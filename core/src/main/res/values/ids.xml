@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <item type="id" name="toolbar" />
+  <item type="id" name="title" />
+  <item type="id" name="gridView" />
+  <item type="id" name="listView" />
+  <item type="id" name="ptr_pull_rv_to_refresh" />
+  <item type="id" name="ptr_pull_gv_to_refresh" />
+  <item type="id" name="ptr_pull_lv_to_refresh" />
+  <item type="id" name="recyclerView" />
+  <item type="id" name="viewPage" />
+  <item type="id" name="tag" />
+
+  <item type="id" name="cat_avatar" />
+  <item type="id" name="cat_title" />
+
+  <item type="id" name="content_view" />
+  <item type="id" name="tv_tips" />
+  <item type="id" name="iv_tips" />
+  <item type="id" name="btn_function" />
+</resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="accent">#00796b</color>
+    <color name="accentLight">#009688</color>
+    <color name="primaryLight">#7DD4B7</color>
+
+    <!-- 常用 -->
+    <color name="transparent">#00000000</color>
+    <color name="divide">#FFcccccc</color>
+    <color name="white">#FFffffff</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="ared">#e3010f</color>
+    <color name="orange">#f89957</color>
+    <color name="bg_gray">#f0f0f0</color>
+    <color name="bg_light">#fff5ee</color>
+
+    <!-- 字体颜色 -->
+    <color name="text_black">#353535</color>
+    <color name="text_gray">#9B9B9B</color>
+    <color name="text_red">#FF5340</color>
+
+    <!-- 橙色 -->
+    <color name="blue_color">#619ff4</color>
+    <!-- 蓝色  -->
+    <color name="purple_color">#d28bf5</color>
+    <!-- 紫色 -->
+    <color name="red_color">#ff0000</color>
+    <!-- 红色 -->
+    <color name="black_color">#000000</color>
+    <!-- 黑色 -->
+    <color name="gray_color">#E5E5E5</color>
+    <!-- 灰色 -->
+    <color name="gray_color2">#777777</color>
+    <color name="gray_color3">#9b9b9b</color>
+    <color name="gray_color4">#c8c8c8</color>
+    <color name="result_view">#b0000000</color>
+    <!--  半透明 -->
+    <color name="viewfinder_mask">#60000000</color>
+    <!-- 黑色半透明30%-->
+    <color name="alpha_black">#20000000</color>
+    <!--  透明 -->
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="transparent_color">#00000000</color>
+    <!-- 主题 -->
+    <color name="theme_color">#1e8bf2</color>
+
+</resources>

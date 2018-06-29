@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.xyoye.dandanplay;
+package com.xyoye.dandanplay.app;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.utils.TLog;
@@ -32,6 +33,7 @@ public class IApplication extends BaseApplication {
     public void onCreate() {
         TLog.i("onCreate");
         super.onCreate();
+        CrashReport.initCrashReport(getApplicationContext(), "e67e479ad9", false);
         MultiDex.install(this);
         initDatabase(new DataBaseHelper(this));
     }

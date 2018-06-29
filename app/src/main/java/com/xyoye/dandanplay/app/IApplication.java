@@ -33,7 +33,7 @@ public class IApplication extends BaseApplication {
     public void onCreate() {
         TLog.i("onCreate");
         super.onCreate();
-        CrashReport.initCrashReport(getApplicationContext(), "e67e479ad9", false);
+        CrashReport.initCrashReport(getApplicationContext(), "e67e479ad9", true);
         MultiDex.install(this);
         initDatabase(new DataBaseHelper(this));
     }

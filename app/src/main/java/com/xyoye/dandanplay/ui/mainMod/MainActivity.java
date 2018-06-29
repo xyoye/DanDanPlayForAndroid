@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
@@ -34,9 +35,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void initView() {
+        setTitle("");
         mFragments = DataGenerator.getFragments();
-        mTabLayout = (TabLayout) findViewById(R.id.bottom_tab_layout);
-
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -95,5 +95,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             getSupportFragmentManager().beginTransaction().replace(R.id.home_container, fragment).commit();
         }
 
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtil.setColor(this, getToolbarColor(),0);
     }
 }

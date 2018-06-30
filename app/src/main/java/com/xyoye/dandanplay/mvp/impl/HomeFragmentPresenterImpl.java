@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.dandanplay.mvp.HomeFragmentView.HomeFragmentView;
+import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 
 /**

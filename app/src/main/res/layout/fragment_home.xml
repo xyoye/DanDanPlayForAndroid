@@ -19,11 +19,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:text="首页"/>
+            android:text="弹弹Play"/>
     </android.support.v7.widget.Toolbar>
 
     <TextView

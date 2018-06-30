@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
-import com.xyoye.dandanplay.mvp.HomeFragmentView.MainView;
+import com.xyoye.dandanplay.mvp.view.MainView;
 
 /**
  * Created by YE on 2018/6/28 0028.

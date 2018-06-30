@@ -8,4 +8,5 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface PlayFragmentPresenter extends BasePresenter {
+    void searchFolder();
 }

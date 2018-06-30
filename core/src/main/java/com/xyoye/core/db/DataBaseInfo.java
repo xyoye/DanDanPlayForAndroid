@@ -10,26 +10,27 @@ public class DataBaseInfo {
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
-
     private static String[] TableNames;
 
     //表，字段名，字段类型
     static {
-        //例："table_1","table_2"
+
         TableNames = new String[]{
-
+                "traverse_folder",
+                "folder",
+                "file"
         };
 
-        //例：{"table_1_id","table_1_name"},
-        //   {"table_2_id","table_2_name"}
         FieldNames = new String[][] {
-
+                {"_id", "folder_path"},
+                {"_id", "folder_path", "file_number"},
+                {"_id", "folder_path", "file_name"}
         };
 
-        //例：{"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(50) NOT NULL"},
-        //   {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(50) NOT NULL"}
         FieldTypes = new String[][] {
-
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","INTEGER NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL"}
         };
     }
 

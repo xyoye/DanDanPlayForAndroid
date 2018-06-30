@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.mvp.HomeFragmentView;
+package com.xyoye.dandanplay.mvp.view;
 
 import com.xyoye.core.interf.view.BaseMvpView;
 

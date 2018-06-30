@@ -12,7 +12,7 @@ import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
-import com.xyoye.dandanplay.mvp.HomeFragmentView.MainView;
+import com.xyoye.dandanplay.mvp.view.MainView;
 import com.xyoye.dandanplay.utils.DataGenerator;
 
 import butterknife.BindView;

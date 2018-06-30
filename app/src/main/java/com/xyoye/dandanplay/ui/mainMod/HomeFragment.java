@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.presenter.BasePresenter;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.mvp.HomeFragmentView.HomeFragmentView;
+import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 
 /**

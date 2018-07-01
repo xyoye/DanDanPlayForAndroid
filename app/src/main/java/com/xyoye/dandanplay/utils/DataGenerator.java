@@ -21,7 +21,7 @@ public class DataGenerator {
 
     public static final int []mTabRes = new int[]{R.mipmap.ic_home_light, R.mipmap.ic_play_light,R.mipmap.ic_my_light};
     public static final int []mTabResPressed = new int[]{R.mipmap.ic_home_dark, R.mipmap.ic_play_dark,R.mipmap.ic_my_dark};
-    public static final String []mTabTitle = new String[]{"DanDanPlay","Play","我的"};
+    public static final String []mTabTitle = new String[]{"首页","Play","我的"};
 
     public static Fragment[] getFragments(){
         Fragment fragments[] = new Fragment[3];

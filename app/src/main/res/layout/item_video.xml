@@ -2,24 +2,99 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
-    android:padding="5dp">
+    android:layout_height="74dp"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
+    android:background="@android:color/white">
 
-    <ImageView
-        android:id="@+id/video_iv"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_centerVertical="true"/>
+    <RelativeLayout
+        android:id="@+id/image_rl"
+        android:layout_width="72dp"
+        android:layout_height="62dp"
+        android:layout_centerVertical="true">
+        <ImageView
+            android:id="@+id/cover_iv"
+            android:layout_width="68dp"
+            android:layout_height="58dp"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"/>
 
-    <TextView
-        android:id="@+id/video_title"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/video_iv"
-        android:layout_marginStart="10dp"
+        <TextView
+            android:id="@+id/duration_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="3dp"
+            android:layout_marginEnd="3dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:gravity="center"
+            android:background="@android:color/black"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_video_image"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_toEndOf="@+id/image_rl"
         android:layout_centerVertical="true"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:textSize="16sp"
-        android:textColor="@color/text_black"/>
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="80dp"
+            android:layout_marginTop="5dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="@color/text_black"
+            android:text=""/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="12sp"
+                android:text="弹幕："/>
+
+            <ImageView
+                android:id="@+id/danmu_tips_iv"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="1dp"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_danmu_inexist"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/danmu_setting_rl"
+        android:layout_width="30dp"
+        android:layout_height="62dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:src="@mipmap/ic_danmu_setting"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>

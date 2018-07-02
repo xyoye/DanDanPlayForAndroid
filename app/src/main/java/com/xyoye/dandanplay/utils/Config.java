@@ -32,4 +32,8 @@ public class Config {
         videoType.add("XV");
         videoType.add("F4V");
     }
+
+    public static class AppConfig {
+        public static final String LOCAL_DANMU_FOLDER = "local_danmu_folder";
+    }
 }

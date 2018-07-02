@@ -26,6 +26,8 @@
         <activity android:name=".ui.folderMod.FolderActivity"/>
 
         <activity android:name=".ui.temp.VideoViewActivity"/>
+
+        <activity android:name=".ui.danmuMod.DanmuActivity"/>
     </application>
 
 </manifest>

@@ -24,6 +24,7 @@ import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.ui.temp.VideoViewActivity;
+import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -71,6 +72,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(1,0,0,0));
 
         showLoading();
         presenter.refreshVideos();

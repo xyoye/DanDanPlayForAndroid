@@ -24,13 +24,13 @@ public class DataBaseInfo {
         FieldNames = new String[][] {
                 {"_id", "folder_path"},
                 {"_id", "folder_path", "file_number"},
-                {"_id", "folder_path", "file_name"}
+                {"_id", "folder_path", "file_name", "danmu_path"}
         };
 
         FieldTypes = new String[][] {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","INTEGER NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL"}
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)"}
         };
     }
 

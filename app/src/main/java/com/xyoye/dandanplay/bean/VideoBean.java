@@ -18,9 +18,10 @@ public class VideoBean implements Serializable {
     public VideoBean() {
     }
 
-    public VideoBean(String videoName, String videoPath) {
+    public VideoBean(String videoName, String videoPath, String danmuPath) {
         this.videoName = videoName;
         this.videoPath = videoPath;
+        this.danmuPath = danmuPath;
     }
 
     public VideoBean(String videoName, String videoPath, String videoCover, String videoDuration, String danmuPath, String lastProgress) {

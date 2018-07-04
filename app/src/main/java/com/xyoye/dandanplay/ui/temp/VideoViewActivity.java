@@ -24,6 +24,7 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     private String videoPath, videoTitle, file_title;
     private boolean hide_danmu = false, isOffLine = false;
     private int episode_id, currentPosition;
+    private String danmuxml;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,8 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
         videoTitle = getIntent().getStringExtra("title");
         hide_danmu = getIntent().getBooleanExtra("hide_danmu", false);
         episode_id = getIntent().getIntExtra("episode_id", -1);
-//        //读取播放进度
+        danmuxml = getIntent().getStringExtra("danmu_path");
+        //        //读取播放进度
 //        Realm realm = MyApplication.getRealmInstance();
 //        VideoFileArgInfo videoFileArgInfo = realm.where(VideoFileArgInfo.class).equalTo("videoPath", videoPath).findFirst();
 //        if (videoFileArgInfo!=null){
@@ -67,7 +69,6 @@ public class VideoViewActivity extends AppCompatActivity implements VideoViewCon
     }
 
     private void initPlayer() {
-        String danmuxml = "";
         InputStream inputStream = null;
         if (!TextUtils.isEmpty(videoPath)) {
             String ddxml = videoPath.substring(0, videoPath.lastIndexOf(".")) + "dd.xml";

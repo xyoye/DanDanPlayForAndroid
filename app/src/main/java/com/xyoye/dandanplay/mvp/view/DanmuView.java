@@ -16,4 +16,6 @@ public interface DanmuView  extends BaseMvpView {
     void showLoading();
 
     void hideLoading();
+
+    void updatePathTitle(String path);
 }

@@ -13,6 +13,7 @@
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:background="@color/white"
         android:paddingStart="14dp">
         <LinearLayout
             android:layout_width="wrap_content"
@@ -50,8 +51,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:layout_height="wrap_content"
+        android:background="@color/divide"/>
 
     <LinearLayout
         android:id="@+id/loading_ll"
@@ -59,7 +60,8 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:layout_marginTop="32dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

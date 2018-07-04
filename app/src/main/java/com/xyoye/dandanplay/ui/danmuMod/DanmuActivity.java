@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.danmuMod;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,10 +13,15 @@ import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
+import com.xyoye.dandanplay.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuView;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -74,7 +80,7 @@ public class DanmuActivity extends BaseActivity<DanmuPresenter> implements Danmu
                 @NonNull
                 @Override
                 public AdapterItem<DanmuFolderBean> onCreateItem(int viewType) {
-                    return null;
+                    return new DanmuFolderItem();
                 }
             };
             recyclerView.setAdapter(adapter);
@@ -94,5 +100,32 @@ public class DanmuActivity extends BaseActivity<DanmuPresenter> implements Danmu
         loadingLl.setVisibility(View.GONE);
     }
 
+    @Override
+    public void updatePathTitle(String path) {
+        pathTv.setText(path);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onpenFolder(OpenDanmuFolderEvent event){
+        if (event.isFolder()){
+            presenter.listFile(event.getPath());
+        }else {
+            Intent intent = getIntent();
+            intent.putExtra("danmu", event.getPath());
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
 }

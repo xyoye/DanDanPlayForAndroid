@@ -66,7 +66,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         new PermissionHelper().with(this).request(new PermissionHelper.OnSuccessListener() {
             @Override
             public void onPermissionSuccess() {
-                presenter.searchFolder();
+                presenter.getVideoList();
             }
         }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
@@ -98,7 +98,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 new PermissionHelper().with(PlayFragment.this).request(new PermissionHelper.OnSuccessListener() {
                     @Override
                     public void onPermissionSuccess() {
-                        presenter.searchFolder();
+                        presenter.getVideoList();
                     }
                 }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 

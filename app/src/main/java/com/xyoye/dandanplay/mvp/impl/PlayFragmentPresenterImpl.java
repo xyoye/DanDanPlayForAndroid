@@ -14,9 +14,11 @@ import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.bean.FolderBean;
+import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.FindVideoTask;
 
 import org.reactivestreams.Subscriber;
 
@@ -69,8 +71,25 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
     }
 
     @Override
-    public void searchFolder() {
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/test");
+    public void getVideoList() {
+        FindVideoTask findVideoTask = new FindVideoTask();
+        findVideoTask.setQueryListener(new FindVideoTask.QueryListener() {
+            @Override
+            public void onResult(List<VideoBean> videoList) {
+                for (VideoBean videoBean : videoList){
+                    String folderPath = videoBean.getVideoPath();
+                    String fileName = videoBean.getVideoName();
+                    saveData(folderPath,fileName);
+                }
+                getView().refreshAdapter(getFolderList());
+            }
+        });
+        findVideoTask.execute(getApplicationContext());
+    }
+
+    @Override
+    public void listFolder(String path) {
+        File file = new File(path);
         Observable.just(file)
                 .flatMap(new Function<File, Observable<File>>() {
                     @Override
@@ -102,14 +121,24 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                                public void onComplete() {
                                    getView().refreshAdapter(getFolderList());
                                }
-                           }
-                );
+                           });
     }
 
     /**
      * RxJava递归查询内存中的视频文件
      */
     private Observable<File> listFiles(final File f){
+        String name = FileUtils.getFileName(f.getAbsolutePath());
+        if ("ANDROID".equals(name.toUpperCase()) ||
+                name.startsWith("com") ||
+                name.startsWith(".")){
+            return Observable.just(f).filter(new Predicate<File>() {
+                @Override
+                public boolean test(File file) throws Exception {
+                    return false;
+                }
+            });
+        }
         if(f.isDirectory()){
             return Observable.fromArray(f.listFiles()).flatMap(new Function<File, Observable<File>>() {
                 @Override

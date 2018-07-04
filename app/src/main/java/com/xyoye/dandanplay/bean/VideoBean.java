@@ -11,7 +11,7 @@ public class VideoBean implements Serializable {
     private String videoName;
     private String videoPath;
     private String videoCover;
-    private String videoDuration;
+    private long videoDuration;
     private String danmuPath;
     private int currentPosition;
 
@@ -25,7 +25,7 @@ public class VideoBean implements Serializable {
         this.currentPosition = currentPosition;
     }
 
-    public VideoBean(String videoName, String videoPath, String videoCover, String videoDuration, String danmuPath, int currentPosition) {
+    public VideoBean(String videoName, String videoPath, String videoCover, long videoDuration, String danmuPath, int currentPosition) {
         this.videoName = videoName;
         this.videoPath = videoPath;
         this.videoCover = videoCover;
@@ -58,11 +58,11 @@ public class VideoBean implements Serializable {
         this.videoCover = videoCover;
     }
 
-    public String getVideoDuration() {
+    public long getVideoDuration() {
         return videoDuration;
     }
 
-    public void setVideoDuration(String videoDuration) {
+    public void setVideoDuration(long videoDuration) {
         this.videoDuration = videoDuration;
     }
 

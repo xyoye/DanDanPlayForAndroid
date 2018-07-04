@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.folderMod;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,11 +20,12 @@ import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.event.OpenFolderEvent;
 import com.xyoye.dandanplay.event.OpenVideoEvent;
+import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
-import com.xyoye.dandanplay.ui.danmuMod.DanmuActivity;
-import com.xyoye.dandanplay.ui.temp.VideoViewActivity;
+import com.xyoye.dandanplay.ui.danmuMod.DanmuLocalActivity;
+import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,8 +55,10 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     RecyclerView recyclerView;
 
     public final static int SELECT_DANMU = 101;
+    public final static int OPEN_VIDEO = 102;
     private BaseRvAdapter<VideoBean> adapter;
     private int selectItem = -1;
+    private int openVideoPosition = -1;
 
     @Override
     public void initView() {
@@ -148,11 +150,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     }
 
     @Override
-    protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor(),0);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
@@ -166,19 +163,28 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openVideo(OpenVideoEvent event){
+        openVideoPosition = event.getPosition();
         VideoBean videoBean = event.getBean();
-        Intent intent = new Intent(this, VideoViewActivity.class);
-        intent.putExtra("file_title", videoBean.getVideoName());
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("title", videoBean.getVideoName());
         intent.putExtra("path",videoBean.getVideoPath());
         intent.putExtra("danmu_path",videoBean.getDanmuPath());
-        startActivity(intent);
+        intent.putExtra("current", videoBean.getCurrentPosition());
+        startActivityForResult(intent, OPEN_VIDEO);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
         selectItem = event.getVideoPosition();
-        Intent intent = new Intent(this, DanmuActivity.class);
+        Intent intent = new Intent(this, DanmuLocalActivity.class);
         startActivityForResult(intent, SELECT_DANMU);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void saveCurrent(SaveCurrentEvent event){
+        presenter.updateCurrent(event);
+        adapter.getData().get(openVideoPosition).setCurrentPosition(event.getCurrentPosition());
+        adapter.notifyItemChanged(openVideoPosition);
     }
 
     @Override
@@ -189,7 +195,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                 String videoPath = adapter.getData().get(selectItem).getVideoPath();
                 String folderPath = FileUtils.getDirName(videoPath);
                 String fileName = FileUtils.getFileName(videoPath);
-                presenter.insertDanmu(danmuPath, new String[]{folderPath, fileName});
+                presenter.updateDanmu(danmuPath, new String[]{folderPath, fileName});
                 adapter.getData().get(selectItem).setDanmuPath(danmuPath);
                 adapter.notifyItemChanged(selectItem);
             }

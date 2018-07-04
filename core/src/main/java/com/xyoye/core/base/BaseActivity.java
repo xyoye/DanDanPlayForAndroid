@@ -22,7 +22,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends BaseMvpActiv
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor());
+        StatusBarUtil.setColor(this, getToolbarColor(), 0);
     }
 
     @Override

@@ -11,9 +11,11 @@ import java.io.Serializable;
 
 public class OpenVideoEvent implements Serializable {
     private VideoBean bean;
+    private int position;
 
-    public OpenVideoEvent(VideoBean bean) {
+    public OpenVideoEvent(VideoBean bean, int position) {
         this.bean = bean;
+        this.position = position;
     }
 
     public VideoBean getBean() {
@@ -22,5 +24,13 @@ public class OpenVideoEvent implements Serializable {
 
     public void setBean(VideoBean bean) {
         this.bean = bean;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

@@ -8,8 +8,8 @@ import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
-import com.xyoye.dandanplay.mvp.presenter.DanmuPresenter;
-import com.xyoye.dandanplay.mvp.view.DanmuView;
+import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
+import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import java.io.File;
@@ -23,11 +23,11 @@ import java.util.List;
  */
 
 
-public class DanmuPresenterImpl extends BaseMvpPresenter<DanmuView> implements DanmuPresenter {
+public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> implements DanmuLocalPresenter {
     private File parentFolder = null;
     private String parentPath = "";
 
-    public DanmuPresenterImpl(DanmuView view, Lifeful lifeful) {
+    public DanmuLocalPresenterImpl(DanmuLocalView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 

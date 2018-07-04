@@ -96,9 +96,4 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         }
 
     }
-
-    @Override
-    protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor(),0);
-    }
 }

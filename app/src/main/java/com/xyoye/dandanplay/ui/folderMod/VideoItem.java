@@ -14,11 +14,8 @@ import com.xyoye.dandanplay.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.event.OpenVideoEvent;
 import com.xyoye.dandanplay.utils.BitmapUtil;
 import com.xyoye.dandanplay.utils.TimeUtil;
-import com.xyoye.dandanplay.weight.CircleImageView;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 import butterknife.BindView;
 
@@ -86,7 +83,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OpenVideoEvent event = new OpenVideoEvent(model);
+                OpenVideoEvent event = new OpenVideoEvent(model, position);
                 EventBus.getDefault().post(event);
             }
         });

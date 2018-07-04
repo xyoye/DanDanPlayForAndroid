@@ -7,6 +7,6 @@ import com.xyoye.core.interf.presenter.BasePresenter;
  */
 
 
-public interface DanmuPresenter extends BasePresenter {
+public interface DanmuLocalPresenter extends BasePresenter {
     void listFile(String path);
 }

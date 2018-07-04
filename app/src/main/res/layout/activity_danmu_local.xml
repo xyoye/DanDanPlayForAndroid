@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.danmuMod.DanmuActivity">
+    tools:context=".ui.danmuMod.DanmuLocalActivity">
 
     <include layout="@layout/layout_toolbar" />
 

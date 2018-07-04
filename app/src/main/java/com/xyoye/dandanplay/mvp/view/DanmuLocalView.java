@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 
-public interface DanmuView  extends BaseMvpView {
+public interface DanmuLocalView extends BaseMvpView {
     void refreshAdapter(List<DanmuFolderBean> beans);
 
     void showLoading();

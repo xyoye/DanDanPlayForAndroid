@@ -14,9 +14,9 @@ import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
 import com.xyoye.dandanplay.event.OpenDanmuFolderEvent;
-import com.xyoye.dandanplay.mvp.impl.DanmuPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.DanmuPresenter;
-import com.xyoye.dandanplay.mvp.view.DanmuView;
+import com.xyoye.dandanplay.mvp.impl.DanmuLocalPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
+import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,8 +31,7 @@ import butterknife.BindView;
  * Created by YE on 2018/7/2.
  */
 
-
-public class DanmuActivity extends BaseActivity<DanmuPresenter> implements DanmuView{
+public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.loading_ll)
@@ -55,6 +54,14 @@ public class DanmuActivity extends BaseActivity<DanmuPresenter> implements Danmu
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1,0,0,0));
+
+        networkTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DanmuLocalActivity.this, DanmuNetworkActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -64,13 +71,13 @@ public class DanmuActivity extends BaseActivity<DanmuPresenter> implements Danmu
 
     @NonNull
     @Override
-    protected DanmuPresenter initPresenter() {
-        return new DanmuPresenterImpl(this, this);
+    protected DanmuLocalPresenter initPresenter() {
+        return new DanmuLocalPresenterImpl(this, this);
     }
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_danmu;
+        return R.layout.activity_danmu_local;
     }
 
     @Override

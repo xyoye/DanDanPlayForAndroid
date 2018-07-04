@@ -13,24 +13,25 @@ public class VideoBean implements Serializable {
     private String videoCover;
     private String videoDuration;
     private String danmuPath;
-    private String lastProgress;
+    private int currentPosition;
 
     public VideoBean() {
     }
 
-    public VideoBean(String videoName, String videoPath, String danmuPath) {
+    public VideoBean(String videoName, String videoPath, String danmuPath, int currentPosition) {
         this.videoName = videoName;
         this.videoPath = videoPath;
         this.danmuPath = danmuPath;
+        this.currentPosition = currentPosition;
     }
 
-    public VideoBean(String videoName, String videoPath, String videoCover, String videoDuration, String danmuPath, String lastProgress) {
+    public VideoBean(String videoName, String videoPath, String videoCover, String videoDuration, String danmuPath, int currentPosition) {
         this.videoName = videoName;
         this.videoPath = videoPath;
         this.videoCover = videoCover;
         this.videoDuration = videoDuration;
         this.danmuPath = danmuPath;
-        this.lastProgress = lastProgress;
+        this.currentPosition = currentPosition;
     }
 
     public String getVideoName() {
@@ -73,11 +74,11 @@ public class VideoBean implements Serializable {
         this.danmuPath = danmuPath;
     }
 
-    public String getLastProgress() {
-        return lastProgress;
+    public int getCurrentPosition() {
+        return currentPosition;
     }
 
-    public void setLastProgress(String lastProgress) {
-        this.lastProgress = lastProgress;
+    public void setCurrentPosition(int currentPosition) {
+        this.currentPosition = currentPosition;
     }
 }

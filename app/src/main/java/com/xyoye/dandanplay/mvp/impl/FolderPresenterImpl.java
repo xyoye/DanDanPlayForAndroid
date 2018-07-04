@@ -11,6 +11,7 @@ import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.utils.BitmapUtil;
@@ -64,13 +65,23 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
     }
 
     @Override
-    public void insertDanmu(String danmuPath, String[] whereArgs) {
+    public void updateDanmu(String danmuPath, String[] whereArgs) {
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-        ContentValues values=new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][3],danmuPath);
         sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values,whereCase,whereArgs);
     }
+
+    @Override
+    public void updateCurrent(SaveCurrentEvent event) {
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+        ContentValues values = new ContentValues();
+        values.put(DataBaseInfo.getFieldNames()[2][4], event.getCurrentPosition());
+        sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoName()});
+    }
+
 
     private List<VideoBean> getVideoList(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
@@ -81,7 +92,8 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
             String fileName = cursor.getString(2);
             String filePath = cursor.getString(1) + fileName;
             String danmuPath = cursor.getString(3);
-            videoBeans.add(getVideoInfoMore(new VideoBean(fileName, filePath, danmuPath)));
+            int currentPosition = cursor.getInt(4);
+            videoBeans.add(getVideoInfoMore(new VideoBean(fileName, filePath, danmuPath, currentPosition)));
         }
         cursor.close();
         return videoBeans;

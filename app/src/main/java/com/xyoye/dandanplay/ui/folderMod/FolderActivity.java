@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.adapter.BaseRvAdapter;
@@ -23,6 +24,7 @@ import com.xyoye.dandanplay.event.OpenVideoEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.ui.danmuMod.DanmuActivity;
 import com.xyoye.dandanplay.ui.temp.VideoViewActivity;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
@@ -52,7 +54,9 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
+    public final static int SELECT_DANMU = 101;
     private BaseRvAdapter<VideoBean> adapter;
+    private int selectItem = -1;
 
     @Override
     public void initView() {
@@ -166,12 +170,29 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         Intent intent = new Intent(this, VideoViewActivity.class);
         intent.putExtra("file_title", videoBean.getVideoName());
         intent.putExtra("path",videoBean.getVideoPath());
+        intent.putExtra("danmu_path",videoBean.getDanmuPath());
         startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
-        // TODO: 2018/7/1 弹幕设置页面
-        ToastUtils.showShort("弹幕设置正在建造中...");
+        selectItem = event.getVideoPosition();
+        Intent intent = new Intent(this, DanmuActivity.class);
+        startActivityForResult(intent, SELECT_DANMU);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK){
+            if (requestCode == SELECT_DANMU){
+                String danmuPath = data.getStringExtra("danmu");
+                String videoPath = adapter.getData().get(selectItem).getVideoPath();
+                String folderPath = FileUtils.getDirName(videoPath);
+                String fileName = FileUtils.getFileName(videoPath);
+                presenter.insertDanmu(danmuPath, new String[]{folderPath, fileName});
+                adapter.getData().get(selectItem).setDanmuPath(danmuPath);
+                adapter.notifyItemChanged(selectItem);
+            }
+        }
     }
 }

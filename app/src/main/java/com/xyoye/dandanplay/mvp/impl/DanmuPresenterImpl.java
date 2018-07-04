@@ -33,7 +33,7 @@ public class DanmuPresenterImpl extends BaseMvpPresenter<DanmuView> implements D
 
     @Override
     public void init() {
-        String parentPath = AppConfigShare.getInstance().getDanmuFolder();
+        parentPath = AppConfigShare.getInstance().getDanmuFolder();
         if (StringUtils.isEmpty(parentPath))
             parentPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         listFile(parentPath);
@@ -59,35 +59,33 @@ public class DanmuPresenterImpl extends BaseMvpPresenter<DanmuView> implements D
 
     }
 
-    private void listFile(String path){
+    @Override
+    public void listFile(String path){
+        getView().updatePathTitle(path);
         getView().showLoading();
         parentFolder = new File(path);
         File[] contents = parentFolder.listFiles();
         List<DanmuFolderBean> results = new ArrayList<>();
-        if (parentPath.equals(parentFolder.getAbsolutePath()))
-            results.add(new DanmuFolderBean(null, "" ,false, false));
-        else
+        if (!parentPath.equals(parentFolder.getAbsolutePath()))
             results.add(new DanmuFolderBean(parentFolder, "..." ,true, true));
         if (contents != null) {
             for (File file : contents) {
+                DanmuFolderBean info = new DanmuFolderBean();
                 if (file.isDirectory()){
-                    DanmuFolderBean info = new DanmuFolderBean();
-                    if (file.isDirectory()){
-                        info.setFolder(true);
+                    info.setFolder(true);
+                    info.setFile(file);
+                    info.setName(file.getName());
+                } else{
+                    String ext = FileUtils.getFileExtension(file);
+                    if ("xml".equals(ext)){
+                        info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
-                    } else{
-                        String ext = FileUtils.getFileExtension(file);
-                        if ("xml".equals(ext)){
-                            info.setFolder(false);
-                            info.setFile(file);
-                            info.setName(file.getName());
-                        }else {
-                            continue;
-                        }
+                    }else {
+                        continue;
                     }
-                    results.add(info);
                 }
+                results.add(info);
             }
             Collections.sort(results, new FolderSorter());
         }

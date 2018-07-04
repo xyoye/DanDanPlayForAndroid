@@ -9,4 +9,6 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 public interface FolderPresenter extends BasePresenter {
     void refreshVideos();
+
+    void insertDanmu(String danmuPath, String[] whereArgs);
 }

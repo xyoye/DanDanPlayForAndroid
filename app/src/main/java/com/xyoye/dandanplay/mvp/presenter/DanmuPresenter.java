@@ -8,5 +8,5 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface DanmuPresenter extends BasePresenter {
-
+    void listFile(String path);
 }

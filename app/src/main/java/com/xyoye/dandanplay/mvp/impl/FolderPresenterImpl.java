@@ -1,11 +1,13 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.xyoye.core.base.BaseMvpPresenter;
+import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -61,6 +63,15 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
         getView().refreshAdapter(videoBeans);
     }
 
+    @Override
+    public void insertDanmu(String danmuPath, String[] whereArgs) {
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+        ContentValues values=new ContentValues();
+        values.put(DataBaseInfo.getFieldNames()[2][3],danmuPath);
+        sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values,whereCase,whereArgs);
+    }
+
     private List<VideoBean> getVideoList(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
@@ -69,7 +80,8 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
         while (cursor.moveToNext()){
             String fileName = cursor.getString(2);
             String filePath = cursor.getString(1) + fileName;
-            videoBeans.add(getVideoInfoMore(new VideoBean(fileName, filePath)));
+            String danmuPath = cursor.getString(3);
+            videoBeans.add(getVideoInfoMore(new VideoBean(fileName, filePath, danmuPath)));
         }
         cursor.close();
         return videoBeans;

@@ -49,16 +49,15 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     TextView toolbarTitle;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ptr_pull_rv_to_refresh)
-    PtrFrameLayout refresh;
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
     public final static int SELECT_DANMU = 101;
     public final static int OPEN_VIDEO = 102;
-    private BaseRvAdapter<VideoBean> adapter;
     private int selectItem = -1;
     private int openVideoPosition = -1;
+
+    private BaseRvAdapter<VideoBean> adapter;
 
     @Override
     public void initView() {
@@ -70,10 +69,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         header.setPadding(0, PixelUtil.dip2px(this, 20) , 0, PixelUtil.dip2px(this, 20));
         header.initWithString("dan dan player");
         header.setTextColor(this.getResources().getColor(R.color.theme_color));
-        refresh.disableWhenHorizontalMove(true);
-        refresh.setDurationToCloseHeader(1500);
-        refresh.setHeaderView(header);
-        refresh.addPtrUIHandler(header);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
@@ -86,17 +81,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Override
     public void initListener() {
-        refresh.setPtrHandler(new PtrHandler() {
-            @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
-            }
-
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                presenter.refreshVideos();
-            }
-        });
     }
 
     @Override
@@ -115,7 +99,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
             adapter.notifyDataSetChanged();
         }
         hideLoading();
-        refresh.refreshComplete();
     }
 
     @NonNull

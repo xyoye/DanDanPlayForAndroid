@@ -43,6 +43,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
+    private LinearLayoutManager layoutManager;
     private BaseRvAdapter<FolderBean> adapter;
 
     public static PlayFragment newInstance(){
@@ -79,7 +80,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         refresh.setHeaderView(header);
         refresh.addPtrUIHandler(header);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
+        layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(adapter);
@@ -90,7 +92,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         refresh.setPtrHandler(new PtrHandler() {
             @Override
             public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return true;
+                return !frame.isRefreshing() && (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
             }
 
             @Override

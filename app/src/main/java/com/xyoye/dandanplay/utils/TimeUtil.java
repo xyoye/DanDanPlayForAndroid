@@ -8,49 +8,35 @@ package com.xyoye.dandanplay.utils;
 public class TimeUtil {
 
     public static String formatDuring(long mss) {
-        boolean flag=false;
-        long days = mss / (1000 * 60 * 60 * 24);
-        long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+        int digit = 0;
+        long hours = mss / (1000 * 60 * 60);
         long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
         long seconds = (mss % (1000 * 60)) / 1000;
         StringBuilder stringBuilder=new StringBuilder();
-        if (days==0){
+        if (hours == 0){
             stringBuilder.append("");
-        }
-        else{
-            flag=true;
-            stringBuilder.append(String.valueOf(days)+":");
-        }
-        if (hours==0){
-            if (flag){
-                stringBuilder.append("00:");
-            }
-            else {
-                stringBuilder.append("");
-            }
-        }
-        else{
-            flag=true;
-            stringBuilder.append(String.valueOf(hours)+":");
-        }
-        if (minutes==0){
-            if (flag)
-                stringBuilder.append("00:");
+        } else{
+            if (hours < 10)
+                stringBuilder.append("0").append(String.valueOf(hours)).append(":");
             else
-                stringBuilder.append("");
+                stringBuilder.append(String.valueOf(hours)).append(":");
         }
-        else{
-            flag=true;
-            stringBuilder.append(String.valueOf(minutes)+":");
-        }
-        if (seconds==0){
-            if (flag)
-                stringBuilder.append("00");
+        if (minutes == 0){
+            stringBuilder.append("00:");
+        } else{
+            if (minutes < 10)
+                stringBuilder.append("0").append(String.valueOf(minutes)).append(":");
             else
-                stringBuilder.append("");
+                stringBuilder.append(String.valueOf(minutes)).append(":");
         }
-        else
-            stringBuilder.append(String.valueOf(seconds));
+        if (seconds == 0){
+            stringBuilder.append("00");
+        } else{
+            if (seconds < 10)
+                stringBuilder.append("0").append(String.valueOf(seconds));
+            else
+                stringBuilder.append(String.valueOf(seconds));
+        }
         return stringBuilder.toString();
     }
 }

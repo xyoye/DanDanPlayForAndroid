@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.folderMod;
 
-import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -12,7 +11,6 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.event.OpenVideoEvent;
-import com.xyoye.dandanplay.utils.BitmapUtil;
 import com.xyoye.dandanplay.utils.ImageLoadTask;
 import com.xyoye.dandanplay.utils.TimeUtil;
 
@@ -58,7 +56,8 @@ public class VideoItem implements AdapterItem<VideoBean> {
     @Override
     public void onUpdateViews(final VideoBean model, final int position) {
         ImageLoadTask task = new ImageLoadTask(coverIv);
-        task.execute(model.getVideoPath() + model.getVideoName());
+        coverIv.setTag(model.getVideoPath());
+        task.execute(model.getVideoPath());
 
         String videoName = model.getVideoName();
         int last = videoName.lastIndexOf(".");
@@ -88,25 +87,5 @@ public class VideoItem implements AdapterItem<VideoBean> {
                 EventBus.getDefault().post(event);
             }
         });
-    }
-
-
-    private VideoBean getVideoInfoMore(VideoBean videoBean){
-        FFmpegMediaMetadataRetriever fmmr = null;
-        String videoCover = "";
-        try {
-            fmmr = new FFmpegMediaMetadataRetriever();
-            fmmr.setDataSource(videoBean.getVideoPath());
-            Bitmap bitmap = fmmr.getFrameAtTime();
-            videoCover = BitmapUtil.bitmapToBase64(bitmap);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }finally {
-            if (fmmr != null){
-                fmmr.release();
-            }
-        }
-        videoBean.setVideoCover(videoCover);
-        return videoBean;
     }
 }

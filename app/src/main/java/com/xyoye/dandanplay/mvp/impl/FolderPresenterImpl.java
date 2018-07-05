@@ -89,7 +89,8 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
             String filePath = cursor.getString(1) + fileName;
             String danmuPath = cursor.getString(3);
             int currentPosition = cursor.getInt(4);
-            videoBeans.add(new VideoBean(fileName, filePath, danmuPath, currentPosition));
+            long duration = Long.parseLong(cursor.getString(5));
+            videoBeans.add(new VideoBean(fileName, filePath, danmuPath, currentPosition, duration));
         }
         cursor.close();
         return videoBeans;

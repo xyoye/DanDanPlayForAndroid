@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.mvp.impl;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -33,6 +34,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 /**
  * Created by YE on 2018/6/29 0029.
@@ -79,7 +81,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                 for (VideoBean videoBean : videoList){
                     String folderPath = videoBean.getVideoPath();
                     String fileName = videoBean.getVideoName();
-                    saveData(folderPath,fileName);
+                    long duration = videoBean.getVideoDuration();
+                    saveData(folderPath,fileName, duration);
                 }
                 getView().refreshAdapter(getFolderList());
             }
@@ -90,6 +93,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
     @Override
     public void listFolder(String path) {
         File file = new File(path);
+        final FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
         Observable.just(file)
                 .flatMap(new Function<File, Observable<File>>() {
                     @Override
@@ -109,7 +113,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                                public void onNext(File file) {
                                     String folderPath = FileUtils.getDirName(file);
                                     String fileName = FileUtils.getFileName(file);
-                                    saveData(folderPath,fileName);
+                                    fmmr.setDataSource(folderPath +fileName);
+                                    long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
+                                    saveData(folderPath, fileName, duration);
                                }
 
                                @Override
@@ -119,6 +125,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
 
                                @Override
                                public void onComplete() {
+                                   fmmr.release();
                                    getView().refreshAdapter(getFolderList());
                                }
                            });
@@ -162,19 +169,18 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         return Config.videoType.contains(ext);
     }
 
-    private void saveData(String folderPath, String fileName){
+    private void saveData(String folderPath, String fileName, long duration){
         ContentValues values=new ContentValues();
-        values.put(DataBaseInfo.getFieldNames()[2][1],folderPath);
-        values.put(DataBaseInfo.getFieldNames()[2][2],fileName);
+        values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
+        values.put(DataBaseInfo.getFieldNames()[2][2], fileName);
+        values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(duration));
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
                 " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
                 "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
         Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, fileName});
-        if (cursor.moveToNext()){
+        if (!cursor.moveToNext()){
             cursor.close();
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values,null,null);
-        }else {
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2],null,values);
         }
 

@@ -8,6 +8,8 @@ import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 
+import wseemann.media.FFmpegMediaMetadataRetriever;
+
 /**
  * Created by xyy on 2018-03-03 下午 6:05
  */
@@ -56,8 +58,24 @@ public class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
      * 根据路径获取视频帧
      */
     private Bitmap downloadImage() {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(imageUrl);
-        return retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        FFmpegMediaMetadataRetriever fmmr = null;
+        Bitmap bitmap = null;
+        try {
+            fmmr = new FFmpegMediaMetadataRetriever();
+            fmmr.setDataSource(imageUrl);
+            bitmap = fmmr.getFrameAtTime();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }finally {
+            if (fmmr != null){
+                fmmr.release();
+            }
+        }
+        if (bitmap == null){
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(imageUrl);
+            bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        }
+        return bitmap;
     }
 }

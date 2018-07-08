@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.danmuMod;
+package com.xyoye.dandanplay.ui.FileManagerMod;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -19,7 +19,7 @@ import butterknife.BindView;
  */
 
 
-public class DanmuFolderItem implements AdapterItem<DanmuFolderBean> {
+public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
     @BindView(R.id.iv)
     ImageView iv;
     @BindView(R.id.tv)
@@ -29,7 +29,7 @@ public class DanmuFolderItem implements AdapterItem<DanmuFolderBean> {
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_danmu_folder;
+        return R.layout.item_file_manager;
     }
 
     @Override

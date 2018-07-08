@@ -5,12 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
@@ -24,7 +22,7 @@ import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
-import com.xyoye.dandanplay.ui.danmuMod.DanmuLocalActivity;
+import com.xyoye.dandanplay.ui.FileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
@@ -35,8 +33,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
@@ -159,7 +155,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
         selectItem = event.getVideoPosition();
-        Intent intent = new Intent(this, DanmuLocalActivity.class);
+        Intent intent = new Intent(this, FileManagerActivity.class);
+        intent.putExtra(FileManagerActivity.IS_FOLDER, false);
         startActivityForResult(intent, SELECT_DANMU);
     }
 

@@ -92,14 +92,11 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
             return;
         }
         mActionBarToolbar.setBackgroundColor(getToolbarColor());
-        String title = getIntent().getStringExtra(EXTRA_TITLE);
-        if (mActionBarToolbar != null && !TextUtils.isEmpty(title) && getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
-        }
         if (hasBackActionbar() && getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBarToolbar.setNavigationIcon(setBackIcon() == 0 ? R.drawable.ic_arrow_back_white_18dp : setBackIcon());
+            actionBar.setDisplayShowTitleEnabled(false);
+            setSupportActionBar(mActionBarToolbar);
             mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

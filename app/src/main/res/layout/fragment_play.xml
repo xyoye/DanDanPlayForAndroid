@@ -16,14 +16,6 @@
         app:titleTextAppearance="@style/Toolbar.TitleText"
         app:layout_scrollFlags="scroll|enterAlways|snap">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:text="播放中心"/>
     </android.support.v7.widget.Toolbar>
 
     <in.srain.cube.views.ptr.PtrFrameLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
@@ -46,5 +38,16 @@
         </android.support.v7.widget.RecyclerView>
 
     </in.srain.cube.views.ptr.PtrFrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ptr_pull_rv_to_refresh"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="11dp"
+        android:text="播放中心"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
 </RelativeLayout>

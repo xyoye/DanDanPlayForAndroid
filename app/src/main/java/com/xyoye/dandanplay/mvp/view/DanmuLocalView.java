@@ -18,4 +18,6 @@ public interface DanmuLocalView extends BaseMvpView {
     void hideLoading();
 
     void updatePathTitle(String path);
+
+    boolean isFolder();
 }

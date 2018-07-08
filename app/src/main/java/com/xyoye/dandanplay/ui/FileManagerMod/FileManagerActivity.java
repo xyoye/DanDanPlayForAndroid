@@ -1,9 +1,11 @@
-package com.xyoye.dandanplay.ui.danmuMod;
+package com.xyoye.dandanplay.ui.FileManagerMod;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,7 +33,9 @@ import butterknife.BindView;
  * Created by YE on 2018/7/2.
  */
 
-public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
+public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
+    public final static String IS_FOLDER = "isFolder";
+
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.loading_ll)
@@ -44,11 +48,21 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
     RecyclerView recyclerView;
 
     private BaseRvAdapter<DanmuFolderBean> adapter;
+    private boolean isFolder;
 
     @Override
     public void initView() {
         setTitle("");
-        toolbarTitle.setText("选择本地弹幕");
+        isFolder = isFolder();
+
+        if (isFolder){
+            toolbarTitle.setText("选择文件夹");
+            networkTv.setVisibility(View.GONE);
+        } else {
+            toolbarTitle.setText("选择本地弹幕");
+            networkTv.setVisibility(View.VISIBLE);
+        }
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
@@ -58,7 +72,7 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
         networkTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DanmuLocalActivity.this, DanmuNetworkActivity.class);
+                Intent intent = new Intent(FileManagerActivity.this, DanmuNetworkActivity.class);
                 startActivity(intent);
             }
         });
@@ -77,7 +91,7 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_danmu_local;
+        return R.layout.activity_file_manager;
     }
 
     @Override
@@ -87,7 +101,7 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
                 @NonNull
                 @Override
                 public AdapterItem<DanmuFolderBean> onCreateItem(int viewType) {
-                    return new DanmuFolderItem();
+                    return new FileManagerItem();
                 }
             };
             recyclerView.setAdapter(adapter);
@@ -95,6 +109,11 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
             adapter.setData(beans);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public boolean isFolder(){
+        return getIntent().getBooleanExtra(IS_FOLDER, true);
     }
 
     @Override
@@ -134,5 +153,29 @@ public class DanmuLocalActivity extends BaseActivity<DanmuLocalPresenter> implem
             setResult(RESULT_OK, intent);
             finish();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.select_video_folder:
+                selectedFolder();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (isFolder)
+            getMenuInflater().inflate(R.menu.menu_select, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void selectedFolder(){
+        Intent intent = getIntent();
+        intent.putExtra("folder", pathTv.getText().toString());
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

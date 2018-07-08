@@ -4,10 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.content.PermissionChecker;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
@@ -19,6 +25,7 @@ import com.xyoye.dandanplay.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
+import com.xyoye.dandanplay.ui.FileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.folderMod.FolderActivity;
 import com.xyoye.dandanplay.utils.permissionchecker.PermissionHelper;
 
@@ -33,11 +40,17 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by YE on 2018/6/29 0029.
  */
 
 public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView{
+    public final static int SELECT_FOLDER = 103;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.ptr_pull_rv_to_refresh)
     PtrFrameLayout refresh;
     @BindView(R.id.rv)
@@ -63,6 +76,12 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void initView() {
+        setHasOptionsMenu(true);
+        getBaseActivity().setSupportActionBar(toolbar);
+        ActionBar actionBar =  getBaseActivity().getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
         showLoading();
         new PermissionHelper().with(this).request(new PermissionHelper.OnSuccessListener() {
             @Override
@@ -160,5 +179,40 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         intent.putExtra(OpenFolderEvent.FOLDERPATH, event.getFolderPath());
         intent.putExtra(OpenFolderEvent.FOLDERTITLE, event.getFolderTitle());
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                break;
+            case R.id.add_video_folder:
+                addFolder();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_add, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+
+    private void addFolder(){
+        Intent intent = new Intent(getContext(), FileManagerActivity.class);
+        intent.putExtra(FileManagerActivity.IS_FOLDER, true);
+        startActivityForResult(intent, SELECT_FOLDER);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK){
+            if (requestCode == SELECT_FOLDER){
+                String folderPath = data.getStringExtra("folder");
+                presenter.listFolder(folderPath);
+            }
+        }
     }
 }

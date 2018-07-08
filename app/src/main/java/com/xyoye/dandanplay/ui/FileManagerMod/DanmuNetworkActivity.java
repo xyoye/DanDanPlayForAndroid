@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.danmuMod;
+package com.xyoye.dandanplay.ui.FileManagerMod;
 
 import android.support.annotation.NonNull;
 import android.widget.TextView;

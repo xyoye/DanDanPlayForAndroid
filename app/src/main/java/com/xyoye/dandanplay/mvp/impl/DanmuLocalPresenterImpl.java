@@ -26,6 +26,7 @@ import java.util.List;
 public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> implements DanmuLocalPresenter {
     private File parentFolder = null;
     private String rootPath = "/";
+    private boolean isFolder;
 
     public DanmuLocalPresenterImpl(DanmuLocalView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -33,6 +34,7 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
 
     @Override
     public void init() {
+        isFolder = getView().isFolder();
         String path = AppConfigShare.getInstance().getDanmuFolder();
         if (StringUtils.isEmpty(path))
             path = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -75,17 +77,16 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
                     info.setFolder(true);
                     info.setFile(file);
                     info.setName(file.getName());
-                } else{
+                    results.add(info);
+                } else if (!isFolder){
                     String ext = FileUtils.getFileExtension(file);
                     if ("xml".equals(ext)){
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
-                    }else {
-                        continue;
+                        results.add(info);
                     }
                 }
-                results.add(info);
             }
             Collections.sort(results, new FolderSorter());
         }

@@ -25,9 +25,9 @@
         </activity>
         <activity android:name=".ui.folderMod.FolderActivity"/>
 
-        <activity android:name=".ui.danmuMod.DanmuLocalActivity"/>
+        <activity android:name=".ui.FileManagerMod.FileManagerActivity"/>
 
-        <activity android:name=".ui.danmuMod.DanmuNetworkActivity"/>
+        <activity android:name=".ui.FileManagerMod.DanmuNetworkActivity"/>
 
         <activity android:name=".ui.playMod.PlayerActivity"/>
 

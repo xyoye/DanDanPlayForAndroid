@@ -35,5 +35,6 @@ public class Config {
 
     public static class AppConfig {
         public static final String LOCAL_DANMU_FOLDER = "local_danmu_folder";
+        public static final String DANMU_SAVE_PATH = "danmu_save_path";
     }
 }

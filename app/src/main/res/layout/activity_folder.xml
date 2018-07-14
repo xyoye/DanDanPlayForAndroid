@@ -27,11 +27,16 @@
             android:text=""/>
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        android:background="@color/diver_color"
+        android:layout_below="@+id/toolbar">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
 
 </RelativeLayout>

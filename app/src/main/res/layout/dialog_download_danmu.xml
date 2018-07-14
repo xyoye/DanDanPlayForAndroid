@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="150dp"
+    android:background="@color/white"
+    android:layout_gravity="center"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/video_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/text_black"
+        android:textSize="16sp"
+        android:text="刀剑神域"/>
+
+    <TextView
+        android:id="@+id/episode_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/video_title_tv"
+        android:textColor="@color/text_black"
+        android:textSize="16sp"
+        android:text="第一集 刀剑世界"/>
+
+    <TextView
+        android:id="@+id/status_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/episode_title_tv"
+        android:layout_marginTop="25dp"
+        android:textColor="@color/theme_color"
+        android:text="下载中..."/>
+
+</RelativeLayout>

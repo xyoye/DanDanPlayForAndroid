@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.utils;
 
+import android.os.Environment;
+
 import com.xyoye.core.BaseApplication;
 import com.xyoye.core.utils.Constants;
 import com.xyoye.core.utils.SharedPreferencesUtil;
@@ -28,6 +30,10 @@ public class AppConfigShare {
 
     public String getDanmuFolder(){
        return getShare().decryptLoad(Config.AppConfig.LOCAL_DANMU_FOLDER);
+    }
+
+    public String getDanmuSavePath(){
+        return getShare().load(Config.AppConfig.DANMU_SAVE_PATH, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
     }
 
 }

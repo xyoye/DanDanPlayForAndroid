@@ -69,6 +69,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         StackManager.getStackManager().pushActivity(this);
         setContentView(initPageLayoutID());
         unbind = ButterKnife.bind(this);
+        AppManager.addActivity(this);
         initActionBar();
         setStatusBar();
         init();

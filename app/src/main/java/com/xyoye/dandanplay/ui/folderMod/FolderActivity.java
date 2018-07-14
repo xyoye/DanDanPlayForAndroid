@@ -157,6 +157,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         selectItem = event.getVideoPosition();
         Intent intent = new Intent(this, FileManagerActivity.class);
         intent.putExtra(FileManagerActivity.IS_FOLDER, false);
+        intent.putExtra(FileManagerActivity.VIDEO_PATH, event.getVideoPath());
         startActivityForResult(intent, SELECT_DANMU);
     }
 

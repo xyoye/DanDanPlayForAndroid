@@ -36,6 +36,8 @@
         <activity android:name=".ui.playMod.PlayerActivity"/>
 
         <activity android:name=".ui.temp.VideoViewActivity"/>
+
+        <activity android:name=".ui.webMod.WebviewActivity"/>
     </application>
 
 </manifest>

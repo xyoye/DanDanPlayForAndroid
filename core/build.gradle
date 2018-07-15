@@ -2,14 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
-    compileSdkVersion 26
-
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -30,25 +29,23 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation rootProject.ext.dependencies["appcompat-v7"]
+    implementation rootProject.ext.dependencies["design"]
+    androidTestImplementation rootProject.ext.dependencies["espresso-core"]
 
-    compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okio:okio:1.11.0'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'com.jaeger.statusbarutil:library:1.4.0'
-    compile 'com.blankj:utilcode:1.6.4'
-    compile 'in.srain.cube:ultra-ptr:1.0.11'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
-    compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+    api 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    api 'com.squareup.okhttp3:okhttp:3.7.0'
+    api 'com.squareup.okio:okio:1.11.0'
+    api 'com.squareup.retrofit2:retrofit:2.2.0'
+    api 'com.squareup.retrofit2:converter-gson:2.2.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
+    api 'io.reactivex.rxjava2:rxjava:2.0.1'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    api 'com.jaeger.statusbarutil:library:1.4.0'
+    api 'com.blankj:utilcode:1.6.4'
+    api 'in.srain.cube:ultra-ptr:1.0.11'
+    api 'com.jakewharton:butterknife:8.4.0'
+    api 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
+    api 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

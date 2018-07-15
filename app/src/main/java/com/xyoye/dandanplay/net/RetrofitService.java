@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.net;
 
+import com.xyoye.dandanplay.bean.AnimaBeans;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
@@ -29,4 +30,8 @@ public interface RetrofitService {
 
     @GET("api/v2/homepage/banner")
     Observable<BannerBeans> getBanner();
+
+
+    @GET("api/v2/bangumi/shin")
+    Observable<AnimaBeans> getAnimas();
 }

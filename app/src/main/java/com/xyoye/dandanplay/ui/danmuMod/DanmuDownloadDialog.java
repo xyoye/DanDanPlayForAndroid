@@ -13,7 +13,6 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.event.OpenDanmuFolderEvent;
-import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.AppConfigShare;
@@ -36,7 +35,7 @@ public class DanmuDownloadDialog extends Dialog{
     @BindView(R.id.video_title_tv)
     TextView videoTitleTv;
     @BindView(R.id.episode_title_tv)
-    TextView episoTitleTv;
+    TextView episodeTitleTv;
     @BindView(R.id.status_tv)
     TextView statusTv;
 
@@ -56,7 +55,7 @@ public class DanmuDownloadDialog extends Dialog{
         ButterKnife.bind(this, this);
 
         videoTitleTv.setText(bean.getAnimeTitle());
-        episoTitleTv.setText(bean.getEpisodeTitle());
+        episodeTitleTv.setText(bean.getEpisodeTitle());
         statusTv.setText("下载中...");
 
         new PermissionHelper().with((Activity) context).request(new PermissionHelper.OnSuccessListener() {
@@ -81,6 +80,7 @@ public class DanmuDownloadDialog extends Dialog{
                         + ".xml";
                 DownloadUtil.saveDanmu(comments,path);
                 statusTv.setText("保存完成！");
+                ToastUtils.showShort("下载完成："+path);
 
                 EventBus.getDefault().post(
                         new OpenDanmuFolderEvent(path, false));

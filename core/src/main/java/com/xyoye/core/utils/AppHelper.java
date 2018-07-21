@@ -196,4 +196,12 @@ public final class AppHelper {
         return telephonyManager.getDeviceId();
     }
 
+    public static String getAppId(){
+        return "appId";
+    }
+
+    public static String getAppSecret(){
+        return "appSecret";
+    }
+
 }

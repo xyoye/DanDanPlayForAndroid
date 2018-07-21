@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.FileManagerMod;
+package com.xyoye.dandanplay.ui.fileManagerMod;
 
 import android.view.View;
 import android.widget.ImageView;

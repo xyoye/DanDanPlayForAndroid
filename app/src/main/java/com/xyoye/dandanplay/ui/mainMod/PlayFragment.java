@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.mainMod;
 import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
@@ -25,7 +23,7 @@ import com.xyoye.dandanplay.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
-import com.xyoye.dandanplay.ui.FileManagerMod.FileManagerActivity;
+import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.folderMod.FolderActivity;
 import com.xyoye.dandanplay.utils.permissionchecker.PermissionHelper;
 
@@ -143,7 +141,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             adapter.notifyDataSetChanged();
         }
         hideLoading();
-        refresh.refreshComplete();
+        if (refresh != null)
+            refresh.refreshComplete();
     }
 
     @Override

@@ -22,7 +22,7 @@ import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
-import com.xyoye.dandanplay.ui.FileManagerMod.FileManagerActivity;
+import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 

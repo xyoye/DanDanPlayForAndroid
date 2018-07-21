@@ -9,6 +9,7 @@ import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.AnimaBeans;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
@@ -28,7 +29,7 @@ import java.util.List;
 
 
 public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView> implements HomeFragmentPresenter {
-    List<String> dateList;
+    private List<String> dateList;
 
     public HomeFragmentPresenterImpl(HomeFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -37,14 +38,13 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
     @Override
     public void init() {
         dateList = new ArrayList<>();
-        dateList.add("日");
-        dateList.add("一");
-        dateList.add("二");
-        dateList.add("三");
-        dateList.add("四");
-        dateList.add("五");
-        dateList.add("六");
-        getAnimaList();
+        dateList.add("周日");
+        dateList.add("周一");
+        dateList.add("周二");
+        dateList.add("周三");
+        dateList.add("周四");
+        dateList.add("周五");
+        dateList.add("周六");
     }
 
     @Override
@@ -58,8 +58,9 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
             titles.add(banner.getTitle());
             urls.add(banner.getUrl());
         }
-
         getView().setBanners(images, titles, urls);
+        getView().initIndicator(dateList);
+        getAnimaList();
     }
 
     @Override
@@ -124,7 +125,8 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
                             break;
                     }
                 }
-                getView().initViewPager(beansList, dateList);
+                IApplication.getExecutor().execute(() ->
+                        getView().initViewPager(beansList));
             }
 
             @Override

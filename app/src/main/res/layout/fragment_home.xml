@@ -26,28 +26,38 @@
             android:text="弹弹Play"/>
     </android.support.v7.widget.Toolbar>
 
-    <com.youth.banner.Banner
-        android:id="@+id/banner"
-        android:layout_width="match_parent"
+    <com.xyoye.dandanplay.weight.ScrollableLayout
+        android:id="@+id/scroll_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:layout_height="200dp" />
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:fillViewport="true">
+            <com.youth.banner.Banner
+                android:id="@+id/banner"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+        </ScrollView>
 
-    <com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator
-        android:id="@+id/magic_indicator"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_below="@+id/banner"
-        android:background="@color/white"
-        android:paddingEnd="10dp"
-        android:paddingStart="10dp"
-        app:tabMode="scrollable">
-    </com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator>
+        <com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator
+            android:id="@+id/magic_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/white"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            app:tabMode="scrollable">
+        </com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/magic_indicator"
-        android:background="@color/white">
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+        </android.support.v4.view.ViewPager>
+
+    </com.xyoye.dandanplay.weight.ScrollableLayout>
 </RelativeLayout>

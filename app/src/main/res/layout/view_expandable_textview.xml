@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_expandable_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:textColor="@color/text_black"
+        android:textSize="15sp"
+        tools:text="System Requirements
+Windows
+Microsoft® Windows® 7/8/10 (32- or 64-bit)
+2 GB RAM minimum, 8 GB RAM recommended
+2 GB of available disk space minimum,
+4 GB Recommended (500 MB for IDE + 1.5 GB for Android SDK and emulator system image)
+1280 x 800 minimum screen resolution
+Java Development Kit (JDK) 8
+For accelerated emulator: 64-bit operating system and Intel® processor with support for Intel® VT-x, Intel® EM64T (Intel® 64), and Execute Disable (XD) Bit functionality" />
+
+    <TextView
+        android:id="@+id/tv_expand_or_collapse"
+        android:layout_width="match_parent"
+        android:layout_height="16dip"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="14sp"
+        android:visibility="gone"
+        tools:drawableBottom="@mipmap/ic_arrow_up"
+        tools:visibility="visible" />
+</LinearLayout>

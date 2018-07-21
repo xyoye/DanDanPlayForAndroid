@@ -8,4 +8,5 @@
 /captures
 .externalNativeBuild
 /core/src/main/res/values/strings.xml
+/core/src/main/res/values/style.xml
 /core/src/main/java/com/xyoye/core/utils/AppHelper.java

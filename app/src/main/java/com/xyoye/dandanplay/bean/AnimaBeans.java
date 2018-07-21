@@ -28,7 +28,7 @@ public class AnimaBeans extends CommJsonEntity implements Serializable {
         this.bangumiList = bangumiList;
     }
 
-    public static class BangumiListBean {
+    public static class BangumiListBean implements Serializable {
         /**
          * animeId : 0
          * animeTitle : string

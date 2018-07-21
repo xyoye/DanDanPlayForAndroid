@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
@@ -13,6 +14,7 @@ import com.xyoye.dandanplay.bean.AnimaBeans;
 import com.xyoye.dandanplay.mvp.impl.AnimaPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
+import com.xyoye.dandanplay.weight.ScrollableHelper;
 
 import butterknife.BindView;
 
@@ -21,7 +23,7 @@ import butterknife.BindView;
  */
 
 
-public class AnimaFragment extends BaseFragment<AnimaPresenter> implements AnimaView {
+public class AnimaFragment extends BaseFragment<AnimaPresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -55,7 +57,7 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Anima
             if (animaBeans ==null) return;
         } else  return;
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
         adapter = new BaseRvAdapter<AnimaBeans.BangumiListBean>(animaBeans.getBangumiList()) {
             @NonNull
@@ -70,5 +72,10 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Anima
     @Override
     public void initListener() {
 
+    }
+
+    @Override
+    public View getScrollableView() {
+        return recyclerView;
     }
 }

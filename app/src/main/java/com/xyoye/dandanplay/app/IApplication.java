@@ -26,7 +26,12 @@ import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.utils.TLog;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 public class IApplication extends BaseApplication {
+    static ThreadPoolExecutor executor;
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -48,6 +53,13 @@ public class IApplication extends BaseApplication {
                     .detectAll()
                     .build());
         }
+    }
+
+    public static ThreadPoolExecutor getExecutor() {
+        if (executor == null) {
+            executor = new ThreadPoolExecutor(3, 3, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
+        }
+        return executor;
     }
 
     @Override

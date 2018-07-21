@@ -14,9 +14,11 @@ import com.xyoye.core.rx.LifefulRunnable;
 import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.xyoye.dandanplay.weight.DiyTablayout.CommonNavigator.CommonNavigator;
@@ -26,9 +28,14 @@ import com.xyoye.dandanplay.weight.DiyTablayout.abs.CommonNavigatorAdapter;
 import com.xyoye.dandanplay.weight.DiyTablayout.abs.IPagerIndicator;
 import com.xyoye.dandanplay.weight.DiyTablayout.abs.IPagerTitleView;
 import com.xyoye.dandanplay.weight.DiyTablayout.title.ClipPagerTitleView;
+import com.xyoye.dandanplay.weight.ScrollableLayout;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +48,8 @@ import butterknife.BindView;
 
 
 public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements HomeFragmentView{
+    @BindView(R.id.scroll_layout)
+    ScrollableLayout scrollableLayout;
     @BindView(R.id.banner)
     Banner banner;
     @BindView(R.id.magic_indicator)
@@ -98,24 +107,18 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     @Override
-    public void initViewPager(List<AnimaBeans> beans, List<String> dateLis) {
-        fragmentList = new ArrayList<>();
-        for (AnimaBeans bean : beans) {
-            fragmentList.add(AnimaFragment.newInstance(bean));
-        }
-        fragmentAdapter = new AnimaFragmentAdapter(getFragmentManager(), fragmentList);
-
+    public void initIndicator(List<String> dateList) {
         CommonNavigator commonNavigator = new CommonNavigator(getBaseActivity());
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
-                return dateLis.size();
+                return dateList.size();
             }
 
             @Override
             public IPagerTitleView getTitleView(Context context, int index) {
                 ClipPagerTitleView clipPagerTitleView = new ClipPagerTitleView(context);
-                clipPagerTitleView.setText(dateLis.get(index));
+                clipPagerTitleView.setText(dateList.get(index));
                 clipPagerTitleView.setPadding(PixelUtil.dip2px(context, 15), 0, PixelUtil.dip2px(context, 15), 0);
                 clipPagerTitleView.setTextColor(Color.parseColor("#222222"));
                 clipPagerTitleView.setClipColor(Color.WHITE);
@@ -132,18 +135,70 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 indicator.setLineHeight(lineHeight);
                 indicator.setRoundRadius(lineHeight / 2);
                 indicator.setYOffset(borderWidth);
-                indicator.setColors(Color.parseColor("#FF2C6B"));
+                indicator.setColors(getResources().getColor(R.color.theme_color));
                 return indicator;
             }
         });
+        magicIndicator.setNavigator(commonNavigator);
+    }
+
+    @Override
+    public void initViewPager(List<AnimaBeans> beans) {
+        fragmentList = new ArrayList<>();
+        for (AnimaBeans bean : beans) {
+            fragmentList.add(AnimaFragment.newInstance(bean));
+        }
 
         bindViewPager(magicIndicator, viewPager);
-        //viewPager.setOffscreenPageLimit(2);
 
         getBaseActivity().runOnUiThread(new LifefulRunnable(() -> {
+
+            fragmentAdapter = new AnimaFragmentAdapter(getChildFragmentManager(), fragmentList);
+
+            if (fragmentList.size() > 0) {
+                scrollableLayout.getHelper().setCurrentScrollableContainer(fragmentList.get(0));
+            }
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    scrollableLayout.getHelper().setCurrentScrollableContainer(fragmentList.get(position));
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+
             viewPager.setAdapter(fragmentAdapter);
-            magicIndicator.setNavigator(commonNavigator);
+
+            viewPager.setOffscreenPageLimit(2);
         }, this));
+    }
+
+    @Override
+    public void onResume() {
+        EventBus.getDefault().register(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void openAnimaDetail(OpenAnimaDetailEvent event){
+        Intent intent = new Intent(getContext(), AnimaDetailActivity.class);
+        intent.putExtra("animaId", event.getAnimaId());
+        startActivity(intent);
     }
 
     public static void bindViewPager(final MagicIndicator magicIndicator, ViewPager viewPager) {
@@ -170,7 +225,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     class AnimaFragmentAdapter extends FragmentPagerAdapter {
         private List<AnimaFragment> list;
 
-        public AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimaFragment> list) {
+        private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimaFragment> list) {
             super(supportFragmentManager);
 
             this.list = list;

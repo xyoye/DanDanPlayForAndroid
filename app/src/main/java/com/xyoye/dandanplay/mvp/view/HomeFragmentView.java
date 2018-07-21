@@ -13,5 +13,7 @@ import java.util.List;
 public interface HomeFragmentView extends BaseMvpView{
     void setBanners(List<String> images, List<String> titles, List<String> urls);
 
-    void initViewPager(List<AnimaBeans> beans, List<String> dateList);
+    void initIndicator(List<String> dateList);
+
+    void initViewPager(List<AnimaBeans> beans);
 }

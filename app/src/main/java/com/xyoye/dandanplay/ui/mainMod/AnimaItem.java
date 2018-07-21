@@ -5,9 +5,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
+import com.xyoye.dandanplay.weight.CornersCenterCrop;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -19,6 +24,8 @@ import butterknife.BindView;
 public class AnimaItem implements AdapterItem<AnimaBeans.BangumiListBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
+    @BindView(R.id.anima_title)
+    TextView animaTitle;
     @BindView(R.id.status_tv)
     TextView statusTv;
 
@@ -46,6 +53,18 @@ public class AnimaItem implements AdapterItem<AnimaBeans.BangumiListBean> {
                          ? "连载中"
                          : "已完结");
 
-        Glide.with(imageView.getContext()).load(model.getImageUrl()).into(imageView);
+        animaTitle.setText(model.getAnimeTitle());
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .transform(new CornersCenterCrop(10));
+
+        Glide.with(imageView.getContext())
+                .load(model.getImageUrl())
+                .apply(options)
+                .into(imageView);
+
+        mView.setOnClickListener(v ->
+                EventBus.getDefault().post(new OpenAnimaDetailEvent(model.getAnimeId()+"")));
     }
 }

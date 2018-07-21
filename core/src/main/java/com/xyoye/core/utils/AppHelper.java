@@ -197,7 +197,7 @@ public final class AppHelper {
     }
 
     public static String getAppId(){
-        return "appId";
+        return "appId" ;
     }
 
     public static String getAppSecret(){

@@ -36,5 +36,10 @@ public class Config {
     public static class AppConfig {
         public static final String LOCAL_DANMU_FOLDER = "local_danmu_folder";
         public static final String DANMU_SAVE_PATH = "danmu_save_path";
+        public static final String TOKEN = "token";
+        public static final String USER_SCREEN_NAME = "user_screen_name";
+        public static final String USER_NAME = "user_name";
+        public static final String USER_IMAGE = "user_image";
+        public static final String IS_LOGIN = "is_login";
     }
 }

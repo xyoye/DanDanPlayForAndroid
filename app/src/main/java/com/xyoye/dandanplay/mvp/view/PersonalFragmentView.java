@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.mvp.view;
 
+import android.content.Context;
+
 import com.xyoye.core.interf.view.BaseMvpView;
 
 /**
@@ -7,5 +9,7 @@ import com.xyoye.core.interf.view.BaseMvpView;
  */
 
 
-public interface MyFragmentView extends BaseMvpView {
+public interface PersonalFragmentView extends BaseMvpView {
+
+    void changeView();
 }

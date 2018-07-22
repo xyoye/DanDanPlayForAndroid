@@ -111,11 +111,15 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
 
                                @Override
                                public void onNext(File file) {
-                                    String folderPath = FileUtils.getDirName(file);
-                                    String fileName = FileUtils.getFileName(file);
-                                    fmmr.setDataSource(folderPath +fileName);
-                                    long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
-                                    saveData(folderPath, fileName, duration);
+                                   try {
+                                       String folderPath = FileUtils.getDirName(file);
+                                       String fileName = FileUtils.getFileName(file);
+                                       fmmr.setDataSource(folderPath +fileName);
+                                       long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
+                                       saveData(folderPath, fileName, duration);
+                                   }catch (Exception e){
+                                       e.printStackTrace();
+                                   }
                                }
 
                                @Override

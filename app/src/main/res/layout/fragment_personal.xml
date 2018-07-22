@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/user_info_rl"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/theme_color"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/user_image_rl"
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_corner">
+
+            <com.xyoye.dandanplay.weight.CircleImageView
+                android:id="@+id/user_image_iv"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/default_image"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/user_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/user_image_rl"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="用户名"/>
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:src="@mipmap/ic_arrow"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/login_rl"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/theme_color">
+
+        <RelativeLayout
+            android:id="@+id/image_tip_rl"
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_corner">
+
+            <com.xyoye.dandanplay.weight.CircleImageView
+                android:id="@+id/image_tip"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/default_image"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/image_tip_rl"
+            android:layout_marginStart="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/login_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:background="@drawable/textview_bg_stroke_white"
+                android:text="登录"/>
+
+            <TextView
+                android:id="@+id/register_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/gray_color4"
+                android:textSize="16sp"
+                android:background="@drawable/textview_bg_stroke_gray"
+                android:text="注册"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

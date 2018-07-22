@@ -5,8 +5,11 @@ import com.xyoye.dandanplay.bean.AnimaDetailBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
+import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.params.LoginParam;
 
 import java.util.Map;
+import java.util.Observer;
 
 import io.reactivex.Observable;
 import retrofit2.http.FieldMap;
@@ -37,4 +40,11 @@ public interface RetrofitService {
 
     @GET("api/v2/bangumi/{animeId}")
     Observable<AnimaDetailBean> getAnimaDetail(@Path("animeId") String animaId);
+
+    @FormUrlEncoded
+    @POST("api/v2/login")
+    Observable<PersonalBean> login(@FieldMap Map<String, String> params);
+
+    @GET("api/v2/login/renew")
+    Observable<PersonalBean> reToken();
 }

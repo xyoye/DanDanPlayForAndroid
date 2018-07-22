@@ -56,6 +56,7 @@ public class DanmuMatchParam implements Serializable{
     public void setMatchMode(String matchMode) {
         this.matchMode = matchMode;
     }
+
     public Map<String, String> getMap(){
         Map<String, String> map = new HashMap<>();
         map.put("fileName", this.fileName);

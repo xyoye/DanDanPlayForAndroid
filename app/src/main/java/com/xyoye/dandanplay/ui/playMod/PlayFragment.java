@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.mainMod;
+package com.xyoye.dandanplay.ui.playMod;
 
 import android.Manifest;
 import android.content.Intent;

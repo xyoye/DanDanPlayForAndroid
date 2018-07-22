@@ -4,17 +4,17 @@ import android.os.Bundle;
 
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.dandanplay.mvp.view.MyFragmentView;
-import com.xyoye.dandanplay.mvp.presenter.MyFragmentPresenter;
+import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
+import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by YE on 2018/7/23.
  */
 
 
-public class MyFragmentPresenterImpl extends BaseMvpPresenter<MyFragmentView> implements MyFragmentPresenter {
+public class PersonalInfoPresenterImpl extends BaseMvpPresenter<PersonalInfoView> implements PersonalInfoPresenter {
 
-    public MyFragmentPresenterImpl(MyFragmentView view, Lifeful lifeful) {
+    public PersonalInfoPresenterImpl(PersonalInfoView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 

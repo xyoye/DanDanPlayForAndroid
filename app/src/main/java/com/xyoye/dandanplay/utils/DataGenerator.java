@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.mainMod.HomeFragment;
-import com.xyoye.dandanplay.ui.mainMod.MyFragment;
-import com.xyoye.dandanplay.ui.mainMod.PlayFragment;
+import com.xyoye.dandanplay.ui.homeMod.HomeFragment;
+import com.xyoye.dandanplay.ui.personalMod.PersonalFragment;
+import com.xyoye.dandanplay.ui.playMod.PlayFragment;
 
 /**
  * Created by YE on 2018/6/28 0028.
@@ -27,7 +27,7 @@ public class DataGenerator {
         Fragment fragments[] = new Fragment[3];
         fragments[0] = HomeFragment.newInstance();
         fragments[1] = PlayFragment.newInstance();
-        fragments[2] = MyFragment.newInstance();
+        fragments[2] = PersonalFragment.newInstance();
         return fragments;
     }
 

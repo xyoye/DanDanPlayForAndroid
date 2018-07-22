@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     TextView text = (TextView) view.findViewById(R.id.tab_content_text);
                     if(i == tab.getPosition()){
                         icon.setImageResource(DataGenerator.mTabResPressed[i]);
-                        text.setTextColor(getResources().getColor(android.R.color.black));
+                        text.setTextColor(getResources().getColor(R.color.theme_color));
                     }else{
                         icon.setImageResource(DataGenerator.mTabRes[i]);
                         text.setTextColor(getResources().getColor(android.R.color.darker_gray));

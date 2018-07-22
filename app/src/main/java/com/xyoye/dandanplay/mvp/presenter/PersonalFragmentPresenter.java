@@ -7,5 +7,5 @@ import com.xyoye.core.interf.presenter.BasePresenter;
  */
 
 
-public interface MyFragmentPresenter extends BasePresenter {
+public interface PersonalFragmentPresenter extends BasePresenter {
 }

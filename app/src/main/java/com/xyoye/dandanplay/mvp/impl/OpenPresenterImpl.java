@@ -10,12 +10,17 @@ import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
+import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.bean.BannerBeans;
+import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
 import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.TokenShare;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.util.List;
 
@@ -31,7 +36,9 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
 
     @Override
     public void init() {
+        getView().setLastLogin(UserInfoShare.getInstance().isLogin());
         getData();
+        reToken();
     }
 
     @Override
@@ -75,6 +82,29 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
             public void onError(int errorCode, String message) {
                 TLog.e(message);
                 ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    private void reToken(){
+        PersonalBean.reToken(new CommJsonObserver<PersonalBean>() {
+            @Override
+            public void onSuccess(PersonalBean personalBean) {
+                UserInfoShare.getInstance().setLogin(true);
+                UserInfoShare.getInstance().saveUserName(personalBean.getScreenName());
+                UserInfoShare.getInstance().saveUserImage(personalBean.getProfileImage());
+                TokenShare.getInstance().saveToken(personalBean.getToken());
+                getView().loginSuccess();
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                UserInfoShare.getInstance().setLogin(false);
+                UserInfoShare.getInstance().saveUserName("");
+                UserInfoShare.getInstance().saveUserImage("");
+                UserInfoShare.getInstance().saveUserScreenName("");
+                TokenShare.getInstance().saveToken("");
+                TLog.e(message);
             }
         }, new NetworkConsumer());
     }

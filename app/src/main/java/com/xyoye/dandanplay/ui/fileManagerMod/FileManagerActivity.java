@@ -39,7 +39,6 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     public final static String VIDEO_PATH = "videoPath";
     public final static int SELECT_NETWORK_DANMU = 104;
 
-
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.loading_ll)

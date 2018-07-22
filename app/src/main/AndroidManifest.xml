@@ -25,7 +25,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.mainMod.MainActivity"/>
+        <activity android:name=".ui.mainMod.MainActivity"
+            android:launchMode="singleTask"/>
 
         <activity android:name=".ui.folderMod.FolderActivity"/>
 
@@ -35,11 +36,13 @@
 
         <activity android:name=".ui.playMod.PlayerActivity"/>
 
-        <activity android:name=".ui.temp.VideoViewActivity"/>
-
         <activity android:name=".ui.webMod.WebviewActivity"/>
 
         <activity android:name=".ui.animaMod.AnimaDetailActivity"/>
+
+        <activity android:name=".ui.personalMod.LoginActivity"/>
+
+        <activity android:name=".ui.personalMod.PersonalInfoActivity"/>
     </application>
 
 </manifest>

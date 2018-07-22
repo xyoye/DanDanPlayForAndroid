@@ -1,8 +1,5 @@
 package com.xyoye.dandanplay.ui.playMod;
 
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +9,6 @@ import android.view.KeyEvent;
 import com.blankj.utilcode.util.FileUtils;
 import com.dl7.player.danmaku.OnDanmakuListener;
 import com.dl7.player.media.IjkPlayerView;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
 
 import org.greenrobot.eventbus.EventBus;

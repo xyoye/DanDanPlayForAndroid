@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.mainMod;
+package com.xyoye.dandanplay.ui.homeMod;
 
 import android.view.View;
 import android.widget.ImageView;

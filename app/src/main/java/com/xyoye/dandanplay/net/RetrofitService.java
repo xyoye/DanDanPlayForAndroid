@@ -2,10 +2,12 @@ package com.xyoye.dandanplay.net;
 
 import com.xyoye.dandanplay.bean.AnimaBeans;
 import com.xyoye.dandanplay.bean.AnimaDetailBean;
+import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 
 import java.util.Map;
@@ -47,4 +49,10 @@ public interface RetrofitService {
 
     @GET("api/v2/login/renew")
     Observable<PersonalBean> reToken();
+
+    @GET("api/v2/favorite")
+    Observable<AnimaFavoriteBean> getFavorite();
+
+    @GET("/api/v2/playhistory")
+    Observable<PlayHistoryBean> getPlayHistory();
 }

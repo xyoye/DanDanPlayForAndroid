@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/diver_color">
 
     <RelativeLayout
         android:id="@+id/user_info_rl"
@@ -38,12 +39,12 @@
             android:singleLine="true"
             android:ellipsize="end"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:text="用户名"/>
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
@@ -109,4 +110,84 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/setting_iv"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:src="@mipmap/ic_setting"/>
+
+    <RelativeLayout
+        android:id="@+id/favorite_rl"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="120dp"
+		android:background="@color/white" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            android:text="我的关注"/>
+
+        <TextView
+            android:id="@+id/more_favorite_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/text_gray"
+            android:text="更多 >"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/favorite_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favorite_rl">
+    </android.support.v7.widget.RecyclerView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/diver_color"
+        android:layout_below="@id/favorite_recycler_view"/>
+
+    <RelativeLayout
+        android:id="@+id/history_rl"
+        android:layout_width="match_parent"
+        android:layout_height="40.5dp"
+		android:background="@color/white"
+        android:layout_below="@id/favorite_recycler_view">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            android:text="播放历史"/>
+
+        <TextView
+            android:id="@+id/more_history_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/text_gray"
+            android:text="更多 >"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/history_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/history_rl">
+    </android.support.v7.widget.RecyclerView>
 </RelativeLayout>

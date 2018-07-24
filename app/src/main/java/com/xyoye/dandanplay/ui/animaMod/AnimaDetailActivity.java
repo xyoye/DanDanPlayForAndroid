@@ -117,7 +117,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
                             : "状态：完结");
         animaAirdayTv.setText(getChineseText(bean.getBangumi().getAirDay()));
         animaFavoritedTv.setText(bean.getBangumi().isIsFavorited()
-                                ? "取消关注"
+                                ? "已关注"
                                 : "未关注");
         if (bean.getBangumi().isIsRestricted())
             animaRestrictedTv.setVisibility(View.VISIBLE);

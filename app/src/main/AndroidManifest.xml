@@ -43,6 +43,12 @@
         <activity android:name=".ui.personalMod.LoginActivity"/>
 
         <activity android:name=".ui.personalMod.PersonalInfoActivity"/>
+
+        <activity android:name=".ui.personalMod.PersonalFavoriteActivity"/>
+
+        <activity android:name=".ui.personalMod.PersonalHistoryActivity"/>
+
+        <activity android:name=".ui.settingMod.SettingActivity"/>
     </application>
 
 </manifest>

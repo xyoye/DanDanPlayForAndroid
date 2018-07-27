@@ -6,7 +6,9 @@ import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.net.RetroFactory;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -239,6 +241,26 @@ public class AnimaDetailBean extends CommJsonEntity implements Serializable {
 
     public static void getAnimaDetail(String animaId, CommJsonObserver<AnimaDetailBean> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getAnimaDetail(animaId)
+                .doOnSubscribe(consumer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public static void addFavorite(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+        Map<String, String> map = new HashMap<>();
+        map.put("animeId", animaId);
+        map.put("favoriteStatus", "favorited");
+        map.put("rating", "0");
+        RetroFactory.getInstance().addFavorite(map)
+                .doOnSubscribe(consumer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public static void reduceFavorite(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+        RetroFactory.getInstance().reduceFavorite(animaId)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

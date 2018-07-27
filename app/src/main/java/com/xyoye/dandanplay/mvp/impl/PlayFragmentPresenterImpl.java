@@ -3,11 +3,7 @@ package com.xyoye.dandanplay.mvp.impl;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
@@ -16,12 +12,10 @@ import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
+import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.utils.Config;
 import com.xyoye.dandanplay.utils.FindVideoTask;
-
-import org.reactivestreams.Subscriber;
 
 import java.io.File;
 import java.util.ArrayList;

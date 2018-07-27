@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.ui.danmuMod.DownloadBilibiliActivity;
 import com.xyoye.dandanplay.weight.IWebView;
 
 import butterknife.BindView;
@@ -28,6 +29,8 @@ public class WebviewActivity extends AppCompatActivity {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
 
+    private boolean isSelectUrl = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,7 @@ public class WebviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
         String link = intent.getStringExtra("link");
+        isSelectUrl = intent.getBooleanExtra("isSelect", false);
         toolbarTitle.setText(title);
         IwebView.loadUrl(link);
     }
@@ -52,7 +56,13 @@ public class WebviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                finish();
+                WebviewActivity.this.finish();
+                break;
+            case R.id.select_url:
+                Intent intent = getIntent();
+                intent.putExtra("selectUrl", IwebView.getUrl());
+                setResult(DownloadBilibiliActivity.SELECT_WEB, intent);
+                WebviewActivity.this.finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -60,6 +70,8 @@ public class WebviewActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (isSelectUrl)
+            getMenuInflater().inflate(R.menu.menu_url_select, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

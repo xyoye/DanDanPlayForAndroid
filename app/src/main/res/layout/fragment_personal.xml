@@ -18,7 +18,7 @@
             android:layout_height="82dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:background="@drawable/bg_corner">
+            android:background="@drawable/bg_corner_41">
 
             <com.xyoye.dandanplay.weight.CircleImageView
                 android:id="@+id/user_image_iv"
@@ -48,7 +48,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="5dp"
-            android:src="@mipmap/ic_arrow"/>
+            android:src="@mipmap/ic_arrow_white"/>
 
     </RelativeLayout>
 
@@ -64,7 +64,7 @@
             android:layout_height="82dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:background="@drawable/bg_corner">
+            android:background="@drawable/bg_corner_41">
 
             <com.xyoye.dandanplay.weight.CircleImageView
                 android:id="@+id/image_tip"
@@ -81,18 +81,19 @@
             android:layout_toEndOf="@+id/image_tip_rl"
             android:layout_marginStart="50dp"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/login_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:textColor="@color/white"
-                android:textSize="16sp"
                 android:background="@drawable/textview_bg_stroke_white"
-                android:text="登录"/>
+                android:paddingBottom="5dp"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:text="登录"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/register_tv"

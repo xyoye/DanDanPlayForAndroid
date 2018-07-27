@@ -6,11 +6,11 @@ ext{
             buildToolsVersion : '27.0.3',
             applicationId : "com.xyoye.dandanplay",
             versionCode : 1,
-            versionName : "1.0"
+            versionName : "3.0.0"
     ]
 
     dependencies = [
-            "appcompat-v7" : 'com.android.support:appcompat-v7:27.1.1',
+            "appcompat-v7" : 'com.android.support:appcompat-v7:27.1.1',\
             "espresso-core" : 'com.android.support.test.espresso:espresso-core:3.0.2',
             "junit" : 'junit:junit:4.12',
             "design" : 'com.android.support:design:27.1.1'

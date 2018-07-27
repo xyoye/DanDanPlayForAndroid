@@ -21,9 +21,11 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
+import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
+import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -38,7 +40,7 @@ public class IApplication extends BaseApplication {
     public void onCreate() {
         TLog.i("onCreate");
         super.onCreate();
-        CrashReport.initCrashReport(getApplicationContext(), "e67e479ad9", false);
+        Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
         MultiDex.install(this);
         initDatabase(new DataBaseHelper(this));
     }

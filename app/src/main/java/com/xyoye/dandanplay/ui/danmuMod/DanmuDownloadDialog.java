@@ -74,7 +74,7 @@ public class DanmuDownloadDialog extends Dialog{
                 List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
 
                 statusTv.setText("开始保存...");
-                String path = AppConfigShare.getInstance().getDanmuSavePath()
+                String path = AppConfigShare.getInstance().getDownloadFolder()
                         + "/" + bean.getAnimeTitle()+"_"
                         + bean.getEpisodeTitle().replace(" ","_")
                         + ".xml";

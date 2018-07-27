@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
@@ -98,7 +99,13 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     private void login(){
         String userName = userNameEt.getText().toString();
         String password = userPasswordEt.getText().toString();
-        presenter.login(new LoginParam(userName, password));
+        if (StringUtils.isEmpty(userName)){
+            ToastUtils.showShort("用户名不能为空");
+        }else if (StringUtils.isEmpty(password)){
+            ToastUtils.showShort("密码不能为空");
+        }else {
+            presenter.login(new LoginParam(userName, password));
+        }
     }
 
     @Override

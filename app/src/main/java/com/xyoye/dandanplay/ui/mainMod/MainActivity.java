@@ -1,12 +1,15 @@
 package com.xyoye.dandanplay.ui.mainMod;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
@@ -21,6 +24,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @BindView(R.id.bottom_tab_layout)
     TabLayout mTabLayout;
     private Fragment[] mFragments;
+
+    private boolean waitExit = true;
 
     @Override
     protected int initPageLayoutID() {
@@ -95,5 +100,30 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             getSupportFragmentManager().beginTransaction().replace(R.id.home_container, fragment).commit();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() != KeyEvent.ACTION_UP) {
+            if (waitExit) {
+                waitExit = false;
+                ToastUtils.showShort("再按一次退出");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitExit = true;
+                    }
+                }, 2000);
+            } else {
+                finish();
+                System.exit(0);
+            }
+        }
+        return true;
     }
 }

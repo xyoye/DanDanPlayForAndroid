@@ -126,16 +126,6 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public void showLoading() {
         showLoadingDialog();
     }

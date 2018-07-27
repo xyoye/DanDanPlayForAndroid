@@ -5,8 +5,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
@@ -22,30 +24,55 @@ import butterknife.BindView;
  */
 
 
-public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> implements PersonalInfoView {
+public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.login_out_bt)
     Button loginOutBt;
+    @BindView(R.id.screen_name_rl)
+    RelativeLayout screenNameRl;
+    @BindView(R.id.password_rl)
+    RelativeLayout passwordRl;
+    @BindView(R.id.user_name_tv)
+    TextView userNameTv;
+    @BindView(R.id.screen_name_tv)
+    TextView screenNameTv;
 
 
     @Override
     public void initView() {
         setTitle("");
         toolbarTitle.setText("个人信息");
+        if (UserInfoShare.getInstance().isLogin()){
+            String screenName = UserInfoShare.getInstance().getUserScreenName();
+            String userName = UserInfoShare.getInstance().getUserName();
+
+            screenNameTv.setText(screenName);
+            userNameTv.setText(userName);
+        }else {
+            ToastUtils.showShort("请先登录再进行此操作");
+        }
     }
 
     @Override
     public void initListener() {
-        loginOutBt.setOnClickListener(v -> {
-            UserInfoShare.getInstance().setLogin(false);
-            UserInfoShare.getInstance().saveUserName("");
-            UserInfoShare.getInstance().saveUserScreenName("");
-            UserInfoShare.getInstance().saveUserImage("");
-            TokenShare.getInstance().saveToken("");
+        screenNameRl.setOnClickListener(this);
+        passwordRl.setOnClickListener(this);
 
-            launchActivity(LoginActivity.class);
-            PersonalInfoActivity.this.finish();
+        loginOutBt.setOnClickListener(v -> {
+            if (UserInfoShare.getInstance().isLogin()){
+                UserInfoShare.getInstance().setLogin(false);
+                UserInfoShare.getInstance().saveUserName("");
+                UserInfoShare.getInstance().saveUserScreenName("");
+                UserInfoShare.getInstance().saveUserImage("");
+                TokenShare.getInstance().saveToken("");
+
+                launchActivity(LoginActivity.class);
+                PersonalInfoActivity.this.finish();
+            }else {
+                ToastUtils.showShort("请先登录再进行此操作");
+            }
+
         });
     }
 
@@ -68,5 +95,17 @@ public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> im
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.screen_name_rl:
+                ToastUtils.showShort("该功能暂未开放");
+                break;
+            case R.id.password_rl:
+                ToastUtils.showShort("该功能暂未开放");
+                break;
+        }
     }
 }

@@ -72,9 +72,14 @@ public class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
             }
         }
         if (bitmap == null){
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(imageUrl);
-            bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(imageUrl);
+                bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+            }
+
         }
         return bitmap;
     }

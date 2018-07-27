@@ -14,6 +14,7 @@ import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,11 +83,19 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
     private List<VideoBean> getVideoList(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+
         String sql = "SELECT * FROM file WHERE folder_path = ?";
         Cursor cursor = sqLiteDatabase.rawQuery(sql ,new String[]{folderPath});
         while (cursor.moveToNext()){
             String fileName = cursor.getString(2);
-            String filePath = cursor.getString(1) + fileName;
+            String filePath = folderPath + fileName;
+
+            File file = new File(filePath);
+            if (!file.exists()){
+                sqLiteDatabase.delete("file", "folder_path = ? AND file_name = ?", new String[]{folderPath, fileName});
+                continue;
+            }
+
             String danmuPath = cursor.getString(3);
             int currentPosition = cursor.getInt(4);
             long duration = Long.parseLong(cursor.getString(5));

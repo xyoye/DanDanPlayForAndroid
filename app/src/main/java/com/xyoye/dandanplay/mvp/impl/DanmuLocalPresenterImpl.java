@@ -35,7 +35,7 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
     @Override
     public void init() {
         isFolder = getView().isFolder();
-        String path = AppConfigShare.getInstance().getDanmuFolder();
+        String path = AppConfigShare.getInstance().getDownloadFolder();
         if (StringUtils.isEmpty(path))
             path = Environment.getExternalStorageDirectory().getAbsolutePath();
         listFile(path);

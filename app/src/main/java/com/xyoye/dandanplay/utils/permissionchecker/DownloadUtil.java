@@ -44,7 +44,16 @@ public class DownloadUtil {
             handler.startElement("", "", "i", attr);
             for (DanmuDownloadBean.CommentsBean bean : comments){
                 attr.clear();
-                String attribute = bean.getP() + ",0,0,0,0";
+                String[] pA = bean.getP().split(",");
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < pA.length; i++) {
+                    stringBuilder.append(pA[i]).append(",");
+                    if (i == 1){
+                        stringBuilder.append("25,");
+                    }
+                }
+                String pText = stringBuilder.toString().substring(0, stringBuilder.length()-1);
+                String attribute = pText + ",0,0,0";
                 attr.addAttribute("", "", "p", "", attribute);
                 handler.startElement("", "", "d", attr);
                 String text = bean.getM();
@@ -53,7 +62,7 @@ public class DownloadUtil {
             }
             handler.endElement("", "", "i");
             handler.endDocument();
-            writeFileFromString(new File(savePath),xmlWriter.toString(),true);
+            writeFileFromString(new File(savePath),xmlWriter.toString(),false);
         } catch (Exception e) {
             e.printStackTrace();
         }

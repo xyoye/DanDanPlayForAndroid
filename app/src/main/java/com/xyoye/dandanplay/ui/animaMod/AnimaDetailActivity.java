@@ -9,16 +9,22 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
+import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimaDetailBean;
 import com.xyoye.dandanplay.mvp.impl.AnimaDetailPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaDetailView;
+import com.xyoye.dandanplay.net.CommJsonEntity;
+import com.xyoye.dandanplay.net.CommJsonObserver;
+import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.weight.ExpandableTextView;
 import com.xyoye.dandanplay.weight.ScrollableHelper;
@@ -58,6 +64,10 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
+    MenuItem favoriteItem = null;
+
+    private boolean isFavorite = false;
+    private String animaId = "";
     private BaseRvAdapter<AnimaDetailBean.BangumiBean.EpisodesBean> adapter;
 
     @Override
@@ -86,18 +96,36 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.favorite:
+                if (UserInfoShare.getInstance().isLogin()){
+                    if (isFavorite){
+                        favoriteCancel();
+                    }else {
+                        favoriteConfirm();
+                    }
+                }else {
+                    ToastUtils.showShort("请登录后再进行此操作");
+                }
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_favorite, menu);
+        favoriteItem = menu.findItem(R.id.favorite);
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public String getAnimaId() {
-        return getIntent().getStringExtra("animaId");
+        animaId = getIntent().getStringExtra("animaId");
+        return animaId;
     }
 
     @Override
@@ -119,6 +147,19 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
         animaFavoritedTv.setText(bean.getBangumi().isIsFavorited()
                                 ? "已关注"
                                 : "未关注");
+
+        if (bean.getBangumi().isIsFavorited()){
+            if (favoriteItem != null){
+                favoriteItem.setTitle("取消关注");
+                isFavorite = true;
+            }
+        }else {
+            if (favoriteItem != null){
+                favoriteItem.setTitle("关注");
+                isFavorite = false;
+            }
+        }
+
         if (bean.getBangumi().isIsRestricted())
             animaRestrictedTv.setVisibility(View.VISIBLE);
         else
@@ -164,5 +205,45 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
     @Override
     public View getScrollableView() {
         return recyclerView;
+    }
+
+    private void favoriteConfirm(){
+        AnimaDetailBean.addFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+            @Override
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                if (favoriteItem != null){
+                    isFavorite = true;
+                    favoriteItem.setTitle("取消关注");
+                    animaFavoritedTv.setText("已关注");
+                    ToastUtils.showShort("关注成功");
+                }
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+                TLog.e(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    private void favoriteCancel(){
+        AnimaDetailBean.reduceFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+            @Override
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                if (favoriteItem != null){
+                    isFavorite = false;
+                    favoriteItem.setTitle("关注");
+                    animaFavoritedTv.setText("未关注");
+                    ToastUtils.showShort("取消关注成功");
+                }
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+                TLog.e(message);
+            }
+        }, new NetworkConsumer());
     }
 }

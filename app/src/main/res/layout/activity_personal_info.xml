@@ -2,9 +2,120 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/diver_color">
 
     <include layout="@layout/layout_toolbar"/>
+
+    <RelativeLayout
+        android:id="@+id/screen_name_rl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="48dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/screen_name_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:text="昵称："/>
+
+        <TextView
+            android:id="@+id/screen_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/screen_name_tip"
+            android:layout_marginStart="5sp"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:textColor="@color/text_black"
+            android:text=""/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/change_screen_name_iv"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            android:text="修改"/>
+
+        <ImageView
+            android:id="@+id/change_screen_name_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_arrow_gray"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_name_rl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/screen_name_rl"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/user_name_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:text="账号："/>
+
+        <TextView
+            android:id="@+id/user_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/user_name_tip"
+            android:layout_marginStart="5sp"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:textColor="@color/text_black"
+            android:text=""/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/password_rl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/user_name_rl"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:text="密码"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/change_password_iv"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            android:text="修改"/>
+
+        <ImageView
+            android:id="@+id/change_password_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_arrow_gray"/>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/login_out_bt"

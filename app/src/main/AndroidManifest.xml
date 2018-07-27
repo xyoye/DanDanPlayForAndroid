@@ -34,6 +34,8 @@
 
         <activity android:name=".ui.danmuMod.DanmuNetworkActivity"/>
 
+        <activity android:name=".ui.danmuMod.DownloadBilibiliActivity"/>
+
         <activity android:name=".ui.playMod.PlayerActivity"/>
 
         <activity android:name=".ui.webMod.WebviewActivity"/>
@@ -49,6 +51,23 @@
         <activity android:name=".ui.personalMod.PersonalHistoryActivity"/>
 
         <activity android:name=".ui.settingMod.SettingActivity"/>
+
+        <activity android:name=".ui.settingMod.AboutActivity"/>
+
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

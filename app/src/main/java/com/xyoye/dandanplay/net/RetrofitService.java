@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Observer;
 
 import io.reactivex.Observable;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -55,4 +56,11 @@ public interface RetrofitService {
 
     @GET("/api/v2/playhistory")
     Observable<PlayHistoryBean> getPlayHistory();
+
+    @FormUrlEncoded
+    @POST("/api/v2/favorite")
+    Observable<CommJsonEntity> addFavorite(@FieldMap Map<String, String> params);
+
+    @DELETE("/api/v2/favorite/{animeId}")
+    Observable<CommJsonEntity> reduceFavorite(@Path("animeId") String animaId);
 }

@@ -3,6 +3,8 @@ package com.xyoye.core.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.blankj.utilcode.util.ToastUtils;
+
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +84,7 @@ public final class SharedPreferencesUtil {
             TLog.i("decryptLoad", str+"_"+"_"+key+"_"+FILE_NAME);
             return !"".equals(str) ? Encryptor.decryptAES(MAK, str) : "";
         } catch(Exception e) {
+            ToastUtils.showShort("解密失败");
             TLog.i("decryptLoad", "error");
             return "";
         }

@@ -16,7 +16,6 @@
 
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="toolbarStyle">@style/NoSpaceActionBarTheme</item>
-        <item name="android:typeface">serif</item>
     </style>
 
     <style name="NoSpaceActionBarTheme" parent="Base.Widget.AppCompat.Toolbar">

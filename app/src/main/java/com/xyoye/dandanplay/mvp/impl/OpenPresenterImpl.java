@@ -91,7 +91,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
             @Override
             public void onSuccess(PersonalBean personalBean) {
                 UserInfoShare.getInstance().setLogin(true);
-                UserInfoShare.getInstance().saveUserName(personalBean.getScreenName());
+                UserInfoShare.getInstance().saveUserScreenName(personalBean.getScreenName());
                 UserInfoShare.getInstance().saveUserImage(personalBean.getProfileImage());
                 TokenShare.getInstance().saveToken(personalBean.getToken());
                 getView().loginSuccess();

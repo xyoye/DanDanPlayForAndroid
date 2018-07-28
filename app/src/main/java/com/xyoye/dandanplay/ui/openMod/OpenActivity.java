@@ -3,11 +3,13 @@ package com.xyoye.dandanplay.ui.openMod;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
+import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.rx.LifefulRunnable;
 import com.xyoye.dandanplay.R;
@@ -92,6 +94,11 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
     @Override
     public void setLastLogin(boolean lastLogin) {
         isLastLogin = lastLogin;
+    }
+
+    @Override
+    protected void setStatusBar() {
+        StatusBarUtil.setTranslucentForImageView(this,null);
     }
 
     @Override

@@ -27,10 +27,10 @@ public class TokenShare {
     }
 
     public String getToken(){
-        return getShare().load(Config.AppConfig.TOKEN,"");
+        return getShare().decryptLoad(Config.AppConfig.TOKEN);
     }
 
     public void saveToken(String token){
-        getShare().save(Config.AppConfig.TOKEN, token);
+        getShare().encryptSave(Config.AppConfig.TOKEN, token);
     }
 }

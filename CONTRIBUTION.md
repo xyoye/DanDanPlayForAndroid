@@ -10,3 +10,9 @@
 
 当您clone本仓库后，您会发现Android Studio找不到KeyUtil.java。处于安全性方面的考虑，我们并没有直接在项目中存储需要的API Key。KeyUtil.java则是负责传递所需的API Key给程序的其它部分。同样出于安全性的考虑，我们没有在项目中包括该类。
 所以，在您要参与贡献之前，请联系仓库的任一主要开发者，并说明您的参与意愿，我们将会把KeyUtil.java发送给您。
+如果您要使用自己的API Key，您需要在自己的KeyUtil.java中提供以下三个函数来返回对应API Key：
+```java
+public static String getAppId(Context context){};
+public static String getAppId2(Context context){};
+public static String getAppSecret(Context context){};
+```

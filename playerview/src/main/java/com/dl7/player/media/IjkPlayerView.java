@@ -50,7 +50,7 @@ import android.widget.Toast;
 
 import com.dl7.player.R;
 import com.dl7.player.danmaku.BaseDanmakuConverter;
-import com.dl7.player.danmaku.BiliDanmukuParser;
+import com.dl7.player.danmaku.BiliDanmakuParser;
 import com.dl7.player.danmaku.OnDanmakuListener;
 import com.dl7.player.utils.AnimHelper;
 import com.dl7.player.utils.MotionEventUtils;
@@ -2081,7 +2081,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }
         IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
         if (mDanmakuParser == null) {
-            mDanmakuParser = new BiliDanmukuParser();
+            mDanmakuParser = new BiliDanmakuParser();
         }
         mDanmakuParser.load(dataSource);
         return this;
@@ -2111,7 +2111,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }
         IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
         if (mDanmakuParser == null) {
-            mDanmakuParser = new BiliDanmukuParser();
+            mDanmakuParser = new BiliDanmakuParser();
         }
         mDanmakuParser.load(dataSource);
         return this;

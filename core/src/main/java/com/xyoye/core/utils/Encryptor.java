@@ -276,7 +276,7 @@ public class Encryptor {
         // SHA1PRNG 强随机种子算法, 要区别4.2以上版本的调用方法
         SecureRandom sr = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
+            sr = SecureRandom.getInstance("SHA1PRNG", new CryptoProvider());
         } else {
             sr = SecureRandom.getInstance("SHA1PRNG");
         }

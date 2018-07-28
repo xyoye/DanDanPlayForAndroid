@@ -20,7 +20,10 @@
 本仓库使用了一系列的第三方开源库，其中包括：
 
 - DanmakuFlameMaster
+
   Copyright (C) 2013-2015 Chen Hui <calmer91@gmail.com>
   Licensed under the Apache License, Version 2.0 (the "License");
+  
 - ijkplayer
+
   ijkplayer is licensed under LGPLv2.1 or later, so itself is free for commercial use under LGPLv2.1 or later

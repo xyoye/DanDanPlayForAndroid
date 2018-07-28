@@ -135,7 +135,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                     return new FolderItem();
                 }
             };
-            recyclerView.setAdapter(adapter);
+            if (recyclerView != null)
+                recyclerView.setAdapter(adapter);
         }else {
             adapter.setData(beans);
             adapter.notifyDataSetChanged();

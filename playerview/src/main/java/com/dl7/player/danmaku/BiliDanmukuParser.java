@@ -18,6 +18,7 @@ import java.util.Locale;
 import master.flame.danmaku.danmaku.model.AlphaValue;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.Duration;
+import master.flame.danmaku.danmaku.model.GlobalFlagValues;
 import master.flame.danmaku.danmaku.model.IDisplayer;
 import master.flame.danmaku.danmaku.model.android.DanmakuFactory;
 import master.flame.danmaku.danmaku.model.android.Danmakus;
@@ -111,6 +112,7 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
                     int color = (int) ((0x00000000ff000000 | Long.parseLong(values[3])) & 0x00000000ffffffff); // 颜色
                     // int poolType = Integer.parseInt(values[5]); // 弹幕池类型（忽略
                     item = mContext.mDanmakuFactory.createDanmaku(type, mContext);
+                    item.flags = new GlobalFlagValues();
                     if (item != null) {
                         item.setTime(time);
                         item.textSize = textSize * (mDispDensity - 0.6f);

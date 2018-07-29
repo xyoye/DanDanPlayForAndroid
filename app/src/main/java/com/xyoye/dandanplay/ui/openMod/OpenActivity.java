@@ -84,9 +84,8 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
     private void setBgRes() {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        //opt.inPurgeable = true;
-        opt.inBitmap = true;
-        //opt.inInputShareable = true;
+        opt.inPurgeable = true;
+        opt.inInputShareable = true;
         InputStream is = getResources().openRawResource(R.raw.launch);
         Bitmap bm = BitmapFactory.decodeStream(is, null, opt);
         imageView.setImageBitmap(bm);

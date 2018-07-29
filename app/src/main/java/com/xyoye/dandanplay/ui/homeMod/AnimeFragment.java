@@ -11,8 +11,8 @@ import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBeans;
-import com.xyoye.dandanplay.mvp.impl.AnimaPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.AnimaPresenter;
+import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
 import com.xyoye.dandanplay.weight.ScrollableHelper;
 
@@ -23,24 +23,24 @@ import butterknife.BindView;
  */
 
 
-public class AnimaFragment extends BaseFragment<AnimaPresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
-    @BindView(R.id.recycler_view)
+public class AnimeFragment extends BaseFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
+    @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
 
     private BaseRvAdapter<AnimeBeans.BangumiListBean> adapter;
 
-    public static AnimaFragment newInstance(AnimeBeans animeBeans){
-        AnimaFragment animaFragment = new AnimaFragment();
+    public static AnimeFragment newInstance(AnimeBeans animeBeans){
+        AnimeFragment animeFragment = new AnimeFragment();
         Bundle args = new Bundle();
         args.putSerializable("anima", animeBeans);
-        animaFragment.setArguments(args);
-        return animaFragment;
+        animeFragment.setArguments(args);
+        return animeFragment;
     }
 
     @NonNull
     @Override
-    protected AnimaPresenter initPresenter() {
-        return new AnimaPresenterImpl(this, this);
+    protected AnimePresenter initPresenter() {
+        return new AnimePresenterImpl(this, this);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Scrol
             @NonNull
             @Override
             public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {
-                return new AnimaItem();
+                return new AnimeItem();
             }
         };
         recyclerView.setAdapter(adapter);

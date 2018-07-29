@@ -7,5 +7,5 @@ import com.xyoye.core.interf.presenter.BasePresenter;
  */
 
 
-public interface AnimaPresenter extends BasePresenter {
+public interface AnimePresenter extends BasePresenter {
 }

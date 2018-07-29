@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.dandanplay.mvp.presenter.AnimaPresenter;
+import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
 
 /**
@@ -12,9 +12,9 @@ import com.xyoye.dandanplay.mvp.view.AnimaView;
  */
 
 
-public class AnimaPresenterImpl extends BaseMvpPresenter<AnimaView> implements AnimaPresenter {
+public class AnimePresenterImpl extends BaseMvpPresenter<AnimaView> implements AnimePresenter {
 
-    public AnimaPresenterImpl(AnimaView view, Lifeful lifeful) {
+    public AnimePresenterImpl(AnimaView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 

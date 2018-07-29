@@ -5,7 +5,6 @@
 /build
 /captures
 .externalNativeBuild
-/.idea/*
-.idea/caches/build_file_checksums.ser
+.idea/*
+.idea/caches/*
 .idea/modules.xml
-.idea/caches/build_file_checksums.ser

@@ -1,126 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/layout_toolbar" />
+    <include
+        layout="@layout/layout_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <com.xyoye.dandanplay.weight.ScrollableLayout
         android:id="@+id/scroll_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:orientation="vertical">
-        <ScrollView
-            android:id="@+id/scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="?android:attr/colorBackground"
+            app:cardElevation="4dp">
+
+            <ScrollView
+                android:id="@+id/scroll_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/anima_image_iv"
-                    android:layout_width="140dp"
-                    android:layout_height="180dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"/>
 
-                <LinearLayout
-                    android:id="@+id/anima_info_ll"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_toEndOf="@id/anima_image_iv"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/anima_title_tv"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/anima_image_iv"
+                        android:layout_width="140dp"
+                        android:layout_height="180dp" />
+
+                    <LinearLayout
+                        android:id="@+id/anima_info_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:layout_toEndOf="@id/anima_image_iv"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp">
+
+                        <TextView
+                            android:id="@+id/anima_title_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text=""
+                            android:textColor="@color/text_black"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/anima_onair_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text=""
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/anima_airday_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text=""
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/anima_rating_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text=""
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/anima_favorited_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text=""
+                            android:textColor="@color/theme_color"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/anima_restricted_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text=""
+                            android:textColor="@color/text_red"
+                            android:textSize="22sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <com.xyoye.dandanplay.weight.ExpandableTextView
+                        android:id="@+id/anima_intro_tv"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textColor="@color/text_black"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:text=""/>
-
-                    <TextView
-                        android:id="@+id/anima_onair_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:textSize="14sp"
-                        android:text=""/>
-
-                    <TextView
-                        android:id="@+id/anima_airday_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textSize="14sp"
-                        android:text=""/>
-
-                    <TextView
-                        android:id="@+id/anima_rating_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textSize="14sp"
-                        android:text=""/>
-
-                    <TextView
-                        android:id="@+id/anima_favorited_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/theme_color"
-                        android:textSize="14sp"
-                        android:text=""/>
-
-                    <TextView
-                        android:id="@+id/anima_restricted_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/anima_info_ll"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:textColor="@color/text_red"
-                        android:textSize="22sp"
-                        android:text=""
-                        android:visibility="gone"/>
-                </LinearLayout>
-
-                <com.xyoye.dandanplay.weight.ExpandableTextView
-                    android:id="@+id/anima_intro_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/anima_info_ll"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:text=""/>
-            </RelativeLayout>
-        </ScrollView>
+                        android:text="" />
+                </RelativeLayout>
+            </ScrollView>
+        </android.support.v7.widget.CardView>
 
         <TextView
             android:id="@+id/anima_episode_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/scroll_view"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
-            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:text="@string/anima_episode_tips_string"
             android:textColor="@color/text_black"
-            android:text="@string/anima_episode_tips_string"/>
+            android:textSize="16sp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/anima_episode_tips"
-            android:layout_margin="5dp">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_margin="5dp"></android.support.v7.widget.RecyclerView>
     </com.xyoye.dandanplay.weight.ScrollableLayout>
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

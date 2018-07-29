@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.homeMod;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -59,7 +60,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     ViewPager viewPager;
 
     AnimaFragmentAdapter fragmentAdapter;
-    List<AnimaFragment> fragmentList;
+    List<AnimeFragment> fragmentList;
 
     public static HomeFragment newInstance(){
         return new HomeFragment();
@@ -131,10 +132,11 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 return simplePagerTitleView;
             }
 
+            @SuppressLint("ResourceType")
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(Color.parseColor("#40c4ff"));
+                indicator.setColors(Color.parseColor(getString(R.color.colorPrimaryLight)));
                 return indicator;
             }
         });
@@ -145,7 +147,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     public void initViewPager(List<AnimeBeans> beans) {
         fragmentList = new ArrayList<>();
         for (AnimeBeans bean : beans) {
-            fragmentList.add(AnimaFragment.newInstance(bean));
+            fragmentList.add(AnimeFragment.newInstance(bean));
         }
 
         bindViewPager(magicIndicator, viewPager);
@@ -222,9 +224,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     class AnimaFragmentAdapter extends FragmentPagerAdapter {
-        private List<AnimaFragment> list;
+        private List<AnimeFragment> list;
 
-        private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimaFragment> list) {
+        private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimeFragment> list) {
             super(supportFragmentManager);
 
             this.list = list;

@@ -22,7 +22,7 @@ import butterknife.BindView;
  */
 
 
-public class AnimaItem implements AdapterItem<AnimeBeans.BangumiListBean> {
+public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
     @BindView(R.id.anima_title)

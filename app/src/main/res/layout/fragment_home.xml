@@ -80,7 +80,7 @@
                 <com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator
                     android:id="@+id/magic_indicator"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
+                    android:layout_height="40dp"
                     android:background="@color/colorPrimary"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
@@ -90,7 +90,7 @@
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="45dp"
+                    android:layout_marginTop="40dp"
                     android:background="@color/colorPrimary" />
             </FrameLayout>
 

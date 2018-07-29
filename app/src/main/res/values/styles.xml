@@ -19,10 +19,10 @@
         <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
     </style>
     <style name="ToolBar" parent="AppBaseTheme">
-        <item name="colorButtonNormal">@android:color/white</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="actionMenuTextColor">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="colorButtonNormal">@color/colorTextIcons</item>
+        <item name="colorControlNormal">@color/colorTextIcons</item>
+        <item name="actionMenuTextColor">@color/colorTextIcons</item>
+        <item name="android:textColor">@color/colorTextIcons</item>
     </style>
 
     <style name="AnimationActivity" parent="@android:style/Animation.Activity">

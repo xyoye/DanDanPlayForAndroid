@@ -6,4 +6,5 @@
     <dimen name="common_layout_end_padding">16dp</dimen>
     <dimen name="title_textSize">20sp</dimen>
     <dimen name="default_spacing">8dp</dimen>
+    <dimen name="item_anime_spacing">3dp</dimen>
 </resources>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -33,28 +34,32 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingStart="8dp"
-        >
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:fillViewport="true">
+        android:clipToPadding="false">
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
+            android:padding="0dp"
             app:cardElevation="3dp">
 
 
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="0dp"
+                android:fillViewport="true"
+                android:padding="0dp">
 
                 <com.youth.banner.Banner
                     android:id="@+id/banner"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="wrap_content">
 
                 </com.youth.banner.Banner>
-        </android.support.v7.widget.CardView>
             </ScrollView>
 
+        </android.support.v7.widget.CardView>
 
 
         <Space
@@ -77,17 +82,17 @@
                     android:background="?attr/colorPrimary"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    app:tabMode="scrollable"/>
+                    app:tabMode="scrollable" />
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="45dp"
-                    android:background="@color/white"/>
+                    android:background="@color/white" />
             </FrameLayout>
 
         </android.support.v7.widget.CardView>
 
     </com.xyoye.dandanplay.weight.ScrollableLayout>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

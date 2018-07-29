@@ -18,7 +18,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
-import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
+import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.xyoye.dandanplay.weight.DiyTablayout.CommonNavigator.CommonNavigator;
@@ -195,7 +195,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDetail(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(getContext(), AnimaDetailActivity.class);
+        Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
         intent.putExtra("animaId", event.getAnimaId());
         startActivity(intent);
     }

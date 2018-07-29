@@ -33,7 +33,7 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimaFavoriteBean.
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anima;
+        return R.layout.item_anime;
     }
 
     @Override

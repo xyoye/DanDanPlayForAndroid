@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,15 +21,13 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
-import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
+import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.settingMod.SettingActivity;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -164,7 +161,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDeatil(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(getContext(), AnimaDetailActivity.class);
+        Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
         intent.putExtra("animaId", event.getAnimaId());
         startActivity(intent);
     }

@@ -30,4 +30,6 @@
 
     </string>
     <string name="home_title">公告与番组</string>
+    <string name="anime_detail_title">动漫详情</string>
+    <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
 </resources>

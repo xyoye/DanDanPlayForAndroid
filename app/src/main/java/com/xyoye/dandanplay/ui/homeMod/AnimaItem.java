@@ -36,7 +36,7 @@ public class AnimaItem implements AdapterItem<AnimeBeans.BangumiListBean> {
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anima;
+        return R.layout.item_anime;
     }
 
     @Override

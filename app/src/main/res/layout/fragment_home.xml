@@ -34,17 +34,17 @@
         android:paddingRight="8dp"
         android:paddingStart="8dp"
         >
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:fillViewport="true">
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             app:cardElevation="3dp">
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:fillViewport="true">
+
 
                 <com.youth.banner.Banner
                     android:id="@+id/banner"
@@ -52,9 +52,10 @@
                     android:layout_height="200dp">
 
                 </com.youth.banner.Banner>
+        </android.support.v7.widget.CardView>
             </ScrollView>
 
-        </android.support.v7.widget.CardView>
+
 
         <Space
             android:layout_width="match_parent"
@@ -76,14 +77,14 @@
                     android:background="?attr/colorPrimary"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    app:tabMode="scrollable"></com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator>
+                    app:tabMode="scrollable"/>
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="45dp"
-                    android:background="@color/white"></android.support.v4.view.ViewPager>
+                    android:background="@color/white"/>
             </FrameLayout>
 
         </android.support.v7.widget.CardView>

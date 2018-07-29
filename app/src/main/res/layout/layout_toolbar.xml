@@ -7,7 +7,6 @@
     android:background="@color/theme_color"
     android:minHeight="48dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    style="@style/NoSpaceActionBarTheme"
     app:titleTextAppearance="@style/Toolbar.TitleText"
     app:layout_scrollFlags="scroll|enterAlways|snap">
 

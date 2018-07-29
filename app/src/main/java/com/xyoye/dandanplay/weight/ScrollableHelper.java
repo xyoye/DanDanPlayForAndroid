@@ -25,6 +25,7 @@ package com.xyoye.dandanplay.weight;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -44,7 +45,7 @@ public class ScrollableHelper {
     /**
      * a viewgroup whitch contains ScrollView/ListView/RecycelerView..
      */
-    public interface ScrollableContainer{
+    public interface ScrollableContainer {
         /**
          * @return ScrollView/ListView/RecycelerView..'s instance
          */
@@ -63,10 +64,10 @@ public class ScrollableHelper {
     }
 
     /**
-     *
      * 判断是否滑动到顶部方法,ScrollAbleLayout根据此方法来做一些逻辑判断
      * 目前只实现了AdapterView,ScrollView,RecyclerView
      * 需要支持其他view可以自行补充实现
+     *
      * @return
      */
     public boolean isTop() {
@@ -83,20 +84,21 @@ public class ScrollableHelper {
         }
         if (scrollableView instanceof RecyclerView) {
             boolean top = isRecyclerViewTop((RecyclerView) scrollableView);
-            TLog.i("isTop", top+"");
+            TLog.i("isTop", top + "");
             return top;
         }
         if (scrollableView instanceof WebView) {
             return isWebViewTop((WebView) scrollableView);
         }
-        throw new IllegalStateException("scrollableView must be a instance of AdapterView|ScrollView|RecyclerView");
+
+        throw new IllegalStateException("scrollableView must be a instance of AdapterView|ScrollView|RecyclerView|CardView");
     }
 
     private static boolean isRecyclerViewTop(RecyclerView recyclerView) {
         if (recyclerView != null) {
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
-               // int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                // int firstVisibleItemPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
                 View childAt = recyclerView.getChildAt(0);
                 /*if (childAt == null || (firstVisibleItemPosition == 0 && childAt.getTop() == 0)) {
                     return true;
@@ -110,29 +112,47 @@ public class ScrollableHelper {
         return false;
     }
 
-    private static boolean isAdapterViewTop(AdapterView adapterView){
-        if(adapterView != null){
+    private static boolean isAdapterViewTop(AdapterView adapterView) {
+        if (adapterView != null) {
             int firstVisiblePosition = adapterView.getFirstVisiblePosition();
             View childAt = adapterView.getChildAt(0);
-            if(childAt == null || (firstVisiblePosition == 0 && childAt.getTop() == 0)){
+            if (childAt == null || (firstVisiblePosition == 0 && childAt.getTop() == 0)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean isScrollViewTop(ScrollView scrollView){
-        if(scrollView != null) {
+    private static boolean isScrollViewTop(ScrollView scrollView) {
+        if (scrollView != null) {
             int scrollViewY = scrollView.getScrollY();
             return scrollViewY <= 0;
         }
         return false;
     }
 
-    private static boolean isWebViewTop(WebView scrollView){
-        if(scrollView != null) {
+    private static boolean isWebViewTop(WebView scrollView) {
+        if (scrollView != null) {
             int scrollViewY = scrollView.getScrollY();
             return scrollViewY <= 0;
+        }
+        return false;
+    }
+
+    private static boolean isCardViewTop(CardView cardView) {
+        //only support CardView has an ScrollView or WebView child
+        if (cardView != null) {
+            View firstChild = cardView.getChildAt(0);
+            if (firstChild != null) {
+                if (firstChild instanceof ScrollView) {
+                    return isScrollViewTop((ScrollView) firstChild);
+                }
+
+                if (firstChild instanceof WebView) {
+                    return isWebViewTop((WebView) firstChild);
+                }
+                throw new IllegalStateException("If scrollableView is a instance of CardView, it must have an ScrollView or WebView child.");
+            }
         }
         return false;
     }

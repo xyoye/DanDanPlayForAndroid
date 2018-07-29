@@ -40,9 +40,11 @@ import butterknife.BindView;
  */
 
 
-public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> implements AnimaDetailView, ScrollableHelper.ScrollableContainer{
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> implements AnimaDetailView, ScrollableHelper.ScrollableContainer{
+    //@BindView(R.id.toolbar_title)
+    //TextView toolbarTitle;
+    @BindView(R.id.toolbar)
+    android.support.v7.widget.Toolbar toolBar;
     @BindView(R.id.scroll_layout)
     ScrollableLayout scrollableLayout;
     @BindView(R.id.anima_image_iv)
@@ -72,9 +74,8 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
 
     @Override
     public void initView() {
-        setTitle("");
-        toolbarTitle.setText("动漫详情");
-
+        //toolbarTitle.setText(R.string.anime_detail_title);
+        setTitle(R.string.anime_detail_title);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
@@ -91,7 +92,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_anima_detail;
+        return R.layout.activity_anime_detail;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
                         favoriteConfirm();
                     }
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    ToastUtils.showShort(R.string.anime_detail_not_login_hint);
                 }
                 break;
         }
@@ -174,7 +175,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
             @NonNull
             @Override
             public AdapterItem<AnimaDetailBean.BangumiBean.EpisodesBean> onCreateItem(int viewType) {
-                return new AnimaEpisodeItem();
+                return new AnimeEpisodeItem();
             }
         };
         recyclerView.setAdapter(adapter);

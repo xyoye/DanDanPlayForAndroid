@@ -45,7 +45,7 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Scrol
 
     @Override
     protected int initPageLayoutId() {
-        return R.layout.fragment_anima;
+        return R.layout.fragment_anime;
     }
 
     @Override

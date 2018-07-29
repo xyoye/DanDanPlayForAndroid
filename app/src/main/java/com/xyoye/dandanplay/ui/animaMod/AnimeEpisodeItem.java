@@ -14,7 +14,7 @@ import butterknife.BindView;
  */
 
 
-public class AnimaEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean.EpisodesBean> {
+public class AnimeEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean.EpisodesBean> {
     @BindView(R.id.episode_number)
     TextView episodeNumber;
     @BindView(R.id.episode_title)
@@ -22,7 +22,7 @@ public class AnimaEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anima_episode;
+        return R.layout.item_anime_episode;
     }
 
     @Override

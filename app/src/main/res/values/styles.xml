@@ -15,12 +15,6 @@
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="toolbarStyle">@style/NoSpaceActionBarTheme</item>
-    </style>
-
-    <style name="NoSpaceActionBarTheme" parent="Base.Widget.AppCompat.Toolbar">
-        <item name="contentInsetStart">0dp</item>
-        <item name="contentInsetStartWithNavigation">0dp</item>
     </style>
 
     <style name="AnimationActivity" parent="@android:style/Animation.Activity">

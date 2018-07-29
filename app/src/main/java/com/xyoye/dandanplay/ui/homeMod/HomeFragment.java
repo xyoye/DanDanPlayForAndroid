@@ -13,7 +13,7 @@ import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.rx.LifefulRunnable;
 import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
@@ -143,9 +143,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     @Override
-    public void initViewPager(List<AnimaBeans> beans) {
+    public void initViewPager(List<AnimeBeans> beans) {
         fragmentList = new ArrayList<>();
-        for (AnimaBeans bean : beans) {
+        for (AnimeBeans bean : beans) {
             fragmentList.add(AnimaFragment.newInstance(bean));
         }
 

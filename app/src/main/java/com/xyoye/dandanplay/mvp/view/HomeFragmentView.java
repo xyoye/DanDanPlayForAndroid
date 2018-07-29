@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.mvp.view;
 
 import com.xyoye.core.interf.view.BaseMvpView;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 
 import java.util.List;
 
@@ -15,5 +15,5 @@ public interface HomeFragmentView extends BaseMvpView{
 
     void initIndicator(List<String> dateList);
 
-    void initViewPager(List<AnimaBeans> beans);
+    void initViewPager(List<AnimeBeans> beans);
 }

@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.net;
 
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.bean.AnimaDetailBean;
 import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
@@ -8,10 +8,8 @@ import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.bean.params.LoginParam;
 
 import java.util.Map;
-import java.util.Observer;
 
 import io.reactivex.Observable;
 import retrofit2.http.DELETE;
@@ -39,7 +37,7 @@ public interface RetrofitService {
     Observable<BannerBeans> getBanner();
 
     @GET("api/v2/bangumi/shin")
-    Observable<AnimaBeans> getAnimas();
+    Observable<AnimeBeans> getAnimas();
 
     @GET("api/v2/bangumi/{animeId}")
     Observable<AnimaDetailBean> getAnimaDetail(@Path("animeId") String animaId);

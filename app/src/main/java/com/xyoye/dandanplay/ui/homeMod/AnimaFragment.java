@@ -10,7 +10,7 @@ import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.mvp.impl.AnimaPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
@@ -27,12 +27,12 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Scrol
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private BaseRvAdapter<AnimaBeans.BangumiListBean> adapter;
+    private BaseRvAdapter<AnimeBeans.BangumiListBean> adapter;
 
-    public static AnimaFragment newInstance(AnimaBeans animaBeans){
+    public static AnimaFragment newInstance(AnimeBeans animeBeans){
         AnimaFragment animaFragment = new AnimaFragment();
         Bundle args = new Bundle();
-        args.putSerializable("anima", animaBeans);
+        args.putSerializable("anima", animeBeans);
         animaFragment.setArguments(args);
         return animaFragment;
     }
@@ -50,19 +50,19 @@ public class AnimaFragment extends BaseFragment<AnimaPresenter> implements Scrol
 
     @Override
     public void initView() {
-        AnimaBeans animaBeans;
+        AnimeBeans animeBeans;
         Bundle args = getArguments();
         if (args != null){
-            animaBeans = (AnimaBeans)getArguments().getSerializable("anima");
-            if (animaBeans ==null) return;
+            animeBeans = (AnimeBeans)getArguments().getSerializable("anima");
+            if (animeBeans ==null) return;
         } else  return;
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
-        adapter = new BaseRvAdapter<AnimaBeans.BangumiListBean>(animaBeans.getBangumiList()) {
+        adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(animeBeans.getBangumiList()) {
             @NonNull
             @Override
-            public AdapterItem<AnimaBeans.BangumiListBean> onCreateItem(int viewType) {
+            public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {
                 return new AnimaItem();
             }
         };

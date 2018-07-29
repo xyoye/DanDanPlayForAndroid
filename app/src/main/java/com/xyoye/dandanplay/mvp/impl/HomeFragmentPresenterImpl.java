@@ -10,11 +10,8 @@ import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.bean.BannerBeans;
-import com.xyoye.dandanplay.bean.DanmuMatchBean;
-import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.net.CommJsonObserver;
@@ -95,12 +92,12 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
     }
 
     private void getAnimaList(){
-        AnimaBeans.getAnimas(new CommJsonObserver<AnimaBeans>() {
+        AnimeBeans.getAnimas(new CommJsonObserver<AnimeBeans>() {
             @Override
-            public void onSuccess(AnimaBeans animaBeans) {
-                List<AnimaBeans> beansList = new ArrayList<>();
+            public void onSuccess(AnimeBeans animeBeans) {
+                List<AnimeBeans> beansList = new ArrayList<>();
                 initList(beansList);
-                for (AnimaBeans.BangumiListBean bean : animaBeans.getBangumiList()){
+                for (AnimeBeans.BangumiListBean bean : animeBeans.getBangumiList()){
                     switch (bean.getAirDay()){
                         case 0:
                             beansList.get(0).getBangumiList().add(bean);
@@ -137,27 +134,27 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
         }, new NetworkConsumer());
     }
 
-    private void initList(List<AnimaBeans> beansList){
-        AnimaBeans animaBeans00 = new AnimaBeans();
-        AnimaBeans animaBeans01 = new AnimaBeans();
-        AnimaBeans animaBeans02 = new AnimaBeans();
-        AnimaBeans animaBeans03 = new AnimaBeans();
-        AnimaBeans animaBeans04 = new AnimaBeans();
-        AnimaBeans animaBeans05 = new AnimaBeans();
-        AnimaBeans animaBeans06 = new AnimaBeans();
-        animaBeans00.setBangumiList(new ArrayList<>());
-        animaBeans01.setBangumiList(new ArrayList<>());
-        animaBeans02.setBangumiList(new ArrayList<>());
-        animaBeans03.setBangumiList(new ArrayList<>());
-        animaBeans04.setBangumiList(new ArrayList<>());
-        animaBeans05.setBangumiList(new ArrayList<>());
-        animaBeans06.setBangumiList(new ArrayList<>());
-        beansList.add(animaBeans00);
-        beansList.add(animaBeans01);
-        beansList.add(animaBeans02);
-        beansList.add(animaBeans03);
-        beansList.add(animaBeans04);
-        beansList.add(animaBeans05);
-        beansList.add(animaBeans06);
+    private void initList(List<AnimeBeans> beansList){
+        AnimeBeans animeBeans00 = new AnimeBeans();
+        AnimeBeans animeBeans01 = new AnimeBeans();
+        AnimeBeans animeBeans02 = new AnimeBeans();
+        AnimeBeans animeBeans03 = new AnimeBeans();
+        AnimeBeans animeBeans04 = new AnimeBeans();
+        AnimeBeans animeBeans05 = new AnimeBeans();
+        AnimeBeans animeBeans06 = new AnimeBeans();
+        animeBeans00.setBangumiList(new ArrayList<>());
+        animeBeans01.setBangumiList(new ArrayList<>());
+        animeBeans02.setBangumiList(new ArrayList<>());
+        animeBeans03.setBangumiList(new ArrayList<>());
+        animeBeans04.setBangumiList(new ArrayList<>());
+        animeBeans05.setBangumiList(new ArrayList<>());
+        animeBeans06.setBangumiList(new ArrayList<>());
+        beansList.add(animeBeans00);
+        beansList.add(animeBeans01);
+        beansList.add(animeBeans02);
+        beansList.add(animeBeans03);
+        beansList.add(animeBeans04);
+        beansList.add(animeBeans05);
+        beansList.add(animeBeans06);
     }
 }

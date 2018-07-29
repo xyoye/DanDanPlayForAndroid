@@ -16,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class AnimaBeans extends CommJsonEntity implements Serializable {
+public class AnimeBeans extends CommJsonEntity implements Serializable {
 
     private List<BangumiListBean> bangumiList;
 
@@ -114,7 +114,7 @@ public class AnimaBeans extends CommJsonEntity implements Serializable {
         }
     }
 
-    public static void getAnimas(CommJsonObserver<AnimaBeans> observer, NetworkConsumer consumer){
+    public static void getAnimas(CommJsonObserver<AnimeBeans> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getAnimas()
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

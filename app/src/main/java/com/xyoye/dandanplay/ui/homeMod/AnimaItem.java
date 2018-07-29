@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.CornersCenterCrop;
@@ -22,7 +22,7 @@ import butterknife.BindView;
  */
 
 
-public class AnimaItem implements AdapterItem<AnimaBeans.BangumiListBean> {
+public class AnimaItem implements AdapterItem<AnimeBeans.BangumiListBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
     @BindView(R.id.anima_title)
@@ -50,7 +50,7 @@ public class AnimaItem implements AdapterItem<AnimaBeans.BangumiListBean> {
     }
 
     @Override
-    public void onUpdateViews(AnimaBeans.BangumiListBean model, int position) {
+    public void onUpdateViews(AnimeBeans.BangumiListBean model, int position) {
 
         if (UserInfoShare.getInstance().isLogin()){
             favoriteTv.setVisibility(View.VISIBLE);

@@ -21,7 +21,7 @@ public class DataGenerator {
 
     public static final int []mTabRes = new int[]{R.drawable.ic_home_light, R.drawable.ic_folder_light,R.drawable.ic_account_box_light};
     public static final int []mTabResPressed = new int[]{R.drawable.ic_home_dark, R.drawable.ic_folder_dark,R.drawable.ic_account_box_dark};
-    public static final String []mTabTitle = new String[]{"首页","媒体库","我的"};
+    public static final String []mTabTitle = new String[]{"公告与番组","媒体库","我的"};
 
     public static Fragment[] getFragments(){
         Fragment fragments[] = new Fragment[3];

@@ -31,11 +31,14 @@
                 android:id="@+id/anima_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/image_iv"
                 android:layout_below="@+id/image_iv"
-                android:layout_marginStart="7.5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginStart="2dp"
                 android:layout_marginTop="3dp"
                 android:ellipsize="end"
                 android:maxLines="2"
+                android:minWidth="100dp"
                 android:textColor="@color/text_black"
                 android:textSize="14sp" />
 
@@ -44,9 +47,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/anima_title"
                 android:layout_marginBottom="3dp"
-                android:layout_marginStart="7.5dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="2dp"
                 android:ellipsize="end"
+                android:maxWidth="100dp"
                 android:singleLine="true"
                 android:textSize="12sp" />
 

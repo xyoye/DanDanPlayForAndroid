@@ -6,8 +6,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
-        <item name="colorPrimary">@color/theme_color</item>
-        <item name="colorPrimaryDark">@color/theme_color</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/theme_color</item>
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <item name="android:windowBackground">@android:color/white</item>
@@ -17,6 +17,12 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="cardViewStyle">@style/CardView</item>
         <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+    </style>
+    <style name="ToolBar" parent="AppBaseTheme">
+        <item name="colorButtonNormal">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="AnimationActivity" parent="@android:style/Animation.Activity">

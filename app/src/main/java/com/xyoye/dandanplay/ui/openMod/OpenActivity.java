@@ -50,7 +50,7 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
                 startActivity(intent);
             }
             this.finish();
-        }, this), 3000);
+        }, this), 100);
     }
 
     @Override

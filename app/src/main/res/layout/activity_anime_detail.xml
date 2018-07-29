@@ -113,7 +113,7 @@
             android:layout_marginStart="10dp"
             android:textSize="16sp"
             android:textColor="@color/text_black"
-            android:text="剧集列表："/>
+            android:text="@string/anima_episode_tips_string"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"

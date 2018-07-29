@@ -6,7 +6,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
-import com.xyoye.dandanplay.bean.AnimaDetailBean;
+import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimaDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaDetailView;
 import com.xyoye.dandanplay.net.CommJsonObserver;
@@ -49,10 +49,10 @@ public class AnimaDetailPresenterImpl extends BaseMvpPresenter<AnimaDetailView> 
     }
 
     private void getAnimaDetail(String animaId){
-        AnimaDetailBean.getAnimaDetail(animaId, new CommJsonObserver<AnimaDetailBean>() {
+        AnimeDetailBean.getAnimaDetail(animaId, new CommJsonObserver<AnimeDetailBean>() {
             @Override
-            public void onSuccess(AnimaDetailBean animaDetailBean) {
-                 getView().showAnimaDetail(animaDetailBean);
+            public void onSuccess(AnimeDetailBean animeDetailBean) {
+                 getView().showAnimeDetail(animeDetailBean);
             }
 
             @Override

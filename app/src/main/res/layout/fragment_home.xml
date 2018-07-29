@@ -10,16 +10,18 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:background="@android:color/transparent"
-        android:paddingBottom="0dp">
+        android:paddingBottom="0dp"
+        >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/theme_color"
             android:elevation="@dimen/common_toolBar_elevation"
             app:title="@string/home_title"
-            app:titleTextColor="@color/title_color" />
+            app:titleTextColor="@color/title_color"
+            style="@style/ToolBar"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -79,7 +81,7 @@
                     android:id="@+id/magic_indicator"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:background="?attr/colorPrimary"
+                    android:background="@color/colorPrimary"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
                     app:tabMode="scrollable" />
@@ -89,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="45dp"
-                    android:background="@color/white" />
+                    android:background="@color/colorPrimary" />
             </FrameLayout>
 
         </android.support.v7.widget.CardView>

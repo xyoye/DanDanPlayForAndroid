@@ -90,7 +90,10 @@ public class ScrollableHelper {
         if (scrollableView instanceof WebView) {
             return isWebViewTop((WebView) scrollableView);
         }
-
+        if (scrollableView instanceof CardView)
+        {
+            return isCardViewTop((CardView) scrollableView);
+        }
         throw new IllegalStateException("scrollableView must be a instance of AdapterView|ScrollView|RecyclerView|CardView");
     }
 

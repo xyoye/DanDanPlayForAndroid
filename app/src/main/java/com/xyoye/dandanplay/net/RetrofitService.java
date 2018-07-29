@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.net;
 
 import com.xyoye.dandanplay.bean.AnimeBeans;
-import com.xyoye.dandanplay.bean.AnimaDetailBean;
+import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
@@ -40,7 +40,7 @@ public interface RetrofitService {
     Observable<AnimeBeans> getAnimas();
 
     @GET("api/v2/bangumi/{animeId}")
-    Observable<AnimaDetailBean> getAnimaDetail(@Path("animeId") String animaId);
+    Observable<AnimeDetailBean> getAnimaDetail(@Path("animeId") String animaId);
 
     @FormUrlEncoded
     @POST("api/v2/login")

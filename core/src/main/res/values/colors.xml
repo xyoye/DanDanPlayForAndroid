@@ -42,7 +42,7 @@
     <!--  半透明 -->
     <color name="viewfinder_mask">#60000000</color>
     <!-- 黑色半透明30%-->
-    <color name="alpha_black">#20000000</color>
+    <color name="alpha_black">#00000000</color>
     <!--  透明 -->
     <color name="possible_result_points">#c0ffff00</color>
     <color name="transparent_color">#00000000</color>

@@ -40,7 +40,7 @@
 
         <activity android:name=".ui.webMod.WebviewActivity"/>
 
-        <activity android:name=".ui.animaMod.AnimaDetailActivity"/>
+        <activity android:name=".ui.animaMod.AnimeDetailActivity"/>
 
         <activity android:name=".ui.personalMod.LoginActivity"/>
 

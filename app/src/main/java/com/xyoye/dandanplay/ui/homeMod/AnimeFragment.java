@@ -10,9 +10,9 @@ import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaBeans;
-import com.xyoye.dandanplay.mvp.impl.AnimaPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.AnimaPresenter;
+import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
 import com.xyoye.dandanplay.weight.ScrollableHelper;
 
@@ -23,47 +23,47 @@ import butterknife.BindView;
  */
 
 
-public class AnimaFragment extends BaseFragment<AnimaPresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
-    @BindView(R.id.recycler_view)
+public class AnimeFragment extends BaseFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
+    @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
 
-    private BaseRvAdapter<AnimaBeans.BangumiListBean> adapter;
+    private BaseRvAdapter<AnimeBeans.BangumiListBean> adapter;
 
-    public static AnimaFragment newInstance(AnimaBeans animaBeans){
-        AnimaFragment animaFragment = new AnimaFragment();
+    public static AnimeFragment newInstance(AnimeBeans animeBeans){
+        AnimeFragment animeFragment = new AnimeFragment();
         Bundle args = new Bundle();
-        args.putSerializable("anima", animaBeans);
-        animaFragment.setArguments(args);
-        return animaFragment;
+        args.putSerializable("anima", animeBeans);
+        animeFragment.setArguments(args);
+        return animeFragment;
     }
 
     @NonNull
     @Override
-    protected AnimaPresenter initPresenter() {
-        return new AnimaPresenterImpl(this, this);
+    protected AnimePresenter initPresenter() {
+        return new AnimePresenterImpl(this, this);
     }
 
     @Override
     protected int initPageLayoutId() {
-        return R.layout.fragment_anima;
+        return R.layout.fragment_anime;
     }
 
     @Override
     public void initView() {
-        AnimaBeans animaBeans;
+        AnimeBeans animeBeans;
         Bundle args = getArguments();
         if (args != null){
-            animaBeans = (AnimaBeans)getArguments().getSerializable("anima");
-            if (animaBeans ==null) return;
+            animeBeans = (AnimeBeans)getArguments().getSerializable("anima");
+            if (animeBeans ==null) return;
         } else  return;
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
-        adapter = new BaseRvAdapter<AnimaBeans.BangumiListBean>(animaBeans.getBangumiList()) {
+        adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(animeBeans.getBangumiList()) {
             @NonNull
             @Override
-            public AdapterItem<AnimaBeans.BangumiListBean> onCreateItem(int viewType) {
-                return new AnimaItem();
+            public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {
+                return new AnimeItem();
             }
         };
         recyclerView.setAdapter(adapter);

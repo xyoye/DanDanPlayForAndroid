@@ -6,6 +6,7 @@
     <item
         android:id="@+id/favorite"
         android:orderInCategory="100"
-        android:title="关注"
-        app:showAsAction="ifRoom" />
+        android:title="@string/menu_favorite_string"
+        app:showAsAction="ifRoom"
+        />
 </menu>

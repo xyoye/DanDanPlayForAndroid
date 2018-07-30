@@ -17,7 +17,7 @@ import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaDetailBean;
+import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.mvp.impl.AnimaDetailPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaDetailView;
@@ -40,9 +40,11 @@ import butterknife.BindView;
  */
 
 
-public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> implements AnimaDetailView, ScrollableHelper.ScrollableContainer{
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> implements AnimaDetailView, ScrollableHelper.ScrollableContainer{
+    //@BindView(R.id.toolbar_title)
+    //TextView toolbarTitle;
+    @BindView(R.id.toolbar)
+    android.support.v7.widget.Toolbar toolBar;
     @BindView(R.id.scroll_layout)
     ScrollableLayout scrollableLayout;
     @BindView(R.id.anima_image_iv)
@@ -68,13 +70,12 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
 
     private boolean isFavorite = false;
     private String animaId = "";
-    private BaseRvAdapter<AnimaDetailBean.BangumiBean.EpisodesBean> adapter;
+    private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> adapter;
 
     @Override
     public void initView() {
-        setTitle("");
-        toolbarTitle.setText("动漫详情");
-
+        //toolbarTitle.setText(R.string.anime_detail_title);
+        setTitle(R.string.anime_detail_title);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
@@ -91,7 +92,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_anima_detail;
+        return R.layout.activity_anime_detail;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
                         favoriteConfirm();
                     }
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    ToastUtils.showShort(R.string.anime_detail_not_login_hint);
                 }
                 break;
         }
@@ -129,7 +130,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
     }
 
     @Override
-    public void showAnimaDetail(AnimaDetailBean bean) {
+    public void showAnimeDetail(AnimeDetailBean bean) {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .transform(new CornersCenterCrop(10));
@@ -168,13 +169,13 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
         animaIntroTv.setText("简介："+bean.getBangumi().getSummary());
 
         //剧集倒序
-        List<AnimaDetailBean.BangumiBean.EpisodesBean> episodesList = bean.getBangumi().getEpisodes();
+        List<AnimeDetailBean.BangumiBean.EpisodesBean> episodesList = bean.getBangumi().getEpisodes();
         Collections.reverse(episodesList);
-        adapter = new BaseRvAdapter<AnimaDetailBean.BangumiBean.EpisodesBean>(episodesList) {
+        adapter = new BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean>(episodesList) {
             @NonNull
             @Override
-            public AdapterItem<AnimaDetailBean.BangumiBean.EpisodesBean> onCreateItem(int viewType) {
-                return new AnimaEpisodeItem();
+            public AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> onCreateItem(int viewType) {
+                return new AnimeEpisodeItem();
             }
         };
         recyclerView.setAdapter(adapter);
@@ -208,7 +209,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
     }
 
     private void favoriteConfirm(){
-        AnimaDetailBean.addFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+        AnimeDetailBean.addFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 if (favoriteItem != null){
@@ -228,7 +229,7 @@ public class AnimaDetailActivity  extends BaseActivity<AnimaDetailPresenter> imp
     }
 
     private void favoriteCancel(){
-        AnimaDetailBean.reduceFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+        AnimeDetailBean.reduceFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 if (favoriteItem != null){

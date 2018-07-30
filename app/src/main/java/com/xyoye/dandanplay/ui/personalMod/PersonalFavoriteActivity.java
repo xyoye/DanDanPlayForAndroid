@@ -15,7 +15,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
 import com.xyoye.dandanplay.mvp.view.PeronalFavoriteView;
-import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
+import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -86,7 +86,7 @@ public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePrese
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDeatil(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(this, AnimaDetailActivity.class);
+        Intent intent = new Intent(this, AnimeDetailActivity.class);
         intent.putExtra("animaId", event.getAnimaId());
         startActivity(intent);
     }

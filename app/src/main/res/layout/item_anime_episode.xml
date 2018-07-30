@@ -2,6 +2,7 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_margin="4dp"
@@ -11,28 +12,27 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dp">
 
         <TextView
             android:id="@+id/episode_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
             android:text=""
             android:textColor="@color/text_black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="第1话" />
 
         <TextView
             android:id="@+id/episode_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginStart="5dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text=""
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="测试标题" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

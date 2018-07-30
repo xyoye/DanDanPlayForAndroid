@@ -65,8 +65,8 @@ public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
         animaTitle.setText(model.getAnimeTitle());
 
         RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .transform(new CornersCenterCrop(10));
+                .centerCrop();
+        //.transform(new CornersCenterCrop(10));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())

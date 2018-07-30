@@ -34,4 +34,5 @@
     <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
     <string name="anima_episode_tips_string">剧集列表：</string>
     <string name="menu_favorite_string">关注</string>
+    <string name="play_title">媒体库</string>
 </resources>

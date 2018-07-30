@@ -41,8 +41,6 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 
 public class FolderActivity extends BaseActivity<FolderPresenter> implements FolderView{
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv)
@@ -57,9 +55,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Override
     public void initView() {
-        setTitle("");
         String title = getIntent().getStringExtra(OpenFolderEvent.FOLDERTITLE);
-        toolbarTitle.setText(title);
+        setTitle(title);
 
         StoreHouseHeader header = new StoreHouseHeader(this);
         header.setPadding(0, PixelUtil.dip2px(this, 20) , 0, PixelUtil.dip2px(this, 20));

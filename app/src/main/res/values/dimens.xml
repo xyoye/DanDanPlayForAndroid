@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="common_toolBar_elevation">6dp</dimen>
+    <dimen name="common_navigator_height">45dp</dimen>
+    <dimen name="common_layout_start_padding">16dp</dimen>
+    <dimen name="common_layout_end_padding">16dp</dimen>
+    <dimen name="title_textSize">20sp</dimen>
+    <dimen name="default_spacing">8dp</dimen>
+    <dimen name="item_anime_spacing">3dp</dimen>
+    <dimen name="item_anime_card_width">116dp</dimen>
+</resources>

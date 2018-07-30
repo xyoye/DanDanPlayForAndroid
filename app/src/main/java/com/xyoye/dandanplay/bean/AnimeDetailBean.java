@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class AnimaDetailBean extends CommJsonEntity implements Serializable {
+public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
     /**
      * bangumi : {"episodes":[{"episodeId":0,"episodeTitle":"string","lastWatched":"2018-07-20T08:52:03.745Z","airDate":"2018-07-20T08:52:03.745Z"}],"summary":"string","bangumiUrl":"string","rating":0,"userRating":0,"favoriteStatus":"favorited","ratingDetails":{},"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true}
@@ -239,7 +239,7 @@ public class AnimaDetailBean extends CommJsonEntity implements Serializable {
         }
     }
 
-    public static void getAnimaDetail(String animaId, CommJsonObserver<AnimaDetailBean> observer, NetworkConsumer consumer){
+    public static void getAnimaDetail(String animaId, CommJsonObserver<AnimeDetailBean> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getAnimaDetail(animaId)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

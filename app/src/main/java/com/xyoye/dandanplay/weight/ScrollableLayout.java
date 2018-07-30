@@ -344,7 +344,8 @@ public class ScrollableLayout extends LinearLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         mHeadView = getChildAt(0);
         measureChildWithMargins(mHeadView, widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0);
-        maxY = mHeadView.getMeasuredHeight();
+        LayoutParams lp = (LayoutParams) mHeadView.getLayoutParams();
+        maxY = mHeadView.getMeasuredHeight() + lp.topMargin;
         mHeadHeight = mHeadView.getMeasuredHeight();
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) + maxY, MeasureSpec.EXACTLY));
     }

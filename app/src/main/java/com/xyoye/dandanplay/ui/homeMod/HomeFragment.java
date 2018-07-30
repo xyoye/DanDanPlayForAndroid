@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.homeMod;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,17 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.rx.LifefulRunnable;
-import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaBeans;
+import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
-import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
+import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.xyoye.dandanplay.weight.DiyTablayout.CommonNavigator.CommonNavigator;
@@ -27,7 +28,8 @@ import com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator;
 import com.xyoye.dandanplay.weight.DiyTablayout.abs.CommonNavigatorAdapter;
 import com.xyoye.dandanplay.weight.DiyTablayout.abs.IPagerIndicator;
 import com.xyoye.dandanplay.weight.DiyTablayout.abs.IPagerTitleView;
-import com.xyoye.dandanplay.weight.DiyTablayout.title.ClipPagerTitleView;
+import com.xyoye.dandanplay.weight.DiyTablayout.title.ColorTransitionPagerTitleView;
+import com.xyoye.dandanplay.weight.DiyTablayout.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.weight.ScrollableLayout;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -58,7 +60,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     ViewPager viewPager;
 
     AnimaFragmentAdapter fragmentAdapter;
-    List<AnimaFragment> fragmentList;
+    List<AnimeFragment> fragmentList;
 
     public static HomeFragment newInstance(){
         return new HomeFragment();
@@ -117,25 +119,24 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
             @Override
             public IPagerTitleView getTitleView(Context context, int index) {
-                ClipPagerTitleView clipPagerTitleView = new ClipPagerTitleView(context);
-                clipPagerTitleView.setText(dateList.get(index));
-                clipPagerTitleView.setPadding(PixelUtil.dip2px(context, 15), 0, PixelUtil.dip2px(context, 15), 0);
-                clipPagerTitleView.setTextColor(Color.parseColor("#222222"));
-                clipPagerTitleView.setClipColor(Color.WHITE);
-                clipPagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-                return clipPagerTitleView;
+                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
+                simplePagerTitleView.setText(dateList.get(index));
+                simplePagerTitleView.setNormalColor(Color.parseColor("#88ffffff"));
+                simplePagerTitleView.setSelectedColor(Color.WHITE);
+                simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewPager.setCurrentItem(index);
+                    }
+                });
+                return simplePagerTitleView;
             }
 
+            @SuppressLint("ResourceType")
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                float navigatorHeight = context.getResources().getDimension(R.dimen.common_navigator_height);
-                float borderWidth = PixelUtil.dip2px(context, 8);
-                float lineHeight = navigatorHeight - 2 * borderWidth;
-                indicator.setLineHeight(lineHeight);
-                indicator.setRoundRadius(lineHeight / 2);
-                indicator.setYOffset(borderWidth);
-                indicator.setColors(getResources().getColor(R.color.theme_color));
+                indicator.setColors(Color.parseColor(getString(R.color.colorPrimaryLight)));
                 return indicator;
             }
         });
@@ -143,10 +144,10 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     @Override
-    public void initViewPager(List<AnimaBeans> beans) {
+    public void initViewPager(List<AnimeBeans> beans) {
         fragmentList = new ArrayList<>();
-        for (AnimaBeans bean : beans) {
-            fragmentList.add(AnimaFragment.newInstance(bean));
+        for (AnimeBeans bean : beans) {
+            fragmentList.add(AnimeFragment.newInstance(bean));
         }
 
         bindViewPager(magicIndicator, viewPager);
@@ -196,7 +197,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDetail(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(getContext(), AnimaDetailActivity.class);
+        Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
         intent.putExtra("animaId", event.getAnimaId());
         startActivity(intent);
     }
@@ -223,9 +224,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     class AnimaFragmentAdapter extends FragmentPagerAdapter {
-        private List<AnimaFragment> list;
+        private List<AnimeFragment> list;
 
-        private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimaFragment> list) {
+        private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimeFragment> list) {
             super(supportFragmentManager);
 
             this.list = list;

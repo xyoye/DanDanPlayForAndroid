@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaDetailBean;
+import com.xyoye.dandanplay.bean.AnimeDetailBean;
 
 import butterknife.BindView;
 
@@ -14,7 +14,7 @@ import butterknife.BindView;
  */
 
 
-public class AnimaEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean.EpisodesBean> {
+public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> {
     @BindView(R.id.episode_number)
     TextView episodeNumber;
     @BindView(R.id.episode_title)
@@ -22,7 +22,7 @@ public class AnimaEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anima_episode;
+        return R.layout.item_anime_episode;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class AnimaEpisodeItem implements AdapterItem<AnimaDetailBean.BangumiBean
     }
 
     @Override
-    public void onUpdateViews(AnimaDetailBean.BangumiBean.EpisodesBean model, int position) {
+    public void onUpdateViews(AnimeDetailBean.BangumiBean.EpisodesBean model, int position) {
         String info = model.getEpisodeTitle();
         String[] infoArray = info.split("\\s");
         if (infoArray.length > 1){

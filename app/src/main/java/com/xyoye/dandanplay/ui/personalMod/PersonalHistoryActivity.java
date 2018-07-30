@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalHistoryPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalHistoryPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalHistoryView;
-import com.xyoye.dandanplay.ui.animaMod.AnimaDetailActivity;
+import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -97,7 +97,7 @@ public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresent
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDeatil(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(this, AnimaDetailActivity.class);
+        Intent intent = new Intent(this, AnimeDetailActivity.class);
         intent.putExtra("animaId", event.getAnimaId());
         startActivity(intent);
     }

@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/theme_color"
-        android:minHeight="48dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:titleTextAppearance="@style/Toolbar.TitleText"
-        app:layout_scrollFlags="scroll|enterAlways|snap">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:background="@android:color/transparent"
+        android:paddingBottom="0dp"
+        >
 
-    </android.support.v7.widget.Toolbar>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/theme_color"
+            android:elevation="@dimen/common_toolBar_elevation"
+            app:title="@string/play_title"
+            app:titleTextColor="@color/title_color" />
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <in.srain.cube.views.ptr.PtrFrameLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/ptr_pull_rv_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
+        android:layout_marginTop="?attr/actionBarSize"
         android:background="@color/diver_color"
         cube_ptr:ptr_duration_to_close="200"
         cube_ptr:ptr_duration_to_close_header="1000"
@@ -33,20 +40,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
     </in.srain.cube.views.ptr.PtrFrameLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ptr_pull_rv_to_refresh"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_marginBottom="11dp"
-        android:text="播放中心"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

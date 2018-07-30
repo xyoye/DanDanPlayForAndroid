@@ -76,10 +76,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void initView() {
         setHasOptionsMenu(true);
         getBaseActivity().setSupportActionBar(toolbar);
-        ActionBar actionBar =  getBaseActivity().getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
         showLoading();
         new PermissionHelper().with(this).request(new PermissionHelper.OnSuccessListener() {
             @Override

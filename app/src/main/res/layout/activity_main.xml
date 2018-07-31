@@ -22,7 +22,7 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/bottom_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         android:elevation="1dp"
         app:tabIndicatorHeight="0dp"
         app:tabSelectedTextColor="@android:color/black"

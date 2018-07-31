@@ -50,11 +50,11 @@ public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
         }
 
         if (model.isFolder() && model.isParent()){
-            iv.setImageResource(R.mipmap.ic_folder_back);
+            iv.setImageResource(R.drawable.ic_chevron_left_dark);
         }else if (model.isFolder() && !model.isParent()){
-            iv.setImageResource(R.mipmap.ic_folder);
+            iv.setImageResource(R.drawable.ic_folder_dark);
         }else {
-            iv.setImageResource(R.mipmap.ic_xml);
+            iv.setImageResource(R.drawable.ic_xml_file);
         }
 
         tv.setText(model.getName());

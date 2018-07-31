@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="74dp"
-    android:paddingStart="5dp"
-    android:paddingEnd="5dp"
-    android:background="@android:color/white">
+    android:layout_height="88dp"
+    android:background="@android:color/white"
+    tools:layout_editor_absoluteY="25dp">
 
     <RelativeLayout
         android:id="@+id/image_rl"
-        android:layout_width="72dp"
-        android:layout_height="62dp"
-        android:layout_centerVertical="true">
+        android:layout_width="100dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/cover_iv"
-            android:layout_width="68dp"
-            android:layout_height="58dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:scaleType="centerCrop"
-            android:layout_centerInParent="true"/>
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/duration_tv"
@@ -27,74 +34,99 @@
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="3dp"
             android:layout_marginEnd="3dp"
-            android:paddingStart="2dp"
-            android:paddingEnd="2dp"
-            android:gravity="center"
             android:background="@android:color/black"
+            android:gravity="center"
+            android:paddingEnd="2dp"
+            android:paddingStart="2dp"
             android:textColor="@android:color/white"
-            android:textSize="10sp"/>
+            android:textSize="12sp" />
 
-        <View
+        <!--<View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_video_image"/>
+            android:background="@drawable/bg_video_image" />-->
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:layout_toEndOf="@+id/image_rl"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp">
-        <TextView
-            android:id="@+id/title_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="80dp"
-            android:layout_marginTop="5dp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textSize="16sp"
-            android:textColor="@color/text_black"
-            android:text=""/>
+    <!--<RelativeLayout-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="62dp"-->
+    <!--android:layout_marginStart="16dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toEndOf="@+id/image_rl"-->
+    <!--app:layout_constraintTop_toTopOf="parent">-->
 
-        <LinearLayout
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="20dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text=""
+        android:textColor="@color/text_black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/danmu_setting_rl"
+        app:layout_constraintStart_toEndOf="@+id/image_rl"
+        app:layout_constraintTop_toTopOf="@+id/image_rl"
+        tools:text="测试标题" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/image_rl"
+        app:layout_constraintStart_toEndOf="@+id/image_rl">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical"
+            android:text="@string/item_danmaku_tip"
+            android:textSize="12sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textSize="12sp"
-                android:text="弹幕："/>
-
-            <ImageView
-                android:id="@+id/danmu_tips_iv"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="1dp"
-                android:layout_gravity="center_vertical"
-                android:src="@mipmap/ic_danmu_inexist"/>
-        </LinearLayout>
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/danmu_tips_iv"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="1dp"
+            android:contentDescription="@string/danmaku_inexists"
+            android:src="@drawable/ic_danmaku_inexist" />
+    </LinearLayout>
+    <!--</RelativeLayout>-->
 
     <RelativeLayout
         android:id="@+id/danmu_setting_rl"
-        android:layout_width="30dp"
-        android:layout_height="62dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true">
+        android:layout_width="56dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_centerInParent="true"
-            android:src="@mipmap/ic_danmu_setting"/>
+            android:contentDescription="@string/load_danmaku"
+            android:rotation="180"
+            android:src="@drawable/ic_subtitles_gray" />
 
     </RelativeLayout>
 
-</RelativeLayout>
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/title_tv" />
+
+</android.support.constraint.ConstraintLayout>

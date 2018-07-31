@@ -114,8 +114,8 @@ public class AnimeBeans extends CommJsonEntity implements Serializable {
         }
     }
 
-    public static void getAnimas(CommJsonObserver<AnimeBeans> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().getAnimas()
+    public static void getAnimes(CommJsonObserver<AnimeBeans> observer, NetworkConsumer consumer){
+        RetroFactory.getInstance().getAnimes()
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

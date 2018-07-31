@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.playMod;
 import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,20 +45,22 @@ import static android.app.Activity.RESULT_OK;
  * Created by YE on 2018/6/29 0029.
  */
 
-public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView{
+public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView {
     public final static int SELECT_FOLDER = 103;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ptr_pull_rv_to_refresh)
-    PtrFrameLayout refresh;
+    //@BindView(R.id.ptr_pull_rv_to_refresh)
+    //PtrFrameLayout refresh;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
     private LinearLayoutManager layoutManager;
     private BaseRvAdapter<FolderBean> adapter;
 
-    public static PlayFragment newInstance(){
+    public static PlayFragment newInstance() {
         return new PlayFragment();
     }
 
@@ -76,10 +79,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void initView() {
         setHasOptionsMenu(true);
         getBaseActivity().setSupportActionBar(toolbar);
-        ActionBar actionBar =  getBaseActivity().getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
         showLoading();
         new PermissionHelper().with(this).request(new PermissionHelper.OnSuccessListener() {
             @Override
@@ -87,15 +86,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 presenter.getVideoList();
             }
         }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        StoreHouseHeader header = new StoreHouseHeader(getContext());
-        header.setPadding(0, PixelUtil.dip2px(this.getContext(), 20) , 0, PixelUtil.dip2px(this.getContext(), 20));
-        header.initWithString("dan dan player");
-        header.setTextColor(this.getResources().getColor(R.color.theme_color));
-        refresh.disableWhenHorizontalMove(true);
-        refresh.setDurationToCloseHeader(1500);
-        refresh.setHeaderView(header);
-        refresh.addPtrUIHandler(header);
+        refresh.setColorSchemeResources(R.color.theme_color);
 
         layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -106,14 +97,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void initListener() {
-        refresh.setPtrHandler(new PtrHandler() {
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
-                return !frame.isRefreshing() && (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
-            }
-
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
+            public void onRefresh() {
                 new PermissionHelper().with(PlayFragment.this).request(new PermissionHelper.OnSuccessListener() {
                     @Override
                     public void onPermissionSuccess() {
@@ -122,12 +108,23 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
             }
-        });
+            });
+
+            /*@Override
+        public void onRefreshBegin (PtrFrameLayout frame){
+            new PermissionHelper().with(PlayFragment.this).request(new PermissionHelper.OnSuccessListener() {
+                @Override
+                public void onPermissionSuccess() {
+                    presenter.getVideoList();
+                }
+            }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        }*/
     }
 
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
-        if (adapter == null){
+        if (adapter == null) {
             adapter = new BaseRvAdapter<FolderBean>(beans) {
                 @NonNull
                 @Override
@@ -137,13 +134,13 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             };
             if (recyclerView != null)
                 recyclerView.setAdapter(adapter);
-        }else {
+        } else {
             adapter.setData(beans);
             adapter.notifyDataSetChanged();
         }
         hideLoading();
         if (refresh != null)
-            refresh.refreshComplete();
+            refresh.setRefreshing(false);
     }
 
     @Override
@@ -174,7 +171,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openFolder(OpenFolderEvent event){
+    public void openFolder(OpenFolderEvent event) {
         Intent intent = new Intent(getContext(), FolderActivity.class);
         intent.putExtra(OpenFolderEvent.FOLDERPATH, event.getFolderPath());
         intent.putExtra(OpenFolderEvent.FOLDERTITLE, event.getFolderTitle());
@@ -183,7 +180,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 break;
             case R.id.add_video_folder:
@@ -200,7 +197,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     }
 
-    private void addFolder(){
+    private void addFolder() {
         Intent intent = new Intent(getContext(), FileManagerActivity.class);
         intent.putExtra(FileManagerActivity.IS_FOLDER, true);
         startActivityForResult(intent, SELECT_FOLDER);
@@ -208,8 +205,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == SELECT_FOLDER){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_FOLDER) {
                 String folderPath = data.getStringExtra("folder");
                 presenter.listFolder(folderPath);
             }

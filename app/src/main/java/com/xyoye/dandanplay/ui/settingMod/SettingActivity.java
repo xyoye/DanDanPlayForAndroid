@@ -26,8 +26,6 @@ import butterknife.BindView;
 public class SettingActivity extends BaseActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     public final static int SELECT_SETTING_FOLDER = 105;
 
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
     @BindView(R.id.download_rl)
@@ -47,8 +45,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
 
     @Override
     public void initView() {
-        setTitle("");
-        toolbarTitle.setText("设置");
+        setTitle("设置");
 
         String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);

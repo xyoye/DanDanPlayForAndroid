@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,45 +9,51 @@
 
     <include layout="@layout/layout_toolbar" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/relativeLayout6"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="14dp"
         android:paddingStart="14dp">
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/path_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="start"
+            android:singleLine="true"
+            android:textColor="#5588FF"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
+            app:layout_constraintEnd_toStartOf="@+id/network_tv"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            tools:text="/test/test/" />
+
+        <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="100dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="当前："
-                android:textColor="#5588FF"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/path_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:ellipsize="start"
-                android:textColor="#5588FF"
-                android:textSize="16sp"/>
-        </LinearLayout>
+            android:layout_marginStart="8dp"
+            android:text="@string/current_folder_tip"
+            android:textColor="#5588FF"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/network_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="14dp"
+            android:text="@string/web_danmaku_button"
             android:textColor="@color/orange"
-            android:text="网络弹幕"/>
+            app:layout_constraintBaseline_toBaselineOf="@+id/path_tv"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

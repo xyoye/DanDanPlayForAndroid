@@ -40,4 +40,7 @@
     <string name="danmaku_inexists">弹幕不存在</string>
     <string name="danmaku_exists">弹幕存在</string>
     <string name="load_danmaku">加载弹幕</string>
+    <string name="tip_downloading">下载中...</string>
+    <string name="current_folder_tip">当前：</string>
+    <string name="web_danmaku_button">网络弹幕</string>
 </resources>

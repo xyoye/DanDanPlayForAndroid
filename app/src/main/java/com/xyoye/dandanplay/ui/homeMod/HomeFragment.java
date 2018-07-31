@@ -19,7 +19,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
-import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.xyoye.dandanplay.weight.DiyTablayout.CommonNavigator.CommonNavigator;

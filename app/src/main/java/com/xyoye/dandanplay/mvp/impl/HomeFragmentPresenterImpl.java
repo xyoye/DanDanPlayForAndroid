@@ -92,7 +92,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
     }
 
     private void getAnimaList(){
-        AnimeBeans.getAnimas(new CommJsonObserver<AnimeBeans>() {
+        AnimeBeans.getAnimes(new CommJsonObserver<AnimeBeans>() {
             @Override
             public void onSuccess(AnimeBeans animeBeans) {
                 List<AnimeBeans> beansList = new ArrayList<>();

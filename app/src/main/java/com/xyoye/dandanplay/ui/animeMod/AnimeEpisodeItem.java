@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.animaMod;
+package com.xyoye.dandanplay.ui.animeMod;
 
 import android.view.View;
 import android.widget.TextView;

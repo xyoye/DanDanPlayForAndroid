@@ -37,7 +37,7 @@ public interface RetrofitService {
     Observable<BannerBeans> getBanner();
 
     @GET("api/v2/bangumi/shin")
-    Observable<AnimeBeans> getAnimas();
+    Observable<AnimeBeans> getAnimes();
 
     @GET("api/v2/bangumi/{animeId}")
     Observable<AnimeDetailBean> getAnimaDetail(@Path("animeId") String animaId);

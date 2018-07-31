@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.animaMod;
+package com.xyoye.dandanplay.ui.animeMod;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;

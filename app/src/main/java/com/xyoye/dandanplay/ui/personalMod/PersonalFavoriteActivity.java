@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
 
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
@@ -15,7 +14,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
 import com.xyoye.dandanplay.mvp.view.PeronalFavoriteView;
-import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

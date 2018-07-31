@@ -25,8 +25,6 @@ import butterknife.BindView;
 
 
 public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.login_out_bt)
     Button loginOutBt;
     @BindView(R.id.screen_name_rl)
@@ -41,8 +39,7 @@ public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> im
 
     @Override
     public void initView() {
-        setTitle("");
-        toolbarTitle.setText("个人信息");
+        setTitle("个人信息");
         if (UserInfoShare.getInstance().isLogin()){
             String screenName = UserInfoShare.getInstance().getUserScreenName();
             String userName = UserInfoShare.getInstance().getUserName();

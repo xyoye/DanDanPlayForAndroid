@@ -21,7 +21,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
-import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.settingMod.SettingActivity;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 

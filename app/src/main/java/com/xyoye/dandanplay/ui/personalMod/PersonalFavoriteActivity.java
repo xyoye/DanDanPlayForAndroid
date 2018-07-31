@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
 
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
@@ -15,7 +14,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
 import com.xyoye.dandanplay.mvp.view.PeronalFavoriteView;
-import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,8 +28,6 @@ import butterknife.BindView;
 
 
 public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePresenter> implements PeronalFavoriteView {
-    @BindView(R.id.toolbar_title)
-    TextView toolBarTitle;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -38,8 +35,7 @@ public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePrese
 
     @Override
     public void initView() {
-        setTitle("");
-        toolBarTitle.setText("我的关注");
+        setTitle("我的关注");
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 

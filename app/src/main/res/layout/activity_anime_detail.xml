@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -37,13 +38,14 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp">
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/anima_image_iv"
                         android:layout_width="140dp"
                         android:layout_height="180dp"
-                        android:elevation="5dp" />
+                        android:elevation="5dp"
+                        tools:ignore="contentDescription" />
 
                     <LinearLayout
                         android:id="@+id/anima_info_ll"
@@ -51,6 +53,7 @@
                         android:layout_height="180dp"
                         android:layout_toEndOf="@id/anima_image_iv"
                         android:orientation="vertical"
+                        android:paddingEnd="16dp"
                         android:paddingStart="16dp">
 
                         <TextView
@@ -59,42 +62,46 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text=""
                             android:textColor="@color/text_black"
-                            android:textSize="18sp" />
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="测试番剧" />
 
                         <TextView
                             android:id="@+id/anima_onair_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:text=""
-                            android:textSize="14sp" />
+                            android:layout_marginTop="8dp"
+                            android:textSize="14sp"
+                            tools:text="状态：连载中" />
 
                         <TextView
                             android:id="@+id/anima_airday_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="4dp"
                             android:text=""
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            tools:text="日期：星期三" />
 
                         <TextView
                             android:id="@+id/anima_rating_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="4dp"
                             android:text=""
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            tools:text="评分：8" />
 
                         <TextView
                             android:id="@+id/anima_favorited_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="8dp"
                             android:text=""
                             android:textColor="@color/theme_color"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            tools:text="未关注" />
 
                         <TextView
                             android:id="@+id/anima_restricted_tv"
@@ -140,17 +147,17 @@
                     android:id="@+id/anima_episode_tips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/scroll_view"
-                    android:layout_marginBottom="8dp"
+                    android:layout_margin="8dp"
                     android:text="@string/anima_episode_tips_string"
                     android:textColor="@color/text_black"
-                    android:textSize="16sp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/anima_episode_tips"></android.support.v7.widget.RecyclerView>
+                    android:layout_below="@+id/anima_episode_tips" />
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>

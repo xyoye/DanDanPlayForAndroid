@@ -36,4 +36,8 @@
     <string name="menu_favorite_string">关注</string>
     <string name="play_title">媒体库</string>
     <string name="folder_icon_resouces">Folder Icon</string>
+    <string name="item_danmaku_tip">弹幕：</string>
+    <string name="danmaku_inexists">弹幕不存在</string>
+    <string name="danmaku_exists">弹幕存在</string>
+    <string name="load_danmaku">加载弹幕</string>
 </resources>

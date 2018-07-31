@@ -26,9 +26,7 @@ import butterknife.ButterKnife;
 
 public class DownloadBilibiliActivity extends AppCompatActivity implements View.OnClickListener{
     public final static int SELECT_WEB = 106;
-    
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.download_by_av)
@@ -55,8 +53,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        setTitle("");
-        toolbarTitle.setText("Bilibili弹幕下载");
+        setTitle("Bilibili弹幕下载");
 
 
         initListener();

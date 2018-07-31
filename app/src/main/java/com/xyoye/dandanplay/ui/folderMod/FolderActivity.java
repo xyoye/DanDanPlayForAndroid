@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.folderMod;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +34,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
  * Created by YE on 2018/6/30 0030.
@@ -58,15 +58,11 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         String title = getIntent().getStringExtra(OpenFolderEvent.FOLDERTITLE);
         setTitle(title);
 
-        StoreHouseHeader header = new StoreHouseHeader(this);
-        header.setPadding(0, PixelUtil.dip2px(this, 20) , 0, PixelUtil.dip2px(this, 20));
-        header.initWithString("dan dan player");
-        header.setTextColor(this.getResources().getColor(R.color.theme_color));
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(1,0,0,0));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(
+//                this, DividerItemDecoration.VERTICAL));
 
         showLoading();
         presenter.refreshVideos();

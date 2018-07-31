@@ -39,8 +39,6 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     public final static String VIDEO_PATH = "videoPath";
     public final static int SELECT_NETWORK_DANMU = 104;
 
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.loading_ll)
     LinearLayout loadingLl;
     @BindView(R.id.path_tv)
@@ -55,14 +53,13 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
 
     @Override
     public void initView() {
-        setTitle("");
         isFolder = isFolder();
 
         if (isFolder){
-            toolbarTitle.setText("选择文件夹");
+            setTitle("选择文件夹");
             networkTv.setVisibility(View.GONE);
         } else {
-            toolbarTitle.setText("选择本地弹幕");
+            setTitle("选择本地弹幕");
             networkTv.setVisibility(View.VISIBLE);
         }
 

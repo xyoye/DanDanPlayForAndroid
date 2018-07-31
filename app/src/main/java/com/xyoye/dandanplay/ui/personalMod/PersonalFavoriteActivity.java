@@ -29,8 +29,6 @@ import butterknife.BindView;
 
 
 public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePresenter> implements PeronalFavoriteView {
-    @BindView(R.id.toolbar_title)
-    TextView toolBarTitle;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -38,8 +36,7 @@ public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePrese
 
     @Override
     public void initView() {
-        setTitle("");
-        toolBarTitle.setText("我的关注");
+        setTitle("我的关注");
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 

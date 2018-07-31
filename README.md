@@ -27,3 +27,7 @@
 - ijkplayer
 
   ijkplayer is licensed under LGPLv2.1 or later, so itself is free for commercial use under LGPLv2.1 or later
+
+- Google Material icons
+
+  Available under Apache license version 2.0.

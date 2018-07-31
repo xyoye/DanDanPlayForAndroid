@@ -19,8 +19,6 @@ import butterknife.ButterKnife;
 
 
 public class AboutActivity extends AppCompatActivity {
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -37,8 +35,7 @@ public class AboutActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        setTitle("");
-        toolbarTitle.setText("关于");
+        setTitle("关于");
     }
 
     @Override

@@ -30,8 +30,6 @@ import butterknife.BindView;
  */
 
 public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresenter> implements PersonalHistoryView {
-    @BindView(R.id.toolbar_title)
-    TextView toolBarTitle;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -39,9 +37,7 @@ public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresent
 
     @Override
     public void initView() {
-        setTitle("");
-        toolBarTitle.setText("播放历史");
-
+        setTitle("播放历史");
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         PlayHistoryBean playHistoryBean = (PlayHistoryBean)getIntent().getSerializableExtra("bean");

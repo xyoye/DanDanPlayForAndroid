@@ -112,8 +112,12 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
             if (favoriteRecyclerView != null)
                 favoriteRecyclerView.setAdapter(favoriteAdapter);
         }else {
-            if (favoriteAdapter != null)
+            if (favoriteRecyclerView != null)
+                favoriteRecyclerView.removeAllViews();
+            if (favoriteAdapter != null){
                 favoriteAdapter.getData().clear();
+                favoriteAdapter.notifyDataSetChanged();
+            }
         }
 
     }
@@ -131,8 +135,12 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
             if (historyRecyclerView != null)
                 historyRecyclerView.setAdapter(historyAdapter);
         }else {
-            if (historyAdapter != null)
+            if (historyRecyclerView != null)
+                historyRecyclerView.removeAllViews();
+            if (historyAdapter != null){
                 historyAdapter.getData().clear();
+                favoriteAdapter.notifyDataSetChanged();
+            }
         }
     }
 

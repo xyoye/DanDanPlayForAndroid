@@ -50,11 +50,9 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
         ActionBar actionBar =  getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
         }
 
         setTitle("Bilibili弹幕下载");
-
 
         initListener();
     }

@@ -8,4 +8,5 @@
     <dimen name="default_spacing">8dp</dimen>
     <dimen name="item_anime_spacing">3dp</dimen>
     <dimen name="item_anime_card_width">116dp</dimen>
+    <dimen name="divider_height">2dp</dimen>
 </resources>

@@ -50,7 +50,7 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
                 startActivity(intent);
             }
             this.finish();
-        }, this), 100);
+        }, this), 2000); //2秒等待时间是用于登录账户
     }
 
     @Override

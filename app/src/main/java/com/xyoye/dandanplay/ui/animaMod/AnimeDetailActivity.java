@@ -131,6 +131,9 @@ public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> impl
 
     @Override
     public void showAnimeDetail(AnimeDetailBean bean) {
+        if(this.isFinishing())
+            return;
+
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .transform(new CornersCenterCrop(10));

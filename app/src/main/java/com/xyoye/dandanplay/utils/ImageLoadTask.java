@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.utils;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.view.View;
@@ -58,28 +59,38 @@ public class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
      * 根据路径获取视频帧
      */
     private Bitmap downloadImage() {
-        FFmpegMediaMetadataRetriever fmmr = null;
         Bitmap bitmap = null;
+        FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
         try {
-            fmmr = new FFmpegMediaMetadataRetriever();
-            fmmr.setDataSource(imageUrl);
-            bitmap = fmmr.getFrameAtTime();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }finally {
-            if (fmmr != null){
-                fmmr.release();
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(imageUrl);
+            bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            if (bitmap != null){
+                if (bitmap.getWidth() > 640) {// 如果图片宽度规格超过640px,则进行压缩
+                    bitmap = ThumbnailUtils.extractThumbnail(bitmap,
+                            640, 480,
+                            ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+                }
             }
-        }
-        if (bitmap == null){
-            try {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(imageUrl);
-                bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            }catch (IllegalArgumentException e){
-                e.printStackTrace();
+            if (bitmap == null) {
+                fmmr.setDataSource(imageUrl);
+                bitmap = fmmr.getFrameAtTime();
+                Bitmap b2 = fmmr.getFrameAtTime(
+                        4000000,
+                        FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                if (b2 != null) {
+                    bitmap = b2;
+                }
+                if (bitmap.getWidth() > 640) {// 如果图片宽度规格超过640px,则进行压缩
+                    bitmap = ThumbnailUtils.extractThumbnail(bitmap,
+                            640, 480,
+                            ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+                }
             }
-
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            fmmr.release();
         }
         return bitmap;
     }

@@ -69,7 +69,7 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
         File[] contents = parentFolder.listFiles();
         List<DanmuFolderBean> results = new ArrayList<>();
         if (!rootPath.equals(parentFolder.getAbsolutePath()))
-            results.add(new DanmuFolderBean(parentFolder, "..." ,true, true));
+            results.add(new DanmuFolderBean(parentFolder, ".." ,true, true));
         if (contents != null) {
             for (File file : contents) {
                 DanmuFolderBean info = new DanmuFolderBean();

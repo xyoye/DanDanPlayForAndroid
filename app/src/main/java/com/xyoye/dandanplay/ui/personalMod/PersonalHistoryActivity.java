@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
@@ -17,7 +16,7 @@ import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalHistoryPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalHistoryPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalHistoryView;
-import com.xyoye.dandanplay.ui.animaMod.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,8 +29,6 @@ import butterknife.BindView;
  */
 
 public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresenter> implements PersonalHistoryView {
-    @BindView(R.id.toolbar_title)
-    TextView toolBarTitle;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -39,9 +36,7 @@ public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresent
 
     @Override
     public void initView() {
-        setTitle("");
-        toolBarTitle.setText("播放历史");
-
+        setTitle("播放历史");
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         PlayHistoryBean playHistoryBean = (PlayHistoryBean)getIntent().getSerializableExtra("bean");

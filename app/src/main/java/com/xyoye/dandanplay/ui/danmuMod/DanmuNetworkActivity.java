@@ -39,8 +39,6 @@ import butterknife.BindView;
 
 
 public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> implements DanmuNetworkView{
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -49,9 +47,7 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
 
     @Override
     public void initView() {
-        setTitle("");
-        toolbarTitle.setText("选择网络弹幕");
-
+        setTitle("选择网络弹幕");
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);

@@ -4,38 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/toolbar"
+    <include
+        android:id="@+id/layout_toolbar"
+        layout="@layout/layout_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@color/theme_color"
-        android:minHeight="48dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:titleTextAppearance="@style/Toolbar.TitleText"
-        app:layout_scrollFlags="scroll|enterAlways|snap">
-
-        <TextView
-            android:id="@id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:text=""/>
-    </android.support.v7.widget.Toolbar>
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/diver_color"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/layout_toolbar"
+        android:background="?android:attr/windowBackground">
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -2,8 +2,10 @@ package com.xyoye.dandanplay.ui.homeMod;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.xyoye.core.adapter.BaseRvAdapter;
@@ -26,6 +28,8 @@ import butterknife.BindView;
 public class AnimeFragment extends BaseFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
     @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refresh;
 
     private BaseRvAdapter<AnimeBeans.BangumiListBean> adapter;
 
@@ -50,15 +54,15 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
 
     @Override
     public void initView() {
+        refresh.setColorSchemeResources(R.color.colorPrimary);
+        //TODO:实现加载动画
+        refresh.setEnabled(false);
         AnimeBeans animeBeans;
         Bundle args = getArguments();
         if (args != null){
             animeBeans = (AnimeBeans)getArguments().getSerializable("anima");
             if (animeBeans ==null) return;
         } else  return;
-
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-
         adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(animeBeans.getBangumiList()) {
             @NonNull
             @Override
@@ -66,6 +70,7 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
                 return new AnimeItem();
             }
         };
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3){});
         recyclerView.setAdapter(adapter);
     }
 

@@ -8,8 +8,5 @@ import com.xyoye.core.interf.view.BaseMvpView;
 
 
 public interface OpenView extends BaseMvpView{
-
-    void setLastLogin(boolean lastLogin);
-
-    void loginSuccess();
+    void launch(boolean toLogin);
 }

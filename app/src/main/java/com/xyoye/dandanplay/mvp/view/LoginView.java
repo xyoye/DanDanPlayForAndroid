@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.view;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.xyoye.core.interf.view.BaseMvpView;
@@ -12,5 +13,7 @@ import com.xyoye.core.interf.view.BaseMvpView;
 public interface LoginView extends BaseMvpView {
     Context getPersonalContext();
 
-    void loginSuccess();
+    void launchMain();
+
+    Activity getActivity();
 }

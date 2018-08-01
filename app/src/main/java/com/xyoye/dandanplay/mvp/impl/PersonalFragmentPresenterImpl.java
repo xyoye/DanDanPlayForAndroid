@@ -2,15 +2,11 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
-import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.net.CommJsonObserver;
@@ -26,7 +22,7 @@ import java.util.List;
 
 public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFragmentView> implements PersonalFragmentPresenter {
 
-    private AnimaFavoriteBean favoriteBean;
+    private AnimeFavoriteBean favoriteBean;
     private PlayHistoryBean historyBean;
 
     public PersonalFragmentPresenterImpl(PersonalFragmentView view, Lifeful lifeful) {
@@ -61,20 +57,20 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
     }
 
     private void getFavorite(){
-        AnimaFavoriteBean.getFavorite(new CommJsonObserver<AnimaFavoriteBean>() {
+        AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>() {
             @Override
-            public void onSuccess(AnimaFavoriteBean animaFavoriteBean) {
-                favoriteBean = animaFavoriteBean;
-                if (animaFavoriteBean.getFavorites().size() > 3){
-                    List<AnimaFavoriteBean.FavoritesBean> beans = new ArrayList<>();
+            public void onSuccess(AnimeFavoriteBean animeFavoriteBean) {
+                favoriteBean = animeFavoriteBean;
+                if (animeFavoriteBean.getFavorites().size() > 3){
+                    List<AnimeFavoriteBean.FavoritesBean> beans = new ArrayList<>();
                     for (int i=0; i<3; i++){
-                        beans.add(animaFavoriteBean.getFavorites().get(i));
+                        beans.add(animeFavoriteBean.getFavorites().get(i));
                     }
-                    AnimaFavoriteBean animaFavoriteBeanTemp = new AnimaFavoriteBean();
-                    animaFavoriteBean.setFavorites(beans);
-                    getView().refreshFavorite(animaFavoriteBeanTemp);
+                    AnimeFavoriteBean animeFavoriteBeanTemp = new AnimeFavoriteBean();
+                    animeFavoriteBean.setFavorites(beans);
+                    getView().refreshFavorite(animeFavoriteBeanTemp);
                 }else
-                    getView().refreshFavorite(animaFavoriteBean);
+                    getView().refreshFavorite(animeFavoriteBean);
             }
 
             @Override
@@ -111,7 +107,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
     }
 
     @Override
-    public AnimaFavoriteBean getFavoriteBean() {
+    public AnimeFavoriteBean getFavoriteBean() {
         return favoriteBean;
     }
 

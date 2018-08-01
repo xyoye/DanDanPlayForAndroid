@@ -1,132 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout8"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/diver_color">
+    android:background="@color/bg_gray">
 
-    <include layout="@layout/layout_toolbar"/>
-
-    <RelativeLayout
-        android:id="@+id/screen_name_rl"
+    <android.support.v7.widget.CardView
+        android:id="@+id/password_card"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="48dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:contentPadding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/screenname_card">
 
-        <TextView
-            android:id="@+id/screen_name_tip"
+        <RelativeLayout
+            android:id="@+id/password_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:text="昵称："/>
+            android:background="@color/white"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="155dp">
 
-        <TextView
-            android:id="@+id/screen_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/screen_name_tip"
-            android:layout_marginStart="5sp"
-            android:layout_centerVertical="true"
-            android:textSize="14sp"
-            android:textColor="@color/text_black"
-            android:text=""/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:text="@string/password_tip"
+                android:textSize="14sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/change_screen_name_iv"
-            android:layout_marginEnd="5dp"
-            android:textSize="12sp"
-            android:text="修改"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="4dp"
+                android:layout_toStartOf="@+id/change_password_iv"
+                android:text="@string/modify_tip"
+                android:textSize="12sp" />
 
-        <ImageView
-            android:id="@+id/change_screen_name_iv"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/ic_arrow_gray"/>
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/change_password_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:src="@mipmap/ic_arrow_gray" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
-    <RelativeLayout
-        android:id="@+id/user_name_rl"
+    <android.support.v7.widget.CardView
+        android:id="@+id/screenname_card"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/screen_name_rl"
-        android:layout_marginTop="1dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:contentPadding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_card">
 
-        <TextView
-            android:id="@+id/user_name_tip"
+        <RelativeLayout
+            android:id="@+id/screen_name_rl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:text="账号："/>
+            android:background="@color/white"
+            tools:layout_editor_absoluteY="107dp">
 
-        <TextView
-            android:id="@+id/user_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/user_name_tip"
-            android:layout_marginStart="5sp"
-            android:layout_centerVertical="true"
-            android:textSize="14sp"
-            android:textColor="@color/text_black"
-            android:text=""/>
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/screen_name_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:text="@string/nickname_tip"
+                android:textSize="14sp" />
 
-    <RelativeLayout
-        android:id="@+id/password_rl"
+            <TextView
+                android:id="@+id/screen_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@id/screen_name_tip"
+                android:text=""
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                tools:text="测试昵称" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="4dp"
+                android:layout_toStartOf="@+id/change_screen_name_iv"
+                android:text="@string/modify_tip"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/change_screen_name_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:src="@mipmap/ic_arrow_gray" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/username_card"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@+id/user_name_rl"
-        android:layout_marginTop="1dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:contentPadding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include2">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/user_name_rl"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:text="密码"/>
+            android:background="@color/white"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="66dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/change_password_iv"
-            android:layout_marginEnd="5dp"
-            android:textSize="12sp"
-            android:text="修改"/>
+            <TextView
+                android:id="@+id/user_name_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:text="@string/page_info_username_tip"
+                android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/change_password_iv"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
-            android:layout_centerVertical="true"
-            android:src="@mipmap/ic_arrow_gray"/>
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/user_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@id/user_name_tip"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                tools:text="测试用户名" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/layout_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/login_out_bt"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/btn_corner_blue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:text="@string/logout_tip"
         android:textColor="@color/white"
         android:textSize="16sp"
-        android:text="退出登录"/>
-</RelativeLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

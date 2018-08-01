@@ -54,7 +54,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
 
         String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);
-        version = "V"+AppConfigShare.getLocalVersion(this);
+        version = AppConfigShare.getLocalVersion(this);
         versionTv.setText(version);
     }
 

@@ -29,6 +29,6 @@ For accelerated emulator: 64-bit operating system and Intel® processor with sup
         android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"
         android:visibility="gone"
-        tools:drawableBottom="@mipmap/ic_arrow_up"
+        tools:drawableBottom="@drawable/ic_keyboard_arrow_up_gray"
         tools:visibility="visible" />
 </LinearLayout>

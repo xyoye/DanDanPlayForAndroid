@@ -1,10 +1,15 @@
 package com.xyoye.dandanplay.ui.settingMod;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.core.base.BaseActivity;
@@ -27,15 +32,15 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
     public final static int SELECT_SETTING_FOLDER = 105;
 
     @BindView(R.id.path_rl)
-    RelativeLayout pathRl;
+    ConstraintLayout pathRl;
     @BindView(R.id.download_rl)
-    RelativeLayout downloadRl;
+    ConstraintLayout downloadRl;
     @BindView(R.id.version_rl)
-    RelativeLayout versionRl;
+    ConstraintLayout versionRl;
     @BindView(R.id.about_rl)
-    RelativeLayout aboutRl;
+    ConstraintLayout aboutRl;
     @BindView(R.id.feedback_rl)
-    RelativeLayout feedbackRl;
+    ConstraintLayout feedbackRl;
     @BindView(R.id.version_tv)
     TextView versionTv;
     @BindView(R.id.download_path_tv)
@@ -49,7 +54,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
 
         String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);
-        version = "V"+AppConfigShare.getLocalVersion(this);
+        version = AppConfigShare.getLocalVersion(this);
         versionTv.setText(version);
     }
 
@@ -91,16 +96,38 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                 launchActivity(AboutActivity.class);
                 break;
             case R.id.feedback_rl:
-                String android_version = "Android "+android.os.Build.VERSION.RELEASE;
-                String phone_version = android.os.Build.MODEL;
-                String app_version = getResources().getString(R.string.app_name)+" V"+version;
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                //builder.setIcon(R.drawable.ic_launcher);
+                builder.setTitle("选择反馈方式");
+                //    指定下拉列表的显示数据
+                final String[] ways = {"邮件", "Github Issue"};
+                //    设置一个下拉的列表选择项
+                builder.setItems(ways, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (ways[which].equals("邮件")) {
+                            builder.show();
+                            String android_version = "Android "+android.os.Build.VERSION.RELEASE;
+                            String phone_version = android.os.Build.MODEL;
+                            String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
 
-                Intent mail_intent = new Intent(android.content.Intent.ACTION_SEND);
-                mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com"});
-                mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹Play - 反馈");
-                mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
-                mail_intent.setType("text/plain");
-                startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
+                            Intent mail_intent = new Intent(android.content.Intent.ACTION_SEND);
+                            mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com"});
+                            mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹Play - 反馈");
+                            mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
+                            mail_intent.setType("text/plain");
+                            startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
+                        }
+                        else if (ways[which].equals("Github Issue")){
+                            Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
                 break;
         }
     }

@@ -2,7 +2,7 @@ package com.xyoye.dandanplay.net;
 
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
@@ -50,7 +50,7 @@ public interface RetrofitService {
     Observable<PersonalBean> reToken();
 
     @GET("api/v2/favorite")
-    Observable<AnimaFavoriteBean> getFavorite();
+    Observable<AnimeFavoriteBean> getFavorite();
 
     @GET("/api/v2/playhistory")
     Observable<PlayHistoryBean> getPlayHistory();

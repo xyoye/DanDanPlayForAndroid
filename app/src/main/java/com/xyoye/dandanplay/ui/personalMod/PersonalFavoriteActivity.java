@@ -9,7 +9,7 @@ import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
@@ -31,7 +31,7 @@ public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePrese
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private BaseRvAdapter<AnimaFavoriteBean.FavoritesBean> adapter;
+    private BaseRvAdapter<AnimeFavoriteBean.FavoritesBean> adapter;
 
     @Override
     public void initView() {
@@ -39,12 +39,12 @@ public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePrese
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
-        AnimaFavoriteBean favoriteBean = (AnimaFavoriteBean)getIntent().getSerializableExtra("bean");
+        AnimeFavoriteBean favoriteBean = (AnimeFavoriteBean)getIntent().getSerializableExtra("bean");
         if (favoriteBean != null){
-            adapter = new BaseRvAdapter<AnimaFavoriteBean.FavoritesBean>(favoriteBean.getFavorites()) {
+            adapter = new BaseRvAdapter<AnimeFavoriteBean.FavoritesBean>(favoriteBean.getFavorites()) {
                 @NonNull
                 @Override
-                public AdapterItem<AnimaFavoriteBean.FavoritesBean> onCreateItem(int viewType) {
+                public AdapterItem<AnimeFavoriteBean.FavoritesBean> onCreateItem(int viewType) {
                     return new PersonalFavoriteAnimaItem();
                 }
             };

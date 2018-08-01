@@ -41,14 +41,13 @@ public class WebviewActivity extends AppCompatActivity {
         ActionBar actionBar =  getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
         }
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");
         String link = intent.getStringExtra("link");
         isSelectUrl = intent.getBooleanExtra("isSelect", false);
-        toolbarTitle.setText(title);
+        setTitle(title);
         IwebView.loadUrl(link);
     }
 

@@ -16,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class AnimaFavoriteBean extends CommJsonEntity implements Serializable {
+public class AnimeFavoriteBean extends CommJsonEntity implements Serializable {
 
     private List<FavoritesBean> favorites;
 
@@ -124,7 +124,7 @@ public class AnimaFavoriteBean extends CommJsonEntity implements Serializable {
         }
     }
 
-    public static void getFavorite(CommJsonObserver<AnimaFavoriteBean> observer, NetworkConsumer consumer){
+    public static void getFavorite(CommJsonObserver<AnimeFavoriteBean> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getFavorite()
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

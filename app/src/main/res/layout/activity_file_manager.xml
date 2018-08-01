@@ -23,6 +23,7 @@
             android:id="@+id/path_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:ellipsize="start"
             android:singleLine="true"
             android:textColor="#5588FF"

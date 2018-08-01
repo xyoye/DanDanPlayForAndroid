@@ -1,12 +1,18 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -15,7 +21,7 @@ import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
@@ -37,30 +43,27 @@ import butterknife.BindView;
 
 
 public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView,View.OnClickListener {
-    @BindView(R.id.setting_iv)
-    ImageView settingIv;
     @BindView(R.id.user_info_rl)
-    RelativeLayout userInfoRl;
+    ConstraintLayout userInfoRl;
     @BindView(R.id.login_rl)
-    RelativeLayout loginRl;
+    ConstraintLayout loginRl;
     @BindView(R.id.user_image_iv)
     ImageView userImageIv;
     @BindView(R.id.user_name_tv)
     TextView userNameTv;
-    @BindView(R.id.login_tv)
-    TextView loginTv;
-    @BindView(R.id.register_tv)
-    TextView registerTv;
+    @BindView(R.id.button_login)
+    Button loginButton;
     @BindView(R.id.more_favorite_tv)
-    TextView moreFovoriteTv;
+    TextView moreFavoriteTv;
     @BindView(R.id.more_history_tv)
     TextView moreHistoryTv;
     @BindView(R.id.favorite_recycler_view)
     RecyclerView favoriteRecyclerView;
     @BindView(R.id.history_recycler_view)
     RecyclerView historyRecyclerView;
-
-    private BaseRvAdapter<AnimaFavoriteBean.FavoritesBean> favoriteAdapter;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    private BaseRvAdapter<AnimeFavoriteBean.FavoritesBean> favoriteAdapter;
     private BaseRvAdapter<PlayHistoryBean.PlayHistoryAnimesBean> historyAdapter;
 
     public static PersonalFragment newInstance(){
@@ -77,11 +80,32 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     protected int initPageLayoutId() {
         return R.layout.fragment_personal;
     }
+    public class ScrollControlGridLayoutManager extends GridLayoutManager {
+        private boolean isScrollEnabled = true;
 
+        public ScrollControlGridLayoutManager(Context context, int spanCount) {
+            super(context,spanCount);
+        }
+        public ScrollControlGridLayoutManager(Context context, int spanCount,boolean canScroll) {
+            super(context,spanCount);
+            this.isScrollEnabled = canScroll;
+        }
+        public void setScrollEnabled(boolean flag) {
+            this.isScrollEnabled = flag;
+        }
+
+        @Override
+        public boolean canScrollVertically() {
+            //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
+            return isScrollEnabled && super.canScrollVertically();
+        }
+    }
     @Override
     public void initView() {
-        favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        historyRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        setHasOptionsMenu(true);
+        getBaseActivity().setSupportActionBar(toolbar);
+        favoriteRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
+        historyRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
     }
 
     @Override
@@ -98,14 +122,29 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
             userInfoRl.setVisibility(View.GONE);
         }
     }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        getActivity().getMenuInflater().inflate(R.menu.menu_settings, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_settings:
+                launchActivity(SettingActivity.class);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
-    public void refreshFavorite(AnimaFavoriteBean favoriteBean) {
+    public void refreshFavorite(AnimeFavoriteBean favoriteBean) {
         if (favoriteBean != null){
-            favoriteAdapter = new BaseRvAdapter<AnimaFavoriteBean.FavoritesBean>(favoriteBean.getFavorites()) {
+            favoriteAdapter = new BaseRvAdapter<AnimeFavoriteBean.FavoritesBean>(favoriteBean.getFavorites()) {
                 @NonNull
                 @Override
-                public AdapterItem<AnimaFavoriteBean.FavoritesBean> onCreateItem(int viewType) {
+                public AdapterItem<AnimeFavoriteBean.FavoritesBean> onCreateItem(int viewType) {
                     return new PersonalFavoriteAnimaItem();
                 }
             };
@@ -147,12 +186,10 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     @Override
     public void initListener() {
         userInfoRl.setOnClickListener(this);
-        loginTv.setOnClickListener(this);
-        registerTv.setOnClickListener(this);
+        loginButton.setOnClickListener(this);
         userImageIv.setOnClickListener(this);
-        moreFovoriteTv.setOnClickListener(this);
+        moreFavoriteTv.setOnClickListener(this);
         moreHistoryTv.setOnClickListener(this);
-        settingIv.setOnClickListener(this);
     }
 
     @Override
@@ -177,17 +214,11 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.setting_iv:
-                launchActivity(SettingActivity.class);
-                break;
             case R.id.user_info_rl:
                 launchActivity(PersonalInfoActivity.class);
                 break;
-            case R.id.login_tv:
+            case R.id.button_login:
                 launchActivity(LoginActivity.class);
-                break;
-            case R.id.register_tv:
-                ToastUtils.showShort("此功能暂未开放");
                 break;
             case R.id.user_image_iv:
                 ToastUtils.showShort("此功能暂未开放");
@@ -211,7 +242,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 }
                 break;
         }
-
-
     }
+
 }

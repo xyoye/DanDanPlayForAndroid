@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.mvp.view;
 
 import com.xyoye.core.interf.view.BaseMvpView;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 
 /**
@@ -13,7 +13,7 @@ public interface PersonalFragmentView extends BaseMvpView {
 
     void changeView();
 
-    void refreshFavorite(AnimaFavoriteBean favoriteBean);
+    void refreshFavorite(AnimeFavoriteBean favoriteBean);
 
     void refreshHistory(PlayHistoryBean historyBean);
 }

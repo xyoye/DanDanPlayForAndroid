@@ -4,9 +4,9 @@
 
 ## 开发者
 
-@xyoye
+@xyoye (<yeshao1997@outlook.com>)
 
-@shine5402
+@shine5402 (<shine_5402@126.com>)
 
 ## 其他平台开发者
 

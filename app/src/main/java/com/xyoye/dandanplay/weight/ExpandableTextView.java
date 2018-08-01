@@ -131,7 +131,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
             if (lineCount > MAX_COLLAPSED_LINES) {
                 tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
                 tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_arrow_down, 0, 0);
+                tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
                 mCollapsedStatus.put(index, STATE_COLLAPSED);
 
             } else {
@@ -151,12 +151,12 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
                 case STATE_COLLAPSED:
                     tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
                     tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.mipmap.ic_arrow_down, 0, 0);
+                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
                     break;
                 case STATE_EXPANDED:
                     tv_expandable_content.setMaxLines(Integer.MAX_VALUE);
                     tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.mipmap.ic_arrow_up, 0, 0);
+                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_up_gray, 0, 0);
                     break;
             }
             tv_expandable_content.setText(text);
@@ -171,7 +171,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         int state = mCollapsedStatus.get(position);
         //两种状态下对应动作
         if (state == STATE_COLLAPSED) {
-            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_arrow_up, 0, 0);
+            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_up_gray, 0, 0);
             tv_expandable_content.setMaxLines(Integer.MAX_VALUE);
             mCollapsedStatus.put(position, STATE_EXPANDED);
 
@@ -179,7 +179,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
                 expandStatusChangedListener.onChanged(true);
             }
         } else if (state == STATE_EXPANDED) {
-            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_arrow_down, 0, 0);
+            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
             tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
             mCollapsedStatus.put(position, STATE_COLLAPSED);
 

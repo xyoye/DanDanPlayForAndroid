@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -79,13 +80,32 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     protected int initPageLayoutId() {
         return R.layout.fragment_personal;
     }
+    public class ScrollControlGridLayoutManager extends GridLayoutManager {
+        private boolean isScrollEnabled = true;
 
+        public ScrollControlGridLayoutManager(Context context, int spanCount) {
+            super(context,spanCount);
+        }
+        public ScrollControlGridLayoutManager(Context context, int spanCount,boolean canScroll) {
+            super(context,spanCount);
+            this.isScrollEnabled = canScroll;
+        }
+        public void setScrollEnabled(boolean flag) {
+            this.isScrollEnabled = flag;
+        }
+
+        @Override
+        public boolean canScrollVertically() {
+            //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
+            return isScrollEnabled && super.canScrollVertically();
+        }
+    }
     @Override
     public void initView() {
         setHasOptionsMenu(true);
         getBaseActivity().setSupportActionBar(toolbar);
-        favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        historyRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        favoriteRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
+        historyRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
     }
 
     @Override

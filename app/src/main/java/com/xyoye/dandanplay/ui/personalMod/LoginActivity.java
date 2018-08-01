@@ -1,7 +1,11 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +25,7 @@ import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.ui.mainMod.MainActivity;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by YE on 2018/7/22.
@@ -43,7 +48,6 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     TextView registerTv;
 
     private boolean isPShow = false;
-
     @Override
     public void initView() {
 

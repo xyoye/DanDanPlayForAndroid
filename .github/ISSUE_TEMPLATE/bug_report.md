@@ -18,7 +18,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots to help explain your problem.Use Image Hosting Services like sm.ms is a good idea.
 
 **Device (please complete the following information):**
  - Device: [e.g. Pixel 2]

@@ -32,4 +32,16 @@
     <string name="app_secret_n">Yt0G</string>
     <string name="app_secret_s">YCGK</string>
     <string name="app_secret_c">GEvp</string>
+
+    <string name="umeng_i">fa3627</string>
+    <string name="umeng_a">c1f5d</string>
+    <string name="umeng_s">5b61c</string>
+    <string name="umeng_e">d045d</string>
+    <string name="umeng_h">048a40</string>
+    <string name="umeng_g">0440</string>
+    <string name="umeng_n">900045</string>
+    <string name="umeng_m">9ff45</string>
+    <string name="umeng_v">8110045</string>
+    <string name="umeng_b">aff1</string>
+    <string name="umeng_l">bs23d</string>
 </resources>

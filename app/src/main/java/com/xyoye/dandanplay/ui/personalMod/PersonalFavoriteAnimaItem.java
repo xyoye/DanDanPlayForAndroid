@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.AnimaFavoriteBean;
+import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.weight.CornersCenterCrop;
 
@@ -21,7 +21,7 @@ import butterknife.BindView;
  */
 
 
-public class PersonalFavoriteAnimaItem implements AdapterItem<AnimaFavoriteBean.FavoritesBean> {
+public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.FavoritesBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
     @BindView(R.id.anima_title)
@@ -47,7 +47,7 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimaFavoriteBean.
     }
 
     @Override
-    public void onUpdateViews(AnimaFavoriteBean.FavoritesBean model, int position) {
+    public void onUpdateViews(AnimeFavoriteBean.FavoritesBean model, int position) {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .transform(new CornersCenterCrop(10));

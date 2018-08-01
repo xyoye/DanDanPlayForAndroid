@@ -43,4 +43,16 @@
     <string name="tip_downloading">下载中...</string>
     <string name="current_folder_tip">当前：</string>
     <string name="web_danmaku_button">网络弹幕</string>
+    <string name="login_button_tip">登录</string>
+    <string name="register_button_tip">注册</string>
+    <string name="username_tip">用户名</string>
+    <string name="my_favorite_tip">我的关注</string>
+    <string name="more_tip">更多</string>
+    <string name="play_history_tip">播放历史</string>
+    <string name="menu_item_settings">设置</string>
+    <string name="logout_tip">退出登录</string>
+    <string name="page_info_username_tip">账号：</string>
+    <string name="modify_tip">修改</string>
+    <string name="nickname_tip">昵称：</string>
+    <string name="password_tip">密码</string>
 </resources>

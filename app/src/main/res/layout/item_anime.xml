@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="188dp"
     android:layout_gravity="center"
@@ -18,7 +19,8 @@
             android:id="@+id/image_iv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            tools:layout_width="100dp" />
 
         <TextView
             android:id="@+id/anima_title"
@@ -32,7 +34,8 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/text_black"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            tools:text="测试标题" />
 
         <TextView
             android:id="@+id/status_tv"
@@ -43,7 +46,8 @@
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:text="测试状态" />
 
         <TextView
             android:id="@+id/favorite_tv"
@@ -51,11 +55,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/theme_color"
             android:textSize="12sp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:text="已关注"
+            tools:visibility="visible" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

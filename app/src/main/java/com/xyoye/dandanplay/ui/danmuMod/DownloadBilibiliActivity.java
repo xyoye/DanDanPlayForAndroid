@@ -3,11 +3,13 @@ package com.xyoye.dandanplay.ui.danmuMod;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,46 +31,42 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.download_by_av)
-    TextView downloadAvTv;
-    @BindView(R.id.download_by_url)
-    TextView downloadUrlTv;
+    @BindView(R.id.download_by_av_button)
+    Button downloadAvButton;
+    @BindView(R.id.download_by_url_button)
+    Button downloadUrlButton;
     @BindView(R.id.select_url_bt)
-    TextView selectUrlBt;
+    Button selectUrlBt;
     @BindView(R.id.av_input_et)
-    EditText avInputEt;
+    TextInputEditText avInputEt;
     @BindView(R.id.url_input_et)
-    EditText urlInputEt;
+    TextInputEditText urlInputEt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTitle(R.string.bilibili_danmaku_download_tip);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_bilibili);
         ButterKnife.bind(this);
-
         setSupportActionBar(toolbar);
         ActionBar actionBar =  getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
         }
-
-        setTitle("Bilibili弹幕下载");
-
 
         initListener();
     }
 
     private void initListener(){
-        downloadAvTv.setOnClickListener(this);
-        downloadUrlTv.setOnClickListener(this);
+        downloadAvButton.setOnClickListener(this);
+        downloadUrlButton.setOnClickListener(this);
         selectUrlBt.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.download_by_av:
+            case R.id.download_by_av_button:
                 String avNumber = avInputEt.getText().toString();
                 if (avNumber.isEmpty()){
                     ToastUtils.showShort("AV号不能为空");
@@ -79,7 +77,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
                     downloadByAvDialog.show();
                 }
                 break;
-            case R.id.download_by_url:
+            case R.id.download_by_url_button:
                 String urlLink = urlInputEt.getText().toString();
                 if (urlLink.isEmpty()){
                     ToastUtils.showShort("视频链接不能为空");

@@ -40,7 +40,7 @@
     <string name="danmaku_inexists">弹幕不存在</string>
     <string name="danmaku_exists">弹幕存在</string>
     <string name="load_danmaku">加载弹幕</string>
-    <string name="tip_downloading">下载中...</string>
+    <string name="tip_downloading">下载中…</string>
     <string name="current_folder_tip">当前：</string>
     <string name="web_danmaku_button">网络弹幕</string>
     <string name="login_button_tip">登录</string>
@@ -55,4 +55,12 @@
     <string name="modify_tip">修改</string>
     <string name="nickname_tip">昵称：</string>
     <string name="password_tip">密码</string>
+    <string name="about_us_tip">关于我们</string>
+    <string name="feedback_tip">意见反馈</string>
+    <string name="current_version_tip">当前版本：</string>
+    <string name="check_update_tip">检查</string>
+    <string name="other_feature_tip">其它功能：</string>
+    <string name="bilibili_danmaku_download_tip">Bilibili弹幕下载</string>
+    <string name="download_tip">下载</string>
+    <string name="cache_path_tip">缓存路径：</string>
 </resources>

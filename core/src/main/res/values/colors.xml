@@ -12,11 +12,11 @@
     <!-- 常用 -->
     <color name="transparent">#00000000</color>
     <color name="divide">#FFcccccc</color>
-    <color name="white">#FFffffff</color>
+    <color name="white">#ffffff</color>
     <color name="black_overlay">#66000000</color>
     <color name="ared">#e3010f</color>
     <color name="orange">#f89957</color>
-    <color name="bg_gray">#f0f0f0</color>
+    <color name="bg_gray">#f5f5f5</color>
     <color name="bg_light">#fff5ee</color>
 
     <!-- 字体颜色 -->

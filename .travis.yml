@@ -18,4 +18,4 @@ cache:
   - "$HOME/.gradle/wrapper/"
 before_install:
 - openssl aes-256-cbc -K $encrypted_fb1dcdf89999_key -iv $encrypted_fb1dcdf89999_iv
-  -in KeyUtil.java.enc -out KeyUtil.java -d
+  -in ./core/src/main/java/com/xyoye/core/utils/KeyUtil.java.enc -out ./core/src/main/java/com/xyoye/core/utils/KeyUtil.java -d

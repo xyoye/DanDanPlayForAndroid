@@ -48,8 +48,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 onTabItemSelected(tab.getPosition());
                 for (int i=0;i<mTabLayout.getTabCount();i++){
                     View view = mTabLayout.getTabAt(i).getCustomView();
-                    ImageView icon = (ImageView) view.findViewById(R.id.tab_content_image);
-                    TextView text = (TextView) view.findViewById(R.id.tab_content_text);
+                    ImageView icon = view.findViewById(R.id.tab_content_image);
+                    TextView text = view.findViewById(R.id.tab_content_text);
                     if(i == tab.getPosition()){
                         icon.setImageResource(DataGenerator.mTabResPressed[i]);
                         text.setTextColor(getResources().getColor(R.color.theme_color));

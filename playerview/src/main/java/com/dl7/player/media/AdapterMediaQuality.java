@@ -30,7 +30,7 @@ public class AdapterMediaQuality extends BaseListAdapter<MediaQualityInfo> {
         if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.adapter_media_quality, parent, false);
         }
-        TextView qualityDesc = (TextView) view.findViewById(R.id.tv_media_quality);
+        TextView qualityDesc = view.findViewById(R.id.tv_media_quality);
         qualityDesc.setText(mDatas.get(i).getDesc());
         qualityDesc.setSelected(mDatas.get(i).isSelect());
         return view;

@@ -25,7 +25,7 @@ public class OPPO implements PermissionsPage {
     }
 
     @Override
-    public Intent settingIntent() throws Exception {
+    public Intent settingIntent() {
         Intent intent = new Intent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(PACK_TAG, context.getPackageName());

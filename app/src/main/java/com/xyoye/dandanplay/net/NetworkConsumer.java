@@ -23,7 +23,7 @@ public class NetworkConsumer implements Consumer<Disposable> {
     }
 
     @Override
-    public void accept(Disposable disposable) throws Exception {
+    public void accept(Disposable disposable) {
         if (NetworkUtils.isAvailableByPing()) {
             if (display != null) {
                 display.normalNetwork();

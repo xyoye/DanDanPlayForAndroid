@@ -355,7 +355,11 @@ public class PermissionsChecker {
                 return false;
             }
         } else if (PermissionsPageManager.isXIAOMI() || PermissionsPageManager.isOPPO()) {
-            return !TextUtils.isEmpty(service.getDeviceId());
+            try{return !TextUtils.isEmpty(service.getDeviceId());}
+            catch( SecurityException e){
+                return false;
+            }
+            
         } else {
             try{
             return !TextUtils.isEmpty(service.getDeviceId()) || !TextUtils.isEmpty(service

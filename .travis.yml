@@ -20,8 +20,10 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_8d4441601686_key -iv $encrypted_8d4441601686_iv
   -in KeyUtil.java.enc -out ./core/src/main/java/com/xyoye/core/utils/KeyUtil.java
   -d
+- export ANDROID_OS=$ANDROID_TARGET
 before_script:
+  - android list targets
   # Create and start emulator
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - echo no | android create avd --force -n test -t android-26 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator

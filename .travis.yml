@@ -6,9 +6,9 @@ android:
   - tools
   - build-tools-27.0.3
   - android-27
-  - android-26
+  - android-25
   - extra-android-m2repository
-  - sys-img-x86-google_apis-26
+  - sys-img-armeabi-v7a-google_apis-25
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -24,6 +24,6 @@ before_install:
 before_script:
   - android list targets
   # Create and start emulator
-  - echo no | android create avd --force -n test -t android-26 --abi google_apis/x86 --tag "google_apis"
+  - echo no | android create avd --force -n test -t android-25 --abi google_apis/armeabi-v7a --tag "google_apis"
   - emulator -avd test -no-skin -no-audio -no-window &
   - android-wait-for-emulator

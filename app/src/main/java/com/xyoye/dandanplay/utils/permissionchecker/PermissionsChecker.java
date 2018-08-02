@@ -277,6 +277,7 @@ public class PermissionsChecker {
             return true;
         } else {
             if (!locationManager.isProviderEnabled("gps")) {
+                try{
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0F, new
                         LocationListener() {
                             @Override
@@ -299,7 +300,10 @@ public class PermissionsChecker {
                             public void onProviderDisabled(String provider) {
                                 locationManager.removeUpdates(this);
                             }
-                        });
+                        });}
+                        catch(SecurityException e) {
+                            return false;
+                        }
             }
             return granted;
         }

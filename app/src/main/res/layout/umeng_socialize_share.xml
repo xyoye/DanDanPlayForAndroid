@@ -25,7 +25,8 @@
             android:id="@+id/umeng_back"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:onClick="onBackClick">
 
             <ImageButton
                 android:layout_width="12dp"

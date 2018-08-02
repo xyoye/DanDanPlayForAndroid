@@ -21,6 +21,12 @@
 #-renamesourcefileattribute SourceFile
 -ignorewarnings
 -dontpreverify
+-dontskipnonpubliclibraryclasses
+-dontskipnonpubliclibraryclassmembers
+-verbose
+-printmapping proguardMapping.txt
+-dontusemixedcaseclassnames
+
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
 -keep class **$$ViewBinder { *; }
@@ -88,4 +94,14 @@
 -keepattributes Signature,*Annotation*,InnerClasses,RuntimeVisibleAnnotations,AnnotationDefault
 -keep class **.R$* {
     *;
+}
+-keepclassmembers class * {
+    void *(**On*Event);
+}
+-keepclassmembers class * extends android.webkit.webViewClient {
+    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
+    public boolean *(android.webkit.WebView, java.lang.String);
+}
+-keepclassmembers class * extends android.webkit.webViewClient {
+    public void *(android.webkit.webView, java.lang.String);
 }

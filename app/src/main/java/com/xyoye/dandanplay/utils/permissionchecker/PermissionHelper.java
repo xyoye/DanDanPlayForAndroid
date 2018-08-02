@@ -74,7 +74,7 @@ public class PermissionHelper {
         Observable.just(new Object()).compose(rxPermissions.ensureEach(permissions)).subscribe(new Consumer<Permission>() {
             //这里记录一下 所有
             @Override
-            public void accept(Permission permission) throws Exception {
+            public void accept(Permission permission) {
                 if (permission.granted) {
                     //尽管显示已经授权了，但是 我也不相信 各种国产手机的疑难杂症
                     boolean permissionGranted = PermissionsChecker.isPermissionGranted(mActivity, permission.name);
@@ -89,14 +89,14 @@ public class PermissionHelper {
             }
         }, new Consumer<Throwable>() {
             @Override
-            public void accept(Throwable throwable) throws Exception {
+            public void accept(Throwable throwable) {
                 //在申请权限的时候发现异常  我一律交给用户处理
                 initDialog(null);
                 permissionList = new ArrayList<Permission>();
             }
         }, new Action() {
             @Override
-            public void run() throws Exception {
+            public void run() {
                 //当上面遍历完成之后就弹出一个提示框  当然需要检测 是否有拒绝的权限
                 if (permissionList.size() > 0) {
                     initDialog(permissionList);
@@ -149,7 +149,7 @@ public class PermissionHelper {
 
 
     public interface OnSuccessListener {
-        public void onPermissionSuccess();
+        void onPermissionSuccess();
     }
 
 }

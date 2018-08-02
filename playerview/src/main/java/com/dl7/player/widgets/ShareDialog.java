@@ -39,7 +39,7 @@ public class ShareDialog extends DialogFragment {
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         View view = inflater.inflate(R.layout.dialog_share, container);
-        final ImageView photo = (ImageView) view.findViewById(R.id.iv_screenshot_photo);
+        final ImageView photo = view.findViewById(R.id.iv_screenshot_photo);
         ViewGroup.LayoutParams layoutParams = photo.getLayoutParams();
         layoutParams.width = getResources().getDisplayMetrics().widthPixels * 7 / 10;
         layoutParams.height = getResources().getDisplayMetrics().heightPixels * 7 / 10;
@@ -53,7 +53,7 @@ public class ShareDialog extends DialogFragment {
                 dismiss();
             }
         });
-        TextView tvShare = (TextView) view.findViewById(R.id.btn_share);
+        TextView tvShare = view.findViewById(R.id.btn_share);
         if (mIsShareMode) {
             tvShare.setText("分享");
         }

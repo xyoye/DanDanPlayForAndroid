@@ -115,7 +115,7 @@ public class AudioRecordManager {
      * @param path
      * @throws IOException
      */
-    public void startRecord(String path) throws IOException, InterruptedException {
+    public void startRecord(String path) throws IOException {
         setPath(path);
         startThread();
     }

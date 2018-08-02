@@ -179,7 +179,7 @@ public final class OkHttpEngine implements Engine {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
 
             }
 
@@ -286,7 +286,7 @@ public final class OkHttpEngine implements Engine {
         return cookieHeader.toString();
     }
 
-    public void receiveHeaders(Headers headers, Request userRequest) throws IOException {
+    public void receiveHeaders(Headers headers, Request userRequest) {
         if (mOkHttpClient.cookieJar() == CookieJar.NO_COOKIES) return;
 
         List<Cookie> cookies = Cookie.parseAll(userRequest.url(), headers);

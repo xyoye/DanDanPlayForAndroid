@@ -12,3 +12,4 @@ gradle.xml
 .idea/libraries/*.xml
 *.iws
 *.iml
+gradle.properties

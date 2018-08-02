@@ -349,12 +349,20 @@ public class PermissionsChecker {
         TelephonyManager service = (TelephonyManager) activity.getSystemService
                 (TELEPHONY_SERVICE);
         if (PermissionsPageManager.isMEIZU()) {
-            return !TextUtils.isEmpty(service.getSubscriberId());
+            try{
+            return !TextUtils.isEmpty(service.getSubscriberId());}
+            catch( SecurityException e){
+                return false;
+            }
         } else if (PermissionsPageManager.isXIAOMI() || PermissionsPageManager.isOPPO()) {
             return !TextUtils.isEmpty(service.getDeviceId());
         } else {
+            try{
             return !TextUtils.isEmpty(service.getDeviceId()) || !TextUtils.isEmpty(service
-                    .getSubscriberId());
+                    .getSubscriberId());}
+                    catch( SecurityException e){
+                        return false;
+                    }
         }
     }
 

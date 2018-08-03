@@ -12,3 +12,5 @@ gradle.xml
 .idea/libraries/*.xml
 *.iws
 *.iml
+*.jks
+PASSWORD.txt

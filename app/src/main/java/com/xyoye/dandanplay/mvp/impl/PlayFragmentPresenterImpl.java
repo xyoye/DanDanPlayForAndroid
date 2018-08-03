@@ -91,7 +91,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         Observable.just(file)
                 .flatMap(new Function<File, Observable<File>>() {
                     @Override
-                    public Observable<File> apply(File file) throws Exception {
+                    public Observable<File> apply(File file) {
                         return listFiles(file);
                     }
                 })
@@ -139,7 +139,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                 name.startsWith(".")){
             return Observable.just(f).filter(new Predicate<File>() {
                 @Override
-                public boolean test(File file) throws Exception {
+                public boolean test(File file) {
                     return false;
                 }
             });
@@ -154,7 +154,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         } else {
             return Observable.just(f).filter(new Predicate<File>() {
                 @Override
-                public boolean test(File file) throws Exception {
+                public boolean test(File file) {
                     return f.exists() && f.canRead() && isVideo(f);
                 }
             });

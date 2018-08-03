@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
+import com.umeng.socialize.UMShareAPI;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.params.LoginParam;
@@ -77,7 +79,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.login_return_iv:
-                LoginActivity.this.finish();
+                launchMain();
                 break;
             case R.id.user_password_eye_iv:
                 if (!isPShow){
@@ -120,7 +122,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     }
 
     @Override
-    public void loginSuccess() {
+    public void launchMain() {
         if(getIntent().getBooleanExtra("isOpen", false))
             launchActivity(MainActivity.class);
         else
@@ -128,7 +130,18 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     }
 
     @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
     protected void setStatusBar() {
         StatusBarUtil.setTranslucentForImageView(this,null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 }

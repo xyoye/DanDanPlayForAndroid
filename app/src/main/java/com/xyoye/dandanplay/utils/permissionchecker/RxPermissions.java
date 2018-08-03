@@ -63,7 +63,7 @@ public class RxPermissions {
                         .buffer(permissions.length)
                         .flatMap(new Function<List<Permission>, ObservableSource<Boolean>>() {
                             @Override
-                            public ObservableSource<Boolean> apply(List<Permission> permissions) throws Exception {
+                            public ObservableSource<Boolean> apply(List<Permission> permissions) {
                                 if (permissions.isEmpty()) {
                                     // Occurs during orientation change, when the subject receives onComplete.
                                     // In that case we don't want to propagate that empty list to the
@@ -111,7 +111,7 @@ public class RxPermissions {
         return oneOf(trigger, pending(permissions))
                 .flatMap(new Function<Object, Observable<Permission>>() {
                     @Override
-                    public Observable<Permission> apply(Object o) throws Exception {
+                    public Observable<Permission> apply(Object o) {
                         return requestImplementation(permissions);
                     }
                 });

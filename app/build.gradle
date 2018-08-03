@@ -31,6 +31,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+    lintOptions{
+        lintConfig file("lint.xml")
+    }
 }
 
 dependencies {
@@ -55,4 +58,15 @@ dependencies {
     api 'com.android.support:cardview-v7:27.1.1'
     api 'org.jsoup:jsoup:1.11.2'
     //api 'com.cjj.materialrefeshlayout:library:1.3.0'
+    implementation files('libs/umeng-share-QQ-simplify-6.9.3.jar')
+    implementation files('libs/umeng-sharetool-6.9.3.jar')
+    implementation files('libs/umeng-share-core-6.9.3.jar')
+    implementation files('libs/umeng-common-1.5.3.jar')
+        // Required for local unit tests (JUnit 4 framework)
+    testImplementation 'junit:junit:4.12'
+
+    // Required for instrumented tests
+    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+
 }

@@ -92,18 +92,17 @@ public class BiliDanmakuParser extends BaseDanmakuParser {
         }
 
         @Override
-        public void startDocument() throws SAXException {
+        public void startDocument() {
             result = new Danmakus(ST_BY_TIME, false, mContext.getBaseComparator());
         }
 
         @Override
-        public void endDocument() throws SAXException {
+        public void endDocument() {
             completed = true;
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes)
-                throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
             String tagName = localName.length() != 0 ? localName : qName;
             tagName = tagName.toLowerCase(Locale.getDefault()).trim();
             if (tagName.equals("d")) {
@@ -137,7 +136,7 @@ public class BiliDanmakuParser extends BaseDanmakuParser {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if (item != null && item.text != null) {
                 if (item.duration != null) {
                     String tagName = localName.length() != 0 ? localName : qName;
@@ -256,7 +255,7 @@ public class BiliDanmakuParser extends BaseDanmakuParser {
                                             points[i][1] = parseFloat(pointArray[1]);
                                         }
                                     }
-                                    mContext.mDanmakuFactory.fillLinePathData(item, points, mDispScaleX,
+                                    DanmakuFactory.fillLinePathData(item, points, mDispScaleX,
                                             mDispScaleY);
                                 }
                             }

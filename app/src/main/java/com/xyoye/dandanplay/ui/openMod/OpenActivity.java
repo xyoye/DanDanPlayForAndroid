@@ -33,24 +33,9 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
     @BindView(R.id.image_iv)
     ImageView imageView;
 
-    private boolean loginStatus = false;
-    private boolean isLastLogin = false;
-
     @Override
     protected void process(Bundle savedInstanceState) {
         super.process(savedInstanceState);
-
-        Handler handler = getHandler();
-        handler.postDelayed(new LifefulRunnable(() -> {
-            if (loginStatus || !isLastLogin)
-                launchActivity(MainActivity.class);
-            else {
-                Intent intent = new Intent(OpenActivity.this, LoginActivity.class);
-                intent.putExtra("isOpen", true);
-                startActivity(intent);
-            }
-            this.finish();
-        }, this), 2000); //2秒等待时间是用于登录账户
     }
 
     @Override
@@ -92,17 +77,21 @@ public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenVie
     }
 
     @Override
-    public void setLastLogin(boolean lastLogin) {
-        isLastLogin = lastLogin;
-    }
-
-    @Override
     protected void setStatusBar() {
         StatusBarUtil.setTranslucentForImageView(this,null);
     }
 
     @Override
-    public void loginSuccess() {
-        loginStatus = true;
+    public void launch(boolean toLogin) {
+        if (!toLogin)
+            launchActivity(MainActivity.class);
+        else {
+            Intent intent = new Intent(OpenActivity.this, LoginActivity.class);
+            intent.putExtra("isOpen", true);
+            startActivity(intent);
+        }
+        this.finish();
     }
+
+
 }

@@ -63,4 +63,8 @@
     <string name="bilibili_danmaku_download_tip">Bilibili弹幕下载</string>
     <string name="download_tip">下载</string>
     <string name="cache_path_tip">缓存路径：</string>
+    <string name="ok_button_tip">确定</string>
+    <string name="download_by_av_tip">输入av号以下载</string>
+    <string name="choose_link_form_bilibili_button_tip">在Bilibili网站上选择一个链接</string>
+    <string name="download_by_link_tip">输入链接以下载</string>
 </resources>

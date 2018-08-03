@@ -29,3 +29,11 @@ before_script:
 dd:
 - openssl aes-256-cbc -K $encrypted_675e62533889_key -iv $encrypted_675e62533889_iv
   -in keystore.jks.enc -out keystore.jks -d
+deploy:
+  provider: releases
+  api_key:
+    secure: kFyg4v/ugP2G3ecHY4w4AFs1kDlQEkq1hvBdlk+RChuEZ4VB7N0Pn9gcA4M06Z68wYz/rjA5puj53mZQVK8ExqCXvwag2SyX36IZUZCFoNhn1yrB6nU44pu0H7EvjghCsr+awBonTo8gdEsk8v/6bBgvKF3RjwJ0/aUPXESPNYm35hnzXcaUTyyLxTENYduxWQA5kzCCM8/EJgxnp5cJIElkp6K/HK0V+vElJ+rwrFhzXSkSf2BV/WcbmuXf2zVlL165/Lk+zAP7t9k6G0PZGARv5g05GLyJlDPvC15EG/mdPzWOFH3ZZD2/eVHqxSXXaT2Y0JnXvSV3goI8+lhkJIkcEnvPVddoW0kuUsJgxvPgytJSr6bLWuf7RaHey8c9C6d8qKIhdGZTw9uqp253F29Z4MJCxjQki2KvdmTeAKYIY58dK8K6uChrCn1gNlZroa9puHURdcQfPEA/+wug3HIT2ZyZFsk0mgkXmJ37guhXUIQIiTnzKPa99OHkTzqZZClZoSac2sLujACjsCncHH9JMeKZS7rAUxYHO0hIr0Q6W3oYWySdfSF0AIYlyXcfFfWuGCmuG+8McTZRfkABE6q057zSr9pZNoqNM/YqdtaN91GmZWYcQXne+ClApleFrYjpa6CClDsWLiEtf5Sw4lcB5sIK4BvIy4mIbI4yP0I=
+  file: /app/release/app-release.apk
+  skip_cleanup: true
+  on:
+    tags: true

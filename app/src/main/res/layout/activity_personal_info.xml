@@ -128,7 +128,7 @@
         app:layout_constraintTop_toBottomOf="@+id/include2">
 
         <RelativeLayout
-            android:id="@+id/user_name_rl"
+            android:id="@+id/user_name_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"

@@ -33,7 +33,7 @@
     <!-- 红色 -->
     <color name="black_color">#000000</color>
     <!-- 黑色 -->
-    <color name="gray_color">#E5E5E5</color>
+    <color name="gray_color">#f6f6f6</color>
     <!-- 灰色 -->
     <color name="gray_color2">#777777</color>
     <color name="gray_color3">#9b9b9b</color>

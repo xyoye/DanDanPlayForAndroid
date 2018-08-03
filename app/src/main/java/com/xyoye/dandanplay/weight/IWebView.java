@@ -163,11 +163,7 @@ public class IWebView extends WebView {
             if (TextUtils.isEmpty(scheme)) return true;
             if (scheme.equals("nativeapi")) {
                 return true;
-            } else if (scheme.equals("http") || scheme.equals("https")) {
-                return false;
-            }else {
-                return true;
-            }
+            } else return !scheme.equals("http") && !scheme.equals("https");
         }
 
         @Override

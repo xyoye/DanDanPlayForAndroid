@@ -49,7 +49,7 @@ public class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap result) {
-        ImageView iv = (ImageView) view.findViewWithTag(imageUrl);
+        ImageView iv = view.findViewWithTag(imageUrl);
         if (iv != null && result != null) {
             iv.setImageBitmap(result);
         }

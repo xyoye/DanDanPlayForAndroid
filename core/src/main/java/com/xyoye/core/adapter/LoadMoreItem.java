@@ -49,8 +49,8 @@ public class LoadMoreItem implements AdapterItem, FootLoading {
     public void initItemViews(View itemView) {
         gloaH = PixelUtil.getScreenH();
         this.itemView = itemView;
-        tv = (TextView) itemView.findViewById(R.id.loading_tv);
-        bar = (ProgressBar) itemView.findViewById(R.id.loading_progress);
+        tv = itemView.findViewById(R.id.loading_tv);
+        bar = itemView.findViewById(R.id.loading_progress);
         setIndexLoadMoreState(isCanLoading);
     }
 

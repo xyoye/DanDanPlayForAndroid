@@ -125,12 +125,12 @@ public class CommonNavigator extends FrameLayout implements IPagerNavigator, Nav
             root = LayoutInflater.from(getContext()).inflate(R.layout.pager_navigator_layout, this);
         }
 
-        mScrollView = (HorizontalScrollView) root.findViewById(R.id.scroll_view);   // mAdjustMode为true时，mScrollView为null
+        mScrollView = root.findViewById(R.id.scroll_view);   // mAdjustMode为true时，mScrollView为null
 
-        mTitleContainer = (LinearLayout) root.findViewById(R.id.title_container);
+        mTitleContainer = root.findViewById(R.id.title_container);
         mTitleContainer.setPadding(mLeftPadding, 0, mRightPadding, 0);
 
-        mIndicatorContainer = (LinearLayout) root.findViewById(R.id.indicator_container);
+        mIndicatorContainer = root.findViewById(R.id.indicator_container);
         if (mIndicatorOnTop) {
             mIndicatorContainer.getParent().bringChildToFront(mIndicatorContainer);
         }

@@ -160,7 +160,7 @@ public class PermissionsChecker {
      * @param activity
      * @return true if success
      */
-    private static boolean checkReadCalendar(Activity activity) throws Exception {
+    private static boolean checkReadCalendar(Activity activity) {
         Cursor cursor = activity.getContentResolver().query(Uri.parse("content://com" +
                 ".android.calendar/calendars"), null, null, null, null);
         if (cursor != null) {
@@ -177,7 +177,7 @@ public class PermissionsChecker {
      * @param activity
      * @return true if success
      */
-    private static boolean checkWriteCallLog(Activity activity) throws Exception {
+    private static boolean checkWriteCallLog(Activity activity) {
         ContentResolver contentResolver = activity.getContentResolver();
         ContentValues content = new ContentValues();
         content.put(CallLog.Calls.TYPE, CallLog.Calls.INCOMING_TYPE);
@@ -202,7 +202,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkReadSms(Activity activity) throws Exception {
+    private static boolean checkReadSms(Activity activity) {
         Cursor cursor = activity.getContentResolver().query(Uri.parse("content://sms/"), null, null,
                 null, null);
         if (cursor != null) {
@@ -226,7 +226,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkWriteStorage(Activity activity) throws Exception {
+    private static boolean checkWriteStorage(Activity activity) {
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).getPath(), TAG);
         if (!file.exists()) {
@@ -250,7 +250,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkReadStorage(Activity activity) throws Exception {
+    private static boolean checkReadStorage(Activity activity) {
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).getPath());
         File[] files = file.listFiles();
@@ -265,7 +265,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkLocation(Activity activity) throws Exception {
+    private static boolean checkLocation(Activity activity) {
         granted = false;
         final LocationManager locationManager = (LocationManager) activity.getSystemService(Context
                 .LOCATION_SERVICE);
@@ -277,6 +277,7 @@ public class PermissionsChecker {
             return true;
         } else {
             if (!locationManager.isProviderEnabled("gps")) {
+                try{
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0F, new
                         LocationListener() {
                             @Override
@@ -299,7 +300,10 @@ public class PermissionsChecker {
                             public void onProviderDisabled(String provider) {
                                 locationManager.removeUpdates(this);
                             }
-                        });
+                        });}
+                        catch(SecurityException e) {
+                            return false;
+                        }
             }
             return granted;
         }
@@ -312,7 +316,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkBodySensors(Activity activity) throws Exception {
+    private static boolean checkBodySensors(Activity activity) {
         SensorManager sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
         Sensor sensor = sensorManager.getDefaultSensor((Sensor.TYPE_ACCELEROMETER));
         SensorEventListener listener = new SensorEventListener() {
@@ -341,16 +345,28 @@ public class PermissionsChecker {
      * @throws Exception
      */
     @SuppressLint("HardwareIds")
-    private static boolean checkReadPhoneState(Activity activity) throws Exception {
+    private static boolean checkReadPhoneState(Activity activity) {
         TelephonyManager service = (TelephonyManager) activity.getSystemService
                 (TELEPHONY_SERVICE);
         if (PermissionsPageManager.isMEIZU()) {
-            return !TextUtils.isEmpty(service.getSubscriberId());
+            try{
+            return !TextUtils.isEmpty(service.getSubscriberId());}
+            catch( SecurityException e){
+                return false;
+            }
         } else if (PermissionsPageManager.isXIAOMI() || PermissionsPageManager.isOPPO()) {
-            return !TextUtils.isEmpty(service.getDeviceId());
+            try{return !TextUtils.isEmpty(service.getDeviceId());}
+            catch( SecurityException e){
+                return false;
+            }
+            
         } else {
+            try{
             return !TextUtils.isEmpty(service.getDeviceId()) || !TextUtils.isEmpty(service
-                    .getSubscriberId());
+                    .getSubscriberId());}
+                    catch( SecurityException e){
+                        return false;
+                    }
         }
     }
 
@@ -361,7 +377,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkReadCallLog(Activity activity) throws Exception {
+    private static boolean checkReadCallLog(Activity activity) {
         Cursor cursor = activity.getContentResolver().query(Uri.parse
                         ("content://call_log/calls"), null, null,
                 null, null);
@@ -429,7 +445,7 @@ public class PermissionsChecker {
      * @return true if success
      * @throws Exception
      */
-    private static boolean checkReadContacts(Activity activity) throws Exception {
+    private static boolean checkReadContacts(Activity activity) {
         Cursor cursor = activity.getContentResolver().query(ContactsContract.CommonDataKinds.Phone
                 .CONTENT_URI, null, null, null, null);
         if (cursor != null) {

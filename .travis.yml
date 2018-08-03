@@ -8,6 +8,7 @@ android:
   - android-27
   - android-22
   - extra-android-m2repository
+  - sys-img-armeabi-v7a-android-22
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

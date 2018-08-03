@@ -17,18 +17,14 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_install:
-- openssl aes-256-cbc -K $encrypted_675e62533889_key -iv $encrypted_675e62533889_iv
-  -in KeyUtil.java.enc -out ./core/src/main/java/com/xyoye/core/utils/KeyUtil.java
-  -d
-- export ANDROID_OS=$ANDROID_TARGET
+  - openssl aes-256-cbc -K $encrypted_675e62533889_key -iv $encrypted_675e62533889_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
+  - export ANDROID_OS=$ANDROID_TARGET
 before_script:
-- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-- emulator -avd test -no-audio -no-window &
-- android-wait-for-emulator
-- adb shell input keyevent 82 &
-dd:
-- openssl aes-256-cbc -K $encrypted_675e62533889_key -iv $encrypted_675e62533889_iv
-  -in keystore.jks.enc -out keystore.jks -d
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
 deploy:
   provider: releases
   api_key:

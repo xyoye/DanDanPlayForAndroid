@@ -19,6 +19,7 @@ import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
 import com.xyoye.dandanplay.ui.danmuMod.DownloadBilibiliActivity;
 import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
+import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import butterknife.BindView;
@@ -93,7 +94,10 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                 Beta.checkUpgrade(false,false);
                 break;
             case R.id.about_rl:
-                launchActivity(AboutActivity.class);
+                Intent intent_about = new Intent(SettingActivity.this, WebviewActivity.class);
+                intent_about.putExtra("title","关于");
+                intent_about.putExtra("link", "file:///android_asset/About_in_application.html");
+                startActivity(intent_about);
                 break;
             case R.id.feedback_rl:
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
@@ -114,7 +118,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                             String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
 
                             Intent mail_intent = new Intent(android.content.Intent.ACTION_SEND);
-                            mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com"});
+                            mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com,shine_5402@126.com"});
                             mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹Play - 反馈");
                             mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
                             mail_intent.setType("text/plain");

@@ -4,31 +4,6 @@
     <string name="add_video_folder">添加文件夹</string>
     <string name="select_video_folder">选择文件夹</string>
 
-    <string name="about">
-        弹弹Play APP\n\n
-
-        弹弹play是一款能够播放本地视频的弹幕播放器。\n\n
-
-        功能介绍：\n
-        一、动漫追番\n
-        &#160;&#160;&#160;&#160;
-        你可以在弹弹Play持续关注你的喜欢的最新番剧。\n\n
-
-        二、视频+弹幕播放\n
-        &#160;&#160;&#160;&#160;
-        目前弹弹Play支持本地弹幕加载与网络弹幕加载\n\n
-
-        其它：\n
-        一、弹弹Play APP目前不进行任何盈利性行为，
-        仅供各位弹幕爱好者交流学习使用。如有修改本模块（修改变更，反编译）等信息后所发布的文件与本人无关。\n\n
-
-        二、感谢一代目APP开发者：shiwentao666，感谢dandanplay作者提供的相关接口\n\n\n\n
-
-        开发者：xyoye、shine_5402\n
-        联系方式：yeshao1997@outlook.com\n
-        GitHub：https://github.com/xyoye/DanDanPlayForAndroid
-
-    </string>
     <string name="home_title">公告与番组</string>
     <string name="anime_detail_title">番组详情</string>
     <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
@@ -63,4 +38,8 @@
     <string name="bilibili_danmaku_download_tip">Bilibili弹幕下载</string>
     <string name="download_tip">下载</string>
     <string name="cache_path_tip">缓存路径：</string>
+    <string name="ok_button_tip">确定</string>
+    <string name="download_by_av_tip">输入av号以下载</string>
+    <string name="choose_link_form_bilibili_button_tip">在Bilibili网站上选择一个链接</string>
+    <string name="download_by_link_tip">输入链接以下载</string>
 </resources>

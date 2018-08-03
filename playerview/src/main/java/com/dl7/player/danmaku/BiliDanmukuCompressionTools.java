@@ -82,7 +82,7 @@ public class BiliDanmukuCompressionTools {
     }
 
 
-    static byte[] decompressXML(byte[] data) throws DataFormatException {
+    static byte[] decompressXML(byte[] data) {
 
         byte[] dest = new byte[data.length + 2];
         System.arraycopy(data, 0, dest, 2, data.length);

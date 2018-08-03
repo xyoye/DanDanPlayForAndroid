@@ -32,7 +32,6 @@ public class AboutActivity extends AppCompatActivity {
         ActionBar actionBar =  getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
         }
 
         setTitle("关于");

@@ -107,9 +107,7 @@ public class ScrollableHelper {
                     return true;
                 }*/
                 int isFirst = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
-                if (childAt == null || isFirst == 0) {
-                    return true;
-                }
+                return childAt == null || isFirst == 0;
             }
         }
         return false;
@@ -119,9 +117,7 @@ public class ScrollableHelper {
         if (adapterView != null) {
             int firstVisiblePosition = adapterView.getFirstVisiblePosition();
             View childAt = adapterView.getChildAt(0);
-            if (childAt == null || (firstVisiblePosition == 0 && childAt.getTop() == 0)) {
-                return true;
-            }
+            return childAt == null || (firstVisiblePosition == 0 && childAt.getTop() == 0);
         }
         return false;
     }

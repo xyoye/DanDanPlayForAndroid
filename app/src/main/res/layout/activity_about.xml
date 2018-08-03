@@ -9,9 +9,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="58dp"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:paddingTop="10dp"
         android:textSize="14sp"
         android:textColor="@color/text_black"
         android:lineSpacingExtra="1.2dp"

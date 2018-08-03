@@ -244,31 +244,31 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             throw new IllegalArgumentException("Context must be AppCompatActivity");
         }
         View.inflate(context, R.layout.layout_player_view, this);
-        mVideoView = (IjkVideoView) findViewById(R.id.video_view);
-        mPlayerThumb = (ImageView) findViewById(R.id.iv_thumb);
-        mLoadingView = (ProgressBar) findViewById(R.id.pb_loading);
-        mTvVolume = (TextView) findViewById(R.id.tv_volume);
-        mTvBrightness = (TextView) findViewById(R.id.tv_brightness);
-        mTvFastForward = (TextView) findViewById(R.id.tv_fast_forward);
-        mFlTouchLayout = (FrameLayout) findViewById(R.id.fl_touch_layout);
-        mIvBack = (ImageView) findViewById(R.id.iv_back);
-        mTvTitle = (MarqueeTextView) findViewById(R.id.tv_title);
-        mFullscreenTopBar = (LinearLayout) findViewById(R.id.fullscreen_top_bar);
-        mIvBackWindow = (ImageView) findViewById(R.id.iv_back_window);
-        mWindowTopBar = (FrameLayout) findViewById(R.id.window_top_bar);
-        mIvPlay = (ImageView) findViewById(R.id.iv_play);
-        mTvCurTime = (TextView) findViewById(R.id.tv_cur_time);
-        mPlayerSeek = (SeekBar) findViewById(R.id.player_seek);
-        mTvEndTime = (TextView) findViewById(R.id.tv_end_time);
-        mIvFullscreen = (ImageView) findViewById(R.id.iv_fullscreen);
-        mLlBottomBar = (LinearLayout) findViewById(R.id.ll_bottom_bar);
-        mFlVideoBox = (FrameLayout) findViewById(R.id.fl_video_box);
-        mIvPlayerLock = (ImageView) findViewById(R.id.iv_player_lock);
-        mIvPlayCircle = (ImageView) findViewById(R.id.iv_play_circle);
-        mTvRecoverScreen = (TextView) findViewById(R.id.tv_recover_screen);
+        mVideoView = findViewById(R.id.video_view);
+        mPlayerThumb = findViewById(R.id.iv_thumb);
+        mLoadingView = findViewById(R.id.pb_loading);
+        mTvVolume = findViewById(R.id.tv_volume);
+        mTvBrightness = findViewById(R.id.tv_brightness);
+        mTvFastForward = findViewById(R.id.tv_fast_forward);
+        mFlTouchLayout = findViewById(R.id.fl_touch_layout);
+        mIvBack = findViewById(R.id.iv_back);
+        mTvTitle = findViewById(R.id.tv_title);
+        mFullscreenTopBar = findViewById(R.id.fullscreen_top_bar);
+        mIvBackWindow = findViewById(R.id.iv_back_window);
+        mWindowTopBar = findViewById(R.id.window_top_bar);
+        mIvPlay = findViewById(R.id.iv_play);
+        mTvCurTime = findViewById(R.id.tv_cur_time);
+        mPlayerSeek = findViewById(R.id.player_seek);
+        mTvEndTime = findViewById(R.id.tv_end_time);
+        mIvFullscreen = findViewById(R.id.iv_fullscreen);
+        mLlBottomBar = findViewById(R.id.ll_bottom_bar);
+        mFlVideoBox = findViewById(R.id.fl_video_box);
+        mIvPlayerLock = findViewById(R.id.iv_player_lock);
+        mIvPlayCircle = findViewById(R.id.iv_play_circle);
+        mTvRecoverScreen = findViewById(R.id.tv_recover_screen);
         // 视频宽高比设置
-        mTvSettings = (TextView) findViewById(R.id.tv_settings);
-        mAspectRatioOptions = (RadioGroup) findViewById(R.id.aspect_ratio_group);
+        mTvSettings = findViewById(R.id.tv_settings);
+        mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
         mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
         mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -1650,9 +1650,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _initMediaQuality() {
         mMediaQualityDesc = getResources().getStringArray(R.array.media_quality);
         mFlMediaQuality = findViewById(R.id.fl_media_quality);
-        mIvMediaQuality = (TextView) findViewById(R.id.iv_media_quality);
+        mIvMediaQuality = findViewById(R.id.iv_media_quality);
         mIvMediaQuality.setOnClickListener(this);
-        mLvMediaQuality = (ListView) findViewById(R.id.lv_media_quality);
+        mLvMediaQuality = findViewById(R.id.lv_media_quality);
         mQualityAdapter = new AdapterMediaQuality(mAttachActivity);
         mLvMediaQuality.setAdapter(mQualityAdapter);
         mLvMediaQuality.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -1770,9 +1770,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     private void _initVideoSkip() {
         mLlSkipLayout = findViewById(R.id.ll_skip_layout);
-        mIvCancelSkip = (ImageView) findViewById(R.id.iv_cancel_skip);
-        mTvSkipTime = (TextView) findViewById(R.id.tv_skip_time);
-        mTvDoSkip = (TextView) findViewById(R.id.tv_do_skip);
+        mIvCancelSkip = findViewById(R.id.iv_cancel_skip);
+        mTvSkipTime = findViewById(R.id.tv_skip_time);
+        mTvDoSkip = findViewById(R.id.tv_do_skip);
         mIvCancelSkip.setOnClickListener(this);
         mTvDoSkip.setOnClickListener(this);
     }
@@ -1927,15 +1927,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     private void _initDanmaku() {
         // 弹幕控制
-        mDanmakuView = (IDanmakuView) findViewById(R.id.sv_danmaku);
-        mIvDanmakuControl = (ImageView) findViewById(R.id.iv_danmaku_control);
-        mTvOpenEditDanmaku = (TextView) findViewById(R.id.tv_open_edit_danmaku);
-        mTvTimeSeparator = (TextView) findViewById(R.id.tv_separator);
+        mDanmakuView = findViewById(R.id.sv_danmaku);
+        mIvDanmakuControl = findViewById(R.id.iv_danmaku_control);
+        mTvOpenEditDanmaku = findViewById(R.id.tv_open_edit_danmaku);
+        mTvTimeSeparator = findViewById(R.id.tv_separator);
         mEditDanmakuLayout = findViewById(R.id.ll_edit_danmaku);
-        mEtDanmakuContent = (EditText) findViewById(R.id.et_danmaku_content);
-        mIvCancelSend = (ImageView) findViewById(R.id.iv_cancel_send);
-        mIvDoSend = (ImageView) findViewById(R.id.iv_do_send);
-        mDanmakuPlayerSeek = (SeekBar) findViewById(R.id.danmaku_player_seek);
+        mEtDanmakuContent = findViewById(R.id.et_danmaku_content);
+        mIvCancelSend = findViewById(R.id.iv_cancel_send);
+        mIvDoSend = findViewById(R.id.iv_do_send);
+        mDanmakuPlayerSeek = findViewById(R.id.danmaku_player_seek);
         mDanmakuPlayerSeek.setMax(MAX_VIDEO_SEEK);
         mDanmakuPlayerSeek.setOnSeekBarChangeListener(mSeekListener);
         mIvDanmakuControl.setOnClickListener(this);
@@ -1955,11 +1955,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmakuOptionsBasic = findViewById(R.id.input_options_basic);
         mDanmakuMoreOptions = findViewById(R.id.input_options_more);
         mDanmakuMoreOptions.setOnClickListener(this);
-        mDanmakuCurColor = (RadioButton) findViewById(R.id.input_options_color_current);
-        mDanmakuMoreColorIcon = (ImageView) findViewById(R.id.input_options_color_more_icon);
-        mDanmakuTextSizeOptions = (RadioGroup) findViewById(R.id.input_options_group_textsize);
-        mDanmakuTypeOptions = (RadioGroup) findViewById(R.id.input_options_group_type);
-        mDanmakuColorOptions = (RadioGroup) findViewById(R.id.input_options_color_group);
+        mDanmakuCurColor = findViewById(R.id.input_options_color_current);
+        mDanmakuMoreColorIcon = findViewById(R.id.input_options_color_more_icon);
+        mDanmakuTextSizeOptions = findViewById(R.id.input_options_group_textsize);
+        mDanmakuTypeOptions = findViewById(R.id.input_options_group_type);
+        mDanmakuColorOptions = findViewById(R.id.input_options_color_group);
         mDanmakuTextSizeOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -2366,15 +2366,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * 初始化电量、锁屏、时间处理
      */
     private void _initReceiver() {
-        mPbBatteryLevel = (ProgressBar) findViewById(R.id.pb_battery);
-        mTvSystemTime = (TextView) findViewById(R.id.tv_system_time);
+        mPbBatteryLevel = findViewById(R.id.pb_battery);
+        mTvSystemTime = findViewById(R.id.tv_system_time);
         mTvSystemTime.setText(StringUtils.getCurFormatTime());
         mBatteryReceiver = new BatteryBroadcastReceiver();
         mScreenReceiver = new ScreenBroadcastReceiver();
         //注册接受广播
         mAttachActivity.registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mAttachActivity.registerReceiver(mScreenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        mIvScreenshot = (ImageView) findViewById(R.id.iv_screenshot);
+        mIvScreenshot = findViewById(R.id.iv_screenshot);
         mIvScreenshot.setOnClickListener(this);
         if (SDCardUtils.isAvailable()) {
             _createSaveDir(SDCardUtils.getRootPath() + File.separator + "IjkPlayView");

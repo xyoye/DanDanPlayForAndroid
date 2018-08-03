@@ -43,7 +43,7 @@ public class FileMediaDataSource implements IMediaDataSource {
     }
 
     @Override
-    public long getSize() throws IOException {
+    public long getSize() {
         return mFileSize;
     }
 

@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.dl7.playerview.test", appContext.getPackageName());
+        assertEquals("com.dl7.player.test", appContext.getPackageName());
     }
 }

@@ -32,8 +32,8 @@ public class LvLoadItem implements FootLoading {
         gloaH = PixelUtil.getScreenH();
         params = new AbsListView.LayoutParams(PixelUtil.getScreenW(), gloaH / 12);
         itemView.setLayoutParams(params);
-        tv = (TextView) itemView.findViewById(R.id.loading_tv);
-        bar = (ProgressBar) itemView.findViewById(R.id.loading_progress);
+        tv = itemView.findViewById(R.id.loading_tv);
+        bar = itemView.findViewById(R.id.loading_progress);
     }
 
     public View getItemView() {

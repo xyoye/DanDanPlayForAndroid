@@ -113,7 +113,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
      */
     protected Toolbar getActionBarToolbar() {
         if (mActionBarToolbar == null) {
-            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar);
+            mActionBarToolbar = findViewById(R.id.toolbar);
             if (mActionBarToolbar != null) {
                 setSupportActionBar(mActionBarToolbar);
             }

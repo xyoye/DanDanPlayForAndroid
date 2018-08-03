@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_margin="4dp"
-    android:background="@drawable/bg_anima_episode"
     android:padding="4dp"
     app:cardElevation="4dp">
 

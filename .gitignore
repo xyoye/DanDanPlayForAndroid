@@ -14,3 +14,4 @@ gradle.xml
 *.iml
 *.jks
 PASSWORD.txt
+secrets.tar

@@ -11,6 +11,7 @@ import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +32,23 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
 
     @Override
     public void init() {
-
     }
 
     @Override
     public void process(Bundle savedInstanceState) {
-
     }
 
     @Override
     public void resume() {
-        getView().changeView();
-        getFavorite();
-        getPlayHistory();
+        if (UserInfoShare.getInstance().isLogin()){
+            getView().changeView();
+            getFavorite();
+            getPlayHistory();
+        }else {
+            getView().refreshFavorite(null);
+            getView().refreshHistory(null);
+            getView().changeView();
+        }
     }
 
     @Override

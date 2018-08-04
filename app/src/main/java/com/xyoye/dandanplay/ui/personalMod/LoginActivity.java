@@ -3,18 +3,13 @@ package com.xyoye.dandanplay.ui.personalMod;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.text.InputType;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +26,6 @@ import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.ui.mainMod.MainActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by YE on 2018/7/22.

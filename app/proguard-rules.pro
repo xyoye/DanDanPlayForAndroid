@@ -19,16 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--ignorewarnings
+#-ignorewarnings
 -dontpreverify
--dontskipnonpubliclibraryclasses
--dontskipnonpubliclibraryclassmembers
 -verbose
 -printmapping proguardMapping.txt
 -dontusemixedcaseclassnames
-
+-useuniqueclassmembernames
 -keep class butterknife.** { *; }
--dontwarn butterknife.internal.**
+-keep class butterknife.compiler.** {*;}
+-dontwarn butterknife.**
 -keep class **$$ViewBinder { *; }
 
 -keepclasseswithmembernames class * {
@@ -39,18 +38,26 @@
     @butterknife.* <methods>;
 }
 
--dontwarn com.google.auto.common.**
--keep class com.google.auto.common.** { *; }
+-dontwarn com.google.**
+-keep class com.google.** { *; }
 -dontwarn com.squareup.javapoet.**
 -keep class com.squareup.javapoet.** { *; }
 -dontwarn com.tencent.bugly.**
 -keep class com.tencent.bugly.** { *; }
--dontwarn com.trllo.rxlifecycle2.**
--keep class com.trllo.rxlifecycle2.** { *; }
+-dontwarn com.trello.rxlifecycle2.**
+-keep,includedescriptorclasses class com.trello.rxlifecycle2.** { *; }
 -dontwarn com.umeng.socialize.**
 -keep class com.umeng.socialize.** { *; }
 -dontwarn okio.**
 -keep class okio.**  { *; }
+-dontwarn com.blankj.**
+-keep class com.blankj.**  { *; }
+-dontwarn com.dl7.player.**
+-keep,includedescriptorclasses class com.dl7.player.**  { *; }
+-dontwarn com.umeng.**
+-keep,includedescriptorclasses class com.umeng.**  { *; }
+-dontwarn okhttp3.**
+-keep,includedescriptorclasses class okhttp3.**  { *; }
 # keep framework class
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -61,10 +68,10 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.app.backup.BackupAgent
 -keep public class com.android.vending.licensing.ILicensingService
--keepclasseswithmembernames class * {
+-keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
 }
--keep public class * extends android.view.View {
+-keep,includedescriptorclasses public class * extends android.view.View {
     *** get*();
     void set*(***);
     public <init>(android.content.Context);
@@ -98,10 +105,28 @@
 -keepclassmembers class * {
     void *(**On*Event);
 }
--keepclassmembers class * extends android.webkit.webViewClient {
-    public void *(android.webkit.WebView, java.lang.String, android.graphics.Bitmap);
-    public boolean *(android.webkit.WebView, java.lang.String);
+-dontwarn retrofit2.Platform$Java8
+-keep class retrofit2.Platform$Java8**
+-keep,includedescriptorclasses class com.squareup.retrofit2.** {*;}
+-dontwarn com.squareup.retrofit2.**
+-keep,includedescriptorclasses class retrofit2.** {*;}
+
+-keepclasseswithmembernames class com.xyoye.dandanplay.bean.** {*;}
+
+-keepclasseswithmembernames class com.xyoye.dandanplay.bean.BannerBeans {*;}
+
+-keepattributes *Annotation*
+
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.Subscribe <methods>;
 }
--keepclassmembers class * extends android.webkit.webViewClient {
-    public void *(android.webkit.webView, java.lang.String);
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+ 
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
 }
+-keep class tv.danmaku.ijk.media.player.** {*;}
+-keep class tv.danmaku.ijk.media.player.IjkMediaPlayer{*;}
+-keep class tv.danmaku.ijk.media.player.ffmpeg.FFmpegApi{*;}
+-keep class wseemann.media**{*;}

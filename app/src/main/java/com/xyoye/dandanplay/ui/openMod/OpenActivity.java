@@ -3,22 +3,18 @@ package com.xyoye.dandanplay.ui.openMod;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.rx.LifefulRunnable;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.mvp.impl.OpenPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
 import com.xyoye.dandanplay.ui.mainMod.MainActivity;
 import com.xyoye.dandanplay.ui.personalMod.LoginActivity;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.io.InputStream;
 

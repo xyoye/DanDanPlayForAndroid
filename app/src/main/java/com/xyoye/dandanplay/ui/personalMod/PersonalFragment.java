@@ -148,11 +148,9 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                     return new PersonalFavoriteAnimaItem();
                 }
             };
-            if (favoriteRecyclerView != null)
-                favoriteRecyclerView.setAdapter(favoriteAdapter);
+            favoriteRecyclerView.setAdapter(favoriteAdapter);
         }else {
-            if (favoriteRecyclerView != null)
-                favoriteRecyclerView.removeAllViews();
+            favoriteRecyclerView.removeAllViews();
             if (favoriteAdapter != null){
                 favoriteAdapter.getData().clear();
                 favoriteAdapter.notifyDataSetChanged();
@@ -171,11 +169,9 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                     return new PersonalPlayHistoryItem();
                 }
             };
-            if (historyRecyclerView != null)
-                historyRecyclerView.setAdapter(historyAdapter);
+            historyRecyclerView.setAdapter(historyAdapter);
         }else {
-            if (historyRecyclerView != null)
-                historyRecyclerView.removeAllViews();
+            historyRecyclerView.removeAllViews();
             if (historyAdapter != null){
                 historyAdapter.getData().clear();
                 favoriteAdapter.notifyDataSetChanged();

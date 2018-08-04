@@ -4,12 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_folder_content_layout"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="52dp"
     android:background="@android:color/white"
-    android:paddingBottom="0dp"
     android:paddingEnd="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp">
+    android:paddingStart="16dp">
 
     <ImageView
         android:id="@+id/folder_iv"
@@ -18,8 +16,7 @@
         android:contentDescription="@string/folder_icon_resouces"
         android:src="@drawable/ic_folder_dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <RelativeLayout
         android:id="@+id/folder_information_layout"

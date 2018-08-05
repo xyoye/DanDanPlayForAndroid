@@ -8,11 +8,13 @@ import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
+import com.xyoye.dandanplay.bean.RegisterBean;
 
 import java.util.Map;
 
 import io.reactivex.Observable;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -61,4 +63,20 @@ public interface RetrofitService {
 
     @DELETE("/api/v2/favorite/{animeId}")
     Observable<CommJsonEntity> reduceFavorite(@Path("animeId") String animaId);
+
+    @FormUrlEncoded
+    @POST("/api/v2/register")
+    Observable<RegisterBean> register(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/v2/user/password")
+    Observable<CommJsonEntity> changePassword(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/v2/register/resetpassword")
+    Observable<CommJsonEntity> resetPassword(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("/api/v2/user/profile")
+    Observable<CommJsonEntity> changeScreenName(@Field("screenName") String screenName);
 }

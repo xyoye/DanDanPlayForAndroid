@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
-import com.xyoye.dandanplay.bean.params.LoginParam;
-import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
+import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.net.CommJsonEntity;
 import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
@@ -14,18 +12,19 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by YE on 2018/7/22.
+ * Created by YE on 2018/8/5.
  */
 
 
-public class PersonalBean extends CommJsonEntity implements Serializable {
+public class RegisterBean extends CommJsonEntity implements Serializable {
 
     /**
      * registerRequired : true
      * userId : 0
+     * userName : string
      * legacyTokenNumber : 0
      * token : string
-     * tokenExpireTime : 2018-07-22T05:58:22.661Z
+     * tokenExpireTime : 2018-08-05T12:07:37.834Z
      * userType : string
      * screenName : string
      * profileImage : string
@@ -34,6 +33,7 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
 
     private boolean registerRequired;
     private int userId;
+    private String userName;
     private int legacyTokenNumber;
     private String token;
     private String tokenExpireTime;
@@ -56,6 +56,14 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getLegacyTokenNumber() {
@@ -114,40 +122,8 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
         this.appScope = appScope;
     }
 
-    public static void login(LoginParam param, CommJsonObserver<PersonalBean> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().login(param.getMap())
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void reToken(CommJsonObserver<PersonalBean> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().reToken()
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void changePassword(ChangePasswordParam param, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().changePassword(param.getMap())
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void resetPassword(ResetPasswordParam param, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().resetPassword(param.getMap())
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void resetPassword(String screenName, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().changeScreenName(screenName)
+    public static void register(RegisterParam param, CommJsonObserver<RegisterBean> observer, NetworkConsumer consumer){
+        RetroFactory.getInstance().register(param.getMap())
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

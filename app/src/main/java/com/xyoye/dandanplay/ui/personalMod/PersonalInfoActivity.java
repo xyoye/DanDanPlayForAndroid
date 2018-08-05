@@ -14,6 +14,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
+import com.xyoye.dandanplay.ui.authMod.LoginActivity;
 import com.xyoye.dandanplay.utils.TokenShare;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 

@@ -43,7 +43,7 @@
 
         <activity android:name=".ui.animeMod.AnimeDetailActivity"/>
 
-        <activity android:name=".ui.personalMod.LoginActivity"/>
+        <activity android:name=".ui.authMod.LoginActivity"/>
 
         <activity android:name=".ui.personalMod.PersonalInfoActivity"/>
 
@@ -52,6 +52,8 @@
         <activity android:name=".ui.personalMod.PersonalHistoryActivity"/>
 
         <activity android:name=".ui.settingMod.SettingActivity"/>
+
+        <activity android:name=".ui.authMod.RegisterActivity"/>
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"

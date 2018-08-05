@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.personalMod;
+package com.xyoye.dandanplay.ui.authMod;
 
 import android.app.Activity;
 import android.content.Context;
@@ -92,7 +92,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
                 ToastUtils.showShort("该功能暂未开放");
                 break;
             case R.id.register_tv:
-                ToastUtils.showShort("该功能暂未开放");
+                launchActivity(RegisterActivity.class);
                 break;
         }
     }
@@ -101,11 +101,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         String userName = userNameEt.getText().toString();
         String password = userPasswordEt.getText().toString();
         if (StringUtils.isEmpty(userName)) {
-//            ToastUtils.showShort("用户名不能为空");
             userNameLayout.setErrorEnabled(true);
             userNameLayout.setError("用户名不能为空");
         } else if (StringUtils.isEmpty(password)) {
-//            ToastUtils.showShort("密码不能为空");
             userPasswordLayout.setErrorEnabled(true);
             userNameLayout.setError("密码不能为空");
         } else {

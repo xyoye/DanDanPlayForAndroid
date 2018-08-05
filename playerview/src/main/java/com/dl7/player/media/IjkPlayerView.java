@@ -585,7 +585,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     public void seekTo(int position) {
         mVideoView.seekTo(position);
-        mDanmakuTargetPosition = position;
+        if(position != 0)
+            mDanmakuTargetPosition = position;
     }
 
     /**

@@ -11,12 +11,19 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
+import com.xyoye.dandanplay.ui.authMod.ChangePasswordActivity;
+import com.xyoye.dandanplay.ui.authMod.ChangeScreenNameDialog;
 import com.xyoye.dandanplay.ui.authMod.LoginActivity;
 import com.xyoye.dandanplay.utils.TokenShare;
 import com.xyoye.dandanplay.utils.UserInfoShare;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -99,11 +106,29 @@ public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> im
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.screen_name_rl:
-                ToastUtils.showShort("该功能暂未开放");
+                ChangeScreenNameDialog dialog = new ChangeScreenNameDialog(PersonalInfoActivity.this, R.style.Dialog);
+                dialog.show();
                 break;
             case R.id.password_rl:
-                ToastUtils.showShort("该功能暂未开放");
+                launchActivity(ChangePasswordActivity.class);
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ChangeScreenNameEvent event){
+        screenNameTv.setText(event.getScreenName());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 }

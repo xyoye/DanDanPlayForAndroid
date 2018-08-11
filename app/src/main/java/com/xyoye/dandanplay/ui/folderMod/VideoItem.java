@@ -36,10 +36,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
     ImageView danmuTipsIv;
     @BindView(R.id.danmu_setting_rl)
     RelativeLayout danmuSetting;
-    @BindString(R.string.danmaku_inexists)
-    String danmaku_inexists_string;
-    @BindString(R.string.danmaku_exists)
-    String danmaku_exists_string;
     private View mView;
 
     @Override
@@ -72,10 +68,8 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         if (StringUtils.isEmpty(model.getDanmuPath())){
             danmuTipsIv.setImageResource(R.drawable.ic_danmaku_inexist);
-            danmuTipsIv.setContentDescription(danmaku_inexists_string);
         }else {
             danmuTipsIv.setImageResource(R.drawable.ic_danmaku_exists);
-            danmuTipsIv.setContentDescription(danmaku_exists_string);
         }
 
         danmuSetting.setOnClickListener(new View.OnClickListener() {

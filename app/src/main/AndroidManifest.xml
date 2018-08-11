@@ -55,6 +55,10 @@
 
         <activity android:name=".ui.authMod.RegisterActivity"/>
 
+        <activity android:name=".ui.authMod.ResetPasswordActivity"/>
+
+        <activity android:name=".ui.authMod.ChangePasswordActivity"/>
+
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

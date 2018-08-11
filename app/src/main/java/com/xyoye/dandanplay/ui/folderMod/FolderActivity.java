@@ -14,6 +14,7 @@ import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.core.utils.PixelUtil;
+import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.event.OpenDanmuSettingEvent;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -137,6 +139,16 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     public void openVideo(OpenVideoEvent event){
         openVideoPosition = event.getPosition();
         VideoBean videoBean = event.getBean();
+        //未设置弹幕情况下，自动匹配同名弹幕
+        if (StringUtils.isEmpty(videoBean.getDanmuPath())){
+            String path = videoBean.getVideoPath();
+            int dot = path.lastIndexOf(".");
+            path = path.substring(0, dot);
+            String danmuPath = path + ".xml";
+            File file = new File(danmuPath);
+            if (file.exists())
+                videoBean.setDanmuPath(danmuPath);
+        }
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("title", videoBean.getVideoName());
         intent.putExtra("path",videoBean.getVideoPath());

@@ -146,7 +146,7 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
                 .subscribe(observer);
     }
 
-    public static void resetPassword(String screenName, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+    public static void changeScreenName(String screenName, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().changeScreenName(screenName)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

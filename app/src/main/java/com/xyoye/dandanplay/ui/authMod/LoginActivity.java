@@ -40,8 +40,8 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     TextInputEditText userPasswordEt;
     @BindView(R.id.login_bt)
     Button loginBt;
-    @BindView(R.id.forgot_password_tv)
-    TextView forgotPasswordTv;
+    @BindView(R.id.reset_password_tv)
+    TextView resetPasswordTv;
     @BindView(R.id.register_tv)
     TextView registerTv;
     @BindView(R.id.user_password_layout)
@@ -64,7 +64,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     public void initListener() {
         loginReturnIv.setOnClickListener(this);
         loginBt.setOnClickListener(this);
-        forgotPasswordTv.setOnClickListener(this);
+        resetPasswordTv.setOnClickListener(this);
         registerTv.setOnClickListener(this);
     }
 
@@ -88,8 +88,8 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
             case R.id.login_bt:
                 login();
                 break;
-            case R.id.forgot_password_tv:
-                ToastUtils.showShort("该功能暂未开放");
+            case R.id.reset_password_tv:
+                launchActivity(ResetPasswordActivity.class);
                 break;
             case R.id.register_tv:
                 launchActivity(RegisterActivity.class);

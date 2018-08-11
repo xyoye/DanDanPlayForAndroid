@@ -13,6 +13,11 @@ public class ChangePasswordParam implements Serializable {
     private String oldPassword;
     private String newPassword;
 
+    public ChangePasswordParam(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
+
     public String getOldPassword() {
         return oldPassword;
     }

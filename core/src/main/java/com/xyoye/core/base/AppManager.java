@@ -16,6 +16,15 @@ import java.util.Stack;
 public class AppManager {
     private static Stack<Activity> activityStack = new Stack<Activity>();
 
+    public static Activity getActivity(Class<?> cls){
+        for (Activity activity : activityStack) {
+            if (activity.getClass().equals(cls)) {
+                return activity;
+            }
+        }
+        return null;
+    }
+
     /**
      * 添加Activity到堆栈
      */

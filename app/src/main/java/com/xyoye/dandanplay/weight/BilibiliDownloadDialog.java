@@ -311,45 +311,53 @@ public class BilibiliDownloadDialog extends Dialog {
     private void getVideoCid(String root){
         sendLogMessage("开始获取cid...\n");
 
-        int start = root.indexOf("INITIAL_STATE__=")+16;
-        int end = root.indexOf(";(function()");
-        String jsonText = root.substring(start,end);
-        //获取标题
-        JsonObject jsonObject = new JsonParser().parse(jsonText).getAsJsonObject();
-        JsonObject videoInfo = jsonObject.get("videoData").getAsJsonObject();
-        videoTitle = videoInfo.get("title").getAsString();
-        //获取cid
-        JsonArray cidInfo = videoInfo.get("pages").getAsJsonArray();
-        JsonObject cidObject = cidInfo.get(0).getAsJsonObject();
-        cid = cidObject.get("cid").getAsString();
+        try {
+            int start = root.indexOf("INITIAL_STATE__=")+16;
+            int end = root.indexOf(";(function()");
+            String jsonText = root.substring(start,end);
+            //获取标题
+            JsonObject jsonObject = new JsonParser().parse(jsonText).getAsJsonObject();
+            JsonObject videoInfo = jsonObject.get("videoData").getAsJsonObject();
+            videoTitle = videoInfo.get("title").getAsString();
+            //获取cid
+            JsonArray cidInfo = videoInfo.get("pages").getAsJsonArray();
+            JsonObject cidObject = cidInfo.get(0).getAsJsonObject();
+            cid = cidObject.get("cid").getAsString();
 
-        sendLogMessage("获取cid成功\n");
-        downloadType = DOWNLOAD_ONE;
-        handler.sendEmptyMessage(101);
+            sendLogMessage("获取cid成功\n");
+            downloadType = DOWNLOAD_ONE;
+            handler.sendEmptyMessage(101);
+        }catch (Exception e){
+            sendLogMessage("cid解析错误");
+        }
     }
 
     /**
      * 获取番剧Cid
      */
     private void getAnimaCid(String root){
-        sendLogMessage("开始获取番剧cid列表...\n");
-        int start = root.indexOf("INITIAL_STATE__=")+16;
-        int end = root.indexOf(";(function()");
-        String jsonText = root.substring(start,end);
-        //获取标题
-        JsonObject animaInfo = new JsonParser().parse(jsonText).getAsJsonObject();
-        JsonObject animaTitleInfo = animaInfo.get("mediaInfo").getAsJsonObject();
-        animaTitle = animaTitleInfo.get("title").getAsString();
-        //获取cid集合
-        JsonArray cidListArray = animaInfo.get("epList").getAsJsonArray();
-        cidList = new ArrayList<>();
-        for (int i=0; i<cidListArray.size(); i++){
-            JsonObject cidInfo = cidListArray.get(i).getAsJsonObject();
-            String cid = cidInfo.get("cid").getAsString();
-            cidList.add(cid);
+        try {
+            sendLogMessage("开始获取番剧cid列表...\n");
+            int start = root.indexOf("INITIAL_STATE__=")+16;
+            int end = root.indexOf(";(function()");
+            String jsonText = root.substring(start,end);
+            //获取标题
+            JsonObject animaInfo = new JsonParser().parse(jsonText).getAsJsonObject();
+            JsonObject animaTitleInfo = animaInfo.get("mediaInfo").getAsJsonObject();
+            animaTitle = animaTitleInfo.get("title").getAsString();
+            //获取cid集合
+            JsonArray cidListArray = animaInfo.get("epList").getAsJsonArray();
+            cidList = new ArrayList<>();
+            for (int i=0; i<cidListArray.size(); i++){
+                JsonObject cidInfo = cidListArray.get(i).getAsJsonObject();
+                String cid = cidInfo.get("cid").getAsString();
+                cidList.add(cid);
+            }
+            sendLogMessage("获取番剧【"+animaTitle+"】cid列表成功\n");
+            downloadType = DOWNLOAD_LIST;
+            handler.sendEmptyMessage(101);
+        }catch (Exception e){
+            sendLogMessage("cid解析错误");
         }
-        sendLogMessage("获取番剧【"+animaTitle+"】cid列表成功\n");
-        downloadType = DOWNLOAD_LIST;
-        handler.sendEmptyMessage(101);
     }
 }

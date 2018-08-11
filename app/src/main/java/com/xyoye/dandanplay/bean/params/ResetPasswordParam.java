@@ -1,5 +1,13 @@
 package com.xyoye.dandanplay.bean.params;
 
+import android.content.Context;
+
+import com.blankj.utilcode.util.ToastUtils;
+import com.xyoye.core.utils.Encryptor;
+import com.xyoye.core.utils.KeyUtil;
+import com.xyoye.core.utils.StringUtils;
+import com.xyoye.core.utils.TLog;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +30,13 @@ public class ResetPasswordParam implements Serializable {
     private String appId;
     private String userName;
     private String email;
-    private int unixTimestamp;
+    private long unixTimestamp;
     private String hash;
+
+    public ResetPasswordParam(String userName, String email){
+        this.userName = userName;
+        this.email = email;
+    }
 
     public String getAppId() {
         return appId;
@@ -49,11 +62,11 @@ public class ResetPasswordParam implements Serializable {
         this.email = email;
     }
 
-    public int getUnixTimestamp() {
+    public long getUnixTimestamp() {
         return unixTimestamp;
     }
 
-    public void setUnixTimestamp(int unixTimestamp) {
+    public void setUnixTimestamp(long unixTimestamp) {
         this.unixTimestamp = unixTimestamp;
     }
 
@@ -74,4 +87,21 @@ public class ResetPasswordParam implements Serializable {
         map.put("hash", this.hash);
         return map;
     }
+    public void buildHash(Context context) {
+        if (StringUtils.isEmpty(userName) ||
+                StringUtils.isEmpty(email) ||
+                StringUtils.isEmpty(appId) ||
+                unixTimestamp == 0){
+            TLog.e("注册信息错误");
+            ToastUtils.showShort("注册信息错误");
+        }else {
+            String builder = this.appId +
+                    this.email +
+                    this.unixTimestamp +
+                    this.userName +
+                    KeyUtil.getAppSecret(context);
+            hash = Encryptor.encryptMD5(builder);
+        }
+    }
+
 }

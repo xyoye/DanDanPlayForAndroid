@@ -5,25 +5,25 @@ import android.os.Bundle;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.RegisterBean;
-import com.xyoye.dandanplay.bean.params.RegisterParam;
-import com.xyoye.dandanplay.mvp.presenter.RegisterPresenter;
-import com.xyoye.dandanplay.mvp.view.RegisterView;
+import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
+import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
+import com.xyoye.dandanplay.mvp.view.ChangePasswordView;
+import com.xyoye.dandanplay.net.CommJsonEntity;
 import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.ui.authMod.ToLoginDialog;
 
 /**
- * Created by YE on 2018/8/5.
+ * Created by YE on 2018/8/11.
  */
 
 
-public class RegisterPresenterImpl extends BaseMvpPresenter<RegisterView> implements RegisterPresenter {
+public class ChangePasswordPresenterImpl extends BaseMvpPresenter<ChangePasswordView> implements ChangePasswordPresenter {
 
-    public RegisterPresenterImpl(RegisterView view, Lifeful lifeful) {
+    public ChangePasswordPresenterImpl(ChangePasswordView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 
@@ -53,15 +53,11 @@ public class RegisterPresenterImpl extends BaseMvpPresenter<RegisterView> implem
     }
 
     @Override
-    public void register(RegisterParam param) {
-        param.setScreenName(param.getUserName());
-        param.setAppId(KeyUtil.getAppId(getView().getRegisterContext()));
-        param.setUnixTimestamp(System.currentTimeMillis()/1000);
-        param.buildHash(getView().getRegisterContext());
-        RegisterBean.register(param, new CommJsonObserver<RegisterBean>() {
+    public void change(ChangePasswordParam param) {
+        PersonalBean.changePassword(param, new CommJsonObserver<CommJsonEntity>() {
             @Override
-            public void onSuccess(RegisterBean registerBean) {
-                ToLoginDialog dialog = new ToLoginDialog(getView().getRegisterContext(), R.style.Dialog, 0);
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                ToLoginDialog dialog = new ToLoginDialog(getView().getChangeContext(), R.style.Dialog,2);
                 dialog.show();
             }
 

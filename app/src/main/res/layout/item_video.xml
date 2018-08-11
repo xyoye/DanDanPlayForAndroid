@@ -95,7 +95,6 @@
             android:layout_height="15dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="1dp"
-            android:contentDescription="@string/danmaku_inexists"
             android:src="@drawable/ic_danmaku_inexist" />
     </LinearLayout>
     <!--</RelativeLayout>-->

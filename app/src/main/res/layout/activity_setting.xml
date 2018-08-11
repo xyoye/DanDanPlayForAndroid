@@ -8,8 +8,17 @@
     android:background="@color/diver_color"
     tools:layout_editor_absoluteY="25dp">
 
+    <include
+        android:id="@+id/include4"
+        layout="@layout/layout_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.v7.widget.CardView
-        android:id="@+id/about_card"
+        android:id="@+id/path_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -17,29 +26,54 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feedback_card">
+        app:layout_constraintTop_toBottomOf="@+id/include4">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/about_rl"
+            android:id="@+id/path_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="301dp">
+            android:background="@color/white">
 
             <TextView
+                android:id="@+id/download_path_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/about_us_tip"
+                android:text="@string/cache_path_tip"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/download_path_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/download_path_tip"
+                app:layout_constraintEnd_toStartOf="@+id/change_download_path_tip"
+                app:layout_constraintStart_toEndOf="@+id/download_path_tip"
+                tools:text="测试路径" />
+
+            <TextView
+                android:id="@+id/change_download_path_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/modify_tip"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/change_download_path_iv"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
-                android:id="@+id/about_iv"
+                android:id="@+id/change_download_path_iv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="8dp"
@@ -49,42 +83,69 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/about_us_tip" />
+                android:contentDescription="@string/modify_tip" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/feedback_card"
+        android:id="@+id/download_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/version_card">
+        app:layout_constraintTop_toBottomOf="@+id/space2">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/feedback_rl"
+            android:id="@+id/download_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="253dp">
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="188dp">
 
             <TextView
+                android:id="@+id/download_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/feedback_tip"
+                android:text="@string/other_feature_tip"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/download_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="4dp"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:text="@string/bilibili_danmaku_download_tip"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/download_tip"
+                app:layout_constraintEnd_toStartOf="@+id/download_arrow_tip"
+                app:layout_constraintStart_toEndOf="@+id/download_tip" />
+
+            <TextView
+                android:id="@+id/download_arrow_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/download_tip"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/download_arrow_iv"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
-                android:id="@+id/feedback_iv"
+                android:id="@+id/download_arrow_iv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="8dp"
@@ -94,7 +155,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/feedback_tip" />
+                android:contentDescription="@string/download_tip" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
@@ -171,89 +232,8 @@
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
-    <include
-        android:id="@+id/include4"
-        layout="@layout/layout_toolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.v7.widget.CardView
-        android:id="@+id/download_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space2">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/download_rl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="188dp">
-
-            <TextView
-                android:id="@+id/download_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/other_feature_tip"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/download_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="4dp"
-                android:ellipsize="start"
-                android:singleLine="true"
-                android:text="@string/bilibili_danmaku_download_tip"
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/download_tip"
-                app:layout_constraintEnd_toStartOf="@+id/download_arrow_tip"
-                app:layout_constraintStart_toEndOf="@+id/download_tip" />
-
-            <TextView
-                android:id="@+id/download_arrow_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/download_tip"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/download_arrow_iv"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/download_arrow_iv"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_arrow_right_dark"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/download_tip" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/path_card"
+        android:id="@+id/feedback_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -261,55 +241,29 @@
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include4">
+        app:layout_constraintTop_toBottomOf="@+id/version_card">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/path_rl"
+            android:id="@+id/feedback_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            tools:layout_editor_absoluteY="56dp">
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="253dp">
 
             <TextView
-                android:id="@+id/download_path_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
-                android:text="@string/cache_path_tip"
-                android:textSize="14sp"
+                android:layout_marginTop="8dp"
+                android:text="@string/feedback_tip"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/download_path_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="4dp"
-                android:ellipsize="start"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/download_path_tip"
-                app:layout_constraintEnd_toStartOf="@+id/change_download_path_tip"
-                app:layout_constraintStart_toEndOf="@+id/download_path_tip"
-                tools:text="测试路径" />
-
-            <TextView
-                android:id="@+id/change_download_path_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/modify_tip"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/change_download_path_iv"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <ImageView
-                android:id="@+id/change_download_path_iv"
+                android:id="@+id/feedback_iv"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="8dp"
@@ -319,7 +273,52 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/modify_tip" />
+                android:contentDescription="@string/feedback_tip" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/about_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feedback_card">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/about_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="301dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/about_us_tip"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/about_iv"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_arrow_right_dark"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/about_us_tip" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

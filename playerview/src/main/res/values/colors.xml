@@ -19,4 +19,6 @@
     <color name="background_gray_light">#bababa</color>
 
     <color name="recover_screen_text">#f06292</color>
+
+    <color name="theme_color">#2095f4</color>
 </resources>

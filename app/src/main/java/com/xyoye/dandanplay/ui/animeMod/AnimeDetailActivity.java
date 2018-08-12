@@ -98,9 +98,6 @@ public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> impl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case android.R.id.home:
-                finish();
-                break;
             case R.id.favorite:
                 if (UserInfoShare.getInstance().isLogin()){
                     if (isFavorite){

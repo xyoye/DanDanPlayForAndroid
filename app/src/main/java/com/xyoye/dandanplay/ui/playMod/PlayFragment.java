@@ -4,20 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.event.OpenFolderEvent;
@@ -35,9 +32,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import in.srain.cube.views.ptr.PtrFrameLayout;
-import in.srain.cube.views.ptr.PtrHandler;
-import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -159,15 +153,21 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onPageFirstVisible() {
+        super.onPageFirstVisible();
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden){
+            if (EventBus.getDefault().isRegistered(this))
+                EventBus.getDefault().unregister(this);
+        }else {
+            if (!EventBus.getDefault().isRegistered(this))
+                EventBus.getDefault().register(this);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -181,8 +181,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                break;
             case R.id.add_video_folder:
                 addFolder();
                 break;

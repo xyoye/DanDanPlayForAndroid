@@ -103,11 +103,8 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 //builder.setIcon(R.drawable.ic_launcher);
                 builder.setTitle("选择反馈方式");
-                //    指定下拉列表的显示数据
                 final String[] ways = {"邮件", "Github Issue"};
-                //    设置一个下拉的列表选择项
-                builder.setItems(ways, new DialogInterface.OnClickListener()
-                {
+                builder.setItems(ways, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {

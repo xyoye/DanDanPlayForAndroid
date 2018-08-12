@@ -22,7 +22,7 @@
         <item name="colorButtonNormal">@color/colorTextIcons</item>
         <item name="colorControlNormal">@color/colorTextIcons</item>
         <item name="actionMenuTextColor">@color/colorTextIcons</item>
-        <item name="android:textColor">@color/colorTextIcons</item>
+        <item name="android:textColor">@color/text_black</item>
     </style>
 
     <style name="AnimationActivity" parent="@android:style/Animation.Activity">
@@ -44,6 +44,8 @@
 
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="Dialog">

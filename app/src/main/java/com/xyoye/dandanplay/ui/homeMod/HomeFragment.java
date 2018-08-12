@@ -183,18 +183,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         }, this));
     }
 
-    @Override
-    public void onResume() {
-        EventBus.getDefault().register(this);
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openAnimaDetail(OpenAnimaDetailEvent event){
         Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
@@ -240,6 +228,24 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         @Override
         public int getCount() {
             return list.size();
+        }
+    }
+
+    @Override
+    protected void onPageFirstVisible() {
+        super.onPageFirstVisible();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden){
+            if (EventBus.getDefault().isRegistered(this))
+                EventBus.getDefault().unregister(this);
+        }else {
+            if (!EventBus.getDefault().isRegistered(this))
+                EventBus.getDefault().register(this);
         }
     }
 }

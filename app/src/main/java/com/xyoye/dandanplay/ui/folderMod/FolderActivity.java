@@ -6,6 +6,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -13,7 +15,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -26,6 +27,9 @@ import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
+import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,7 +37,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.text.Collator;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 
@@ -54,6 +63,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     private int openVideoPosition = -1;
 
     private BaseRvAdapter<VideoBean> adapter;
+    private List<VideoBean> videoBeans;
 
     @Override
     public void initView() {
@@ -63,8 +73,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
-//        recyclerView.addItemDecoration(new DividerItemDecoration(
-//                this, DividerItemDecoration.VERTICAL));
 
         showLoading();
         presenter.refreshVideos();
@@ -76,6 +84,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Override
     public void refreshAdapter(List<VideoBean> beans) {
+        videoBeans = beans;
+        sort(UserInfoShare.getInstance().getFolderCollectionsType());
         if (adapter == null){
             adapter = new BaseRvAdapter<VideoBean>(beans) {
                 @NonNull
@@ -124,6 +134,39 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.sort_by_name:
+                int nameType = UserInfoShare.getInstance().getFolderCollectionsType();
+                if (nameType == Config.Collection.NAME_ASC)
+                    sort(Config.Collection.NAME_DESC);
+                else if (nameType == Config.Collection.NAME_DESC)
+                    sort(Config.Collection.NAME_ASC);
+                else
+                    sort(Config.Collection.NAME_ASC);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_by_duration:
+                int durationType = UserInfoShare.getInstance().getFolderCollectionsType();
+                if (durationType == Config.Collection.DURATION_ASC)
+                    sort(Config.Collection.DURATION_DESC);
+                else if (durationType == Config.Collection.DURATION_DESC)
+                    sort(Config.Collection.DURATION_ASC);
+                else
+                    sort(Config.Collection.DURATION_ASC);
+                adapter.notifyDataSetChanged();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_folder, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
@@ -139,15 +182,21 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     public void openVideo(OpenVideoEvent event){
         openVideoPosition = event.getPosition();
         VideoBean videoBean = event.getBean();
-        //未设置弹幕情况下，自动匹配同名弹幕
+        //未设置弹幕情况下，自动匹配同名弹幕(先匹配相同目录下，再匹配默认下载目录下)
         if (StringUtils.isEmpty(videoBean.getDanmuPath())){
             String path = videoBean.getVideoPath();
-            int dot = path.lastIndexOf(".");
-            path = path.substring(0, dot);
-            String danmuPath = path + ".xml";
+            String danmuPath = path.substring(0, path.lastIndexOf("."))+ ".xml";
             File file = new File(danmuPath);
             if (file.exists())
                 videoBean.setDanmuPath(danmuPath);
+            else {
+                String ext = FileUtils.getFileExtension(path);
+                String name = FileUtils.getFileName(path).replace(ext, "xml");
+                danmuPath = AppConfigShare.getInstance().getDownloadFolder()+ "/" + name;
+                file = new File(danmuPath);
+                if (file.exists())
+                    videoBean.setDanmuPath(danmuPath);
+            }
         }
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("title", videoBean.getVideoName());
@@ -186,5 +235,22 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                 adapter.notifyItemChanged(selectItem);
             }
         }
+    }
+
+    public void sort(int type){
+        if (type == Config.Collection.NAME_ASC){
+            Collections.sort(videoBeans,
+                    (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(o1.getVideoName(), o2.getVideoName()));
+        }else if (type == Config.Collection.NAME_DESC){
+            Collections.sort(videoBeans,
+                    (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(o2.getVideoName(), o1.getVideoName()));
+        }else if (type == Config.Collection.DURATION_ASC){
+            Collections.sort(videoBeans,
+                    (o1, o2) -> o1.getVideoDuration() > o2.getVideoDuration() ? 1 : -1);
+        }else if (type == Config.Collection.DURATION_DESC){
+            Collections.sort(videoBeans,
+                    (o1, o2) -> o1.getVideoDuration() < o2.getVideoDuration() ? 1 : -1);
+        }
+        UserInfoShare.getInstance().saveFolderCollectionsType(type);
     }
 }

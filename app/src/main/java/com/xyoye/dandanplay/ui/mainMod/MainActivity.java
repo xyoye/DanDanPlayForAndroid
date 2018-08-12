@@ -121,7 +121,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     public void selected(int position) {
         int[] selectedList = DataGenerator.mTabResPressed;
         if (selectedList != null && position < 5) {
-            Drawable img = getDrawable(selectedList[position]);
+            Drawable img = getResources().getDrawable(selectedList[position]);
             assert img != null;
             img.setBounds(0, 0, img.getMinimumWidth(), img.getMinimumHeight());
             tabView[position].setCompoundDrawables(null, img, null, null);

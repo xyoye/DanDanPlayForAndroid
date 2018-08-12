@@ -1,12 +1,12 @@
 ext{
     android = [
             compileSdkVersion : 27,
-            minSdkVersion : 21,
+            minSdkVersion : 19,
             targetSdkVersion : 26,
             buildToolsVersion : '27.0.3',
             applicationId : "com.xyoye.dandanplay",
             versionCode : 1,
-            versionName : "3.0.0 developing"
+            versionName : "3.0.0"
     ]
 
     dependencies = [

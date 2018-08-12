@@ -75,7 +75,9 @@ public class ToLoginDialog extends Dialog {
                         AppManager.finishActivity(personalInfoActivity);
                     context.startActivity(new Intent(context, LoginActivity.class));
                 }
-                AppManager.finishActivity(cla);
+                Activity activity = AppManager.getActivity(cla);
+                if (activity != null)
+                    activity.finish();
             }
         });
     }

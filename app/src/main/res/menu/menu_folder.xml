@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.folderMod.FolderActivity">
+    <item
+        android:id="@+id/sort_by_name"
+        android:orderInCategory="100"
+        android:title="按文件名排序"
+        app:showAsAction="withText"
+        />
+    <item
+        android:id="@+id/sort_by_duration"
+        android:orderInCategory="100"
+        android:title="按时长排序"
+        app:showAsAction="withText"
+        />
+</menu>

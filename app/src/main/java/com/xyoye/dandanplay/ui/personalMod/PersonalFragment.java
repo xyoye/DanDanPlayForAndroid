@@ -192,13 +192,11 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -241,4 +239,21 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         }
     }
 
+    @Override
+    protected void onPageFirstVisible() {
+        super.onPageFirstVisible();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden){
+            if (EventBus.getDefault().isRegistered(this))
+                EventBus.getDefault().unregister(this);
+        }else {
+            if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+        }
+    }
 }

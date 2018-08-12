@@ -9,8 +9,7 @@
         android:layout_height="@dimen/control_bar_height"
         android:background="@color/bg_video_view"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/iv_back"
@@ -57,6 +56,19 @@
             android:background="@drawable/sel_item_background"
             android:padding="10dp"
             android:src="@mipmap/ic_video_screenshot"/>
+        <TextView
+            android:id="@+id/tv_danmu"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/sel_item_background"
+            android:text="弹幕"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_settings"
@@ -65,7 +77,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:background="@drawable/sel_item_background"
-            android:text="设置"
+            android:text="比例"
             android:layout_marginRight="10dp"
             android:gravity="center"
             android:textColor="@android:color/white"
@@ -120,4 +132,162 @@
             style="@style/AspectRatioButton"
             android:background="@drawable/sel_btn_ar_4_3"/>
     </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/danmu_setting_ll"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:padding="10dp"
+        android:layout_marginTop="@dimen/control_bar_height"
+        android:background="@color/bg_video_view"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="文字比例"/>
+
+            <TextView
+                android:id="@+id/danmu_size_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="50%"/>
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/danmu_size_sb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="速度大小"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/speed_fast_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="快"/>
+            <TextView
+                android:id="@+id/speed_middle_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="中"/>
+            <TextView
+                android:id="@+id/speed_slow_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="慢"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="弹幕屏蔽"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/mobile_danmu_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/ic_mobile_unselect"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:text="滚动"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/bottom_danmu_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/ic_bottom_unselect"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:text="底部"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical">
+                <ImageView
+                    android:id="@+id/top_danmu_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/ic_top_unselect"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/white"
+                    android:text="顶部"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 </merge>

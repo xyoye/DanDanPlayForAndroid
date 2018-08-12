@@ -40,5 +40,13 @@ public class Config {
         public static final String USER_NAME = "user_name";
         public static final String USER_IMAGE = "user_image";
         public static final String IS_LOGIN = "is_login";
+        public static final String FOLDER_COLLECTIONS = "folder_collection";
+    }
+
+    public static class Collection {
+        public static final int NAME_ASC = 1;
+        public static final int NAME_DESC = 2;
+        public static final int DURATION_ASC = 3;
+        public static final int DURATION_DESC = 4;
     }
 }

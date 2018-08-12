@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
+import com.dl7.player.utils.DanmuConfigShare;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.commonsdk.UMConfigure;
@@ -43,8 +44,9 @@ public class IApplication extends BaseApplication {
         super.onCreate();
         MultiDex.install(this);
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
-        UMConfigure.init(this,KeyUtil.getUmengId(getApplicationContext()) ,"umeng",UMConfigure.DEVICE_TYPE_PHONE,"");
+        //UMConfigure.init(this,KeyUtil.getUmengId(getApplicationContext()) ,"umeng",UMConfigure.DEVICE_TYPE_PHONE,"");
         initDatabase(new DataBaseHelper(this));
+        DanmuConfigShare.initDanmuConfigShare(getApplicationContext());
     }
 
     private void strictModeConfig() {

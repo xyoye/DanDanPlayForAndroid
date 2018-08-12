@@ -65,4 +65,13 @@ public class UserInfoShare {
     public void setLogin(boolean isLogin){
         getShare().saveSharedPreferences(Config.AppConfig.IS_LOGIN, isLogin);
     }
+
+    public int getFolderCollectionsType(){
+        String type = getShare().load(Config.AppConfig.FOLDER_COLLECTIONS, Config.Collection.NAME_ASC+"");
+        return Integer.valueOf(type);
+    }
+
+    public void saveFolderCollectionsType(int type){
+        getShare().save(Config.AppConfig.FOLDER_COLLECTIONS, type+"");
+    }
 }

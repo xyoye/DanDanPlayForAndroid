@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.net.CommJsonEntity;
-import com.xyoye.dandanplay.net.CommJsonObserver;
 import com.xyoye.dandanplay.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.net.RetroFactory;
@@ -76,6 +74,18 @@ public class DanmuDownloadBean implements Serializable{
 
         public void setM(String m) {
             this.m = m;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            CommentsBean oldBean = (CommentsBean)obj;
+            return (p.equals(oldBean.getP()) && m.equals(oldBean.getM()));
+        }
+
+        @Override
+        public int hashCode() {
+            String mp = m + p;
+            return mp.hashCode();
         }
     }
 

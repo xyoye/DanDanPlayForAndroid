@@ -3,23 +3,20 @@ package com.xyoye.dandanplay.ui.homeMod;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.rx.LifefulRunnable;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBeans;
-import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
-import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.xyoye.dandanplay.weight.DiyTablayout.CommonNavigator.CommonNavigator;
@@ -34,10 +31,6 @@ import com.xyoye.dandanplay.weight.ScrollableLayout;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +88,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         banner.setBannerAnimation(Transformer.DepthPage);
         banner.setBannerTitles(titles);
         banner.isAutoPlay(true);
-        banner.setDelayTime(3000);
+        banner.setDelayTime(5000);
         banner.setIndicatorGravity(BannerConfig.CENTER);
         banner.setOnBannerListener(position -> {
             String url = urls.get(position);
@@ -121,14 +114,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(dateList.get(index));
-                simplePagerTitleView.setNormalColor(Color.parseColor("#88ffffff"));
-                simplePagerTitleView.setSelectedColor(Color.WHITE);
-                simplePagerTitleView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        viewPager.setCurrentItem(index);
-                    }
-                });
+                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.text_black));
+                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.theme_color));
+                simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
 
@@ -136,7 +124,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(Color.parseColor(getString(R.color.colorPrimaryLight)));
+                indicator.setColors(ContextCompat.getColor(context, R.color.theme_color));
                 return indicator;
             }
         });
@@ -183,13 +171,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         }, this));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openAnimaDetail(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
-        intent.putExtra("animaId", event.getAnimaId());
-        startActivity(intent);
-    }
-
     public static void bindViewPager(final MagicIndicator magicIndicator, ViewPager viewPager) {
         if (viewPager == null) return;
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -211,7 +192,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         });
     }
 
-    class AnimaFragmentAdapter extends FragmentPagerAdapter {
+    private class AnimaFragmentAdapter extends FragmentPagerAdapter {
         private List<AnimeFragment> list;
 
         private AnimaFragmentAdapter(FragmentManager supportFragmentManager, List<AnimeFragment> list) {
@@ -228,24 +209,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         @Override
         public int getCount() {
             return list.size();
-        }
-    }
-
-    @Override
-    protected void onPageFirstVisible() {
-        super.onPageFirstVisible();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden){
-            if (EventBus.getDefault().isRegistered(this))
-                EventBus.getDefault().unregister(this);
-        }else {
-            if (!EventBus.getDefault().isRegistered(this))
-                EventBus.getDefault().register(this);
         }
     }
 }

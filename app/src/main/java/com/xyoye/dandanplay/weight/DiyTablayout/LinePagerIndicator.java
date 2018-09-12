@@ -52,7 +52,7 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
     private void init(Context context) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
-        mLineHeight = PixelUtil.dip2px(context, 3);
+        mLineHeight = PixelUtil.dip2px(context, 2);
         mLineWidth = PixelUtil.dip2px(context, 10);
     }
 

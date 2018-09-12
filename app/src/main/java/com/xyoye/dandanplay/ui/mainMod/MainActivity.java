@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.mainMod;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -108,11 +109,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         int[] normalList = DataGenerator.mTabRes;
         String[] tabTitleList = DataGenerator.mTabTitle;
         for (int i = 0; i < normalList.length; i++) {
-            Drawable img = getDrawable(normalList[i]);
+            Drawable img = ContextCompat.getDrawable(this,normalList[i]);
             assert img != null;
             img.setBounds(0, 0, img.getMinimumWidth(), img.getMinimumHeight());
             tabView[i].setCompoundDrawables(null, img, null, null);
-            tabView[i].setTextColor(getResources().getColor(R.color.text_gray));
+            tabView[i].setTextColor(ContextCompat.getColor(this, R.color.text_gray));
             tabView[i].setText(tabTitleList[i]);
         }
     }
@@ -121,11 +122,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     public void selected(int position) {
         int[] selectedList = DataGenerator.mTabResPressed;
         if (selectedList != null && position < 5) {
-            Drawable img = getResources().getDrawable(selectedList[position]);
+            Drawable img = ContextCompat.getDrawable(this, selectedList[position]);
             assert img != null;
             img.setBounds(0, 0, img.getMinimumWidth(), img.getMinimumHeight());
             tabView[position].setCompoundDrawables(null, img, null, null);
-            tabView[position].setTextColor(getResources().getColor(R.color.theme_color));
+            tabView[position].setTextColor(ContextCompat.getColor(this, R.color.theme_color));
         }
     }
 }

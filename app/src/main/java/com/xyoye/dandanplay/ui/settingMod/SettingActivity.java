@@ -5,11 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.core.base.BaseActivity;
@@ -33,15 +31,15 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
     public final static int SELECT_SETTING_FOLDER = 105;
 
     @BindView(R.id.path_rl)
-    ConstraintLayout pathRl;
+    RelativeLayout pathRl;
     @BindView(R.id.download_rl)
-    ConstraintLayout downloadRl;
+    RelativeLayout downloadRl;
     @BindView(R.id.version_rl)
-    ConstraintLayout versionRl;
+    RelativeLayout versionRl;
     @BindView(R.id.about_rl)
-    ConstraintLayout aboutRl;
+    RelativeLayout aboutRl;
     @BindView(R.id.feedback_rl)
-    ConstraintLayout feedbackRl;
+    RelativeLayout feedbackRl;
     @BindView(R.id.version_tv)
     TextView versionTv;
     @BindView(R.id.download_path_tv)
@@ -101,7 +99,6 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                 break;
             case R.id.feedback_rl:
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                //builder.setIcon(R.drawable.ic_launcher);
                 builder.setTitle("选择反馈方式");
                 final String[] ways = {"邮件", "Github Issue"};
                 builder.setItems(ways, new DialogInterface.OnClickListener() {

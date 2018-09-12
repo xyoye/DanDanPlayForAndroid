@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
-    android:background="@color/white"
-    app:cardElevation="5dp">
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.xyoye.dandanplay.weight.SquareImageView
-            android:id="@+id/image_iv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            tools:layout_width="100dp" />
+        <RelativeLayout
+            android:id="@+id/image_rl"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true">
+            <ImageView
+                android:id="@+id/image_iv"
+                android:layout_width="100dp"
+                android:layout_height="120dp"/>
 
-        <TextView
-            android:id="@+id/anima_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image_iv"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:minLines="2"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
-            tools:text="测试标题" />
+            <TextView
+                android:id="@+id/anima_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/background_anime_title"
+                android:padding="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="测试标题" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/status_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/anima_title"
-            android:layout_marginTop="8dp"
+            android:layout_below="@+id/image_rl"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:ellipsize="end"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textSize="12sp"
             tools:text="测试状态" />
 
@@ -53,10 +51,10 @@
             android:id="@+id/favorite_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/anima_title"
+            android:layout_below="@+id/image_rl"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
             android:textColor="@color/theme_color"
             android:textSize="12sp"
@@ -65,4 +63,4 @@
             tools:visibility="visible" />
     </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+</RelativeLayout>

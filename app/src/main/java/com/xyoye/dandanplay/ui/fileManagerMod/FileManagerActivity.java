@@ -19,7 +19,6 @@ import com.xyoye.dandanplay.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuLocalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
-import com.xyoye.dandanplay.ui.danmuMod.DanmuNetworkActivity;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,14 +36,11 @@ import butterknife.BindView;
 public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
     public final static String IS_FOLDER = "isFolder";
     public final static String VIDEO_PATH = "videoPath";
-    public final static int SELECT_NETWORK_DANMU = 104;
 
     @BindView(R.id.loading_ll)
     LinearLayout loadingLl;
     @BindView(R.id.path_tv)
     TextView pathTv;
-    @BindView(R.id.network_tv)
-    TextView networkTv;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -57,10 +53,8 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
 
         if (isFolder){
             setTitle("选择文件夹");
-            networkTv.setVisibility(View.GONE);
         } else {
             setTitle("选择本地弹幕");
-            networkTv.setVisibility(View.VISIBLE);
         }
 
 
@@ -68,13 +62,6 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1,0,0,0));
-
-        networkTv.setOnClickListener(v -> {
-            Intent intent = new Intent(FileManagerActivity.this, DanmuNetworkActivity.class);
-            String videoPath = getIntent().getStringExtra(VIDEO_PATH);
-            intent.putExtra("path", videoPath);
-            startActivityForResult(intent, SELECT_NETWORK_DANMU);
-        });
     }
 
     @Override
@@ -176,17 +163,5 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
         intent.putExtra("folder", pathTv.getText().toString());
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == SELECT_NETWORK_DANMU){
-                Intent intent = getIntent();
-                intent.putExtra("danmu", data.getStringExtra("path"));
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        }
     }
 }

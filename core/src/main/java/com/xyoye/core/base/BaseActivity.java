@@ -1,6 +1,7 @@
 package com.xyoye.core.base;
 
 import android.app.Dialog;
+import android.support.v4.content.ContextCompat;
 
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.core.R;
@@ -17,7 +18,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends BaseMvpActiv
 
     @Override
     protected int getToolbarColor() {
-        return this.getResources().getColor(R.color.theme_color);
+        return ContextCompat.getColor(this, R.color.theme_color);
     }
 
     @Override

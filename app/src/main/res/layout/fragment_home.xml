@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,21 +7,15 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:background="@android:color/transparent"
-        android:paddingBottom="0dp"
-        >
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/theme_color"
-            android:elevation="@dimen/common_toolBar_elevation"
             app:title="@string/home_title"
-            app:titleTextColor="@color/title_color"
-            style="@style/ToolBar"/>
+            app:titleTextColor="@color/title_color"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -31,70 +25,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingEnd="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingStart="8dp"
         android:clipToPadding="false">
 
-        <android.support.v7.widget.CardView
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="0dp"
-            app:cardElevation="3dp">
+            android:layout_height="200dp">
+        </com.youth.banner.Banner>
 
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="0dp"
-                android:fillViewport="true"
-                android:padding="0dp">
-
-                <com.youth.banner.Banner
-                    android:id="@+id/banner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </com.youth.banner.Banner>
-            </ScrollView>
-
-        </android.support.v7.widget.CardView>
-
-
-        <Space
+        <com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator
+            android:id="@+id/magic_indicator"
             android:layout_width="match_parent"
-            android:layout_height="8dp" />
+            android:layout_height="40dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            app:tabMode="scrollable" />
 
-        <android.support.v7.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardElevation="3dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.xyoye.dandanplay.weight.DiyTablayout.MagicIndicator
-                    android:id="@+id/magic_indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:background="@color/colorPrimary"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    app:tabMode="scrollable" />
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/viewpager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="40dp"
-                    android:background="@color/colorPrimary" />
-            </FrameLayout>
-
-        </android.support.v7.widget.CardView>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"/>
 
     </com.xyoye.dandanplay.weight.ScrollableLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

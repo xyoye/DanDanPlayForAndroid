@@ -32,7 +32,7 @@ public interface RetrofitService {
     @POST("api/v2/match")
     Observable<DanmuMatchBean> matchDanmu(@FieldMap Map<String, String> params);
 
-    @GET("api/v2/comment/{episodeId}")
+    @GET("api/v2/comment/{episodeId}?withRelated=true")
     Observable<DanmuDownloadBean> downloadDanmu(@Path("episodeId") String episodeId);
 
     @GET("api/v2/homepage/banner")

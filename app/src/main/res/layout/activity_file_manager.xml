@@ -29,7 +29,6 @@
             android:textColor="#5588FF"
             android:textSize="16sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
-            app:layout_constraintEnd_toStartOf="@+id/network_tv"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             tools:text="/test/test/" />
 
@@ -44,15 +43,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/network_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/web_danmaku_button"
-            android:textColor="@color/orange"
-            app:layout_constraintBaseline_toBaselineOf="@+id/path_tv"
-            app:layout_constraintEnd_toEndOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

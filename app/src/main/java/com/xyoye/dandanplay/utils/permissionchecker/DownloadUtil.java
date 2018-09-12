@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -26,7 +27,7 @@ import static com.blankj.utilcode.util.FileUtils.createOrExistsFile;
 
 public class DownloadUtil {
 
-    public static void saveDanmu(List<DanmuDownloadBean.CommentsBean> comments, String savePath){
+    public static void saveDanmu(Set<DanmuDownloadBean.CommentsBean> comments, String savePath){
         try {
             StringWriter xmlWriter = new StringWriter();
             SAXTransformerFactory factory = (SAXTransformerFactory)SAXTransformerFactory.newInstance();

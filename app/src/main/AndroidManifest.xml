@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.openMod.OpenActivity">
+        <activity android:name=".ui.openMod.OpenActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,37 +27,53 @@
         </activity>
 
         <activity android:name=".ui.mainMod.MainActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
 
-        <activity android:name=".ui.folderMod.FolderActivity"/>
+        <activity android:name=".ui.folderMod.FolderActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.fileManagerMod.FileManagerActivity"/>
+        <activity android:name=".ui.fileManagerMod.FileManagerActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.danmuMod.DanmuNetworkActivity"/>
+        <activity android:name=".ui.danmuMod.DanmuNetworkActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.danmuMod.DownloadBilibiliActivity"/>
+        <activity android:name=".ui.danmuMod.DownloadBilibiliActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.playMod.PlayerActivity"/>
+        <activity android:name=".ui.playMod.PlayerActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.webMod.WebviewActivity"/>
+        <activity android:name=".ui.webMod.WebviewActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.animeMod.AnimeDetailActivity"/>
+        <activity android:name=".ui.animeMod.AnimeDetailActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.LoginActivity"/>
+        <activity android:name=".ui.authMod.LoginActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalInfoActivity"/>
+        <activity android:name=".ui.personalMod.PersonalInfoActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalFavoriteActivity"/>
+        <activity android:name=".ui.personalMod.PersonalFavoriteActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalHistoryActivity"/>
+        <activity android:name=".ui.personalMod.PersonalHistoryActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settingMod.SettingActivity"/>
+        <activity android:name=".ui.settingMod.SettingActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.RegisterActivity"/>
+        <activity android:name=".ui.authMod.RegisterActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.ResetPasswordActivity"/>
+        <activity android:name=".ui.authMod.ResetPasswordActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.ChangePasswordActivity"/>
+        <activity android:name=".ui.authMod.ChangePasswordActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"

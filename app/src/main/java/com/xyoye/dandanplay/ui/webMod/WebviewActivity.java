@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.webMod;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -10,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.danmuMod.DownloadBilibiliActivity;
 import com.xyoye.dandanplay.weight.IWebView;
@@ -42,6 +44,7 @@ public class WebviewActivity extends AppCompatActivity {
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("title");

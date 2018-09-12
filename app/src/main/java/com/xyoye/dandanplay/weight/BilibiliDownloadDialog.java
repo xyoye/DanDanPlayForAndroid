@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,7 +78,7 @@ public class BilibiliDownloadDialog extends Dialog {
                     }
                     downloadStartBt.setVisibility(View.VISIBLE);
                     downloadStartBt.setEnabled(true);
-                    downloadStartBt.setBackground(context.getResources().getDrawable(R.drawable.btn_corner_blue));
+                    downloadStartBt.setBackground(ContextCompat.getDrawable(context, R.drawable.btn_corner_blue));
                     downloadStartBt.setText("开始下载");
                     break;
                 //初始化完成

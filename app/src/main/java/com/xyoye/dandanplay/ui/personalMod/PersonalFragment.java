@@ -1,9 +1,8 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -23,18 +23,12 @@ import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
-import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.authMod.LoginActivity;
 import com.xyoye.dandanplay.ui.settingMod.SettingActivity;
 import com.xyoye.dandanplay.utils.UserInfoShare;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -45,9 +39,7 @@ import butterknife.BindView;
 
 public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView,View.OnClickListener {
     @BindView(R.id.user_info_rl)
-    ConstraintLayout userInfoRl;
-    @BindView(R.id.login_rl)
-    ConstraintLayout loginRl;
+    RelativeLayout userInfoRl;
     @BindView(R.id.user_image_iv)
     ImageView userImageIv;
     @BindView(R.id.user_name_tv)
@@ -64,6 +56,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     RecyclerView historyRecyclerView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+
     private BaseRvAdapter<AnimeFavoriteBean.FavoritesBean> favoriteAdapter;
     private BaseRvAdapter<PlayHistoryBean.PlayHistoryAnimesBean> historyAdapter;
 
@@ -81,51 +74,35 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     protected int initPageLayoutId() {
         return R.layout.fragment_personal;
     }
-    public class ScrollControlGridLayoutManager extends GridLayoutManager {
-        private boolean isScrollEnabled = true;
 
-        public ScrollControlGridLayoutManager(Context context, int spanCount) {
-            super(context,spanCount);
-        }
-        public ScrollControlGridLayoutManager(Context context, int spanCount,boolean canScroll) {
-            super(context,spanCount);
-            this.isScrollEnabled = canScroll;
-        }
-        public void setScrollEnabled(boolean flag) {
-            this.isScrollEnabled = flag;
-        }
-
-        @Override
-        public boolean canScrollVertically() {
-            //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
-            return isScrollEnabled && super.canScrollVertically();
-        }
-    }
     @Override
     public void initView() {
         setHasOptionsMenu(true);
         getBaseActivity().setSupportActionBar(toolbar);
-        favoriteRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
-        historyRecyclerView.setLayoutManager(new ScrollControlGridLayoutManager(getContext(), 3,false));
+        favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        historyRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
     }
 
     @Override
     public void changeView(){
         if (UserInfoShare.getInstance().isLogin()){
             userInfoRl.setVisibility(View.VISIBLE);
-            loginRl.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
             Glide.with(this)
                     .load(UserInfoShare.getInstance().getUserImage())
                     .into(userImageIv);
             userNameTv.setText(UserInfoShare.getInstance().getUserScreenName());
         }else {
-            loginRl.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
             userInfoRl.setVisibility(View.GONE);
         }
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_settings, menu);
+        Activity activity;
+        activity = getActivity();
+        if (activity != null)
+            activity.getMenuInflater().inflate(R.menu.menu_settings, menu);
         super.onCreateOptionsMenu(menu, inflater);
 
     }
@@ -199,13 +176,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         super.onPause();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openAnimaDeatil(OpenAnimaDetailEvent event){
-        Intent intent = new Intent(getContext(), AnimeDetailActivity.class);
-        intent.putExtra("animaId", event.getAnimaId());
-        startActivity(intent);
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -216,7 +186,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 launchActivity(LoginActivity.class);
                 break;
             case R.id.user_image_iv:
-                ToastUtils.showShort("此功能暂未开放");
+                ToastUtils.showShort("头像功能暂未开放");
                 break;
             case R.id.more_favorite_tv:
                 if (UserInfoShare.getInstance().isLogin()){
@@ -236,24 +206,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                     ToastUtils.showShort("请登录后再进行此操作");
                 }
                 break;
-        }
-    }
-
-    @Override
-    protected void onPageFirstVisible() {
-        super.onPageFirstVisible();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden){
-            if (EventBus.getDefault().isRegistered(this))
-                EventBus.getDefault().unregister(this);
-        }else {
-            if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
         }
     }
 }

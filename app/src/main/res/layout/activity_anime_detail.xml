@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -16,151 +15,122 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
-        android:paddingTop="8dp">
+        android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginTop="8dp"
-            app:cardBackgroundColor="@color/bg_light"
-            app:cardElevation="4dp">
+            android:padding="16dp">
 
-            <ScrollView
-                android:id="@+id/scroll_view"
+            <ImageView
+                android:id="@+id/anima_image_iv"
+                android:layout_width="140dp"
+                android:layout_height="180dp"
+                android:elevation="5dp"
+                tools:ignore="contentDescription" />
+
+            <LinearLayout
+                android:id="@+id/anima_info_ll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:id="@+id/anima_image_iv"
-                        android:layout_width="140dp"
-                        android:layout_height="180dp"
-                        android:elevation="5dp"
-                        tools:ignore="contentDescription" />
-
-                    <LinearLayout
-                        android:id="@+id/anima_info_ll"
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_toEndOf="@id/anima_image_iv"
-                        android:orientation="vertical"
-                        android:paddingEnd="16dp"
-                        android:paddingStart="16dp">
-
-                        <TextView
-                            android:id="@+id/anima_title_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLines="2"
-                            android:textColor="@color/text_black"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            tools:text="测试番剧" />
-
-                        <TextView
-                            android:id="@+id/anima_onair_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textSize="14sp"
-                            tools:text="状态：连载中" />
-
-                        <TextView
-                            android:id="@+id/anima_airday_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text=""
-                            android:textSize="14sp"
-                            tools:text="日期：星期三" />
-
-                        <TextView
-                            android:id="@+id/anima_rating_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text=""
-                            android:textSize="14sp"
-                            tools:text="评分：8" />
-
-                        <TextView
-                            android:id="@+id/anima_favorited_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text=""
-                            android:textColor="@color/theme_color"
-                            android:textSize="14sp"
-                            tools:text="未关注" />
-
-                        <TextView
-                            android:id="@+id/anima_restricted_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text=""
-                            android:textColor="@color/text_red"
-                            android:textSize="22sp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <com.xyoye.dandanplay.weight.ExpandableTextView
-                        android:id="@+id/anima_intro_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/anima_info_ll"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:text="" />
-                </RelativeLayout>
-            </ScrollView>
-
-        </android.support.v7.widget.CardView>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardBackgroundColor="@color/bg_gray"
-            app:cardElevation="4dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="8dp">
+                android:layout_height="180dp"
+                android:layout_toEndOf="@id/anima_image_iv"
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
 
                 <TextView
-                    android:id="@+id/anima_episode_tips"
+                    android:id="@+id/anima_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:text="@string/anima_episode_tips_string"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:textColor="@color/text_black"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp"
+                    tools:text="测试番剧" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/anima_onair_tv"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/anima_episode_tips" />
-            </RelativeLayout>
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
+                    tools:text="状态：连载中" />
 
-        </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/anima_airday_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text=""
+                    android:textSize="14sp"
+                    tools:text="日期：星期三" />
+
+                <TextView
+                    android:id="@+id/anima_rating_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text=""
+                    android:textSize="14sp"
+                    tools:text="评分：8" />
+
+                <TextView
+                    android:id="@+id/anima_favorited_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text=""
+                    android:textColor="@color/theme_color"
+                    android:textSize="14sp"
+                    tools:text="未关注" />
+
+                <TextView
+                    android:id="@+id/anima_restricted_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text=""
+                    android:textColor="@color/text_red"
+                    android:textSize="22sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <com.xyoye.dandanplay.weight.ExpandableTextView
+                android:id="@+id/anima_intro_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/anima_info_ll"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/diver_color"/>
+
+            <TextView
+                android:id="@+id/anima_episode_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/anima_episode_tips_string"
+                android:textColor="@color/text_black"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/anima_episode_tips" />
+        </RelativeLayout>
 
     </com.xyoye.dandanplay.weight.ScrollableLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

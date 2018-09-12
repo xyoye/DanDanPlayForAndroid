@@ -21,7 +21,9 @@ import com.xyoye.dandanplay.utils.permissionchecker.PermissionHelper;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,12 +60,10 @@ public class DanmuDownloadDialog extends Dialog{
         episodeTitleTv.setText(bean.getEpisodeTitle());
         statusTv.setText("下载中...");
 
-        new PermissionHelper().with((Activity) context).request(new PermissionHelper.OnSuccessListener() {
-            @Override
-            public void onPermissionSuccess() {
-                startDownload();
-            }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
+        new PermissionHelper()
+                .with((Activity) context)
+                .request(this::startDownload,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     private void startDownload(){
@@ -71,14 +71,17 @@ public class DanmuDownloadDialog extends Dialog{
             @Override
             public void onSuccess(DanmuDownloadBean danmuDownloadBean) {
                 statusTv.setText("下载完成...");
-                List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
+                List<DanmuDownloadBean.CommentsBean> commentsTemp = danmuDownloadBean.getComments();
 
                 statusTv.setText("开始保存...");
                 String path = AppConfigShare.getInstance().getDownloadFolder()
                         + "/" + bean.getAnimeTitle()+"_"
                         + bean.getEpisodeTitle().replace(" ","_")
                         + ".xml";
+                //去除内容时间一样的弹幕
+                Set<DanmuDownloadBean.CommentsBean> comments = new HashSet<>(commentsTemp);
                 DownloadUtil.saveDanmu(comments,path);
+
                 statusTv.setText("保存完成！");
                 ToastUtils.showShort("下载完成："+path);
 

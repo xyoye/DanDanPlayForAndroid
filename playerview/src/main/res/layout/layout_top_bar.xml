@@ -289,5 +289,22 @@
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/more_block_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:text="更多屏蔽"/>
+        </RelativeLayout>
+
     </LinearLayout>
 </merge>

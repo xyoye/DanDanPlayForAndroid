@@ -25,6 +25,7 @@ import com.xyoye.dandanplay.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.ui.danmuMod.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
@@ -57,7 +58,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
-    public final static int SELECT_DANMU = 101;
+    public final static int SELECT_NETWORK_DANMU = 104;
     public final static int OPEN_VIDEO = 102;
     private int selectItem = -1;
     private int openVideoPosition = -1;
@@ -209,10 +210,9 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
         selectItem = event.getVideoPosition();
-        Intent intent = new Intent(this, FileManagerActivity.class);
-        intent.putExtra(FileManagerActivity.IS_FOLDER, false);
-        intent.putExtra(FileManagerActivity.VIDEO_PATH, event.getVideoPath());
-        startActivityForResult(intent, SELECT_DANMU);
+        Intent intent = new Intent(FolderActivity.this, DanmuNetworkActivity.class);
+        intent.putExtra("path", event.getVideoPath());
+        startActivityForResult(intent, SELECT_NETWORK_DANMU);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -225,8 +225,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            if (requestCode == SELECT_DANMU){
-                String danmuPath = data.getStringExtra("danmu");
+            if (requestCode == SELECT_NETWORK_DANMU){
+                String danmuPath = data.getStringExtra("path");
                 String videoPath = adapter.getData().get(selectItem).getVideoPath();
                 String folderPath = FileUtils.getDirName(videoPath);
                 String fileName = FileUtils.getFileName(videoPath);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.webMod.WebviewActivity;
 import com.xyoye.dandanplay.utils.BilibiliDownloadUtil;
@@ -53,6 +55,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
 
         initListener();
     }

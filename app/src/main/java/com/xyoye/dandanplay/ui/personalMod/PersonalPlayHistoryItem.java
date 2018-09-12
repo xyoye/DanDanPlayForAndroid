@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.ui.personalMod;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -9,10 +11,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.weight.CornersCenterCrop;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -30,6 +30,7 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
     TextView statusTv;
 
     private View mView;
+    private Context context;
 
     @Override
     public int getLayoutResId() {
@@ -39,6 +40,7 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
     @Override
     public void initItemViews(View itemView) {
         mView = itemView;
+        context = mView.getContext();
     }
 
     @Override
@@ -63,7 +65,10 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
                 ? "连载中"
                 : "已完结");
 
-        mView.setOnClickListener(v ->
-                EventBus.getDefault().post(new OpenAnimaDetailEvent(model.getAnimeId()+"")));
+        mView.setOnClickListener(v ->{
+            Intent intent = new Intent(mView.getContext(), AnimeDetailActivity.class);
+            intent.putExtra("animaId", model.getAnimeId()+"");
+            mView.getContext().startActivity(intent);
+        });
     }
 }

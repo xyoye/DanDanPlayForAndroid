@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.homeMod;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -7,13 +8,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
+import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBeans;
-import com.xyoye.dandanplay.event.OpenAnimaDetailEvent;
+import com.xyoye.dandanplay.ui.animeMod.AnimeDetailActivity;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.CornersCenterCrop;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -65,15 +65,18 @@ public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
         animaTitle.setText(model.getAnimeTitle());
 
         RequestOptions options = new RequestOptions()
-                .centerCrop();
-        //.transform(new CornersCenterCrop(10));
+                .centerCrop()
+                .transform(new CornersCenterCrop(PixelUtil.dip2px(mView.getContext(), 5)));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
                 .into(imageView);
 
-        mView.setOnClickListener(v ->
-                EventBus.getDefault().post(new OpenAnimaDetailEvent(model.getAnimeId()+"")));
+        mView.setOnClickListener(v ->{
+            Intent intent = new Intent(mView.getContext(), AnimeDetailActivity.class);
+            intent.putExtra("animaId", model.getAnimeId()+"");
+            mView.getContext().startActivity(intent);
+        });
     }
 }

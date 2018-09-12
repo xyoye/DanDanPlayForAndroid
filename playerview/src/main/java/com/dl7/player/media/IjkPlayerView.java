@@ -45,6 +45,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -168,6 +169,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private TextView mDanmuSizeTv;
     private TextView mDanmuSpeedFast, mDanmuSpeedMiddle, mDanmuSpeedSlow;
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
+    private RelativeLayout mMoreBlockRl;
+    //弹幕屏蔽
+    private FrameLayout mBlockView;
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
@@ -300,6 +304,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuMobileIv = findViewById(R.id.mobile_danmu_iv);
         mDanmuTopIv = findViewById(R.id.top_danmu_iv);
         mDanmuBottomIv = findViewById(R.id.bottom_danmu_iv);
+        mMoreBlockRl = findViewById(R.id.more_block_rl);
+        //弹幕屏蔽相关
+        mBlockView = findViewById(R.id.block_setting_view);
 
         mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
         mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -383,6 +390,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mTvRecoverScreen.setOnClickListener(this);
         mTvSettings.setOnClickListener(this);
         mDanmuSettings.setOnClickListener(this);
+        mMoreBlockRl.setOnClickListener(this);
     }
 
     /**
@@ -926,10 +934,23 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     private void _showDanmuSetting(boolean isShow){
         if (isShow) {
-            AnimHelper.doClipViewHeight(mDanmuSettingLL, 0, dip2px(getContext(), 210), 150);
+            AnimHelper.doClipViewHeight(mDanmuSettingLL, 0, dip2px(getContext(), 240), 150);
         } else {
             ViewGroup.LayoutParams layoutParams = mDanmuSettingLL.getLayoutParams();
             layoutParams.height = 0;
+        }
+    }
+
+    /**
+     * 显示弹幕屏蔽列表设置
+     */
+    private void _showMoreDanmuBlock(boolean isShow){
+        if (isShow) {
+            mBlockView.setVisibility(VISIBLE);
+            pause();
+        } else {
+            mBlockView.setVisibility(GONE);
+            start();
         }
     }
 
@@ -990,27 +1011,32 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         } else if (id == R.id.tv_settings) {
             _showAspectRatioOptions(true);
             _showDanmuSetting(false);
+            resetHideControllerBar();
         } else if (id == R.id.tv_danmu){
             _showDanmuSetting(true);
             _showAspectRatioOptions(false);
+            resetHideControllerBar();
         }else if (id == R.id.speed_fast_tv){
             mDanmuSpeedFast.setTextColor(getResources().getColor(R.color.theme_color));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
             DanmuConfigShare.getInstance().saveSpeed(Constants.SPEED_FAST);
             mDanmakuContext.setScrollSpeedFactor(Constants.SPEED_FAST);
+            resetHideControllerBar();
         }else if (id == R.id.speed_middle_tv){
             mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(R.color.theme_color));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
             DanmuConfigShare.getInstance().saveSpeed(Constants.SPEED_MIDDLE);
             mDanmakuContext.setScrollSpeedFactor(Constants.SPEED_MIDDLE);
+            resetHideControllerBar();
         }else if (id == R.id.speed_slow_tv){
             mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(R.color.theme_color));
             DanmuConfigShare.getInstance().saveSpeed(Constants.SPEED_SLOW);
             mDanmakuContext.setScrollSpeedFactor(Constants.SPEED_SLOW);
+            resetHideControllerBar();
         }else if (id == R.id.mobile_danmu_iv){
             isShowMobile = !isShowMobile;
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
@@ -1018,6 +1044,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmuMobileIv.setImageResource(isShowMobile
                     ? R.mipmap.ic_mobile_unselect
                     : R.mipmap.ic_mobile_select);
+            resetHideControllerBar();
         }else if (id == R.id.top_danmu_iv){
             isShowTop = !isShowTop;
             mDanmakuContext.setFTDanmakuVisibility(isShowTop);
@@ -1025,6 +1052,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmuTopIv.setImageResource(isShowTop
                     ? R.mipmap.ic_top_unselect
                     : R.mipmap.ic_top_select);
+            resetHideControllerBar();
         }else if (id == R.id.bottom_danmu_iv){
             isShowBottom = !isShowBottom;
             mDanmakuContext.setFBDanmakuVisibility(isShowBottom);
@@ -1032,8 +1060,21 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmuBottomIv.setImageResource(isShowBottom
                     ? R.mipmap.ic_bottom_unselect
                     : R.mipmap.ic_bottom_select);
+            resetHideControllerBar();
+        }else if (id == R.id.more_block_rl){
+            if (test == 0){
+                test = 1;
+                _showDanmuSetting(false);
+                _showAspectRatioOptions(false);
+                _showMoreDanmuBlock(true);
+            }else {
+                test = 0;
+                _showMoreDanmuBlock(false);
+            }
         }
     }
+
+    int test = 0;
 
     /**==================== 屏幕翻转/切换处理 ====================*/
 
@@ -2631,6 +2672,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 }
             }
         }
+    }
+
+    /**
+     * 重新倒计时 隐藏控制视图
+     */
+    private void resetHideControllerBar() {
+        mHandler.removeCallbacks(mHideBarRunnable);
+        mHandler.postDelayed(mHideBarRunnable, DEFAULT_HIDE_TIMEOUT);
     }
 
     /**

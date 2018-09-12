@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -29,18 +30,24 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation rootProject.ext.dependencies["appcompat-v7"]
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile rootProject.ext.dependencies["appcompat-v7"]
 
-    api 'tv.danmaku.ijk.media:ijkplayer-java:0.7.7.1'
-    api 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
-    implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
-    implementation 'com.github.ctiao:ndkbitmap-x86:0.9.21'
+    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.7.1'
+    compile 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
+    compile 'com.github.ctiao:ndkbitmap-x86:0.9.21'
         // Required for local unit tests (JUnit 4 framework)
-    testImplementation 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 
     // Required for instrumented tests
-    androidTestImplementation 'com.android.support:support-annotations:27.1.1'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestCompile 'com.android.support:support-annotations:27.1.1'
+    androidTestCompile 'com.android.support.test:runner:1.0.2'
 
+}
+
+if (rootProject.file('gradle/gradle-mvn-push.gradle').exists()) {
+    apply from: rootProject.file('gradle/gradle-mvn-push.gradle')
+}
+if (rootProject.file('gradle/gradle-bintray-upload.gradle').exists()) {
+    apply from: rootProject.file('gradle/gradle-bintray-upload.gradle')
 }

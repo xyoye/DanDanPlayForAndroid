@@ -47,8 +47,8 @@ public class RetroFactory {
         return OkHttpEngine.getInstance()
                 .getOkHttpClient()
                 .newBuilder()
-                .connectTimeout(1, TimeUnit.SECONDS)
-                .readTimeout(1, TimeUnit.SECONDS)
+                .connectTimeout(5000, TimeUnit.SECONDS)
+                .readTimeout(5000, TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder builder = original.newBuilder()

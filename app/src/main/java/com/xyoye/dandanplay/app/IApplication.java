@@ -44,7 +44,6 @@ public class IApplication extends BaseApplication {
         super.onCreate();
         MultiDex.install(this);
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
-        //UMConfigure.init(this,KeyUtil.getUmengId(getApplicationContext()) ,"umeng",UMConfigure.DEVICE_TYPE_PHONE,"");
         initDatabase(new DataBaseHelper(this));
         DanmuConfigShare.initDanmuConfigShare(getApplicationContext());
     }

@@ -69,4 +69,6 @@
     <include layout="@layout/layout_media_quality"/>
 
     <include layout="@layout/layout_send_danmaku"/>
+
+    <include layout="@layout/layout_block_view"/>
 </FrameLayout>

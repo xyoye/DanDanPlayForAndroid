@@ -6,23 +6,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
-import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.event.DownloadDanmuEvent;
 import com.xyoye.dandanplay.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuNetworkPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
+import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,6 +36,7 @@ import butterknife.BindView;
 
 
 public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> implements DanmuNetworkView{
+    public final static int SELECT_DANMU = 101;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -57,6 +55,25 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
     @Override
     public void initListener() {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.local_danmu:
+                Intent intent = new Intent(this, FileManagerActivity.class);
+                intent.putExtra(FileManagerActivity.IS_FOLDER, false);
+                intent.putExtra(FileManagerActivity.VIDEO_PATH, getIntent().getStringExtra("path"));
+                startActivityForResult(intent, SELECT_DANMU);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_danmu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @NonNull
@@ -135,4 +152,18 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
     public void showError(String message) {
         ToastUtils.showShort(message);
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK){
+            if (requestCode == SELECT_DANMU){
+                Intent intent = getIntent();
+                intent.putExtra("path", data.getStringExtra("danmu"));
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+    }
+
 }

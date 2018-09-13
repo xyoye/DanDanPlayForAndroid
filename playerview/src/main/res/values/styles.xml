@@ -48,4 +48,10 @@
         <item name="android:windowEnterAnimation">@anim/dialog_zoom_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_zoom_out</item>
     </style>
+
+    <!-- EditText样式-->
+    <style name="BlockEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/theme_color</item>
+        <item name="colorControlActivated">@color/theme_color</item>
+    </style>
 </resources>

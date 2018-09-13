@@ -18,12 +18,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,6 +40,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -51,6 +56,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dl7.player.R;
+import com.dl7.player.adapter.AdapterItem;
+import com.dl7.player.adapter.BaseRvAdapter;
 import com.dl7.player.danmaku.BaseDanmakuConverter;
 import com.dl7.player.danmaku.BiliDanmakuParser;
 import com.dl7.player.danmaku.OnDanmakuListener;
@@ -63,6 +70,7 @@ import com.dl7.player.utils.SDCardUtils;
 import com.dl7.player.utils.SoftInputUtils;
 import com.dl7.player.utils.StringUtils;
 import com.dl7.player.utils.WindowUtils;
+import com.dl7.player.widgets.BlockItem;
 import com.dl7.player.widgets.MarqueeTextView;
 import com.dl7.player.widgets.ShareDialog;
 
@@ -171,7 +179,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
     private RelativeLayout mMoreBlockRl;
     //弹幕屏蔽
-    private FrameLayout mBlockView;
+    private RelativeLayout mBlockView;
+    private ImageView mBlockViewCancelIv;
+    private EditText mBlockInputEt;
+    private Button mBlockAddBt;
+    private RecyclerView mBlockRecyclerView;
+
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
@@ -250,6 +263,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isShowTop = true;
     private boolean isShowMobile = true;
     private boolean isShowBottom = true;
+    // TODO: 2018/9/13 从数据库读取屏蔽列表
+    private List<String> blockList = new ArrayList<>();
+    private BaseRvAdapter<String> blockAdapter;
 
     public IjkPlayerView(Context context) {
         this(context, null);
@@ -307,6 +323,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mMoreBlockRl = findViewById(R.id.more_block_rl);
         //弹幕屏蔽相关
         mBlockView = findViewById(R.id.block_setting_view);
+        mBlockViewCancelIv = findViewById(R.id.block_view_cancel_iv);
+        mBlockInputEt = findViewById(R.id.block_input_et);
+        mBlockAddBt = findViewById(R.id.add_block_bt);
+        mBlockRecyclerView = findViewById(R.id.block_recycler);
 
         mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
         mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -340,6 +360,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         isShowMobile = DanmuConfigShare.getInstance().isShowMobile();
         isShowTop = DanmuConfigShare.getInstance().isShowTop();
         isShowBottom = DanmuConfigShare.getInstance().isShowBottom();
+        mBlockRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+        blockAdapter = new BaseRvAdapter<String>(blockList) {
+            @NonNull
+            @Override
+            public AdapterItem<String> onCreateItem(int viewType) {
+                return new BlockItem();
+            }
+        };
+        mBlockRecyclerView.setAdapter(blockAdapter);
 
         if (mDanmuSpeed == Constants.SPEED_FAST)
             mDanmuSpeedFast.setTextColor(getResources().getColor(R.color.theme_color));
@@ -391,6 +420,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mTvSettings.setOnClickListener(this);
         mDanmuSettings.setOnClickListener(this);
         mMoreBlockRl.setOnClickListener(this);
+        mBlockAddBt.setOnClickListener(this);
+        mBlockViewCancelIv.setOnClickListener(this);
+
+        mBlockView.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 
     /**
@@ -1062,14 +1100,23 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                     : R.mipmap.ic_bottom_select);
             resetHideControllerBar();
         }else if (id == R.id.more_block_rl){
-            if (test == 0){
-                test = 1;
-                _showDanmuSetting(false);
-                _showAspectRatioOptions(false);
-                _showMoreDanmuBlock(true);
+            _showDanmuSetting(false);
+            _showAspectRatioOptions(false);
+            _showMoreDanmuBlock(true);
+        }else if (id == R.id.block_view_cancel_iv){
+            _showMoreDanmuBlock(false);
+        }else if (id == R.id.add_block_bt){
+            String blockText = mBlockInputEt.getText().toString();
+            if (TextUtils.isEmpty(blockText)){
+                Toast.makeText(getContext(), "请输入屏蔽关键字", Toast.LENGTH_LONG).show();
+            }else if (blockList.contains(blockText)){
+                Toast.makeText(getContext(), "当前关键字已屏蔽", Toast.LENGTH_LONG).show();
             }else {
-                test = 0;
-                _showMoreDanmuBlock(false);
+                Toast.makeText(getContext(), "添加屏蔽成功", Toast.LENGTH_LONG).show();
+                blockList.add(blockText);
+                blockAdapter.notifyDataSetChanged();
+                // TODO: 2018/9/13 添加到本地数据库
+                mDanmakuContext.addKeyWordBlackList(blockText);
             }
         }
     }

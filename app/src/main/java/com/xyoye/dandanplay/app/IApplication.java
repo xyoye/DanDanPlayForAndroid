@@ -23,8 +23,6 @@ import android.support.multidex.MultiDex;
 
 import com.dl7.player.utils.DanmuConfigShare;
 import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
-import com.umeng.commonsdk.UMConfigure;
 import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.utils.KeyUtil;

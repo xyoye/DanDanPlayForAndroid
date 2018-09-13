@@ -14,9 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
-import com.umeng.socialize.UMShareAPI;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.params.LoginParam;
@@ -139,6 +137,5 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 }

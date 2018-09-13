@@ -1,7 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'android-apt'
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -49,10 +48,8 @@ dependencies {
     compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-        // Required for local unit tests (JUnit 4 framework)
     testCompile 'junit:junit:4.12'
 
-    // Required for instrumented tests
     androidTestCompile 'com.android.support:support-annotations:27.1.1'
     androidTestCompile 'com.android.support.test:runner:1.0.2'
 

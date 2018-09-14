@@ -10,8 +10,6 @@ import com.xyoye.dandanplay.event.OpenFolderEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-
 import butterknife.BindView;
 
 /**

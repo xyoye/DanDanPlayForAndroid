@@ -16,8 +16,6 @@ import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.SearchDanmuUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * Created by YE on 2018/7/4 0004.

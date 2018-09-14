@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -10,11 +9,9 @@ import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.PersonalBean;
-import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
 import com.xyoye.dandanplay.net.CommJsonObserver;

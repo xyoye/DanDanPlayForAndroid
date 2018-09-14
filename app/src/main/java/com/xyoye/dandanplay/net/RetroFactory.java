@@ -4,10 +4,8 @@ import com.xyoye.core.gson.GsonFactory;
 import com.xyoye.core.net.okhttp.OkHttpEngine;
 import com.xyoye.dandanplay.utils.TokenShare;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;

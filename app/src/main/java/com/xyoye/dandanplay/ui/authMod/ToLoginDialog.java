@@ -70,8 +70,11 @@ public class ToLoginDialog extends Dialog {
                     UserInfoShare.getInstance().saveUserImage("");
                     TokenShare.getInstance().saveToken("");
                     Activity personalInfoActivity = AppManager.getActivity(PersonalInfoActivity.class);
+                    Activity changePasswordActivity = AppManager.getActivity(ChangePasswordActivity.class);
                     if (personalInfoActivity != null)
                         AppManager.finishActivity(personalInfoActivity);
+                    if (changePasswordActivity != null)
+                        AppManager.finishActivity(changePasswordActivity);
                     context.startActivity(new Intent(context, LoginActivity.class));
                 }
                 Activity activity = AppManager.getActivity(cla);

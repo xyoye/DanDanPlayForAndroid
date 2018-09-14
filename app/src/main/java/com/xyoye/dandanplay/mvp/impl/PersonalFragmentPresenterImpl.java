@@ -72,7 +72,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
                         beans.add(animeFavoriteBean.getFavorites().get(i));
                     }
                     AnimeFavoriteBean animeFavoriteBeanTemp = new AnimeFavoriteBean();
-                    animeFavoriteBean.setFavorites(beans);
+                    animeFavoriteBeanTemp.setFavorites(beans);
                     getView().refreshFavorite(animeFavoriteBeanTemp);
                 }else
                     getView().refreshFavorite(animeFavoriteBean);
@@ -97,7 +97,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
                         beans.add(playHistoryBean.getPlayHistoryAnimes().get(i));
                     }
                     PlayHistoryBean playHistoryBeanTemp = new PlayHistoryBean();
-                    playHistoryBean.setPlayHistoryAnimes(beans);
+                    playHistoryBeanTemp.setPlayHistoryAnimes(beans);
                     getView().refreshHistory(playHistoryBeanTemp);
                 }else
                     getView().refreshHistory(playHistoryBean);

@@ -60,7 +60,6 @@ dependencies {
     compile 'com.tencent.bugly:nativecrashreport:3.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.1.2'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'org.greenrobot:eventbus:3.1.1'
     compile 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
     annotationProcessor 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -70,7 +69,6 @@ dependencies {
     compile 'org.jsoup:jsoup:1.11.2'
 
     // Required for instrumented tests
-    androidTestCompile 'com.android.support:support-annotations:27.1.1'
     androidTestCompile 'com.android.support.test:runner:1.0.2'
 
 }

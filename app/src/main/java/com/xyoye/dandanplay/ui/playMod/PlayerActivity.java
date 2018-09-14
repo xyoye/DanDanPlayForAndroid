@@ -7,11 +7,14 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.dl7.player.danmaku.OnDanmakuListener;
 import com.dl7.player.media.IjkPlayerView;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +39,7 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         mPlayer = new IjkPlayerView(this);
         setContentView(mPlayer);
 
@@ -83,11 +87,29 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer.start();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(String text){
+        mPlayer.removeBlock(text);
+    }
+
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         saveCurrent(mPlayer.getCurPosition());
         mPlayer.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        mPlayer.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mPlayer.onPause();
+        super.onPause();
     }
 
     @Override

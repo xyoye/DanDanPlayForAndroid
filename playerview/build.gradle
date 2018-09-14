@@ -36,11 +36,11 @@ dependencies {
     compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.7.1'
     compile 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
     compile 'com.github.ctiao:ndkbitmap-x86:0.9.21'
+    compile 'org.greenrobot:eventbus:3.1.1'
         // Required for local unit tests (JUnit 4 framework)
     testCompile 'junit:junit:4.12'
 
     // Required for instrumented tests
-    androidTestCompile 'com.android.support:support-annotations:27.1.1'
     androidTestCompile 'com.android.support.test:runner:1.0.2'
 
 }

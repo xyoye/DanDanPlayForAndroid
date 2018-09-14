@@ -303,7 +303,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@android:color/white"
-                android:text="更多屏蔽"/>
+                android:text="屏蔽管理"/>
         </RelativeLayout>
 
     </LinearLayout>

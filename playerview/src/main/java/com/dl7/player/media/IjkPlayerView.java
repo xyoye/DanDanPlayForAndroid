@@ -1,11 +1,14 @@
 package com.dl7.player.media;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -39,6 +42,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -61,6 +65,9 @@ import com.dl7.player.adapter.BaseRvAdapter;
 import com.dl7.player.danmaku.BaseDanmakuConverter;
 import com.dl7.player.danmaku.BiliDanmakuParser;
 import com.dl7.player.danmaku.OnDanmakuListener;
+import com.dl7.player.database.DataBaseHelper;
+import com.dl7.player.database.DataBaseInfo;
+import com.dl7.player.database.DataBaseManager;
 import com.dl7.player.utils.AnimHelper;
 import com.dl7.player.utils.Constants;
 import com.dl7.player.utils.DanmuConfigShare;
@@ -263,9 +270,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isShowTop = true;
     private boolean isShowMobile = true;
     private boolean isShowBottom = true;
-    // TODO: 2018/9/13 从数据库读取屏蔽列表
+
     private List<String> blockList = new ArrayList<>();
     private BaseRvAdapter<String> blockAdapter;
+    private SQLiteDatabase sqLiteDatabase;
 
     public IjkPlayerView(Context context) {
         this(context, null);
@@ -273,7 +281,24 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
     public IjkPlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        _initData(context);
+
         _initView(context);
+    }
+
+    private void _initData(Context context){
+        DataBaseManager.initializeInstance(new DataBaseHelper(context));
+        sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+
+        //获取所有屏蔽
+        String sql = "SELECT * FROM block";
+        Cursor cursor = sqLiteDatabase.rawQuery(sql ,new String[]{});
+        while (cursor.moveToNext()){
+            String blockText = cursor.getString(1);
+            blockList.add(blockText);
+        }
+        cursor.close();
     }
 
     private void _initView(Context context) {
@@ -988,7 +1013,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             pause();
         } else {
             mBlockView.setVisibility(GONE);
-            start();
         }
     }
 
@@ -1106,24 +1130,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }else if (id == R.id.block_view_cancel_iv){
             _showMoreDanmuBlock(false);
         }else if (id == R.id.add_block_bt){
-            String blockText = mBlockInputEt.getText().toString();
-            if (TextUtils.isEmpty(blockText)){
-                Toast.makeText(getContext(), "请输入屏蔽关键字", Toast.LENGTH_LONG).show();
-            }else if (blockList.contains(blockText)){
-                Toast.makeText(getContext(), "当前关键字已屏蔽", Toast.LENGTH_LONG).show();
-            }else {
-                Toast.makeText(getContext(), "添加屏蔽成功", Toast.LENGTH_LONG).show();
-                blockList.add(blockText);
-                blockAdapter.notifyDataSetChanged();
-                // TODO: 2018/9/13 添加到本地数据库
-                mDanmakuContext.addKeyWordBlackList(blockText);
-            }
+            String blockText = mBlockInputEt.getText().toString().trim();
+            addBlock(blockText);
         }
     }
-
-    int test = 0;
-
-    /**==================== 屏幕翻转/切换处理 ====================*/
 
     /**
      * 使能视频翻转
@@ -1148,7 +1158,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 设置全屏或窗口模式
      *
-     * @param isFullscreen
+     * @param isFullscreen 是否全屏
      */
     private void _setFullScreen(boolean isFullscreen) {
         mIsFullscreen = isFullscreen;
@@ -1183,7 +1193,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 处理屏幕翻转
      *
-     * @param orientation
+     * @param orientation 方向
      */
     private void _handleOrientation(int orientation) {
         if (mIsNeverPlay) {
@@ -1219,7 +1229,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 隐藏/显示 ActionBar
      *
-     * @param isFullscreen
+     * @param isFullscreen 显示/隐藏
      */
     private void _handleActionBar(boolean isFullscreen) {
         ActionBar supportActionBar = mAttachActivity.getSupportActionBar();
@@ -1256,19 +1266,17 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * 设置UI沉浸式显示
      */
     private void _setUiLayoutFullscreen() {
-        if (Build.VERSION.SDK_INT >= 14) {
-            // 获取关联 Activity 的 DecorView
-            View decorView = mAttachActivity.getWindow().getDecorView();
-            // 沉浸式使用这些Flag
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                    View.SYSTEM_UI_FLAG_FULLSCREEN |
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            );
-            mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+        // 获取关联 Activity 的 DecorView
+        View decorView = mAttachActivity.getWindow().getDecorView();
+        // 沉浸式使用这些Flag
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+        mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     /**
@@ -1286,29 +1294,27 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     public void configurationChanged(Configuration newConfig) {
         _refreshOrientationEnable();
         // 沉浸式只能在SDK19以上实现
-        if (Build.VERSION.SDK_INT >= 14) {
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                // 获取关联 Activity 的 DecorView
-                View decorView = mAttachActivity.getWindow().getDecorView();
-                // 保存旧的配置
-                mScreenUiVisibility = decorView.getSystemUiVisibility();
-                // 沉浸式使用这些Flag
-                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                        View.SYSTEM_UI_FLAG_FULLSCREEN |
-                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                );
-                _setFullScreen(true);
-                mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                View decorView = mAttachActivity.getWindow().getDecorView();
-                // 还原
-                decorView.setSystemUiVisibility(mScreenUiVisibility);
-                _setFullScreen(false);
-                mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            }
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // 获取关联 Activity 的 DecorView
+            View decorView = mAttachActivity.getWindow().getDecorView();
+            // 保存旧的配置
+            mScreenUiVisibility = decorView.getSystemUiVisibility();
+            // 沉浸式使用这些Flag
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+            _setFullScreen(true);
+            mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            View decorView = mAttachActivity.getWindow().getDecorView();
+            // 还原
+            decorView.setSystemUiVisibility(mScreenUiVisibility);
+            _setFullScreen(false);
+            mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
@@ -2245,6 +2251,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
             mDanmakuContext.setFTDanmakuVisibility(isShowTop);
             mDanmakuContext.setFBDanmakuVisibility(isShowBottom);
+            for (String block : blockList){
+                mDanmakuContext.addBlockKeyWord(block);
+            }
             mDanmakuContext.preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
             //同步弹幕和video，貌似没法保持同步，可能我用的有问题，先注释掉- -
 //            mDanmakuContext.setDanmakuSync(new VideoDanmakuSync(this));
@@ -2429,6 +2438,63 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         }
     }
+    /**
+     * 移除屏蔽的弹幕
+     */
+    public void removeBlock(String text){
+        if (blockList.contains(text)){
+            //从界面移除
+            blockList.remove(text);
+            blockAdapter.notifyDataSetChanged();
+            //从数据库移除
+            sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+            String whereCase = DataBaseInfo.getFieldNames()[0][1]+" = ?";
+            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[0], whereCase, new String[]{text});
+            //弹幕中移除
+            mDanmakuContext.removeKeyWordBlackList(text);
+            Toast.makeText(getContext(), "已移除-“ "+ text +" ”", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 添加屏蔽的弹幕
+     */
+    public void addBlock(String blockText){
+        if (TextUtils.isEmpty(blockText)){
+            Toast.makeText(getContext(), "屏蔽关键字不能为空", Toast.LENGTH_LONG).show();
+        }else if (blockList.contains(blockText)){
+            Toast.makeText(getContext(), "当前关键字已屏蔽", Toast.LENGTH_LONG).show();
+        }else if (traverseBlock(blockText)){
+            Toast.makeText(getContext(), "当前关键字已屏蔽", Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(getContext(), "添加屏蔽成功", Toast.LENGTH_LONG).show();
+            mBlockInputEt.setText("");
+            hideKeyBoard(mBlockInputEt);
+            //添加到显示界面
+            blockList.add(blockText);
+            blockAdapter.notifyDataSetChanged();
+            //添加到数据库
+            ContentValues values=new ContentValues();
+            values.put(DataBaseInfo.getFieldNames()[0][1], blockText);
+            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[0],null,values);
+            //添加到弹幕屏蔽
+            mDanmakuContext.addBlockKeyWord(blockText);
+        }
+    }
+    /**
+     * 添加前遍历弹幕
+     */
+    public boolean traverseBlock(String blockText){
+        boolean isContains = false;
+        for (String text : blockList){
+            if (text.contains(blockText)){
+                isContains = true;
+                break;
+            }
+        }
+        return isContains;
+    }
+
 
     /**
      * 编辑操作前调用，会控制视频的播放状态，如在编辑弹幕前调用，配合{@link #recoverFromEditVideo()}使用
@@ -2752,5 +2818,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
         return (int) TypedValue.applyDimension(1, dipValue
                 , context.getApplicationContext().getResources().getDisplayMetrics());
+    }
+
+    public static void hideKeyBoard(View view){
+        InputMethodManager imm =
+                (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm == null) return;
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

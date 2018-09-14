@@ -7,7 +7,8 @@
         android:id="@+id/block_setting_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#bb000000">
+        android:background="#bb000000"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/add_block_rl"
@@ -28,11 +29,14 @@
                 android:id="@+id/block_input_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_toEndOf="@id/block_view_cancel_iv"
                 android:layout_toStartOf="@+id/add_block_bt"
-                android:layout_alignParentBottom="true"
-                android:theme="@style/BlockEditText"
                 android:layout_marginEnd="20dp"
+                android:theme="@style/BlockEditText"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:maxLength="50"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:textColorHint="@android:color/darker_gray"
@@ -44,7 +48,7 @@
                 android:layout_height="35dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
+                android:layout_marginEnd="20dp"
                 android:background="@drawable/btn_corner_blue"
                 android:textColor="@android:color/white"
                 android:text="添加"/>

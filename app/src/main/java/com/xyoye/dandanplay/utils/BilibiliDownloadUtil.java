@@ -60,18 +60,13 @@ public class BilibiliDownloadUtil {
     }
 
     public static boolean isNum(String str){
-
         Pattern pattern = Pattern.compile("^-?[0-9]+");
-        //数字
-//非数字
         return pattern.matcher(str).matches();
     }
 
     public static boolean isUrl(String str){
         String regex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\/])+$";
         Pattern pattern = Pattern.compile(regex);
-        //数字
-//非数字
         return pattern.matcher(str).matches();
     }
 

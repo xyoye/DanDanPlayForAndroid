@@ -476,13 +476,6 @@ public class PermissionsChecker {
      * @return true if can not get info
      */
     private static boolean isNumberIndexInfoIsNull(Cursor cursor, int numberIndex) {
-        if (cursor.getCount() > 0) {
-            while (cursor.moveToNext()) {
-                return TextUtils.isEmpty(cursor.getString(numberIndex));
-            }
-            return false;
-        } else {
-            return true;
-        }
+        return cursor.getCount() <= 0 || cursor.moveToNext() && TextUtils.isEmpty(cursor.getString(numberIndex));
     }
 }

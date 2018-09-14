@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
+
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,9 +119,13 @@ public class PermissionHelper {
         builder.setCancelable(false).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                new Intent();
-                Intent intent = PermissionsPageManager.getIntent(mActivity);
-                mActivity.startActivity(intent);
+                try {
+                    Intent intent = PermissionsPageManager.getIntent(mActivity);
+                    mActivity.startActivity(intent);
+                }catch (Exception e){
+                    ToastUtils.showShort("授权系统发生异常错误，请到用户中心设置");
+                }
+
             }
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override

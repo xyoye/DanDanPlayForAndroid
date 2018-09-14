@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.playMod;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -190,7 +191,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_add, menu);
+        Activity activity = getActivity();
+        if (activity != null)
+            activity.getMenuInflater().inflate(R.menu.menu_add, menu);
         super.onCreateOptionsMenu(menu, inflater);
 
     }

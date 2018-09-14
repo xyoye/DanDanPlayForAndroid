@@ -16,9 +16,7 @@ import com.xyoye.dandanplay.utils.TimeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
-import butterknife.BindString;
 import butterknife.BindView;
-import wseemann.media.FFmpegMediaMetadataRetriever;
 
 /**
  * Created by YE on 2018/6/30 0030.

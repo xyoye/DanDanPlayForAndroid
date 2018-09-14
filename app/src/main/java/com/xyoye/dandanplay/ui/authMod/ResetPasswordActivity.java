@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ResetPasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;

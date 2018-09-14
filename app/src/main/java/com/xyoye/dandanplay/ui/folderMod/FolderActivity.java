@@ -2,13 +2,11 @@ package com.xyoye.dandanplay.ui.folderMod;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -26,12 +24,10 @@ import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.ui.danmuMod.DanmuNetworkActivity;
-import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.Config;
 import com.xyoye.dandanplay.utils.UserInfoShare;
-import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,9 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.text.Collator;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 

@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.core.rx.RxUtils;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.net.CommJsonEntity;
 import com.xyoye.dandanplay.net.CommJsonObserver;

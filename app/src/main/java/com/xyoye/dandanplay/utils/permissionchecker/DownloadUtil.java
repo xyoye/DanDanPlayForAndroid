@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;

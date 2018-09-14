@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.AppManager;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.personalMod.PersonalInfoActivity;

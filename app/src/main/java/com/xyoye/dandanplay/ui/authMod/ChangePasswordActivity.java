@@ -14,7 +14,6 @@ import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
-import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ChangePasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ChangePasswordView;

@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.danmuMod;
 import android.view.View;
 import android.widget.TextView;
 
-import com.xyoye.core.base.AppManager;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;

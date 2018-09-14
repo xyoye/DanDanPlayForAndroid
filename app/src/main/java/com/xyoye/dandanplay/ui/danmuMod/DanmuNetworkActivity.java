@@ -19,7 +19,6 @@ import com.xyoye.dandanplay.mvp.impl.DanmuNetworkPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
 import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.weight.decorator.SpacesItemDecoration;
 
 import org.greenrobot.eventbus.EventBus;

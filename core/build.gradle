@@ -49,8 +49,6 @@ dependencies {
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testCompile 'junit:junit:4.12'
-
-    androidTestCompile 'com.android.support:support-annotations:27.1.1'
     androidTestCompile 'com.android.support.test:runner:1.0.2'
 
 }

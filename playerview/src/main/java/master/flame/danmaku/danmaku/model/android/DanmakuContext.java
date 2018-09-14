@@ -243,7 +243,7 @@ public class DanmakuContext implements Cloneable {
     * @param keyWords
     * @return
      */
-    public DanmakuContext addKeyWordBlackList(String... keywords){
+    public DanmakuContext addBlockKeyWord(String... keywords){
         if (keywords == null){
             return this;
         }

@@ -8,6 +8,8 @@ import android.widget.Toast;
 import com.dl7.player.R;
 import com.dl7.player.adapter.AdapterItem;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by xyy on 2018/9/13.
  */
@@ -41,7 +43,7 @@ public class BlockItem implements AdapterItem<String> {
         blockRemoveIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mView.getContext(), model, Toast.LENGTH_LONG).show();
+                EventBus.getDefault().post(model);
             }
         });
     }

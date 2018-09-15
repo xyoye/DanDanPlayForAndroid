@@ -2245,7 +2245,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
             overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
             overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
-            mDanmakuContext.setDuplicateMergingEnabled(false);//是否启用合并重复弹幕
+            mDanmakuContext.setDuplicateMergingEnabled(true);//是否启用合并重复弹幕
             mDanmakuContext.setScaleTextSize(mDanmuTextSize);
             mDanmakuContext.setScrollSpeedFactor(mDanmuSpeed);
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);

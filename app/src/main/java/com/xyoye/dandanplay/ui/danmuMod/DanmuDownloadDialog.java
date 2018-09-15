@@ -71,23 +71,24 @@ public class DanmuDownloadDialog extends Dialog{
             @Override
             public void onSuccess(DanmuDownloadBean danmuDownloadBean) {
                 statusTv.setText("下载完成...");
-                List<DanmuDownloadBean.CommentsBean> commentsTemp = danmuDownloadBean.getComments();
+                List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
+                if(comments == null || comments.size() == 0){
+                    ToastUtils.showShort("保存失败，弹幕内容为空");
+                }else {
+                    statusTv.setText("开始保存...");
+                    String path = AppConfigShare.getInstance().getDownloadFolder()
+                            + "/" + bean.getAnimeTitle()+"_"
+                            + bean.getEpisodeTitle().replace(" ","_")
+                            + ".xml";
+                    //去除内容时间一样的弹幕
+                    DownloadUtil.saveDanmu(comments,path);
 
-                statusTv.setText("开始保存...");
-                String path = AppConfigShare.getInstance().getDownloadFolder()
-                        + "/" + bean.getAnimeTitle()+"_"
-                        + bean.getEpisodeTitle().replace(" ","_")
-                        + ".xml";
-                //去除内容时间一样的弹幕
-                Set<DanmuDownloadBean.CommentsBean> comments = new HashSet<>(commentsTemp);
-                DownloadUtil.saveDanmu(comments,path);
+                    statusTv.setText("保存完成！");
+                    ToastUtils.showShort("下载完成："+path);
 
-                statusTv.setText("保存完成！");
-                ToastUtils.showShort("下载完成："+path);
-
-                EventBus.getDefault().post(
-                        new OpenDanmuFolderEvent(path, false));
-
+                    EventBus.getDefault().post(
+                            new OpenDanmuFolderEvent(path, false));
+                }
                 DanmuDownloadDialog.this.cancel();
             }
 

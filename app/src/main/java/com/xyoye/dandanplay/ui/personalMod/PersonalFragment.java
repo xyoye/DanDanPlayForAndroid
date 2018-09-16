@@ -79,6 +79,8 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     public void initView() {
         setHasOptionsMenu(true);
         getBaseActivity().setSupportActionBar(toolbar);
+        favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        historyRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
     }
 
     @Override
@@ -116,7 +118,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void refreshFavorite(AnimeFavoriteBean favoriteBean) {
-        favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         if (favoriteBean != null){
             favoriteAdapter = new BaseRvAdapter<AnimeFavoriteBean.FavoritesBean>(favoriteBean.getFavorites()) {
                 @NonNull
@@ -138,7 +139,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void refreshHistory(PlayHistoryBean historyBean) {
-        historyRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         if (historyBean != null){
             historyAdapter = new BaseRvAdapter<PlayHistoryBean.PlayHistoryAnimesBean>(historyBean.getPlayHistoryAnimes()) {
                 @NonNull

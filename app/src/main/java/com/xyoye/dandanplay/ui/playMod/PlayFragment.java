@@ -45,8 +45,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    //@BindView(R.id.ptr_pull_rv_to_refresh)
-    //PtrFrameLayout refresh;
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
@@ -104,17 +102,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
             }
             });
-
-            /*@Override
-        public void onRefreshBegin (PtrFrameLayout frame){
-            new PermissionHelper().with(PlayFragment.this).request(new PermissionHelper.OnSuccessListener() {
-                @Override
-                public void onPermissionSuccess() {
-                    presenter.getVideoList();
-                }
-            }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        }*/
     }
 
     @Override

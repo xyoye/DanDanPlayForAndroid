@@ -2837,6 +2837,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         bothLanguageTv.setOnClickListener(this);
 
         isAutoLoadSubtitle = PlayerConfigShare.getInstance().isAutoLoadSubtitle();
+
         subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
         subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
 
@@ -2917,18 +2918,18 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         switch (languageType){
             case Constants.SUBTITLE_ENGLISH:
                 onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                onlyUsShowTv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_ENGLISH);
                 break;
             case Constants.SUBTITLE_CHINESE_ENGLISH:
                 onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 onlyUsShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                bothLanguageTv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_BOTH);
                 break;
             default:
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                onlyCnShowTv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 onlyUsShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_CHINA);
@@ -3009,7 +3010,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     public void setPlayerSpeedView(int type){
         switch (type){
             case 1:
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed50Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3017,7 +3018,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 break;
             case 2:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed75Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3033,7 +3034,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed125Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 5:
@@ -3041,7 +3042,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed150Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 break;
         }
     }

@@ -33,9 +33,10 @@ dependencies {
     compile rootProject.ext.dependencies["appcompat-v7"]
     compile rootProject.ext.dependencies["recycler"]
 
-    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.7.1'
-    compile 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
-    compile 'com.github.ctiao:ndkbitmap-x86:0.9.21'
+    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
+    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
+
     compile 'org.greenrobot:eventbus:3.1.1'
         // Required for local unit tests (JUnit 4 framework)
     testCompile 'junit:junit:4.12'

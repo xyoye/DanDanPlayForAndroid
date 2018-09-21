@@ -1,4 +1,4 @@
-# 弹弹Play Android
+# 弹弹play Android
 
 ![MIT License](https://img.shields.io/badge/licence-MIT-green.svg) ![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 
@@ -6,7 +6,7 @@ Copyright © DanDanPlayForAndroid Developer Group
 
 版本 3.0.0 developing
 
-弹弹Play系列应用的安卓平台实现。为您带来简单愉悦的本地视频弹幕观看体验。
+弹弹play系列应用的安卓平台实现。为您带来简单愉悦的本地视频弹幕观看体验。
 
 Github repo: [xyoye/DanDanPlayForAndroid](https://github.com/xyoye/DanDanPlayForAndroid/)
 

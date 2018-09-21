@@ -21,7 +21,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
-import com.dl7.player.utils.DanmuConfigShare;
+import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.tencent.bugly.Bugly;
 import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
@@ -43,7 +43,7 @@ public class IApplication extends BaseApplication {
         MultiDex.install(this);
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
         initDatabase(new DataBaseHelper(this));
-        DanmuConfigShare.initDanmuConfigShare(getApplicationContext());
+        PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
     }
 
     private void strictModeConfig() {

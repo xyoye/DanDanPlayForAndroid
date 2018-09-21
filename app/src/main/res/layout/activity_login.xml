@@ -20,11 +20,21 @@
         android:id="@+id/app_tip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="弹弹Play"
+        android:text="弹弹play"
         android:textColor="@color/white"
         android:layout_above="@+id/login_card"
         android:textSize="28sp"
         android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/app_tip"
+        android:layout_toEndOf="@id/app_tip"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:text="概念版"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/login_card"

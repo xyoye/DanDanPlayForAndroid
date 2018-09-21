@@ -19,7 +19,7 @@
         android:textSize="16sp"
         android:maxLines="3"
         android:ellipsize="end"
-        android:text="弹弹Play，注册成功！"/>
+        android:text="弹弹play，注册成功！"/>
 
     <Button
         android:id="@+id/to_login_bt"

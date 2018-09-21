@@ -17,6 +17,7 @@
     
     <color name="background_gray">#a5a5a5</color>
     <color name="background_gray_light">#bababa</color>
+    <color name="background_gray_select">#ffffff</color>
 
     <color name="recover_screen_text">#f06292</color>
 

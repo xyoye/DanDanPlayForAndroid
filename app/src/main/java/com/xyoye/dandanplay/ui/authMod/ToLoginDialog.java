@@ -47,7 +47,7 @@ public class ToLoginDialog extends Dialog {
 
         switch (dex){
             case 0:
-                tipsTv.setText("弹弹Play，注册成功！");
+                tipsTv.setText("弹弹play，注册成功！");
                 cla = RegisterActivity.class;
                 break;
             case 1:

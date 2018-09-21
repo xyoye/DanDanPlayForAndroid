@@ -7,7 +7,7 @@
 
 安卓平台上的本地视频弹幕播放器，并附带一系列有用的在线功能。
 
-其他平台可移步[弹弹Play官网](http://www.dandanplay.com)下载。
+其他平台可移步[弹弹play官网](http://www.dandanplay.com)下载。
 
 ## 使用
 

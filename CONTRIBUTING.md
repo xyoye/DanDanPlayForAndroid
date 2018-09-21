@@ -23,9 +23,9 @@
 如果您要使用自己的API Key，您需要在自己的KeyUtil.java中提供以下三个函数来返回对应API Key：
 
 ```java
-public static String getAppId(Context context){};//弹弹Play API APPID
+public static String getAppId(Context context){};//弹弹play API APPID
 public static String getAppId2(Context context){};//腾讯Bugly APPID
-public static String getAppSecret(Context context){};//弹弹Play API 密钥
+public static String getAppSecret(Context context){};//弹弹play API 密钥
 ```
 
 在获得KeyUtil.java后，请不要将其发送给除已知贡献者之外的其他任何人，这有助于保护本项目所使用服务的安全。

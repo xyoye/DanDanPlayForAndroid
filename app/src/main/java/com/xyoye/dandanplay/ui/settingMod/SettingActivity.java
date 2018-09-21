@@ -113,7 +113,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
 
                             Intent mail_intent = new Intent(android.content.Intent.ACTION_SEND);
                             mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com,shine_5402@126.com"});
-                            mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹Play - 反馈");
+                            mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
                             mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
                             mail_intent.setType("text/plain");
                             startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));

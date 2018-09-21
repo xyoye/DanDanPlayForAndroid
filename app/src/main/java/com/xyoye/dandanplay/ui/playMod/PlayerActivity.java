@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.dl7.player.danmaku.OnDanmakuListener;
-import com.dl7.player.media.IjkPlayerView;
+import com.player.ijkplayer.danmaku.OnDanmakuListener;
+import com.player.ijkplayer.media.IjkPlayerView;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -20,7 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import master.flame.danmaku.danmaku.model.BaseDanmaku;
+import com.player.danmaku.danmaku.model.BaseDanmaku;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -29,7 +29,7 @@ import master.flame.danmaku.danmaku.model.BaseDanmaku;
 
 public class PlayerActivity extends AppCompatActivity {
 
-    com.dl7.player.media.IjkPlayerView mPlayer;
+    com.player.ijkplayer.media.IjkPlayerView mPlayer;
     private String videoPath;
     private String videoTitle;
     private String danmuPath;

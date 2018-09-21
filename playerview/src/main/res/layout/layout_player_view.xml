@@ -7,7 +7,7 @@
              android:focusableInTouchMode="true"
              android:background="@android:color/black">
 
-    <com.dl7.player.media.IjkVideoView
+    <com.player.ijkplayer.media.IjkVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
@@ -19,10 +19,16 @@
         android:scaleType="fitXY"
         android:src="@android:color/black"/>
 
-    <master.flame.danmaku.ui.widget.DanmakuView
+    <com.player.danmaku.ui.widget.DanmakuView
         android:id="@+id/sv_danmaku"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.player.subtitle.SubtitleView
+        android:id="@+id/subtitle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.player.subtitle.SubtitleView>
 
     <ProgressBar
         android:id="@+id/pb_loading"

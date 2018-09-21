@@ -3005,6 +3005,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         speed100Tv.setOnClickListener(this);
         speed125Tv.setOnClickListener(this);
         speed150Tv.setOnClickListener(this);
+
+        setPlayerSpeedView(3);
     }
 
     public void setPlayerSpeedView(int type){

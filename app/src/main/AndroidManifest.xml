@@ -42,7 +42,15 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.playMod.PlayerActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <data android:mimeType="video/*" android:scheme="http"/>
+                <data android:mimeType="video/*" android:scheme="file"/>
+                <data android:mimeType="audio/*" android:scheme="http"/>
+                <data android:mimeType="audio/*" android:scheme="file"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
         <activity android:name=".ui.webMod.WebviewActivity"
             android:screenOrientation="portrait"/>

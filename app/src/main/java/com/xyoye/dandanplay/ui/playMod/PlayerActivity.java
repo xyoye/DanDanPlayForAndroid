@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.playMod;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
@@ -48,6 +50,35 @@ public class PlayerActivity extends AppCompatActivity {
         currentPosition = getIntent().getIntExtra("current",0);
 
         initPlayer();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if(getIntent() != null && getIntent().getData() != null)
+        {
+            videoPath = getIntent().getData().getPath();
+            if (videoPath.contains("/")){
+                int titleLocation = videoPath.lastIndexOf("/");
+                videoTitle = videoPath.substring(titleLocation, videoPath.length());
+            }else {
+                videoTitle = "";
+            }
+            if (videoPath.contains(".")){
+                int extLocation = videoPath.lastIndexOf(".");
+                String danmuPathTemp = videoPath.substring(0, extLocation) + ".xml";
+                File damuFile = new File(danmuPathTemp);
+                if (damuFile.exists()){
+                    danmuPath = danmuPathTemp;
+                }else {
+                    danmuPath = "";
+                }
+            }
+            currentPosition = 0;
+
+            initPlayer();
+        }else {
+            ToastUtils.showShort("解析视频信息失败");
+        }
     }
 
     private void initPlayer(){

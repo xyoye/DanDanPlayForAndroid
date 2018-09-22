@@ -59,6 +59,7 @@ public class FormatASS implements TimedTextFileFormat {
 		String [] dialogueFormat;
 
 		//first lets load the file
+		// TODO: 2018/9/23 字幕需要添加格式
 		InputStreamReader in= new InputStreamReader(is, isCharset);
 		BufferedReader br = new BufferedReader(in);
 

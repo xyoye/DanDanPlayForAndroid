@@ -90,7 +90,7 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
     private boolean isPalying = false;
 
     /**
-     * 是否隐藏字幕
+     * 是否显示字幕
      */
     private boolean isShow = false;
 

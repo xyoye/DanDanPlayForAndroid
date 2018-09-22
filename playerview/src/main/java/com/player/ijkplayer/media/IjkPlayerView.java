@@ -108,6 +108,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,6 +135,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private static final int MSG_UPDATE_SEEK = 10086;
     // 使能翻转消息
     private static final int MSG_ENABLE_ORIENTATION = 10087;
+    // 更新字幕消息
+    private static final int MSG_UPDATE_SUBTITLE = 10088;
     // 无效变量
     private static final int INVALID_VALUE = -1;
 
@@ -204,6 +207,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             } else if (msg.what == MSG_ENABLE_ORIENTATION) {
                 if (mOrientationListener != null) {
                     mOrientationListener.enable();
+                }
+            } else if (msg.what == MSG_UPDATE_SUBTITLE){
+                if (isLoadSubtitle && isShowSubtitle && mVideoView.isPlaying()){
+                    updateSubtitle();
+                    msg = obtainMessage(MSG_UPDATE_SUBTITLE);
+                    sendMessageDelayed(msg, 1000);
                 }
             }
         }
@@ -1565,9 +1574,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         // 更新播放时间
         mTvEndTime.setText(generateTime(duration));
         mTvCurTime.setText(generateTime(position));
-        if (isLoadSubtitle && isShowSubtitle){
-            mSubtitleView.seekTo(position);
-        }
         // 返回当前播放进度
         return position;
     }
@@ -2816,6 +2822,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isAutoLoadSubtitle = false;
     private int subtitleChineseProgress, subtitleEnglishProgress;
     private float subtitleChineseSize, subtitleEnglishSize;
+    // TODO: 2018/9/23 额外控制字幕时间，用于调整字幕进度 
+    private int extraUpdateTime;
 
     public void _initSubtitle(){
         //字幕相关
@@ -2842,11 +2850,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
 
         subtitleCnSB.setMax(100);
-        subtitleChineseSize = (float) subtitleChineseProgress / 50;
+        subtitleChineseSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
         subtitleCnSizeTv.setText(subtitleChineseProgress + "%");
         subtitleCnSB.setProgress(subtitleChineseProgress);
         subtitleUSSB.setMax(100);
-        subtitleEnglishSize = (float) subtitleEnglishProgress / 50;
+        subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
         subtitleUSSizeTv.setText(subtitleEnglishProgress + "%");
         subtitleUSSB.setProgress(subtitleEnglishProgress);
         mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
@@ -2860,7 +2868,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                     if (isLoadSubtitle){
                         isShowSubtitle = true;
                         mSubtitleView.show();
+                        mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
                     }else {
+                        isShowSubtitle = true;
+                        mSubtitleView.show();
+                        mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
                         _loadSubtitleSource();
                     }
                 }else {
@@ -2886,7 +2898,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 int progress = seekBar.getProgress();
                 if (progress == 0 ) progress = 1;
                 float calcProgress = (float) progress;
-                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,calcProgress/50);
+                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
+                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,textSize);
                 PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
             }
         });
@@ -2907,7 +2920,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 int progress = seekBar.getProgress();
                 if (progress == 0 ) progress = 1;
                 float calcProgress = (float) progress;
-                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,calcProgress/50);
+                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
+                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
                 PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
             }
         });
@@ -2958,7 +2972,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 fileNamePath = filePath.substring(0, lastDot);
             }
             for (String anExtArray : extArray) {
-                String tempPath = fileNamePath + anExtArray;
+                String tempPath = fileNamePath + "." +anExtArray;
                 File tempFile = new File(tempPath);
                 if (tempFile.exists()) {
                     subtitlePath = tempPath;
@@ -2972,9 +2986,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             //解析字幕文件
             File subtitleFile = new File(subtitlePath);
             InputStream subtitleFileIs = new FileInputStream(subtitleFile);
-            TimedTextFileFormat format = SubtitleFormat.format(filePath);
+            TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
+
+
+
             if (format != null){
-                subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs);
+                subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, Charset.forName("UTF-8"));
                 isLoadSubtitle = true;
                 mSubtitleView.setData(subtitleObj);
                 mSubtitleView.start();
@@ -2987,6 +3004,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+    
+    private void updateSubtitle(){
+        long position = mVideoView.getCurrentPosition() + extraUpdateTime;
+        mSubtitleView.seekTo(position);
     }
 
     /**

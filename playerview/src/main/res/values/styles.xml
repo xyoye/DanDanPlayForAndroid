@@ -39,7 +39,7 @@
     <style name="AspectRatioButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/aspect_btn_height</item>
-        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_margin">15dp</item>
         <item name="android:button">@null</item>
     </style>
     

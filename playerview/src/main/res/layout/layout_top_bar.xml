@@ -35,27 +35,31 @@
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
 
-        <ProgressBar
-            android:id="@+id/pb_battery"
-            style="@style/ProgressBarBattery"
-            android:layout_marginRight="10dp"
-            android:max="100"/>
-
         <TextView
-            android:id="@+id/tv_system_time"
-            android:layout_width="wrap_content"
+            android:id="@+id/danmu_settings_tv"
+            android:layout_width="@dimen/settings_btn_width"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/sel_item_background"
+            android:text="弹"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
 
-        <ImageView
-            android:id="@+id/iv_screenshot"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/subtitle_settings_tv"
+            android:layout_width="@dimen/settings_btn_width"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:background="@drawable/sel_item_background"
-            android:padding="10dp"
-            android:src="@mipmap/ic_video_screenshot"/>
+            android:text="字"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/player_settings_tv"
@@ -67,6 +71,21 @@
             android:text="设置"
             android:layout_marginEnd="10dp"
             android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+        <ProgressBar
+            android:id="@+id/pb_battery"
+            style="@style/ProgressBarBattery"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:max="100"/>
+
+        <TextView
+            android:id="@+id/tv_system_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -87,131 +106,169 @@
             android:src="@mipmap/ic_return_back"/>
     </FrameLayout>
 
-    <!--设置-->
+    <!--视频设置-->
     <LinearLayout
         android:id="@+id/player_setting_ll"
-        android:layout_width="80dp"
-        android:layout_height="0dp"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="@dimen/control_bar_height"
-        android:background="@color/bg_video_view"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/proportion_setting_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="比例"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#70ffffff"/>
-
-        <TextView
-            android:id="@+id/danmu_setting_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="弹幕"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#70ffffff"/>
-
-        <TextView
-            android:id="@+id/subtitle_setting_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="字幕"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#70ffffff"/>
-
-        <TextView
-            android:id="@+id/speed_setting_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="倍速"/>
-
-    </LinearLayout>
-
-    <!--比例设置-->
-    <RadioGroup
-        android:id="@+id/aspect_ratio_group"
-        android:layout_width="@dimen/settings_btn_width"
-        android:layout_height="0dp"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="@dimen/control_bar_height"
-        android:background="@color/bg_video_view"
-        android:checkedButton="@id/aspect_fit_parent"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/aspect_fit_parent"
-            style="@style/AspectRatioButton"
-            android:background="@drawable/sel_btn_ar_adjust_screen"/>
-
-        <RadioButton
-            android:id="@+id/aspect_fit_screen"
-            style="@style/AspectRatioButton"
-            android:background="@drawable/sel_btn_ar_adjust_video"/>
-
-        <RadioButton
-            android:id="@+id/aspect_16_and_9"
-            style="@style/AspectRatioButton"
-            android:background="@drawable/sel_btn_ar_16_9"/>
-
-        <RadioButton
-            android:id="@+id/aspect_4_and_3"
-            style="@style/AspectRatioButton"
-            android:background="@drawable/sel_btn_ar_4_3"/>
-    </RadioGroup>
-
-    <!--弹幕设置-->
-    <LinearLayout
-        android:id="@+id/danmu_setting_ll"
-        android:layout_width="150dp"
-        android:layout_height="0dp"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
         android:padding="10dp"
-        android:layout_marginTop="@dimen/control_bar_height"
         android:background="@color/bg_video_view"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:text="视频"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:text="视频尺寸"/>
+
+        <RadioGroup
+            android:id="@+id/aspect_ratio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_horizontal"
+            android:checkedButton="@id/aspect_fit_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/aspect_fit_parent"
+                style="@style/AspectRatioButton"
+                android:background="@drawable/sel_btn_ar_adjust_screen"/>
+
+            <RadioButton
+                android:id="@+id/aspect_fit_screen"
+                style="@style/AspectRatioButton"
+                android:background="@drawable/sel_btn_ar_adjust_video"/>
+
+            <RadioButton
+                android:id="@+id/aspect_16_and_9"
+                style="@style/AspectRatioButton"
+                android:background="@drawable/sel_btn_ar_16_9"/>
+
+            <RadioButton
+                android:id="@+id/aspect_4_and_3"
+                style="@style/AspectRatioButton"
+                android:background="@drawable/sel_btn_ar_4_3"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="播放速度"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/speed50_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="0.5"/>
+
+            <TextView
+                android:id="@+id/speed75_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="0.75"/>
+
+            <TextView
+                android:id="@+id/speed100_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="1.0"/>
+
+            <TextView
+                android:id="@+id/speed125_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="1.25"/>
+
+            <TextView
+                android:id="@+id/speed150_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="1.5"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--弹幕设置-->
+    <LinearLayout
+        android:id="@+id/danmu_setting_ll"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:padding="10dp"
+        android:background="@color/bg_video_view"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:text="弹幕"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -224,23 +281,25 @@
                 android:id="@+id/danmu_size_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_alignParentEnd="true"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:text="50%"/>
-        </LinearLayout>
+        </RelativeLayout>
 
         <SeekBar
             android:id="@+id/danmu_size_sb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"/>
-
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:text="速度大小"/>
@@ -249,12 +308,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/speed_fast_tv"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -264,6 +327,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -273,6 +338,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
@@ -283,6 +350,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:text="弹幕屏蔽"/>
@@ -292,6 +360,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center"
             android:orientation="horizontal">
             <LinearLayout
@@ -359,8 +429,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
             android:gravity="center_vertical">
 
             <TextView
@@ -368,26 +440,36 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@android:color/white"
-                android:text="屏蔽管理"/>
+                android:text="关键字屏蔽  >>"/>
         </RelativeLayout>
 
     </LinearLayout>
 
-    <!--字幕--><!--H：180-->
+    <!--字幕设置-->
     <LinearLayout
         android:id="@+id/subtitle_setting_ll"
-        android:layout_width="150dp"
-        android:layout_height="0dp"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
         android:padding="10dp"
-        android:layout_marginTop="@dimen/control_bar_height"
         android:background="@color/bg_video_view"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:text="字幕"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -406,27 +488,64 @@
                 android:layout_alignParentEnd="true"/>
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/subtitle_ctrl_rl"
-            android:layout_width="match_parent"
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
-            android:gravity="center_vertical">
+            android:layout_marginStart="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="语言设置"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/only_chinese_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
                 android:textColor="@android:color/white"
-                android:text="显示控制"/>
-        </RelativeLayout>
+                android:textSize="14sp"
+                android:text="中文"/>
+            <TextView
+                android:id="@+id/only_english_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="英文"/>
+            <TextView
+                android:id="@+id/both_language_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:text="双语"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -449,12 +568,16 @@
             android:id="@+id/subtitle_chinese_size_sb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -477,137 +600,9 @@
             android:id="@+id/subtitle_english_size_sb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"/>
-    </LinearLayout>
-
-    <!--字幕显示控制--><!--H：96-->
-    <LinearLayout
-        android:id="@+id/subtitle_display_setting_ll"
-        android:layout_width="80dp"
-        android:layout_height="0dp"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="@dimen/control_bar_height"
-        android:background="@color/bg_video_view"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/only_chinese_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="仅中文"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#70ffffff"/>
-
-        <TextView
-            android:id="@+id/only_english_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="仅英语"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#70ffffff"/>
-
-        <TextView
-            android:id="@+id/both_language_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="双语显示"/>
-    </LinearLayout>
-
-    <!--倍速设置--><!--H：160-->
-    <LinearLayout
-        android:id="@+id/speed_setting_ll"
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="@dimen/control_bar_height"
-        android:background="@color/bg_video_view"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/speed50_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="0.5"/>
-
-        <TextView
-            android:id="@+id/speed75_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="0.75"/>
-
-        <TextView
-            android:id="@+id/speed100_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="1.0"/>
-
-        <TextView
-            android:id="@+id/speed125_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="1.25"/>
-
-        <TextView
-            android:id="@+id/speed150_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center"
-            android:background="@drawable/sel_item_background"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:text="1.5"/>
     </LinearLayout>
 
 </merge>

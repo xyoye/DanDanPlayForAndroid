@@ -142,8 +142,8 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
 
     @Override
     public void setData(TimedTextObject model) {
-        if (model == null || model.captions.size() <= 0) {
-            return;
+        if (this.model != null){
+            this.model = null;
         }
         this.model = model;
     }
@@ -180,6 +180,7 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
 
     @Override
     public void start() {
+        isShow = true;
         isPalying = true;
     }
 

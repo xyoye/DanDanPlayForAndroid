@@ -78,14 +78,6 @@ public class PlayerConfigShare {
      *  ===================字幕======================
      */
 
-    public boolean isAutoLoadSubtitle(){
-        return getShare().load(Constants.SUBTITLE_STATUS, false);
-    }
-
-    public void setAutoLoadSubtitle(boolean isAutoLoad){
-        getShare().save(Constants.SUBTITLE_STATUS, isAutoLoad);
-    }
-
     public int getSubtitleLanguageType(){
         int type = getShare().loadIntSharedPreference(Constants.SUBTITLE_LANGUAGE);
         return type == 0 ? Constants.SUBTITLE_CHINESE : type;
@@ -113,4 +105,11 @@ public class PlayerConfigShare {
         return size == 0 ? 50 : size;
     }
 
+    public String getSubtitleEncoding(){
+        return getShare().load(Constants.SUBTITLE_ENCODING, "UTF-8");
+    }
+
+    public void setSubtitleEncoding(String encoding){
+        getShare().save(Constants.SUBTITLE_ENCODING, encoding);
+    }
 }

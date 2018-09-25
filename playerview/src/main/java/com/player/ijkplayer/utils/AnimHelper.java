@@ -1,5 +1,7 @@
 package com.player.ijkplayer.utils;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -20,13 +22,13 @@ public final class AnimHelper {
 
 
     /**
-     * 执行从右滑入动画
+     * 执行滑动动画
      * @param view
      * @param startX
      * @param endX
      * @param duration
      */
-    public static void doSlideRightIn(View view, int startX, int endX, int duration) {
+    public static void doSlide(View view, int startX, int endX, int duration) {
         ObjectAnimator translationX = ObjectAnimator.ofFloat(view, "translationX", startX, endX);
         ObjectAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
         AnimatorSet set = new AnimatorSet();

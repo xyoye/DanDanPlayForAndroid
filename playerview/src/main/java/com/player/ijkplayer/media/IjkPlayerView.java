@@ -42,6 +42,7 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -1134,6 +1135,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mVideoView.setSpeed(1.5f);
             mDanmakuContext.setScrollSpeedFactor(0.5f);
             setPlayerSpeedView(5);
+        }else if (id == R.id.subtitle_extra_time_reduce){
+            extraUpdateTime -= 0.5f;
+            subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
+        }else if (id == R.id.subtitle_extra_time_add){
+            extraUpdateTime += 0.5f;
+            subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
         }
     }
 
@@ -2768,6 +2775,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private TextView addEncodingTv;
     private LinearLayout encodingInputLL;
     private EditText encodingEt;
+    private TextView addExtraTimeTv, reduceExtraTimeTv;
+    private EditText subExtraTimeEt;
 
     //字幕
     private TimedTextObject subtitleObj = null;
@@ -2775,8 +2784,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isShowSubtitle = false;
     private int subtitleChineseProgress, subtitleEnglishProgress;
     private float subtitleChineseSize, subtitleEnglishSize;
-    // TODO: 2018/9/23 额外控制字幕时间，用于调整字幕进度 
-    private int extraUpdateTime;
+    // 额外控制字幕时间，用于调整字幕进度
+    private float extraUpdateTime;
 
     public void _initSubtitle(){
         //字幕相关
@@ -2796,6 +2805,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         addEncodingTv = findViewById(R.id.add_encoding_tv);
         encodingInputLL = findViewById(R.id.input_encoding_ll);
         encodingEt = findViewById(R.id.input_encoding_et);
+        addExtraTimeTv = findViewById(R.id.subtitle_extra_time_add);
+        reduceExtraTimeTv = findViewById(R.id.subtitle_extra_time_reduce);
+        subExtraTimeEt = findViewById(R.id.subtitle_extra_time_et);
 
         subtitleSwitch.setOnClickListener(this);
         onlyCnShowTv.setOnClickListener(this);
@@ -2806,6 +2818,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         encodingGbk.setOnClickListener(this);
         encodingOther.setOnClickListener(this);
         addEncodingTv.setOnClickListener(this);
+        addExtraTimeTv.setOnClickListener(this);
+        reduceExtraTimeTv.setOnClickListener(this);
+
+        subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        subExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        subExtraTimeEt.setSingleLine(true);
 
         subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
         subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
@@ -2883,6 +2901,21 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 float textSize = (calcProgress/100) * dip2px(getContext(), 18);
                 mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
                 PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
+            }
+        });
+        subExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    try {
+                        String extraTime = subExtraTimeEt.getText().toString().trim();
+                        extraUpdateTime = Float.valueOf(extraTime);
+                    }catch (Exception e){
+                        Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -3013,7 +3046,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     }
     
     private void updateSubtitle(){
-        long position = mVideoView.getCurrentPosition() + extraUpdateTime;
+        long position = mVideoView.getCurrentPosition() + (int)(extraUpdateTime * 1000);
         mSubtitleView.seekTo(position);
     }
 

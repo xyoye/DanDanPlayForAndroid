@@ -443,6 +443,19 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 ITrackInfo[] info = mVideoView.getTrackInfo();
+                int selectTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+                int sortN = 1;
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO){
+                        AudioTrack audioTrack = new AudioTrack();
+                        audioTrack.setName("音频#"+sortN+"（"+info[i].getLanguage().toUpperCase()+"）");
+                        audioTrack.setStream(i);
+                        if (i == selectTrack) audioTrack.setSelect(true);
+                        sortN ++;
+                        audioTrackList.add(audioTrack);
+                    }
+                }
+                _initAudioView();
             }
         });
         mVideoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
@@ -3209,6 +3222,50 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed150Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 break;
         }
+    }
+
+    /**
+     * ============================ 音频 ============================
+     */
+    private RadioGroup audioRadioGroup;
+    private RadioButton[] radioButtons;
+
+    private void _initAudioView(){
+        audioRadioGroup = findViewById(R.id.audio_radio_group);
+        radioButtons = new RadioButton[5];
+        radioButtons[0] = findViewById(R.id.audio_radio_bt1);
+        radioButtons[1] = findViewById(R.id.audio_radio_bt2);
+        radioButtons[2] = findViewById(R.id.audio_radio_bt3);
+        radioButtons[3] = findViewById(R.id.audio_radio_bt4);
+        radioButtons[4] = findViewById(R.id.audio_radio_bt5);
+
+        for (int i = 0; i < audioTrackList.size(); i++) {
+            radioButtons[i].setText(audioTrackList.get(i).getName());
+            radioButtons[i].setChecked(audioTrackList.get(i).isSelect());
+            radioButtons[i].setVisibility(VISIBLE);
+        }
+
+        audioRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.audio_radio_bt1) {
+                    mVideoView.selectTrack(audioTrackList.get(0).getStream());
+
+                } else if (checkedId == R.id.audio_radio_bt2) {
+                    mVideoView.selectTrack(audioTrackList.get(1).getStream());
+
+                } else if (checkedId == R.id.audio_radio_bt3) {
+                    mVideoView.selectTrack(audioTrackList.get(2).getStream());
+
+                } else if (checkedId == R.id.audio_radio_bt4) {
+                    mVideoView.selectTrack(audioTrackList.get(3).getStream());
+
+                } else if (checkedId == R.id.audio_radio_bt5) {
+                    mVideoView.selectTrack(audioTrackList.get(4).getStream());
+
+                }
+            }
+        });
     }
 
     /**

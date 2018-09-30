@@ -1,6 +1,8 @@
 package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -110,13 +112,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.misc.ITrackInfo;
+import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 
 import static android.view.GestureDetector.OnGestureListener;
 import static android.view.GestureDetector.SimpleOnGestureListener;
@@ -190,12 +193,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private RadioGroup mAspectRatioOptions;
     private LinearLayout mDanmuSettingLL;
     private LinearLayout mSubtitleSettingLL;
-    private LinearLayout mSubtitleDisplayLL;
-    private LinearLayout mSpeedSettingLL;
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -269,6 +271,20 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     // 选项列表高度
     private int mAspectOptionsHeight;
 
+    //硬解码
+    private boolean mUsingMediaCodec = false;
+    //H265硬解码
+    private boolean mUsingMediaCodecH265 = false;
+    //openSLES
+    private boolean mUsingOpenSLES = false;
+    //渲染器
+    private boolean mUsingSurfaceRenders = true;
+    //播放器类型
+    private int mUsingPlayerType = Constants.IJK_PLAYER;
+    //像素格式
+    private String mUsingPixelFormat = "";
+
+    private List<AudioTrack> audioTrackList = new ArrayList<>();
     private List<String> blockList = new ArrayList<>();
     private BaseRvAdapter<String> blockAdapter;
     private SQLiteDatabase sqLiteDatabase;
@@ -423,6 +439,22 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             // 禁止翻转
             mOrientationListener.disable();
         }
+        mVideoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(IMediaPlayer iMediaPlayer) {
+                ITrackInfo[] info = mVideoView.getTrackInfo();
+            }
+        });
+        mVideoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+                Toast.makeText(getContext(), "播放错误", Toast.LENGTH_LONG).show();
+                Activity activity = (Activity) getContext();
+                if (activity != null)
+                    activity.finish();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -444,7 +476,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         if (mIsScreenLocked) {
             // 如果出现锁屏则需要重新渲染器Render，不然会出现只有声音没有动画
             // 目前只在锁屏时会出现图像不动的情况，如果有遇到类似情况可以尝试按这个方法解决
-            mVideoView.setRender(IjkVideoView.RENDER_TEXTURE_VIEW);
+            if (mUsingSurfaceRenders)
+                mVideoView.setRender(IjkVideoView.RENDER_SURFACE_VIEW);
+            else
+                mVideoView.setRender(IjkVideoView.RENDER_TEXTURE_VIEW);
             mIsScreenLocked = false;
         }
         mVideoView.resume();
@@ -685,6 +720,70 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
     public void reset() {
 
+    }
+
+    public IjkPlayerView initVideoView(boolean mediaCodeC, boolean mediaCodeCH265, boolean openSLES, boolean surfaceRenders, int playType, String pixelFormat){
+        setUsingMediaCodeC(mediaCodeC);
+        setUsingMediaCodeCH265(mediaCodeCH265);
+        setUsingOpenSLES(openSLES);
+        setUsingSurfaceRenders(surfaceRenders);
+        setUsingPlayerType(playType);
+        setUsingPixelFormat(pixelFormat);
+
+        if (mUsingOpenSLES ||
+                mUsingPlayerType == Constants.IJK_ANDROID_PLAYER ||
+                mUsingPlayerType == Constants.IJK_EXO_PLAYER){
+            speedCtrlLL.setVisibility(GONE);
+        }
+        return this;
+    }
+
+    /**
+     * 硬解码
+     */
+    public void setUsingMediaCodeC(boolean isUse){
+        mUsingMediaCodec = isUse;
+        mVideoView.setIsUsingMediaCodec(isUse);
+        mVideoView.setIsUsingMediaCodecAutoRotate(isUse);
+    }
+
+    /**
+     * H265硬解码
+     */
+    public void setUsingMediaCodeCH265(boolean isUse){
+        mUsingMediaCodecH265 = isUse;
+        mVideoView.setIsUsingMediaCodecH265(isUse);
+    }
+    /**
+     * OpenSLES
+     */
+    public void setUsingOpenSLES(boolean isUse){
+        mUsingOpenSLES = isUse;
+        mVideoView.setIsUsingOpenSLES(isUse);
+    }
+
+    /**
+     * 渲染器类型
+     */
+    public void setUsingSurfaceRenders(boolean isUse) {
+        mUsingSurfaceRenders = isUse;
+        mVideoView.setIsUsingSurfaceRenders(isUse);
+    }
+
+    /**
+     * 播放器类型
+     */
+    public void setUsingPlayerType(int playerType){
+        mUsingPlayerType = playerType;
+        mVideoView.setIsUsingPlayerType(playerType);
+    }
+
+    /**
+     * 像素格式
+     */
+    public void setUsingPixelFormat(String mPixelFormat){
+        mUsingPixelFormat = mPixelFormat;
+        mVideoView.setPixelFormat(mPixelFormat);
     }
 
     /**============================ 控制栏处理 ============================*/
@@ -3053,9 +3152,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * ============================ 倍速 ============================
      */
+    private LinearLayout speedCtrlLL;
     private TextView speed50Tv, speed75Tv,speed100Tv,speed125Tv, speed150Tv;
 
     public void _initPlayerSpeedCtrl(){
+        speedCtrlLL = findViewById(R.id.speed_ctrl_ll);
         speed50Tv = findViewById(R.id.speed50_tv);
         speed75Tv = findViewById(R.id.speed75_tv);
         speed100Tv = findViewById(R.id.speed100_tv);

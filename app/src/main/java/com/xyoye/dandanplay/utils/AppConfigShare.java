@@ -55,4 +55,70 @@ public class AppConfigShare {
         return localVersionName;
     }
 
+    /**
+     * 开启硬解码
+     */
+    public boolean isOpenMediaCodeC(){
+        return getShare().loadBooleanSharedPreference(Config.SHARE_MEDIA_CODE_C);
+    }
+
+    public void setOpenMediaCodeC(boolean isUse){
+        getShare().saveSharedPreferences(Config.SHARE_MEDIA_CODE_C, isUse);
+    }
+
+    /**
+     * 开启H265硬解码
+     */
+    public boolean isOpenMediaCodeCH265(){
+        return getShare().loadBooleanSharedPreference(Config.SHARE_MEDIA_CODE_C_H265);
+    }
+
+    public void setOpenMediaCodeCH265(boolean isUse){
+        getShare().saveSharedPreferences(Config.SHARE_MEDIA_CODE_C_H265, isUse);
+    }
+
+    /**
+     * OpenSLES
+     */
+    public boolean isOpenSLES(){
+        return getShare().loadBooleanSharedPreference(Config.SHARE_OPEN_SLES);
+    }
+
+    public void setOpenSLES(boolean isUse){
+        getShare().saveSharedPreferences(Config.SHARE_OPEN_SLES, isUse);
+    }
+
+    /**
+     * SurfaceRenders
+     */
+    public boolean isSurfaceRenders(){
+        return getShare().loadBooleanSharedPreference(Config.SHARE_SURFACE_RENDERS);
+    }
+
+    public void setSurfaceRenders(boolean isUse){
+        getShare().saveSharedPreferences(Config.SHARE_SURFACE_RENDERS, isUse);
+    }
+
+    /**
+     * PlayerType
+     */
+    public int getPlayerType(){
+        return getShare().loadIntSharedPreference(Config.SHARE_PLAYER_TYPE);
+    }
+
+    public void setPlayerType(int type){
+        getShare().saveSharedPreferences(Config.SHARE_PLAYER_TYPE, type);
+    }
+
+    /**
+     * PixelFormat
+     */
+    public String getPixelFormat(){
+        return getShare().load(Config.SHARE_PIXEL_FORMAT, "");
+    }
+
+    public void setPixelFormat(String pixelFormat){
+        getShare().save(Config.SHARE_PIXEL_FORMAT, pixelFormat);
+    }
+
 }

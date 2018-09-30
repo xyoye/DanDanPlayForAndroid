@@ -1,6 +1,9 @@
 package com.xyoye.dandanplay.ui.playMod;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +11,15 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
+import com.player.ijkplayer.utils.Constants;
+import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,8 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import com.player.danmaku.danmaku.model.BaseDanmaku;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -44,41 +50,72 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer = new IjkPlayerView(this);
         setContentView(mPlayer);
 
-        videoPath = getIntent().getStringExtra("path");
-        videoTitle = getIntent().getStringExtra("title");
-        danmuPath = getIntent().getStringExtra("danmu_path");
-        currentPosition = getIntent().getIntExtra("current",0);
-
-        initPlayer();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if(getIntent() != null && getIntent().getData() != null)
-        {
-            videoPath = getIntent().getData().getPath();
-            if (videoPath.contains("/")){
-                int titleLocation = videoPath.lastIndexOf("/");
-                videoTitle = videoPath.substring(titleLocation, videoPath.length());
+        if (!Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+            videoPath = getIntent().getStringExtra("path");
+            videoTitle = getIntent().getStringExtra("title");
+            danmuPath = getIntent().getStringExtra("danmu_path");
+            currentPosition = getIntent().getIntExtra("current",0);
+        }else {
+            //外部打开
+            //从uri.getPath否则path被转译了
+            if (getIntent().getDataString() == null || "".equals(getIntent().getDataString())){
+                videoPath = "";
+            }else {
+                Uri uri = Uri.parse(getIntent().getDataString());
+                videoPath = uri.getPath();
+            }
+            //获取标题
+            if (videoPath != null && videoPath.contains("/")){
+                int titleLocation = videoPath.lastIndexOf("/") + 1;
+                if (titleLocation < videoPath.length())
+                    videoTitle = videoPath.substring(titleLocation, videoPath.length());
+                else
+                    videoTitle = "";
             }else {
                 videoTitle = "";
+                videoPath = "";
+
             }
-            if (videoPath.contains(".")){
-                int extLocation = videoPath.lastIndexOf(".");
-                String danmuPathTemp = videoPath.substring(0, extLocation) + ".xml";
-                File damuFile = new File(danmuPathTemp);
-                if (damuFile.exists()){
-                    danmuPath = danmuPathTemp;
-                }else {
-                    danmuPath = "";
+            //获取弹幕：先从数据库根据path拿，未匹配到则从相同目录下拿
+            if (videoPath.contains(".") && !StringUtils.isEmpty(videoTitle)){
+                String danmuPathTemp;
+                boolean isGetDanmuPath = false;
+                String folderPath = FileUtils.getDirName(videoPath);
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                String sql = "SELECT danmu_path FROM file WHERE folder_path=? AND file_name=?";
+                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoTitle});
+                if (cursor.getCount() != 0){
+                    cursor.moveToNext();
+                    danmuPathTemp = cursor.getString(0);
+                    cursor.close();
+                    if (!StringUtils.isEmpty(danmuPathTemp)){
+                        File damuFile = new File(danmuPathTemp);
+                        if (damuFile.exists()){
+                            danmuPath = danmuPathTemp;
+                            isGetDanmuPath = true;
+                        }
+                    }
+                }
+                if (!isGetDanmuPath){
+                    int extLocation = videoPath.lastIndexOf(".");
+                    danmuPathTemp = videoPath.substring(0, extLocation) + ".xml";
+                    File damuFile = new File(danmuPathTemp);
+                    if (damuFile.exists()){
+                        danmuPath = danmuPathTemp;
+                    }else {
+                        danmuPath = "";
+                    }
                 }
             }
+            //上次播放默认为0
             currentPosition = 0;
 
-            initPlayer();
-        }else {
-            ToastUtils.showShort("解析视频信息失败");
+            if ("".equals(videoPath)){
+                ToastUtils.showShort("解析视频地址失败");
+                return;
+            }
         }
+        initPlayer();
     }
 
     private void initPlayer(){
@@ -90,7 +127,16 @@ public class PlayerActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        mPlayer.init().alwaysFullScreen();
+
+        boolean mediaCodeC = AppConfigShare.getInstance().isOpenMediaCodeC();
+        boolean mediaCodeCH265 = AppConfigShare.getInstance().isOpenMediaCodeCH265();
+        boolean openSLES = AppConfigShare.getInstance().isOpenSLES();
+        boolean surfaceRenders = AppConfigShare.getInstance().isSurfaceRenders();
+        int playerType = AppConfigShare.getInstance().getPlayerType();
+        String pixelFormat = AppConfigShare.getInstance().getPixelFormat();
+        mPlayer.init()
+                .initVideoView(mediaCodeC, mediaCodeCH265, openSLES, surfaceRenders, playerType, pixelFormat)
+                .alwaysFullScreen();
         if (currentPosition > 0) {
             mPlayer.setSkipTip(currentPosition);
         }

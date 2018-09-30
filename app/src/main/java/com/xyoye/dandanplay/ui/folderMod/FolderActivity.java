@@ -25,6 +25,7 @@ import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.ui.danmuMod.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.playMod.PlayerActivity;
+import com.xyoye.dandanplay.ui.settingMod.PlayerSettingActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.Config;
 import com.xyoye.dandanplay.utils.UserInfoShare;
@@ -54,7 +55,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     public final static int SELECT_NETWORK_DANMU = 104;
     public final static int OPEN_VIDEO = 102;
-    private int selectItem = -1;
     private int openVideoPosition = -1;
 
     private BaseRvAdapter<VideoBean> adapter;
@@ -151,6 +151,9 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                     sort(Config.Collection.DURATION_ASC);
                 adapter.notifyDataSetChanged();
                 break;
+            case R.id.player_setting:
+                launchActivity(PlayerSettingActivity.class);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -203,9 +206,9 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
-        selectItem = event.getVideoPosition();
         Intent intent = new Intent(FolderActivity.this, DanmuNetworkActivity.class);
         intent.putExtra("path", event.getVideoPath());
+        intent.putExtra("position", event.getVideoPosition());
         startActivityForResult(intent, SELECT_NETWORK_DANMU);
     }
 
@@ -221,12 +224,14 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         if (resultCode == RESULT_OK){
             if (requestCode == SELECT_NETWORK_DANMU){
                 String danmuPath = data.getStringExtra("path");
-                String videoPath = adapter.getData().get(selectItem).getVideoPath();
+                int position = data.getIntExtra("position", -1);
+                if (position < 0) return;
+                String videoPath = adapter.getData().get(position).getVideoPath();
                 String folderPath = FileUtils.getDirName(videoPath);
                 String fileName = FileUtils.getFileName(videoPath);
                 presenter.updateDanmu(danmuPath, new String[]{folderPath, fileName});
-                adapter.getData().get(selectItem).setDanmuPath(danmuPath);
-                adapter.notifyItemChanged(selectItem);
+                adapter.getData().get(position).setDanmuPath(danmuPath);
+                adapter.notifyItemChanged(position);
             }
         }
     }

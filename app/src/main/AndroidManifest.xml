@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.xyoye.dandanplay">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,6 +33,9 @@
         <activity android:name=".ui.folderMod.FolderActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.settingMod.PlayerSettingActivity"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".ui.fileManagerMod.FileManagerActivity"
             android:screenOrientation="portrait"/>
 
@@ -42,13 +46,14 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.playMod.PlayerActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <data android:mimeType="video/*" android:scheme="http"/>
-                <data android:mimeType="video/*" android:scheme="file"/>
-                <data android:mimeType="audio/*" android:scheme="http"/>
-                <data android:mimeType="audio/*" android:scheme="file"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+            android:launchMode="singleInstance">
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+                <data android:scheme="http" />
+                <data android:scheme="file" />
             </intent-filter>
         </activity>
 

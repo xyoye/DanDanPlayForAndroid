@@ -14,8 +14,7 @@
         android:background="@color/theme_color"
         android:elevation="@dimen/common_toolBar_elevation"
         app:titleTextColor="@color/white"
-        app:theme="@style/ToolBar"
-        >
+        app:theme="@style/ToolBar">
 
         <TextView
             android:id="@+id/toolbar_title"

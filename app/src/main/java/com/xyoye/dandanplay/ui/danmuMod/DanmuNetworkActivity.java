@@ -159,6 +159,7 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
             if (requestCode == SELECT_DANMU){
                 Intent intent = getIntent();
                 intent.putExtra("path", data.getStringExtra("danmu"));
+                intent.putExtra("position", getIntent().getIntExtra("position", -1));
                 setResult(RESULT_OK, intent);
                 finish();
             }

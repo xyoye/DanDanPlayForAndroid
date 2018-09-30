@@ -8,6 +8,11 @@ public final class Constants {
 
     public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 
+    //播放器
+    public static final int IJK_EXO_PLAYER = 1;
+    public static final int IJK_ANDROID_PLAYER = 2;
+    public static final int IJK_PLAYER = 3;
+
     //弹幕
     public static final String DANMU_SIZE = "danmu_size";
     public static final String DANMU_SPEED = "danmu_speed";

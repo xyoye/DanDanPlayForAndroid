@@ -36,14 +36,18 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 
+import com.player.ijkplayer.utils.Constants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 
+import tv.danmaku.ijk.media.exo.IjkExoMediaPlayer;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.TextureMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 
@@ -63,7 +67,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     // All the stuff we need for playing and showing a video
     private IRenderView.ISurfaceHolder mSurfaceHolder = null;
-    private IjkMediaPlayer mMediaPlayer = null;
+    private IMediaPlayer mMediaPlayer = null;
     // private int         mAudioSession;
     private int mVideoWidth;
     private int mVideoHeight;
@@ -84,13 +88,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private boolean mCanPause = true;
     private boolean mCanSeekBack = true;
     private boolean mCanSeekForward = true;
-    private boolean mIsUsingMediaCodec;
-    private boolean mIsUsingMediaCodecAutoRotate;
-    private boolean mIsMediaCodecHandleResolutionChange;
-    private boolean mIsUsingOpenSLES;
-    private boolean mIsUsingMediaDataSource;
-    //Auto Select=,RGB 565=fcc-rv16,RGB 888X=fcc-rv32,YV12=fcc-yv12,默认为RGB 888X
-    private String mPixelFormat = "";
 
     /** Subtitle rendering widget overlaid on top of the video. */
     // private RenderingWidget mSubtitleWidget;
@@ -462,10 +459,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                     (TextUtils.isEmpty(scheme) || scheme.equalsIgnoreCase("file"))) {
                 IMediaDataSource dataSource = new FileMediaDataSource(new File(mUri.toString()));
                 mMediaPlayer.setDataSource(dataSource);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                mMediaPlayer.setDataSource(mAppContext, mUri, mHeaders);
             } else {
-                mMediaPlayer.setDataSource(mUri.toString());
+                mMediaPlayer.setDataSource(mAppContext, mUri, mHeaders);
             }
             bindSurfaceHolder(mMediaPlayer, mSurfaceHolder);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -1061,63 +1056,84 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
      * 初始化渲染器
      */
     private void initRenders() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+        if (mIsUsingSurfaceRenders) {
             setRender(RENDER_TEXTURE_VIEW);
         } else {
             setRender(RENDER_SURFACE_VIEW);
         }
     }
 
-    public void setSpeed(float speed){
-        mMediaPlayer.setSpeed(speed);
-        mMediaPlayer.start();
-    }
+    public IMediaPlayer createPlayer() {
+        IMediaPlayer mediaPlayer = null;
 
-    public float getSpeed(){
-        return mMediaPlayer.getSpeed(0.0f);
-    }
+        switch (mIsUsingPlayerType) {
+            case Constants.IJK_EXO_PLAYER: {
+                IjkExoMediaPlayer IjkExoMediaPlayer = new IjkExoMediaPlayer(mAppContext);
+                mediaPlayer = IjkExoMediaPlayer;
+            }
+            break;
+            case Constants.IJK_ANDROID_PLAYER: {
+                AndroidMediaPlayer androidMediaPlayer = new AndroidMediaPlayer();
+                mediaPlayer = androidMediaPlayer;
+            }
+            break;
+            case Constants.IJK_PLAYER:
+            default: {
+                IjkMediaPlayer ijkMediaPlayer = null;
+                if (mUri != null) {
+                    ijkMediaPlayer = new IjkMediaPlayer();
+                    ijkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_DEBUG);
 
-    public IjkMediaPlayer createPlayer() {
-        IjkMediaPlayer ijkMediaPlayer = null;
-        if (mUri != null) {
-            ijkMediaPlayer = new IjkMediaPlayer();
-            IjkMediaPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_DEBUG);
+                    if (mIsUsingMediaCodec) {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
+                        if (mIsUsingMediaCodecAutoRotate) {
+                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+                        } else {
+                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
+                        }
+                        if (mIsMediaCodecHandleResolutionChange) {
+                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+                        } else {
+                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
+                        }
+                    } else {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
+                    }
 
-            if (mIsUsingMediaCodec) {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
-                if (mIsUsingMediaCodecAutoRotate) {
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-                } else {
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
+                    if (mIsUsingMediaCodecH265){
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 0);
+                    }else {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 0);
+                    }
+
+                    if (mIsUsingOpenSLES) {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1);
+                    } else {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0);
+                    }
+
+                    if (TextUtils.isEmpty(mPixelFormat)) {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32);
+                    } else {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", mPixelFormat);
+                    }
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
+
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
+
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
                 }
-                if (mIsMediaCodecHandleResolutionChange) {
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-                } else {
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
-                }
-            } else {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
+                mediaPlayer = ijkMediaPlayer;
             }
-
-            if (mIsUsingOpenSLES) {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1);
-            } else {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0);
-            }
-
-            if (TextUtils.isEmpty(mPixelFormat)) {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32);
-            } else {
-                ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", mPixelFormat);
-            }
-            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
-            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
-
-            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
-
-            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+            break;
         }
-        return ijkMediaPlayer;
+
+        if (mIsUsingDetachedSurfaceTextureView) {
+            mediaPlayer = new TextureMediaPlayer(mediaPlayer);
+        }
+
+        return mediaPlayer;
     }
 
     //-------------------------
@@ -1169,6 +1185,10 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         }
     }
 
+    /**
+     * ===========音频===========
+     */
+
     public ITrackInfo[] getTrackInfo() {
         if (mMediaPlayer == null)
             return null;
@@ -1186,5 +1206,86 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     public int getSelectedTrack(int trackType) {
         return MediaPlayerCompat.getSelectedTrack(mMediaPlayer, trackType);
+    }
+
+    /**
+     * ===========播放器设置===========
+     */
+
+    //硬解码
+    private boolean mIsUsingMediaCodec = false;
+    //H265硬解码
+    private boolean mIsUsingMediaCodecH265 = false;
+    //硬解码时自动旋转
+    private boolean mIsUsingMediaCodecAutoRotate = false;
+    private boolean mIsMediaCodecHandleResolutionChange = false;
+    //openSLES
+    private boolean mIsUsingOpenSLES = false;
+    //MediaDataSource
+    private boolean mIsUsingMediaDataSource = false;
+
+    private boolean mIsUsingDetachedSurfaceTextureView = false;
+    //surface渲染器（TurfaceView、TextureView）
+    private boolean mIsUsingSurfaceRenders = true;
+    //播放器类型(ijk_exo，AndroidMedia，)
+    private int mIsUsingPlayerType = Constants.IJK_PLAYER;
+    //像素格式
+    private String mPixelFormat = "";
+
+    public void setIsUsingMediaCodec(boolean mIsUsingMediaCodec) {
+        this.mIsUsingMediaCodec = mIsUsingMediaCodec;
+    }
+
+    public void setIsUsingMediaCodecH265(boolean mIsUsingMediaCodecH265){
+        this.mIsUsingMediaCodecH265 = mIsUsingMediaCodecH265;
+    }
+
+    public void setIsUsingMediaCodecAutoRotate(boolean mIsUsingMediaCodecAutoRotate) {
+        this.mIsUsingMediaCodecAutoRotate = mIsUsingMediaCodecAutoRotate;
+    }
+
+    public void setIsMediaCodecHandleResolutionChange(boolean mIsMediaCodecHandleResolutionChange) {
+        this.mIsMediaCodecHandleResolutionChange = mIsMediaCodecHandleResolutionChange;
+    }
+
+    public void setIsUsingOpenSLES(boolean mIsUsingOpenSLES) {
+        this.mIsUsingOpenSLES = mIsUsingOpenSLES;
+    }
+
+    public void setIsUsingMediaDataSource(boolean mIsUsingMediaDataSource) {
+        this.mIsUsingMediaDataSource = mIsUsingMediaDataSource;
+    }
+
+    public void setIsUsingDetachedSurfaceTextureView(boolean mIsUsingDetachedSurfaceTextureView) {
+        this.mIsUsingDetachedSurfaceTextureView = mIsUsingDetachedSurfaceTextureView;
+    }
+
+    public void setIsUsingSurfaceRenders(boolean mIsUsingSurfaceRenders) {
+        this.mIsUsingSurfaceRenders = mIsUsingSurfaceRenders;
+    }
+
+    public void setIsUsingPlayerType(int mIsUsingPlayerType) {
+        this.mIsUsingPlayerType = mIsUsingPlayerType;
+    }
+
+    public void setPixelFormat(String mPixelFormat) {
+        this.mPixelFormat = mPixelFormat;
+    }
+
+    public void setSpeed(float speed){
+        if (mIsUsingPlayerType == Constants.IJK_PLAYER){
+            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer)mMediaPlayer;
+            ijkMediaPlayer.setSpeed(speed);
+            mMediaPlayer.start();
+        }
+    }
+
+    public float getSpeed(){
+        if (mIsUsingPlayerType == Constants.IJK_PLAYER){
+            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer)mMediaPlayer;
+            return ijkMediaPlayer.getSpeed(1.0f);
+        }else {
+            return 1.0f;
+        }
     }
 }

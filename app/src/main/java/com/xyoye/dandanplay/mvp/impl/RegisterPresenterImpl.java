@@ -58,7 +58,7 @@ public class RegisterPresenterImpl extends BaseMvpPresenter<RegisterView> implem
         param.setAppId(KeyUtil.getAppId(getView().getRegisterContext()));
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getRegisterContext());
-        RegisterBean.register(param, new CommJsonObserver<RegisterBean>() {
+        RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifeful()) {
             @Override
             public void onSuccess(RegisterBean registerBean) {
                 ToLoginDialog dialog = new ToLoginDialog(getView().getRegisterContext(), R.style.Dialog, 0);

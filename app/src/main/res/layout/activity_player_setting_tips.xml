@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_toolbar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        android:text="播放器选择"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp"
+        android:text="      播放器提供了3个播放器，用于应对ijk播放器可能不能播放一些视频。默认选择ijk播放器，开发大多数是以ijk播放器为主，在选择其它播放器后将不提供某些功能，例如倍速。"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        android:text="OpenS ES"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp"
+        android:text="      引用BiliBili设置里的一句话“只要播放器还有声音，就不要开这个设置”"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        android:text="视频输出方式"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:textSize="14sp"
+        android:text="      选择SurfaceRender时(标准的输出方式)，不选择时（针对高帧率视频优化性能）"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        android:text="像素格式"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:textSize="14sp"
+        android:text="      播放卡顿时可以试着切换一下像素格式，播放超清视频时试试非RGB像素格式"/>
+
+</LinearLayout>

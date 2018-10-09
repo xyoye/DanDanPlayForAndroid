@@ -87,7 +87,7 @@ public class DanmuDownloadDialog extends Dialog{
                     ToastUtils.showShort("下载完成："+path);
 
                     EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(path, false));
+                            new OpenDanmuFolderEvent(path, bean.getEpisodeId(), false));
                 }
                 DanmuDownloadDialog.this.cancel();
             }

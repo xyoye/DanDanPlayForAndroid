@@ -9,6 +9,7 @@ import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
+import com.xyoye.dandanplay.bean.UploadDanmuBean;
 
 import java.util.Map;
 
@@ -31,6 +32,10 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("api/v2/match")
     Observable<DanmuMatchBean> matchDanmu(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
+    @POST("api/v2/comment/{episodeId}")
+    Observable<UploadDanmuBean> uploadDanmu(@FieldMap Map<String, String> params, @Path("episodeId") String episodeId);
 
     @GET("api/v2/comment/{episodeId}?withRelated=true")
     Observable<DanmuDownloadBean> downloadDanmu(@Path("episodeId") String episodeId);

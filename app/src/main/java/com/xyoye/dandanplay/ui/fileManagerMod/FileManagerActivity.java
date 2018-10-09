@@ -34,8 +34,9 @@ import butterknife.BindView;
  */
 
 public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
-    public final static String IS_FOLDER = "isFolder";
-    public final static String VIDEO_PATH = "videoPath";
+    public final static int FILE_FOLDER = 0;
+    public final static int FILE_DANMU = 1;
+    public final static int FILE_SUBTITLE = 2;
 
     @BindView(R.id.loading_ll)
     LinearLayout loadingLl;
@@ -45,16 +46,18 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     RecyclerView recyclerView;
 
     private BaseRvAdapter<DanmuFolderBean> adapter;
-    private boolean isFolder;
+    private int fileType;
 
     @Override
     public void initView() {
-        isFolder = isFolder();
+        fileType = getFileType();
 
-        if (isFolder){
+        if (fileType == FILE_FOLDER){
             setTitle("选择文件夹");
-        } else {
+        } else if (fileType == FILE_DANMU){
             setTitle("选择本地弹幕");
+        } else if (fileType == FILE_SUBTITLE){
+            setTitle("选择字幕");
         }
 
 
@@ -98,8 +101,8 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     }
 
     @Override
-    public boolean isFolder(){
-        return getIntent().getBooleanExtra(IS_FOLDER, true);
+    public int getFileType(){
+        return getIntent().getIntExtra("file_type", 0);
     }
 
     @Override
@@ -133,9 +136,14 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     public void onpenFolder(OpenDanmuFolderEvent event){
         if (event.isFolder()){
             presenter.listFile(event.getPath());
-        }else {
+        }else if (fileType == FILE_DANMU){
             Intent intent = getIntent();
             intent.putExtra("danmu", event.getPath());
+            setResult(RESULT_OK, intent);
+            finish();
+        } else if (fileType == FILE_SUBTITLE){
+            Intent intent = getIntent();
+            intent.putExtra("subtitle", event.getPath());
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -153,7 +161,7 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (isFolder)
+        if (fileType == FILE_FOLDER)
             getMenuInflater().inflate(R.menu.menu_select, menu);
         return super.onCreateOptionsMenu(menu);
     }

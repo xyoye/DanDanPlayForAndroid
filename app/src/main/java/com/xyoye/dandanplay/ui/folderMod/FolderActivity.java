@@ -54,7 +54,6 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     RecyclerView recyclerView;
 
     public final static int SELECT_NETWORK_DANMU = 104;
-    public final static int OPEN_VIDEO = 102;
     private int openVideoPosition = -1;
 
     private BaseRvAdapter<VideoBean> adapter;
@@ -201,7 +200,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         intent.putExtra("path",videoBean.getVideoPath());
         intent.putExtra("danmu_path",videoBean.getDanmuPath());
         intent.putExtra("current", videoBean.getCurrentPosition());
-        startActivityForResult(intent, OPEN_VIDEO);
+        intent.putExtra("episode_id", videoBean.getEpisodeId());
+        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -224,13 +224,15 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         if (resultCode == RESULT_OK){
             if (requestCode == SELECT_NETWORK_DANMU){
                 String danmuPath = data.getStringExtra("path");
+                int episodeId = data.getIntExtra("episode_id", 0);
                 int position = data.getIntExtra("position", -1);
                 if (position < 0) return;
                 String videoPath = adapter.getData().get(position).getVideoPath();
                 String folderPath = FileUtils.getDirName(videoPath);
                 String fileName = FileUtils.getFileName(videoPath);
-                presenter.updateDanmu(danmuPath, new String[]{folderPath, fileName});
+                presenter.updateDanmu(danmuPath, episodeId, new String[]{folderPath, fileName});
                 adapter.getData().get(position).setDanmuPath(danmuPath);
+                adapter.getData().get(position).setEpisodeId(episodeId);
                 adapter.notifyItemChanged(position);
             }
         }

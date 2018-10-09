@@ -46,7 +46,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.playMod.PlayerActivity"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -76,6 +78,9 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.settingMod.SettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.settingMod.PlayerSettingTipsActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.authMod.RegisterActivity"

@@ -60,16 +60,6 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
     private SubtitleTextView subEnglish;
 
     /**
-     * 中文字幕
-     */
-    private SubtitleTextView subChinaTwo;
-
-    /**
-     * 英文字幕
-     */
-    private SubtitleTextView subEnglishTwo;
-
-    /**
      * 当前显示节点
      */
     private View subTitleView;
@@ -125,12 +115,8 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
         subTitleView = View.inflate(context, R.layout.layout_subtitle, null);
         subChina = subTitleView.findViewById(R.id.subTitleChina);
         subEnglish = subTitleView.findViewById(R.id.subTitleEnglish);
-        subChinaTwo = subTitleView.findViewById(R.id.subTitleChinaTwo);
-        subEnglishTwo = subTitleView.findViewById(R.id.subTitleEnglishTwo);
         subChina.setSubtitleOnTouchListener(this);
         subEnglish.setSubtitleOnTouchListener(this);
-        subChinaTwo.setSubtitleOnTouchListener(this);
-        subEnglishTwo.setSubtitleOnTouchListener(this);
         this.setOrientation(VERTICAL);
         this.addView(subTitleView);
     }
@@ -153,23 +139,15 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
         if (type == LANGUAGE_TYPE_CHINA) {
             subChina.setVisibility(View.VISIBLE);
             subEnglish.setVisibility(View.GONE);
-            subChinaTwo.setVisibility(View.VISIBLE);
-            subEnglishTwo.setVisibility(View.GONE);
         } else if (type == LANGUAGE_TYPE_ENGLISH) {
             subChina.setVisibility(View.GONE);
             subEnglish.setVisibility(View.VISIBLE);
-            subChinaTwo.setVisibility(View.GONE);
-            subEnglishTwo.setVisibility(View.VISIBLE);
         } else if (type == LANGUAGE_TYPE_BOTH) {
             subChina.setVisibility(View.VISIBLE);
             subEnglish.setVisibility(View.VISIBLE);
-            subChinaTwo.setVisibility(View.VISIBLE);
-            subEnglishTwo.setVisibility(View.VISIBLE);
         } else {
             subChina.setVisibility(View.GONE);
             subEnglish.setVisibility(View.GONE);
-            subChinaTwo.setVisibility(View.GONE);
-            subEnglishTwo.setVisibility(View.GONE);
         }
     }
 
@@ -195,29 +173,25 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
             return;
         }
         if (model != null && !model.captions.isEmpty()) {
-            List<Caption> captions = searchSub(model.captions, position);
-            if(captions.size() > 1) {//之多同时显示两个字幕，如需同时显示两个以上的只需重新自定义view增加即可
-                caption = captions.get(0);
-                if (caption != null) {
-                    setItemSubtitle(subChina, caption.content);
-                    setItemSubtitle(subEnglish, caption.content);
-                } else {
-                    setItemSubtitle(subChina, "");
-                    setItemSubtitle(subEnglish, "");
-                }
-                caption = captions.get(1);
-                if (caption != null) {
-                    setItemSubtitle(subChinaTwo, caption.content);
-                    setItemSubtitle(subEnglishTwo, caption.content);
-                } else {
-                    setItemSubtitle(subChinaTwo, "");
-                    setItemSubtitle(subEnglishTwo, "");
-                }
-            }else if (captions.size() == 1){
-                caption = captions.get(0);
-                if (caption != null) {
-                    setItemSubtitle(subChina, caption.content);
-                    setItemSubtitle(subEnglish, caption.content);
+            Caption caption = searchSub(model.captions, position);
+            if (caption != null){
+                if (caption.content.contains("<br />")){
+                    String[] content = caption.content.split("<br />");
+                    if (content.length > 1){
+                        if (content[1].contains("{") && content[1].contains("}")){
+                            int start = content[1].indexOf("}")+1;
+                            int end = content[1].lastIndexOf("{");
+                            if (start < end){
+                                content[1] = content[1].substring(start, end);
+                            }
+                        }
+
+                        setItemSubtitle(subChina, content[0]);
+                        setItemSubtitle(subEnglish, content[1]);
+                    }else {
+                        setItemSubtitle(subChina, content[0]);
+                        setItemSubtitle(subEnglish, "");
+                    }
                 }
             }else {
                 setItemSubtitle(subChina, "");
@@ -241,19 +215,15 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
     public void setTextSize(int languageType, float textSize) {
         if (languageType == LANGUAGE_TYPE_CHINA){
             subChina.setTextSize(textSize);
-            subChinaTwo.setTextSize(textSize);
         }else {
             subEnglish.setTextSize(textSize);
-            subEnglishTwo.setTextSize(textSize);
         }
     }
 
     @Override
     public void setTextSize(float chineseSize, float englishSize) {
         subChina.setTextSize(chineseSize);
-        subChinaTwo.setTextSize(chineseSize);
         subEnglish.setTextSize(englishSize);
-        subEnglishTwo.setTextSize(englishSize);
     }
 
     @Override
@@ -261,8 +231,6 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
         isShow = false;
         setItemSubtitle(subChina, "");
         setItemSubtitle(subEnglish, "");
-        setItemSubtitle(subChinaTwo, "");
-        setItemSubtitle(subEnglishTwo, "");
     }
 
     @Override
@@ -274,8 +242,7 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
      * @param list 全部字幕
      * @param key  播放的时间点
      */
-    public List<Caption> searchSub(TreeMap<Integer, Caption> list, long key) {
-        List<Caption> captions = new ArrayList<>();
+    public Caption searchSub(TreeMap<Integer, Caption> list, long key) {
         System.out.println("captionKey："+key);
         try {
             //最小时间
@@ -289,9 +256,8 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
                 for(Integer key1 : temp.keySet()) {
                     Caption caption = temp.get(key1);
                     //开始时间小于当前时间，结束时间大于当前时间
-                    if (key >= caption.start.getMseconds() && key <= caption.end.getMseconds()){
-                        captions.add(caption);
-                        System.out.println(caption.content);
+                    if (key >= caption.start.getMseconds() && key <= caption.end.getMseconds()){;
+                        return caption;
                     }
                     //减少查找时间，从开始大于当前时间开始break
                     if (caption.start.getMseconds() > key){
@@ -302,7 +268,7 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
         }catch (Exception e){
             e.printStackTrace();
         }
-        return captions;
+        return null;
     }
 
     @Override

@@ -106,7 +106,7 @@ public class PlayerConfigShare {
     }
 
     public String getSubtitleEncoding(){
-        return getShare().load(Constants.SUBTITLE_ENCODING, "UTF-8");
+        return getShare().load(Constants.SUBTITLE_ENCODING, "UTF-16");
     }
 
     public void setSubtitleEncoding(String encoding){

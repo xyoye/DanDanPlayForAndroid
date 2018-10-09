@@ -209,7 +209,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> impl
     }
 
     private void favoriteConfirm(){
-        AnimeDetailBean.addFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+        AnimeDetailBean.addFavorite(animaId, new CommJsonObserver<CommJsonEntity>(this) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 if (favoriteItem != null){
@@ -229,7 +229,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> impl
     }
 
     private void favoriteCancel(){
-        AnimeDetailBean.reduceFavorite(animaId, new CommJsonObserver<CommJsonEntity>() {
+        AnimeDetailBean.reduceFavorite(animaId, new CommJsonObserver<CommJsonEntity>(this) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 if (favoriteItem != null){

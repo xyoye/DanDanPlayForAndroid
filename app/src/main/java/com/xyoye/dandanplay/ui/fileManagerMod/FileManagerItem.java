@@ -65,13 +65,13 @@ public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
                 if (model.isParent()){
                     String parentPath = FileUtils.getDirName(model.getFile().getAbsolutePath());
                     EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(parentPath, true));
+                            new OpenDanmuFolderEvent(parentPath,-1, true));
                 }else if(model.isFolder()){
                     EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(), true));
+                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(), -1,true));
                 }else {
                     EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(), false));
+                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(),-1, false));
                 }
             }
         });

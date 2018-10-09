@@ -61,8 +61,7 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
         switch (item.getItemId()){
             case R.id.local_danmu:
                 Intent intent = new Intent(this, FileManagerActivity.class);
-                intent.putExtra(FileManagerActivity.IS_FOLDER, false);
-                intent.putExtra(FileManagerActivity.VIDEO_PATH, getIntent().getStringExtra("path"));
+                intent.putExtra("file_type", FileManagerActivity.FILE_DANMU);
                 startActivityForResult(intent, SELECT_DANMU);
                 break;
         }
@@ -120,6 +119,7 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
     public void setDanmu(OpenDanmuFolderEvent event){
         String path = event.getPath();
         Intent intent = getIntent();
+        intent.putExtra("episode_id", event.getEpisodeId());
         intent.putExtra("path", path);
         setResult(RESULT_OK, intent);
         finish();

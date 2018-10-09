@@ -2,7 +2,6 @@ package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +19,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.IntDef;
@@ -87,6 +87,7 @@ import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.Constants;
 import com.player.ijkplayer.utils.MotionEventUtils;
 import com.player.ijkplayer.utils.NavUtils;
+import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SDCardUtils;
 import com.player.ijkplayer.utils.SoftInputUtils;
@@ -100,6 +101,8 @@ import com.player.subtitle.util.FatalParsingException;
 import com.player.subtitle.util.SubtitleFormat;
 import com.player.subtitle.util.TimedTextFileFormat;
 import com.player.subtitle.util.TimedTextObject;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -142,6 +145,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private static final int MSG_ENABLE_ORIENTATION = 10087;
     // 更新字幕消息
     private static final int MSG_UPDATE_SUBTITLE = 10088;
+    //设置字幕源
+    private static final int MSG_SET_SUBTITLE_SOURCE = 10089;
     // 无效变量
     private static final int INVALID_VALUE = -1;
 
@@ -213,11 +218,21 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                     mOrientationListener.enable();
                 }
             } else if (msg.what == MSG_UPDATE_SUBTITLE){
-                if (isLoadSubtitle && isShowSubtitle && mVideoView.isPlaying()){
+                if (isLoadSubtitle && isShowSubtitle){
                     updateSubtitle();
                     msg = obtainMessage(MSG_UPDATE_SUBTITLE);
                     sendMessageDelayed(msg, 1000);
                 }
+            } else if (msg.what == MSG_SET_SUBTITLE_SOURCE){
+                TimedTextObject subtitleObj = (TimedTextObject) msg.obj;
+                isShowSubtitle = true;
+                isLoadSubtitle = true;
+                subtitleSwitch.setChecked(true);
+                subtitleLoadStatusTv.setText("（已加载）");
+                subtitleLoadStatusTv.setTextColor(getResources().getColor(R.color.theme_color));
+                mSubtitleView.setData(subtitleObj);
+                mSubtitleView.start();
+                Toast.makeText(getContext(), "加载字幕成功", Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -461,10 +476,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mVideoView.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-                Toast.makeText(getContext(), "播放错误", Toast.LENGTH_LONG).show();
-                Activity activity = (Activity) getContext();
-                if (activity != null)
-                    activity.finish();
+                Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
+                mLoadingView.setVisibility(GONE);
+//                Activity activity = (Activity) getContext();
+//                if (activity != null)
+//                    activity.finish();
                 return false;
             }
         });
@@ -652,7 +668,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mIsAlwaysFullScreen = true;
         _setFullScreen(true);
         mIvFullscreen.setVisibility(GONE);
-        mAttachActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         _setUiLayoutFullscreen();
         return this;
     }
@@ -684,6 +699,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mIsShowBar = false;
             // 放这边装载弹幕，不然会莫名其妙出现多切几次到首页会弹幕自动播放问题，这里处理下
             _loadDanmaku();
+            //加载字幕
+            subtitlePath = getSubtitlePath();
+            if (!"".equals(subtitlePath))
+                setSubtitleSource("", subtitlePath);
         }
         // 视频播放时开启屏幕常亮
         mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -1203,6 +1222,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }else if (id == R.id.add_block_bt){
             String blockText = mBlockInputEt.getText().toString().trim();
             addBlock(blockText);
+        }else if (id == R.id.subtitle_change_source_tv){
+            EventBus.getDefault().post(new OpenSubtitleFileEvent());
         }else if (id == R.id.only_chinese_tv){
             PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE);
             setSubtitleLanguageType();
@@ -1213,17 +1234,20 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE_ENGLISH);
             setSubtitleLanguageType();
         }else if (id == R.id.encoding_utf_8){
-            setSubtitleEncodingType("utf-8");
+            if (!"".equals(subtitlePath))
+                setSubtitleSource("utf-8", subtitlePath);
         }else if (id == R.id.encoding_utf_16){
-            setSubtitleEncodingType("utf-16");
+            if (!"".equals(subtitlePath))
+                setSubtitleSource("utf-16", subtitlePath);
         }else if (id == R.id.encoding_gbk){
-            setSubtitleEncodingType("gbk");
+            if (!"".equals(subtitlePath))
+                setSubtitleSource("gbk", subtitlePath);
         }else if (id == R.id.encoding_other){
             encodingInputLL.setVisibility(VISIBLE);
         }else if (id == R.id.add_encoding_tv){
             String encoding = encodingEt.getText().toString().trim();
-            if (!"".equals(encoding)){
-                setSubtitleEncodingType(encoding);
+            if (!"".equals(encoding) && !"".equals(subtitlePath)){
+                setSubtitleSource(encoding, subtitlePath);
             }else{
                 Toast.makeText(getContext(), "编码格式不能为空", Toast.LENGTH_LONG).show();
             }
@@ -2877,9 +2901,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     //字幕相关组件
     private SubtitleView mSubtitleView;
     private Switch subtitleSwitch;
-    private RelativeLayout subtitleCtrlRl;
     private SeekBar subtitleCnSB;
     private SeekBar subtitleUSSB;
+    private TextView subtitleChangeSourceTv;
+    private TextView subtitleLoadStatusTv;
     private TextView subtitleCnSizeTv;
     private TextView subtitleUSSizeTv;
     private TextView onlyCnShowTv, onlyUsShowTv, bothLanguageTv;
@@ -2891,7 +2916,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private EditText subExtraTimeEt;
 
     //字幕
-    private TimedTextObject subtitleObj = null;
+    private String subtitlePath = "";
     private boolean isLoadSubtitle = false;
     private boolean isShowSubtitle = false;
     private int subtitleChineseProgress, subtitleEnglishProgress;
@@ -2899,10 +2924,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     // 额外控制字幕时间，用于调整字幕进度
     private float extraUpdateTime;
 
+    String subtitleEncoding;
+
     public void _initSubtitle(){
         //字幕相关
         mSubtitleView = findViewById(R.id.subtitle_view);
+        subtitleLoadStatusTv = findViewById(R.id.subtitle_load_status_tv);
         subtitleSwitch = findViewById(R.id.subtitle_sw);
+        subtitleChangeSourceTv = findViewById(R.id.subtitle_change_source_tv);
         subtitleCnSizeTv = findViewById(R.id.subtitle_chinese_size_tv);
         subtitleCnSB = findViewById(R.id.subtitle_chinese_size_sb);
         subtitleUSSizeTv = findViewById(R.id.subtitle_english_size_tv);
@@ -2921,6 +2950,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         reduceExtraTimeTv = findViewById(R.id.subtitle_extra_time_reduce);
         subExtraTimeEt = findViewById(R.id.subtitle_extra_time_et);
 
+        subtitleChangeSourceTv.setOnClickListener(this);
         subtitleSwitch.setOnClickListener(this);
         onlyCnShowTv.setOnClickListener(this);
         onlyUsShowTv.setOnClickListener(this);
@@ -2950,21 +2980,22 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         subtitleUSSB.setProgress(subtitleEnglishProgress);
         mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
 
+        subtitleEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
+
         setSubtitleLanguageType();
+        setSubtitleEncodingType();
 
         subtitleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isLoadSubtitle && isChecked){
+                    subtitleSwitch.setChecked(false);
+                    Toast.makeText(getContext(), "未加载字幕源", Toast.LENGTH_LONG).show();
+                }
                 if (isChecked){
-                    if (isLoadSubtitle){
-                        isShowSubtitle = true;
-                        mSubtitleView.show();
-                        mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
-                    }else {
-                        isShowSubtitle = true;
-                        mSubtitleView.show();
-                        setSubtitleEncodingType(PlayerConfigShare.getInstance().getSubtitleEncoding());
-                    }
+                    isShowSubtitle = true;
+                    mSubtitleView.show();
+                    mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
                 }else {
                     isShowSubtitle = false;
                     mSubtitleView.hide();
@@ -3032,6 +3063,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         });
     }
 
+    /**
+     * 设置字幕显示语言类型
+     */
     private void setSubtitleLanguageType(){
         int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
         switch (languageType){
@@ -3055,15 +3089,16 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 break;
         }
     }
-
-    private void setSubtitleEncodingType(String encoding){
-        if (!isShowSubtitle) return;
+    /**
+     * 设置字幕编码格式
+     */
+    private void setSubtitleEncodingType(){
         encodingUtf8.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
         encodingUtf16.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
         encodingGbk.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
         encodingOther.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
         isLoadSubtitle = false;
-        switch (encoding.toUpperCase()){
+        switch (subtitleEncoding.toUpperCase()){
             case "UTF-8":
             case "":
                 encodingUtf8.setBackgroundColor(Color.parseColor("#33ffffff"));
@@ -3082,81 +3117,106 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 encodingInputLL.setVisibility(VISIBLE);
                 break;
         }
-        _loadSubtitleSource(encoding);
     }
 
     /**
      * 解析视频同名字幕
      */
-    public void _loadSubtitleSource(String encoding){
-        String oldEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
-        if (oldEncoding.equals(encoding) && isLoadSubtitle) return;
-        try {
-            //可加载的字幕格式
-            String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
-            //获取视频路径
-            String filePath = mVideoView.getUri().getPath();
-            if (filePath == null || "".equals(filePath)){
-                Toast.makeText(getContext(), "获取视频路径失败", Toast.LENGTH_LONG).show();
-                return;
-            }
-            //获取可用的同名字幕文件
-            String fileNamePath = "";
-            String subtitlePath = "";
-            if (filePath.contains(".")){
-                int lastDot = filePath.lastIndexOf(".");
-                fileNamePath = filePath.substring(0, lastDot);
-            }
-            for (String anExtArray : extArray) {
-                String tempPath = fileNamePath + "." +anExtArray;
-                File tempFile = new File(tempPath);
-                if (tempFile.exists()) {
-                    subtitlePath = tempPath;
-                    break;
-                }
-            }
-            if("".equals(subtitlePath)){
-                Toast.makeText(getContext(), "字幕文件不存在", Toast.LENGTH_LONG).show();
-                return;
-            }
-            //解析字幕文件
-            File subtitleFile = new File(subtitlePath);
-            InputStream subtitleFileIs = new FileInputStream(subtitleFile);
-            TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
-
-            if (format != null){
-                Charset charset;
-                try {
-                    charset = Charset.forName(encoding);
-                }catch (Exception exception){
-                    isLoadSubtitle = false;
-                    Toast.makeText(getContext(), "解析编码格式失败", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, charset);
-                if(subtitleObj != null && subtitleObj.captions.size() > 0){
-                    isLoadSubtitle = true;
-                    mSubtitleView.setData(subtitleObj);
-                    mSubtitleView.start();
-                    mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
-                    PlayerConfigShare.getInstance().setSubtitleEncoding(encoding);
-                    Toast.makeText(getContext(), "加载字幕成功", Toast.LENGTH_LONG).show();
-                }else {
-                    isLoadSubtitle = false;
-                    mSubtitleView.hide();
-                    Toast.makeText(getContext(), "字幕内容为空", Toast.LENGTH_LONG).show();
-                }
-            }else {
-                isLoadSubtitle = false;
-                Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
-            }
-        } catch (FatalParsingException | IOException e) {
-            isLoadSubtitle = false;
-            Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
+    public String getSubtitlePath(){
+        //可加载的字幕格式
+        String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
+        //获取视频路径
+        String filePath = mVideoView.getUri().getPath();
+        if (filePath == null || "".equals(filePath)){
+            Toast.makeText(getContext(), "获取视频路径失败", Toast.LENGTH_LONG).show();
+            return "";
         }
+        //获取可用的同名字幕文件
+        String fileNamePath = "";
+        String path = "";
+        if (filePath.contains(".")){
+            int lastDot = filePath.lastIndexOf(".");
+            fileNamePath = filePath.substring(0, lastDot);
+        }
+        for (String anExtArray : extArray) {
+            String tempPath = fileNamePath + "." +anExtArray;
+            File tempFile = new File(tempPath);
+            if (tempFile.exists()) {
+                path = tempPath;
+                break;
+            }
+        }
+        return path;
     }
-    
+
+    /**
+     * 设置字幕源
+     */
+    public void setSubtitleSource(String encoding, String path){
+        subtitlePath = path;
+        if ("".equals(encoding.trim())) {
+            subtitleEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
+        }else{
+            subtitleEncoding = encoding;
+            PlayerConfigShare.getInstance().setSubtitleEncoding(subtitleEncoding);
+        }
+        setSubtitleEncodingType();
+        subtitleSwitch.setChecked(false);
+        isShowSubtitle = false;
+        subtitleLoadStatusTv.setText("（未加载）");
+        subtitleLoadStatusTv.setTextColor(Color.parseColor("#ff0000"));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Looper.prepare();
+                    if("".equals(subtitlePath)){
+                        Toast.makeText(getContext(), "字幕文件不存在", Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                        return;
+                    }
+                    //解析字幕文件
+                    File subtitleFile = new File(subtitlePath);
+                    InputStream subtitleFileIs = new FileInputStream(subtitleFile);
+                    TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
+
+                    if (format != null){
+                        Charset charset;
+                        try {
+                            charset = Charset.forName(subtitleEncoding);
+                        }catch (Exception exception){
+                            isLoadSubtitle = false;
+                            Toast.makeText(getContext(), "解析编码格式失败", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                            return;
+                        }
+
+                        TimedTextObject subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, charset);
+                        if(subtitleObj != null && subtitleObj.captions.size() > 0){
+                            Message message = new Message();
+                            message.what = MSG_SET_SUBTITLE_SOURCE;
+                            message.obj = subtitleObj;
+                            mHandler.sendMessage(message);
+                        }else {
+                            isLoadSubtitle = false;
+                            Toast.makeText(getContext(), "无法解析字幕内容，试试切换编码格式", Toast.LENGTH_LONG).show();
+                            Looper.loop();
+                        }
+                    }else {
+                        isLoadSubtitle = false;
+                        Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                    }
+                } catch (FatalParsingException | IOException e) {
+                    isLoadSubtitle = false;
+                    Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
+                    Looper.loop();
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     private void updateSubtitle(){
         long position = mVideoView.getCurrentPosition() + (int)(extraUpdateTime * 1000);
         mSubtitleView.seekTo(position);
@@ -3232,12 +3292,17 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
     private void _initAudioView(){
         audioRadioGroup = findViewById(R.id.audio_radio_group);
-        radioButtons = new RadioButton[5];
+        radioButtons = new RadioButton[10];
         radioButtons[0] = findViewById(R.id.audio_radio_bt1);
         radioButtons[1] = findViewById(R.id.audio_radio_bt2);
         radioButtons[2] = findViewById(R.id.audio_radio_bt3);
         radioButtons[3] = findViewById(R.id.audio_radio_bt4);
         radioButtons[4] = findViewById(R.id.audio_radio_bt5);
+        radioButtons[5] = findViewById(R.id.audio_radio_bt6);
+        radioButtons[6] = findViewById(R.id.audio_radio_bt7);
+        radioButtons[7] = findViewById(R.id.audio_radio_bt8);
+        radioButtons[8] = findViewById(R.id.audio_radio_bt9);
+        radioButtons[9] = findViewById(R.id.audio_radio_bt10);
 
         for (int i = 0; i < audioTrackList.size(); i++) {
             radioButtons[i].setText(audioTrackList.get(i).getName());
@@ -3250,19 +3315,24 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.audio_radio_bt1) {
                     mVideoView.selectTrack(audioTrackList.get(0).getStream());
-
                 } else if (checkedId == R.id.audio_radio_bt2) {
                     mVideoView.selectTrack(audioTrackList.get(1).getStream());
-
                 } else if (checkedId == R.id.audio_radio_bt3) {
                     mVideoView.selectTrack(audioTrackList.get(2).getStream());
-
                 } else if (checkedId == R.id.audio_radio_bt4) {
                     mVideoView.selectTrack(audioTrackList.get(3).getStream());
-
                 } else if (checkedId == R.id.audio_radio_bt5) {
                     mVideoView.selectTrack(audioTrackList.get(4).getStream());
-
+                } else if (checkedId == R.id.audio_radio_bt6) {
+                    mVideoView.selectTrack(audioTrackList.get(5).getStream());
+                } else if (checkedId == R.id.audio_radio_bt7) {
+                    mVideoView.selectTrack(audioTrackList.get(6).getStream());
+                } else if (checkedId == R.id.audio_radio_bt8) {
+                    mVideoView.selectTrack(audioTrackList.get(7).getStream());
+                } else if (checkedId == R.id.audio_radio_bt9) {
+                    mVideoView.selectTrack(audioTrackList.get(8).getStream());
+                } else if (checkedId == R.id.audio_radio_bt10) {
+                    mVideoView.selectTrack(audioTrackList.get(9).getStream());
                 }
             }
         });

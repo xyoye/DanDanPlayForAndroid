@@ -37,23 +37,21 @@
                 android:id="@+id/player_ijk_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="IJK Player（默认）"/>
+                android:text="IJK Player"/>
 
             <RadioButton
                 android:id="@+id/player_ijk_exo_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="IJK_EXO Player"
-                android:visibility="gone"/>
+                android:text="IJK_EXO Player（测试）"/>
 
             <RadioButton
                 android:id="@+id/player_android_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="AndroidMedia Player"
-                android:visibility="gone"/>
+                android:text="AndroidMedia Player（测试）"/>
 
         </RadioGroup>
 

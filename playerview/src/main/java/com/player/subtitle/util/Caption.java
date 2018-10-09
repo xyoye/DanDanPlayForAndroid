@@ -17,6 +17,8 @@ public class Caption {
      */
 	public String content="";
 
+	public String endglishContent = "";
+
     @Override
     public String toString() {
         return "Caption{" +

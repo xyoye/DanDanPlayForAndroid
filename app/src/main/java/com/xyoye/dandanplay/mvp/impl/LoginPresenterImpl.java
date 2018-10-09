@@ -56,7 +56,7 @@ public class LoginPresenterImpl extends BaseMvpPresenter<LoginView> implements L
         param.setAppId(KeyUtil.getAppId(getView().getPersonalContext()));
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getPersonalContext());
-        PersonalBean.login(param, new CommJsonObserver<PersonalBean>() {
+        PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
                 UserInfoShare.getInstance().setLogin(true);

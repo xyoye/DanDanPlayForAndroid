@@ -1,11 +1,13 @@
 package com.xyoye.dandanplay.ui.settingMod;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -162,8 +164,17 @@ public class PlayerSettingActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 break;
+            case R.id.setting_tips:
+                startActivity(new Intent(PlayerSettingActivity.this, PlayerSettingTipsActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_player_setting_tips, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

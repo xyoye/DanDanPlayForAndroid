@@ -82,7 +82,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         switch (v.getId()){
             case R.id.path_rl:
                 Intent intent = new Intent(SettingActivity.this, FileManagerActivity.class);
-                intent.putExtra(FileManagerActivity.IS_FOLDER, true);
+                intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
                 startActivityForResult(intent, SELECT_SETTING_FOLDER);
                 break;
             case R.id.download_rl:

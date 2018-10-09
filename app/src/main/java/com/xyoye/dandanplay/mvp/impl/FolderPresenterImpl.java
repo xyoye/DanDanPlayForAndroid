@@ -62,11 +62,12 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
     }
 
     @Override
-    public void updateDanmu(String danmuPath, String[] whereArgs) {
+    public void updateDanmu(String danmuPath, int episodeId, String[] whereArgs) {
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
         ContentValues values = new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][3],danmuPath);
+        values.put(DataBaseInfo.getFieldNames()[2][6],episodeId);
         sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values,whereCase,whereArgs);
     }
 
@@ -99,7 +100,8 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
             String danmuPath = cursor.getString(3);
             int currentPosition = cursor.getInt(4);
             long duration = Long.parseLong(cursor.getString(5));
-            videoBeans.add(new VideoBean(fileName, filePath, danmuPath, currentPosition, duration));
+            int episodeId = cursor.getInt(6);
+            videoBeans.add(new VideoBean(fileName, filePath, danmuPath, currentPosition, duration, episodeId));
         }
         cursor.close();
         return videoBeans;

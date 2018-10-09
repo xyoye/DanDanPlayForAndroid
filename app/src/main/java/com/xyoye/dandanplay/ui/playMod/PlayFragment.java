@@ -187,7 +187,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     private void addFolder() {
         Intent intent = new Intent(getContext(), FileManagerActivity.class);
-        intent.putExtra(FileManagerActivity.IS_FOLDER, true);
+        intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
         startActivityForResult(intent, SELECT_FOLDER);
     }
 

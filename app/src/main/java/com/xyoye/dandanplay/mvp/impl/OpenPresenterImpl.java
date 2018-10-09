@@ -66,7 +66,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
     }
 
     private void getData(){
-        BannerBeans.getBanner(new CommJsonObserver<BannerBeans>() {
+        BannerBeans.getBanner(new CommJsonObserver<BannerBeans>(getLifeful()) {
             @Override
             public void onSuccess(BannerBeans bannerBean) {
                 List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
@@ -102,7 +102,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
     }
 
     private void reToken(){
-        PersonalBean.reToken(new CommJsonObserver<PersonalBean>() {
+        PersonalBean.reToken(new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
                 UserInfoShare.getInstance().setLogin(true);

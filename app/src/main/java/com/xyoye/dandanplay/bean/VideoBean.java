@@ -14,25 +14,28 @@ public class VideoBean implements Serializable {
     private long videoDuration;
     private String danmuPath;
     private int currentPosition;
+    private int episodeId;
 
     public VideoBean() {
     }
 
-    public VideoBean(String videoName, String videoPath, String danmuPath, int currentPosition, long videoDuration) {
+    public VideoBean(String videoName, String videoPath, String danmuPath, int currentPosition, long videoDuration, int episodeId) {
         this.videoName = videoName;
         this.videoPath = videoPath;
         this.danmuPath = danmuPath;
         this.currentPosition = currentPosition;
         this.videoDuration = videoDuration;
+        this.episodeId = episodeId;
     }
 
-    public VideoBean(String videoName, String videoPath, String videoCover, long videoDuration, String danmuPath, int currentPosition) {
+    public VideoBean(String videoName, String videoPath, String videoCover, long videoDuration, String danmuPath, int currentPosition, int episodeId) {
         this.videoName = videoName;
         this.videoPath = videoPath;
         this.videoCover = videoCover;
         this.videoDuration = videoDuration;
         this.danmuPath = danmuPath;
         this.currentPosition = currentPosition;
+        this.episodeId = episodeId;
     }
 
     public String getVideoName() {
@@ -81,5 +84,13 @@ public class VideoBean implements Serializable {
 
     public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
+    }
+
+    public int getEpisodeId() {
+        return episodeId;
+    }
+
+    public void setEpisodeId(int episodeId) {
+        this.episodeId = episodeId;
     }
 }

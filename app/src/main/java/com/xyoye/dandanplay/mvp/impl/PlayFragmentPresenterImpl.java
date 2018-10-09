@@ -177,11 +177,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                 " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
                 "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
         Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, fileName});
-        if (!cursor.moveToNext()){
-            cursor.close();
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2],null,values);
+        if (!cursor.moveToNext()) {
+            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
         }
-
+        cursor.close();
     }
 
     private List<FolderBean> getFolderList(){

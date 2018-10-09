@@ -62,7 +62,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
     }
 
     private void getFavorite(){
-        AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>() {
+        AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>(getLifeful()) {
             @Override
             public void onSuccess(AnimeFavoriteBean animeFavoriteBean) {
                 favoriteBean = animeFavoriteBean;
@@ -87,7 +87,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
     }
 
     private void getPlayHistory(){
-        PlayHistoryBean.getPlayHistory(new CommJsonObserver<PlayHistoryBean>() {
+        PlayHistoryBean.getPlayHistory(new CommJsonObserver<PlayHistoryBean>(getLifeful()) {
             @Override
             public void onSuccess(PlayHistoryBean playHistoryBean) {
                 historyBean = playHistoryBean;

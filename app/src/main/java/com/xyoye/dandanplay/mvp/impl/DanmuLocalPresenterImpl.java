@@ -10,6 +10,7 @@ import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
 import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
+import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import java.io.File;
@@ -26,7 +27,7 @@ import java.util.List;
 public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> implements DanmuLocalPresenter {
     private File parentFolder = null;
     private String rootPath = "/";
-    private boolean isFolder;
+    private int fileType;
 
     public DanmuLocalPresenterImpl(DanmuLocalView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -34,7 +35,7 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
 
     @Override
     public void init() {
-        isFolder = getView().isFolder();
+        fileType = getView().getFileType();
         String path = AppConfigShare.getInstance().getDownloadFolder();
         if (StringUtils.isEmpty(path))
             path = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -78,13 +79,27 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
                     info.setFile(file);
                     info.setName(file.getName());
                     results.add(info);
-                } else if (!isFolder){
+                } else if (fileType == FileManagerActivity.FILE_DANMU){
                     String ext = FileUtils.getFileExtension(file);
                     if ("xml".equals(ext)){
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
                         results.add(info);
+                    }
+                }else if (fileType == FileManagerActivity.FILE_SUBTITLE){
+                    String ext = FileUtils.getFileExtension(file);
+                    switch (ext.toUpperCase()){
+                        case "ASS":
+                        case "SCC":
+                        case "STL":
+                        case "SRT":
+                        case "TTML":
+                            info.setFolder(false);
+                            info.setFile(file);
+                            info.setName(file.getName());
+                            results.add(info);
+                            break;
                     }
                 }
             }

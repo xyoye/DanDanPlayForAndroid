@@ -160,7 +160,7 @@
             android:layout_centerVertical="true"
             android:textSize="16sp"
             android:textColor="@color/text_black"
-            android:text="SurfaceView"/>
+            android:text="SurfaceRender"/>
 
         <CheckBox
             android:id="@+id/surface_renders_cb"

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -16,10 +17,18 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
-import com.player.ijkplayer.utils.Constants;
 import com.xyoye.core.db.DataBaseManager;
+import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
+import com.xyoye.dandanplay.bean.DanmuMatchBean;
+import com.xyoye.dandanplay.bean.UploadDanmuBean;
+import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.net.CommJsonEntity;
+import com.xyoye.dandanplay.net.CommJsonObserver;
+import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -36,12 +46,14 @@ import java.io.InputStream;
 
 
 public class PlayerActivity extends AppCompatActivity {
+    private static final int SELECT_SUBTITLE = 101;
 
     com.player.ijkplayer.media.IjkPlayerView mPlayer;
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
     private int currentPosition;
+    private int episodeId = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +67,7 @@ public class PlayerActivity extends AppCompatActivity {
             videoTitle = getIntent().getStringExtra("title");
             danmuPath = getIntent().getStringExtra("danmu_path");
             currentPosition = getIntent().getIntExtra("current",0);
+            episodeId = getIntent().getIntExtra("episode_id", 0);
         }else {
             //外部打开
             //从uri.getPath否则path被转译了
@@ -87,6 +100,7 @@ public class PlayerActivity extends AppCompatActivity {
                 if (cursor.getCount() != 0){
                     cursor.moveToNext();
                     danmuPathTemp = cursor.getString(0);
+                    episodeId = cursor.getInt(6);
                     cursor.close();
                     if (!StringUtils.isEmpty(danmuPathTemp)){
                         File damuFile = new File(danmuPathTemp);
@@ -151,21 +165,64 @@ public class PlayerActivity extends AppCompatActivity {
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
-                        return false;
+                        return (UserInfoShare.getInstance().isLogin() && episodeId != 0);
                     }
 
                     @Override
                     public void onDataObtain(BaseDanmaku data) {
-
+                        uploadDanmu(data);
                     }
 
                 });
         mPlayer.start();
     }
 
+    private void uploadDanmu(BaseDanmaku data){
+        double dTime = new BigDecimal(data.getTime() / 1000)
+                .setScale(3, BigDecimal.ROUND_HALF_UP)
+                .doubleValue();
+        String time = dTime+"";
+        int type = data.getType();
+        if (type != 1 && type != 4 && type != 5){
+            type = 1;
+        }
+        String mode = type+"";
+        String color = (data.textColor & 0x00FFFFFF)+"";
+        String comment = String.valueOf(data.text);
+        DanmuUploadParam uploadParam = new DanmuUploadParam(time, mode, color, comment);
+        UploadDanmuBean.uploadDanmu(uploadParam, episodeId+"", new CommJsonObserver<UploadDanmuBean>(){
+            @Override
+            public void onSuccess(UploadDanmuBean bean) {
+                Log.i("DanmuUpload", "onSuccess: text："+data.text+"  cid："+bean.getCid());
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String text){
         mPlayer.removeBlock(text);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(OpenSubtitleFileEvent event){
+        Intent intent = new Intent(this, FileManagerActivity.class);
+        intent.putExtra("file_type", FileManagerActivity.FILE_SUBTITLE);
+        startActivityForResult(intent, SELECT_SUBTITLE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK){
+            if (requestCode == SELECT_SUBTITLE){
+                String subtitlePath = data.getStringExtra("subtitle");
+                mPlayer.setSubtitleSource("", subtitlePath);
+            }
+        }
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.xyoye.dandanplay.event.SaveCurrentEvent;
 public interface FolderPresenter extends BasePresenter {
     void refreshVideos();
 
-    void updateDanmu(String danmuPath, String[] whereArgs);
+    void updateDanmu(String danmuPath, int episodeId, String[] whereArgs);
 
     void updateCurrent(SaveCurrentEvent event);
 }

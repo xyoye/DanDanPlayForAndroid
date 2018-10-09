@@ -9,10 +9,12 @@ import java.io.Serializable;
 
 public class OpenDanmuFolderEvent implements Serializable {
     private String path;
+    private int episodeId;
     private boolean isFolder;
 
-    public OpenDanmuFolderEvent(String path, boolean isFolder) {
+    public OpenDanmuFolderEvent(String path,int episodeId, boolean isFolder) {
         this.path = path;
+        this.episodeId = episodeId;
         this.isFolder = isFolder;
     }
 
@@ -22,6 +24,14 @@ public class OpenDanmuFolderEvent implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public int getEpisodeId() {
+        return episodeId;
+    }
+
+    public void setEpisodeId(int episodeId) {
+        this.episodeId = episodeId;
     }
 
     public boolean isFolder() {

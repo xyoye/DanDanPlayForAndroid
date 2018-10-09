@@ -49,7 +49,7 @@ public class AnimaDetailPresenterImpl extends BaseMvpPresenter<AnimaDetailView> 
     }
 
     private void getAnimaDetail(String animaId){
-        AnimeDetailBean.getAnimaDetail(animaId, new CommJsonObserver<AnimeDetailBean>() {
+        AnimeDetailBean.getAnimaDetail(animaId, new CommJsonObserver<AnimeDetailBean>(getLifeful()) {
             @Override
             public void onSuccess(AnimeDetailBean animeDetailBean) {
                  getView().showAnimeDetail(animeDetailBean);

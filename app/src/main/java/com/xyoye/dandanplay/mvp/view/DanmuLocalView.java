@@ -19,5 +19,5 @@ public interface DanmuLocalView extends BaseMvpView {
 
     void updatePathTitle(String path);
 
-    boolean isFolder();
+    int getFileType();
 }

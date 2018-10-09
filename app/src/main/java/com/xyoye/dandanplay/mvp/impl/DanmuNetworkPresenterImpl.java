@@ -68,7 +68,7 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
 
     @Override
     public void searchDanmu(DanmuMatchParam param) {
-        DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(){
+        DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();

@@ -192,6 +192,9 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
                         setItemSubtitle(subChina, content[0]);
                         setItemSubtitle(subEnglish, "");
                     }
+                }else {
+                    setItemSubtitle(subChina, caption.content);
+                    setItemSubtitle(subEnglish, "");
                 }
             }else {
                 setItemSubtitle(subChina, "");

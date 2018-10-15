@@ -20,6 +20,8 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
     @BindView(R.id.episode_title)
     TextView episodeTitle;
 
+    private View mView;
+
     @Override
     public int getLayoutResId() {
         return R.layout.item_anime_episode;
@@ -27,7 +29,7 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
 
     @Override
     public void initItemViews(View itemView) {
-
+        mView = itemView;
     }
 
     @Override
@@ -48,5 +50,9 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
         }else {
             episodeTitle.setText("未知剧集");
         }
+
+        mView.setOnClickListener(v -> {
+
+        });
     }
 }

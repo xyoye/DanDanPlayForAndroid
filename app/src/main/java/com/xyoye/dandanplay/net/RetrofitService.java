@@ -6,6 +6,7 @@ import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
+import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
@@ -84,4 +85,7 @@ public interface RetrofitService {
     @FormUrlEncoded
     @POST("/api/v2/user/profile")
     Observable<CommJsonEntity> changeScreenName(@Field("screenName") String screenName);
+
+    @GET("/list?keyword={keyword}&typeId={type}&subgroup={subgroup}")
+    Observable<MagnetBean> searchMagnet(@Path("keyword") String keyword, @Path("type") String typeId, @Path("subgroup") String subGroupId);
 }

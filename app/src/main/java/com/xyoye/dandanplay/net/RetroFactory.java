@@ -19,9 +19,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class RetroFactory {
-    public static String url = "https://api.acplay.net/";
+    private static String url = "https://api.acplay.net/";
+    private static String resUrl = "https://res.acplay.net/";
 
     private static RetrofitService retrofitService;
+    private static RetrofitService resRetrofitService;
 
     private RetroFactory() {
 
@@ -38,6 +40,19 @@ public class RetroFactory {
                     .create(RetrofitService.class);
         }
         return retrofitService;
+    }
+
+    public static  RetrofitService getResInstance(){
+        if (resRetrofitService == null){
+            resRetrofitService = new Retrofit.Builder()
+                    .baseUrl(resUrl)
+                    .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .client(initOkHttp())
+                    .build()
+                    .create(RetrofitService.class);
+        }
+        return resRetrofitService;
     }
 
 

@@ -92,6 +92,9 @@
         <activity android:name=".ui.authMod.ChangePasswordActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.mangetMod.SearchMagnetActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

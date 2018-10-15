@@ -41,8 +41,6 @@ import butterknife.BindView;
 
 
 public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> implements AnimaDetailView, ScrollableHelper.ScrollableContainer{
-    //@BindView(R.id.toolbar_title)
-    //TextView toolbarTitle;
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolBar;
     @BindView(R.id.scroll_layout)
@@ -74,7 +72,6 @@ public class AnimeDetailActivity extends BaseActivity<AnimaDetailPresenter> impl
 
     @Override
     public void initView() {
-        //toolbarTitle.setText(R.string.anime_detail_title);
         setTitle(R.string.anime_detail_title);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
     }

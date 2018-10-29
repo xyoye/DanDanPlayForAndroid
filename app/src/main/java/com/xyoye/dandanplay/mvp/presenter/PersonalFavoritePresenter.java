@@ -8,4 +8,5 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface PersonalFavoritePresenter extends BasePresenter {
+    void getFavorite();
 }

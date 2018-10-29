@@ -458,16 +458,18 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 ITrackInfo[] info = mVideoView.getTrackInfo();
-                int selectTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-                int sortN = 1;
-                for (int i = 0; i < info.length; i++) {
-                    if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO){
-                        AudioTrack audioTrack = new AudioTrack();
-                        audioTrack.setName("音频#"+sortN+"（"+info[i].getLanguage().toUpperCase()+"）");
-                        audioTrack.setStream(i);
-                        if (i == selectTrack) audioTrack.setSelect(true);
-                        sortN ++;
-                        audioTrackList.add(audioTrack);
+                if (info != null){
+                    int selectTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+                    int sortN = 1;
+                    for (int i = 0; i < info.length; i++) {
+                        if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO){
+                            AudioTrack audioTrack = new AudioTrack();
+                            audioTrack.setName("音频#"+sortN+"（"+info[i].getLanguage().toUpperCase()+"）");
+                            audioTrack.setStream(i);
+                            if (i == selectTrack) audioTrack.setSelect(true);
+                            sortN ++;
+                            audioTrackList.add(audioTrack);
+                        }
                     }
                 }
                 _initAudioView();
@@ -2271,6 +2273,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     //弹幕设置相关组件
     private SeekBar mDanmuSizeSb;
     private TextView mDanmuSizeTv;
+    private SeekBar mDanmuAlphaSb;
+    private TextView mDanmuAlphaTv;
     private TextView mDanmuSpeedFast, mDanmuSpeedMiddle, mDanmuSpeedSlow;
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
     private RelativeLayout mMoreBlockRl;
@@ -2322,6 +2326,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private long mDanmakuTargetPosition = INVALID_VALUE;
     //弹幕文字大小
     private float mDanmuTextSize;
+    //弹幕文字大小
+    private float mDanmuTextAlpha;
     //弹幕速度大小
     private float mDanmuSpeed;
     //弹幕屏蔽获取
@@ -2349,6 +2355,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         //弹幕设置相关
         mDanmuSizeTv = findViewById(R.id.danmu_size_tv);
         mDanmuSizeSb = findViewById(R.id.danmu_size_sb);
+        mDanmuAlphaTv = findViewById(R.id.danmu_alpha_tv);
+        mDanmuAlphaSb = findViewById(R.id.danmu_alpha_sb);
         mDanmuSpeedFast = findViewById(R.id.speed_fast_tv);
         mDanmuSpeedMiddle = findViewById(R.id.speed_middle_tv);
         mDanmuSpeedSlow = findViewById(R.id.speed_slow_tv);
@@ -2392,6 +2400,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuTextSize = calcProgress/50;
         mDanmuSizeTv.setText(progress + "%");
         mDanmuSizeSb.setProgress(progress);
+        //弹幕文字透明度初始化
+        mDanmuAlphaSb.setMax(100);
+        int progressA = PlayerConfigShare.getInstance().getDanmuAlpha();
+        float calcProgressA = (float) progressA;
+        mDanmuTextAlpha = calcProgressA/100;
+        mDanmuAlphaTv.setText(progressA + "%");
+        mDanmuAlphaSb.setProgress(progressA);
         //弹幕速度大小
         mDanmuSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         //弹幕屏蔽初始化
@@ -2499,6 +2514,28 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         });
 
+        mDanmuAlphaSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress == 0 ) progress = 1;
+                mDanmuAlphaTv.setText(progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (progress == 0 ) progress = 1;
+                float calcProgress = (float) progress;
+                mDanmakuContext.setDanmakuTransparency(calcProgress/100);
+                PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
+            }
+        });
+
         mBlockView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -2520,6 +2557,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuContext = DanmakuContext.create();
             mDanmakuContext.setDuplicateMergingEnabled(true);//是否启用合并重复弹幕
             mDanmakuContext.setScaleTextSize(mDanmuTextSize);
+            mDanmakuContext.setDanmakuTransparency(mDanmuTextAlpha);
             mDanmakuContext.setScrollSpeedFactor(mDanmuSpeed);
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
             mDanmakuContext.setFTDanmakuVisibility(isShowTop);

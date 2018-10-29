@@ -1,8 +1,8 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
-import com.xyoye.dandanplay.net.RetroFactory;
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,6 +1,10 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
 import com.xyoye.core.interf.presenter.BasePresenter;
+import com.xyoye.dandanplay.bean.AnimeTypeBean;
+import com.xyoye.dandanplay.bean.SubGroupBean;
+
+import java.util.List;
 
 /**
  * Created by YE on 2018/10/13.
@@ -8,5 +12,12 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface SearchMagnetPresenter extends BasePresenter{
-    void searchManget(String anime, int typeId, int subGroundId);
+
+    void searchMagnet(String anime, int typeId, int subGroundId);
+
+    void downloadTorrent(String savePath, String magnet);
+
+    List<AnimeTypeBean.TypesBean> getTypeList();
+
+    List<SubGroupBean.SubgroupsBean> getSubGroupList();
 }

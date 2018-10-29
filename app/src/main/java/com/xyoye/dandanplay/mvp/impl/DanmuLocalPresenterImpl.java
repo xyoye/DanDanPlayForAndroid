@@ -10,7 +10,7 @@ import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
 import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
-import com.xyoye.dandanplay.ui.fileManagerMod.FileManagerActivity;
+import com.xyoye.dandanplay.ui.activities.FileManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import java.io.File;

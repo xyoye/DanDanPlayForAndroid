@@ -41,6 +41,15 @@ public class PlayerConfigShare {
         getShare().save(Constants.DANMU_SIZE, size+"");
     }
 
+    public int getDanmuAlpha(){
+        String alpha = getShare().load(Constants.DANMU_ALPHA, 100+"");
+        return Integer.valueOf(alpha);
+    }
+
+    public void saveDanmuAlpha(int alpha){
+        getShare().save(Constants.DANMU_ALPHA, alpha+"");
+    }
+
     public float getDanmuSpeed(){
         String speed = getShare().load(Constants.DANMU_SPEED, Constants.DANMU_SPEED_MIDDLE+"");
         return Float.valueOf(speed);

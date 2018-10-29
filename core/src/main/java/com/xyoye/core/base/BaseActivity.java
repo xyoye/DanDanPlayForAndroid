@@ -53,6 +53,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends BaseMvpActiv
 
     @Override
     public void dismissLoadingDialog() {
+        super.dismissLoadingDialog();
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();
             dialog = null;

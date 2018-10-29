@@ -66,4 +66,7 @@ public class Config {
     public static final String PIXEL_RGBX8888 = "fcc-rv32";
     public static final String PIXEL_YV12 = "fcc-yv12";
     public static final String PIXEL_OPENGL_ES2 = "fcc-_es2";
+
+    public static final String TORRENT_DOWNLOAD_SPEED = "torrent_download_speed";
+    public static final String TORRENT_UPLOAD_SPEED = "torrent_upload_speed";
 }

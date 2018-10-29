@@ -121,4 +121,26 @@ public class AppConfigShare {
         getShare().save(Config.SHARE_PIXEL_FORMAT, pixelFormat);
     }
 
+    /**
+     * 下载速度限制
+     */
+    public int getTorrentDownloadSpeed(){
+        return getShare().getShare().getInt(Config.TORRENT_DOWNLOAD_SPEED, -1);
+    }
+
+    public void setTorrentDownloadSpeed(int speed){
+        getShare().saveSharedPreferences(Config.TORRENT_DOWNLOAD_SPEED, speed);
+    }
+
+    /**
+     * 上传速度限制
+     */
+    public int getTorrentUploadSpeed(){
+        return getShare().getShare().getInt(Config.TORRENT_UPLOAD_SPEED, -1);
+    }
+
+    public void setTorrentUploadSpeed(int speed){
+        getShare().saveSharedPreferences(Config.TORRENT_UPLOAD_SPEED, speed);
+    }
+
 }

@@ -9,8 +9,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:background="@color/white">
+        android:layout_height="80dp"
+        android:background="@color/white"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <LinearLayout
             android:id="@+id/search_extra_ll"
@@ -33,12 +35,12 @@
                     android:text="字幕组："/>
 
                 <TextView
-                    android:id="@+id/search_magnet_subground_tv"
+                    android:id="@+id/search_magnet_subgroup_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textColor="@color/theme_color"
-                    android:text="请选择字幕组"/>
+                    android:text="全部"/>
             </LinearLayout>
 
             <LinearLayout
@@ -62,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textColor="@color/theme_color"
-                    android:text="请选择分类"/>
+                    android:text="全部"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -90,16 +92,18 @@
                 android:layout_toStartOf="@+id/search_magnet_bt"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:textSize="14sp"
                 android:singleLine="true"
                 android:layout_alignParentBottom="true"/>
 
             <Button
                 android:id="@+id/search_magnet_bt"
-                android:layout_width="70dp"
-                android:layout_height="40dp"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
+                android:textSize="14sp"
                 android:textColor="@color/white"
                 android:background="@drawable/btn_corner_blue"
                 android:text="搜索"/>

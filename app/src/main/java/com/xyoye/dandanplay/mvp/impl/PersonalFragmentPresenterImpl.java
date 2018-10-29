@@ -7,14 +7,23 @@ import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
-import com.xyoye.dandanplay.net.CommJsonObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.CountDownLatch;
+
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.Subject;
 
 /**
  * Created by YE on 2018/6/29 0029.
@@ -22,9 +31,9 @@ import java.util.List;
 
 
 public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFragmentView> implements PersonalFragmentPresenter {
-
-    private AnimeFavoriteBean favoriteBean;
-    private PlayHistoryBean historyBean;
+    private CountDownLatch countDownLatch = null;
+    private AnimeFavoriteBean animeFavoriteBean;
+    private PlayHistoryBean playHistoryBean;
 
     public PersonalFragmentPresenterImpl(PersonalFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -40,15 +49,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
 
     @Override
     public void resume() {
-        if (UserInfoShare.getInstance().isLogin()){
-            getView().changeView();
-            getFavorite();
-            getPlayHistory();
-        }else {
-            getView().refreshFavorite(null);
-            getView().refreshHistory(null);
-            getView().changeView();
-        }
+
     }
 
     @Override
@@ -61,36 +62,48 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
 
     }
 
-    private void getFavorite(){
+    @Override
+    public void getFavoriteData(){
         AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>(getLifeful()) {
             @Override
             public void onSuccess(AnimeFavoriteBean animeFavoriteBean) {
-                favoriteBean = animeFavoriteBean;
                 if (animeFavoriteBean.getFavorites().size() > 3){
                     List<AnimeFavoriteBean.FavoritesBean> beans = new ArrayList<>();
-                    for (int i=0; i<3; i++){
+                    for (int i = 0; i < 3; i++) {
                         beans.add(animeFavoriteBean.getFavorites().get(i));
                     }
                     AnimeFavoriteBean animeFavoriteBeanTemp = new AnimeFavoriteBean();
                     animeFavoriteBeanTemp.setFavorites(beans);
-                    getView().refreshFavorite(animeFavoriteBeanTemp);
+                    PersonalFragmentPresenterImpl.this.animeFavoriteBean = animeFavoriteBeanTemp;
                 }else
-                    getView().refreshFavorite(animeFavoriteBean);
+                    PersonalFragmentPresenterImpl.this.animeFavoriteBean = animeFavoriteBean;
+
+                if (countDownLatch == null){
+                    getView().refreshFavorite(PersonalFragmentPresenterImpl.this.animeFavoriteBean);
+                }else {
+                    countDownLatch.countDown();
+                }
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                getView().refreshFavorite(null);
+                PersonalFragmentPresenterImpl.this.animeFavoriteBean = null;
                 TLog.e(message);
+
+                if (countDownLatch == null){
+                    getView().refreshFavorite(PersonalFragmentPresenterImpl.this.animeFavoriteBean);
+                }else {
+                    countDownLatch.countDown();
+                }
             }
         }, new NetworkConsumer());
     }
 
-    private void getPlayHistory(){
+    @Override
+    public void getHistoryData(){
         PlayHistoryBean.getPlayHistory(new CommJsonObserver<PlayHistoryBean>(getLifeful()) {
             @Override
             public void onSuccess(PlayHistoryBean playHistoryBean) {
-                historyBean = playHistoryBean;
                 if (playHistoryBean.getPlayHistoryAnimes().size() > 3){
                     List<PlayHistoryBean.PlayHistoryAnimesBean> beans = new ArrayList<>();
                     for (int i = 0; i < 3; i++) {
@@ -98,26 +111,68 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
                     }
                     PlayHistoryBean playHistoryBeanTemp = new PlayHistoryBean();
                     playHistoryBeanTemp.setPlayHistoryAnimes(beans);
-                    getView().refreshHistory(playHistoryBeanTemp);
+                    PersonalFragmentPresenterImpl.this.playHistoryBean = playHistoryBeanTemp;
                 }else
-                    getView().refreshHistory(playHistoryBean);
+                    PersonalFragmentPresenterImpl.this.playHistoryBean = playHistoryBean;
+
+                if (countDownLatch == null){
+                    getView().refreshHistory(PersonalFragmentPresenterImpl.this.playHistoryBean);
+                }else {
+                    countDownLatch.countDown();
+                }
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                getView().refreshHistory(null);
+                PersonalFragmentPresenterImpl.this.playHistoryBean = null;
                 TLog.e(message);
+
+                if (countDownLatch == null){
+                    getView().refreshHistory(PersonalFragmentPresenterImpl.this.playHistoryBean);
+                }else {
+                    countDownLatch.countDown();
+                }
             }
         }, new NetworkConsumer());
     }
 
     @Override
-    public AnimeFavoriteBean getFavoriteBean() {
-        return favoriteBean;
+    public void getFragmentData() {
+        countDownLatch = new CountDownLatch(2);
+        getFavoriteData();
+        getHistoryData();
+
+        io.reactivex.Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            e.onNext(true);
+            e.onComplete();
+        }).subscribeOn(Schedulers.newThread())
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe(new Observer<Boolean>() {
+              @Override
+              public void onSubscribe(Disposable d) {
+
+              }
+
+              @Override
+              public void onNext(Boolean b) {
+                  getView().refreshUI(animeFavoriteBean, playHistoryBean);
+              }
+
+              @Override
+              public void onError(Throwable e) {
+
+              }
+
+              @Override
+              public void onComplete() {
+
+              }
+          });
     }
 
-    @Override
-    public PlayHistoryBean getPlayHistoryBean() {
-        return historyBean;
-    }
 }

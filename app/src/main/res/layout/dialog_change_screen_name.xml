@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
     android:padding="20dp"
     android:layout_gravity="center"
     android:background="@color/white">
@@ -36,7 +36,7 @@
     <Button
         android:id="@+id/confirm_bt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="38dp"
         android:layout_below="@+id/user_screen_name_layout"
         android:layout_marginTop="20dp"
         android:background="@drawable/btn_corner_blue"

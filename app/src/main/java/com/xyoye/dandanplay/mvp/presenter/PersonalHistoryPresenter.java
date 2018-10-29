@@ -8,4 +8,6 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface PersonalHistoryPresenter extends BasePresenter{
+
+    void getPlayHistory();
 }

@@ -10,7 +10,9 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 
 
 public interface PersonalFragmentPresenter extends BasePresenter {
-    AnimeFavoriteBean getFavoriteBean();
+    void getFavoriteData();
 
-    PlayHistoryBean getPlayHistoryBean();
+    void getHistoryData();
+
+    void getFragmentData();
 }

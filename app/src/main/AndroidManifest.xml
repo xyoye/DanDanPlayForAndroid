@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.openMod.OpenActivity"
+        <activity android:name=".ui.activities.OpenActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,27 +26,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.mainMod.MainActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-
-        <activity android:name=".ui.folderMod.FolderActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.settingMod.PlayerSettingActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.fileManagerMod.FileManagerActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.danmuMod.DanmuNetworkActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.danmuMod.DownloadBilibiliActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.playMod.PlayerActivity"
-            android:launchMode="singleInstance"
+        <activity android:name=".ui.activities.PlayerActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter tools:ignore="AppLinkUrlError">
@@ -55,50 +35,90 @@
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
                 <data android:scheme="http" />
+                <data android:scheme="ftp" />
                 <data android:scheme="file" />
+                <data android:scheme="ed2k" />
+                <data android:scheme="thunder" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+                <data android:scheme="http" />
+                <data android:scheme="ftp" />
+                <data android:scheme="file" />
+                <data android:scheme="ed2k" />
+                <data android:scheme="thunder" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.webMod.WebviewActivity"
+        <activity android:name=".ui.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
+        <activity android:name=".ui.activities.FolderActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.animeMod.AnimeDetailActivity"
+        <activity android:name=".ui.activities.PlayerSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.LoginActivity"
+        <activity android:name=".ui.activities.FileManagerActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalInfoActivity"
+        <activity android:name=".ui.activities.DanmuNetworkActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalFavoriteActivity"
+        <activity android:name=".ui.activities.DownloadBilibiliActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.personalMod.PersonalHistoryActivity"
+        <activity android:name=".ui.activities.DownloadMangerActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settingMod.SettingActivity"
+        <activity android:name=".ui.activities.WebviewActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settingMod.PlayerSettingTipsActivity"
+        <activity android:name=".ui.activities.AnimeDetailActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.RegisterActivity"
+        <activity android:name=".ui.activities.LoginActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.ResetPasswordActivity"
+        <activity android:name=".ui.activities.PersonalInfoActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.authMod.ChangePasswordActivity"
+        <activity android:name=".ui.activities.PersonalFavoriteActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.mangetMod.SearchMagnetActivity"
+        <activity android:name=".ui.activities.PersonalHistoryActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.SettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PlayerSettingTipsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.RegisterActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.ResetPasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.ChangePasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.SearchMagnetActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.TorrentActivity"
             android:screenOrientation="portrait"/>
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@android:style/Theme.Translucent" />
+
+        <service android:name=".service.TorrentService"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

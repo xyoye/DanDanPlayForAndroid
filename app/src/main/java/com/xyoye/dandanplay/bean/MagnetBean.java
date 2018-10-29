@@ -1,20 +1,26 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
-import com.xyoye.dandanplay.net.RetroFactory;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 
 /**
  * Created by YE on 2018/10/13.
  */
 
 
-public class MagnetBean {
+public class MagnetBean implements Parcelable{
 
     /**
      * HasMore : true
@@ -23,6 +29,11 @@ public class MagnetBean {
 
     private boolean HasMore;
     private List<ResourcesBean> Resources;
+
+    protected MagnetBean(Parcel in) {
+        HasMore = in.readByte() != 0;
+        Resources = in.createTypedArrayList(ResourcesBean.CREATOR);
+    }
 
     public boolean isHasMore() {
         return HasMore;
@@ -40,7 +51,29 @@ public class MagnetBean {
         this.Resources = Resources;
     }
 
-    public static class ResourcesBean {
+    public static final Creator<MagnetBean> CREATOR = new Creator<MagnetBean>() {
+        @Override
+        public MagnetBean createFromParcel(Parcel in) {
+            return new MagnetBean(in);
+        }
+
+        @Override
+        public MagnetBean[] newArray(int size) {
+            return new MagnetBean[size];
+        }
+    };
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (HasMore ? 1 : 0));
+        dest.writeTypedList(Resources);
+    }
+
+    public static class ResourcesBean implements Parcelable {
         /**
          * Title : 【傲娇零&自由字幕组】[刀剑神域III UnderWorld/Sword Art Online - Alicization][01][HEVC-10Bit-1080P AAC][外挂GB/BIG5][WEB-Rip][MP4+ass]
          * TypeId : 2
@@ -62,6 +95,32 @@ public class MagnetBean {
         private String PageUrl;
         private String FileSize;
         private String PublishDate;
+        private int episodeId;
+
+        protected ResourcesBean(Parcel in) {
+            Title = in.readString();
+            TypeId = in.readInt();
+            TypeName = in.readString();
+            SubgroupId = in.readInt();
+            SubgroupName = in.readString();
+            Magnet = in.readString();
+            PageUrl = in.readString();
+            FileSize = in.readString();
+            PublishDate = in.readString();
+            episodeId = in.readInt();
+        }
+
+        public static final Creator<ResourcesBean> CREATOR = new Creator<ResourcesBean>() {
+            @Override
+            public ResourcesBean createFromParcel(Parcel in) {
+                return new ResourcesBean(in);
+            }
+
+            @Override
+            public ResourcesBean[] newArray(int size) {
+                return new ResourcesBean[size];
+            }
+        };
 
         public String getTitle() {
             return Title;
@@ -134,12 +193,48 @@ public class MagnetBean {
         public void setPublishDate(String PublishDate) {
             this.PublishDate = PublishDate;
         }
+
+        public int getEpisodeId() {
+            return episodeId;
+        }
+
+        public void setEpisodeId(int episodeId) {
+            this.episodeId = episodeId;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(Title);
+            dest.writeInt(TypeId);
+            dest.writeString(TypeName);
+            dest.writeInt(SubgroupId);
+            dest.writeString(SubgroupName);
+            dest.writeString(Magnet);
+            dest.writeString(PageUrl);
+            dest.writeString(FileSize);
+            dest.writeString(PublishDate);
+            dest.writeInt(episodeId);
+        }
     }
 
-    public static void searchManget(String anime, int typeId, int subGroupId, CommOtherDataObserver<MagnetBean> observer, NetworkConsumer consumer){
+    public static void searchMagnet(String anime, int typeId, int subGroupId, CommOtherDataObserver<MagnetBean> observer, NetworkConsumer consumer){
         String type = typeId == -1 ? "" : typeId+"";
         String subGroup = subGroupId == -1 ? "" : subGroupId+"";
         RetroFactory.getResInstance().searchMagnet(anime, type, subGroup)
+                .doOnSubscribe(consumer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public static void downloadTorrent(String magnet, CommOtherDataObserver<ResponseBody> observer, NetworkConsumer consumer){
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), magnet);
+        RetroFactory.getDownloadInstance().downloadTorrent(requestBody)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

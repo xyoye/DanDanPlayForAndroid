@@ -8,4 +8,8 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 
 
 public interface HomeFragmentPresenter extends BasePresenter {
+    void getBannerList();
+    void getAnimaList();
+
+    void getHomeFragmentData();
 }

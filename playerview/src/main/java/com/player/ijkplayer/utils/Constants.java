@@ -15,11 +15,12 @@ public final class Constants {
 
     //弹幕
     public static final String DANMU_SIZE = "danmu_size";
+    public static final String DANMU_ALPHA = "danmu_alpha";
     public static final String DANMU_SPEED = "danmu_speed";
     public static final String DANMU_TOP = "danmu_top";
     public static final String DANMU_BOTTOM = "danmu_bottom";
     public static final String DANMU_MOBILE = "danmu_mobile";
-    public static final float DANMU_SPEED_FAST = 1.8f;
+    public static final float DANMU_SPEED_FAST = 0.8f;
     public static final float DANMU_SPEED_MIDDLE = 1.0f;
     public static final float DANMU_SPEED_SLOW = 1.2f;
 

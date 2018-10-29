@@ -8,14 +8,17 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
+import com.xyoye.dandanplay.bean.DanmuSearchBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
-import com.xyoye.dandanplay.net.CommJsonObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.SearchDanmuUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -43,7 +46,7 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
         param.setFileSize(length);
         param.setVideoDuration(duration);
         param.setMatchMode("hashAndFileName");
-        searchDanmu(param);
+        matchDanmu(param);
     }
 
     @Override
@@ -67,7 +70,7 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
     }
 
     @Override
-    public void searchDanmu(DanmuMatchParam param) {
+    public void matchDanmu(DanmuMatchParam param) {
         DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
@@ -85,4 +88,39 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
             }
         }, new NetworkConsumer());
     }
+
+    @Override
+    public void searchDanmu(String anime, String episode) {
+        getView().showLoading();
+        DanmuSearchBean.searchDanmu(anime, episode, new CommJsonObserver<DanmuSearchBean>(getLifeful()){
+            @Override
+            public void onSuccess(DanmuSearchBean danmuSearchBean) {
+                getView().hideLoading();
+                if (danmuSearchBean.getAnimes().size() > 0){
+                    List<DanmuMatchBean.MatchesBean> matchesBeanList = new ArrayList<>();
+                    for (DanmuSearchBean.AnimesBean animesBean : danmuSearchBean.getAnimes()){
+                        DanmuMatchBean.MatchesBean matchesBean = new DanmuMatchBean.MatchesBean();
+                        for (DanmuSearchBean.AnimesBean.EpisodesBean episodesBean : animesBean.getEpisodes()){
+                            matchesBean.setAnimeId(animesBean.getAnimeId());
+                            matchesBean.setAnimeTitle(animesBean.getAnimeTitle());
+                            matchesBean.setType(animesBean.getType());
+                            matchesBean.setEpisodeId(episodesBean.getEpisodeId());
+                            matchesBean.setEpisodeTitle(episodesBean.getEpisodeTitle());
+                            matchesBeanList.add(matchesBean);
+                        }
+                    }
+                    getView().refreshAdapter(matchesBeanList);
+                }else
+                    ToastUtils.showShort("无匹配弹幕");
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+
 }

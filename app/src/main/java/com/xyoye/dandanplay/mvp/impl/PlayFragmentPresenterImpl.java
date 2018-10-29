@@ -19,7 +19,11 @@ import com.xyoye.dandanplay.utils.FindVideoTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -69,19 +73,26 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
     @Override
     public void getVideoList() {
         FindVideoTask findVideoTask = new FindVideoTask();
-        findVideoTask.setQueryListener(new FindVideoTask.QueryListener() {
-            @Override
-            public void onResult(List<VideoBean> videoList) {
-                for (VideoBean videoBean : videoList){
-                    String folderPath = videoBean.getVideoPath();
-                    String fileName = videoBean.getVideoName();
-                    long duration = videoBean.getVideoDuration();
-                    saveData(folderPath,fileName, duration);
-                }
-                getView().refreshAdapter(getFolderList());
+        findVideoTask.setQueryListener(videoList -> {
+            for (VideoBean videoBean : videoList){
+                String folderPath = videoBean.getVideoPath();
+                String fileName = videoBean.getVideoName();
+                long duration = videoBean.getVideoDuration();
+                saveData(folderPath,fileName, duration);
             }
+            getView().refreshAdapter(getFolderList());
         });
         findVideoTask.execute(getApplicationContext());
+    }
+
+    @Override
+    public void deleteFolder(String folderPath) {
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        sqLiteDatabase.delete("file", "folder_path = ?" , new String[]{folderPath});
+        sqLiteDatabase.delete("folder", "folder_path = ?" , new String[]{folderPath});
+
+        getView().hideLoading();
+        getView().refreshAdapter(getFolderList());
     }
 
     @Override
@@ -89,12 +100,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         File file = new File(path);
         final FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
         Observable.just(file)
-                .flatMap(new Function<File, Observable<File>>() {
-                    @Override
-                    public Observable<File> apply(File file) {
-                        return listFiles(file);
-                    }
-                })
+                .flatMap((Function<File, Observable<File>>) this::listFiles)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<File>() {
@@ -137,27 +143,12 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         if ("ANDROID".equals(name.toUpperCase()) ||
                 name.startsWith("com") ||
                 name.startsWith(".")){
-            return Observable.just(f).filter(new Predicate<File>() {
-                @Override
-                public boolean test(File file) {
-                    return false;
-                }
-            });
+            return Observable.just(f).filter(file -> false);
         }
         if(f.isDirectory()){
-            return Observable.fromArray(f.listFiles()).flatMap(new Function<File, Observable<File>>() {
-                @Override
-                public Observable<File> apply(File file) {
-                    return listFiles(file);
-                }
-            });
+            return Observable.fromArray(f.listFiles()).flatMap((Function<File, Observable<File>>) this::listFiles);
         } else {
-            return Observable.just(f).filter(new Predicate<File>() {
-                @Override
-                public boolean test(File file) {
-                    return f.exists() && f.canRead() && isVideo(f);
-                }
-            });
+            return Observable.just(f).filter(file -> f.exists() && f.canRead() && isVideo(f));
         }
     }
 
@@ -185,19 +176,41 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
 
     private List<FolderBean> getFolderList(){
         List<FolderBean> folderBeanList = new ArrayList<>();
+        Map<String, Integer> beanMap = new HashMap<>();
+        Map<String, String> deleteMap = new HashMap<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path,count(folder_path) AS number FROM file GROUP BY folder_path",new String[]{});
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path, file_name FROM file",new String[]{});
         while (cursor.moveToNext()){
             String folderPath = cursor.getString(0);
-            int fileNumber = cursor.getInt(1);
-            folderBeanList.add(new FolderBean(folderPath,fileNumber));
+            String fileName = cursor.getString(1);
+            String filePath = folderPath + "/" + fileName;
 
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[1][1],folderPath);
-            values.put(DataBaseInfo.getFieldNames()[1][2],fileNumber);
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values,null,null);
+            File file = new File(filePath);
+            if (file.exists()){
+                if (beanMap.containsKey(folderPath)){
+                    int number = beanMap.get(folderPath);
+                    beanMap.put(folderPath, ++number);
+                }else {
+                    beanMap.put(folderPath, 1);
+                }
+            }else {
+                deleteMap.put(folderPath, fileName);
+            }
         }
         cursor.close();
+
+        for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
+            folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
+            ContentValues values = new ContentValues();
+            values.put(DataBaseInfo.getFieldNames()[1][1], entry.getKey());
+            values.put(DataBaseInfo.getFieldNames()[1][2], entry.getValue());
+            sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values,null,null);
+        }
+
+        for (Map.Entry<String, String> entry : deleteMap.entrySet()){
+            sqLiteDatabase.delete("file", "folder_path=? AND file_name = ?" , new String[]{entry.getKey(), entry.getValue()});
+        }
         return folderBeanList;
     }
 }

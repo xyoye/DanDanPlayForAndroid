@@ -19,7 +19,7 @@ import java.util.zip.InflaterInputStream;
  */
 
 public class BilibiliDownloadUtil {
-    private static String BaseUrl = "http://comment.bilibili.tv/";
+    private static String BaseUrl = "http://comment.bilibili.com/";
 
     public static String getXmlString(String cid){
         InputStream in = null;

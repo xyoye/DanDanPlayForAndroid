@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
+    android:background="@drawable/bg_corner_5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                android:text="搜索字幕" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/text_black"
+                android:text="番剧："/>
+
+            <EditText
+                android:id="@+id/anime_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/episode_type_rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/episode_rb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text=""/>
+
+                <TextView
+                    android:id="@+id/episode_start_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/episode_rb"
+                    android:layout_centerVertical="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_black"
+                    android:text="第"/>
+
+                <EditText
+                    android:id="@+id/episode_et"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/episode_start_tips"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:id="@+id/episode_end_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/episode_et"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_black"
+                    android:text="集"/>
+
+                <RadioButton
+                    android:id="@+id/ova_rb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_black"
+                    android:text="剧场版"/>
+            </RelativeLayout>
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/search_danmu_bt"
+            android:layout_width="100dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/btn_corner_blue"
+            style="@style/Widget.AppCompat.Button"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="搜索" />
+    </LinearLayout>
+
+</LinearLayout>

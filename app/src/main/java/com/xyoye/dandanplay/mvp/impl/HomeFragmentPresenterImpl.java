@@ -1,24 +1,32 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
+import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.bean.BannerBeans;
-import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
-import com.xyoye.dandanplay.net.CommJsonObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
+import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by YE on 2018/6/29 0029.
@@ -26,7 +34,10 @@ import java.util.List;
 
 
 public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView> implements HomeFragmentPresenter {
-    private List<String> dateList;
+
+    private CountDownLatch countDownLatch = null;
+    private List<BannerBeans.BannersBean> bannerList;
+    private List<AnimeBeans> animeBeansList;
 
     public HomeFragmentPresenterImpl(HomeFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -34,30 +45,12 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
 
     @Override
     public void init() {
-        dateList = new ArrayList<>();
-        dateList.add("周日");
-        dateList.add("周一");
-        dateList.add("周二");
-        dateList.add("周三");
-        dateList.add("周四");
-        dateList.add("周五");
-        dateList.add("周六");
+        bannerList = new ArrayList<>();
+        animeBeansList = new ArrayList<>();
     }
 
     @Override
     public void process(Bundle savedInstanceState) {
-        List<BannerBeans.BannersBean> banners = getBannerList();
-        List<String> images = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
-        List<String> urls = new ArrayList<>();
-        for (BannerBeans.BannersBean banner : banners ){
-            images.add(banner.getImageUrl());
-            titles.add(banner.getTitle());
-            urls.add(banner.getUrl());
-        }
-        getView().setBanners(images, titles, urls);
-        getView().initIndicator(dateList);
-        getAnimaList();
     }
 
     @Override
@@ -75,23 +68,60 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
 
     }
 
-    private List<BannerBeans.BannersBean> getBannerList(){
-        List<BannerBeans.BannersBean> bannerBeans = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        String sql = "SELECT * FROM banner";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            String title = cursor.getString(1);
-            String description = cursor.getString(2);
-            String url = cursor.getString(3);
-            String imageUrl = cursor.getString(4);
-            bannerBeans.add(new BannerBeans.BannersBean(title,description,url,imageUrl));
-        }
-        cursor.close();
-        return bannerBeans;
+    @Override
+    public void getBannerList(){
+        BannerBeans.getBanner(new CommJsonObserver<BannerBeans>(getLifeful()) {
+            @Override
+            public void onSuccess(BannerBeans bannerBean) {
+                List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[3],"", new String[]{});
+                for(BannerBeans.BannersBean bean : beans ){
+                    ContentValues values=new ContentValues();
+                    values.put(DataBaseInfo.getFieldNames()[3][1], bean.getTitle());
+                    values.put(DataBaseInfo.getFieldNames()[3][2], bean.getDescription());
+                    values.put(DataBaseInfo.getFieldNames()[3][3], bean.getUrl());
+                    values.put(DataBaseInfo.getFieldNames()[3][4], bean.getImageUrl());
+                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[3],null,values);
+                }
+                if (countDownLatch != null){
+                    countDownLatch.countDown();
+                    HomeFragmentPresenterImpl.this.bannerList = beans;
+                }else {
+                    setBanners(beans);
+                }
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                TLog.e(message);
+                ToastUtils.showShort(message);
+
+                List<BannerBeans.BannersBean> bannerBeans = new ArrayList<>();
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                String sql = "SELECT * FROM banner";
+                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
+                while (cursor.moveToNext()){
+                    String title = cursor.getString(1);
+                    String description = cursor.getString(2);
+                    String url = cursor.getString(3);
+                    String imageUrl = cursor.getString(4);
+                    bannerBeans.add(new BannerBeans.BannersBean(title,description,url,imageUrl));
+                }
+                cursor.close();
+
+                if (countDownLatch != null){
+                    countDownLatch.countDown();
+                    HomeFragmentPresenterImpl.this.bannerList = bannerBeans;
+                }else {
+                    setBanners(bannerBeans);
+                }
+            }
+        }, new NetworkConsumer());
     }
 
-    private void getAnimaList(){
+    @Override
+    public void getAnimaList(){
         AnimeBeans.getAnimes(new CommJsonObserver<AnimeBeans>(getLifeful()) {
             @Override
             public void onSuccess(AnimeBeans animeBeans) {
@@ -122,16 +152,74 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
                             break;
                     }
                 }
-                IApplication.getExecutor().execute(() ->
-                        getView().initViewPager(beansList));
+                if (countDownLatch != null){
+                    countDownLatch.countDown();
+                    HomeFragmentPresenterImpl.this.animeBeansList = beansList;
+                }else {
+                    getView().initViewPager(beansList);
+                }
             }
 
             @Override
             public void onError(int errorCode, String message) {
                 ToastUtils.showShort(message);
                 TLog.e(message);
+
+                if (countDownLatch != null){
+                    countDownLatch.countDown();
+                }else {
+                    getView().initViewPager(new ArrayList<>());
+                }
             }
         }, new NetworkConsumer());
+    }
+
+    @Override
+    public void getHomeFragmentData(){
+        countDownLatch = new CountDownLatch(2);
+        getBannerList();
+        getAnimaList();
+
+        io.reactivex.Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            e.onNext(true);
+            e.onComplete();
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean b) {
+                        List<String> images = new ArrayList<>();
+                        List<String> titles = new ArrayList<>();
+                        List<String> urls = new ArrayList<>();
+                        for (BannerBeans.BannersBean banner : bannerList ){
+                            images.add(banner.getImageUrl());
+                            titles.add(banner.getTitle());
+                            urls.add(banner.getUrl());
+                        }
+
+                        getView().refreshUI(images, titles, urls, animeBeansList);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     private void initList(List<AnimeBeans> beansList){
@@ -156,5 +244,18 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
         beansList.add(animeBeans04);
         beansList.add(animeBeans05);
         beansList.add(animeBeans06);
+    }
+
+    private void setBanners(List<BannerBeans.BannersBean> bannerBeans){
+        List<String> images = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        List<String> urls = new ArrayList<>();
+        for (BannerBeans.BannersBean banner : bannerBeans ){
+            images.add(banner.getImageUrl());
+            titles.add(banner.getTitle());
+            urls.add(banner.getUrl());
+        }
+
+        getView().setBanners(images, titles, urls);
     }
 }

@@ -11,4 +11,6 @@ public interface PlayFragmentPresenter extends BasePresenter {
     void listFolder(String path);
 
     void getVideoList();
+
+    void deleteFolder(String folderPath);
 }

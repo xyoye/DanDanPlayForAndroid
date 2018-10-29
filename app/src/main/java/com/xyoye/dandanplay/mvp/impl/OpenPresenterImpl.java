@@ -1,34 +1,23 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
 import com.xyoye.core.utils.TLog;
-import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
-import com.xyoye.dandanplay.net.CommJsonObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.TokenShare;
 import com.xyoye.dandanplay.utils.UserInfoShare;
-
-import java.util.List;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
  * Created by YE on 2018/7/15.
  */
 
 public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements OpenPresenter {
-
-    private volatile int openStatus = 0;
-    private boolean toLogin = false;
 
     public OpenPresenterImpl(OpenView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -40,9 +29,8 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
         if (UserInfoShare.getInstance().isLogin()){
             reToken();
         }else {
-            openStatus++;
+            getView().launch(false);
         }
-        getData();
     }
 
     @Override
@@ -65,42 +53,6 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
 
     }
 
-    private void getData(){
-        BannerBeans.getBanner(new CommJsonObserver<BannerBeans>(getLifeful()) {
-            @Override
-            public void onSuccess(BannerBeans bannerBean) {
-                List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[3],"", new String[]{});
-                for(BannerBeans.BannersBean bean : beans ){
-                    ContentValues values=new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[3][1], bean.getTitle());
-                    values.put(DataBaseInfo.getFieldNames()[3][2], bean.getDescription());
-                    values.put(DataBaseInfo.getFieldNames()[3][3], bean.getUrl());
-                    values.put(DataBaseInfo.getFieldNames()[3][4], bean.getImageUrl());
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[3],null,values);
-                }
-
-                if (openStatus == 1){
-                    getView().launch(toLogin);
-                }else {
-                    openStatus++;
-                }
-            }
-
-            @Override
-            public void onError(int errorCode, String message) {
-                TLog.e(message);
-                ToastUtils.showShort(message);
-                if (openStatus == 1){
-                    getView().launch(toLogin);
-                }else {
-                    openStatus++;
-                }
-            }
-        }, new NetworkConsumer());
-    }
-
     private void reToken(){
         PersonalBean.reToken(new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
@@ -109,11 +61,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
                 UserInfoShare.getInstance().saveUserScreenName(personalBean.getScreenName());
                 UserInfoShare.getInstance().saveUserImage(personalBean.getProfileImage());
                 TokenShare.getInstance().saveToken(personalBean.getToken());
-                if (openStatus == 1){
-                    getView().launch(false);
-                }else {
-                    openStatus++;
-                }
+                getView().launch(false);
             }
 
             @Override
@@ -124,13 +72,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
                 UserInfoShare.getInstance().saveUserScreenName("");
                 TokenShare.getInstance().saveToken("");
                 TLog.e(message);
-
-                if (openStatus == 1){
-                    getView().launch(true);
-                }else {
-                    toLogin = true;
-                    openStatus++;
-                }
+                getView().launch(true);
             }
         }, new NetworkConsumer());
     }

@@ -2,11 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.mainMod.MainActivity">
+    tools:context=".ui.activities.MainActivity">
+    <item
+        android:id="@+id/search_danmu"
+        android:orderInCategory="100"
+        android:title="搜索"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/local_danmu"
         android:orderInCategory="100"
         android:title="本地弹幕"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
 </menu>

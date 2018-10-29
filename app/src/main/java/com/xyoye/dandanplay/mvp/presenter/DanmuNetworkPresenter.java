@@ -9,5 +9,7 @@ import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 
 
 public interface DanmuNetworkPresenter extends BasePresenter {
-    void searchDanmu(DanmuMatchParam param);
+    void matchDanmu(DanmuMatchParam param);
+
+    void searchDanmu(String anime, String episode);
 }

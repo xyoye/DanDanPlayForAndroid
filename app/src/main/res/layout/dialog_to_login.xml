@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="140dp"
     android:layout_gravity="center"
-    android:layout_marginStart="60dp"
-    android:layout_marginEnd="60dp"
-    android:background="@color/white">
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
+    android:background="@drawable/bg_corner_5">
 
     <TextView
         android:id="@+id/tips_tv"
@@ -24,7 +24,7 @@
     <Button
         android:id="@+id/to_login_bt"
         android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_height="38dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="18dp"

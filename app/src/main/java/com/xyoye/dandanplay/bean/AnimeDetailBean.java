@@ -1,9 +1,9 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.net.CommJsonEntity;
-import com.xyoye.dandanplay.net.CommJsonObserver;
-import com.xyoye.dandanplay.net.NetworkConsumer;
-import com.xyoye.dandanplay.net.RetroFactory;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.io.Serializable;
 import java.util.HashMap;

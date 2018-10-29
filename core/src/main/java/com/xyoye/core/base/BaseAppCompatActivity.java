@@ -2,6 +2,7 @@ package com.xyoye.core.base;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -258,12 +259,17 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
      * @param tag
      */
     protected void switchFragment(int id, Fragment from, Fragment to, String tag) {
-        FragmentTransaction transation = getSupportFragmentManager().beginTransaction();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transation = fragmentManager.beginTransaction();
         TLog.i("switchFragment", to.isAdded() + "");
-        if (!to.isAdded()) {
-            transation.hide(from).add(id, to, tag).show(to).commitAllowingStateLoss();
-        } else {
-            transation.hide(from).show(to).commitAllowingStateLoss();
+        if (from != null){
+            if (!to.isAdded() && fragmentManager.findFragmentByTag(tag) == null) {
+                transation.hide(from).add(id, to, tag).show(to).commitAllowingStateLoss();
+            } else {
+                transation.hide(from).show(to).commitAllowingStateLoss();
+            }
+        }else {
+            transation.add(id, to, tag).commitAllowingStateLoss();
         }
     }
 

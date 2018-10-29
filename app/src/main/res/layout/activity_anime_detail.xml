@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="0dp" />
 
-    <com.xyoye.dandanplay.weight.ScrollableLayout
+    <com.xyoye.dandanplay.ui.weight.ScrollableLayout
         android:id="@+id/scroll_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:textColor="@color/text_black"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     tools:text="测试番剧" />
 
                 <TextView
@@ -95,7 +95,7 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <com.xyoye.dandanplay.weight.ExpandableTextView
+            <com.xyoye.dandanplay.ui.weight.ExpandableTextView
                 android:id="@+id/anima_intro_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                 android:layout_margin="8dp"
                 android:text="@string/anima_episode_tips_string"
                 android:textColor="@color/text_black"
-                android:textSize="18sp"/>
+                android:textSize="16sp"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -132,5 +132,5 @@
                 android:layout_below="@+id/anima_episode_tips" />
         </RelativeLayout>
 
-    </com.xyoye.dandanplay.weight.ScrollableLayout>
+    </com.xyoye.dandanplay.ui.weight.ScrollableLayout>
 </RelativeLayout>

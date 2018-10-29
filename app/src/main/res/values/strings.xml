@@ -42,4 +42,6 @@
     <string name="download_by_av_tip">输入av号以下载</string>
     <string name="choose_link_form_bilibili_button_tip">在Bilibili网站上选择一个链接</string>
     <string name="download_by_link_tip">输入链接以下载</string>
+
+    <string name="per_second">/s</string>
 </resources>

@@ -83,6 +83,7 @@ public class DialogUtils {
         DialogUtils.this.content.setText(content);
         ok.setVisibility( okVis ? View.VISIBLE : View.GONE);
         cancel.setVisibility( cancelVis ? View.VISIBLE : View.GONE);
+        DialogUtils.this.extra.setVisibility(View.VISIBLE);
         if (!((Activity)context).isFinishing())
             dialog.show();
     }

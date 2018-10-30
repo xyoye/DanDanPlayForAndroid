@@ -22,6 +22,10 @@ public class TorrentStorage implements FileStorageTorrent {
         hashs.put(hash, torrent);
     }
 
+    public void removeHash(String hash){
+        hashs.remove(hash);
+    }
+
     @Override
     public void createZeroLengthFile(String hash, String path) throws Exception {
         Torrent torrent = hashs.get(hash);

@@ -167,7 +167,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void deleteEvent(DeleteFolderEvent event){
         new DialogUtils.Builder(getContext())
                 .setOkListener(dialog ->
-                        new PermissionHelper().request(() -> {
+                        new PermissionHelper().with(this).request(() -> {
                             dialog.dismiss();
                             showLoading();
                             File file = new File(event.getFolderPath());

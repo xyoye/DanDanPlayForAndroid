@@ -2,16 +2,18 @@ package com.xyoye.dandanplay.utils.torrent;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
+import android.util.Base64;
 import android.widget.Toast;
 
+import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import libtorrent.Libtorrent;
 import libtorrent.StatsTorrent;
@@ -32,8 +34,8 @@ public class TorrentTask{
         return prepareTorrent(torrent);
     }
 
-    public void start(Torrent torrent){
-        startTorrent(torrent);
+    public boolean start(Torrent torrent){
+        return startTorrent(torrent);
     }
 
     public void pause(Torrent torrent){
@@ -46,7 +48,13 @@ public class TorrentTask{
         downloadFolder += oldTorrent.getFolder();
         Torrent torrent = new Torrent();
         torrent.setPath(oldTorrent.getPath());
-        torrent.setFolder(downloadFolder);
+        if (oldTorrent.getFolder().endsWith("/"))
+            torrent.setFolder(downloadFolder);
+        else
+            torrent.setFolder(downloadFolder+"/");
+        torrent.setEpisodeId(oldTorrent.getEpisodeId());
+        torrent.setDanmuPath(oldTorrent.getDanmuPath());
+        torrent.setDone(oldTorrent.isDone());
 
         byte[] torrentData;
         File torrentFile = new File(oldTorrent.getPath());
@@ -72,18 +80,25 @@ public class TorrentTask{
     }
 
     //下载torrent内容
-    private void startTorrent(Torrent torrent) {
+    private boolean startTorrent(Torrent torrent) {
         int torrentStatus = Libtorrent.torrentStatus(torrent.getId());
         torrent.setStatus(torrentStatus);
         if (torrentStatus == Libtorrent.StatusPaused || torrentStatus == Libtorrent.StatusQueued){
-            if (!Libtorrent.startTorrent(torrent.getId()))
-                throw new RuntimeException(Libtorrent.error());
+            if (!Libtorrent.startTorrent(torrent.getId())){
+                TLog.e(Libtorrent.error());
+                Toast.makeText(context, "错误，无法下载", Toast.LENGTH_LONG).show();
+                return false;
+            }
+            if (Libtorrent.torrentTrackersCount(torrent.getId()) == 0){
+                for (String tracker : IApplication.trackers){
+                    Libtorrent.torrentTrackerAdd(torrent.getId(), tracker);
+                }
+            }
             StatsTorrent b = Libtorrent.torrentStats(torrent.getId());
             torrent.downloaded.start(b.getDownloaded());
             torrent.uploaded.start(b.getUploaded());
-        }else{
-            Libtorrent.stopTorrent(torrent.getId());
         }
+        return true;
     }
 
     //暂停torrent下载
@@ -91,6 +106,7 @@ public class TorrentTask{
         if (torrent.getId() == -1)
             return;
         Libtorrent.stopTorrent(torrent.getId());
+        IApplication.updateTorrent(torrent);
         StatsTorrent b = Libtorrent.torrentStats(torrent.getId());
         torrent.downloaded.end(b.getDownloaded());
         torrent.uploaded.end(b.getUploaded());

@@ -178,8 +178,8 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         fragmentAdapter = new AnimaFragmentAdapter(getChildFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(2);
-        magicIndicator.onPageSelected( Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-        viewPager.setCurrentItem( Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+        magicIndicator.onPageSelected( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+        viewPager.setCurrentItem( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
         bindViewPager(magicIndicator, viewPager);
     }
 

@@ -156,6 +156,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
                 return;
             }
         }
+        intent.putExtra("episode_id", getIntent().getIntExtra("episode_id", -1));
         intent.putExtra("torrent_path", torrentPath);
         intent.putExtra("anime_folder", animeFolder);
         startActivity(intent);
@@ -194,7 +195,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MagnetBean.ResourcesBean model){
-        String savePath = AppConfigShare.getInstance().getDownloadFolder()+"/";
+        String savePath = AppConfigShare.getInstance().getDownloadFolder();
         savePath += StringUtils.isEmpty( animeFolder) ? "" : (animeFolder + "/");
         presenter.downloadTorrent(savePath, model.getMagnet());
 //        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

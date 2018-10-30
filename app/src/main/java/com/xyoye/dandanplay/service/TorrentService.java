@@ -19,6 +19,7 @@ import com.github.axet.wget.SpeedInfo;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
+import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.TorrentStorage;
@@ -31,6 +32,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import libtorrent.BytesInfo;
 import libtorrent.Libtorrent;
@@ -55,21 +57,19 @@ public class TorrentService extends Service {
     public void onEvent(TorrentEvent event){
         switch (event.getAction()){
             case TorrentEvent.EVENT_START:
-                if (!isStart){
-                    refresh.run();
-                    isStart = true;
-                }
                 Torrent torrent = torrentTask.prepare(event.getTorrent());
                 if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
                     IApplication.torrentList.add(torrent);
                     IApplication.torrentStorage.addHash(torrent.getHash(), torrent);
                     IApplication.saveTorrent(torrent);
-                    torrentTask.start(torrent);
+                    if (!torrentTask.start(torrent))
+                        torrent.setError(true);
                     showNotification();
                 }
                 break;
             case TorrentEvent.EVENT_RESUME:
-                torrentTask.start(event.getTorrent());
+                if (!torrentTask.start(event.getTorrent()))
+                    event.getTorrent().setError(true);
                 break;
             case TorrentEvent.EVENT_PAUSE:
                 torrentTask.pause(event.getTorrent());
@@ -77,6 +77,41 @@ public class TorrentService extends Service {
             case TorrentEvent.EVENT_STOP:
                 torrentTask.pause(event.getTorrent());
                 break;
+            case TorrentEvent.EVENT_DELETE_TASK:
+                 torrentTask.pause(event.getTorrent());
+                 IApplication.deleteTorrent(event.getTorrent(), false);
+                 break;
+            case TorrentEvent.EVENT_DELETE_FILE:
+                torrentTask.pause(event.getTorrent());
+                IApplication.deleteTorrent(event.getTorrent(), true);
+                break;
+            case TorrentEvent.EVENT_ALL_PAUSE:
+                for (Torrent t : IApplication.torrentList){
+                    torrentTask.pause(t);
+                }
+                break;
+            case TorrentEvent.EVENT_ALL_START:
+                for (int i=IApplication.torrentList.size()-1; i>=0; i--){
+                    Torrent t = IApplication.torrentList.get(i);
+                    if (!Libtorrent.torrentActive(t.getId())){
+                        if (!torrentTask.start(t))
+                            t.setError(true);
+                    }
+                }
+                break;
+            case TorrentEvent.EVENT_ALL_DELETE_TASK:
+                for (Torrent t : IApplication.torrentList){
+                    torrentTask.pause(t);
+                    IApplication.deleteTorrent(t, false);
+                }
+                break;
+            case TorrentEvent.EVENT_ALL_DELETE_FILE:
+                for (Torrent t : IApplication.torrentList){
+                    torrentTask.pause(t);
+                    IApplication.deleteTorrent(t, true);
+                }
+                break;
+
         }
     }
 
@@ -112,7 +147,7 @@ public class TorrentService extends Service {
             notificationManager.notify(NOTIFICATION_ID, showNotification());
             mHandler.postDelayed(refresh,1000);
         };
-
+        refresh.run();
     }
 
     private Notification showNotification(){

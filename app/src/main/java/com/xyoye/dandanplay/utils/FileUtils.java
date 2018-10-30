@@ -1,8 +1,19 @@
 package com.xyoye.dandanplay.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.xyoye.core.utils.StringUtils;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -100,5 +111,22 @@ public class FileUtils {
         } else if (file.exists()) {
             file.delete();
         }
+    }
+
+    public static List<String> readTracker(Context context) {
+        List<String> stringList = new ArrayList<>();
+        try {
+            InputStream inputStream = context.getAssets().open("tracker.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            while (( line = bufferedReader.readLine()) != null) {
+                if (StringUtils.isEmpty(line) || line.startsWith("#")) continue;
+                stringList.add(line);
+            }
+        } catch (IOException ee) {
+            ee.printStackTrace();
+        }
+        return stringList;
     }
 }

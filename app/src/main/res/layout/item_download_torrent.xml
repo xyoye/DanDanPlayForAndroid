@@ -3,16 +3,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="71dp"
-    android:paddingTop="10dp"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
     android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/download_info_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="11dp"
+        android:layout_marginStart="10dp"
         android:layout_toStartOf="@+id/download_ctrl_rl"
         android:orientation="vertical">
 
@@ -62,7 +61,9 @@
         android:id="@+id/download_ctrl_rl"
         android:layout_width="50dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="11dp">
 
@@ -90,4 +91,151 @@
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
         android:background="@color/diver_color"/>
+
+    <LinearLayout
+        android:id="@+id/torrent_action_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#88000000"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/play_action_ll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:padding="5dp"
+                android:src="@mipmap/ic_download_play"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="播放"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bind_danmu_action_ll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/bind_danmu_iv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:padding="5dp"
+                android:src="@mipmap/ic_download_bind_danmu"/>
+
+            <TextView
+                android:id="@+id/bind_danmu_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="弹幕"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/info_action_ll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:padding="5dp"
+                android:src="@mipmap/ic_download_info"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="详情"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/delete_action_ll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:padding="5dp"
+                android:src="@mipmap/ic_download_delete"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="删除"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/close_action_ll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:padding="5dp"
+                android:src="@mipmap/ic_download_close"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="关闭"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

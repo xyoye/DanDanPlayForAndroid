@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.utils.torrent;
 
 import com.github.axet.wget.SpeedInfo;
+import com.xyoye.dandanplay.app.IApplication;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,10 +17,13 @@ public class Torrent implements Serializable{
     private long id;
     private String title;
     private String path;
+    private String danmuPath;
+    private int episodeId;
     private String folder;
     private String hash;
     private long size;
     private boolean done;
+    private boolean error;
     private int status = -1;
     private List<TorrentFile> torrentFileList;
     public SpeedInfo downloaded = new SpeedInfo();
@@ -49,12 +53,28 @@ public class Torrent implements Serializable{
         this.path = path;
     }
 
+    public String getDanmuPath() {
+        return danmuPath;
+    }
+
+    public void setDanmuPath(String danmuPath) {
+        this.danmuPath = danmuPath;
+    }
+
     public String getFolder() {
         return folder;
     }
 
     public void setFolder(String folder) {
         this.folder = folder;
+    }
+
+    public int getEpisodeId() {
+        return episodeId;
+    }
+
+    public void setEpisodeId(int episodeId) {
+        this.episodeId = episodeId;
     }
 
     public String getHash() {
@@ -87,6 +107,14 @@ public class Torrent implements Serializable{
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
     }
 
     public List<TorrentFile> getTorrentFileList() {
@@ -134,7 +162,10 @@ public class Torrent implements Serializable{
         if (Libtorrent.metaTorrent(id)) {
             long l = Libtorrent.torrentPendingBytesLength(id);
             long c = Libtorrent.torrentPendingBytesCompleted(id);
-            done = l > 0 && l == c;
+            if (l > 0 && l == c && !isDone()){
+                setDone(true);
+                IApplication.updateTorrent(this);
+            }
         } else {
             done = false;
         }

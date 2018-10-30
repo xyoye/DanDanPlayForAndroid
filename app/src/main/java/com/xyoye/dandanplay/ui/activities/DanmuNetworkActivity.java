@@ -139,6 +139,7 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
         Intent intent = getIntent();
         intent.putExtra("episode_id", event.getEpisodeId());
         intent.putExtra("path", path);
+        intent.putExtra("position", getIntent().getIntExtra("position", -1));
         setResult(RESULT_OK, intent);
         finish();
     }

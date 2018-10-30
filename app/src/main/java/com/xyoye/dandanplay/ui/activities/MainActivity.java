@@ -18,6 +18,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
@@ -25,12 +26,14 @@ import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
+import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import libtorrent.Libtorrent;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
 
@@ -124,6 +127,15 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            for (Torrent torrent : IApplication.torrentList){
+                if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
+                        Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding ){
+                    ToastUtils.showShort("请先暂停下载任务再退出，否则无法保存下载进度");
+                    return false;
+                }
+            }
+
             if (System.currentTimeMillis() - touchTime > 1500) {
                 ToastUtils.showShort("再按一次退出应用");
                 touchTime = System.currentTimeMillis();

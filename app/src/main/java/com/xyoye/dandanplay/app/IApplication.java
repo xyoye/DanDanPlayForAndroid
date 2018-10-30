@@ -37,11 +37,15 @@ import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.utils.KeyUtil;
+import com.xyoye.core.utils.StringUtils;
 import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.TorrentStorage;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -53,6 +57,7 @@ public class IApplication extends BaseApplication {
     static ThreadPoolExecutor executor;
     public static List<Torrent> torrentList = new ArrayList<>();
     public static TorrentStorage torrentStorage = new TorrentStorage();
+    public static List<String> trackers = new ArrayList<>();
 
     public static Handler mainHandler;
 
@@ -105,6 +110,7 @@ public class IApplication extends BaseApplication {
             throw new RuntimeException(Libtorrent.error());
         Libtorrent.setUploadRate(-1);
         Libtorrent.setDownloadRate(-1);
+        trackers = FileUtils.readTracker(getApplicationContext());
     }
 
     private void loadTorrent(){
@@ -115,6 +121,9 @@ public class IApplication extends BaseApplication {
             Torrent torrent = new Torrent();
             String path = cursor.getString(1);
             String state = cursor.getString(2);
+            Boolean isDone = cursor.getInt( 3) == 1;
+            String danmuPath = cursor.getString(4);
+            int episodeId = cursor.getInt(5);
             byte[] stateByte = Base64.decode(state, Base64.DEFAULT);
             long id = Libtorrent.loadTorrent(path, stateByte);
             if (id == -1) {
@@ -122,18 +131,24 @@ public class IApplication extends BaseApplication {
                 continue;
             }
             String hash = Libtorrent.torrentHash(id);
-            torrent.setDone(false);
+            torrent.setDone(isDone);
             torrent.setId(id);
             torrent.setHash(hash);
             torrent.setPath(path);
+            torrent.setDanmuPath(danmuPath);
+            torrent.setEpisodeId(episodeId);
             torrent.setTitle(Libtorrent.torrentName(id));
             torrent.setStatus(Libtorrent.torrentStatus(id));
             torrent.setSize(Libtorrent.torrentBytesLength(id));
             if (path.contains("/")){
-                int folderS = path.lastIndexOf("/");
-                String folder = path.substring(0, folderS);
-                if (folder.contains("/torrent"))
-                    folder = folder.replace("/torrent", "");
+                String folder;
+                if (path.contains("/torrent/")){
+                    int end = path.indexOf("/torrent/");
+                    folder = path.substring(0, end);
+                }else {
+                    int end = path.lastIndexOf("/");
+                    folder = path.substring(0, end);
+                }
                 torrent.setFolder(folder+"/");
             }else {
                 torrent.setFolder(path+"/");
@@ -144,6 +159,27 @@ public class IApplication extends BaseApplication {
         cursor.close();
     }
 
+    public static void deleteTorrent( Torrent torrent, boolean isDeleteFile){
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        sqLiteDatabase.delete("torrent", "torrent_path=?" , new String[]{torrent.getPath()});
+        Libtorrent.removeTorrent(torrent.getId());
+
+        if (isDeleteFile){
+            File folderFile = new File(torrent.getFolder());
+            if (folderFile.exists()){
+                folderFile.delete();
+            }
+        }
+        Iterator<Torrent> iterator = torrentList.iterator();
+        while (iterator.hasNext()){
+            Torrent t = iterator.next();
+            if (t != null && !StringUtils.isEmpty(t.getPath()) && t.getPath().equals(torrent.getPath())){
+                torrentStorage.removeHash(torrent.getHash());
+                iterator.remove();
+            }
+        }
+    }
+
     public static void saveTorrent(Torrent torrent){
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         byte[] b = Libtorrent.saveTorrent(torrent.getId());
@@ -151,7 +187,22 @@ public class IApplication extends BaseApplication {
         ContentValues values=new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[6][1], torrent.getPath());
         values.put(DataBaseInfo.getFieldNames()[6][2], state);
+        values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
+        values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
+        values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
         sqLiteDatabase.insert(DataBaseInfo.getTableNames()[6], null, values);
+    }
+
+    public static void updateTorrent(Torrent torrent){
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        ContentValues values=new ContentValues();
+        byte[] b = Libtorrent.saveTorrent(torrent.getId());
+        String state = Base64.encodeToString(b, Base64.DEFAULT);
+        values.put(DataBaseInfo.getFieldNames()[6][2], state);
+        values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
+        values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
+        values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
+        sqLiteDatabase.update(DataBaseInfo.getTableNames()[6], values, "torrent_path = ?", new String[]{torrent.getPath()});
     }
 
     @Override

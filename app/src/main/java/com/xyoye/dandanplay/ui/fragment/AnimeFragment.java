@@ -17,6 +17,11 @@ import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
+import com.xyoye.dandanplay.utils.UserInfoShare;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -56,7 +61,17 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
         animeBeans = (AnimeBeans)getArguments().getSerializable("anima");
         if (animeBeans ==null) return;
 
-        BaseRvAdapter<AnimeBeans.BangumiListBean> adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(animeBeans.getBangumiList()) {
+        List<AnimeBeans.BangumiListBean> bangumiList = animeBeans.getBangumiList();
+
+        if (UserInfoShare.getInstance().isLogin()){
+            Collections.sort(bangumiList, (o1, o2) -> {
+                // 返回值为int类型，大于0表示正序，小于0表示逆序
+                if (o1.isIsFavorited()) return -1;
+                if (o2.isIsFavorited()) return 1;
+                return 0;
+            });
+        }
+        BaseRvAdapter<AnimeBeans.BangumiListBean> adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(bangumiList) {
             @NonNull
             @Override
             public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {

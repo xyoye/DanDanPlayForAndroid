@@ -227,7 +227,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
             }
 
             intent.putExtra("anime", animeDetailBean.getBangumi().getSearchKeyword());
-            intent.putExtra("anime_folder", animeDetailBean.getBangumi().getAnimeTitle());
+            intent.putExtra("anime_folder", "/"+animeDetailBean.getBangumi().getAnimeTitle());
             intent.putExtra("episode_title", episode);
             intent.putExtra("episode_id", event.getEpisodeId());
             startActivity(intent);

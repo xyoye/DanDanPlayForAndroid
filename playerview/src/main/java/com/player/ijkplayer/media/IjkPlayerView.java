@@ -513,7 +513,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 mVideoView.setRender(IjkVideoView.RENDER_TEXTURE_VIEW);
             mIsScreenLocked = false;
         }
-        mVideoView.resume();
         if (!mIsForbidTouch && !mIsForbidOrientation) {
             mOrientationListener.enable();
         }

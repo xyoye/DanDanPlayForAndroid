@@ -103,7 +103,7 @@ public class AppConfigShare {
      * PlayerType
      */
     public int getPlayerType(){
-        return getShare().loadIntSharedPreference(Config.SHARE_PLAYER_TYPE);
+        return getShare().getShare().getInt(Config.SHARE_PLAYER_TYPE, com.player.ijkplayer.utils.Constants.IJK_PLAYER);
     }
 
     public void setPlayerType(int type){

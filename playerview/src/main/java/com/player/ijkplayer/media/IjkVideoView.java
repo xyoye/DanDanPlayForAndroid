@@ -946,7 +946,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     }
 
     public void resume() {
-        openVideo();
+        start();
     }
 
     @Override

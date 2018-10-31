@@ -170,14 +170,6 @@ public class IApplication extends BaseApplication {
                 folderFile.delete();
             }
         }
-        Iterator<Torrent> iterator = torrentList.iterator();
-        while (iterator.hasNext()){
-            Torrent t = iterator.next();
-            if (t != null && !StringUtils.isEmpty(t.getPath()) && t.getPath().equals(torrent.getPath())){
-                torrentStorage.removeHash(torrent.getHash());
-                iterator.remove();
-            }
-        }
     }
 
     public static void saveTorrent(Torrent torrent){

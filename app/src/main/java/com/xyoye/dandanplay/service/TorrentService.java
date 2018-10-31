@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 
 import com.github.axet.wget.SpeedInfo;
+import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
@@ -33,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import libtorrent.BytesInfo;
 import libtorrent.Libtorrent;
@@ -100,15 +102,23 @@ public class TorrentService extends Service {
                 }
                 break;
             case TorrentEvent.EVENT_ALL_DELETE_TASK:
-                for (Torrent t : IApplication.torrentList){
+                Iterator<Torrent> iterator = IApplication.torrentList.iterator();
+                while (iterator.hasNext()){
+                    Torrent t = iterator.next();
                     torrentTask.pause(t);
                     IApplication.deleteTorrent(t, false);
+                    IApplication.torrentStorage.removeHash(t.getHash());
+                    iterator.remove();
                 }
                 break;
             case TorrentEvent.EVENT_ALL_DELETE_FILE:
-                for (Torrent t : IApplication.torrentList){
+                Iterator<Torrent> iterator2 = IApplication.torrentList.iterator();
+                while (iterator2.hasNext()){
+                    Torrent t = iterator2.next();
                     torrentTask.pause(t);
                     IApplication.deleteTorrent(t, true);
+                    IApplication.torrentStorage.removeHash(t.getHash());
+                    iterator2.remove();
                 }
                 break;
 

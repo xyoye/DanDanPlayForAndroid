@@ -157,11 +157,11 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
                 break;
             case R.id.all_delete:new DialogUtils.Builder(this)
                     .setOkListener(dialog -> {
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, null));
+                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, null));
                         dialog.dismiss();
                     })
                     .setExtraListener(dialog -> {
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, null));
+                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, null));
                         dialog.dismiss();
                     })
                     .setCancelListener(DialogUtils::dismiss)

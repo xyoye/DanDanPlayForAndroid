@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -155,6 +157,13 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
         switch (item.getItemId()){
             case R.id.select_video_folder:
                 selectedFolder();
+                break;
+            case R.id.restore_default:
+                String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
+                File file = new File(path);
+                if (file.exists())
+                    file.mkdirs();
+                presenter.listFile(path);
                 break;
         }
         return super.onOptionsItemSelected(item);

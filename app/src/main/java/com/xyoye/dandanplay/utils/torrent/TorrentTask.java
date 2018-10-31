@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Base64;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.AppConfigShare;
@@ -61,6 +62,7 @@ public class TorrentTask{
         try {
             torrentData = FileUtils.readFileToByteArray(torrentFile);
         } catch (IOException e) {
+            ToastUtils.showShort("找不到种子文件，目前暂不支持读取SD卡文件");
             throw new RuntimeException(e);
         }
         File folder = new File(downloadFolder);

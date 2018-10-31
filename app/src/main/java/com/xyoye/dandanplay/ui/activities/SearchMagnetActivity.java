@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import com.xyoye.dandanplay.mvp.view.SearchMagnetView;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.permission.PermissionHelper;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -195,9 +197,11 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MagnetBean.ResourcesBean model){
-        String savePath = AppConfigShare.getInstance().getDownloadFolder();
-        savePath += StringUtils.isEmpty( animeFolder) ? "" : (animeFolder + "/");
-        presenter.downloadTorrent(savePath, model.getMagnet());
+        new PermissionHelper().with(this).request(() -> {
+            String savePath = AppConfigShare.getInstance().getDownloadFolder();
+            savePath += StringUtils.isEmpty(animeFolder) ? "" : (animeFolder + "/");
+            presenter.downloadTorrent(savePath, model.getMagnet());
+        }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE );
 //        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //        ClipData mClipData = ClipData.newPlainText("Label", model.getMagnet());
 //        if (clipboardManager != null){

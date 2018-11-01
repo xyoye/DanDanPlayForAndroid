@@ -72,7 +72,6 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
 
 
     private Context context;
-    private View mView;
 
     @Override
     public int getLayoutResId() {
@@ -82,7 +81,6 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
     @Override
     public void initItemViews(View itemView) {
         context = itemView.getContext();
-        mView = itemView;
     }
 
     @Override
@@ -113,6 +111,12 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             setStatus(torrent);
         }
 
+        if (torrent.isLongCheck()){
+            torrentActionLl.setVisibility(View.VISIBLE);
+        }else {
+            torrentActionLl.setVisibility(View.GONE);
+        }
+
         if (!StringUtils.isEmpty(torrent.getDanmuPath())) {
             bindDanmuIv.setImageResource(R.mipmap.ic_download_binded_danmu);
             bindDanmuTv.setText("已绑定");
@@ -123,8 +127,8 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             bindDanmuTv.setTextColor(context.getResources().getColor(R.color.white));
         }
 
-        mView.setOnLongClickListener(v -> {
-            torrentActionLl.setVisibility(View.VISIBLE);
+        downloadInfoRl.setOnLongClickListener(v -> {
+            showActionView(torrent,true);
             if (torrent.isDone()) playActionLl.setVisibility(View.VISIBLE);
             if (torrent.isDone() || (Libtorrent.torrentPendingBytesCompleted(torrent.getId()) > 16 * 1024 * 1024))
                 bindDanmuActionLl.setVisibility(View.VISIBLE);
@@ -164,7 +168,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 }
             }
             ToastUtils.showShort("未找到可播放视频");
-            torrentActionLl.setVisibility(View.GONE);
+            showActionView(torrent,false);
         });
         bindDanmuActionLl.setOnClickListener(v -> {
             long l = Libtorrent.torrentFilesCount(torrent.getId());
@@ -183,7 +187,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                     }
                 }
             }
-            torrentActionLl.setVisibility(View.GONE);
+            showActionView(torrent,false);
         });
         infoActionLl.setOnClickListener(v -> {
             torrentActionLl.setVisibility(View.GONE);
@@ -201,10 +205,9 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                     .setCancelListener(DialogUtils::dismiss)
                     .build()
                     .show("删除任务和文件", "确认删除任务？", true, true);
-            torrentActionLl.setVisibility(View.GONE);
+            showActionView(torrent,false);
         });
-        closeActionLl.setOnClickListener(v -> torrentActionLl.setVisibility(View.GONE));
-
+        closeActionLl.setOnClickListener(v -> showActionView(torrent,false));
     }
 
     private String getSpeed(Torrent torrent) {
@@ -327,6 +330,16 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             case Libtorrent.StatusQueued:
                 EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_RESUME, torrent));
                 break;
+        }
+    }
+
+    private void showActionView(Torrent torrent, boolean isShow){
+        if (isShow){
+            torrent.setLongCheck(true);
+            torrentActionLl.setVisibility(View.VISIBLE);
+        }else {
+            torrent.setLongCheck(false);
+            torrentActionLl.setVisibility(View.GONE);
         }
     }
 }

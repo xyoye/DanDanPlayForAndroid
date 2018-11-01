@@ -52,6 +52,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import libtorrent.Libtorrent;
+import me.yokeyword.fragmentation.BuildConfig;
+import me.yokeyword.fragmentation.Fragmentation;
 
 public class IApplication extends BaseApplication {
     static ThreadPoolExecutor executor;
@@ -72,6 +74,11 @@ public class IApplication extends BaseApplication {
         PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
         initLibTorrent();
         loadTorrent();
+
+        Fragmentation.builder()
+                .stackViewMode(Fragmentation.NONE)
+                .debug(BuildConfig.DEBUG)
+                .install();
     }
 
     private void strictModeConfig() {

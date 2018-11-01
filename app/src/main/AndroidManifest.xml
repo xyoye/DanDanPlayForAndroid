@@ -72,6 +72,7 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.activities.DownloadMangerActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.activities.WebviewActivity"

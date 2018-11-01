@@ -96,6 +96,7 @@ public class TorrentTask{
                     Libtorrent.torrentTrackerAdd(torrent.getId(), tracker);
                 }
             }
+            torrent.setUpdate(true);
             StatsTorrent b = Libtorrent.torrentStats(torrent.getId());
             torrent.downloaded.start(b.getDownloaded());
             torrent.uploaded.start(b.getUploaded());

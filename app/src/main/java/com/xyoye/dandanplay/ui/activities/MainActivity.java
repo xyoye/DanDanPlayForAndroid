@@ -1,41 +1,30 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.core.base.BaseAppFragment;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
-import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import libtorrent.Libtorrent;
+import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
-public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
+public class MainActivity extends BaseActivity<MainPresenter> implements MainView{
 
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
@@ -45,7 +34,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     private HomeFragment homeFragment;
     private PlayFragment playFragment;
     private PersonalFragment personalFragment;
-    private Fragment previousFragment;
+    private BaseAppFragment previousFragment;
 
     private long touchTime = 0;
 
@@ -63,9 +52,25 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @Override
     public void initView() {
         setTitle("");
-
         navigationView.setSelectedItemId(R.id.navigation_play);
-        showFragment(1);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (playFragment == null){
+            playFragment = PlayFragment.newInstance();
+            homeFragment = HomeFragment.newInstance();
+            personalFragment = PersonalFragment.newInstance();
+            mDelegate.loadMultipleRootFragment(R.id.fragment_container, 0, playFragment, homeFragment, personalFragment);
+            previousFragment = playFragment;
+        }
+    }
+
+    @Override
+    public FragmentAnimator onCreateFragmentAnimator() {
+        return super.onCreateFragmentAnimator();
     }
 
     @Override
@@ -73,56 +78,36 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         navigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    showFragment(0);
+                    if (homeFragment == null){
+                        homeFragment = HomeFragment.newInstance();
+                        mDelegate.showHideFragment(homeFragment);
+                    }else {
+                        mDelegate.showHideFragment(homeFragment, previousFragment);
+                    }
+                    previousFragment = homeFragment;
                     return true;
                 case R.id.navigation_play:
-                    showFragment(1);
+                    if (playFragment == null){
+                        playFragment = PlayFragment.newInstance();
+                        mDelegate.showHideFragment(playFragment);
+                    }else {
+                        mDelegate.showHideFragment(playFragment, previousFragment);
+                    }
+                    previousFragment = playFragment;
                     return true;
                 case R.id.navigation_personal:
-                    showFragment(2);
+                    if (personalFragment == null){
+                        personalFragment = PersonalFragment.newInstance();
+                        mDelegate.showHideFragment(personalFragment);
+                    }else {
+                        mDelegate.showHideFragment(personalFragment, previousFragment);
+                    }
+                    previousFragment = personalFragment;
                     return true;
             }
             return false;
         });
     }
-
-    public void showFragment(int index) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (previousFragment != null)
-            fragmentTransaction.hide(previousFragment);
-        switch (index){
-            case 0:
-                if (homeFragment == null){
-                    homeFragment = HomeFragment.newInstance();
-                    fragmentTransaction.add(R.id.fragment_container, homeFragment, HomeFragment.TAG);
-                }else {
-                    fragmentTransaction.show(homeFragment);
-                }
-                previousFragment = homeFragment;
-                break;
-            case 1:
-                if (playFragment == null){
-                    playFragment = PlayFragment.newInstance();
-                    fragmentTransaction.add(R.id.fragment_container, playFragment, PlayFragment.TAG);
-                }else {
-                    fragmentTransaction.show(playFragment);
-                }
-                previousFragment = playFragment;
-                break;
-            case 2:
-                if (personalFragment == null){
-                    personalFragment = PersonalFragment.newInstance();
-                    fragmentTransaction.add(R.id.fragment_container, personalFragment, PersonalFragment.TAG);
-                }else {
-                    fragmentTransaction.show(personalFragment);
-                }
-                previousFragment = personalFragment;
-                break;
-        }
-        fragmentTransaction.commitAllowingStateLoss();
-    }
-
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

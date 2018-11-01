@@ -35,6 +35,7 @@ dependencies {
 
     compile 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
     compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+    compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
     compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
 
     compile 'org.greenrobot:eventbus:3.1.1'

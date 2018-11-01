@@ -231,8 +231,13 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 ? new ArrayList<>()
                 : historyBean.getPlayHistoryAnimes());
         historyAdapter.notifyDataSetChanged();
-
         if (refresh != null)
             refresh.setRefreshing(false);
+    }
+
+    @Override
+    public void onSupportVisible(){
+        presenter.getFragmentData();
+        changeView();
     }
 }

@@ -6,7 +6,6 @@
     android:background="@color/white">
 
     <RelativeLayout
-        android:id="@+id/download_info_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
@@ -56,7 +55,14 @@
             android:textColor="@color/text_gray"
             android:text="90M/100M（100%）"/>
     </RelativeLayout>
-    
+
+    <RelativeLayout
+        android:id="@+id/download_info_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@+id/download_ctrl_rl">
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/download_ctrl_rl"
         android:layout_width="50dp"

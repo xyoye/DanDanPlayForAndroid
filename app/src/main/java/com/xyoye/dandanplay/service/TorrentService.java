@@ -13,12 +13,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
 
 import com.github.axet.wget.SpeedInfo;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.bean.event.DownloadManagerUpdateEvent;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.utils.AppConfigShare;
@@ -45,8 +47,6 @@ import libtorrent.Libtorrent;
 
 public class TorrentService extends Service {
     private int NOTIFICATION_ID = 1;
-
-    private boolean isStart = false;
 
     private TorrentTask torrentTask;
     private SpeedInfo downloaded = new SpeedInfo();
@@ -80,12 +80,30 @@ public class TorrentService extends Service {
                 torrentTask.pause(event.getTorrent());
                 break;
             case TorrentEvent.EVENT_DELETE_TASK:
-                 torrentTask.pause(event.getTorrent());
-                 IApplication.deleteTorrent(event.getTorrent(), false);
-                 break;
+                torrentTask.pause(event.getTorrent());
+                IApplication.deleteTorrent(event.getTorrent(), false);
+                Iterator<Torrent> iteratorTask = IApplication.torrentList.iterator();
+                while (iteratorTask.hasNext()){
+                    Torrent t = iteratorTask.next();
+                    if (t.getPath().endsWith(event.getTorrent().getPath())){
+                        iteratorTask.remove();
+                        IApplication.torrentStorage.removeHash(t.getHash());
+                        EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                    }
+                }
+                break;
             case TorrentEvent.EVENT_DELETE_FILE:
                 torrentTask.pause(event.getTorrent());
                 IApplication.deleteTorrent(event.getTorrent(), true);
+                Iterator<Torrent> iteratorFile = IApplication.torrentList.iterator();
+                while (iteratorFile.hasNext()){
+                    Torrent t = iteratorFile.next();
+                    if (t.getPath().endsWith(event.getTorrent().getPath())){
+                        iteratorFile.remove();
+                        IApplication.torrentStorage.removeHash(t.getHash());
+                        EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                    }
+                }
                 break;
             case TorrentEvent.EVENT_ALL_PAUSE:
                 for (Torrent t : IApplication.torrentList){
@@ -110,6 +128,7 @@ public class TorrentService extends Service {
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator.remove();
                 }
+                EventBus.getDefault().post(new DownloadManagerUpdateEvent());
                 break;
             case TorrentEvent.EVENT_ALL_DELETE_FILE:
                 Iterator<Torrent> iterator2 = IApplication.torrentList.iterator();
@@ -120,6 +139,7 @@ public class TorrentService extends Service {
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator2.remove();
                 }
+                EventBus.getDefault().post(new DownloadManagerUpdateEvent());
                 break;
 
         }
@@ -135,7 +155,11 @@ public class TorrentService extends Service {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //创建NotificationChannel
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("DownloadChannel", "下载任务", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.torrentservice.downloadchannel", "下载任务", NotificationManager.IMPORTANCE_LOW);
+            channel.enableVibration(false);
+            channel.setVibrationPattern(new long[]{0});
+            channel.enableLights(false);
+            channel.setSound(null, null);
             if (notificationManager != null) {
                 notificationManager.createNotificationChannel(channel);
             }
@@ -225,9 +249,13 @@ public class TorrentService extends Service {
                 .setContentTitle("弹弹play")
                 .setContentText(msg)
                 .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setWhen(System.currentTimeMillis())
+                .setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
+                .setVibrate(new long[]{0})
+                .setSound(null);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId("DownloadChannel");
+            builder.setChannelId("com.xyoye.dandanplay.torrentservice.downloadchannel");
         }
         Notification notify = builder.build();
         notify.flags = Notification.FLAG_FOREGROUND_SERVICE ;

@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,6 +21,7 @@ import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.bean.event.DownloadManagerUpdateEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
@@ -30,6 +32,7 @@ import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -53,7 +56,17 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(msg.what == 0) {
-                adapter.notifyDataSetChanged();
+                for (int i=0; i<IApplication.torrentList.size(); i++){
+                    Torrent torrent = IApplication.torrentList.get(i);
+                    if (torrent.isDone()) continue;
+                    if (torrent.isUpdate()){
+                        adapter.notifyItemChanged(i);
+                        if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
+                            torrent.setUpdate(false);
+                        }
+                    }
+
+                }
                 mHandler.sendMessageDelayed(mHandler.obtainMessage(0),1000);
             }
         }
@@ -65,7 +78,7 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
         downloadRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         downloadRv.setNestedScrollingEnabled(false);
         downloadRv.setItemViewCacheSize(10);
-
+        ((SimpleItemAnimator)downloadRv.getItemAnimator()).setSupportsChangeAnimations(false);
         presenter.getTorrentList();
         adapter = new BaseRvAdapter<Torrent>(IApplication.torrentList) {
             @NonNull
@@ -195,5 +208,22 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(DownloadManagerUpdateEvent event){
+        adapter.notifyDataSetChanged();
     }
 }

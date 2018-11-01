@@ -25,6 +25,8 @@ public class Torrent implements Serializable{
     private boolean done;
     private boolean error;
     private int status = -1;
+    private boolean isLongCheck;
+    private boolean update;
     private List<TorrentFile> torrentFileList;
     public SpeedInfo downloaded = new SpeedInfo();
     public SpeedInfo uploaded = new SpeedInfo();
@@ -115,6 +117,22 @@ public class Torrent implements Serializable{
 
     public void setError(boolean error) {
         this.error = error;
+    }
+
+    public boolean isLongCheck() {
+        return isLongCheck;
+    }
+
+    public void setLongCheck(boolean longCheck) {
+        isLongCheck = longCheck;
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
     public List<TorrentFile> getTorrentFileList() {

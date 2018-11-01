@@ -2,7 +2,6 @@ package com.xyoye.core.base;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -13,13 +12,14 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,6 +33,13 @@ import com.xyoye.core.utils.TLog;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import me.yokeyword.fragmentation.ExtraTransaction;
+import me.yokeyword.fragmentation.ISupportActivity;
+import me.yokeyword.fragmentation.ISupportFragment;
+import me.yokeyword.fragmentation.SupportActivityDelegate;
+import me.yokeyword.fragmentation.SupportHelper;
+import me.yokeyword.fragmentation.anim.DefaultVerticalAnimator;
+import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 /**
  * AppCompatActivity基类
@@ -45,7 +52,7 @@ import butterknife.Unbinder;
  * onDestroy()
  * Created by yzd on 2015/12/18.
  */
-public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful {
+public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful, ISupportActivity {
 
     public static final String TAG = BaseAppCompatActivity.class.getSimpleName();
 
@@ -77,6 +84,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         initPageView();
         initPageViewListener();
         process(savedInstanceState);
+        mDelegate.onCreate(savedInstanceState);
     }
 
     /**
@@ -145,6 +153,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     protected void onDestroy() {
         TLog.i("Activity", "onDestroy");
         isDestroyed = true;
+        mDelegate.onDestroy();
         super.onDestroy();
         if (mLoadingDialog != null) {
             mLoadingDialog.dismiss();
@@ -420,4 +429,55 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         TLog.i("Activity", "onPause");
     }
 
+
+    final public SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
+
+    @Override
+    public SupportActivityDelegate getSupportDelegate() {
+        return mDelegate;
+    }
+
+    @Override
+    public ExtraTransaction extraTransaction() {
+        return  mDelegate.extraTransaction();
+    }
+
+    @Override
+    public FragmentAnimator getFragmentAnimator() {
+        return new DefaultVerticalAnimator();
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDelegate.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setFragmentAnimator(FragmentAnimator fragmentAnimator) {
+        mDelegate.setFragmentAnimator(fragmentAnimator);
+    }
+
+    @Override
+    public FragmentAnimator onCreateFragmentAnimator() {
+        return new DefaultVerticalAnimator();
+    }
+
+    @Override
+    public void post(Runnable runnable) {
+        mDelegate.post(runnable);
+    }
+
+    @Override
+    public void onBackPressedSupport() {
+
+    }
+
+    public void loadRootFragment(int containerId, @NonNull ISupportFragment toFragment) {
+        mDelegate.loadRootFragment(containerId, toFragment);
+    }
+
+    public <F extends ISupportFragment> F findFragment(Class<F> fragmentClass) {
+        return SupportHelper.findFragment(getSupportFragmentManager(), fragmentClass);
+    }
 }

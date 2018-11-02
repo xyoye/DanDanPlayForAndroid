@@ -2,9 +2,8 @@ package com.player.ijkplayer.danmaku;
 
 import android.util.Log;
 
-import com.player.ijkplayer.media.IjkPlayerView;
-
 import com.player.danmaku.danmaku.model.AbsDanmakuSync;
+import com.player.ijkplayer.media.IjkPlayerView;
 
 /**
  * Created by long on 2016/12/15.

@@ -15,8 +15,8 @@ import android.widget.Button;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.utils.BilibiliDownloadUtil;
 import com.xyoye.dandanplay.ui.weight.dialog.BilibiliDownloadDialog;
+import com.xyoye.dandanplay.utils.BilibiliDownloadUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

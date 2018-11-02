@@ -16,10 +16,10 @@
 
 package com.player.danmaku.danmaku.model;
 
+import com.player.danmaku.danmaku.util.DanmakuUtils;
+
 import java.util.Collection;
 import java.util.Comparator;
-
-import com.player.danmaku.danmaku.util.DanmakuUtils;
 
 public interface IDanmakus {
 

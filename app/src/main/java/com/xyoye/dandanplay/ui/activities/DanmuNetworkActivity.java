@@ -1,18 +1,16 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.app.Dialog;
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
@@ -36,7 +34,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -120,12 +117,20 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
         }
     }
 
+    @SuppressLint("CheckResult")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void downloadDanmu(DownloadDanmuEvent event) {
-        DanmuMatchBean.MatchesBean bean = event.getModel();
-        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, bean);
-        dialog.show();
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        DanmuMatchBean.MatchesBean bean = event.getModel();
+                        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, bean);
+                        dialog.show();
+                    }
+                });
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void searchDanmu(SearchDanmuEvent event) {

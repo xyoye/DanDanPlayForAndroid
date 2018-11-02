@@ -16,11 +16,11 @@
 
 package com.player.danmaku.danmaku.loader.android;
 
-import java.io.InputStream;
-
 import com.player.danmaku.danmaku.loader.ILoader;
 import com.player.danmaku.danmaku.loader.IllegalDataException;
 import com.player.danmaku.danmaku.parser.android.AndroidFileSource;
+
+import java.io.InputStream;
 
 public class BiliDanmakuLoader implements ILoader {
 

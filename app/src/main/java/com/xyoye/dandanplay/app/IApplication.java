@@ -36,8 +36,8 @@ import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
+import com.xyoye.core.utils.AppHelper;
 import com.xyoye.core.utils.KeyUtil;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.TorrentStorage;
@@ -45,7 +45,6 @@ import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -66,6 +65,9 @@ public class IApplication extends BaseApplication {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onCreate() {
+        if (!isDebug())
+            AppHelper.setDebug(true);
+
         TLog.i("onCreate");
         super.onCreate();
         MultiDex.install(this);

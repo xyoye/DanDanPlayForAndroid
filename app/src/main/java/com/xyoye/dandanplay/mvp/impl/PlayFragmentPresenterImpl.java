@@ -20,17 +20,14 @@ import com.xyoye.dandanplay.utils.FindVideoTask;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -72,6 +69,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
 
     @Override
     public void getVideoList() {
+        getView().showLoading();
         FindVideoTask findVideoTask = new FindVideoTask();
         findVideoTask.setQueryListener(videoList -> {
             for (VideoBean videoBean : videoList){
@@ -80,6 +78,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                 long duration = videoBean.getVideoDuration();
                 saveData(folderPath,fileName, duration);
             }
+            getView().hideLoading();
             getView().refreshAdapter(getFolderList());
         });
         findVideoTask.execute(getApplicationContext());
@@ -90,8 +89,6 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         sqLiteDatabase.delete("file", "folder_path = ?" , new String[]{folderPath});
         sqLiteDatabase.delete("folder", "folder_path = ?" , new String[]{folderPath});
-
-        getView().hideLoading();
         getView().refreshAdapter(getFolderList());
     }
 

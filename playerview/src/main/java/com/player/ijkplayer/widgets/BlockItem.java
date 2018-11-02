@@ -3,7 +3,6 @@ package com.player.ijkplayer.widgets;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.adapter.AdapterItem;

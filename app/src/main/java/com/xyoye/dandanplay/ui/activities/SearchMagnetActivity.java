@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
@@ -28,7 +31,6 @@ import com.xyoye.dandanplay.mvp.view.SearchMagnetView;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.permission.PermissionHelper;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,7 +70,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
     private List<SubGroupBean.SubgroupsBean> subgroupList;
 
     private String oldSearchTerm;
-    private String animeFolder;
+    private String animeTitle;
 
     @Override
     public void initView() {
@@ -79,7 +81,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
         magnetRv.setNestedScrollingEnabled(false);
         magnetRv.setItemViewCacheSize(10);
 
-        animeFolder = getIntent().getStringExtra("anime_folder");
+        animeTitle = getIntent().getStringExtra("anime_title");
         String animeName = getIntent().getStringExtra("anime");
         String episode = getIntent().getStringExtra("episode_title");
         oldSearchTerm = animeName + " " + episode;
@@ -160,13 +162,18 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
         }
         intent.putExtra("episode_id", getIntent().getIntExtra("episode_id", -1));
         intent.putExtra("torrent_path", torrentPath);
-        intent.putExtra("anime_folder", animeFolder);
+        intent.putExtra("anime_folder", animeTitle);
         startActivity(intent);
     }
 
     @Override
     public void showLoading(String text) {
         showLoadingDialog(text, false);
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -195,13 +202,16 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
         searchMagnet();
     }
 
+    @SuppressLint("CheckResult")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MagnetBean.ResourcesBean model){
-        new PermissionHelper().with(this).request(() -> {
-            String savePath = AppConfigShare.getInstance().getDownloadFolder();
-            savePath += StringUtils.isEmpty(animeFolder) ? "" : (animeFolder + "/");
-            presenter.downloadTorrent(savePath, model.getMagnet());
-        }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE );
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        presenter.downloadTorrent(animeTitle, model.getMagnet());
+                    }
+                });
 //        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 //        ClipData mClipData = ClipData.newPlainText("Label", model.getMagnet());
 //        if (clipboardManager != null){

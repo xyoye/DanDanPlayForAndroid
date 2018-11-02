@@ -1,7 +1,12 @@
 
 package com.player.danmaku.controller;
 
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.danmaku.danmaku.model.DanmakuTimer;
 import com.player.danmaku.danmaku.model.Duration;
+import com.player.danmaku.danmaku.model.IDanmakus;
+import com.player.danmaku.danmaku.model.android.DanmakuContext;
+import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.util.SystemClock;
 
 import java.util.ArrayList;
@@ -12,12 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.danmaku.danmaku.model.DanmakuTimer;
-import com.player.danmaku.danmaku.model.IDanmakus;
-import com.player.danmaku.danmaku.model.android.DanmakuContext;
-import com.player.danmaku.danmaku.model.android.Danmakus;
 
 public class DanmakuFilters {
 

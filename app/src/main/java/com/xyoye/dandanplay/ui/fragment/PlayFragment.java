@@ -1,34 +1,30 @@
 package com.xyoye.dandanplay.ui.fragment;
 
 import android.Manifest;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseFragment;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
+import com.xyoye.dandanplay.bean.event.ListFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
-import com.xyoye.dandanplay.ui.activities.FileManagerActivity;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
-import com.xyoye.dandanplay.utils.FileUtils;
-import com.xyoye.dandanplay.utils.permission.PermissionHelper;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
+import com.xyoye.dandanplay.utils.FileUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,17 +35,11 @@ import java.util.List;
 
 import butterknife.BindView;
 
-import static android.app.Activity.RESULT_OK;
-
 /**
  * Created by YE on 2018/6/29 0029.
  */
 
 public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView {
-    public final static int SELECT_FOLDER = 103;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
@@ -73,14 +63,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         return R.layout.fragment_play;
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void initView() {
-        setHasOptionsMenu(true);
-        getBaseActivity().setSupportActionBar(toolbar);
-        showLoading();
-        new PermissionHelper().with(this).request(() ->
-                presenter.getVideoList(),
-                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         refresh.setColorSchemeResources(R.color.theme_color);
 
         layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
@@ -88,17 +73,13 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(adapter);
+
+        getVideoList();
     }
 
     @Override
     public void initListener() {
-        refresh.setOnRefreshListener(() ->
-                new PermissionHelper()
-                        .with(PlayFragment.this)
-                        .request(() ->
-                                presenter.getVideoList(),
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE));
+        refresh.setOnRefreshListener(this::getVideoList);
     }
 
     @Override
@@ -166,53 +147,37 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void deleteEvent(DeleteFolderEvent event){
         new DialogUtils.Builder(getContext())
-                .setOkListener(dialog ->
-                        new PermissionHelper().with(this).request(() -> {
-                            dialog.dismiss();
-                            showLoading();
-                            File file = new File(event.getFolderPath());
-                            if (file.exists())
-                                FileUtils.deleteFile(file);
-
-                            presenter.deleteFolder(event.getFolderPath());
-                }, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))
+                .setOkListener(dialog ->{
+                    dialog.dismiss();
+                    new RxPermissions(this).
+                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .subscribe(granted -> {
+                            if (granted) {
+                                File file = new File(event.getFolderPath());
+                                if (file.exists())
+                                    FileUtils.deleteFile(file);
+                                presenter.deleteFolder(event.getFolderPath());
+                            }
+                        });
+                })
                 .setCancelListener(DialogUtils::dismiss)
                 .build()
                 .show("确认删除文件和记录？", true, true);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_video_folder:
-                addFolder();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void listFolderEvent(ListFolderEvent event){
+        presenter.listFolder(event.getPath());
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Activity activity = getActivity();
-        if (activity != null)
-            activity.getMenuInflater().inflate(R.menu.menu_add, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-
-    }
-
-    private void addFolder() {
-        Intent intent = new Intent(getContext(), FileManagerActivity.class);
-        intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
-        startActivityForResult(intent, SELECT_FOLDER);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_FOLDER) {
-                String folderPath = data.getStringExtra("folder");
-                presenter.listFolder(folderPath);
-            }
-        }
+    @SuppressLint("CheckResult")
+    private void getVideoList(){
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        presenter.getVideoList();
+                    }
+                });
     }
 }

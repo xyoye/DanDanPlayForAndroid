@@ -5,25 +5,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.FileProvider;
 
 import com.github.axet.wget.SpeedInfo;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.DownloadManagerUpdateEvent;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
-import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.TorrentStorage;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -34,8 +28,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import libtorrent.BytesInfo;

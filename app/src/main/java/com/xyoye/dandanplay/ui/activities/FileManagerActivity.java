@@ -20,8 +20,8 @@ import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuLocalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
-import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
+import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

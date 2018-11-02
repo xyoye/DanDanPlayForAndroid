@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,16 +23,15 @@ import com.xyoye.dandanplay.bean.event.SearchMagnetEvent;
 import com.xyoye.dandanplay.mvp.impl.AnimeDetailPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
-import com.xyoye.dandanplay.utils.net.CommJsonEntity;
-import com.xyoye.dandanplay.utils.net.CommJsonObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.UserInfoShare;
-import com.xyoye.dandanplay.utils.permission.PermissionHelper;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
+import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -217,22 +215,17 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SearchMagnetEvent event){
-        new PermissionHelper().with(this).request(() -> {
-            Intent intent = new Intent(AnimeDetailActivity.this, SearchMagnetActivity.class);
-
-            String episode = event.getEpisodeName();
-            if (episode.startsWith("第") && episode.endsWith("话")){
-                String temp = episode.substring(1, episode.length()-1);
-                episode = isInt(temp) ? temp : episode;
-            }
-
-            intent.putExtra("anime", animeDetailBean.getBangumi().getSearchKeyword());
-            intent.putExtra("anime_folder", "/"+animeDetailBean.getBangumi().getAnimeTitle());
-            intent.putExtra("episode_title", episode);
-            intent.putExtra("episode_id", event.getEpisodeId());
-            startActivity(intent);
-        }, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
+        String episode = event.getEpisodeName();
+        if (episode.startsWith("第") && episode.endsWith("话")){
+            String temp = episode.substring(1, episode.length()-1);
+            episode = isInt(temp) ? temp : episode;
+        }
+        Intent intent = new Intent(AnimeDetailActivity.this, SearchMagnetActivity.class);
+        intent.putExtra("anime", animeDetailBean.getBangumi().getSearchKeyword());
+        intent.putExtra("anime_title", "/"+animeDetailBean.getBangumi().getAnimeTitle());
+        intent.putExtra("episode_title", episode);
+        intent.putExtra("episode_id", event.getEpisodeId());
+        startActivity(intent);
     }
 
     private void favoriteConfirm(){

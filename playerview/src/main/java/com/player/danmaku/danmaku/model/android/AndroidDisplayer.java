@@ -26,13 +26,13 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.text.TextPaint;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.player.danmaku.danmaku.model.AbsDisplayer;
 import com.player.danmaku.danmaku.model.AlphaValue;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.renderer.IRenderer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
 

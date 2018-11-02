@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.utils.torrent;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Base64;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -14,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import libtorrent.Libtorrent;
 import libtorrent.StatsTorrent;

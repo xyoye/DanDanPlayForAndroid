@@ -1,15 +1,10 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,13 +27,11 @@ import com.xyoye.dandanplay.ui.activities.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
-import com.xyoye.dandanplay.ui.activities.SettingActivity;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimaItem;
 import com.xyoye.dandanplay.ui.weight.item.PersonalPlayHistoryItem;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -66,8 +59,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     RecyclerView favoriteRecyclerView;
     @BindView(R.id.history_recycler_view)
     RecyclerView historyRecyclerView;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
 
@@ -91,8 +82,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void initView() {
-        setHasOptionsMenu(true);
-        getBaseActivity().setSupportActionBar(toolbar);
         refresh.setColorSchemeResources(R.color.theme_color);
 
         favoriteRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
@@ -137,24 +126,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
             loginButton.setVisibility(View.VISIBLE);
             userInfoRl.setVisibility(View.GONE);
         }
-    }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Activity activity;
-        activity = getActivity();
-        if (activity != null)
-            activity.getMenuInflater().inflate(R.menu.menu_settings, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_settings:
-                launchActivity(SettingActivity.class);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -4,11 +4,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.TextPaint;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.model.SpecialDanmaku;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ch on 15-7-16.

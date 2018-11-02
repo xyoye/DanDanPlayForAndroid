@@ -12,9 +12,9 @@ import com.xyoye.dandanplay.bean.RegisterBean;
 import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.mvp.presenter.RegisterPresenter;
 import com.xyoye.dandanplay.mvp.view.RegisterView;
+import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 
 /**
  * Created by YE on 2018/8/5.

@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
@@ -16,6 +16,7 @@ import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
 import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.FileUtils;
 
 import butterknife.BindView;
 
@@ -26,6 +27,7 @@ import butterknife.BindView;
 
 public class SettingActivity extends BaseActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     public final static int SELECT_SETTING_FOLDER = 105;
+    private static final int DIRECTORY_CHOOSE_REQ_CODE = 106;
 
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
@@ -43,13 +45,19 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
     TextView pathTv;
 
     private String version;
+    private String SDCardPath;
 
     @Override
     public void initView() {
         setTitle("设置");
 
         String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
-        pathTv.setText(downloadPath);
+        if (downloadPath.startsWith(FileUtils.Base_Path)){
+            pathTv.setText(downloadPath);
+        }else {
+            String SDPath = AppConfigShare.getInstance().getSDFolder();
+            pathTv.setText(SDPath);
+        }
         version = AppConfigShare.getLocalVersion(this);
         versionTv.setText(version);
     }
@@ -98,28 +106,24 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
                 builder.setTitle("选择反馈方式");
                 final String[] ways = {"邮件", "Github Issue"};
-                builder.setItems(ways, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        if (ways[which].equals("邮件")) {
-                            builder.show();
-                            String android_version = "Android "+android.os.Build.VERSION.RELEASE;
-                            String phone_version = android.os.Build.MODEL;
-                            String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
+                builder.setItems(ways, (dialog, which) -> {
+                    if (ways[which].equals("邮件")) {
+                        builder.show();
+                        String android_version = "Android "+android.os.Build.VERSION.RELEASE;
+                        String phone_version = android.os.Build.MODEL;
+                        String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
 
-                            Intent mail_intent = new Intent(android.content.Intent.ACTION_SEND);
-                            mail_intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com,shine_5402@126.com"});
-                            mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
-                            mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
-                            mail_intent.setType("text/plain");
-                            startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
-                        }
-                        else if (ways[which].equals("Github Issue")){
-                            Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
-                        }
+                        Intent mail_intent = new Intent(Intent.ACTION_SEND);
+                        mail_intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com,shine_5402@126.com"});
+                        mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
+                        mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
+                        mail_intent.setType("text/plain");
+                        startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
+                    }
+                    else if (ways[which].equals("Github Issue")){
+                        Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent1);
                     }
                 });
                 builder.show();
@@ -132,8 +136,30 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         if (resultCode == RESULT_OK){
             if (requestCode == SELECT_SETTING_FOLDER){
                 String folderPath = data.getStringExtra("folder");
-                pathTv.setText(folderPath);
-                AppConfigShare.getInstance().setDownloadFolder(folderPath);
+                //根据系统根目录判断是否为SD卡路径
+                if (folderPath.startsWith(FileUtils.Base_Path)){
+                    pathTv.setText(folderPath);
+                    AppConfigShare.getInstance().setDownloadFolder(folderPath);
+                }else {
+                    ToastUtils.showShort("SD卡目录需由系统授权，请再次选择目录");
+                    SDCardPath = folderPath;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        startActivityForResult(intent, DIRECTORY_CHOOSE_REQ_CODE);
+                    }
+                }
+            } else if(requestCode == DIRECTORY_CHOOSE_REQ_CODE){
+                Uri SDCardUri = data.getData();
+                if (SDCardUri != null){
+                    getContentResolver().takePersistableUriPermission(SDCardUri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    pathTv.setText(SDCardPath);
+                    AppConfigShare.getInstance().setSDFolder(SDCardPath);
+                    AppConfigShare.getInstance().setDownloadFolder(SDCardUri.toString());
+                }else {
+                    ToastUtils.showShort("未获取SD卡权限，无法设置修改默认下载路径");
+                }
             }
         }
     }

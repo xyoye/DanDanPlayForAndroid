@@ -16,12 +16,17 @@
 
 package com.player.danmaku.danmaku.parser.android;
 
+import android.net.Uri;
+
 import com.player.danmaku.danmaku.parser.IDataSource;
 import com.player.danmaku.danmaku.util.IOUtils;
 
-import android.net.Uri;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 

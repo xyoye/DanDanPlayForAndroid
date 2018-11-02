@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,7 +19,6 @@ import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;

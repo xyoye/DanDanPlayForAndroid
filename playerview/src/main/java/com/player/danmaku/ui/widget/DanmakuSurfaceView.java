@@ -27,9 +27,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-import java.util.LinkedList;
-import java.util.Locale;
-
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.DrawHandler.Callback;
 import com.player.danmaku.controller.DrawHelper;
@@ -41,6 +38,9 @@ import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.renderer.IRenderer.RenderingState;
 import com.player.danmaku.danmaku.util.SystemClock;
+
+import java.util.LinkedList;
+import java.util.Locale;
 
 public class DanmakuSurfaceView extends SurfaceView implements IDanmakuView, IDanmakuViewController, SurfaceHolder.Callback {
 

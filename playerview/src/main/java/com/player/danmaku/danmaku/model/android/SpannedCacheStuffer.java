@@ -7,9 +7,9 @@ import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 
-import java.lang.ref.SoftReference;
-
 import com.player.danmaku.danmaku.model.BaseDanmaku;
+
+import java.lang.ref.SoftReference;
 
 /**
  * Created by ch on 15-7-16.

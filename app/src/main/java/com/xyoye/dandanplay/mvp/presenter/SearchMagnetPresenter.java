@@ -15,7 +15,7 @@ public interface SearchMagnetPresenter extends BasePresenter{
 
     void searchMagnet(String anime, int typeId, int subGroundId);
 
-    void downloadTorrent(String savePath, String magnet);
+    void downloadTorrent(String animeTitle, String magnet);
 
     List<AnimeTypeBean.TypesBean> getTypeList();
 

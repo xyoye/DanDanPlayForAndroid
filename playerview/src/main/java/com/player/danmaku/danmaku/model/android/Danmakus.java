@@ -16,6 +16,10 @@
 
 package com.player.danmaku.danmaku.model.android;
 
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.danmaku.danmaku.model.Danmaku;
+import com.player.danmaku.danmaku.model.IDanmakus;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,10 +27,6 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.danmaku.danmaku.model.Danmaku;
-import com.player.danmaku.danmaku.model.IDanmakus;
 
 public class Danmakus implements IDanmakus {
 

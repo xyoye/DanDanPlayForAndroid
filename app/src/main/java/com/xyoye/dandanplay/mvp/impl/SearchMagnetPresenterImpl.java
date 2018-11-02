@@ -2,9 +2,13 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.support.v4.provider.DocumentFile;
 
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.db.DataBaseManager;
@@ -16,6 +20,9 @@ import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.mvp.presenter.SearchMagnetPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchMagnetView;
+import com.xyoye.dandanplay.ui.weight.SDCardUtil;
+import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -31,7 +38,6 @@ import okhttp3.ResponseBody;
 
 
 public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView> implements SearchMagnetPresenter {
-    private String savePath;
 
     public SearchMagnetPresenterImpl(SearchMagnetView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -86,26 +92,40 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
         }, new NetworkConsumer());
     }
 
+    private String savePath;
     @Override
-    public void downloadTorrent(String savePath, String magnet) {
-        this.savePath = savePath;
+    public void downloadTorrent(String animeTitle, String magnet) {
+        String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
 
         //判断是否已经下载过该种子
-        String donePath = isDoneTorrent(savePath , magnet);
+        String donePath = isDoneTorrent(downloadPath, animeTitle , magnet);
         if (!StringUtils.isEmpty(donePath)){
             getView().downloadTorrentOver(donePath);
             return;
         }
+        savePath = downloadPath;
 
         getView().showLoading("下载准备中");
         MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
             @Override
             public void onSuccess(ResponseBody responseBody) {
-                SearchMagnetPresenterImpl.this.savePath += "torrent/";
-                SearchMagnetPresenterImpl.this.savePath += magnet.substring(20, magnet.length()) +".torrent";
-                FileIOUtils.writeFileFromIS(SearchMagnetPresenterImpl.this.savePath, responseBody.byteStream());
-                getView().hideLoading();
-                getView().downloadTorrentOver(SearchMagnetPresenterImpl.this.savePath);
+                if (downloadPath.startsWith(FileUtils.Base_Path)){
+                    savePath += animeTitle + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+                    FileIOUtils.writeFileFromIS(savePath, responseBody.byteStream());
+                    getView().hideLoading();
+                    getView().downloadTorrentOver(savePath);
+                }else {
+                    String fileUriPath = SDCardUtil.createNewFile(getView().getContext(), torrentDocumentFile, responseBody.byteStream());
+                    if(StringUtils.isEmpty(fileUriPath)){
+                        getView().hideLoading();
+                        ToastUtils.showShort("写入种子文件失败");
+                    }else {
+                        getView().hideLoading();
+                        String SdCardFolder =  AppConfigShare.getInstance().getSDFolder();
+                        String realFilePath = SdCardFolder + animeTitle + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+                        getView().downloadTorrentOver(realFilePath);
+                    }
+                }
             }
 
             @Override
@@ -117,13 +137,24 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
         }, new NetworkConsumer());
     }
 
-    private String isDoneTorrent(String savePath, String magnet){
-        String path = savePath + "torrent/" + magnet.substring(20, magnet.length()) +".torrent";
-        File file = new File(path);
-        if (file.exists())
-            return path;
-        else
-            return "";
+    private DocumentFile torrentDocumentFile;
+    private String isDoneTorrent(String path, String folder, String magnet){
+        String torrentPath = path + folder + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+        if (path.startsWith(FileUtils.Base_Path)){
+            File file = new File(torrentPath);
+            if (file.exists())
+                return path;
+            else
+                return "";
+        }else {
+            DocumentFile rootDocumentFile = DocumentFile.fromTreeUri(getView().getContext(), Uri.parse(path));
+            if (rootDocumentFile.canRead() && rootDocumentFile.canWrite()){
+                torrentDocumentFile = SDCardUtil.isFileExist(getView().getContext(), path, torrentPath);
+            }else {
+                ToastUtils.showShort("获取SD卡读写权限失败，请在下载目录重新授权");
+            }
+        }
+        return "";
     }
 
     @Override

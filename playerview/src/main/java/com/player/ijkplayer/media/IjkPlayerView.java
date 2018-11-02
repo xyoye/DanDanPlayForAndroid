@@ -1,7 +1,6 @@
 package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;

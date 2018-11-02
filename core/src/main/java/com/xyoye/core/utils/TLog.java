@@ -9,7 +9,7 @@ import com.xyoye.core.BaseApplication;
  * Created by Administrator on 2015/12/2.
  */
 public class TLog {
-    public static boolean DEBUG = BaseApplication.isDebug();
+    public static boolean DEBUG = true;
     private static final String LOG_TAG = "SIMICO";
 
     public static void analytics(String paramString) {

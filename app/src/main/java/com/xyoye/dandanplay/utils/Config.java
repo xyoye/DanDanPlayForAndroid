@@ -1,9 +1,7 @@
 package com.xyoye.dandanplay.utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by YE on 2018/6/29 0029.
@@ -36,7 +34,8 @@ public class Config {
     }
 
     public static class AppConfig {
-        public static final String LOCAL_DANMU_FOLDER = "local_danmu_folder";
+        public static final String LOCAL_DOWNLOAD_FOLDER = "local_download_folder";
+        public static final String LOCAL_SDCARD_FOLDER = "local_sdcard_folder";
         public static final String TOKEN = "token";
         public static final String USER_SCREEN_NAME = "user_screen_name";
         public static final String USER_NAME = "user_name";

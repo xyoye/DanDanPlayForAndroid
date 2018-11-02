@@ -19,6 +19,17 @@ package com.player.ijkplayer.danmaku;
 import android.graphics.Color;
 import android.text.TextUtils;
 
+import com.player.danmaku.danmaku.model.AlphaValue;
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.danmaku.danmaku.model.Duration;
+import com.player.danmaku.danmaku.model.IDisplayer;
+import com.player.danmaku.danmaku.model.SpecialDanmaku;
+import com.player.danmaku.danmaku.model.android.DanmakuFactory;
+import com.player.danmaku.danmaku.model.android.Danmakus;
+import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
+import com.player.danmaku.danmaku.parser.android.AndroidFileSource;
+import com.player.danmaku.danmaku.util.DanmakuUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.xml.sax.Attributes;
@@ -30,17 +41,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.IOException;
 import java.util.Locale;
-
-import com.player.danmaku.danmaku.model.AlphaValue;
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.danmaku.danmaku.model.Duration;
-import com.player.danmaku.danmaku.model.IDisplayer;
-import com.player.danmaku.danmaku.model.SpecialDanmaku;
-import com.player.danmaku.danmaku.model.android.Danmakus;
-import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
-import com.player.danmaku.danmaku.model.android.DanmakuFactory;
-import com.player.danmaku.danmaku.parser.android.AndroidFileSource;
-import com.player.danmaku.danmaku.util.DanmakuUtils;
 
 import static com.player.danmaku.danmaku.model.IDanmakus.ST_BY_TIME;
 

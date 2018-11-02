@@ -6,10 +6,10 @@ import android.text.TextPaint;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.player.danmaku.danmaku.model.BaseDanmaku;
 
 public abstract class ViewCacheStuffer<VH extends ViewCacheStuffer.ViewHolder> extends BaseCacheStuffer {
 

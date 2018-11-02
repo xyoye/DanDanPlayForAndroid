@@ -1,11 +1,12 @@
 package com.player.danmaku.danmaku.loader.android;
 
-import java.io.InputStream;
+import android.net.Uri;
 
 import com.player.danmaku.danmaku.loader.ILoader;
 import com.player.danmaku.danmaku.loader.IllegalDataException;
 import com.player.danmaku.danmaku.parser.android.JSONSource;
-import android.net.Uri;
+
+import java.io.InputStream;
 /**
  * Ac danmaku loader
  * @author yrom

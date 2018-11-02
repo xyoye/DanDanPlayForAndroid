@@ -12,9 +12,9 @@ import com.xyoye.dandanplay.bean.DanmuSearchBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
+import com.xyoye.dandanplay.utils.SearchDanmuUtil;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.SearchDanmuUtil;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -14,10 +14,10 @@ import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import org.greenrobot.eventbus.EventBus;
 

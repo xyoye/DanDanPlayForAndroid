@@ -18,9 +18,9 @@ import com.jaeger.library.StatusBarUtil;
 import com.player.ijkplayer.utils.Constants;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.PlayerSettingEvent;
+import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.Config;
-import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

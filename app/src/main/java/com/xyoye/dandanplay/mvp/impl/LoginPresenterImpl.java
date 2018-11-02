@@ -11,10 +11,10 @@ import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
-import com.xyoye.dandanplay.utils.net.CommJsonObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.TokenShare;
 import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
  * Created by YE on 2018/7/22.

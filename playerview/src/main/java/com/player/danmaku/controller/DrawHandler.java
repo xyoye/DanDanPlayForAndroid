@@ -26,8 +26,6 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.Choreographer;
 
-import java.util.LinkedList;
-
 import com.player.danmaku.danmaku.model.AbsDanmakuSync;
 import com.player.danmaku.danmaku.model.AbsDisplayer;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
@@ -39,6 +37,8 @@ import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.renderer.IRenderer.RenderingState;
 import com.player.danmaku.danmaku.util.SystemClock;
 import com.player.danmaku.jni.DeviceUtils;
+
+import java.util.LinkedList;
 
 public class DrawHandler extends Handler {
 

@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.utils.permission;
+package com.xyoye.dandanplay.utils;
 
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 

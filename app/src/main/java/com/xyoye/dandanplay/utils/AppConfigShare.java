@@ -32,11 +32,20 @@ public class AppConfigShare {
     }
 
     public String getDownloadFolder(){
-       return getShare().load(Config.AppConfig.LOCAL_DANMU_FOLDER, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
+       return getShare().load(Config.AppConfig.LOCAL_DOWNLOAD_FOLDER, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
     }
 
     public void setDownloadFolder(String path){
-        getShare().save(Config.AppConfig.LOCAL_DANMU_FOLDER, path);
+        getShare().save(Config.AppConfig.LOCAL_DOWNLOAD_FOLDER, path);
+    }
+
+
+    public String getSDFolder(){
+        return getShare().load(Config.AppConfig.LOCAL_SDCARD_FOLDER, "");
+    }
+
+    public void setSDFolder(String uriPath){
+        getShare().save(Config.AppConfig.LOCAL_SDCARD_FOLDER, uriPath);
     }
 
     /**

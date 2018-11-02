@@ -1,14 +1,13 @@
 package com.xyoye.dandanplay.utils;
 
 import android.content.Context;
+import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.xyoye.core.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +20,7 @@ import java.util.List;
  */
 
 public class FileUtils {
+    public final static String Base_Path = Environment.getExternalStorageDirectory().getPath();
 
     public static String convertFileSize(long size) {
         long kb = 1024;

@@ -2,15 +2,15 @@ package com.player.ijkplayer.danmaku;
 
 import android.graphics.Color;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.android.JSONSource;
 import com.player.danmaku.danmaku.util.DanmakuUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by long on 2016/12/22.

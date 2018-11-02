@@ -16,9 +16,9 @@
 
 package com.player.danmaku.danmaku.loader;
 
-import java.io.InputStream;
-
 import com.player.danmaku.danmaku.parser.IDataSource;
+
+import java.io.InputStream;
 
 public interface ILoader {
     /**

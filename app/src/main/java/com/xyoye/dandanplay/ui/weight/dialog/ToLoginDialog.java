@@ -13,9 +13,9 @@ import com.xyoye.core.base.AppManager;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.ChangePasswordActivity;
 import com.xyoye.dandanplay.ui.activities.LoginActivity;
+import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.RegisterActivity;
 import com.xyoye.dandanplay.ui.activities.ResetPasswordActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
 import com.xyoye.dandanplay.utils.TokenShare;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 

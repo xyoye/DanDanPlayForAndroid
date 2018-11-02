@@ -12,8 +12,8 @@ import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
+import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import butterknife.BindView;
 

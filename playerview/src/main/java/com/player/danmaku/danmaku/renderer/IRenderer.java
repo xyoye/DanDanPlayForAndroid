@@ -17,9 +17,9 @@
 package com.player.danmaku.danmaku.renderer;
 
 
+import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.model.DanmakuTimer;
 import com.player.danmaku.danmaku.model.ICacheManager;
-import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.model.IDanmakus;
 import com.player.danmaku.danmaku.model.IDisplayer;
 import com.player.danmaku.danmaku.model.android.Danmakus;

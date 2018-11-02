@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,11 +11,10 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
+import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.permission.DownloadUtil;
-import com.xyoye.dandanplay.utils.permission.PermissionHelper;
+import com.xyoye.dandanplay.utils.DownloadUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -58,10 +55,7 @@ public class DanmuDownloadDialog extends Dialog{
         episodeTitleTv.setText(bean.getEpisodeTitle());
         statusTv.setText("下载中...");
 
-        new PermissionHelper()
-                .with((Activity) context)
-                .request(this::startDownload,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE);
+        startDownload();
     }
 
     private void startDownload(){

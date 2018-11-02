@@ -15,8 +15,6 @@ import com.player.subtitle.util.Caption;
 import com.player.subtitle.util.ISubtitleControl;
 import com.player.subtitle.util.TimedTextObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

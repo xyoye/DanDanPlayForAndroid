@@ -1,11 +1,7 @@
 package com.player.danmaku.danmaku.parser.android;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import android.net.Uri;
+import android.text.TextUtils;
 
 import com.player.danmaku.danmaku.parser.IDataSource;
 import com.player.danmaku.danmaku.util.IOUtils;
@@ -13,8 +9,12 @@ import com.player.danmaku.danmaku.util.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.net.Uri;
-import android.text.TextUtils;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * a json file source

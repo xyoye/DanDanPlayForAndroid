@@ -47,6 +47,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+    api 'com.github.tbruyelle:rxpermissions:0.10.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test:runner:1.0.2'

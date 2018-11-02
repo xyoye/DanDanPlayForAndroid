@@ -6,20 +6,6 @@
     android:clipToPadding="false"
     android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/theme_color"
-            app:title="@string/home_title"
-            app:titleTextColor="@color/title_color"/>
-
-    </android.support.design.widget.AppBarLayout>
-
     <com.xyoye.dandanplay.ui.weight.ScrollableLayout
         android:id="@+id/scroll_layout"
         android:layout_width="wrap_content"

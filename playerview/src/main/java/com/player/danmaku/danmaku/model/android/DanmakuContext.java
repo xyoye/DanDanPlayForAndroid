@@ -3,12 +3,6 @@ package com.player.danmaku.danmaku.model.android;
 
 import android.graphics.Typeface;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.player.danmaku.controller.DanmakuFilters;
 import com.player.danmaku.controller.DanmakuFilters.IDanmakuFilter;
 import com.player.danmaku.danmaku.model.AbsDanmakuSync;
@@ -17,6 +11,12 @@ import com.player.danmaku.danmaku.model.AlphaValue;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.danmaku.danmaku.model.GlobalFlagValues;
 import com.player.danmaku.danmaku.model.IDanmakus;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class DanmakuContext implements Cloneable {
 

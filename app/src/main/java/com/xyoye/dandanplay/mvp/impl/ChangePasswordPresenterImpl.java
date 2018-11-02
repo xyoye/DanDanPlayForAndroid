@@ -11,10 +11,10 @@ import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
 import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ChangePasswordView;
+import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 
 /**
  * Created by YE on 2018/8/11.

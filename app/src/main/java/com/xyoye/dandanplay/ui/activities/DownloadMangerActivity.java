@@ -204,6 +204,7 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
                     Torrent torrent = IApplication.torrentList.get(position);
                     torrent.setDanmuPath(path);
                     torrent.setEpisodeId(episodeId);
+                    adapter.notifyItemChanged(position);
                     IApplication.updateTorrent(torrent);
                     ToastUtils.showShort("绑定弹幕成功");
                 }

@@ -1849,7 +1849,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * 手势结束调用
      */
     private void _endGesture() {
-        if (mTargetPosition >= 0 && mTargetPosition != mVideoView.getCurrentPosition()) {
+        if (mTargetPosition >= 0 && mTargetPosition != mVideoView.getCurrentPosition() && mVideoView.getDuration() != 0) {
             // 更新视频播放进度
             seekTo((int) mTargetPosition);
             mPlayerSeek.setProgress((int) (mTargetPosition * MAX_VIDEO_SEEK / mVideoView.getDuration()));

@@ -145,6 +145,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             setAction(torrent);
         });
         playActionLl.setOnClickListener(v -> {
+            showActionView(torrent,false);
             long l = Libtorrent.torrentFilesCount(torrent.getId());
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
@@ -169,9 +170,9 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 }
             }
             ToastUtils.showShort("未找到可播放视频");
-            showActionView(torrent,false);
         });
         bindDanmuActionLl.setOnClickListener(v -> {
+            showActionView(torrent,false);
             long l = Libtorrent.torrentFilesCount(torrent.getId());
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
@@ -188,7 +189,6 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                     }
                 }
             }
-            showActionView(torrent,false);
         });
         infoActionLl.setOnClickListener(v -> {
             ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);

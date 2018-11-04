@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.base.BaseAppFragment;
@@ -22,6 +23,7 @@ import com.xyoye.dandanplay.bean.event.ListFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
+import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
@@ -158,6 +160,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 ToastUtils.showShort("再按一次退出应用");
                 touchTime = System.currentTimeMillis();
             } else {
+                if (ServiceUtils.isServiceRunning(TorrentService.class))
+                    ServiceUtils.stopService(TorrentService.class);
                 finish();
             }
         }

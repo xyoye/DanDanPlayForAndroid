@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
@@ -22,6 +23,7 @@ import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
+import com.xyoye.dandanplay.utils.FileUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,6 +39,7 @@ import butterknife.BindView;
  */
 
 public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
+    public final static int DEFAULT_FOLDER = -1;
     public final static int FILE_FOLDER = 0;
     public final static int FILE_DANMU = 1;
     public final static int FILE_SUBTITLE = 2;
@@ -55,7 +58,7 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
     public void initView() {
         fileType = getFileType();
 
-        if (fileType == FILE_FOLDER){
+        if (fileType == FILE_FOLDER || fileType == DEFAULT_FOLDER){
             setTitle("选择文件夹");
         } else if (fileType == FILE_DANMU){
             setTitle("选择本地弹幕");
@@ -171,14 +174,19 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (fileType == FILE_FOLDER)
+        if (fileType == FILE_FOLDER || fileType == DEFAULT_FOLDER)
             getMenuInflater().inflate(R.menu.menu_select, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     private void selectedFolder(){
+        String folder = pathTv.getText().toString();
+        if (fileType == DEFAULT_FOLDER && !folder.startsWith(FileUtils.Base_Path)){
+            ToastUtils.showShort("暂不支持外部储存作为缓存路径");
+            return;
+        }
         Intent intent = getIntent();
-        intent.putExtra("folder", pathTv.getText().toString());
+        intent.putExtra("folder", folder);
         setResult(RESULT_OK, intent);
         finish();
     }

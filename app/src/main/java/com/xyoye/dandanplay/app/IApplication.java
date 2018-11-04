@@ -133,6 +133,7 @@ public class IApplication extends BaseApplication {
             Boolean isDone = cursor.getInt( 3) == 1;
             String danmuPath = cursor.getString(4);
             int episodeId = cursor.getInt(5);
+            String magnet = cursor.getString(6);
             byte[] stateByte = Base64.decode(state, Base64.DEFAULT);
             long id = Libtorrent.loadTorrent(path, stateByte);
             if (id == -1) {
@@ -146,6 +147,7 @@ public class IApplication extends BaseApplication {
             torrent.setPath(path);
             torrent.setDanmuPath(danmuPath);
             torrent.setEpisodeId(episodeId);
+            torrent.setMagnet(magnet);
             torrent.setTitle(Libtorrent.torrentName(id));
             torrent.setStatus(Libtorrent.torrentStatus(id));
             torrent.setSize(Libtorrent.torrentBytesLength(id));
@@ -191,6 +193,7 @@ public class IApplication extends BaseApplication {
         values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
         values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
         values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
+        values.put(DataBaseInfo.getFieldNames()[6][6], torrent.getMagnet());
         sqLiteDatabase.insert(DataBaseInfo.getTableNames()[6], null, values);
     }
 
@@ -203,6 +206,7 @@ public class IApplication extends BaseApplication {
         values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
         values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
         values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
+        values.put(DataBaseInfo.getFieldNames()[6][6], torrent.getMagnet());
         sqLiteDatabase.update(DataBaseInfo.getTableNames()[6], values, "torrent_path = ?", new String[]{torrent.getPath()});
     }
 

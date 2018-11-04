@@ -55,7 +55,7 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
         private String summary;
         private String bangumiUrl;
-        private int rating;
+        private double rating;
         private int userRating;
         private String favoriteStatus;
         private RatingDetailsBean ratingDetails;
@@ -85,11 +85,11 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
             this.bangumiUrl = bangumiUrl;
         }
 
-        public int getRating() {
+        public double getRating() {
             return rating;
         }
 
-        public void setRating(int rating) {
+        public void setRating(double rating) {
             this.rating = rating;
         }
 

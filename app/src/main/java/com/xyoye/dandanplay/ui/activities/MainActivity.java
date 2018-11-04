@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -64,7 +66,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void initView() {
-        setTitle("");
+        setTitle("媒体库");
+        if (hasBackActionbar() && getSupportActionBar() != null) {
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayShowTitleEnabled(true);
+        }
         navigationView.setSelectedItemId(R.id.navigation_play);
     }
 
@@ -90,6 +97,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         navigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    setTitle("公告与番组");
                     if (homeFragment == null) {
                         homeFragment = HomeFragment.newInstance();
                         mDelegate.showHideFragment(homeFragment);
@@ -101,6 +109,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     fragFlag = 0;
                     return true;
                 case R.id.navigation_play:
+                    setTitle("媒体库");
                     if (playFragment == null) {
                         playFragment = PlayFragment.newInstance();
                         mDelegate.showHideFragment(playFragment);
@@ -114,6 +123,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     fragFlag = 1;
                     return true;
                 case R.id.navigation_personal:
+                    setTitle("个人中心");
                     if (personalFragment == null) {
                         personalFragment = PersonalFragment.newInstance();
                         mDelegate.showHideFragment(personalFragment);

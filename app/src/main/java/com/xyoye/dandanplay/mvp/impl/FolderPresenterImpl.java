@@ -1,18 +1,29 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.core.base.BaseMvpPresenter;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
+import com.xyoye.dandanplay.utils.SearchDanmuUtil;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -80,6 +91,26 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
         sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoName()});
     }
 
+    @Override
+    public void deleteFile(String folderPath, String fileName) {
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[2], whereCase, new String[]{folderPath, fileName});
+        String sql = "SELECT * FROM folder WHERE folder_path = ?";
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath});
+        if (cursor.moveToNext()){
+            int number = cursor.getInt(2);
+            if (number > 2){
+                ContentValues values = new ContentValues();
+                values.put(DataBaseInfo.getFieldNames()[1][2], --number);
+                sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values, "folder_path = ?", new String[]{folderPath});
+            }else {
+                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[1], "folder_path = ?", new String[]{folderPath});
+            }
+        }
+        cursor.close();
+    }
+
 
     private List<VideoBean> getVideoList(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
@@ -105,5 +136,35 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
         }
         cursor.close();
         return videoBeans;
+    }
+
+    @Override
+    public void getDanmu(String videoPath){
+        String title = FileUtils.getFileName(videoPath);
+        String hash = SearchDanmuUtil.getVideoFileHash(videoPath);
+        long length = new File(videoPath).length();
+        long duration = SearchDanmuUtil.getVideoDuration(videoPath);
+        DanmuMatchParam param = new DanmuMatchParam();
+        param.setFileName(title);
+        param.setFileHash(hash);
+        param.setFileSize(length);
+        param.setVideoDuration(duration);
+        param.setMatchMode("hashAndFileName");
+        DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
+            @Override
+            public void onSuccess(DanmuMatchBean danmuMatchBean) {
+                getView().hideLoading();
+                if (danmuMatchBean.getMatches().size() > 0)
+                    getView().downloadDanmu(danmuMatchBean.getMatches().get(0));
+                else
+                    getView().noMatchDanmu(videoPath);
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
     }
 }

@@ -27,6 +27,7 @@ public class Torrent implements Serializable{
     private int status = -1;
     private boolean isLongCheck;
     private boolean update;
+    private String magnet;
     private List<TorrentFile> torrentFileList;
     public SpeedInfo downloaded = new SpeedInfo();
     public SpeedInfo uploaded = new SpeedInfo();
@@ -133,6 +134,14 @@ public class Torrent implements Serializable{
 
     public void setUpdate(boolean update) {
         this.update = update;
+    }
+
+    public String getMagnet() {
+        return magnet;
+    }
+
+    public void setMagnet(String magnet) {
+        this.magnet = magnet;
     }
 
     public List<TorrentFile> getTorrentFileList() {

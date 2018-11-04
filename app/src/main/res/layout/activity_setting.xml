@@ -59,6 +59,44 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/auto_load_danmu_rl"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="自动加载弹幕"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textSize="11sp"
+                android:textColor="@color/text_black"
+                android:text="未指定弹幕时，自动匹配网络弹幕"/>
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/auto_load_danmu_sw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/download_rl"
         android:layout_width="match_parent"
         android:layout_height="48dp"

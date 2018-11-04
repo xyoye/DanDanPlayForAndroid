@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -134,9 +136,8 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 bindDanmuActionLl.setVisibility(View.VISIBLE);
             deleteActionLl.setVisibility(View.VISIBLE);
             closeActionLl.setVisibility(View.VISIBLE);
-
-            // TODO: 2018/10/30 下载详情未完善
-            infoActionLl.setVisibility(View.GONE);
+            if (!StringUtils.isEmpty(torrent.getMagnet()))
+                infoActionLl.setVisibility(View.VISIBLE);
             return false;
         });
 
@@ -190,7 +191,13 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             showActionView(torrent,false);
         });
         infoActionLl.setOnClickListener(v -> {
-            torrentActionLl.setVisibility(View.GONE);
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData mClipData = ClipData.newPlainText("Label", torrent.getMagnet());
+            if (clipboardManager != null){
+                clipboardManager.setPrimaryClip(mClipData);
+                ToastUtils.showShort("已复制链接");
+            }
+            showActionView(torrent,false);
         });
         deleteActionLl.setOnClickListener(v -> {
             new DialogUtils.Builder(context)

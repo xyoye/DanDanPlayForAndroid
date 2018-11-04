@@ -49,6 +49,17 @@ public class AppConfigShare {
     }
 
     /**
+     * 自动匹配弹幕
+     */
+    public boolean isAutoLoadDanmu(){
+        return getShare().loadBooleanSharedPreference(Config.AppConfig.AUTO_LOAD_DANMU);
+    }
+
+    public void setAutoLoadDanmu(boolean auto){
+        getShare().saveSharedPreferences(Config.AppConfig.AUTO_LOAD_DANMU, auto);
+    }
+
+    /**
      * 获取本地软件版本号
 	 */
     public static String getLocalVersion(Context context) {

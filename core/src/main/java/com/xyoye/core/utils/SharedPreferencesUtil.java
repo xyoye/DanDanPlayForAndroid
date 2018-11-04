@@ -54,42 +54,6 @@ public final class SharedPreferencesUtil {
         return getShare().getString(key, defaultValue);
     }
 
-    /**
-     * 加密保存
-     * param key
-     * param value
-     * return
-     */
-    public void encryptSave(String key, String value) {
-        try {
-            SharedPreferences.Editor editor = getShare().edit();
-            TLog.i("encryptSave", Encryptor.encryptAES(MAK, value)+"_"+key+"_"+value+"_"+FILE_NAME);
-            editor.putString(key, Encryptor.encryptAES(MAK, value));
-            editor.apply();
-        } catch (Exception e) {
-            TLog.i("encryptSave", "error");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 解密读取
-     * param key
-     * param value
-     * return
-     */
-    public String decryptLoad(String key) {
-        try {
-            String str = getShare().getString(key, "");
-            TLog.i("decryptLoad", str+"_"+"_"+key+"_"+FILE_NAME);
-            return !"".equals(str) ? Encryptor.decryptAES(MAK, str) : "";
-        } catch(Exception e) {
-            ToastUtils.showShort("解密失败");
-            TLog.i("decryptLoad", "error");
-            return "";
-        }
-    }
-
     public synchronized SharedPreferences getShare() {
         return this.context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
     }

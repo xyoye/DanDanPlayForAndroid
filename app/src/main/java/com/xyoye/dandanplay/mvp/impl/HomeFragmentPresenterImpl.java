@@ -74,16 +74,18 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
             @Override
             public void onSuccess(BannerBeans bannerBean) {
                 List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[3],"", new String[]{});
-                for(BannerBeans.BannersBean bean : beans ){
-                    ContentValues values=new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[3][1], bean.getTitle());
-                    values.put(DataBaseInfo.getFieldNames()[3][2], bean.getDescription());
-                    values.put(DataBaseInfo.getFieldNames()[3][3], bean.getUrl());
-                    values.put(DataBaseInfo.getFieldNames()[3][4], bean.getImageUrl());
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[3],null,values);
-                }
+                new Thread(() -> {
+                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[3],"", new String[]{});
+                    for(BannerBeans.BannersBean bean : beans ){
+                        ContentValues values=new ContentValues();
+                        values.put(DataBaseInfo.getFieldNames()[3][1], bean.getTitle());
+                        values.put(DataBaseInfo.getFieldNames()[3][2], bean.getDescription());
+                        values.put(DataBaseInfo.getFieldNames()[3][3], bean.getUrl());
+                        values.put(DataBaseInfo.getFieldNames()[3][4], bean.getImageUrl());
+                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[3],null,values);
+                    }
+                }).start();
                 if (countDownLatch != null){
                     countDownLatch.countDown();
                     HomeFragmentPresenterImpl.this.bannerList = beans;

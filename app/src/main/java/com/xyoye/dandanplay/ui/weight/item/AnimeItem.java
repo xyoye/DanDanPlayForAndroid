@@ -15,6 +15,8 @@ import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.UserInfoShare;
 
+import java.text.DecimalFormat;
+
 import butterknife.BindView;
 
 /**
@@ -31,6 +33,8 @@ public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
     TextView statusTv;
     @BindView(R.id.favorite_tv)
     TextView favoriteTv;
+    @BindView(R.id.rating_tv)
+    TextView ratingTv;
 
     private View mView;
 
@@ -61,6 +65,16 @@ public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
         statusTv.setText(model.isIsOnAir()
                          ? "连载中"
                          : "已完结");
+
+        double rating = model.getRating();
+        int ratingInt = (int) rating;
+        if (rating == ratingInt){
+            ratingTv.setText(ratingInt+"");
+        }else {
+            DecimalFormat df =new java.text.DecimalFormat("#.0");
+            String ratingText = df.format(rating);
+            ratingTv.setText(ratingText);
+        }
 
         animaTitle.setText(model.getAnimeTitle());
 

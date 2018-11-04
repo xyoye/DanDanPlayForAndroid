@@ -37,6 +37,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -145,7 +146,17 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
 
         animeDetailBean = bean;
         animaTitleTv.setText(bean.getBangumi().getAnimeTitle());
-        animaTRatingTv.setText("评分："+String.valueOf(bean.getBangumi().getRating()));
+
+        double rating = bean.getBangumi().getRating();
+        int ratingInt = (int) rating;
+        if (rating == ratingInt){
+            animaTRatingTv.setText("评分："+ratingInt+"");
+        }else {
+            DecimalFormat df =new java.text.DecimalFormat("#.0");
+            String ratingText = df.format(rating);
+            animaTRatingTv.setText("评分："+ratingText);
+        }
+
         animaOnairTv.setText(bean.getBangumi().isIsOnAir()
                             ? "状态：连载中"
                             : "状态：完结");
@@ -271,12 +282,14 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (EventBus.getDefault().isRegistered(this))
         EventBus.getDefault().unregister(this);
     }
 

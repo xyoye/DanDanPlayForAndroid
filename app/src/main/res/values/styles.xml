@@ -18,6 +18,7 @@
         <item name="cardViewStyle">@style/CardView</item>
         <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
     </style>
+
     <style name="ToolBar" parent="AppBaseTheme">
         <item name="colorButtonNormal">@color/colorTextIcons</item>
         <item name="colorControlNormal">@color/colorTextIcons</item>
@@ -31,6 +32,10 @@
         <item name="android:activityOpenExitAnimation">@anim/keep_visitity</item>
         <item name="android:activityCloseEnterAnimation">@anim/keep_visitity</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
+    </style>
+
+    <style name="OpenTheme" parent="AppTheme">
+        <item name="android:windowBackground">@raw/launch</item>
     </style>
 
     <style name="FooterStyle">

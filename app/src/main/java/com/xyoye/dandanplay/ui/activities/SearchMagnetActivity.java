@@ -152,7 +152,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
     }
 
     @Override
-    public void downloadTorrentOver(String torrentPath) {
+    public void downloadTorrentOver(String torrentPath, String magnet) {
         Intent intent = new Intent(this, DownloadMangerActivity.class);
         for (Torrent torrent : IApplication.torrentList){
             if (torrentPath.equals(torrent.getPath())){
@@ -163,6 +163,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
         intent.putExtra("episode_id", getIntent().getIntExtra("episode_id", -1));
         intent.putExtra("torrent_path", torrentPath);
         intent.putExtra("anime_folder", animeTitle);
+        intent.putExtra("torrent_magnet", magnet);
         startActivity(intent);
     }
 
@@ -212,12 +213,6 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
                         presenter.downloadTorrent(animeTitle, model.getMagnet());
                     }
                 });
-//        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-//        ClipData mClipData = ClipData.newPlainText("Label", model.getMagnet());
-//        if (clipboardManager != null){
-//            clipboardManager.setPrimaryClip(mClipData);
-//            ToastUtils.showShort("已复制链接");
-//        }
     }
 
     private void searchMagnet(){

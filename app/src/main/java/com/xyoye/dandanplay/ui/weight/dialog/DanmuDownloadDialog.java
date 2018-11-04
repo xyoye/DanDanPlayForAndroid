@@ -81,14 +81,16 @@ public class DanmuDownloadDialog extends Dialog{
                     EventBus.getDefault().post(
                             new OpenDanmuFolderEvent(path, bean.getEpisodeId(), false));
                 }
-                DanmuDownloadDialog.this.cancel();
+                if (DanmuDownloadDialog.this.isShowing() && context!=null && getOwnerActivity() != null)
+                    DanmuDownloadDialog.this.cancel();
             }
 
             @Override
             public void onError(int errorCode, String message) {
                 System.out.println(message);
                 ToastUtils.showShort(message);
-                DanmuDownloadDialog.this.cancel();
+                if (DanmuDownloadDialog.this.isShowing() && context!=null && getOwnerActivity() != null)
+                    DanmuDownloadDialog.this.cancel();
             }
         }, new NetworkConsumer());
     }

@@ -38,6 +38,7 @@ public class AnimeBeans extends CommJsonEntity implements Serializable {
          * airDay : 0
          * isFavorited : true
          * isRestricted : true
+         * rating": 0
          */
 
         private int animeId;
@@ -48,6 +49,7 @@ public class AnimeBeans extends CommJsonEntity implements Serializable {
         private int airDay;
         private boolean isFavorited;
         private boolean isRestricted;
+        private double rating;
 
         public int getAnimeId() {
             return animeId;
@@ -111,6 +113,14 @@ public class AnimeBeans extends CommJsonEntity implements Serializable {
 
         public void setIsRestricted(boolean isRestricted) {
             this.isRestricted = isRestricted;
+        }
+
+        public double getRating() {
+            return rating;
+        }
+
+        public void setRating(double String) {
+            this.rating = rating;
         }
     }
 

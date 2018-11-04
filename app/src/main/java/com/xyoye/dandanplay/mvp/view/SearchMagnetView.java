@@ -19,7 +19,7 @@ public interface SearchMagnetView extends BaseMvpView, LoadDataView {
 
     int getEpisodeId();
 
-    void downloadTorrentOver(String torrentPath);
+    void downloadTorrentOver(String torrentPath, String magnet);
 
     void showLoading(String text);
 

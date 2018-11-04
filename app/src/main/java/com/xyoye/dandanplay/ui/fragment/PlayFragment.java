@@ -149,16 +149,20 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         new DialogUtils.Builder(getContext())
                 .setOkListener(dialog ->{
                     dialog.dismiss();
-                    new RxPermissions(this).
-                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .subscribe(granted -> {
-                            if (granted) {
-                                File file = new File(event.getFolderPath());
-                                if (file.exists())
-                                    FileUtils.deleteFile(file);
-                                presenter.deleteFolder(event.getFolderPath());
-                            }
-                        });
+                    if (!event.getFolderPath().startsWith(com.xyoye.dandanplay.utils.FileUtils.Base_Path)){
+                        ToastUtils.showShort("很抱歉，目前暂不支持管理外置储存卡文件");
+                    }else {
+                        new RxPermissions(this).
+                                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .subscribe(granted -> {
+                                    if (granted) {
+                                        File file = new File(event.getFolderPath());
+                                        if (file.exists())
+                                            FileUtils.deleteFile(file);
+                                        presenter.deleteFolder(event.getFolderPath());
+                                    }
+                                });
+                    }
                 })
                 .setCancelListener(DialogUtils::dismiss)
                 .build()

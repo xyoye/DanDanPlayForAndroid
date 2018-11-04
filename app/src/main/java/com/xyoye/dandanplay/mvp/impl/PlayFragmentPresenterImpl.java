@@ -97,7 +97,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         File file = new File(path);
         final FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
         Observable.just(file)
-                .flatMap((Function<File, Observable<File>>) this::listFiles)
+                .flatMap(this::listFiles)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<File>() {
@@ -143,7 +143,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
             return Observable.just(f).filter(file -> false);
         }
         if(f.isDirectory()){
-            return Observable.fromArray(f.listFiles()).flatMap((Function<File, Observable<File>>) this::listFiles);
+            return Observable.fromArray(f.listFiles()).flatMap(this::listFiles);
         } else {
             return Observable.just(f).filter(file -> f.exists() && f.canRead() && isVideo(f));
         }

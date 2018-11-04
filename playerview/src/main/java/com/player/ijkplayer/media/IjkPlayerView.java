@@ -79,6 +79,7 @@ import com.player.ijkplayer.adapter.BaseRvAdapter;
 import com.player.ijkplayer.danmaku.BaseDanmakuConverter;
 import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
+import com.player.ijkplayer.danmaku.VideoDanmakuSync;
 import com.player.ijkplayer.database.DataBaseHelper;
 import com.player.ijkplayer.database.DataBaseInfo;
 import com.player.ijkplayer.database.DataBaseManager;
@@ -680,7 +681,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     public void start() {
         if (mIsPlayComplete) {
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.seekTo((long) 0);
+                mDanmakuView.seekTo((long) 0 - (danmuExtraTime * 1000));
                 mDanmakuView.pause();
             }
             mIsPlayComplete = false;
@@ -1253,23 +1254,18 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         }else if (id == R.id.speed50_tv){
             mVideoView.setSpeed(0.5f);
-            mDanmakuContext.setScrollSpeedFactor(1.5f);
             setPlayerSpeedView(1);
         }else if (id == R.id.speed75_tv){
             mVideoView.setSpeed(0.75f);
-            mDanmakuContext.setScrollSpeedFactor(1.25f);
             setPlayerSpeedView(2);
         }else if (id == R.id.speed100_tv){
             mVideoView.setSpeed(1.0f);
-            mDanmakuContext.setScrollSpeedFactor(1.0f);
             setPlayerSpeedView(3);
         }else if (id == R.id.speed125_tv){
             mVideoView.setSpeed(1.25f);
-            mDanmakuContext.setScrollSpeedFactor(0.75f);
             setPlayerSpeedView(4);
         }else if (id == R.id.speed150_tv){
             mVideoView.setSpeed(1.5f);
-            mDanmakuContext.setScrollSpeedFactor(0.5f);
             setPlayerSpeedView(5);
         }else if (id == R.id.subtitle_extra_time_reduce){
             extraUpdateTime -= 0.5f;
@@ -1277,6 +1273,18 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }else if (id == R.id.subtitle_extra_time_add){
             extraUpdateTime += 0.5f;
             subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
+        }else if (id == R.id.danmu_extra_time_add){
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
+                danmuExtraTime += 1;
+                mDanmakuView.seekTo(mDanmakuView.getCurrentTime() - 1000);
+                danmuExtraTimeEt.setText(String.valueOf(danmuExtraTime));
+            }
+        }else if (id == R.id.danmu_extra_time_reduce){
+            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
+                danmuExtraTime -= 1;
+                mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + 1000);
+                danmuExtraTimeEt.setText(String.valueOf(danmuExtraTime));
+            }
         }
     }
 
@@ -2276,6 +2284,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private TextView mDanmuSpeedFast, mDanmuSpeedMiddle, mDanmuSpeedSlow;
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
     private RelativeLayout mMoreBlockRl;
+    private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
+    private EditText danmuExtraTimeEt;
+
     //弹幕屏蔽
     private RelativeLayout mBlockView;
     private ImageView mBlockViewCancelIv;
@@ -2333,6 +2344,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isShowMobile = true;
     private boolean isShowBottom = true;
 
+    private int danmuExtraTime;
     /**
      * 弹幕初始化
      */
@@ -2362,6 +2374,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuTopIv = findViewById(R.id.top_danmu_iv);
         mDanmuBottomIv = findViewById(R.id.bottom_danmu_iv);
         mMoreBlockRl = findViewById(R.id.more_block_rl);
+        addDanmuExtraTimeTv = findViewById(R.id.danmu_extra_time_add);
+        reduceDanmuExtraTimeTv = findViewById(R.id.danmu_extra_time_reduce);
+        danmuExtraTimeEt = findViewById(R.id.danmu_extra_time_et);
         //弹幕屏蔽相关
         mBlockView = findViewById(R.id.block_setting_view);
         mBlockViewCancelIv = findViewById(R.id.block_view_cancel_iv);
@@ -2378,6 +2393,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mMoreBlockRl.setOnClickListener(this);
         mBlockAddBt.setOnClickListener(this);
         mBlockViewCancelIv.setOnClickListener(this);
+        addDanmuExtraTimeTv.setOnClickListener(this);
+        reduceDanmuExtraTimeTv.setOnClickListener(this);
 
         mIvDanmakuControl.setOnClickListener(this);
         mTvOpenEditDanmaku.setOnClickListener(this);
@@ -2387,6 +2404,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mPlayerSetting.setOnClickListener(this);
         mDanmuSettings.setOnClickListener(this);
         mSubtitleSettings.setOnClickListener(this);
+
+        danmuExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        danmuExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        danmuExtraTimeEt.setSingleLine(true);
 
         DataBaseManager.initializeInstance(new DataBaseHelper(getContext()));
         sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
@@ -2534,6 +2555,26 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         });
 
+        danmuExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE){
+                    if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
+                        try {
+                            String extraTime = danmuExtraTimeEt.getText().toString().trim();
+                            int extraTimeLong = Integer.valueOf(extraTime);
+                            mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + (danmuExtraTime- extraTimeLong) * 1000);
+                            danmuExtraTime = extraTimeLong;
+                        }catch (Exception e){
+                            Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
         mBlockView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -2586,6 +2627,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
                 @Override
                 public void updateTimer(DanmakuTimer timer) {
+
                 }
 
                 @Override
@@ -2843,7 +2885,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _resumeDanmaku() {
         if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
             if (mDanmakuTargetPosition != INVALID_VALUE) {
-                mDanmakuView.seekTo(mDanmakuTargetPosition);
+                mDanmakuView.seekTo(mDanmakuTargetPosition - danmuExtraTime*1000);
                 mDanmakuTargetPosition = INVALID_VALUE;
             } else {
                 mDanmakuView.resume();

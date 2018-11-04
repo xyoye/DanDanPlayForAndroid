@@ -100,7 +100,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
         //判断是否已经下载过该种子
         String donePath = isDoneTorrent(downloadPath, animeTitle , magnet);
         if (!StringUtils.isEmpty(donePath)){
-            getView().downloadTorrentOver(donePath);
+            getView().downloadTorrentOver(donePath, magnet);
             return;
         }
         savePath = downloadPath;
@@ -113,7 +113,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
                     savePath += animeTitle + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
                     FileIOUtils.writeFileFromIS(savePath, responseBody.byteStream());
                     getView().hideLoading();
-                    getView().downloadTorrentOver(savePath);
+                    getView().downloadTorrentOver(savePath, magnet);
                 }else {
                     String fileUriPath = SDCardUtil.createNewFile(getView().getContext(), torrentDocumentFile, responseBody.byteStream());
                     if(StringUtils.isEmpty(fileUriPath)){
@@ -123,7 +123,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
                         getView().hideLoading();
                         String SdCardFolder =  AppConfigShare.getInstance().getSDFolder();
                         String realFilePath = SdCardFolder + animeTitle + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
-                        getView().downloadTorrentOver(realFilePath);
+                        getView().downloadTorrentOver(realFilePath, magnet);
                     }
                 }
             }

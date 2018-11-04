@@ -62,55 +62,55 @@ public class PlayerActivity extends AppCompatActivity {
             videoPath = getIntent().getStringExtra("path");
             videoTitle = getIntent().getStringExtra("title");
             danmuPath = getIntent().getStringExtra("danmu_path");
-            currentPosition = getIntent().getIntExtra("current",0);
+            currentPosition = getIntent().getIntExtra("current", 0);
             episodeId = getIntent().getIntExtra("episode_id", 0);
-        }else {
+        } else {
             //外部打开
-            if (getIntent().getDataString() == null || "".equals(getIntent().getDataString())){
+            if (getIntent().getDataString() == null || "".equals(getIntent().getDataString())) {
                 videoPath = "";
-            }else {
+            } else {
                 videoPath = getIntent().getDataString();
             }
             //获取标题
-            if (videoPath != null && videoPath.contains("/")){
+            if (videoPath != null && videoPath.contains("/")) {
                 int titleLocation = videoPath.lastIndexOf("/") + 1;
                 if (titleLocation < videoPath.length())
                     videoTitle = videoPath.substring(titleLocation, videoPath.length());
                 else
                     videoTitle = "";
-            }else {
+            } else {
                 videoTitle = "";
                 videoPath = "";
 
             }
             //获取弹幕：先从数据库根据path拿，未匹配到则从相同目录下拿
-            if (videoPath.contains(".") && !StringUtils.isEmpty(videoTitle)){
+            if (videoPath.contains(".") && !StringUtils.isEmpty(videoTitle)) {
                 String danmuPathTemp;
                 boolean isGetDanmuPath = false;
                 String folderPath = FileUtils.getDirName(videoPath);
                 SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
                 String sql = "SELECT danmu_path FROM file WHERE folder_path=? AND file_name=?";
                 Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoTitle});
-                if (cursor != null && cursor.getCount() != 0){
+                if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToNext();
                     danmuPathTemp = cursor.getString(0);
                     episodeId = cursor.getInt(6);
                     cursor.close();
-                    if (!StringUtils.isEmpty(danmuPathTemp)){
+                    if (!StringUtils.isEmpty(danmuPathTemp)) {
                         File damuFile = new File(danmuPathTemp);
-                        if (damuFile.exists()){
+                        if (damuFile.exists()) {
                             danmuPath = danmuPathTemp;
                             isGetDanmuPath = true;
                         }
                     }
                 }
-                if (!isGetDanmuPath){
+                if (!isGetDanmuPath) {
                     int extLocation = videoPath.lastIndexOf(".");
                     danmuPathTemp = videoPath.substring(0, extLocation) + ".xml";
                     File damuFile = new File(danmuPathTemp);
-                    if (damuFile.exists()){
+                    if (damuFile.exists()) {
                         danmuPath = danmuPathTemp;
-                    }else {
+                    } else {
                         danmuPath = "";
                     }
                 }
@@ -118,7 +118,7 @@ public class PlayerActivity extends AppCompatActivity {
             //上次播放默认为0
             currentPosition = 0;
 
-            if ("".equals(videoPath)){
+            if (videoPath == null || "".equals(videoPath)) {
                 ToastUtils.showShort("解析视频地址失败");
                 return;
             }
@@ -126,7 +126,7 @@ public class PlayerActivity extends AppCompatActivity {
         initPlayer();
     }
 
-    private void initPlayer(){
+    private void initPlayer() {
         InputStream inputStream = null;
         if (!TextUtils.isEmpty(danmuPath) && FileUtils.isFileExists(danmuPath)) {
             try {
@@ -171,23 +171,23 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer.start();
     }
 
-    private void uploadDanmu(BaseDanmaku data){
+    private void uploadDanmu(BaseDanmaku data) {
         double dTime = new BigDecimal(data.getTime() / 1000)
                 .setScale(3, BigDecimal.ROUND_HALF_UP)
                 .doubleValue();
-        String time = dTime+"";
+        String time = dTime + "";
         int type = data.getType();
-        if (type != 1 && type != 4 && type != 5){
+        if (type != 1 && type != 4 && type != 5) {
             type = 1;
         }
-        String mode = type+"";
-        String color = (data.textColor & 0x00FFFFFF)+"";
+        String mode = type + "";
+        String color = (data.textColor & 0x00FFFFFF) + "";
         String comment = String.valueOf(data.text);
         DanmuUploadParam uploadParam = new DanmuUploadParam(time, mode, color, comment);
-        UploadDanmuBean.uploadDanmu(uploadParam, episodeId+"", new CommJsonObserver<UploadDanmuBean>(){
+        UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>() {
             @Override
             public void onSuccess(UploadDanmuBean bean) {
-                Log.i("DanmuUpload", "onSuccess: text："+data.text+"  cid："+bean.getCid());
+                Log.i("DanmuUpload", "onSuccess: text：" + data.text + "  cid：" + bean.getCid());
             }
 
             @Override
@@ -198,12 +198,12 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String text){
+    public void onEvent(String text) {
         mPlayer.removeBlock(text);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(OpenSubtitleFileEvent event){
+    public void onEvent(OpenSubtitleFileEvent event) {
         Intent intent = new Intent(this, FileManagerActivity.class);
         intent.putExtra("file_type", FileManagerActivity.FILE_SUBTITLE);
         startActivityForResult(intent, SELECT_SUBTITLE);
@@ -211,8 +211,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == SELECT_SUBTITLE){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_SUBTITLE) {
                 String subtitlePath = data.getStringExtra("subtitle");
                 mPlayer.setSubtitleSource("", subtitlePath);
             }
@@ -252,7 +252,7 @@ public class PlayerActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void saveCurrent(int currentPosition){
+    private void saveCurrent(int currentPosition) {
         SaveCurrentEvent event = new SaveCurrentEvent();
         event.setCurrentPosition(currentPosition);
         event.setFolderPath(FileUtils.getDirName(videoPath));

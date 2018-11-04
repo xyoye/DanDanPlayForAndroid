@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,19 +11,25 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.core.adapter.BaseRvAdapter;
 import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.bean.event.VideoActionEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
 import com.xyoye.dandanplay.utils.AppConfigShare;
 import com.xyoye.dandanplay.utils.Config;
@@ -56,6 +63,8 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     private BaseRvAdapter<VideoBean> adapter;
     private List<VideoBean> videoBeans;
+    private VideoBean selectVideoBean;
+    private int selectPosition;
 
     @Override
     public void initView() {
@@ -112,12 +121,12 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Override
     public void showLoading() {
-
+        showLoadingDialog("正在搜索网络弹幕", false);
     }
 
     @Override
     public void hideLoading() {
-
+        dismissLoadingDialog();
     }
 
     @Override
@@ -177,29 +186,27 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     public void openVideo(OpenVideoEvent event){
         openVideoPosition = event.getPosition();
         VideoBean videoBean = event.getBean();
-        //未设置弹幕情况下，自动匹配同名弹幕(先匹配相同目录下，再匹配默认下载目录下)
+        selectVideoBean = videoBean;
+        selectPosition = event.getPosition();
+        //未设置弹幕情况下，1、开启自动加载时自动加载，2、自动匹配相同目录下同名弹幕，3、匹配默认下载目录下同名弹幕
         if (StringUtils.isEmpty(videoBean.getDanmuPath())){
             String path = videoBean.getVideoPath();
-            String danmuPath = path.substring(0, path.lastIndexOf("."))+ ".xml";
-            File file = new File(danmuPath);
-            if (file.exists())
-                videoBean.setDanmuPath(danmuPath);
-            else {
-                String ext = FileUtils.getFileExtension(path);
-                String name = FileUtils.getFileName(path).replace(ext, "xml");
-                danmuPath = AppConfigShare.getInstance().getDownloadFolder()+ "/" + name;
-                file = new File(danmuPath);
-                if (file.exists())
-                    videoBean.setDanmuPath(danmuPath);
+            if (AppConfigShare.getInstance().isAutoLoadDanmu()){
+                if (!StringUtils.isEmpty(path)){
+                    presenter.getDanmu(path);
+                }
+            }else {
+                noMatchDanmu(path);
             }
+        }else {
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtra("title", videoBean.getVideoName());
+            intent.putExtra("path",videoBean.getVideoPath());
+            intent.putExtra("danmu_path",videoBean.getDanmuPath());
+            intent.putExtra("current", videoBean.getCurrentPosition());
+            intent.putExtra("episode_id", videoBean.getEpisodeId());
+            startActivity(intent);
         }
-        Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("title", videoBean.getVideoName());
-        intent.putExtra("path",videoBean.getVideoPath());
-        intent.putExtra("danmu_path",videoBean.getDanmuPath());
-        intent.putExtra("current", videoBean.getCurrentPosition());
-        intent.putExtra("episode_id", videoBean.getEpisodeId());
-        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -215,6 +222,69 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         presenter.updateCurrent(event);
         adapter.getData().get(openVideoPosition).setCurrentPosition(event.getCurrentPosition());
         adapter.notifyItemChanged(openVideoPosition);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void openVideo( OpenDanmuFolderEvent event){
+        selectVideoBean.setDanmuPath(event.getPath());
+        selectVideoBean.setEpisodeId(event.getEpisodeId());
+
+        String folderPath = FileUtils.getDirName(selectVideoBean.getVideoPath());
+        String fileName = FileUtils.getFileName(selectVideoBean.getVideoPath());
+        presenter.updateDanmu(event.getPath(), event.getEpisodeId(), new String[]{folderPath, fileName});
+        adapter.notifyItemChanged(selectPosition);
+
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("title", selectVideoBean.getVideoName());
+        intent.putExtra("path", selectVideoBean.getVideoPath());
+        intent.putExtra("danmu_path",selectVideoBean.getDanmuPath());
+        intent.putExtra("current", selectVideoBean.getCurrentPosition());
+        intent.putExtra("episode_id", selectVideoBean.getEpisodeId());
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void videoAction(VideoActionEvent event){
+        VideoBean videoBean = videoBeans.get(event.getPosition());
+        switch (event.getActionType()){
+            case VideoActionEvent.UN_BIND:
+                videoBean.setEpisodeId(-1);
+                videoBean.setDanmuPath("");
+                adapter.notifyItemChanged(event.getPosition());
+                String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                String fileName = FileUtils.getFileName(videoBean.getVideoPath());
+                presenter.updateDanmu("", -1, new String[]{folderPath, fileName});
+                break;
+            case VideoActionEvent.DELETE:
+                new DialogUtils.Builder(this)
+                        .setOkListener(dialog -> {
+                            dialog.dismiss();
+                            if (!videoBean.getVideoPath().startsWith(com.xyoye.dandanplay.utils.FileUtils.Base_Path)){
+                                ToastUtils.showShort("很抱歉，目前暂不支持管理外置储存卡文件");
+                            }else {
+                                new RxPermissions(this).
+                                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        .subscribe(granted -> {
+                                            if (granted) {
+                                                File file = new File(videoBean.getVideoPath());
+                                                if (file.exists())
+                                                    file.delete();
+
+                                                String deleteFolderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                                                String deleteFileName = FileUtils.getFileName(videoBean.getVideoPath());
+                                                presenter.deleteFile(deleteFolderPath, deleteFileName);
+
+                                                videoBeans.remove(event.getPosition());
+                                                adapter.notifyItemChanged(event.getPosition());
+                                            }
+                                        });
+                            }
+                        })
+                        .setCancelListener(DialogUtils::dismiss)
+                        .build()
+                        .show("确认删除该文件？");
+                break;
+        }
     }
 
     @Override
@@ -234,6 +304,44 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                 adapter.notifyItemChanged(position);
             }
         }
+    }
+
+    @Override
+    public void downloadDanmu(DanmuMatchBean.MatchesBean matchesBean){
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, matchesBean);
+                        dialog.show();
+                    }
+                });
+    }
+
+    @Override
+    public void noMatchDanmu(String videoPath) {
+        String danmuPath = videoPath.substring(0, videoPath.lastIndexOf("."))+ ".xml";
+        File file = new File(danmuPath);
+        if (file.exists()){
+            selectVideoBean.setDanmuPath(danmuPath);
+            ToastUtils.showShort("匹配到相同目录下同名弹幕");
+        }else {
+            String ext = FileUtils.getFileExtension(videoPath);
+            String name = FileUtils.getFileName(videoPath).replace(ext, "xml");
+            danmuPath = AppConfigShare.getInstance().getDownloadFolder()+ "/" + name;
+            file = new File(danmuPath);
+            if (file.exists()){
+                selectVideoBean.setDanmuPath(danmuPath);
+                ToastUtils.showShort("匹配到下载目录下同名弹幕");
+            }
+        }
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("title", selectVideoBean.getVideoName());
+        intent.putExtra("path",selectVideoBean.getVideoPath());
+        intent.putExtra("danmu_path",selectVideoBean.getDanmuPath());
+        intent.putExtra("current", selectVideoBean.getCurrentPosition());
+        intent.putExtra("episode_id", selectVideoBean.getEpisodeId());
+        startActivity(intent);
     }
 
     public void sort(int type){

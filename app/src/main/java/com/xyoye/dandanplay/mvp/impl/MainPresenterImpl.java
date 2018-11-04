@@ -59,20 +59,22 @@ public class MainPresenterImpl extends BaseMvpPresenter<MainView> implements Mai
             @Override
             public void onSuccess(AnimeTypeBean animeTypeBean) {
                 if (animeTypeBean != null && animeTypeBean.getTypes() != null && animeTypeBean.getTypes().size() > 0){
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[4], "", new String[]{});
+                    new Thread(() -> {
+                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[4], "", new String[]{});
 
-                    ContentValues firstValues = new ContentValues();
-                    firstValues.put(DataBaseInfo.getFieldNames()[4][1], -1);
-                    firstValues.put(DataBaseInfo.getFieldNames()[4][2], "全部");
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, firstValues);
+                        ContentValues firstValues = new ContentValues();
+                        firstValues.put(DataBaseInfo.getFieldNames()[4][1], -1);
+                        firstValues.put(DataBaseInfo.getFieldNames()[4][2], "全部");
+                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, firstValues);
 
-                    for (AnimeTypeBean.TypesBean typesBean : animeTypeBean.getTypes()){
-                        ContentValues values = new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[4][1],typesBean.getId());
-                        values.put(DataBaseInfo.getFieldNames()[4][2],typesBean.getName());
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, values);
-                    }
+                        for (AnimeTypeBean.TypesBean typesBean : animeTypeBean.getTypes()){
+                            ContentValues values = new ContentValues();
+                            values.put(DataBaseInfo.getFieldNames()[4][1],typesBean.getId());
+                            values.put(DataBaseInfo.getFieldNames()[4][2],typesBean.getName());
+                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, values);
+                        }
+                    }).start();
                 }
             }
 
@@ -88,23 +90,25 @@ public class MainPresenterImpl extends BaseMvpPresenter<MainView> implements Mai
         SubGroupBean.getSubGroup(new CommOtherDataObserver<SubGroupBean>(getLifeful()) {
             @Override
             public void onSuccess(SubGroupBean subGroupBean) {
-                if (subGroupBean != null && subGroupBean.getSubgroups() != null && subGroupBean.getSubgroups().size() > 0){
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[5], "", new String[]{});
+                new Thread(() -> {
+                    if (subGroupBean != null && subGroupBean.getSubgroups() != null && subGroupBean.getSubgroups().size() > 0){
+                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[5], "", new String[]{});
 
-                    //全部
-                    ContentValues firstValues = new ContentValues();
-                    firstValues.put(DataBaseInfo.getFieldNames()[5][1], -1);
-                    firstValues.put(DataBaseInfo.getFieldNames()[5][2], "全部");
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, firstValues);
+                        //全部
+                        ContentValues firstValues = new ContentValues();
+                        firstValues.put(DataBaseInfo.getFieldNames()[5][1], -1);
+                        firstValues.put(DataBaseInfo.getFieldNames()[5][2], "全部");
+                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, firstValues);
 
-                    for (SubGroupBean.SubgroupsBean subgroupsBean : subGroupBean.getSubgroups()){
-                        ContentValues values = new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[5][1],subgroupsBean.getId());
-                        values.put(DataBaseInfo.getFieldNames()[5][2],subgroupsBean.getName());
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, values);
+                        for (SubGroupBean.SubgroupsBean subgroupsBean : subGroupBean.getSubgroups()){
+                            ContentValues values = new ContentValues();
+                            values.put(DataBaseInfo.getFieldNames()[5][1],subgroupsBean.getId());
+                            values.put(DataBaseInfo.getFieldNames()[5][2],subgroupsBean.getName());
+                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, values);
+                        }
                     }
-                }
+                }).start();
             }
 
             @Override

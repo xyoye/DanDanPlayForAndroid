@@ -54,6 +54,7 @@ public class TorrentTask{
         torrent.setEpisodeId(oldTorrent.getEpisodeId());
         torrent.setDanmuPath(oldTorrent.getDanmuPath());
         torrent.setDone(oldTorrent.isDone());
+        torrent.setMagnet(oldTorrent.getMagnet());
 
         byte[] torrentData;
         File torrentFile = new File(oldTorrent.getPath());

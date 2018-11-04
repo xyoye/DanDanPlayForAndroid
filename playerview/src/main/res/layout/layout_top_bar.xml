@@ -501,6 +501,67 @@
                     android:layout_marginStart="10dp"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
+                    android:text="时间调节"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/danmu_extra_time_reduce"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:background="#33ffffff"
+                            android:text="—"/>
+                        <EditText
+                            android:id="@+id/danmu_extra_time_et"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:theme="@style/BlockEditText"
+                            android:gravity="center"
+                            android:imeOptions="actionDone"
+                            android:maxLines="1"
+                            android:maxLength="50"
+                            android:textColor="@android:color/white"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            android:text="0.0"/>
+                        <TextView
+                            android:id="@+id/danmu_extra_time_add"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:background="#33ffffff"
+                            android:text="+"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
                     android:text="弹幕屏蔽"/>
 
                 <LinearLayout
@@ -519,8 +580,8 @@
                         android:orientation="vertical">
                         <ImageView
                             android:id="@+id/mobile_danmu_iv"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@mipmap/ic_mobile_unselect"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -538,8 +599,8 @@
                         android:orientation="vertical">
                         <ImageView
                             android:id="@+id/bottom_danmu_iv"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@mipmap/ic_bottom_unselect"/>
                         <TextView
                             android:layout_width="wrap_content"
@@ -557,8 +618,8 @@
                         android:orientation="vertical">
                         <ImageView
                             android:id="@+id/top_danmu_iv"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:src="@mipmap/ic_top_unselect"/>
                         <TextView
                             android:layout_width="wrap_content"

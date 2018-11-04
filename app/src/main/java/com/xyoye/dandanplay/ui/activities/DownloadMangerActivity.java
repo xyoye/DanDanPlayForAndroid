@@ -121,10 +121,12 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
     public void startNewTask(){
         String torrentPath = getIntent().getStringExtra("torrent_path");
         String animeFolder = getIntent().getStringExtra("anime_folder");
+        String torrentMagnet = getIntent().getStringExtra("torrent_magnet");
         if (!StringUtils.isEmpty(torrentPath)) {
             Torrent torrent = new Torrent();
             torrent.setPath(torrentPath);
             torrent.setFolder(animeFolder+"/");
+            torrent.setMagnet(torrentMagnet);
             EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_START, torrent));
         }
         mHandler.sendEmptyMessageDelayed(0, 1000);

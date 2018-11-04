@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -31,6 +33,8 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
 
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
+    @BindView(R.id.auto_load_danmu_sw)
+    Switch autoLoadDanmuSw;
     @BindView(R.id.download_rl)
     RelativeLayout downloadRl;
     @BindView(R.id.version_rl)
@@ -60,6 +64,9 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         }
         version = AppConfigShare.getLocalVersion(this);
         versionTv.setText(version);
+        if (AppConfigShare.getInstance().isAutoLoadDanmu()){
+            autoLoadDanmuSw.setChecked(true);
+        }
     }
 
     @Override
@@ -69,6 +76,10 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
+
+        autoLoadDanmuSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            AppConfigShare.getInstance().setAutoLoadDanmu(isChecked);
+        });
     }
 
     @NonNull
@@ -87,7 +98,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         switch (v.getId()){
             case R.id.path_rl:
                 Intent intent = new Intent(SettingActivity.this, FileManagerActivity.class);
-                intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
+                intent.putExtra("file_type", FileManagerActivity.DEFAULT_FOLDER);
                 startActivityForResult(intent, SELECT_SETTING_FOLDER);
                 break;
             case R.id.download_rl:

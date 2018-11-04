@@ -27,35 +27,27 @@ public class UserInfoShare {
     }
 
     public String getUserScreenName(){
-        return getShare().decryptLoad(Config.AppConfig.USER_SCREEN_NAME);
+        return getShare().load(Config.AppConfig.USER_SCREEN_NAME, "");
     }
 
     public void saveUserScreenName(String userScreenName){
-        getShare().encryptSave(Config.AppConfig.USER_SCREEN_NAME, userScreenName);
+        getShare().save(Config.AppConfig.USER_SCREEN_NAME, userScreenName);
     }
 
     public String getUserName(){
-        return getShare().decryptLoad(Config.AppConfig.USER_NAME);
+        return getShare().load(Config.AppConfig.USER_NAME, "");
     }
 
     public void saveUserName(String username){
-        getShare().encryptSave(Config.AppConfig.USER_NAME, username);
-    }
-
-    public String getUserPassword(){
-        return getShare().decryptLoad(Config.AppConfig.USER_NAME);
-    }
-
-    public void saveUserPassword(String username){
-        getShare().encryptSave(Config.AppConfig.USER_NAME, username);
+        getShare().save(Config.AppConfig.USER_NAME, username);
     }
 
     public String getUserImage(){
-        return getShare().decryptLoad(Config.AppConfig.USER_IMAGE);
+        return getShare().load(Config.AppConfig.USER_IMAGE, "");
     }
 
     public void saveUserImage(String userImage){
-        getShare().encryptSave(Config.AppConfig.USER_IMAGE, userImage);
+        getShare().save(Config.AppConfig.USER_IMAGE, userImage);
     }
 
     public boolean isLogin(){

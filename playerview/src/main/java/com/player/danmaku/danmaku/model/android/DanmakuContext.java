@@ -132,8 +132,7 @@ public class DanmakuContext implements Cloneable {
     public byte updateMethod = 0;
 
     /**
-     * set typeface
-     * 
+     * 设置字体类型
      * @param font
      */
     public DanmakuContext setTypeface(Typeface font) {
@@ -146,6 +145,11 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
+    /**
+     * 设置透明度
+     * @param p
+     * @return
+     */
     public DanmakuContext setDanmakuTransparency(float p) {
         int newTransparency = (int) (p * AlphaValue.MAX);
         if (newTransparency != transparency) {
@@ -156,6 +160,11 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
+    /**
+     * 设置字体大小
+     * @param p
+     * @return
+     */
     public DanmakuContext setScaleTextSize(float p) {
         if (scaleTextSize != p) {
             scaleTextSize = p;
@@ -168,6 +177,11 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
+    /**
+     * 设置弹幕边距
+     * @param m
+     * @return
+     */
     public DanmakuContext setDanmakuMargin(int m) {
         if (margin != m) {
             margin = m;
@@ -179,6 +193,11 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
+    /**
+     * 设置弹幕距离顶部距离
+     * @param m
+     * @return
+     */
     public DanmakuContext setMarginTop(int m) {
         mDisplayer.setAllMarginTop(m);
         return this;
@@ -217,6 +236,11 @@ public class DanmakuContext implements Cloneable {
         filter.setData(data);
     }
 
+    /**
+     * 是否显示弹幕
+     * @param visible
+     * @param type
+     */
     private void setDanmakuVisible(boolean visible, int type) {
         if (visible) {
             mFilterTypes.remove(Integer.valueOf(type));
@@ -225,6 +249,11 @@ public class DanmakuContext implements Cloneable {
         }
     }
 
+    /**
+     * 移除所有屏蔽的关键词
+     * @param keywords
+     * @return
+     */
     public DanmakuContext removeKeyWordBlackList(String... keywords){
         if (keywords == null){
             return this;
@@ -238,10 +267,9 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
-    /*
-    *添加屏蔽关键词
-    * @param keyWords
-    * @return
+    /**
+     *添加屏蔽关键词
+     * @return
      */
     public DanmakuContext addBlockKeyWord(String... keywords){
         if (keywords == null){
@@ -254,6 +282,10 @@ public class DanmakuContext implements Cloneable {
         return this;
     }
 
+    /**
+     * 获取屏蔽的关键词列表
+     * @return
+     */
     public List<String> getKeyWordBlackList(){
         return mUserKeyWordBlackList;
     }
@@ -449,7 +481,12 @@ public class DanmakuContext implements Cloneable {
         notifyConfigureChanged(DanmakuConfigTag.USER_HASH_BLACK_LIST, mUserHashBlackList);
         return this;
     }
-    
+
+    /**
+     * 移除屏蔽弹幕用户hash
+     * @param hashes
+     * @return
+     */
     public DanmakuContext removeUserHashBlackList(String... hashes){
         if(hashes == null || hashes.length == 0) {
             return this;
@@ -501,7 +538,10 @@ public class DanmakuContext implements Cloneable {
         notifyConfigureChanged(DanmakuConfigTag.USER_ID_BLACK_LIST, mUserIdBlackList);
         return this;
     }
-    
+
+    /**
+     * 移除屏蔽弹幕用户id , 0 表示游客弹幕
+     */
     public DanmakuContext removeUserIdBlackList(Integer... ids){
         if(ids == null || ids.length == 0) {
             return this;

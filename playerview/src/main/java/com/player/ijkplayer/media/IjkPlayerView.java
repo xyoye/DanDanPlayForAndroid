@@ -1254,18 +1254,23 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         }else if (id == R.id.speed50_tv){
             mVideoView.setSpeed(0.5f);
+            mDanmakuContext.setDanmuTimeRate(0.5f);
             setPlayerSpeedView(1);
         }else if (id == R.id.speed75_tv){
             mVideoView.setSpeed(0.75f);
+            mDanmakuContext.setDanmuTimeRate(0.75f);
             setPlayerSpeedView(2);
         }else if (id == R.id.speed100_tv){
             mVideoView.setSpeed(1.0f);
+            mDanmakuContext.setDanmuTimeRate(1.0f);
             setPlayerSpeedView(3);
         }else if (id == R.id.speed125_tv){
             mVideoView.setSpeed(1.25f);
+            mDanmakuContext.setDanmuTimeRate(1.25f);
             setPlayerSpeedView(4);
         }else if (id == R.id.speed150_tv){
             mVideoView.setSpeed(1.5f);
+            mDanmakuContext.setDanmuTimeRate(1.5f);
             setPlayerSpeedView(5);
         }else if (id == R.id.subtitle_extra_time_reduce){
             extraUpdateTime -= 0.5f;

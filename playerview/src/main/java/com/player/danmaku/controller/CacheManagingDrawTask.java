@@ -688,10 +688,10 @@ public class CacheManagingDrawTask extends DrawTask {
                 IDanmakus danmakus = null;
                 try {
                     long begin = mTimer.currMillisecond;
-                    long end = begin + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * 2;
+                    long end = begin + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate()) * 2;
                     danmakus = danmakuList.subnew(begin - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION, end);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 if (danmakus == null || danmakus.isEmpty()) {
                     return;
@@ -722,7 +722,7 @@ public class CacheManagingDrawTask extends DrawTask {
             private long prepareCaches(final boolean repositioned) {
                 preMeasure();
                 final long curr = mCacheTimer.currMillisecond - 30;
-                final long end = curr + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mScreenSize;
+                final long end = curr + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mScreenSize * mContext.getDanmuTimeRate());
                 if (end < mTimer.currMillisecond) {
                     return 0;
                 }

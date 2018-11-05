@@ -74,6 +74,11 @@ public class DanmakuContext implements Cloneable {
      */
     public float scrollSpeedFactor = 1.0f;
 
+    /**
+     * 播放时间倍率，用于倍速
+     */
+    public float speedTimeRate;
+
     public AbsDanmakuSync danmakuSync;
 
     List<String> mUserKeyWordBlackList = new ArrayList<String>();
@@ -175,6 +180,19 @@ public class DanmakuContext implements Cloneable {
             notifyConfigureChanged(DanmakuConfigTag.SCALE_TEXTSIZE, p);
         }
         return this;
+    }
+
+    /**
+     * 设置弹幕倍速
+     * 思路：当前时间是1秒，倍速1.5时播放时间在1-2.5秒内弹幕
+     * 播放速度调到1.5倍影响体验
+     */
+    public void setDanmuTimeRate(float rate){
+        speedTimeRate = rate;
+    }
+
+    public float getDanmuTimeRate(){
+        return speedTimeRate;
     }
 
     /**

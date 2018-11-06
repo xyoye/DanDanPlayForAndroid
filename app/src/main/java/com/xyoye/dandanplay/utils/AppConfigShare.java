@@ -40,12 +40,12 @@ public class AppConfigShare {
     }
 
 
-    public String getSDFolder(){
+    public String getSDFolderUri(){
         return getShare().load(Config.AppConfig.LOCAL_SDCARD_FOLDER, "");
     }
 
-    public void setSDFolder(String uriPath){
-        getShare().save(Config.AppConfig.LOCAL_SDCARD_FOLDER, uriPath);
+    public void setSDFolderUri(String uri){
+        getShare().save(Config.AppConfig.LOCAL_SDCARD_FOLDER, uri);
     }
 
     /**

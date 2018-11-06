@@ -181,10 +181,6 @@ public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> imple
 
     private void selectedFolder(){
         String folder = pathTv.getText().toString();
-        if (fileType == DEFAULT_FOLDER && !folder.startsWith(FileUtils.Base_Path)){
-            ToastUtils.showShort("暂不支持外部储存作为缓存路径");
-            return;
-        }
         Intent intent = getIntent();
         intent.putExtra("folder", folder);
         setResult(RESULT_OK, intent);

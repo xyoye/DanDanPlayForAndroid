@@ -46,7 +46,6 @@ import butterknife.OnClick;
  * Created by YE on 2018/10/13.
  */
 
-
 public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> implements SearchMagnetView {
 
     @BindView(R.id.toolbar)
@@ -170,11 +169,6 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
     @Override
     public void showLoading(String text) {
         showLoadingDialog(text, false);
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

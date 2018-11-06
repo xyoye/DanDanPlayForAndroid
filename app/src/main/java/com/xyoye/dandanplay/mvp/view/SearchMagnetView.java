@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.mvp.view;
 
-import android.content.Context;
-
 import com.xyoye.core.interf.view.BaseMvpView;
 import com.xyoye.core.interf.view.LoadDataView;
 import com.xyoye.dandanplay.bean.MagnetBean;
@@ -22,6 +20,4 @@ public interface SearchMagnetView extends BaseMvpView, LoadDataView {
     void downloadTorrentOver(String torrentPath, String magnet);
 
     void showLoading(String text);
-
-    Context getContext();
 }

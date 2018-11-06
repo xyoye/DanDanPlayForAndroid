@@ -203,6 +203,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 EventBus.getDefault().post(new ListFolderEvent(folderPath));
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 

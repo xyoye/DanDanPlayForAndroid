@@ -29,7 +29,6 @@ import butterknife.BindView;
 
 public class SettingActivity extends BaseActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     public final static int SELECT_SETTING_FOLDER = 105;
-    private static final int DIRECTORY_CHOOSE_REQ_CODE = 106;
 
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
@@ -49,19 +48,13 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
     TextView pathTv;
 
     private String version;
-    private String SDCardPath;
 
     @Override
     public void initView() {
         setTitle("设置");
 
         String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
-        if (downloadPath.startsWith(FileUtils.Base_Path)){
-            pathTv.setText(downloadPath);
-        }else {
-            String SDPath = AppConfigShare.getInstance().getSDFolder();
-            pathTv.setText(SDPath);
-        }
+        pathTv.setText(downloadPath);
         version = AppConfigShare.getLocalVersion(this);
         versionTv.setText(version);
         if (AppConfigShare.getInstance().isAutoLoadDanmu()){
@@ -147,30 +140,8 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         if (resultCode == RESULT_OK){
             if (requestCode == SELECT_SETTING_FOLDER){
                 String folderPath = data.getStringExtra("folder");
-                //根据系统根目录判断是否为SD卡路径
-                if (folderPath.startsWith(FileUtils.Base_Path)){
-                    pathTv.setText(folderPath);
-                    AppConfigShare.getInstance().setDownloadFolder(folderPath);
-                }else {
-                    ToastUtils.showShort("SD卡目录需由系统授权，请再次选择目录");
-                    SDCardPath = folderPath;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        startActivityForResult(intent, DIRECTORY_CHOOSE_REQ_CODE);
-                    }
-                }
-            } else if(requestCode == DIRECTORY_CHOOSE_REQ_CODE){
-                Uri SDCardUri = data.getData();
-                if (SDCardUri != null){
-                    getContentResolver().takePersistableUriPermission(SDCardUri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    pathTv.setText(SDCardPath);
-                    AppConfigShare.getInstance().setSDFolder(SDCardPath);
-                    AppConfigShare.getInstance().setDownloadFolder(SDCardUri.toString());
-                }else {
-                    ToastUtils.showShort("未获取SD卡权限，无法设置修改默认下载路径");
-                }
+                pathTv.setText(folderPath);
+                AppConfigShare.getInstance().setDownloadFolder(folderPath);
             }
         }
     }

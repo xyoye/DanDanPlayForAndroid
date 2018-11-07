@@ -111,7 +111,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         videoInfoRl.setOnLongClickListener(v -> {
             videoActionLl.setVisibility(View.VISIBLE);
-            return false;
+            return true;
         });
 
         closeActionLl.setOnClickListener(v -> videoActionLl.setVisibility(View.GONE));

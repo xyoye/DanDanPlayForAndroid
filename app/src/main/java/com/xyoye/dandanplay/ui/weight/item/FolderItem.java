@@ -55,7 +55,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
 
         mView.setOnLongClickListener(v -> {
             EventBus.getDefault().post(new DeleteFolderEvent(model.getFolderPath()));
-            return false;
+            return true;
         });
     }
 }

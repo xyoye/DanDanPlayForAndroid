@@ -327,7 +327,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                                                 presenter.deleteFile(deleteFolderPath, deleteFileName);
 
                                                 videoBeans.remove(event.getPosition());
-                                                adapter.notifyItemChanged(event.getPosition());
+                                                adapter.notifyDataSetChanged();
                                             }
                                         });
                             }

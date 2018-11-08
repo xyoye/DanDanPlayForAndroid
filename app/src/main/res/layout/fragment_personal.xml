@@ -92,17 +92,14 @@
                         android:text="下载管理"
                         android:textColor="@color/text_black"/>
 
-                    <TextView
+                    <ImageView
                         android:id="@+id/download_manager_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:drawableEnd="@drawable/ic_arrow_right_dark"
-                        android:gravity="center"
-                        android:textColor="@color/text_gray"/>
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_arrow_right_dark"/>
                 </RelativeLayout>
 
                 <View
@@ -120,6 +117,7 @@
                         android:id="@+id/favorite_rl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
                         android:minHeight="40dp">
                         <TextView
                             android:id="@+id/more_favorite_tips"
@@ -131,17 +129,14 @@
                             android:text="@string/my_favorite_tip"
                             android:textColor="@color/text_black"/>
 
-                        <TextView
+                        <ImageView
                             android:id="@+id/more_favorite_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginTop="10dp"
                             android:layout_marginEnd="10dp"
-                            android:drawableEnd="@drawable/ic_arrow_right_dark"
-                            android:gravity="center"
-                            android:textColor="@color/text_gray"/>
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_arrow_right_dark"/>
                     </RelativeLayout>
 
                     <android.support.v7.widget.RecyclerView
@@ -167,6 +162,7 @@
                         android:id="@+id/history_rl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
                         android:minHeight="40dp">
                         <TextView
                             android:id="@+id/more_history_tips"
@@ -178,17 +174,14 @@
                             android:text="@string/play_history_tip"
                             android:textColor="@color/text_black"/>
 
-                        <TextView
+                        <ImageView
                             android:id="@+id/more_history_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginTop="10dp"
                             android:layout_marginEnd="10dp"
-                            android:drawableEnd="@drawable/ic_arrow_right_dark"
-                            android:gravity="center"
-                            android:textColor="@color/text_gray"/>
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_arrow_right_dark"/>
                     </RelativeLayout>
 
                     <android.support.v7.widget.RecyclerView

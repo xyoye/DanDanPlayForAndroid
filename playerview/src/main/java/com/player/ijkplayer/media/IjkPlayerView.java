@@ -1159,10 +1159,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             _showSubtitleSetting(true);
             resetHideControllerBar();
         } else if (id == R.id.speed_fast_tv){
-            if (Math.abs(1 - mVideoView.getSpeed()) > 0.01){
-                Toast.makeText(getContext(), "倍速状态下不能调节弹幕速度", Toast.LENGTH_LONG).show();
-                return;
-            }
             mDanmuSpeedFast.setTextColor(getResources().getColor(R.color.theme_color));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
@@ -1170,10 +1166,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuContext.setScrollSpeedFactor(Constants.DANMU_SPEED_FAST);
             resetHideControllerBar();
         }else if (id == R.id.speed_middle_tv){
-            if (Math.abs(1 - mVideoView.getSpeed()) > 0.01){
-                Toast.makeText(getContext(), "倍速状态下不能调节弹幕速度", Toast.LENGTH_LONG).show();
-                return;
-            }
             mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(R.color.theme_color));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
@@ -1181,10 +1173,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuContext.setScrollSpeedFactor(Constants.DANMU_SPEED_MIDDLE);
             resetHideControllerBar();
         }else if (id == R.id.speed_slow_tv){
-            if (Math.abs(1 - mVideoView.getSpeed()) > 0.01){
-                Toast.makeText(getContext(), "倍速状态下不能调节弹幕速度", Toast.LENGTH_LONG).show();
-                return;
-            }
             mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
             mDanmuSpeedSlow.setTextColor(getResources().getColor(R.color.theme_color));

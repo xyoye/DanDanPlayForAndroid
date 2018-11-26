@@ -27,6 +27,96 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
+        <activity android:name=".ui.activities.FolderActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PlayerSettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.FileManagerActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.DanmuNetworkActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.DownloadBilibiliActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.DownloadMangerActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.WebviewActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.AnimeDetailActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.LoginActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PersonalInfoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PersonalFavoriteActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PersonalHistoryActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.SettingActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.PlayerSettingTipsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.RegisterActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.ResetPasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.ChangePasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.SearchMagnetActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.TorrentActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.LanDeviceDeviceActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.LanFolderActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.LanVideoActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <service android:name=".service.TorrentService"/>
+
+        <service android:name=".service.SmbService"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
         <activity android:name=".ui.activities.PlayerActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden">
@@ -3602,85 +3692,6 @@
                 </data>
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-
-        <activity android:name=".ui.activities.FolderActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.PlayerSettingActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.FileManagerActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.DanmuNetworkActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.DownloadBilibiliActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.DownloadMangerActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.WebviewActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.AnimeDetailActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.LoginActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.PersonalInfoActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.PersonalFavoriteActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.PersonalHistoryActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.SettingActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.PlayerSettingTipsActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.RegisterActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.ResetPasswordActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.ChangePasswordActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.SearchMagnetActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.activities.TorrentActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name="com.tencent.bugly.beta.ui.BetaActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:theme="@android:style/Theme.Translucent" />
-
-        <service android:name=".service.TorrentService"/>
-
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.fileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
     </application>
 
 </manifest>

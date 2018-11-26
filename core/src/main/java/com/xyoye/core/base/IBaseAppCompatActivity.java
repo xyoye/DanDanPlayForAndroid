@@ -8,7 +8,7 @@ import com.xyoye.core.weight.BaseLoadingDialog;
 
 /**
  *
- * Created by yzd on 2016/7/1.
+ * Created by xyy on 2017/6/23.
  */
 public abstract class IBaseAppCompatActivity extends BaseAppCompatActivity {
 

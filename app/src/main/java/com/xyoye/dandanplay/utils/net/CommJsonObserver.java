@@ -13,7 +13,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by yzd on 2017/5/15 0015.
+ * Created by xyy on 2017/5/15
  */
 
 public abstract class CommJsonObserver<T extends CommJsonEntity> implements Observer<T> {

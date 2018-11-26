@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import com.xyoye.core.interf.presenter.BasePresenter;
 
 /**
- * Created by yzd on 2017/2/5 0005.
+ * Created by xyy on 2017/6/23.
  */
 
 public abstract class BaseMvpFragment<T extends BasePresenter> extends BaseAppFragment {

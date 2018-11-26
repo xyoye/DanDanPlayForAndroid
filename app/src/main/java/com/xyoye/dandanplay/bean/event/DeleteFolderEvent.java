@@ -6,9 +6,11 @@ package com.xyoye.dandanplay.bean.event;
 
 public class DeleteFolderEvent {
     private String folderPath;
+    private int position;
 
-    public DeleteFolderEvent(String folderPath) {
+    public DeleteFolderEvent(String folderPath, int position) {
         this.folderPath = folderPath;
+        this.position = position;
     }
 
     public String getFolderPath() {
@@ -17,5 +19,13 @@ public class DeleteFolderEvent {
 
     public void setFolderPath(String folderPath) {
         this.folderPath = folderPath;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

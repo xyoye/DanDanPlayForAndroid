@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
- * Created by yzd on 2017/7/6 0006.
+ * Created by xyy on 2017/6/23.
  */
 
 public class GsonFactory {

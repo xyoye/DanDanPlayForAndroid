@@ -2,8 +2,8 @@ package com.xyoye.dandanplay.bean.params;
 
 import android.content.Context;
 
+import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.utils.Encryptor;
 import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.core.utils.TLog;
@@ -127,7 +127,7 @@ public class RegisterParam implements Serializable {
                     this.unixTimestamp +
                     this.userName +
                     KeyUtil.getAppSecret(context);
-            hash = Encryptor.encryptMD5(builder);
+            hash = EncryptUtils.encryptMD5ToString(builder);
         }
     }
 }

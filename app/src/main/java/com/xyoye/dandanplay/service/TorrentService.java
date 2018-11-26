@@ -16,7 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import com.github.axet.wget.SpeedInfo;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.event.DownloadManagerUpdateEvent;
+import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.TorrentStorage;
@@ -80,7 +80,7 @@ public class TorrentService extends Service {
                     if (t.getPath().endsWith(event.getTorrent().getPath())){
                         iteratorTask.remove();
                         IApplication.torrentStorage.removeHash(t.getHash());
-                        EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                     }
                 }
                 break;
@@ -93,7 +93,7 @@ public class TorrentService extends Service {
                     if (t.getPath().endsWith(event.getTorrent().getPath())){
                         iteratorFile.remove();
                         IApplication.torrentStorage.removeHash(t.getHash());
-                        EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                     }
                 }
                 break;
@@ -120,7 +120,7 @@ public class TorrentService extends Service {
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator.remove();
                 }
-                EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                 break;
             case TorrentEvent.EVENT_ALL_DELETE_FILE:
                 Iterator<Torrent> iterator2 = IApplication.torrentList.iterator();
@@ -131,7 +131,7 @@ public class TorrentService extends Service {
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator2.remove();
                 }
-                EventBus.getDefault().post(new DownloadManagerUpdateEvent());
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                 break;
 
         }

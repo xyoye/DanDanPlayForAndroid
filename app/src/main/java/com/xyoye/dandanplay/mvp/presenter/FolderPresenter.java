@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
 import com.xyoye.core.interf.presenter.BasePresenter;
+import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 
 /**
@@ -9,13 +10,15 @@ import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 
 
 public interface FolderPresenter extends BasePresenter {
-    void refreshVideos();
+    void getVideoList(String folderPath);
 
     void updateDanmu(String danmuPath, int episodeId, String[] whereArgs);
 
     void updateCurrent(SaveCurrentEvent event);
 
-    void deleteFile(String folderPath, String fileName);
+    void deleteFile(String filePath);
 
     void getDanmu(String videoPath);
+
+    void observeService(VideoBean videoBean);
 }

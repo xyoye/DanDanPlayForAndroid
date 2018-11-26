@@ -6,7 +6,7 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 import android.view.Gravity;
 
-import com.xyoye.core.utils.PixelUtil;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.ui.weight.indicator.abs.IMeasurablePagerTitleView;
 
 
@@ -27,7 +27,7 @@ public class SimplePagerTitleView extends android.support.v7.widget.AppCompatTex
 
     private void init(Context context) {
         setGravity(Gravity.CENTER);
-        int padding = PixelUtil.dip2px(context, 10);
+        int padding = ConvertUtils.dp2px(10);
         setPadding(padding, 0, padding, 0);
         setSingleLine();
         setEllipsize(TextUtils.TruncateAt.END);

@@ -13,11 +13,14 @@ import java.util.List;
 
 
 public interface FolderView extends BaseMvpView, LoadDataView {
-    String getFolderPath();
 
     void refreshAdapter(List<VideoBean> beans);
 
     void downloadDanmu(DanmuMatchBean.MatchesBean matchesBean);
 
     void noMatchDanmu(String videoPath);
+
+    void openIntentVideo(VideoBean videoBean);
+
+    Boolean isLan();
 }

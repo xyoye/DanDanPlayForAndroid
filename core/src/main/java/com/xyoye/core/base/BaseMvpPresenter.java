@@ -9,7 +9,7 @@ import com.xyoye.core.rx.Lifeful;
 
 /**
  * mvp中presenter的抽象类
- * Created by yzd on 2016/8/29.
+ * Created by xyy on 2017/6/23.
  */
 public abstract class BaseMvpPresenter<T extends BaseMvpView> implements BasePresenter {
 

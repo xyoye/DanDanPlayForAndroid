@@ -14,7 +14,6 @@ import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
-import com.xyoye.dandanplay.utils.Config;
 import com.xyoye.dandanplay.utils.FindVideoTask;
 
 import java.io.File;
@@ -27,7 +26,6 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -73,10 +71,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         FindVideoTask findVideoTask = new FindVideoTask();
         findVideoTask.setQueryListener(videoList -> {
             for (VideoBean videoBean : videoList){
-                String folderPath = videoBean.getVideoPath();
-                String fileName = videoBean.getVideoName();
+                String filePath = videoBean.getVideoPath();
+                String folderPath = FileUtils.getDirName(filePath);
                 long duration = videoBean.getVideoDuration();
-                saveData(folderPath,fileName, duration);
+                saveData(folderPath, filePath, duration);
             }
             getView().hideLoading();
             getView().refreshAdapter(getFolderList());
@@ -109,11 +107,11 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                                @Override
                                public void onNext(File file) {
                                    try {
-                                       String folderPath = FileUtils.getDirName(file);
-                                       String fileName = FileUtils.getFileName(file);
-                                       fmmr.setDataSource(folderPath +fileName);
+                                       String filePath = file.getAbsolutePath();
+                                       String folderPath = FileUtils.getDirName(filePath);
+                                       fmmr.setDataSource(filePath);
                                        long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
-                                       saveData(folderPath, fileName, duration);
+                                       saveData(folderPath, filePath, duration);
                                    }catch (Exception e){
                                        e.printStackTrace();
                                    }
@@ -145,26 +143,20 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         if(f.isDirectory()){
             return Observable.fromArray(f.listFiles()).flatMap(this::listFiles);
         } else {
-            return Observable.just(f).filter(file -> f.exists() && f.canRead() && isVideo(f));
+            return Observable.just(f).filter(file -> f.exists() && f.canRead() && com.xyoye.dandanplay.utils.FileUtils.isMediaFile(f.getAbsolutePath()));
         }
     }
 
-    private static boolean isVideo(File file){
-        String path = file.getAbsolutePath();
-        String ext = FileUtils.getFileExtension(path).toUpperCase();
-        return Config.videoType.contains(ext);
-    }
-
-    private void saveData(String folderPath, String fileName, long duration){
+    private void saveData(String folderPath, String filePath, long duration){
         ContentValues values=new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
-        values.put(DataBaseInfo.getFieldNames()[2][2], fileName);
+        values.put(DataBaseInfo.getFieldNames()[2][2], filePath);
         values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(duration));
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
                 " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
                 "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, fileName});
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, filePath});
         if (!cursor.moveToNext()) {
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
         }
@@ -177,11 +169,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         Map<String, String> deleteMap = new HashMap<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
 
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path, file_name FROM file",new String[]{});
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path, file_path FROM file",new String[]{});
         while (cursor.moveToNext()){
             String folderPath = cursor.getString(0);
-            String fileName = cursor.getString(1);
-            String filePath = folderPath + "/" + fileName;
+            String filePath = cursor.getString(1);
 
             File file = new File(filePath);
             if (file.exists()){
@@ -192,7 +183,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
                     beanMap.put(folderPath, 1);
                 }
             }else {
-                deleteMap.put(folderPath, fileName);
+                deleteMap.put(folderPath, filePath);
             }
         }
         cursor.close();
@@ -206,7 +197,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         }
 
         for (Map.Entry<String, String> entry : deleteMap.entrySet()){
-            sqLiteDatabase.delete("file", "folder_path=? AND file_name = ?" , new String[]{entry.getKey(), entry.getValue()});
+            sqLiteDatabase.delete("file", "folder_path=? AND file_path = ?" , new String[]{entry.getKey(), entry.getValue()});
         }
         return folderBeanList;
     }

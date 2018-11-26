@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.ServiceUtils;
@@ -13,6 +14,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -56,6 +58,7 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenter<DownloadManag
 
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void observeService() {
         //等待服务开启后增加新任务
@@ -83,26 +86,7 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenter<DownloadManag
             }
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Boolean b) {
-                        getView().startNewTask();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                .subscribe(aBoolean ->
+                        getView().startNewTask());
     }
 }

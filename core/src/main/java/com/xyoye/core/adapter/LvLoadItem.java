@@ -9,12 +9,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.xyoye.core.R;
 import com.xyoye.core.interf.FootLoading;
-import com.xyoye.core.utils.PixelUtil;
 
 /**
- * Created by yzd on 2016/7/16.
+ * Created by xyy on 2017/6/23.
  */
 public class LvLoadItem implements FootLoading {
 
@@ -29,8 +29,8 @@ public class LvLoadItem implements FootLoading {
 
     public LvLoadItem(Context context) {
         itemView = LayoutInflater.from(context).inflate(R.layout.loading_more, null);
-        gloaH = PixelUtil.getScreenH();
-        params = new AbsListView.LayoutParams(PixelUtil.getScreenW(), gloaH / 12);
+        gloaH = ScreenUtils.getScreenHeight();
+        params = new AbsListView.LayoutParams(ScreenUtils.getScreenWidth(), gloaH / 12);
         itemView.setLayoutParams(params);
         tv = itemView.findViewById(R.id.loading_tv);
         bar = itemView.findViewById(R.id.loading_progress);
@@ -79,7 +79,6 @@ public class LvLoadItem implements FootLoading {
                 completeLoading();
             } else {
                 params.height = gloaH / 2;
-                //params.height = PixelUtil.getScreenMetrics(itemView.getContext()).y;
                 itemView.setLayoutParams(params);
                 nothing();
             }

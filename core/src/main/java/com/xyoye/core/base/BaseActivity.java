@@ -9,9 +9,8 @@ import com.xyoye.core.interf.presenter.BasePresenter;
 import com.xyoye.core.weight.BaseLoadingDialog;
 
 /**
- * Created by yzd on 2017/2/5 0005.
+ * Created by xyy on 2017/5/15
  */
-
 public abstract class BaseActivity<T extends BasePresenter> extends BaseMvpActivity<T> {
 
     protected Dialog dialog;

@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class FileUtils {
         return "";
     }
     public static boolean isMediaFile(String fileName){
-        switch (getFileExt(fileName)){
+        switch (getFileExt(fileName).toLowerCase()){
             case ".avi":
             case ".mp4":
             case ".m4v":
@@ -128,5 +130,34 @@ public class FileUtils {
             ee.printStackTrace();
         }
         return stringList;
+    }
+
+    public static byte[] getBytesOfMd5(InputStream is) throws IOException {
+        byte[] buffer = new byte[1024];
+        MessageDigest complete = null;
+        try {
+            complete = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+
+        int numRead;
+        do {
+            numRead = is.read(buffer);
+            if (numRead > 0) {
+                complete.update(buffer, 0, numRead);
+            }
+        } while (numRead != -1);
+
+        is.close();
+
+        byte[] hash = complete.digest();
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash)
+            sb.append(String.format("%02x", b & 0xFF));
+        String hexHash = sb.toString();
+
+        System.out.println("smbFile hash: "+hexHash);
+        return complete.digest();
     }
 }

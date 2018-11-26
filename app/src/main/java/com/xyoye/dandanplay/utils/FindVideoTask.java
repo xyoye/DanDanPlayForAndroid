@@ -62,8 +62,7 @@ public class FindVideoTask extends AsyncTask<Context, Integer, List<VideoBean>> 
                 continue;
             }
             VideoBean videoBean = new VideoBean();
-            videoBean.setVideoPath(FileUtils.getDirName(file));
-            videoBean.setVideoName(FileUtils.getFileName(file));
+            videoBean.setVideoPath(file.getAbsolutePath());
             videoBean.setVideoDuration(cursor.getLong(
                     cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
             videoList.add(videoBean);

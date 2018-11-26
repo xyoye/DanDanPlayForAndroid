@@ -5,10 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.PixelUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
@@ -80,7 +80,7 @@ public class AnimeItem implements AdapterItem<AnimeBeans.BangumiListBean> {
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .transform(new CornersCenterCrop(PixelUtil.dip2px(mView.getContext(), 5)));
+                .transform(new CornersCenterCrop(ConvertUtils.dp2px(5)));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())

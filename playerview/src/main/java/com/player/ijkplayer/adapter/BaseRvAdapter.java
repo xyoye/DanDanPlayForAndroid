@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by yzd on 2016/6/21.
+ * Created by xyy on 2017/9/15
  * RecyclerView 通用Adapter
  * 需要不同Item显示的，请重写getItemViewType(int position);
  * 建议用枚举类定义Item的类型

@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ServiceUtils;
@@ -20,6 +19,7 @@ import com.xyoye.core.base.BaseAppFragment;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.ListFolderEvent;
+import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     private PersonalFragment personalFragment;
     private BaseAppFragment previousFragment;
 
-    private MenuItem menuMainItem;
+    private MenuItem menuMainItem, menuLanItem;
     private int fragFlag = 1;
 
     private long touchTime = 0;
@@ -97,6 +97,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @Override
     public void initListener() {
         navigationView.setOnNavigationItemSelectedListener(item -> {
+            if (playFragment != null)
+                playFragment.unrigisterEventBus();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     setTitle("公告与番组");
@@ -108,6 +110,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     }
                     previousFragment = homeFragment;
                     menuMainItem.setVisible(false);
+                    menuLanItem.setVisible(false);
                     fragFlag = 0;
                     return true;
                 case R.id.navigation_play:
@@ -118,8 +121,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     } else {
                         mDelegate.showHideFragment(playFragment, previousFragment);
                     }
+                    playFragment.registerEventBus();
                     previousFragment = playFragment;
                     menuMainItem.setVisible(true);
+                    menuLanItem.setVisible(true);
                     menuMainItem.setTitle("添加文件夹");
                     menuMainItem.setIcon(R.drawable.ic_add);
                     fragFlag = 1;
@@ -134,6 +139,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     }
                     previousFragment = personalFragment;
                     menuMainItem.setVisible(true);
+                    menuLanItem.setVisible(false);
                     menuMainItem.setTitle("设置");
                     menuMainItem.setIcon(R.drawable.ic_settings_white);
                     fragFlag = 2;
@@ -172,7 +178,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menuMainItem = menu.findItem(R.id.menu_item_mian);
+        menuLanItem = menu.findItem(R.id.menu_item_lan);
         menuMainItem.setVisible(true);
+        menuLanItem.setVisible(true);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -188,6 +196,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 }else if (fragFlag == 2){
                     launchActivity(SettingActivity.class);
                 }
+                break;
+            case R.id.menu_item_lan:
+                launchActivity(LanFolderActivity.class);
+                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -206,5 +218,23 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (navigationView != null){
+            if (navigationView.getSelectedItemId() == R.id.navigation_play){
+                if (playFragment != null){
+                    playFragment.registerEventBus();
+                }
+            }
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (playFragment != null){
+            playFragment.unrigisterEventBus();
+        }
+    }
 }

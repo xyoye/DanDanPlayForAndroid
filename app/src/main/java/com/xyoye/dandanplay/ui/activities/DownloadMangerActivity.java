@@ -21,7 +21,7 @@ import com.xyoye.core.base.BaseActivity;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.event.DownloadManagerUpdateEvent;
+import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
@@ -226,7 +226,8 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
     }
 
     @Subscribe
-    public void onEvent(DownloadManagerUpdateEvent event){
-        adapter.notifyDataSetChanged();
+    public void onEvent(MessageEvent event){
+        if (event.getMsg() == MessageEvent.UPDATE_DOWNLOAD_MANAGER)
+            adapter.notifyDataSetChanged();
     }
 }

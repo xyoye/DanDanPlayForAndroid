@@ -5,6 +5,12 @@
     tools:context=".ui.activities.MainActivity">
 
     <item
+        android:id="@+id/menu_item_lan"
+        android:orderInCategory="100"
+        android:title="局域网"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/menu_item_mian"
         android:orderInCategory="100"
         android:title="添加文件夹"

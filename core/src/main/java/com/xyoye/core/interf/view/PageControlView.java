@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * 数据翻页填充控制
- * Created by yzd on 2016/7/19.
+ * Created by xyy on 2017/6/23.
  */
 public interface PageControlView<T> {
 

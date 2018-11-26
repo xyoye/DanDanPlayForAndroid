@@ -52,7 +52,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * onDestroy()              | Destroyed
  * onDetach()               |
  * ----------------------------------
- * Created by yzd on 2015/12/2.
+ * Created by xyy on 2017/6/23.
  */
 public abstract class BaseAppFragment extends Fragment implements IBaseView, Lifeful, ISupportFragment  {
 

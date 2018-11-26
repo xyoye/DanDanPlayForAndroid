@@ -6,14 +6,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ScreenUtils;
 import com.xyoye.core.R;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.core.interf.FootLoading;
-import com.xyoye.core.utils.PixelUtil;
 
 
 /**
- * Created by yzd on 2016/1/3.
+ * Created by xyy on 2017/9/15
  */
 public class LoadMoreItem implements AdapterItem, FootLoading {
 
@@ -47,7 +47,7 @@ public class LoadMoreItem implements AdapterItem, FootLoading {
 
     @Override
     public void initItemViews(View itemView) {
-        gloaH = PixelUtil.getScreenH();
+        gloaH = ScreenUtils.getScreenHeight();
         this.itemView = itemView;
         tv = itemView.findViewById(R.id.loading_tv);
         bar = itemView.findViewById(R.id.loading_progress);

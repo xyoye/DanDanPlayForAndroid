@@ -23,7 +23,7 @@ import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
 /**
- * Created by yzd on 2016/6/23.
+ * Created by xyy on 2017/6/23.
  */
 public class PersistentCookieStore {
     private static final String LOG_TAG = "PersistentCookieStore";

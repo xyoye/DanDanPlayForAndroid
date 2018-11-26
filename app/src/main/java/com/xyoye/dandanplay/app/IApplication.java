@@ -24,7 +24,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.util.Base64;
 import android.util.Log;
@@ -36,7 +35,6 @@ import com.xyoye.core.BaseApplication;
 import com.xyoye.core.db.DataBaseHelper;
 import com.xyoye.core.db.DataBaseInfo;
 import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.utils.AppHelper;
 import com.xyoye.core.utils.KeyUtil;
 import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.utils.FileUtils;
@@ -65,12 +63,11 @@ public class IApplication extends BaseApplication {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onCreate() {
-        if (!isDebug())
-            AppHelper.setDebug(true);
 
         TLog.i("onCreate");
         super.onCreate();
         MultiDex.install(this);
+        TLog.DEBUG = true;
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
         initDatabase(new DataBaseHelper(this));
         PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
@@ -81,18 +78,6 @@ public class IApplication extends BaseApplication {
                 .stackViewMode(Fragmentation.NONE)
                 .debug(BuildConfig.DEBUG)
                 .install();
-    }
-
-    private void strictModeConfig() {
-        if (DEBUG) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectAll()
-                    .penaltyDialog()
-                    .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectAll()
-                    .build());
-        }
     }
 
     public static ThreadPoolExecutor getExecutor() {

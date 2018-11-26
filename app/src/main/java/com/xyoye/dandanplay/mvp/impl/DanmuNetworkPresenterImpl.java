@@ -35,18 +35,24 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
     public void init() {
         getView().showLoading();
         String videoPath = getView().getVideoPath();
+
         if (StringUtils.isEmpty(videoPath)) return;
-        String title = FileUtils.getFileName(videoPath);
-        String hash = SearchDanmuUtil.getVideoFileHash(videoPath);
-        long length = new File(videoPath).length();
-        long duration = SearchDanmuUtil.getVideoDuration(videoPath);
-        DanmuMatchParam param = new DanmuMatchParam();
-        param.setFileName(title);
-        param.setFileHash(hash);
-        param.setFileSize(length);
-        param.setVideoDuration(duration);
-        param.setMatchMode("hashAndFileName");
-        matchDanmu(param);
+        if (!getView().isLan()){
+            String title = FileUtils.getFileName(videoPath);
+            String hash = SearchDanmuUtil.getVideoFileHash(videoPath);
+            long length = new File(videoPath).length();
+            long duration = SearchDanmuUtil.getVideoDuration(videoPath);
+            DanmuMatchParam param = new DanmuMatchParam();
+            param.setFileName(title);
+            param.setFileHash(hash);
+            param.setFileSize(length);
+            param.setVideoDuration(duration);
+            param.setMatchMode("hashAndFileName");
+            matchDanmu(param);
+        }else {
+            String anime = FileUtils.getFileNameNoExtension(videoPath);
+            searchDanmu(anime, "");
+        }
     }
 
     @Override

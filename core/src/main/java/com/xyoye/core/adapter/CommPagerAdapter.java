@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 
 /**
  *
- * Created by yzd on 2016/6/23.
+ * Created by xyy on 2017/6/23.
  */
 public abstract class CommPagerAdapter<T> extends BasePagerAdapter<View> implements IAdapter<T> {
 

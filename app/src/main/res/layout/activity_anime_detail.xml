@@ -4,11 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        layout="@layout/layout_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp" />
+    <include layout="@layout/layout_toolbar"/>
 
     <com.xyoye.dandanplay.ui.weight.ScrollableLayout
         android:id="@+id/scroll_layout"

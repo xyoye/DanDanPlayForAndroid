@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * application基类
- * Created by yzd on 2016/6/17.
+ * Created by xyy on 2017/6/17.
  */
 public class BaseApplication extends Application {
 

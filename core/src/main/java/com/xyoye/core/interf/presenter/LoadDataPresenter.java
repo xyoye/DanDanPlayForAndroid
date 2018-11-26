@@ -2,7 +2,7 @@ package com.xyoye.core.interf.presenter;
 
 /**
  * 数据接口
- * Created by yzd on 2016/7/19.
+ * Created by xyy on 2017/6/23.
  */
 public interface LoadDataPresenter {
 

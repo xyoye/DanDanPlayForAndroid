@@ -2,7 +2,7 @@ package com.xyoye.core.interf.view;
 
 /**
  * 网络状态处理接口
- * Created by yzd on 2016/7/7.
+ * Created by xyy on 2017/6/23.
  */
 public interface NetworkView{
 

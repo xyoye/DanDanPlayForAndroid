@@ -16,7 +16,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 /**
- * Created by yzd on 2015/12/25.
+ * Created by xyy on 2017/9/15
  * ListView 通用Adapter
  * 需要不同Item显示的，请重写getItemViewType(int position);
  * 建议用枚举类定义Item的类型

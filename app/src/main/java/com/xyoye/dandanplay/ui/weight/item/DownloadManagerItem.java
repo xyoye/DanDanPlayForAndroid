@@ -20,7 +20,6 @@ import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
-import com.xyoye.dandanplay.utils.Config;
 import com.xyoye.dandanplay.utils.FileUtils;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
@@ -150,8 +149,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
-                    String ext = com.blankj.utilcode.util.FileUtils.getFileExtension(playFile.getPath()).toUpperCase();
-                    if (Config.videoType.contains(ext)) {
+                    if (FileUtils.isMediaFile(playFile.getPath())) {
                         String videoTitle = playFile.getPath();
                         if (!torrent.getFolder().endsWith("/")) torrent.setFolder(torrent.getFolder() + "/");
                         String path = torrent.getFolder() + videoTitle;
@@ -177,8 +175,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
-                    String ext = com.blankj.utilcode.util.FileUtils.getFileExtension(playFile.getPath()).toUpperCase();
-                    if (Config.videoType.contains(ext)) {
+                    if (FileUtils.isMediaFile(playFile.getPath())) {
                         String path = torrent.getFolder() + "/" + playFile.getPath();
                         Intent intent = new Intent(context, DanmuNetworkActivity.class);
                         intent.putExtra("path", path);

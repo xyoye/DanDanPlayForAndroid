@@ -9,15 +9,15 @@ import java.io.Serializable;
 
 public class SaveCurrentEvent implements Serializable {
     private String folderPath;
-    private String videoName;
+    private String videoPath;
     private int currentPosition;
 
     public SaveCurrentEvent() {
     }
 
-    public SaveCurrentEvent(String folderPath, String videoName, int currentPosition) {
+    public SaveCurrentEvent(String folderPath, String videoPath, int currentPosition) {
         this.folderPath = folderPath;
-        this.videoName = videoName;
+        this.videoPath = videoPath;
         this.currentPosition = currentPosition;
     }
 
@@ -29,12 +29,12 @@ public class SaveCurrentEvent implements Serializable {
         this.folderPath = folderPath;
     }
 
-    public String getVideoName() {
-        return videoName;
+    public String getVideoPath() {
+        return videoPath;
     }
 
-    public void setVideoName(String videoName) {
-        this.videoName = videoName;
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 
     public int getCurrentPosition() {

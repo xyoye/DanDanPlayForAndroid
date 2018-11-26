@@ -6,7 +6,7 @@ import java.util.Collection;
  *  领域模型映射
  *  T 模型类型
  *  K 领域类型
- * Created by yzd on 2016/5/11.
+ * Created by xyy on 2017/6/23.
  */
 public interface Mapper<T, K> {
 

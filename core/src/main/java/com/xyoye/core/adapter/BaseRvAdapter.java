@@ -16,7 +16,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 /**
- * Created by yzd on 2016/6/21.
+ * Created by xyy on 2017/6/23.
  * RecyclerView 通用Adapter
  * 需要不同Item显示的，请重写getItemViewType(int position);
  * 建议用枚举类定义Item的类型

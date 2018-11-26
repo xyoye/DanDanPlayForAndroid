@@ -12,7 +12,7 @@ import com.google.gson.JsonSyntaxException;
 import java.lang.reflect.Type;
 
 /**
- * Created by yzd on 2017/7/21 0021.
+ * Created by xyy on 2017/6/23.
  */
 
 public class BooleanDefaultAdapter implements JsonSerializer<Boolean>, JsonDeserializer<Boolean> {

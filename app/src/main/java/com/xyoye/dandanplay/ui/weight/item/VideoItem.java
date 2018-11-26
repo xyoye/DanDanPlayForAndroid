@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
@@ -69,9 +70,15 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
     @Override
     public void onUpdateViews(final VideoBean model, final int position) {
-        ImageLoadTask task = new ImageLoadTask(coverIv);
-        coverIv.setTag(model.getVideoPath());
-        task.execute(model.getVideoPath());
+        if (!model.isNotCover()){
+            ImageLoadTask task = new ImageLoadTask(coverIv);
+            coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
+            coverIv.setTag(model.getVideoPath());
+            task.execute(model.getVideoPath());
+        }else {
+            coverIv.setScaleType(ImageView.ScaleType.CENTER);
+            coverIv.setImageResource(R.mipmap.ic_smb_video);
+        }
 
         if (!StringUtils.isEmpty(model.getDanmuPath())){
             bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
@@ -83,15 +90,10 @@ public class VideoItem implements AdapterItem<VideoBean> {
             unbindDanmuActionLl.setEnabled(false);
         }
 
-        String videoName = model.getVideoName();
-        if (videoName.contains(".")) {
-            int last = videoName.lastIndexOf(".");
-            if (last > 0)
-                videoName = videoName.substring(0, last);
-        }
-        titleTv.setText(videoName);
+        titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
 
         durationTv.setText(TimeUtil.formatDuring(model.getVideoDuration()));
+        if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {
             danmuTipsIv.setImageResource(R.drawable.ic_danmaku_inexist);

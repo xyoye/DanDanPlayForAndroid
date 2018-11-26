@@ -1,7 +1,7 @@
 package com.xyoye.core.exception;
 
 /**
- * Created by yzd on 2016/11/14.
+ * Created by xyy on 2017/9/15
  */
 
 public class ResponseException extends Exception {

@@ -3,7 +3,7 @@ package com.xyoye.core.interf.presenter;
 import android.os.Bundle;
 
 /**
- * Created by yzd on 2016/8/29.
+ * Created by xyy on 2017/6/23.
  */
 public interface BasePresenter extends Presenter {
 

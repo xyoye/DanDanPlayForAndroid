@@ -2,7 +2,7 @@ package com.xyoye.core.interf.presenter;
 
 /**
  * 主持人接口
- * Created by yzd on 2016/3/18.
+ * Created by xyy on 2017/6/23.
  */
 public interface Presenter {
     /**

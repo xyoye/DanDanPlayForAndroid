@@ -13,8 +13,7 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * Created by yzd
- * @date 2015/11/21
+ * Created by xyy on 2017/6/23.
  *
  * 如果调用{@link #notifyDataSetChanged()}来更新，
  * 它会自动调用{@link #instantiateItem(ViewGroup, int)}重新new出需要的item，算是完全初始化一次。

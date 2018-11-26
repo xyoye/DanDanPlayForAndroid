@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.xyoye.core.utils.PixelUtil;
+import com.blankj.utilcode.util.ConvertUtils;
 
 
 /**
@@ -84,11 +84,11 @@ public class CustomDialog extends Dialog {
         }
 
         public Builder heightdp(int val) {
-            height = PixelUtil.dip2px(context, val);
+            height = ConvertUtils.dp2px( val);
             return this;
         }
         public Builder widthdp(int val) {
-           width = PixelUtil.dip2px(context, val);
+           width = ConvertUtils.dp2px( val);
             return this;
         }
 

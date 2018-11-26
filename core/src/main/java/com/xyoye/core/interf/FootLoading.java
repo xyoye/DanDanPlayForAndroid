@@ -1,7 +1,7 @@
 package com.xyoye.core.interf;
 
 /**
- * Created by yzd on 2016/7/31.
+ * Created by xyy on 2017/6/23.
  */
 public interface FootLoading {
 

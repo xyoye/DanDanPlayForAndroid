@@ -8,19 +8,17 @@ import java.io.Serializable;
 
 
 public class VideoBean implements Serializable {
-    private String videoName;
     private String videoPath;
-    private String videoCover;
     private long videoDuration;
     private String danmuPath;
     private int currentPosition;
     private int episodeId;
+    private boolean notCover;
 
     public VideoBean() {
     }
 
-    public VideoBean(String videoName, String videoPath, String danmuPath, int currentPosition, long videoDuration, int episodeId) {
-        this.videoName = videoName;
+    public VideoBean(String videoPath, String danmuPath, int currentPosition, long videoDuration, int episodeId) {
         this.videoPath = videoPath;
         this.danmuPath = danmuPath;
         this.currentPosition = currentPosition;
@@ -28,22 +26,13 @@ public class VideoBean implements Serializable {
         this.episodeId = episodeId;
     }
 
-    public VideoBean(String videoName, String videoPath, String videoCover, long videoDuration, String danmuPath, int currentPosition, int episodeId) {
-        this.videoName = videoName;
+    public VideoBean(String videoPath, boolean notCover, long videoDuration, String danmuPath, int currentPosition, int episodeId) {
         this.videoPath = videoPath;
-        this.videoCover = videoCover;
+        this.notCover = notCover;
         this.videoDuration = videoDuration;
         this.danmuPath = danmuPath;
         this.currentPosition = currentPosition;
         this.episodeId = episodeId;
-    }
-
-    public String getVideoName() {
-        return videoName;
-    }
-
-    public void setVideoName(String videoName) {
-        this.videoName = videoName;
     }
 
     public String getVideoPath() {
@@ -54,12 +43,12 @@ public class VideoBean implements Serializable {
         this.videoPath = videoPath;
     }
 
-    public String getVideoCover() {
-        return videoCover;
+    public boolean isNotCover() {
+        return notCover;
     }
 
-    public void setVideoCover(String videoCover) {
-        this.videoCover = videoCover;
+    public void setNotCover(boolean notCover) {
+        this.notCover = notCover;
     }
 
     public long getVideoDuration() {

@@ -50,7 +50,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * onPause()
  * onStop()
  * onDestroy()
- * Created by yzd on 2015/12/18.
+ * Created by xyy on 2017/5/18.
  */
 public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful, ISupportActivity {
 

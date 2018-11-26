@@ -2,7 +2,7 @@ package com.xyoye.core.utils;
 
 /**
  *
- * Created by yzd on 2016/7/1.
+ * Created by xyy on 2017/6/23.
  */
 public final class Constants {
 

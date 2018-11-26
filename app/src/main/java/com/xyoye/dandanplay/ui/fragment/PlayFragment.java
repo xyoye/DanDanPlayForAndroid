@@ -127,29 +127,10 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         ToastUtils.showShort(message);
     }
 
-    @Override
-    protected void onPageFirstVisible() {
-        super.onPageFirstVisible();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden){
-            if (EventBus.getDefault().isRegistered(this))
-                EventBus.getDefault().unregister(this);
-        }else {
-            if (!EventBus.getDefault().isRegistered(this))
-                EventBus.getDefault().register(this);
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openFolder(OpenFolderEvent event) {
         Intent intent = new Intent(getContext(), FolderActivity.class);
         intent.putExtra(OpenFolderEvent.FOLDERPATH, event.getFolderPath());
-        intent.putExtra(OpenFolderEvent.FOLDERTITLE, event.getFolderTitle());
         startActivity(intent);
     }
 
@@ -251,5 +232,15 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void registerEventBus(){
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    public void unrigisterEventBus(){
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
     }
 }

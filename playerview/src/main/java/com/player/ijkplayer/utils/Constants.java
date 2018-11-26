@@ -2,7 +2,7 @@ package com.player.ijkplayer.utils;
 
 /**
  *
- * Created by yzd on 2016/7/1.
+ * Created by xyy on 2018/7/1.
  */
 public final class Constants {
 

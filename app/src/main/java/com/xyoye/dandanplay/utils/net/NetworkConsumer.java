@@ -7,7 +7,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 /**
- * Created by yzd on 2017/5/10 0010.
+ * Created by xyy on 2017/5/15
  */
 
 public class NetworkConsumer implements Consumer<Disposable> {

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.xyoye.core.utils.PixelUtil;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerIndicator;
 import com.xyoye.dandanplay.ui.weight.indicator.mode.PositionData;
 
@@ -52,8 +52,8 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
     private void init(Context context) {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStyle(Paint.Style.FILL);
-        mLineHeight = PixelUtil.dip2px(context, 2);
-        mLineWidth = PixelUtil.dip2px(context, 10);
+        mLineHeight = ConvertUtils.dp2px(2);
+        mLineWidth = ConvertUtils.dp2px( 10);
     }
 
     @Override

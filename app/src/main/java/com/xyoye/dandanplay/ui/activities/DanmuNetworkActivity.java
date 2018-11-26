@@ -101,6 +101,11 @@ public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> im
     }
 
     @Override
+    public boolean isLan() {
+        return getIntent().getBooleanExtra("is_lan", false);
+    }
+
+    @Override
     public void refreshAdapter(List<DanmuMatchBean.MatchesBean> beans) {
         if (adapter == null) {
             adapter = new BaseRvAdapter<DanmuMatchBean.MatchesBean>(beans) {

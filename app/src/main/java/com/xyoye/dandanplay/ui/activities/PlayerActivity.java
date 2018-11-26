@@ -256,7 +256,7 @@ public class PlayerActivity extends AppCompatActivity {
         SaveCurrentEvent event = new SaveCurrentEvent();
         event.setCurrentPosition(currentPosition);
         event.setFolderPath(FileUtils.getDirName(videoPath));
-        event.setVideoName(videoTitle);
+        event.setVideoPath(videoPath);
         EventBus.getDefault().post(event);
     }
 }

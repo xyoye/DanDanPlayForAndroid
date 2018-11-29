@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class LanDeviceBean implements Comparable<LanDeviceBean>,Serializable{
     private String ip;
     private String deviceName;
+    private String domain;
     private String account;
     private String password;
     private boolean anonymous;
@@ -43,6 +44,14 @@ public class LanDeviceBean implements Comparable<LanDeviceBean>,Serializable{
 
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getAccount() {

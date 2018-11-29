@@ -20,7 +20,6 @@ import com.xyoye.dandanplay.mvp.presenter.LanDevicePresenter;
 import com.xyoye.dandanplay.mvp.view.LanDeviceView;
 import com.xyoye.dandanplay.utils.smb.FindLanDevicesTask;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.FileUtil;
 
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
@@ -30,12 +29,13 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import jcifs.netbios.NbtAddress;
+import jcifs.Address;
+import jcifs.CIFSContext;
+import jcifs.context.SingletonContext;
+import jcifs.smb.NtStatus;
+import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
@@ -93,33 +93,29 @@ public class LanDevicePresenterImpl extends BaseMvpPresenter<LanDeviceView> impl
                 .subscribe(deviceBeanList -> getView().refreshDevices(deviceBeanList));
     }
 
+    private CIFSContext context;
     @SuppressLint("CheckResult")
     @Override
     public void authLan(LanDeviceBean deviceBean, int position, boolean isAdd){
         Observable.create((ObservableOnSubscribe<LanDeviceBean>) emitter -> {
-            String smbIp;
-            if (StringUtils.isEmpty(deviceBean.getAccount()) || deviceBean.isAnonymous()){
-                smbIp = "smb://"+deviceBean.getIp()+"/";
-            }else {
-                smbIp = "smb://"+deviceBean.getAccount()+":"+deviceBean.getPassword()+"@"+deviceBean.getIp()+"/";
-            }
             try {
-                SmbFile smbFile = new SmbFile(smbIp);
+                NtlmPasswordAuthenticator auth = new NtlmPasswordAuthenticator(deviceBean.getDomain(), deviceBean.getAccount(), deviceBean.getPassword());
+                context = SingletonContext.getInstance().withCredentials(auth);
+                Address address = context.getNameServiceClient().getByName(deviceBean.getIp());
+                context.getTransportPool().logon(context, address);
+                SmbFile smbFile = new SmbFile("smb://"+deviceBean.getIp(), context);
                 smbFile.listFiles();
                 if (isAdd){
+                    //为新增设备添加设备名
                     try {
-                        //为新增设备添加设备名
-                        NbtAddress nbtAddress = NbtAddress.getByName(deviceBean.getIp());
-                        nbtAddress.firstCalledName();
-                        deviceBean.setDeviceName(nbtAddress.nextCalledName());
-                    } catch (UnknownHostException e) {
-                        e.printStackTrace();
+                        Address nameAddress = SingletonContext.getInstance().getNameServiceClient().getByName(deviceBean.getIp());
+                        nameAddress.firstCalledName();
+                        deviceBean.setDeviceName(nameAddress.nextCalledName(SingletonContext.getInstance()));
+                    }catch (UnknownHostException e){
+                        deviceBean.setDeviceName("UnKnow");
                     }
                 }
                 emitter.onNext(deviceBean);
-            } catch (MalformedURLException urlException){
-                urlException.printStackTrace();
-                getView().showError("Url错误："+smbIp);
             } catch (SmbException e) {
                 getView().showError("登陆设备失败："+e.getNtStatus());
                 e.printStackTrace();
@@ -155,7 +151,7 @@ public class LanDevicePresenterImpl extends BaseMvpPresenter<LanDeviceView> impl
     //遍历链接下所有视频文件
     private List<SmbBean> traverseFolder(String smbUrl){
         try {
-            SmbFile smbFile = new SmbFile(smbUrl);
+            SmbFile smbFile = new SmbFile(smbUrl, context);
             if (smbFile.isFile() && com.xyoye.dandanplay.utils.FileUtils.isMediaFile(smbUrl)){
                 SmbBean smbBean = new SmbBean();
                 smbBean.setName(smbFile.getName());
@@ -172,7 +168,7 @@ public class LanDevicePresenterImpl extends BaseMvpPresenter<LanDeviceView> impl
                 }
                 return smbBeanList;
             }
-        } catch (MalformedURLException | SmbException e) {
+        } catch (SmbException | MalformedURLException e) {
             e.printStackTrace();
         }
         return new ArrayList<>();

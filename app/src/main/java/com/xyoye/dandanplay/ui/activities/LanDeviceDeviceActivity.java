@@ -104,11 +104,12 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
         LanDeviceBean device = lanDeviceList.get(position);
         device.setAccount(deviceBean.getAccount());
         device.setPassword(deviceBean.getPassword());
+        device.setDomain(deviceBean.getDomain());
         device.setAnonymous(deviceBean.isAnonymous());
         adapter.notifyItemChanged(position);
         //保存设备数据
         SPUtils.getInstance().put(Config.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
-        
+
         String smbUrl;
         if (StringUtils.isEmpty(device.getAccount()) || device.isAnonymous()){
             smbUrl = "smb://"+device.getIp()+"/";
@@ -138,6 +139,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
             if (lanDeviceList.get(i).getIp().equals(device.getIp())){
                 device.setAccount(device.getAccount());
                 device.setPassword(device.getPassword());
+                device.setDomain(device.getDomain());
                 device.setAnonymous(device.isAnonymous());
                 adapter.notifyItemChanged(i);
                 isEarlyExist = true;
@@ -184,6 +186,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
     public void onAuthLan(AuthLanEvent event){
         LanDeviceBean lanDeviceBean = lanDeviceList.get(event.getPosition());
         lanDeviceBean.setAccount(event.getAccount());
+        lanDeviceBean.setDomain(event.getDomain());
         lanDeviceBean.setPassword(event.getPassword());
         lanDeviceBean.setAnonymous(event.isAnonymous());
         presenter.authLan(lanDeviceBean, event.getPosition(), false);
@@ -199,6 +202,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
                     lanDeviceBean.setAccount("");
                     lanDeviceBean.setAnonymous(false);
                     lanDeviceBean.setPassword("");
+                    lanDeviceBean.setDomain("");
                     adapter.notifyItemChanged(event.getPosition());
                 })
                 .setCancelListener(DialogUtils::dismiss)

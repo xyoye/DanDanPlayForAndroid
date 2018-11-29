@@ -33,6 +33,8 @@ public class AuthLanDialog extends Dialog {
     TextInputEditText lanAccountEt;
     @BindView(R.id.lan_password_et)
     TextInputEditText lanPasswordEt;
+    @BindView(R.id.lan_domain_et)
+    TextInputEditText lanDomainEt;
     @BindView(R.id.anonymous_cb)
     CheckBox anonymousCb;
     @BindView(R.id.lan_cancel_bt)
@@ -65,6 +67,7 @@ public class AuthLanDialog extends Dialog {
         if (mDeviceBean != null){
             lanAccountEt.setText(mDeviceBean.getAccount());
             lanPasswordEt.setText(mDeviceBean.getPassword());
+            lanDomainEt.setText(mDeviceBean.getDomain());
             anonymousCb.setChecked(mDeviceBean.isAnonymous());
         }
         lanIpLayout.setVisibility(isShowIp ? View.VISIBLE : View.GONE);
@@ -80,6 +83,7 @@ public class AuthLanDialog extends Dialog {
                 boolean anonymous = anonymousCb.isChecked();
                 String account = lanAccountEt.getText().toString();
                 String password = lanPasswordEt.getText().toString();
+                String domain = lanDomainEt.getText().toString();
                 String ip = lanIpEt.getText().toString();
                 if (isShowIp && StringUtils.isEmpty(ip)){
                     ToastUtils.showShort("请输入ip地址");
@@ -90,12 +94,13 @@ public class AuthLanDialog extends Dialog {
                     return;
                 }
                 if (!isShowIp)
-                    EventBus.getDefault().post(new AuthLanEvent(account, password, anonymous, position));
+                    EventBus.getDefault().post(new AuthLanEvent(account, password, domain, anonymous, position));
                 else {
                     LanDeviceBean lanDeviceBean = new LanDeviceBean();
                     lanDeviceBean.setIp(ip);
                     lanDeviceBean.setAccount(account);
                     lanDeviceBean.setPassword(password);
+                    lanDeviceBean.setDomain(domain);
                     lanDeviceBean.setAnonymous(anonymous);
                     EventBus.getDefault().post(new AddLanDeviceEvent(lanDeviceBean));
                 }

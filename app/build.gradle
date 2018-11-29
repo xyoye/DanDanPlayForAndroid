@@ -62,5 +62,5 @@ dependencies {
     compile 'com.github.axet:libtorrent:0.13.35'
     // Required for instrumented tests
     androidTestCompile 'com.android.support.test:runner:1.0.2'
-    implementation files('libs/jcifs-1.3.18.3.jar')
+    implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
 }

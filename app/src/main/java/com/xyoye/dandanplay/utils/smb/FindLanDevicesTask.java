@@ -20,7 +20,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import jcifs.netbios.NbtAddress;
+import jcifs.Address;
+import jcifs.context.SingletonContext;
 
 /**
  * Created by xyy on 2018/11/19.
@@ -113,9 +114,9 @@ public class FindLanDevicesTask implements Runnable {
                         String deviceName;
                         deviceName = "UnKnow";
                         try {
-                            NbtAddress nbtAddress = NbtAddress.getByName(ip);
-                            nbtAddress.firstCalledName();
-                            deviceName =  nbtAddress.nextCalledName();
+                            Address address = SingletonContext.getInstance().getNameServiceClient().getByName(ip);
+                            address.firstCalledName();
+                            deviceName =  address.nextCalledName(SingletonContext.getInstance());
                         } catch (UnknownHostException e) {
                             e.printStackTrace();
                         }

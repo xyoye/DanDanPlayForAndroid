@@ -10,7 +10,6 @@ import android.net.NetworkCapabilities;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.widget.Toast;
 
 import java.math.BigInteger;
 import java.net.Inet4Address;

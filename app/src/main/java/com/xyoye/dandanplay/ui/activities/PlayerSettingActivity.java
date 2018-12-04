@@ -15,12 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jaeger.library.StatusBarUtil;
-import com.player.ijkplayer.utils.Constants;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.PlayerSettingEvent;
 import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,45 +75,45 @@ public class PlayerSettingActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        int playerType = AppConfigShare.getInstance().getPlayerType();
+        int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType) {
-            case Constants.IJK_EXO_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
                 playerTypeTv.setText("IJK_EXO Player");
                 break;
-            case Constants.IJK_ANDROID_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:
                 playerTypeTv.setText("AndroidMedia Player");
                 break;
-            case Constants.IJK_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_PLAYER:
             default:
                 playerTypeTv.setText("IJK Player");
                 break;
         }
-        String pixelType = AppConfigShare.getInstance().getPixelFormat();
+        String pixelType = AppConfig.getInstance().getPixelFormat();
         switch (pixelType) {
-            case Config.PIXEL_RGB565:
+            case Constants.PIXEL_RGB565:
                 pixelFormatTv.setText("RGB 565");
                 break;
-            case Config.PIXEL_RGB888:
+            case Constants.PIXEL_RGB888:
                 pixelFormatTv.setText("RGB 888");
                 break;
-            case Config.PIXEL_RGBX8888:
+            case Constants.PIXEL_RGBX8888:
                 pixelFormatTv.setText("RGBX 8888");
                 break;
-            case Config.PIXEL_YV12:
+            case Constants.PIXEL_YV12:
                 pixelFormatTv.setText("YV12");
                 break;
-            case Config.PIXEL_OPENGL_ES2:
+            case Constants.PIXEL_OPENGL_ES2:
                 pixelFormatTv.setText("OpenGL ES2");
                 break;
-            case Config.PIXEL_AUTO:
+            case Constants.PIXEL_AUTO:
             default:
                 pixelFormatTv.setText("默认");
                 break;
         }
-        boolean mediaCodeC = AppConfigShare.getInstance().isOpenMediaCodeC();
-        boolean mediaCodeCH265 = AppConfigShare.getInstance().isOpenMediaCodeCH265();
-        boolean openSLES = AppConfigShare.getInstance().isOpenSLES();
-        boolean surfaceRenders = AppConfigShare.getInstance().isSurfaceRenders();
+        boolean mediaCodeC = AppConfig.getInstance().isOpenMediaCodeC();
+        boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
+        boolean openSLES = AppConfig.getInstance().isOpenSLES();
+        boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
         mediaCodeCCb.setChecked(mediaCodeC);
         mediaCodeCH265Cb.setChecked(mediaCodeCH265);
         openSlesCb.setChecked(openSLES);
@@ -123,17 +122,17 @@ public class PlayerSettingActivity extends AppCompatActivity {
 
     private void initListener() {
         mediaCodeCCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfigShare.getInstance().setOpenMediaCodeC(isChecked);
+            AppConfig.getInstance().setOpenMediaCodeC(isChecked);
         });
         mediaCodeCH265Cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfigShare.getInstance().setOpenMediaCodeCH265(isChecked);
+            AppConfig.getInstance().setOpenMediaCodeCH265(isChecked);
         });
         openSlesCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfigShare.getInstance().setOpenSLES(isChecked);
+            AppConfig.getInstance().setOpenSLES(isChecked);
 
         });
         surfaceRendersCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfigShare.getInstance().setSurfaceRenders(isChecked);
+            AppConfig.getInstance().setSurfaceRenders(isChecked);
         });
     }
 

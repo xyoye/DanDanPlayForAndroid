@@ -17,15 +17,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.BilibiliDownloadUtil;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Constants;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -240,10 +247,10 @@ public class BilibiliDownloadDialog extends Dialog {
      */
     private void downloadDanmuOne(){
         fileName = fileNameEt.getText().toString();
-        String path = AppConfigShare.getInstance().getDownloadFolder();
+        String path = AppConfig.getInstance().getDownloadFolder();
 
         sendLogMessage("开始下载弹幕文件...\n");
-        String xmlContent = BilibiliDownloadUtil.getXmlString(cid);
+        String xmlContent = getXmlString(cid);
         if (xmlContent == null){
             sendLogMessage("弹幕文件下载失败");
             return;
@@ -252,7 +259,7 @@ public class BilibiliDownloadDialog extends Dialog {
 
         if (fileName.isEmpty())
             fileName = cid;
-        BilibiliDownloadUtil.writeXmlFile(xmlContent, fileName, path);
+        CommonUtils.writeXmlFile(xmlContent, fileName, path);
         sendLogMessage("写入文件成功\n文件路径：\n" + path + "/" + fileName + ".xml");
 
         handler.sendEmptyMessage(102);
@@ -262,7 +269,7 @@ public class BilibiliDownloadDialog extends Dialog {
      * 下载番剧弹幕集合
      */
     private void downloadDanmuList(){
-        String path = AppConfigShare.getInstance().getDownloadFolder();
+        String path = AppConfig.getInstance().getDownloadFolder();
         path = path + "/"+ animaTitle;
 
         sendLogMessage("开始下载弹幕文件...\n");
@@ -270,7 +277,7 @@ public class BilibiliDownloadDialog extends Dialog {
             int episode = i+1;
             String cid = cidList.get(i);
             sendLogMessage("下载第"+episode+"集弹幕...\n");
-            String xmlContent = BilibiliDownloadUtil.getXmlString(cid);
+            String xmlContent = getXmlString(cid);
             if (xmlContent == null){
                 sendLogMessage("第"+episode+"集弹幕文件下载失败");
                 continue;
@@ -280,7 +287,7 @@ public class BilibiliDownloadDialog extends Dialog {
                 fileName = "0"+episode;
             else
                 fileName = episode+"";
-            BilibiliDownloadUtil.writeXmlFile(xmlContent, fileName, path);
+            CommonUtils.writeXmlFile(xmlContent, fileName, path);
         }
         sendLogMessage("弹幕下载完成\n文件路径：\n" + path);
         handler.sendEmptyMessage(102);
@@ -360,5 +367,46 @@ public class BilibiliDownloadDialog extends Dialog {
         }catch (Exception e){
             sendLogMessage("cid解析错误");
         }
+    }
+
+    /**
+     * 下载xml
+     */
+    public String getXmlString(String cid){
+        InputStream in = null;
+        InputStream flin = null;
+        Scanner sc = null;
+        try {
+            String xmlUrl = Constants.BilibiliUrl + cid + ".xml";
+            URL url = new URL(xmlUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
+            conn.connect();
+
+            in = conn.getInputStream();
+            flin = new InflaterInputStream(in, new Inflater(true));
+
+            sc = new Scanner(flin, "utf-8");
+
+            StringBuilder stringBuffer = new StringBuilder();
+            while(sc.hasNext())
+                stringBuffer.append(sc.nextLine());
+            return stringBuffer.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (sc != null)
+                    sc.close();
+                if (flin != null)
+                    flin.close();
+                if (in != null)
+                    in.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+        }
+        return null;
     }
 }

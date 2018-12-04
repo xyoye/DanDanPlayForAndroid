@@ -11,10 +11,9 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
@@ -24,7 +23,8 @@ import com.xyoye.dandanplay.mvp.presenter.LanFolderPresenter;
 import com.xyoye.dandanplay.mvp.view.LanFolderView;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
-import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,7 +38,7 @@ import butterknife.BindView;
  * Created by xyy on 2018/11/21.
  */
 
-public class LanFolderActivity extends BaseActivity<LanFolderPresenter> implements LanFolderView {
+public class LanFolderActivity extends BaseMvpActivity<LanFolderPresenter> implements LanFolderView {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -83,7 +83,7 @@ public class LanFolderActivity extends BaseActivity<LanFolderPresenter> implemen
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(mAdapter);
 
-        String device = SPUtils.getInstance().getString(Config.AppConfig.SMB_DEVICE);
+        String device = SPUtils.getInstance().getString(Constants.AppConfig.SMB_DEVICE);
         if (StringUtils.isEmpty(device)){
             launchActivity(LanDeviceDeviceActivity.class);
         }else {

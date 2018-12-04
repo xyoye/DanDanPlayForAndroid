@@ -5,14 +5,14 @@ import android.os.Bundle;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.DanmuSearchBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
-import com.xyoye.dandanplay.utils.SearchDanmuUtil;
+import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 
-public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView> implements DanmuNetworkPresenter {
+public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetworkView> implements DanmuNetworkPresenter {
 
     public DanmuNetworkPresenterImpl(DanmuNetworkView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -39,9 +39,9 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenter<DanmuNetworkView
         if (StringUtils.isEmpty(videoPath)) return;
         if (!getView().isLan()){
             String title = FileUtils.getFileName(videoPath);
-            String hash = SearchDanmuUtil.getVideoFileHash(videoPath);
+            String hash = MD5Util.getVideoFileHash(videoPath);
             long length = new File(videoPath).length();
-            long duration = SearchDanmuUtil.getVideoDuration(videoPath);
+            long duration = MD5Util.getVideoDuration(videoPath);
             DanmuMatchParam param = new DanmuMatchParam();
             param.setFileName(title);
             param.setFileHash(hash);

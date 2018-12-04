@@ -17,12 +17,11 @@ import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
 import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
-import com.xyoye.core.db.DataBaseManager;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -136,12 +135,12 @@ public class PlayerActivity extends AppCompatActivity {
             }
         }
 
-        boolean mediaCodeC = AppConfigShare.getInstance().isOpenMediaCodeC();
-        boolean mediaCodeCH265 = AppConfigShare.getInstance().isOpenMediaCodeCH265();
-        boolean openSLES = AppConfigShare.getInstance().isOpenSLES();
-        boolean surfaceRenders = AppConfigShare.getInstance().isSurfaceRenders();
-        int playerType = AppConfigShare.getInstance().getPlayerType();
-        String pixelFormat = AppConfigShare.getInstance().getPixelFormat();
+        boolean mediaCodeC = AppConfig.getInstance().isOpenMediaCodeC();
+        boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
+        boolean openSLES = AppConfig.getInstance().isOpenSLES();
+        boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
+        int playerType = AppConfig.getInstance().getPlayerType();
+        String pixelFormat = AppConfig.getInstance().getPixelFormat();
         mPlayer.init()
                 .initVideoView(mediaCodeC, mediaCodeCH265, openSLES, surfaceRenders, playerType, pixelFormat)
                 .alwaysFullScreen();
@@ -159,7 +158,7 @@ public class PlayerActivity extends AppCompatActivity {
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
-                        return (UserInfoShare.getInstance().isLogin() && episodeId != 0);
+                        return (AppConfig.getInstance().isLogin() && episodeId != 0);
                     }
 
                     @Override

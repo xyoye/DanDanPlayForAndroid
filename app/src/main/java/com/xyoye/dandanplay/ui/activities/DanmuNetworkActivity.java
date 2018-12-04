@@ -11,10 +11,9 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.event.DownloadDanmuEvent;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
@@ -26,6 +25,7 @@ import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,7 +40,7 @@ import butterknife.BindView;
  */
 
 
-public class DanmuNetworkActivity extends BaseActivity<DanmuNetworkPresenter> implements DanmuNetworkView {
+public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter> implements DanmuNetworkView {
     public final static int SELECT_DANMU = 101;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;

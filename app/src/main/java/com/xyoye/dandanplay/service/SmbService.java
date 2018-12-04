@@ -13,9 +13,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
-import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
-import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 

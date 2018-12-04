@@ -13,10 +13,9 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseFragment;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
@@ -29,7 +28,8 @@ import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimaItem;
 import com.xyoye.dandanplay.ui.weight.item.PersonalPlayHistoryItem;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
 
@@ -106,7 +106,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         historyRecyclerView.setAdapter(historyAdapter);
 
 
-        if (UserInfoShare.getInstance().isLogin()){
+        if (AppConfig.getInstance().isLogin()){
             presenter.getFragmentData();
         }else {
             refreshUI(null, null);
@@ -115,13 +115,13 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     }
 
     public void changeView(){
-        if (UserInfoShare.getInstance().isLogin()){
+        if (AppConfig.getInstance().isLogin()){
             userInfoRl.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
             Glide.with(this)
-                    .load(UserInfoShare.getInstance().getUserImage())
+                    .load(AppConfig.getInstance().getUserImage())
                     .into(userImageIv);
-            userNameTv.setText(UserInfoShare.getInstance().getUserScreenName());
+            userNameTv.setText(AppConfig.getInstance().getUserScreenName());
         }else {
             loginButton.setVisibility(View.VISIBLE);
             userInfoRl.setVisibility(View.GONE);
@@ -157,7 +157,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 launchActivity(DownloadMangerActivity.class);
                 break;
             case R.id.favorite_rl:
-                if (UserInfoShare.getInstance().isLogin()){
+                if (AppConfig.getInstance().isLogin()){
                     Intent intent = new Intent(getContext(), PersonalFavoriteActivity.class);
                     startActivity(intent);
                 }else {
@@ -165,7 +165,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 }
                 break;
             case R.id.history_rl:
-                if (UserInfoShare.getInstance().isLogin()){
+                if (AppConfig.getInstance().isLogin()){
                     Intent intent = new Intent(getContext(), PersonalHistoryActivity.class);
                     startActivity(intent);
                 }else {

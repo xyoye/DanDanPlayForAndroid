@@ -2,17 +2,16 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.KeyUtil;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
-import com.xyoye.dandanplay.utils.TokenShare;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.KeyUtil;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -20,7 +19,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  * Created by YE on 2018/7/22.
  */
 
-public class LoginPresenterImpl extends BaseMvpPresenter<LoginView> implements LoginPresenter {
+public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implements LoginPresenter {
 
     public LoginPresenterImpl(LoginView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -59,18 +58,18 @@ public class LoginPresenterImpl extends BaseMvpPresenter<LoginView> implements L
         PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
-                UserInfoShare.getInstance().setLogin(true);
-                UserInfoShare.getInstance().saveUserScreenName(personalBean.getScreenName());
-                UserInfoShare.getInstance().saveUserName(param.getUserName());
-                UserInfoShare.getInstance().saveUserImage(personalBean.getProfileImage());
-                TokenShare.getInstance().saveToken(personalBean.getToken());
+                AppConfig.getInstance().setLogin(true);
+                AppConfig.getInstance().saveUserScreenName(personalBean.getScreenName());
+                AppConfig.getInstance().saveUserName(param.getUserName());
+                AppConfig.getInstance().saveUserImage(personalBean.getProfileImage());
+                AppConfig.getInstance().saveToken(personalBean.getToken());
                 ToastUtils.showShort("登录成功");
                 getView().launchMain();
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());

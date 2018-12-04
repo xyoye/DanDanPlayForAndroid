@@ -8,13 +8,13 @@ import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.utils.StringUtils;
-import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -63,14 +63,14 @@ public class ChangeScreenNameDialog extends Dialog {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 ToastUtils.showShort("修改昵称成功");
-                UserInfoShare.getInstance().saveUserScreenName(screenName);
+                AppConfig.getInstance().saveUserScreenName(screenName);
                 EventBus.getDefault().post(new ChangeScreenNameEvent(screenName));
                 ChangeScreenNameDialog.this.cancel();
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());

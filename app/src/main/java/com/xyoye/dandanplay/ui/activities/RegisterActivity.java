@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.mvp.impl.RegisterPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.RegisterPresenter;
@@ -25,7 +25,7 @@ import butterknife.BindView;
  */
 
 
-public class RegisterActivity extends BaseActivity<RegisterPresenter> implements RegisterView, View.OnClickListener {
+public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> implements RegisterView, View.OnClickListener {
     @BindView(R.id.return_iv)
     ImageView returnIv;
     @BindView(R.id.user_name_et)

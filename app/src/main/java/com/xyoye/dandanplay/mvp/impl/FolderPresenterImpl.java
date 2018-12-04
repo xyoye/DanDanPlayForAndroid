@@ -9,41 +9,35 @@ import android.os.Bundle;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.service.SmbService;
-import com.xyoye.dandanplay.service.TorrentService;
-import com.xyoye.dandanplay.utils.HashBufferedInputStream;
-import com.xyoye.dandanplay.utils.SearchDanmuUtil;
+import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import jcifs.smb.SmbFile;
 
 /**
  * Created by YE on 2018/6/30 0030.
  */
 
 
-public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements FolderPresenter {
+public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
     // is smb file view
     private boolean isLan;
 
@@ -150,9 +144,9 @@ public class FolderPresenterImpl extends BaseMvpPresenter<FolderView> implements
     public void getDanmu(String videoPath){
         String title = FileUtils.getFileName(videoPath);
         DanmuMatchParam param = new DanmuMatchParam();
-        String hash = SearchDanmuUtil.getVideoFileHash(videoPath);
+        String hash = MD5Util.getVideoFileHash(videoPath);
         long length = new File(videoPath).length();
-        long duration = SearchDanmuUtil.getVideoDuration(videoPath);
+        long duration = MD5Util.getVideoDuration(videoPath);
         param.setFileName(title);
         param.setFileHash(hash);
         param.setFileSize(length);

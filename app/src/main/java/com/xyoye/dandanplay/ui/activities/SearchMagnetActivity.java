@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,14 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
@@ -30,7 +28,7 @@ import com.xyoye.dandanplay.mvp.presenter.SearchMagnetPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchMagnetView;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
-import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,7 +44,7 @@ import butterknife.OnClick;
  * Created by YE on 2018/10/13.
  */
 
-public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> implements SearchMagnetView {
+public class SearchMagnetActivity extends BaseMvpActivity<SearchMagnetPresenter> implements SearchMagnetView {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -168,7 +166,7 @@ public class SearchMagnetActivity extends BaseActivity<SearchMagnetPresenter> im
 
     @Override
     public void showLoading(String text) {
-        showLoadingDialog(text, false);
+        showLoadingDialog(text);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

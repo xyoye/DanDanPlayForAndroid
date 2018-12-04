@@ -2,13 +2,13 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.blankj.utilcode.util.LogUtils;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFragmentView> implements PersonalFragmentPresenter {
+public class PersonalFragmentPresenterImpl extends BaseMvpPresenterImpl<PersonalFragmentView> implements PersonalFragmentPresenter {
     private CountDownLatch countDownLatch = null;
     private AnimeFavoriteBean animeFavoriteBean;
     private PlayHistoryBean playHistoryBean;
@@ -85,7 +85,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
             @Override
             public void onError(int errorCode, String message) {
                 PersonalFragmentPresenterImpl.this.animeFavoriteBean = null;
-                TLog.e(message);
+                LogUtils.e(message);
 
                 if (countDownLatch == null){
                     getView().refreshFavorite(PersonalFragmentPresenterImpl.this.animeFavoriteBean);
@@ -122,7 +122,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenter<PersonalFrag
             @Override
             public void onError(int errorCode, String message) {
                 PersonalFragmentPresenterImpl.this.playHistoryBean = null;
-                TLog.e(message);
+                LogUtils.e(message);
 
                 if (countDownLatch == null){
                     getView().refreshHistory(PersonalFragmentPresenterImpl.this.playHistoryBean);

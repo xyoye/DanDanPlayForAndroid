@@ -7,15 +7,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
 import com.xyoye.dandanplay.bean.event.VideoActionEvent;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.ImageLoadTask;
-import com.xyoye.dandanplay.utils.TimeUtil;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -92,7 +92,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
 
-        durationTv.setText(TimeUtil.formatDuring(model.getVideoDuration()));
+        durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
         if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {

@@ -1,10 +1,10 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.core.interf.presenter.BasePresenter;
+import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
  * Created by xyy on 2018/11/22.
  */
 
-public interface LanVideoPresenter extends BasePresenter{
+public interface LanVideoPresenter extends BaseMvpPresenter {
 }

@@ -31,15 +31,13 @@ import android.util.Log;
 import com.blankj.utilcode.util.LogUtils;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.tencent.bugly.Bugly;
-import com.xyoye.core.BaseApplication;
-import com.xyoye.core.db.DataBaseHelper;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.utils.KeyUtil;
-import com.xyoye.core.utils.TLog;
-import com.xyoye.dandanplay.utils.FileUtils;
-import com.xyoye.dandanplay.utils.TorrentStorage;
+import com.xyoye.dandanplay.database.DataBaseHelper;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
+import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,10 +62,9 @@ public class IApplication extends BaseApplication {
     @Override
     public void onCreate() {
 
-        TLog.i("onCreate");
+        LogUtils.i("onCreate");
         super.onCreate();
         MultiDex.install(this);
-        TLog.DEBUG = true;
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
         initDatabase(new DataBaseHelper(this));
         PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
@@ -104,7 +101,7 @@ public class IApplication extends BaseApplication {
             throw new RuntimeException(Libtorrent.error());
         Libtorrent.setUploadRate(-1);
         Libtorrent.setDownloadRate(-1);
-        trackers = FileUtils.readTracker(getApplicationContext());
+        trackers = CommonUtils.readTracker(getApplicationContext());
     }
 
     private void loadTorrent(){
@@ -210,21 +207,21 @@ public class IApplication extends BaseApplication {
     @Override
     public void onTerminate() {
         // 程序终止的时候执行
-        TLog.i("onTerminate");
+        LogUtils.i("onTerminate");
         super.onTerminate();
     }
 
     @Override
     public void onLowMemory() {
         // 低内存的时候执行
-        TLog.i("onLowMemory");
+        LogUtils.i("onLowMemory");
         super.onLowMemory();
     }
 
     @Override
     public void onTrimMemory(int level) {
         // 程序在内存清理的时候执行
-        TLog.i("onTrimMemory_" + level);
+        LogUtils.i("onTrimMemory_" + level);
         super.onTrimMemory(level);
     }
 

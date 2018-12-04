@@ -7,21 +7,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
 import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.LanFolderPresenter;
 import com.xyoye.dandanplay.mvp.view.LanFolderView;
-import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.JsonUtil;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
@@ -41,7 +41,7 @@ import jcifs.smb.SmbFile;
  * Created by xyy on 2018/11/21.
  */
 
-public class LanFolderPresenterImpl extends BaseMvpPresenter<LanFolderView> implements LanFolderPresenter {
+public class LanFolderPresenterImpl extends BaseMvpPresenterImpl<LanFolderView> implements LanFolderPresenter {
 
     public LanFolderPresenterImpl(LanFolderView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -86,7 +86,7 @@ public class LanFolderPresenterImpl extends BaseMvpPresenter<LanFolderView> impl
 
     @Override
     public void searchFolder(){
-        String device  = SPUtils.getInstance().getString(Config.AppConfig.SMB_DEVICE);
+        String device  = SPUtils.getInstance().getString(Constants.AppConfig.SMB_DEVICE);
         if (StringUtils.isEmpty(device)){
             ToastUtils.showShort("请先选择共享设备");
             getView().refreshFolder(new ArrayList<>());
@@ -133,12 +133,12 @@ public class LanFolderPresenterImpl extends BaseMvpPresenter<LanFolderView> impl
     private List<SmbBean> traverseFolder(String smbUrl){
         try {
             SmbFile smbFile = new SmbFile(smbUrl);
-            if (smbFile.isFile() && com.xyoye.dandanplay.utils.FileUtils.isMediaFile(smbUrl)){
+            if (smbFile.isFile() && CommonUtils.isMediaFile(smbUrl)){
                 SmbBean smbBean = new SmbBean();
                 smbBean.setName(smbFile.getName());
                 smbBean.setUrl(smbUrl);
                 List<SmbBean> smbBeanList = new ArrayList<>();
-                TLog.e("add smb video file: " + smbBean.getUrl());
+                LogUtils.e("add smb video file: " + smbBean.getUrl());
                 smbBeanList.add(smbBean);
                 return smbBeanList;
             }else if (smbFile.isDirectory()){

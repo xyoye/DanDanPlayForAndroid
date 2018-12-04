@@ -11,8 +11,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 
-import com.xyoye.core.base.BaseFragment;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
@@ -31,8 +31,6 @@ import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Calendar;

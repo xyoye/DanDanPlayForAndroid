@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.bean.VideoBean;
 
 import java.io.File;

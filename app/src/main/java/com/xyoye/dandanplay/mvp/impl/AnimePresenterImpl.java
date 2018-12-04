@@ -2,17 +2,17 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 /**
  * Created by YE on 2018/7/15.
  */
 
 
-public class AnimePresenterImpl extends BaseMvpPresenter<AnimaView> implements AnimePresenter {
+public class AnimePresenterImpl extends BaseMvpPresenterImpl<AnimaView> implements AnimePresenter {
 
     public AnimePresenterImpl(AnimaView view, Lifeful lifeful) {
         super(view, lifeful);

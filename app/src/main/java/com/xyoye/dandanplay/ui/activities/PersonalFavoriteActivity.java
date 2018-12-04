@@ -4,15 +4,15 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.mvp.impl.PersonalPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
 import com.xyoye.dandanplay.mvp.view.PeronalFavoriteView;
 import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimaItem;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
 
@@ -21,7 +21,7 @@ import butterknife.BindView;
  */
 
 
-public class PersonalFavoriteActivity extends BaseActivity<PersonalFavoritePresenter> implements PeronalFavoriteView {
+public class PersonalFavoriteActivity extends BaseMvpActivity<PersonalFavoritePresenter> implements PeronalFavoriteView {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 

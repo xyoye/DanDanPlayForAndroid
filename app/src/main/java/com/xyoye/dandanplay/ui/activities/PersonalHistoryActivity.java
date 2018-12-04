@@ -6,15 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.impl.PersonalHistoryPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalHistoryPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalHistoryView;
 import com.xyoye.dandanplay.ui.weight.item.PersonalPlayHistoryItem;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
 
@@ -22,7 +22,7 @@ import butterknife.BindView;
  * Created by YE on 2018/7/24.
  */
 
-public class PersonalHistoryActivity extends BaseActivity<PersonalHistoryPresenter> implements PersonalHistoryView {
+public class PersonalHistoryActivity extends BaseMvpActivity<PersonalHistoryPresenter> implements PersonalHistoryView {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 

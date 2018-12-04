@@ -1,8 +1,8 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.core.interf.presenter.BasePresenter;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
+import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 
-public interface SearchMagnetPresenter extends BasePresenter{
+public interface SearchMagnetPresenter extends BaseMvpPresenter {
 
     void searchMagnet(String anime, int typeId, int subGroundId);
 

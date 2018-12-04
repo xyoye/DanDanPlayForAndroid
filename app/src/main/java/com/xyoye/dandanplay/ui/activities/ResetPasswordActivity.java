@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ResetPasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;
@@ -25,7 +25,7 @@ import butterknife.BindView;
  */
 
 
-public class ResetPasswordActivity extends BaseActivity<ResetPasswordPresenter> implements ResetPasswordView, View.OnClickListener{
+public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresenter> implements ResetPasswordView, View.OnClickListener{
     @BindView(R.id.return_iv)
     ImageView returnIv;
     @BindView(R.id.user_name_et)

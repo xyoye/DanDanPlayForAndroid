@@ -5,16 +5,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.mvp.impl.LanVideoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LanVideoPresenter;
 import com.xyoye.dandanplay.mvp.view.LanVideoView;
-import com.xyoye.dandanplay.ui.weight.item.VideoItem;
-import com.xyoye.dandanplay.utils.UserInfoShare;
 
 import java.util.List;
 
@@ -24,7 +21,7 @@ import butterknife.BindView;
  * Created by xyy on 2018/11/22.
  */
 
-public class LanVideoActivity extends BaseActivity<LanVideoPresenter> implements LanVideoView {
+public class LanVideoActivity extends BaseMvpActivity<LanVideoPresenter> implements LanVideoView {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

@@ -8,8 +8,8 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 
 import com.jaeger.library.StatusBarUtil;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.OpenPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
@@ -23,7 +23,7 @@ import butterknife.BindView;
  */
 
 
-public class OpenActivity extends BaseActivity<OpenPresenter> implements OpenView {
+public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements OpenView {
     @BindView(R.id.image_iv)
     ImageView imageView;
 

@@ -1,13 +1,13 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.core.interf.presenter.BasePresenter;
+import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
  * Created by YE on 2018/10/27.
  */
 
 
-public interface DownloadManagerPresenter extends BasePresenter{
+public interface DownloadManagerPresenter extends BaseMvpPresenter {
     void getTorrentList();
 
     void observeService();

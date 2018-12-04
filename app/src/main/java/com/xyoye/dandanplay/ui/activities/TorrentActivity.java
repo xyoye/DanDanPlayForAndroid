@@ -2,8 +2,8 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.support.annotation.NonNull;
 
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.TorrentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.TorrentPresenter;
 import com.xyoye.dandanplay.mvp.view.TorrentView;
@@ -12,7 +12,7 @@ import com.xyoye.dandanplay.mvp.view.TorrentView;
  * Created by xyy on 2018/10/23.
  */
 
-public class TorrentActivity extends BaseActivity<TorrentPresenter> implements TorrentView {
+public class TorrentActivity extends BaseMvpActivity<TorrentPresenter> implements TorrentView {
 
     @NonNull
     @Override

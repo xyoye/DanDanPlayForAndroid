@@ -11,11 +11,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuLocalPresenterImpl;
@@ -23,7 +21,7 @@ import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
-import com.xyoye.dandanplay.utils.FileUtils;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,7 +36,7 @@ import butterknife.BindView;
  * Created by YE on 2018/7/2.
  */
 
-public class FileManagerActivity extends BaseActivity<DanmuLocalPresenter> implements DanmuLocalView {
+public class FileManagerActivity extends BaseMvpActivity<DanmuLocalPresenter> implements DanmuLocalView {
     public final static int DEFAULT_FOLDER = -1;
     public final static int FILE_FOLDER = 0;
     public final static int FILE_DANMU = 1;

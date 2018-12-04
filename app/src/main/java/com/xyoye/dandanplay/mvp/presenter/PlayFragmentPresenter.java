@@ -1,13 +1,13 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.core.interf.presenter.BasePresenter;
+import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
  * Created by YE on 2018/6/29 0029.
  */
 
 
-public interface PlayFragmentPresenter extends BasePresenter {
+public interface PlayFragmentPresenter extends BaseMvpPresenter {
     void listFolder(String path);
 
     void getVideoList();

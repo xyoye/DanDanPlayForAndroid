@@ -11,10 +11,10 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
-import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.DownloadUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -68,12 +68,12 @@ public class DanmuDownloadDialog extends Dialog{
                 }else {
                     List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
                     statusTv.setText("开始保存...");
-                    String path = AppConfigShare.getInstance().getDownloadFolder()
+                    String path = AppConfig.getInstance().getDownloadFolder()
                             + "/" + bean.getAnimeTitle()+"_"
                             + bean.getEpisodeTitle().replace(" ","_")
                             + ".xml";
                     //去除内容时间一样的弹幕
-                    DownloadUtil.saveDanmu(comments,path);
+                    CommonUtils.saveDanmu(comments,path);
 
                     statusTv.setText("保存完成！");
                     ToastUtils.showShort("下载完成："+path);

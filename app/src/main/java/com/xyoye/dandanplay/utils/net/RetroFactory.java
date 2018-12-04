@@ -1,8 +1,8 @@
 package com.xyoye.dandanplay.utils.net;
 
-import com.xyoye.core.gson.GsonFactory;
-import com.xyoye.core.net.okhttp.OkHttpEngine;
-import com.xyoye.dandanplay.utils.TokenShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
+import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 
 import java.util.concurrent.TimeUnit;
 
@@ -79,7 +79,7 @@ public class RetroFactory {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder builder = original.newBuilder()
-                            .header("Authorization", "Bearer "+TokenShare.getInstance().getToken());
+                            .header("Authorization", "Bearer "+ AppConfig.getInstance().getToken());
                     return chain.proceed(builder.build());
                 })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

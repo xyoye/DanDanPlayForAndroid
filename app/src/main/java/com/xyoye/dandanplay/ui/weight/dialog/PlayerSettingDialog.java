@@ -10,11 +10,10 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.player.ijkplayer.utils.Constants;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.PlayerSettingEvent;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -69,37 +68,37 @@ public class PlayerSettingDialog extends Dialog {
         setContentView(R.layout.dialog_player_setting);
         ButterKnife.bind(this);
 
-        int playerType = AppConfigShare.getInstance().getPlayerType();
+        int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType){
-            case Constants.IJK_EXO_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
                 playerIjkExoRb.setChecked(true);
                 break;
-            case Constants.IJK_ANDROID_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:
                 playerAndroidRb.setChecked(true);
                 break;
-            case Constants.IJK_PLAYER:
+            case com.player.ijkplayer.utils.Constants.IJK_PLAYER:
             default:
                 playerIjkRb.setChecked(true);
                 break;
         }
-        String pixelType = AppConfigShare.getInstance().getPixelFormat();
+        String pixelType = AppConfig.getInstance().getPixelFormat();
         switch (pixelType){
-            case Config.PIXEL_RGB565:
+            case Constants.PIXEL_RGB565:
                 pixelRgb565.setChecked(true);
                 break;
-            case Config.PIXEL_RGB888:
+            case Constants.PIXEL_RGB888:
                 pixelRgb888.setChecked(true);
                 break;
-            case Config.PIXEL_RGBX8888:
+            case Constants.PIXEL_RGBX8888:
                 pixelRgbx8888.setChecked(true);
                 break;
-            case Config.PIXEL_YV12:
+            case Constants.PIXEL_YV12:
                 pixelYv12.setChecked(true);
                 break;
-            case Config.PIXEL_OPENGL_ES2:
+            case Constants.PIXEL_OPENGL_ES2:
                 pixelOpenglEs2.setChecked(true);
                 break;
-            case Config.PIXEL_AUTO:
+            case Constants.PIXEL_AUTO:
             default:
                 pixelAuto.setChecked(true);
                 break;
@@ -117,15 +116,15 @@ public class PlayerSettingDialog extends Dialog {
                 switch (checkedId){
                     case R.id.player_ijk_rb:
                         player_name = "IJK Player";
-                        AppConfigShare.getInstance().setPlayerType(Constants.IJK_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_PLAYER);
                         break;
                     case R.id.player_ijk_exo_rb:
                         player_name = "IJK_EXO Player";
-                        AppConfigShare.getInstance().setPlayerType(Constants.IJK_EXO_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER);
                         break;
                     case R.id.player_android_rb:
                         player_name = "AndroidMedia Player";
-                        AppConfigShare.getInstance().setPlayerType(Constants.IJK_ANDROID_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER);
                         break;
                 }
                 EventBus.getDefault().post(new PlayerSettingEvent(true, player_name));
@@ -139,27 +138,27 @@ public class PlayerSettingDialog extends Dialog {
                 switch (checkedId){
                     case R.id.pixel_auto:
                         pixelType = "默认";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_AUTO);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_AUTO);
                         break;
                     case R.id.pixel_rgb565:
                         pixelType = "RGB 565";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_RGB565);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGB565);
                         break;
                     case R.id.pixel_rgb888:
                         pixelType = "RGB 888";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_RGB888);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGB888);
                         break;
                     case R.id.pixel_rgbx8888:
                         pixelType = "RGBX 8888";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_RGBX8888);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGBX8888);
                         break;
                     case R.id.pixel_yv12:
                         pixelType = "YV12";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_YV12);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_YV12);
                         break;
                     case R.id.pixel_opengl_es2:
                         pixelType = "OpenGL ES2";
-                        AppConfigShare.getInstance().setPixelFormat(Config.PIXEL_OPENGL_ES2);
+                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_OPENGL_ES2);
                         break;
                 }
                 EventBus.getDefault().post(new PlayerSettingEvent(false, pixelType));

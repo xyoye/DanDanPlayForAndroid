@@ -4,17 +4,14 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.ServiceUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -22,7 +19,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class DownloadManagerPresenterImpl extends BaseMvpPresenter<DownloadManagerView> implements DownloadManagerPresenter {
+public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadManagerView> implements DownloadManagerPresenter {
 
     public DownloadManagerPresenterImpl(DownloadManagerView view, Lifeful lifeful) {
         super(view, lifeful);

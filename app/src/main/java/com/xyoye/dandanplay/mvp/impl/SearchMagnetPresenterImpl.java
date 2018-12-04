@@ -5,18 +5,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.StringUtils;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchMagnetPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchMagnetView;
-import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -31,7 +31,7 @@ import okhttp3.ResponseBody;
  */
 
 
-public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView> implements SearchMagnetPresenter {
+public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnetView> implements SearchMagnetPresenter {
     private String savePath;
 
     public SearchMagnetPresenterImpl(SearchMagnetView view, Lifeful lifeful) {
@@ -81,7 +81,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
             @Override
             public void onError(int errorCode, String message) {
                 getView().hideLoading();
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
@@ -89,7 +89,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
 
     @Override
     public void downloadTorrent(String animeTitle, String magnet) {
-        this.savePath = AppConfigShare.getInstance().getDownloadFolder() + animeTitle;
+        this.savePath = AppConfig.getInstance().getDownloadFolder() + animeTitle;
 
         //判断是否已经下载过该种子
         String donePath = isDoneTorrent(savePath , magnet);
@@ -112,7 +112,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenter<SearchMagnetView
             @Override
             public void onError(int errorCode, String message) {
                 getView().hideLoading();
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort("下载种子文件失败");
             }
         }, new NetworkConsumer());

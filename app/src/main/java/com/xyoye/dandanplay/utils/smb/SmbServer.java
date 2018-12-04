@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.utils.smb;
 
-import com.xyoye.dandanplay.utils.FileUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequest;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequestListener;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPResponse;
@@ -133,7 +133,7 @@ public class SmbServer extends Thread implements HTTPRequestListener
 			// 获取文件的大小
 			long contentLen = file.length();
 			// 获取文件类型
-			String contentType = FileUtils.getFileExt(filePaths);
+			String contentType = "."+FileUtils.getFileExtension(filePaths);
 			// 获取文文件流
 			InputStream contentIn = file.getInputStream();
 

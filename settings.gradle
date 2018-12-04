@@ -1,1 +1,1 @@
-include ':app', ':core', ':playerview'
+include ':app', ':player'

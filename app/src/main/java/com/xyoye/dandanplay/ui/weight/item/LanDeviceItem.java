@@ -4,14 +4,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
-import com.xyoye.dandanplay.bean.event.AuthLanEvent;
 import com.xyoye.dandanplay.bean.event.OpenLanEvent;
 import com.xyoye.dandanplay.bean.event.UpdateDeviceEvent;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 

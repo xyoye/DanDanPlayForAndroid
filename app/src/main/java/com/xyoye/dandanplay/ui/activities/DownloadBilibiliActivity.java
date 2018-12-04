@@ -16,7 +16,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BilibiliDownloadDialog;
-import com.xyoye.dandanplay.utils.BilibiliDownloadUtil;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,7 +70,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
                 String avNumber = avInputEt.getText().toString();
                 if (avNumber.isEmpty()){
                     ToastUtils.showShort("AV号不能为空");
-                }else if(!BilibiliDownloadUtil.isNum(avNumber)){
+                }else if(!CommonUtils.isNum(avNumber)){
                     ToastUtils.showShort("请输入纯数字AV号");
                 }else {
                     BilibiliDownloadDialog downloadByAvDialog = new BilibiliDownloadDialog(DownloadBilibiliActivity.this, R.style.Dialog, avNumber, "av");
@@ -81,7 +81,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
                 String urlLink = urlInputEt.getText().toString();
                 if (urlLink.isEmpty()){
                     ToastUtils.showShort("视频链接不能为空");
-                }else if (!BilibiliDownloadUtil.isUrl(urlLink)){
+                }else if (!CommonUtils.isUrl(urlLink)){
                     ToastUtils.showShort("请输入正确视频链接");
                 }else {
                     BilibiliDownloadDialog downloadByUrlDialog = new BilibiliDownloadDialog(DownloadBilibiliActivity.this, R.style.Dialog, urlLink, "url");
@@ -105,7 +105,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
             String selectUrl = data.getStringExtra("selectUrl");
             if (selectUrl.isEmpty()){
                 ToastUtils.showShort( "视频链接不能为空");
-            }else if (!BilibiliDownloadUtil.isUrl(selectUrl)){
+            }else if (!CommonUtils.isUrl(selectUrl)){
                 ToastUtils.showShort("请输入正确视频链接");
             }else {
                 BilibiliDownloadDialog downloadByUrlDialog = new BilibiliDownloadDialog(DownloadBilibiliActivity.this, R.style.Dialog, selectUrl, "url");

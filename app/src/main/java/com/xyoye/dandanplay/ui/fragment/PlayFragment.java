@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.provider.DocumentFile;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,10 +17,9 @@ import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseFragment;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
 import com.xyoye.dandanplay.bean.event.ListFolderEvent;
@@ -30,8 +30,8 @@ import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.FileUtils;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -140,8 +140,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         new DialogUtils.Builder(getContext())
                 .setOkListener(dialog ->{
                     dialog.dismiss();
-                    if (!event.getFolderPath().startsWith(FileUtils.Base_Path)){
-                        String SDFolderUri = AppConfigShare.getInstance().getSDFolderUri();
+                    String rootPhonePath = Environment.getExternalStorageDirectory().getPath();
+                    if (!event.getFolderPath().startsWith(rootPhonePath)){
+                        String SDFolderUri = AppConfig.getInstance().getSDFolderUri();
                         if (StringUtils.isEmpty(SDFolderUri)) {
                             new DialogUtils.Builder(getContext())
                                     .setOkListener(dialog1 -> {
@@ -185,9 +186,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 .subscribe(granted -> {
                                     if (granted) {
-                                        File file = new File(event.getFolderPath());
-                                        if (file.exists())
-                                            FileUtils.deleteFile(file);
+                                        File folder = new File(event.getFolderPath());
+                                        if (folder.exists())
+                                            com.blankj.utilcode.util.FileUtils.deleteDir(folder);
                                         presenter.deleteFolder(event.getFolderPath());
                                     }
                                 });
@@ -224,7 +225,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                     if (activity != null) {
                         activity.getContentResolver().takePersistableUriPermission(SDCardUri,
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        AppConfigShare.getInstance().setSDFolderUri(SDCardUri.toString());
+                        AppConfig.getInstance().setSDFolderUri(SDCardUri.toString());
                     }
                 }else {
                     ToastUtils.showShort("未获取外置存储卡权限，无法操作外置存储卡");

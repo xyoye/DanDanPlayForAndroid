@@ -3,10 +3,10 @@ package com.xyoye.dandanplay.bean.params;
 import android.content.Context;
 
 import com.blankj.utilcode.util.EncryptUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.utils.KeyUtil;
-import com.xyoye.core.utils.StringUtils;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.utils.KeyUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -79,7 +79,7 @@ public class LoginParam implements Serializable {
                 StringUtils.isEmpty(password) ||
                 StringUtils.isEmpty(appId) ||
                 unixTimestamp == 0){
-            TLog.e("登录信息错误");
+            LogUtils.e("登录信息错误");
             ToastUtils.showShort("登录信息错误");
         }else {
             String builder = this.appId +

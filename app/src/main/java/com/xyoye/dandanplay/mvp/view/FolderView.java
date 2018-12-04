@@ -1,9 +1,9 @@
 package com.xyoye.dandanplay.mvp.view;
 
-import com.xyoye.core.interf.view.BaseMvpView;
-import com.xyoye.core.interf.view.LoadDataView;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
+import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 
 import java.util.List;
 

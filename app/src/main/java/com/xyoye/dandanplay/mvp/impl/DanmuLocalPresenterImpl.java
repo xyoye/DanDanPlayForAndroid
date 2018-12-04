@@ -4,14 +4,13 @@ import android.os.Bundle;
 import android.os.Environment;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
 import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.ui.activities.FileManagerActivity;
-import com.xyoye.dandanplay.ui.weight.SDCardUtil;
-import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 
 
-public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> implements DanmuLocalPresenter {
+public class DanmuLocalPresenterImpl extends BaseMvpPresenterImpl<DanmuLocalView> implements DanmuLocalPresenter {
     private File parentFolder = null;
     private String rootPath = Environment.getExternalStorageDirectory().getPath();
     private int fileType;
@@ -36,7 +35,7 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenter<DanmuLocalView> im
     @Override
     public void init() {
         fileType = getView().getFileType();
-        String path = AppConfigShare.getInstance().getDownloadFolder();
+        String path = AppConfig.getInstance().getDownloadFolder();
         listFile(path);
     }
 

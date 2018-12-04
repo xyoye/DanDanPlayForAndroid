@@ -4,16 +4,16 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -22,7 +22,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  */
 
 
-public class MainPresenterImpl extends BaseMvpPresenter<MainView> implements MainPresenter {
+public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements MainPresenter {
 
     public MainPresenterImpl(MainView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -80,7 +80,7 @@ public class MainPresenterImpl extends BaseMvpPresenter<MainView> implements Mai
 
             @Override
             public void onError(int errorCode, String message) {
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
@@ -113,7 +113,7 @@ public class MainPresenterImpl extends BaseMvpPresenter<MainView> implements Mai
 
             @Override
             public void onError(int errorCode, String message) {
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());

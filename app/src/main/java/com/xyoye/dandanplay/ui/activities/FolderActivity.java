@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,13 +17,12 @@ import android.view.MenuItem;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.ServiceUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
@@ -38,9 +38,9 @@ import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.Config;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -61,7 +61,7 @@ import butterknife.BindView;
  */
 
 
-public class FolderActivity extends BaseActivity<FolderPresenter> implements FolderView{
+public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements FolderView{
     private static final int DIRECTORY_CHOOSE_REQ_CODE = 106;
 
     @BindView(R.id.toolbar)
@@ -103,7 +103,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     public void refreshAdapter(List<VideoBean> beans) {
         videoList.clear();
         videoList.addAll(beans);
-        sort(UserInfoShare.getInstance().getFolderCollectionsType());
+        sort(AppConfig.getInstance().getFolderSortType());
         if (adapter == null){
             adapter = new BaseRvAdapter<VideoBean>(videoList) {
                 @NonNull
@@ -131,7 +131,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
 
     @Override
     public void showLoading() {
-        showLoadingDialog("正在搜索网络弹幕", false);
+        showLoadingDialog("正在搜索网络弹幕");
     }
 
     @Override
@@ -148,23 +148,23 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.sort_by_name:
-                int nameType = UserInfoShare.getInstance().getFolderCollectionsType();
-                if (nameType == Config.Collection.NAME_ASC)
-                    sort(Config.Collection.NAME_DESC);
-                else if (nameType == Config.Collection.NAME_DESC)
-                    sort(Config.Collection.NAME_ASC);
+                int nameType = AppConfig.getInstance().getFolderSortType();
+                if (nameType == Constants.Collection.NAME_ASC)
+                    sort(Constants.Collection.NAME_DESC);
+                else if (nameType == Constants.Collection.NAME_DESC)
+                    sort(Constants.Collection.NAME_ASC);
                 else
-                    sort(Config.Collection.NAME_ASC);
+                    sort(Constants.Collection.NAME_ASC);
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.sort_by_duration:
-                int durationType = UserInfoShare.getInstance().getFolderCollectionsType();
-                if (durationType == Config.Collection.DURATION_ASC)
-                    sort(Config.Collection.DURATION_DESC);
-                else if (durationType == Config.Collection.DURATION_DESC)
-                    sort(Config.Collection.DURATION_ASC);
+                int durationType = AppConfig.getInstance().getFolderSortType();
+                if (durationType == Constants.Collection.DURATION_ASC)
+                    sort(Constants.Collection.DURATION_DESC);
+                else if (durationType == Constants.Collection.DURATION_DESC)
+                    sort(Constants.Collection.DURATION_ASC);
                 else
-                    sort(Config.Collection.DURATION_ASC);
+                    sort(Constants.Collection.DURATION_ASC);
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.player_setting:
@@ -204,7 +204,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
         //未设置弹幕情况下，1、开启自动加载时自动加载，2、自动匹配相同目录下同名弹幕，3、匹配默认下载目录下同名弹幕
         if (StringUtils.isEmpty(videoBean.getDanmuPath())){
             String path = videoBean.getVideoPath();
-            if (AppConfigShare.getInstance().isAutoLoadDanmu() && !isLan){
+            if (AppConfig.getInstance().isAutoLoadDanmu() && !isLan){
                 if (!StringUtils.isEmpty(path)){
                     presenter.getDanmu(path);
                 }
@@ -264,8 +264,10 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                                 adapter.notifyDataSetChanged();
                                 return;
                             }
-                            if (!videoBean.getVideoPath().startsWith(com.xyoye.dandanplay.utils.FileUtils.Base_Path)){
-                                String SDFolderUri = AppConfigShare.getInstance().getSDFolderUri();
+
+                            String rootPhonePath = Environment.getExternalStorageDirectory().getPath();
+                            if (!videoBean.getVideoPath().startsWith(rootPhonePath)){
+                                String SDFolderUri = AppConfig.getInstance().getSDFolderUri();
                                 if (com.blankj.utilcode.util.StringUtils.isEmpty(SDFolderUri)) {
                                     new DialogUtils.Builder(FolderActivity.this)
                                             .setOkListener(dialog1 -> {
@@ -349,7 +351,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                 if (SDCardUri != null) {
                     getContentResolver().takePersistableUriPermission(SDCardUri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    AppConfigShare.getInstance().setSDFolderUri(SDCardUri.toString());
+                    AppConfig.getInstance().setSDFolderUri(SDCardUri.toString());
                 } else {
                     ToastUtils.showShort("未获取外置存储卡权限，无法操作外置存储卡");
                 }
@@ -380,7 +382,7 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
                 ToastUtils.showShort("匹配到相同目录下同名弹幕");
             }else {
                 String name = FileUtils.getFileNameNoExtension(videoPath)+ ".xml";
-                danmuPath = AppConfigShare.getInstance().getDownloadFolder()+ "/" + name;
+                danmuPath = AppConfig.getInstance().getDownloadFolder()+ "/" + name;
                 file = new File(danmuPath);
                 if (file.exists()){
                     selectVideoBean.setDanmuPath(danmuPath);
@@ -435,19 +437,19 @@ public class FolderActivity extends BaseActivity<FolderPresenter> implements Fol
     }
 
     public void sort(int type){
-        if (type == Config.Collection.NAME_ASC){
+        if (type == Constants.Collection.NAME_ASC){
             Collections.sort(videoList,
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o1.getVideoPath()), FileUtils.getFileNameNoExtension(o2.getVideoPath())));
-        }else if (type == Config.Collection.NAME_DESC){
+        }else if (type == Constants.Collection.NAME_DESC){
             Collections.sort(videoList,
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o2.getVideoPath()), FileUtils.getFileNameNoExtension(o1.getVideoPath())));
-        }else if (type == Config.Collection.DURATION_ASC){
+        }else if (type == Constants.Collection.DURATION_ASC){
             Collections.sort(videoList,
                     (o1, o2) -> o1.getVideoDuration() > o2.getVideoDuration() ? 1 : -1);
-        }else if (type == Config.Collection.DURATION_DESC){
+        }else if (type == Constants.Collection.DURATION_DESC){
             Collections.sort(videoList,
                     (o1, o2) -> o1.getVideoDuration() < o2.getVideoDuration() ? 1 : -1);
         }
-        UserInfoShare.getInstance().saveFolderCollectionsType(type);
+        AppConfig.getInstance().saveFolderSortType(type);
     }
 }

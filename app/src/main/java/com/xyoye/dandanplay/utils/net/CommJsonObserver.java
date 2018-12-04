@@ -2,9 +2,9 @@ package com.xyoye.dandanplay.utils.net;
 
 import android.app.ProgressDialog;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.JsonSyntaxException;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -39,7 +39,6 @@ public abstract class CommJsonObserver<T extends CommJsonEntity> implements Obse
     @Override
     public void onSubscribe(Disposable d) {
         mDisposable = d;
-        TLog.i("onSubscribe");
         if (lifeful != null && !lifeful.isAlive()) {
             d.dispose();
         }
@@ -47,7 +46,6 @@ public abstract class CommJsonObserver<T extends CommJsonEntity> implements Obse
 
     @Override
     public void onNext(T value) {
-        TLog.i("onNext");
         if (lifeful == null || lifeful.isAlive()) {
             if (value.isSuccess()) {
                 onSuccess(value);
@@ -72,12 +70,12 @@ public abstract class CommJsonObserver<T extends CommJsonEntity> implements Obse
     }
 
     private String getErrorMessage(Throwable e) {
-        TLog.e(e.toString());
+        LogUtils.e(e.toString());
         if (e instanceof JsonSyntaxException) {
-            TLog.i("error", e.toString());
+            LogUtils.i("error", e.toString());
             return "数据异常";
         } else if (e instanceof UnknownHostException) {
-            TLog.i("error", e.toString());
+            LogUtils.i("error", e.toString());
             return "网络连接中断";
         } else if (e instanceof SocketTimeoutException) {
             return "服务器繁忙";

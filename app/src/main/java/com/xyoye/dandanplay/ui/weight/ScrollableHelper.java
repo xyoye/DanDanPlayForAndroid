@@ -34,7 +34,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ScrollView;
 
-import com.xyoye.core.utils.TLog;
+import com.blankj.utilcode.util.LogUtils;
 
 /**
  */
@@ -84,7 +84,7 @@ public class ScrollableHelper {
         }
         if (scrollableView instanceof RecyclerView) {
             boolean top = isRecyclerViewTop((RecyclerView) scrollableView);
-            TLog.i("isTop", top + "");
+            LogUtils.i("isTop", top + "");
             return top;
         }
         if (scrollableView instanceof WebView) {

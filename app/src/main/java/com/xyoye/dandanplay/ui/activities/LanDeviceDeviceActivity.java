@@ -10,12 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.StringUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
 import com.xyoye.dandanplay.bean.event.AddLanDeviceEvent;
 import com.xyoye.dandanplay.bean.event.AuthLanEvent;
@@ -28,8 +27,9 @@ import com.xyoye.dandanplay.mvp.view.LanDeviceView;
 import com.xyoye.dandanplay.ui.weight.dialog.AuthLanDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.LanDeviceItem;
-import com.xyoye.dandanplay.utils.Config;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.JsonUtil;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,7 +43,7 @@ import butterknife.BindView;
  * Created by xyy on 2018/11/19.
  */
 
-public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> implements LanDeviceView {
+public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter> implements LanDeviceView {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.device_rv)
@@ -99,7 +99,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
         if (authLanDialog != null && authLanDialog.isShowing())
             authLanDialog.dismiss();
         ToastUtils.showShort("登陆成功");
-        showLoadingDialog("开始搜索视频文件", false);
+        showLoadingDialog("开始搜索视频文件");
         
         LanDeviceBean device = lanDeviceList.get(position);
         device.setAccount(deviceBean.getAccount());
@@ -108,7 +108,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
         device.setAnonymous(deviceBean.isAnonymous());
         adapter.notifyItemChanged(position);
         //保存设备数据
-        SPUtils.getInstance().put(Config.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
+        SPUtils.getInstance().put(Constants.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
 
         String smbUrl;
         if (StringUtils.isEmpty(device.getAccount()) || device.isAnonymous()){
@@ -131,7 +131,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
         if (authLanDialog != null && authLanDialog.isShowing())
             authLanDialog.dismiss();
         ToastUtils.showShort("添加设备成功");
-        showLoadingDialog("开始搜索视频文件", false);
+        showLoadingDialog("开始搜索视频文件");
 
         //存在则更新设备，不存在则添加设备
         boolean isEarlyExist = false;
@@ -151,7 +151,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
             adapter.notifyDataSetChanged();
         }
         //保存设备数据
-        SPUtils.getInstance().put(Config.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
+        SPUtils.getInstance().put(Constants.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
 
         String smbUrl;
         if (StringUtils.isEmpty(device.getAccount()) || device.isAnonymous()){
@@ -197,7 +197,7 @@ public class LanDeviceDeviceActivity extends BaseActivity<LanDevicePresenter> im
         new DialogUtils.Builder(this)
                 .setOkListener(dialog -> {
                     dialog.dismiss();
-                    SPUtils.getInstance().remove(Config.AppConfig.SMB_DEVICE);
+                    SPUtils.getInstance().remove(Constants.AppConfig.SMB_DEVICE);
                     LanDeviceBean lanDeviceBean = lanDeviceList.get(event.getPosition());
                     lanDeviceBean.setAccount("");
                     lanDeviceBean.setAnonymous(false);

@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.utils.net;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.xyoye.core.utils.TLog;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -28,12 +28,11 @@ public class NetworkConsumer implements Consumer<Disposable> {
             if (display != null) {
                 display.normalNetwork();
             }
-            TLog.i("normal network");
         } else {
             if (display != null) {
                 display.noNetwork();
             }
-            TLog.i("no network");
+            LogUtils.i("no network");
         }
     }
 

@@ -44,4 +44,49 @@
     <string name="download_by_link_tip">输入链接以下载</string>
 
     <string name="per_second">/s</string>
+
+    <string name="app_id_o">lay</string>
+    <string name="app_id_g">roi</string>
+    <string name="app_id_h">ley</string>
+    <string name="app_id_f">d2d</string>
+    <string name="app_id_b">rod</string>
+    <string name="app_id_y">ddp</string>
+    <string name="app_id_n">and</string>
+    <string name="app_id_e">dv3</string>
+
+    <string name="app_id2_a">c9</string>
+    <string name="app_id2_y">9a</string>
+    <string name="app_id2_g">yv</string>
+    <string name="app_id2_o">d9</string>
+    <string name="app_id2_x">e6</string>
+    <string name="app_id2_i">7e</string>
+    <string name="app_id2_f">65</string>
+    <string name="app_id2_e">47</string>
+    <string name="app_id2_m">ag</string>
+
+    <string name="app_secret_a">8KfM</string>
+    <string name="app_secret_b">iFIZ</string>
+    <string name="app_secret_7">p6V</string>
+    <string name="app_secret_o">e5iF</string>
+    <string name="app_secret_e">0YtG</string>
+    <string name="app_secret_y">pDa6</string>
+    <string name="app_secret_1">iZuo</string>
+    <string name="app_secret_h">Bpw2</string>
+    <string name="app_secret_5">p4V</string>
+    <string name="app_secret_9">oF6V</string>
+    <string name="app_secret_n">Yt0G</string>
+    <string name="app_secret_s">YCGK</string>
+    <string name="app_secret_c">GEvp</string>
+
+    <string name="umeng_i">fa3627</string>
+    <string name="umeng_a">c1f5d</string>
+    <string name="umeng_s">5b61c</string>
+    <string name="umeng_e">d045d</string>
+    <string name="umeng_h">048a40</string>
+    <string name="umeng_g">0440</string>
+    <string name="umeng_n">900045</string>
+    <string name="umeng_m">9ff45</string>
+    <string name="umeng_v">8110045</string>
+    <string name="umeng_b">aff1</string>
+    <string name="umeng_l">bs23d</string>
 </resources>

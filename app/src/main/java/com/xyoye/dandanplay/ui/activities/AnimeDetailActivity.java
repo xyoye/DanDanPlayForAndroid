@@ -10,14 +10,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
-import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.event.SearchMagnetEvent;
 import com.xyoye.dandanplay.mvp.impl.AnimeDetailPresenterImpl;
@@ -28,7 +27,8 @@ import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -47,7 +47,7 @@ import butterknife.BindView;
  * Created by YE on 2018/7/20.
  */
 
-public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> implements AnimeDetailView, ScrollableHelper.ScrollableContainer{
+public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView, ScrollableHelper.ScrollableContainer{
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolBar;
     @BindView(R.id.scroll_layout)
@@ -104,7 +104,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.favorite:
-                if (UserInfoShare.getInstance().isLogin()){
+                if (AppConfig.getInstance().isLogin()){
                     if (isFavorite){
                         favoriteCancel();
                     }else {
@@ -254,7 +254,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
             @Override
             public void onError(int errorCode, String message) {
                 ToastUtils.showShort(message);
-                TLog.e(message);
+                LogUtils.e(message);
             }
         }, new NetworkConsumer());
     }
@@ -274,7 +274,7 @@ public class AnimeDetailActivity extends BaseActivity<AnimeDetailPresenter> impl
             @Override
             public void onError(int errorCode, String message) {
                 ToastUtils.showShort(message);
-                TLog.e(message);
+                LogUtils.e(message);
             }
         }, new NetworkConsumer());
     }

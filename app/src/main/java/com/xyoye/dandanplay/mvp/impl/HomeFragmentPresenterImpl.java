@@ -5,16 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.bean.BannerBeans;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 
-public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView> implements HomeFragmentPresenter {
+public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragmentView> implements HomeFragmentPresenter {
 
     private CountDownLatch countDownLatch = null;
     private List<BannerBeans.BannersBean> bannerList;
@@ -96,7 +96,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
 
             @Override
             public void onError(int errorCode, String message) {
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
 
                 List<BannerBeans.BannersBean> bannerBeans = new ArrayList<>();
@@ -165,7 +165,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenter<HomeFragmentView
             @Override
             public void onError(int errorCode, String message) {
                 ToastUtils.showShort(message);
-                TLog.e(message);
+                LogUtils.e(message);
 
                 if (countDownLatch != null){
                     countDownLatch.countDown();

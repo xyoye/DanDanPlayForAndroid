@@ -7,17 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.StringUtils;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
 import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.LanDevicePresenter;
 import com.xyoye.dandanplay.mvp.view.LanDeviceView;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.FindLanDevicesTask;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 
@@ -34,7 +35,6 @@ import io.reactivex.schedulers.Schedulers;
 import jcifs.Address;
 import jcifs.CIFSContext;
 import jcifs.context.SingletonContext;
-import jcifs.smb.NtStatus;
 import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
@@ -43,7 +43,7 @@ import jcifs.smb.SmbFile;
  * Created by xyy on 2018/11/19.
  */
 
-public class LanDevicePresenterImpl extends BaseMvpPresenter<LanDeviceView> implements LanDevicePresenter {
+public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> implements LanDevicePresenter {
     private Context mContext;
 
     public LanDevicePresenterImpl(LanDeviceView view, Lifeful lifeful) {
@@ -152,12 +152,12 @@ public class LanDevicePresenterImpl extends BaseMvpPresenter<LanDeviceView> impl
     private List<SmbBean> traverseFolder(String smbUrl){
         try {
             SmbFile smbFile = new SmbFile(smbUrl, context);
-            if (smbFile.isFile() && com.xyoye.dandanplay.utils.FileUtils.isMediaFile(smbUrl)){
+            if (smbFile.isFile() && CommonUtils.isMediaFile(smbUrl)){
                 SmbBean smbBean = new SmbBean();
                 smbBean.setName(smbFile.getName());
                 smbBean.setUrl(smbUrl);
                 List<SmbBean> smbBeanList = new ArrayList<>();
-                TLog.e("add smb video file: " + smbBean.getUrl());
+                LogUtils.e("add smb video file: " + smbBean.getUrl());
                 smbBeanList.add(smbBean);
                 return smbBeanList;
             }else if (smbFile.isDirectory()){

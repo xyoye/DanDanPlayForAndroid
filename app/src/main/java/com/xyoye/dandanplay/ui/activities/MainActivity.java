@@ -14,10 +14,10 @@ import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.base.BaseAppFragment;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.base.BaseAppFragment;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.event.ListFolderEvent;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
@@ -35,7 +35,7 @@ import butterknife.BindView;
 import libtorrent.Libtorrent;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
-public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
+public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView {
     public final static int SELECT_FOLDER = 103;
 
     @BindView(R.id.fragment_container)

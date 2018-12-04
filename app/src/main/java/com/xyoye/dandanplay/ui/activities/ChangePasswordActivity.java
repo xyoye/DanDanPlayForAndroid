@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ChangePasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
@@ -25,7 +25,7 @@ import butterknife.BindView;
  */
 
 
-public class ChangePasswordActivity extends BaseActivity<ChangePasswordPresenter> implements ChangePasswordView, View.OnClickListener {
+public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresenter> implements ChangePasswordView, View.OnClickListener {
     @BindView(R.id.return_iv)
     ImageView returnIv;
     @BindView(R.id.user_old_password_et)

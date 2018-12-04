@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
-import com.xyoye.dandanplay.utils.FileUtils;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
 import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
@@ -149,7 +149,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
-                    if (FileUtils.isMediaFile(playFile.getPath())) {
+                    if (CommonUtils.isMediaFile(playFile.getPath())) {
                         String videoTitle = playFile.getPath();
                         if (!torrent.getFolder().endsWith("/")) torrent.setFolder(torrent.getFolder() + "/");
                         String path = torrent.getFolder() + videoTitle;
@@ -175,7 +175,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             for (long i = 0; i < l; i++) {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
-                    if (FileUtils.isMediaFile(playFile.getPath())) {
+                    if (CommonUtils.isMediaFile(playFile.getPath())) {
                         String path = torrent.getFolder() + "/" + playFile.getPath();
                         Intent intent = new Intent(context, DanmuNetworkActivity.class);
                         intent.putExtra("path", path);
@@ -240,8 +240,8 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                         left = "" + TorrentUtil.formatDuration(context, diff) + "";
                 }
                 str += left;
-                str += " · ↓ " + FileUtils.convertFileSize(torrent.downloaded.getCurrentSpeed()) + context.getString(R.string.per_second);
-                str += " · ↑ " + FileUtils.convertFileSize(torrent.uploaded.getCurrentSpeed()) + context.getString(R.string.per_second);
+                str += " · ↓ " + CommonUtils.convertFileSize(torrent.downloaded.getCurrentSpeed()) + context.getString(R.string.per_second);
+                str += " · ↑ " + CommonUtils.convertFileSize(torrent.uploaded.getCurrentSpeed()) + context.getString(R.string.per_second);
                 break;
         }
 
@@ -264,11 +264,11 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
         if (torrent.isError())
             return "未知/未知";
         if (torrent.isDone())
-            return FileUtils.convertFileSize(torrent.getSize()) + "/" + FileUtils.convertFileSize(torrent.getSize());
+            return CommonUtils.convertFileSize(torrent.getSize()) + "/" + CommonUtils.convertFileSize(torrent.getSize());
         if (Libtorrent.metaTorrent(torrent.getId())) {
             long size = Libtorrent.torrentPendingBytesLength(torrent.getId());
             long completed = Libtorrent.torrentPendingBytesCompleted(torrent.getId());
-            return FileUtils.convertFileSize(completed) + "/" + FileUtils.convertFileSize(size);
+            return CommonUtils.convertFileSize(completed) + "/" + CommonUtils.convertFileSize(size);
         }
         return "未知/未知";
     }

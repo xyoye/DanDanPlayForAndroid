@@ -4,12 +4,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 

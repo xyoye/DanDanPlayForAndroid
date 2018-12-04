@@ -9,15 +9,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
 import com.xyoye.dandanplay.ui.weight.dialog.ChangeScreenNameDialog;
-import com.xyoye.dandanplay.utils.TokenShare;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,7 +29,7 @@ import butterknife.BindView;
  */
 
 
-public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
+public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
     @BindView(R.id.login_out_bt)
     Button loginOutBt;
     @BindView(R.id.screen_name_rl)
@@ -46,9 +45,9 @@ public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> im
     @Override
     public void initView() {
         setTitle("个人信息");
-        if (UserInfoShare.getInstance().isLogin()){
-            String screenName = UserInfoShare.getInstance().getUserScreenName();
-            String userName = UserInfoShare.getInstance().getUserName();
+        if (AppConfig.getInstance().isLogin()){
+            String screenName = AppConfig.getInstance().getUserScreenName();
+            String userName = AppConfig.getInstance().getUserName();
 
             screenNameTv.setText(screenName);
             userNameTv.setText(userName);
@@ -63,12 +62,12 @@ public class PersonalInfoActivity extends BaseActivity<PersonalInfoPresenter> im
         passwordRl.setOnClickListener(this);
 
         loginOutBt.setOnClickListener(v -> {
-            if (UserInfoShare.getInstance().isLogin()){
-                UserInfoShare.getInstance().setLogin(false);
-                UserInfoShare.getInstance().saveUserName("");
-                UserInfoShare.getInstance().saveUserScreenName("");
-                UserInfoShare.getInstance().saveUserImage("");
-                TokenShare.getInstance().saveToken("");
+            if (AppConfig.getInstance().isLogin()){
+                AppConfig.getInstance().setLogin(false);
+                AppConfig.getInstance().saveUserName("");
+                AppConfig.getInstance().saveUserScreenName("");
+                AppConfig.getInstance().saveUserImage("");
+                AppConfig.getInstance().saveToken("");
 
                 launchActivity(LoginActivity.class);
                 PersonalInfoActivity.this.finish();

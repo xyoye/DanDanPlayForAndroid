@@ -5,20 +5,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.tencent.bugly.beta.Beta;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
-import com.xyoye.dandanplay.utils.AppConfigShare;
-import com.xyoye.dandanplay.utils.FileUtils;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import butterknife.BindView;
 
@@ -27,7 +25,7 @@ import butterknife.BindView;
  */
 
 
-public class SettingActivity extends BaseActivity<SettingPresenter> implements SettingView, View.OnClickListener{
+public class SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     public final static int SELECT_SETTING_FOLDER = 105;
 
     @BindView(R.id.path_rl)
@@ -53,11 +51,11 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
     public void initView() {
         setTitle("设置");
 
-        String downloadPath = AppConfigShare.getInstance().getDownloadFolder();
+        String downloadPath = AppConfig.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);
-        version = AppConfigShare.getLocalVersion(this);
+        version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
-        if (AppConfigShare.getInstance().isAutoLoadDanmu()){
+        if (AppConfig.getInstance().isAutoLoadDanmu()){
             autoLoadDanmuSw.setChecked(true);
         }
     }
@@ -71,7 +69,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
         feedbackRl.setOnClickListener(this);
 
         autoLoadDanmuSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfigShare.getInstance().setAutoLoadDanmu(isChecked);
+            AppConfig.getInstance().setAutoLoadDanmu(isChecked);
         });
     }
 
@@ -141,7 +139,7 @@ public class SettingActivity extends BaseActivity<SettingPresenter> implements S
             if (requestCode == SELECT_SETTING_FOLDER){
                 String folderPath = data.getStringExtra("folder");
                 pathTv.setText(folderPath);
-                AppConfigShare.getInstance().setDownloadFolder(folderPath);
+                AppConfig.getInstance().setDownloadFolder(folderPath);
             }
         }
     }

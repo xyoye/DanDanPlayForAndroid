@@ -16,11 +16,10 @@ import android.view.MenuItem;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.adapter.BaseRvAdapter;
-import com.xyoye.core.base.BaseActivity;
-import com.xyoye.core.interf.AdapterItem;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
@@ -28,6 +27,7 @@ import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
 
@@ -43,7 +43,7 @@ import libtorrent.Libtorrent;
  * Created by YE on 2018/10/27.
  */
 
-public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresenter> implements DownloadManagerView {
+public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView {
     public final static int BIND_DANMU = 1001;
     @BindView(R.id.download_rv)
     RecyclerView downloadRv;
@@ -143,7 +143,7 @@ public class DownloadMangerActivity extends BaseActivity<DownloadManagerPresente
 
     @Override
     public void showLoading() {
-        showLoadingDialog("正在开启下载服务", false);
+        showLoadingDialog("正在开启下载服务");
     }
 
     @Override

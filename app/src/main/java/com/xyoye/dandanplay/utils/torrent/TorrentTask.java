@@ -4,10 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.utils.TLog;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.utils.AppConfigShare;
+import com.xyoye.dandanplay.utils.AppConfig;
 
 import org.apache.commons.io.FileUtils;
 
@@ -43,7 +43,7 @@ public class TorrentTask{
 
     //解析torrent内容
     private Torrent prepareTorrent(Torrent oldTorrent){
-        String downloadFolder = AppConfigShare.getInstance().getDownloadFolder();
+        String downloadFolder = AppConfig.getInstance().getDownloadFolder();
         downloadFolder += oldTorrent.getFolder();
         Torrent torrent = new Torrent();
         torrent.setPath(oldTorrent.getPath());
@@ -86,7 +86,7 @@ public class TorrentTask{
         torrent.setStatus(torrentStatus);
         if (torrentStatus == Libtorrent.StatusPaused || torrentStatus == Libtorrent.StatusQueued){
             if (!Libtorrent.startTorrent(torrent.getId())){
-                TLog.e(Libtorrent.error());
+                LogUtils.e(Libtorrent.error());
                 Toast.makeText(context, "错误，无法下载", Toast.LENGTH_LONG).show();
                 return false;
             }

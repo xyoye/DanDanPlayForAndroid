@@ -18,10 +18,10 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
-import com.xyoye.dandanplay.utils.FileUtils;
-import com.xyoye.dandanplay.utils.TorrentStorage;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
 import com.xyoye.dandanplay.utils.torrent.TorrentTask;
 
 import org.greenrobot.eventbus.EventBus;
@@ -217,8 +217,8 @@ public class TorrentService extends Service {
             downloadStatus = "未知";
         }
 
-        String downloadSpeed = FileUtils.convertFileSize(downloaded.getCurrentSpeed());
-        String uploadSpeed = FileUtils.convertFileSize(uploaded.getCurrentSpeed());
+        String downloadSpeed = CommonUtils.convertFileSize(downloaded.getCurrentSpeed());
+        String uploadSpeed = CommonUtils.convertFileSize(uploaded.getCurrentSpeed());
 
         return buildNotification(downloadStatus, doneTask, downloadSpeed, uploadSpeed);
     }

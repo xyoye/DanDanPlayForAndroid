@@ -6,15 +6,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.db.DataBaseInfo;
-import com.xyoye.core.db.DataBaseManager;
-import com.xyoye.core.rx.Lifeful;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.database.DataBaseInfo;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.FindVideoTask;
+import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
  */
 
 
-public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView> implements PlayFragmentPresenter {
+public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {
 
     public PlayFragmentPresenterImpl(PlayFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -143,7 +144,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenter<PlayFragmentView
         if(f.isDirectory()){
             return Observable.fromArray(f.listFiles()).flatMap(this::listFiles);
         } else {
-            return Observable.just(f).filter(file -> f.exists() && f.canRead() && com.xyoye.dandanplay.utils.FileUtils.isMediaFile(f.getAbsolutePath()));
+            return Observable.just(f).filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
         }
     }
 

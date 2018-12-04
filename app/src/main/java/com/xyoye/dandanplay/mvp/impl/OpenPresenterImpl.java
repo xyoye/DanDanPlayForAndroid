@@ -2,14 +2,13 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.blankj.utilcode.util.LogUtils;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
-import com.xyoye.dandanplay.utils.TokenShare;
-import com.xyoye.dandanplay.utils.UserInfoShare;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -17,7 +16,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  * Created by YE on 2018/7/15.
  */
 
-public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements OpenPresenter {
+public class OpenPresenterImpl extends BaseMvpPresenterImpl<OpenView> implements OpenPresenter {
 
     public OpenPresenterImpl(OpenView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -26,7 +25,7 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
     @Override
     public void init() {
         //判断用户上次是否登录
-        if (UserInfoShare.getInstance().isLogin()){
+        if (AppConfig.getInstance().isLogin()){
             reToken();
         }else {
             getView().launch(false);
@@ -57,21 +56,21 @@ public class OpenPresenterImpl extends BaseMvpPresenter<OpenView> implements Ope
         PersonalBean.reToken(new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
-                UserInfoShare.getInstance().setLogin(true);
-                UserInfoShare.getInstance().saveUserScreenName(personalBean.getScreenName());
-                UserInfoShare.getInstance().saveUserImage(personalBean.getProfileImage());
-                TokenShare.getInstance().saveToken(personalBean.getToken());
+                AppConfig.getInstance().setLogin(true);
+                AppConfig.getInstance().saveUserScreenName(personalBean.getScreenName());
+                AppConfig.getInstance().saveUserImage(personalBean.getProfileImage());
+                AppConfig.getInstance().saveToken(personalBean.getToken());
                 getView().launch(false);
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                UserInfoShare.getInstance().setLogin(false);
-                UserInfoShare.getInstance().saveUserName("");
-                UserInfoShare.getInstance().saveUserImage("");
-                UserInfoShare.getInstance().saveUserScreenName("");
-                TokenShare.getInstance().saveToken("");
-                TLog.e(message);
+                AppConfig.getInstance().setLogin(false);
+                AppConfig.getInstance().saveUserName("");
+                AppConfig.getInstance().saveUserImage("");
+                AppConfig.getInstance().saveUserScreenName("");
+                AppConfig.getInstance().saveToken("");
+                LogUtils.e(message);
                 getView().launch(true);
             }
         }, new NetworkConsumer());

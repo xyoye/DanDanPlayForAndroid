@@ -2,12 +2,12 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.blankj.utilcode.util.LogUtils;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.presenter.PersonalHistoryPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalHistoryView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -16,7 +16,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  */
 
 
-public class PersonalHistoryPresenterImpl extends BaseMvpPresenter<PersonalHistoryView> implements PersonalHistoryPresenter{
+public class PersonalHistoryPresenterImpl extends BaseMvpPresenterImpl<PersonalHistoryView> implements PersonalHistoryPresenter{
 
     public PersonalHistoryPresenterImpl(PersonalHistoryView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -61,7 +61,7 @@ public class PersonalHistoryPresenterImpl extends BaseMvpPresenter<PersonalHisto
             public void onError(int errorCode, String message) {
                 getView().refreshHistory(null);
                 getView().hideLoading();
-                TLog.e(message);
+                LogUtils.e(message);
             }
         }, new NetworkConsumer());
     }

@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.mvp.view;
 
-import com.xyoye.core.interf.view.BaseMvpView;
 import com.xyoye.dandanplay.bean.DanmuFolderBean;
+import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
 import java.util.List;
 

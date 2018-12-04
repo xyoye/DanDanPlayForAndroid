@@ -2,12 +2,12 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.blankj.utilcode.util.LogUtils;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFavoritePresenter;
 import com.xyoye.dandanplay.mvp.view.PeronalFavoriteView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -16,7 +16,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  */
 
 
-public class PersonalPresenterImpl extends BaseMvpPresenter<PeronalFavoriteView> implements PersonalFavoritePresenter {
+public class PersonalPresenterImpl extends BaseMvpPresenterImpl<PeronalFavoriteView> implements PersonalFavoritePresenter {
 
     public PersonalPresenterImpl(PeronalFavoriteView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -61,7 +61,7 @@ public class PersonalPresenterImpl extends BaseMvpPresenter<PeronalFavoriteView>
             public void onError(int errorCode, String message) {
                 getView().hideLoading();
                 getView().refreshFavorite(null);
-                TLog.e(message);
+                LogUtils.e(message);
             }
         }, new NetworkConsumer());
     }

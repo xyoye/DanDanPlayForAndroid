@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.jaeger.library.StatusBarUtil;
-import com.xyoye.core.base.BaseActivity;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.impl.LoginPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
@@ -28,7 +28,7 @@ import butterknife.BindView;
  * Created by YE on 2018/7/22.
  */
 
-public class LoginActivity extends BaseActivity<LoginPresenter> implements LoginView, View.OnClickListener {
+public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements LoginView, View.OnClickListener {
     @BindView(R.id.login_return_iv)
     ImageView loginReturnIv;
     @BindView(R.id.user_name_et)

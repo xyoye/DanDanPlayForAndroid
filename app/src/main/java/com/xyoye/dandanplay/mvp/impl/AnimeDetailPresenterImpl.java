@@ -2,13 +2,13 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.core.base.BaseMvpPresenter;
-import com.xyoye.core.rx.Lifeful;
-import com.xyoye.core.utils.TLog;
+import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
  */
 
 
-public class AnimeDetailPresenterImpl extends BaseMvpPresenter<AnimeDetailView> implements AnimeDetailPresenter {
+public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailView> implements AnimeDetailPresenter {
 
     public AnimeDetailPresenterImpl(AnimeDetailView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -60,7 +60,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenter<AnimeDetailView> 
             @Override
             public void onError(int errorCode, String message) {
                 getView().hideLoading();
-                TLog.e(message);
+                LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());

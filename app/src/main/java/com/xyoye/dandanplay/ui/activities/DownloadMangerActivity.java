@@ -160,6 +160,20 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeMessages(0);
+
+        boolean downloading = false;
+        for (Torrent torrent : IApplication.torrentList) {
+            if (torrent.isDone()) continue;
+            if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
+                    Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
+                downloading = true;
+                break;
+            }
+        }
+        if (!downloading){
+            if (ServiceUtils.isServiceRunning(TorrentService.class))
+                ServiceUtils.stopService(TorrentService.class);
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

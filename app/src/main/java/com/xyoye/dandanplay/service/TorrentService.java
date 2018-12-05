@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.github.axet.wget.SpeedInfo;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
@@ -140,6 +141,7 @@ public class TorrentService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogUtils.i("TorrentService onCreate");
         EventBus.getDefault().register(TorrentService.this);
 
         torrentTask = new TorrentTask(this.getApplicationContext());
@@ -257,18 +259,29 @@ public class TorrentService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        LogUtils.i("TorrentService onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        LogUtils.i("TorrentService onDestroy");
+        mHandler.removeCallbacks(refresh);
+        notificationManager.cancel(NOTIFICATION_ID);
         EventBus.getDefault().unregister(TorrentService.this);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        LogUtils.i("TorrentService onBind");
         return null;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        LogUtils.i("TorrentService onUnbind");
+        return super.onUnbind(intent);
     }
 }

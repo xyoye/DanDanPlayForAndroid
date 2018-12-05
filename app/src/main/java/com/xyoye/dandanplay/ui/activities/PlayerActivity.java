@@ -88,7 +88,7 @@ public class PlayerActivity extends AppCompatActivity {
                 boolean isGetDanmuPath = false;
                 String folderPath = FileUtils.getDirName(videoPath);
                 SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                String sql = "SELECT danmu_path FROM file WHERE folder_path=? AND file_name=?";
+                String sql = "SELECT danmu_path FROM file WHERE folder_path=? AND file_path=?";
                 Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoTitle});
                 if (cursor != null && cursor.getCount() != 0) {
                     cursor.moveToNext();

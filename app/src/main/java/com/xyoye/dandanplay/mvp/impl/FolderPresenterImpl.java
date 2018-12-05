@@ -213,7 +213,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             String filePath = cursor.getString(2);
             File file = new File(filePath);
             if (!file.exists()){
-                sqLiteDatabase.delete("file", "folder_path = ? AND file_name = ?", new String[]{folderPath, filePath});
+                sqLiteDatabase.delete("file", "folder_path = ? AND file_path = ?", new String[]{folderPath, filePath});
                 continue;
             }
 

@@ -117,7 +117,7 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
                 }
                 emitter.onNext(deviceBean);
             } catch (SmbException e) {
-                getView().showError("登陆设备失败："+e.getNtStatus());
+                getView().showError("登陆设备失败："+SmbException.getMessageByCode(e.getNtStatus()));
                 e.printStackTrace();
             }
             emitter.onComplete();

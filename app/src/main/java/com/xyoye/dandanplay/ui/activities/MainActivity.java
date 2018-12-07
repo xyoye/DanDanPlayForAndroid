@@ -126,7 +126,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     menuMainItem.setVisible(true);
                     menuLanItem.setVisible(true);
                     menuMainItem.setTitle("添加文件夹");
-                    menuMainItem.setIcon(R.drawable.ic_add);
+                    menuMainItem.setIcon(R.mipmap.ic_add);
                     fragFlag = 1;
                     return true;
                 case R.id.navigation_personal:

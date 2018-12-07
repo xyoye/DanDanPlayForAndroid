@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.activities.MainActivity">
+    tools:context=".ui.activities.TrackerActivity">
 
     <item
-        android:id="@+id/menu_item_lan_device"
+        android:id="@+id/tracker_help"
+        android:icon="@mipmap/ic_help"
         android:orderInCategory="100"
-        android:title="添加设备"
-        app:showAsAction="ifRoom"
-        android:icon="@mipmap/ic_add"/>
+        android:title="help"
+        app:showAsAction="ifRoom" />
 </menu>

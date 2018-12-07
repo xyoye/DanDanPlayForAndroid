@@ -23,6 +23,15 @@ public class AppConfig {
     }
 
     /**
+     * 首次进入app
+     */
+    public boolean isFirstStart(){
+        boolean isFirst = SPUtils.getInstance().getBoolean(Constants.AppConfig.FIRST_OPEN_APP, true);
+        if (isFirst) SPUtils.getInstance().put(Constants.AppConfig.FIRST_OPEN_APP, false);
+        return isFirst;
+    }
+
+    /**
      * 昵称
      */
     public String getUserScreenName(){

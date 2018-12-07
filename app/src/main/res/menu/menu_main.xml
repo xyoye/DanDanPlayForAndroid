@@ -15,5 +15,5 @@
         android:orderInCategory="100"
         android:title="添加文件夹"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_add"/>
+        android:icon="@mipmap/ic_add"/>
 </menu>

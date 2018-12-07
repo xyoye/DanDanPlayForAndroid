@@ -28,7 +28,7 @@ import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -137,26 +137,26 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @SuppressLint("CheckResult")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void deleteEvent(DeleteFolderEvent event){
-        new DialogUtils.Builder(getContext())
-                .setOkListener(dialog ->{
-                    dialog.dismiss();
+        new CommonDialog.Builder(getContext())
+                .setAutoDismiss()
+                .setOkListener(dialog -> {
                     String rootPhonePath = Environment.getExternalStorageDirectory().getPath();
                     if (!event.getFolderPath().startsWith(rootPhonePath)){
                         String SDFolderUri = AppConfig.getInstance().getSDFolderUri();
                         if (StringUtils.isEmpty(SDFolderUri)) {
-                            new DialogUtils.Builder(getContext())
+                            new CommonDialog.Builder(getContext())
+                                    .setAutoDismiss()
                                     .setOkListener(dialog1 -> {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                                             intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                                             startActivityForResult(intent, DIRECTORY_CHOOSE_REQ_CODE);
                                         } else {
-                                            ToastUtils.showShort("当前build sdk版本不支持SD卡授权");
+                                            ToastUtils.showShort("外置存储文件操作需要手动授权，确认跳转后，请选择外置存储卡");
                                         }
                                     })
-                                    .setCancelListener(DialogUtils::dismiss)
                                     .build()
-                                    .show("外置存储文件操作需要手动授权，确认跳转后，请选择外置存储卡");
+                                    .show("确认删除此文件夹？");
                         }else {
                             DocumentFile documentFile = DocumentFile.fromTreeUri(getContext(), Uri.parse(SDFolderUri));
                             List<String> rootPaths = SDCardUtils.getSDCardPaths();
@@ -194,9 +194,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                                 });
                     }
                 })
-                .setCancelListener(DialogUtils::dismiss)
                 .build()
-                .show("确认删除文件和记录？", true, true);
+                .show("确认删除文件和记录？");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

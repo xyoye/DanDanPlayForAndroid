@@ -5,7 +5,7 @@
     tools:context=".ui.activities.MainActivity">
     <item
         android:id="@+id/add_video_folder"
-        android:icon="@drawable/ic_add"
+        android:icon="@mipmap/ic_add"
         android:orderInCategory="100"
         android:title="@string/add_video_folder"
         app:showAsAction="ifRoom" />

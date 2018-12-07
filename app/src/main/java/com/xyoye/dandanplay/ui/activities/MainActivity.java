@@ -87,6 +87,13 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
             previousFragment = playFragment;
         }
+        if (navigationView != null){
+            if (navigationView.getSelectedItemId() == R.id.navigation_play){
+                if (playFragment != null){
+                    playFragment.registerEventBus();
+                }
+            }
+        }
     }
 
     @Override
@@ -219,20 +226,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (navigationView != null){
-            if (navigationView.getSelectedItemId() == R.id.navigation_play){
-                if (playFragment != null){
-                    playFragment.registerEventBus();
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         if (playFragment != null){
             playFragment.unrigisterEventBus();
         }

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +28,7 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -91,6 +93,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         getView().refreshAdapter(getFolderList());
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void listFolder(String path) {
         File file = new File(path);
@@ -99,36 +102,19 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .flatMap(this::listFiles)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<File>() {
-                               @Override
-                               public void onSubscribe(Disposable d) {
-
-                               }
-
-                               @Override
-                               public void onNext(File file) {
-                                   try {
-                                       String filePath = file.getAbsolutePath();
-                                       String folderPath = FileUtils.getDirName(filePath);
-                                       fmmr.setDataSource(filePath);
-                                       long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
-                                       saveData(folderPath, filePath, duration);
-                                   }catch (Exception e){
-                                       e.printStackTrace();
-                                   }
-                               }
-
-                               @Override
-                               public void onError(Throwable e) {
-                                    e.printStackTrace();
-                               }
-
-                               @Override
-                               public void onComplete() {
-                                   fmmr.release();
-                                   getView().refreshAdapter(getFolderList());
-                               }
-                           });
+                .subscribe(file1 -> {
+                    try {
+                        String filePath = file1.getAbsolutePath();
+                        String folderPath = FileUtils.getDirName(filePath);
+                        fmmr.setDataSource(filePath);
+                        long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
+                        saveData(folderPath, filePath, duration);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    fmmr.release();
+                    getView().refreshAdapter(getFolderList());
+                });
     }
 
     /**

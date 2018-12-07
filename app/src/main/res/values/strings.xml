@@ -43,6 +43,16 @@
     <string name="choose_link_form_bilibili_button_tip">在Bilibili网站上选择一个链接</string>
     <string name="download_by_link_tip">输入链接以下载</string>
 
+    <string name="what_is_tracker">
+        BitTorrent tracker（中文可称：BT服务器、tracker服务器等）是帮助BitTorrent协议在节点与节点之间做连接的服务器，对BT下载起到客户端协调和调控的重要作用。\n\n
+
+        BitTorrent客户端下载一开始就要连接到tracker，从tracker获得其他客户端IP地址后，才能连接到其他客户端下载。在传输过程中，也会一直与tracker通信，上传自己的信息，获取其它客户端的信息。\n\n
+
+        长按添加按钮可将tracker恢复为弹弹提供的默认tracker。\n\n
+
+        from zh.wikipedia.org
+    </string>
+
     <string name="per_second">/s</string>
 
     <string name="app_id_o">lay</string>

@@ -160,7 +160,7 @@ public class CommonUtils {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
             while (( line = bufferedReader.readLine()) != null) {
-                if (StringUtils.isEmpty(line) || line.startsWith("#")) continue;
+                if (StringUtils.isEmpty(line) || line.trim().startsWith("#")) continue;
                 stringList.add(line);
             }
         } catch (IOException ee) {

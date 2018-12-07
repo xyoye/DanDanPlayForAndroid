@@ -61,27 +61,23 @@
                         android:src="@drawable/ic_arrow_right_dark"/>
                 </RelativeLayout>
 
-                <Button
+                <TextView
                     android:id="@+id/button_login"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_margin="5dp"
+                    android:gravity="center"
                     android:background="@color/theme_color"
                     android:text="@string/login_button_tip"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:background="@color/diver_color"/>
 
                 <RelativeLayout
                     android:id="@+id/download_manager_rl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:minHeight="40dp">
+                    android:minHeight="48dp">
                     <TextView
                         android:id="@+id/download_manager_tips"
                         android:layout_width="wrap_content"
@@ -104,7 +100,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
+                    android:layout_height="5dp"
                     android:background="@color/diver_color"/>
 
                 <LinearLayout
@@ -118,7 +114,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:attr/selectableItemBackground"
-                        android:minHeight="40dp">
+                        android:minHeight="48dp">
                         <TextView
                             android:id="@+id/more_favorite_tips"
                             android:layout_width="wrap_content"
@@ -149,7 +145,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
+                    android:layout_height="5dp"
                     android:background="@color/diver_color"/>
 
                 <LinearLayout
@@ -163,7 +159,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:attr/selectableItemBackground"
-                        android:minHeight="40dp">
+                        android:minHeight="48dp">
                         <TextView
                             android:id="@+id/more_history_tips"
                             android:layout_width="wrap_content"

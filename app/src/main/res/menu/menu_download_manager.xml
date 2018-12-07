@@ -19,4 +19,9 @@
         android:orderInCategory="100"
         android:title="删除全部"
         app:showAsAction="withText" />
+    <item
+        android:id="@+id/tracker_manager"
+        android:orderInCategory="100"
+        android:title="tracker管理"
+        app:showAsAction="withText" />
 </menu>

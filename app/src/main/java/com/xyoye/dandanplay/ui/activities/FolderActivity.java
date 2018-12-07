@@ -35,8 +35,8 @@ import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.service.SmbService;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
@@ -255,9 +255,9 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 presenter.updateDanmu("", -1, new String[]{folderPath, videoBean.getVideoPath()});
                 break;
             case VideoActionEvent.DELETE:
-                new DialogUtils.Builder(this)
+                new CommonDialog.Builder(this)
+                        .setAutoDismiss()
                         .setOkListener(dialog -> {
-                            dialog.dismiss();
                             if(isLan){
                                 presenter.deleteFile(videoBean.getVideoPath());
                                 videoList.remove(event.getPosition());
@@ -269,7 +269,8 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                             if (!videoBean.getVideoPath().startsWith(rootPhonePath)){
                                 String SDFolderUri = AppConfig.getInstance().getSDFolderUri();
                                 if (com.blankj.utilcode.util.StringUtils.isEmpty(SDFolderUri)) {
-                                    new DialogUtils.Builder(FolderActivity.this)
+                                    new CommonDialog.Builder(this)
+                                            .setAutoDismiss()
                                             .setOkListener(dialog1 -> {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                                     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -279,7 +280,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                                                     ToastUtils.showShort("当前build sdk版本不支持SD卡授权");
                                                 }
                                             })
-                                            .setCancelListener(DialogUtils::dismiss)
                                             .build()
                                             .show("外置存储文件操作需要手动授权，确认跳转后，请选择外置存储卡");
                                 }else {
@@ -324,7 +324,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                                         });
                             }
                         })
-                        .setCancelListener(DialogUtils::dismiss)
                         .build()
                         .show("确认删除该文件？");
                 break;

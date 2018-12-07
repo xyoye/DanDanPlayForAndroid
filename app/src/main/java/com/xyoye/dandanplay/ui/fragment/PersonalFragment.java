@@ -48,7 +48,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     @BindView(R.id.user_name_tv)
     TextView userNameTv;
     @BindView(R.id.button_login)
-    Button loginButton;
+    TextView loginButton;
     @BindView(R.id.download_manager_rl)
     RelativeLayout downloadManagerRl;
     @BindView(R.id.favorite_rl)

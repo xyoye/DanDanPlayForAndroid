@@ -34,6 +34,7 @@ import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.database.DataBaseHelper;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -68,8 +69,10 @@ public class IApplication extends BaseApplication {
         Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
         initDatabase(new DataBaseHelper(this));
         PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
-        initLibTorrent();
-        loadTorrent();
+        new Thread(() -> {
+            initLibTorrent();
+            loadTorrent();
+        }).start();
 
         Fragmentation.builder()
                 .stackViewMode(Fragmentation.NONE)
@@ -101,7 +104,24 @@ public class IApplication extends BaseApplication {
             throw new RuntimeException(Libtorrent.error());
         Libtorrent.setUploadRate(-1);
         Libtorrent.setDownloadRate(-1);
-        trackers = CommonUtils.readTracker(getApplicationContext());
+        if (AppConfig.getInstance().isFirstStart()) {
+            trackers = CommonUtils.readTracker(getApplicationContext());
+            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+            for (String tracker : trackers){
+                ContentValues values=new ContentValues();
+                values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
+                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
+            }
+        }else {
+            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+            String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[8];
+            Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
+            while (cursor.moveToNext()){
+                String tracker = cursor.getString(1);
+                trackers.add(tracker);
+            }
+            cursor.close();
+        }
     }
 
     private void loadTorrent(){

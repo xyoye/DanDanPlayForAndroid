@@ -30,13 +30,14 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-    lintOptions{
+    lintOptions {
         lintConfig file("lint.xml")
     }
-    
+
 }
 
 dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':player')
     compile rootProject.ext.dependencies["appcompat-v7"]
@@ -69,10 +70,9 @@ dependencies {
     compile 'me.yokeyword:fragmentation:1.3.6'
     compile 'com.github.axet:libtorrent:0.13.35'
     compile 'com.blankj:utilcode:1.21.2'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-    //compile 'com.trello.rxlifecycle2:rxlifecycle:2.2.1'
-    //compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
 
     compile('com.github.axet:wget:1.4.2') {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'

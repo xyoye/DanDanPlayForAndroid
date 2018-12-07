@@ -25,7 +25,7 @@ import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -184,18 +184,19 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
             case R.id.all_pause:
                 EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_PAUSE, null));
                 break;
-            case R.id.all_delete:new DialogUtils.Builder(this)
-                    .setOkListener(dialog -> {
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, null));
-                        dialog.dismiss();
-                    })
-                    .setExtraListener(dialog -> {
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, null));
-                        dialog.dismiss();
-                    })
-                    .setCancelListener(DialogUtils::dismiss)
-                    .build()
-                    .show("删除任务和文件", "确认删除所有任务？", true, true);
+            case R.id.all_delete:
+                new CommonDialog.Builder(this)
+                        .showExtra()
+                        .setAutoDismiss()
+                        .setOkListener(dialog ->
+                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, null)))
+                        .setExtraListener(dialog ->
+                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, null)))
+                        .build()
+                        .show("确认删除所有任务？","删除任务和文件");
+                break;
+            case R.id.tracker_manager:
+                startActivity(new Intent(DownloadMangerActivity.this, TrackerActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

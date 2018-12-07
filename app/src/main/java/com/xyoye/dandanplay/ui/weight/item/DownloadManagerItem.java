@@ -18,7 +18,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -197,18 +197,14 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             showActionView(torrent,false);
         });
         deleteActionLl.setOnClickListener(v -> {
-            new DialogUtils.Builder(context)
-                    .setOkListener(dialog -> {
-                        dialog.dismiss();
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrent));
-                    })
-                    .setExtraListener(dialog -> {
-                        dialog.dismiss();
-                        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_FILE, torrent));
-                    })
-                    .setCancelListener(DialogUtils::dismiss)
+            new CommonDialog.Builder(context)
+                    .setAutoDismiss()
+                    .setOkListener(dialog ->
+                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrent)))
+                    .setExtraListener(dialog ->
+                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_FILE, torrent)))
                     .build()
-                    .show("删除任务和文件", "确认删除任务？", true, true);
+                    .show( "确认删除任务？","删除任务和文件");
             showActionView(torrent,false);
         });
         closeActionLl.setOnClickListener(v -> showActionView(torrent,false));

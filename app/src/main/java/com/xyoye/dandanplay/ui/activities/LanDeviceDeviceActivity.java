@@ -25,7 +25,7 @@ import com.xyoye.dandanplay.mvp.impl.LanDevicePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LanDevicePresenter;
 import com.xyoye.dandanplay.mvp.view.LanDeviceView;
 import com.xyoye.dandanplay.ui.weight.dialog.AuthLanDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.LanDeviceItem;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.JsonUtil;
@@ -194,9 +194,9 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
 
     @Subscribe
     public void updateDevice(UpdateDeviceEvent event){
-        new DialogUtils.Builder(this)
-                .setOkListener(dialog -> {
-                    dialog.dismiss();
+        new CommonDialog.Builder(this)
+                .setAutoDismiss()
+                .setOkListener(dialog1 -> {
                     SPUtils.getInstance().remove(Constants.AppConfig.SMB_DEVICE);
                     LanDeviceBean lanDeviceBean = lanDeviceList.get(event.getPosition());
                     lanDeviceBean.setAccount("");
@@ -205,9 +205,8 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
                     lanDeviceBean.setDomain("");
                     adapter.notifyItemChanged(event.getPosition());
                 })
-                .setCancelListener(DialogUtils::dismiss)
                 .build()
-                .show("你希望清除登陆信息吗？", true, true);
+                .show("你希望清除登陆信息吗？");
     }
 
     @Subscribe

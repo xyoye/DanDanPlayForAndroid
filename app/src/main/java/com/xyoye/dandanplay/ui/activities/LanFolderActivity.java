@@ -21,7 +21,7 @@ import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.LanFolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LanFolderPresenter;
 import com.xyoye.dandanplay.mvp.view.LanFolderView;
-import com.xyoye.dandanplay.ui.weight.dialog.DialogUtils;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -115,16 +115,15 @@ public class LanFolderActivity extends BaseMvpActivity<LanFolderPresenter> imple
 
     @Subscribe
     public void deleteEvent(DeleteFolderEvent event){
-        new DialogUtils.Builder(this)
+        new CommonDialog.Builder(this)
+                .setAutoDismiss()
                 .setOkListener(dialog -> {
-                    dialog.dismiss();
                     mFolderBeanList.remove(event.getPosition());
                     mAdapter.notifyDataSetChanged();
                     presenter.deleteFolder(event.getFolderPath());
                 })
-                .setCancelListener(DialogUtils::dismiss)
                 .build()
-                .show("确认删除此文件夹？", true, true);
+                .show("确认删除此文件夹？");
     }
 
     @Subscribe

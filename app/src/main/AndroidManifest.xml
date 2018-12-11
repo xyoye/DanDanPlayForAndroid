@@ -94,6 +94,8 @@
         <activity
             android:name=".ui.activities.LanVideoActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activities.TrackerActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -1028,7 +1030,6 @@
                 <data android:pathPattern=".*..*..*..*..*..*..*..*..*..*..*..*..*..*..*.wtv"></data>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.TrackerActivity"></activity>
     </application>
 
 </manifest>

@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.IWebView;
@@ -60,10 +62,14 @@ public class WebviewActivity extends AppCompatActivity {
                 WebviewActivity.this.finish();
                 break;
             case R.id.select_url:
-                Intent intent = getIntent();
-                intent.putExtra("selectUrl", IwebView.getUrl());
-                setResult(DownloadBilibiliActivity.SELECT_WEB, intent);
-                WebviewActivity.this.finish();
+                if(!StringUtils.isEmpty(IwebView.getUrl())){
+                    Intent intent = getIntent();
+                    intent.putExtra("selectUrl", IwebView.getUrl());
+                    setResult(DownloadBilibiliActivity.SELECT_WEB, intent);
+                    WebviewActivity.this.finish();
+                }else {
+                    ToastUtils.showShort("url不能为空");
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

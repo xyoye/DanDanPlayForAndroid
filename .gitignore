@@ -1,6 +1,7 @@
 /local.properties
 /build
 /.idea
+/.settings
 .externalNativeBuild
 *.iws
 *.iml

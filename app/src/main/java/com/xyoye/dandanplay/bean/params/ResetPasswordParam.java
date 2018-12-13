@@ -99,7 +99,7 @@ public class ResetPasswordParam implements Serializable {
                     this.email +
                     this.unixTimestamp +
                     this.userName +
-                    KeyUtil.getAppSecret(context);
+                    KeyUtil.getDanDanAppSecret(context);
             hash = EncryptUtils.encryptMD5ToString(builder);
         }
     }

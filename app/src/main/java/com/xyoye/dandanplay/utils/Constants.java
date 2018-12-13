@@ -31,6 +31,10 @@ public class Constants {
         public static final String FOLDER_COLLECTIONS = "folder_collection";
         //smb地址
         public static final String SMB_DEVICE = "smb_device";
+        //补丁版本号
+        public static final String PATCH_VERSION = "patch_version";
+        //自动查询补丁模式
+        public static final String AUTO_QUERY_PATCH = "auto_query_patch";
     }
 
     //文件排序方式

@@ -24,6 +24,7 @@ import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
 import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
 import com.xyoye.dandanplay.utils.torrent.TorrentTask;
+import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,7 +46,7 @@ public class TorrentService extends Service {
     private SpeedInfo downloaded = new SpeedInfo();
     private SpeedInfo uploaded = new SpeedInfo();
     private NotificationManager notificationManager;
-    private Handler mHandler = IApplication.getMainHander();
+    private Handler mHandler = IApplication.getMainHandler();
     private Runnable refresh;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -56,7 +57,7 @@ public class TorrentService extends Service {
                 if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
                     IApplication.torrentList.add(torrent);
                     IApplication.torrentStorage.addHash(torrent.getHash(), torrent);
-                    IApplication.saveTorrent(torrent);
+                    TorrentUtil.saveTorrent(torrent);
                     if (!torrentTask.start(torrent))
                         torrent.setError(true);
                     showNotification();
@@ -74,7 +75,7 @@ public class TorrentService extends Service {
                 break;
             case TorrentEvent.EVENT_DELETE_TASK:
                 torrentTask.pause(event.getTorrent());
-                IApplication.deleteTorrent(event.getTorrent(), false);
+                TorrentUtil.deleteTorrent(event.getTorrent(), false);
                 Iterator<Torrent> iteratorTask = IApplication.torrentList.iterator();
                 while (iteratorTask.hasNext()){
                     Torrent t = iteratorTask.next();
@@ -87,7 +88,7 @@ public class TorrentService extends Service {
                 break;
             case TorrentEvent.EVENT_DELETE_FILE:
                 torrentTask.pause(event.getTorrent());
-                IApplication.deleteTorrent(event.getTorrent(), true);
+                TorrentUtil.deleteTorrent(event.getTorrent(), true);
                 Iterator<Torrent> iteratorFile = IApplication.torrentList.iterator();
                 while (iteratorFile.hasNext()){
                     Torrent t = iteratorFile.next();
@@ -117,7 +118,7 @@ public class TorrentService extends Service {
                 while (iterator.hasNext()){
                     Torrent t = iterator.next();
                     torrentTask.pause(t);
-                    IApplication.deleteTorrent(t, false);
+                    TorrentUtil.deleteTorrent(t, false);
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator.remove();
                 }
@@ -128,7 +129,7 @@ public class TorrentService extends Service {
                 while (iterator2.hasNext()){
                     Torrent t = iterator2.next();
                     torrentTask.pause(t);
-                    IApplication.deleteTorrent(t, true);
+                    TorrentUtil.deleteTorrent(t, true);
                     IApplication.torrentStorage.removeHash(t.getHash());
                     iterator2.remove();
                 }

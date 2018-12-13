@@ -52,7 +52,7 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
 
     @Override
     public void login(LoginParam param){
-        param.setAppId(KeyUtil.getAppId(getView().getPersonalContext()));
+        param.setAppId(KeyUtil.getDanDanAppId(getView().getPersonalContext()));
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getPersonalContext());
         PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifeful()) {

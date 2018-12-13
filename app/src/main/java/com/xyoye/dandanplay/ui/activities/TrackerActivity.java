@@ -160,6 +160,9 @@ public class TrackerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.tracker_help:
                 new CommonDialog.Builder(TrackerActivity.this)
                         .hideCancel()

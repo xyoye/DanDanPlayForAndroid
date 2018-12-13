@@ -218,6 +218,57 @@
             android:background="@color/diver_color"/>
 
         <RelativeLayout
+            android:id="@+id/patch_rl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/patch_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:textSize="14sp"
+                android:text="补丁版本："/>
+
+            <TextView
+                android:id="@+id/patch_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/patch_tip"
+                android:layout_marginStart="5dp"
+                android:layout_centerVertical="true"
+                android:textSize="14sp"
+                android:textColor="@color/text_black"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/find_patch_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/find_patch_iv"
+                android:layout_marginEnd="5dp"
+                android:textSize="12sp"
+                android:text="检查"/>
+
+            <ImageView
+                android:id="@+id/find_patch_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_arrow_right_dark"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/diver_color"/>
+
+        <RelativeLayout
             android:id="@+id/about_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"

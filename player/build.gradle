@@ -39,7 +39,10 @@ dependencies {
     implementation 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
 
     api 'org.greenrobot:eventbus:3.1.1'
-        // Required for local unit tests (JUnit 4 framework)
+
+    api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'
+
+    // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
 
     // Required for instrumented tests

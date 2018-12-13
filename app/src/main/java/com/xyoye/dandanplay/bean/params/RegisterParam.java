@@ -126,7 +126,7 @@ public class RegisterParam implements Serializable {
                     this.screenName +
                     this.unixTimestamp +
                     this.userName +
-                    KeyUtil.getAppSecret(context);
+                    KeyUtil.getDanDanAppSecret(context);
             hash = EncryptUtils.encryptMD5ToString(builder);
         }
     }

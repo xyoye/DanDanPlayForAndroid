@@ -20,6 +20,11 @@ android {
             abiFilters 'x86', 'armeabi-v7a'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -33,7 +38,6 @@ android {
     lintOptions {
         lintConfig file("lint.xml")
     }
-
 }
 
 dependencies {

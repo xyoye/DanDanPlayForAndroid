@@ -29,16 +29,27 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.player.ijkplayer.utils.PlayerConfigShare;
+import com.taobao.sophix.PatchStatus;
+import com.taobao.sophix.SophixManager;
+import com.taobao.sophix.listener.PatchLoadStatusListener;
 import com.tencent.bugly.Bugly;
+import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.database.DataBaseHelper;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
+import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +63,6 @@ import me.yokeyword.fragmentation.BuildConfig;
 import me.yokeyword.fragmentation.Fragmentation;
 
 public class IApplication extends BaseApplication {
-    static ThreadPoolExecutor executor;
     public static List<Torrent> torrentList = new ArrayList<>();
     public static TorrentStorage torrentStorage = new TorrentStorage();
     public static List<String> trackers = new ArrayList<>();
@@ -62,166 +72,122 @@ public class IApplication extends BaseApplication {
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
     public void onCreate() {
-
-        LogUtils.i("onCreate");
         super.onCreate();
-        MultiDex.install(this);
-        Bugly.init(getApplicationContext(), KeyUtil.getAppId2(getApplicationContext()), false);
+
+        //Bugly
+        Bugly.init(getApplicationContext(), KeyUtil.getBuglyAppId(getApplicationContext()), false);
+
+        //Sophix
+        SophixManager.getInstance().setPatchLoadStatusStub(getPatchLoadListener());
+
+        //数据库
         initDatabase(new DataBaseHelper(this));
-        PlayerConfigShare.initPlayerConfigShare(getApplicationContext());
+
+        //播放器配置
+        PlayerConfigShare.initPlayerConfigShare(this);
+
+        //LibTorrent
         new Thread(() -> {
-            initLibTorrent();
-            loadTorrent();
+            TorrentUtil.initLibTorrent(this);
+            TorrentUtil.loadTorrent();
         }).start();
 
+        //Fragmentation
         Fragmentation.builder()
                 .stackViewMode(Fragmentation.NONE)
                 .debug(BuildConfig.DEBUG)
                 .install();
-    }
 
-    public static ThreadPoolExecutor getExecutor() {
-        if (executor == null) {
-            executor = new ThreadPoolExecutor(3, 3, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
+        //检查补丁
+        if (AppConfig.getInstance().isAutoQueryPatch()){
+            SophixManager.getInstance().queryAndLoadNewPatch();
         }
-        return executor;
     }
 
-    public static Handler getMainHander(){
+    public static Handler getMainHandler(){
         if (mainHandler == null){
             return new Handler(Looper.getMainLooper());
         }
         return mainHandler;
     }
 
-    private void initLibTorrent(){
-        String announces = "udp://exodus.desync.com:6969\nudp://tracker.leechers-paradise.org:6969";
-        Libtorrent.setDefaultAnnouncesList(announces);
-        Libtorrent.setVersion("dandanplay-beta");
-        Libtorrent.setBindAddr(":0");
-        Libtorrent.torrentStorageSet(IApplication.torrentStorage);
-        if (!Libtorrent.create())
-            throw new RuntimeException(Libtorrent.error());
-        Libtorrent.setUploadRate(-1);
-        Libtorrent.setDownloadRate(-1);
-        if (AppConfig.getInstance().isFirstStart()) {
-            trackers = CommonUtils.readTracker(getApplicationContext());
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            for (String tracker : trackers){
-                ContentValues values=new ContentValues();
-                values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
+    public PatchLoadStatusListener getPatchLoadListener(){
+        return (mode, code, serviceMsg, version) -> {
+            String msg = "";
+            List<PatchFixEvent> eventList = JsonUtil.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
+            if (eventList == null) eventList = new ArrayList<>();
+            AppConfig.getInstance().setPatchVersion(version);
+            PatchFixEvent event = new PatchFixEvent();
+            event.setVersion(version);
+            event.setTime(TimeUtils.date2String(new java.util.Date()));
+            switch (code){
+                //加载阶段, 成功
+                case PatchStatus.CODE_LOAD_SUCCESS:
+                    msg = "加载补丁成功";
+                    break;
+                //加载阶段, 失败设备不支持
+                case PatchStatus.CODE_ERR_INBLACKLIST:
+                    msg = "加载失败，设备不支持";
+                    break;
+                //查询阶段, 没有发布新补丁
+                case PatchStatus.CODE_REQ_NOUPDATE:
+                    msg = "已是最新补丁";
+                    event.setCode(-2);
+                    break;
+                //查询阶段, 补丁不是最新的
+                case PatchStatus.CODE_REQ_NOTNEWEST:
+                    msg = "开始下载补丁";
+                    break;
+                //查询阶段, 补丁下载成功
+                case PatchStatus.CODE_DOWNLOAD_SUCCESS:
+                    msg = "补丁下载成功";
+                    break;
+                //查询阶段, 补丁文件损坏下载失败
+                case PatchStatus.CODE_DOWNLOAD_BROKEN:
+                    msg = "补丁文件损坏下载失败";
+                    break;
+                //查询阶段, 补丁解密失败
+                case PatchStatus.CODE_UNZIP_FAIL:
+                    msg = "补丁解密失败";
+                    break;
+                //预加载阶段, 需要重启
+                case PatchStatus.CODE_LOAD_RELAUNCH:
+                    msg = "加载成功，重启应用后生效";
+                    break;
+                //查询阶段, appid异常
+                case PatchStatus.CODE_REQ_APPIDERR:
+                    msg = "加载失败，appid异常";
+                    break;
+                //查询阶段, 签名异常
+                case PatchStatus.CODE_REQ_SIGNERR:
+                    msg = "加载失败，签名异常";
+                    break;
+                //查询阶段, 系统无效
+                case PatchStatus.CODE_REQ_UNAVAIABLE:
+                    msg = "加载失败，系统无效";
+                    break;
+                //查询阶段, 系统异常
+                case PatchStatus.CODE_REQ_SYSTEMERR:
+                    msg = "加载失败，系统异常";
+                    break;
+                //查询阶段, 一键清除补丁
+                case PatchStatus.CODE_REQ_CLEARPATCH:
+                    msg = "一键清除成功";
+                    break;
+                //加载阶段, 补丁格式非法
+                case PatchStatus.CODE_PATCH_INVAILD:
+                    msg = "加载失败，补丁格式非法";
+                    break;
+                default:
+                    event.setCode(code);
+                    break;
             }
-        }else {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[8];
-            Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
-            while (cursor.moveToNext()){
-                String tracker = cursor.getString(1);
-                trackers.add(tracker);
-            }
-            cursor.close();
-        }
-    }
-
-    private void loadTorrent(){
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[6];
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
-        while (cursor.moveToNext()){
-            Torrent torrent = new Torrent();
-            String path = cursor.getString(1);
-            String state = cursor.getString(2);
-            Boolean isDone = cursor.getInt( 3) == 1;
-            String danmuPath = cursor.getString(4);
-            int episodeId = cursor.getInt(5);
-            String magnet = cursor.getString(6);
-            byte[] stateByte = Base64.decode(state, Base64.DEFAULT);
-            long id = Libtorrent.loadTorrent(path, stateByte);
-            if (id == -1) {
-                LogUtils.e(Libtorrent.error());
-                continue;
-            }
-            String hash = Libtorrent.torrentHash(id);
-            torrent.setDone(isDone);
-            torrent.setId(id);
-            torrent.setHash(hash);
-            torrent.setPath(path);
-            torrent.setDanmuPath(danmuPath);
-            torrent.setEpisodeId(episodeId);
-            torrent.setMagnet(magnet);
-            torrent.setTitle(Libtorrent.torrentName(id));
-            torrent.setStatus(Libtorrent.torrentStatus(id));
-            torrent.setSize(Libtorrent.torrentBytesLength(id));
-            if (path.contains("/")){
-                String folder;
-                if (path.contains("/torrent/")){
-                    int end = path.indexOf("/torrent/");
-                    folder = path.substring(0, end);
-                }else {
-                    int end = path.lastIndexOf("/");
-                    folder = path.substring(0, end);
-                }
-                torrent.setFolder(folder+"/");
-            }else {
-                torrent.setFolder(path+"/");
-            }
-            torrentList.add(torrent);
-            torrentStorage.addHash(hash, torrent);
-        }
-        cursor.close();
-    }
-
-    public static void deleteTorrent( Torrent torrent, boolean isDeleteFile){
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        sqLiteDatabase.delete("torrent", "torrent_path=?" , new String[]{torrent.getPath()});
-        Libtorrent.removeTorrent(torrent.getId());
-
-        if (isDeleteFile){
-            File folderFile = new File(torrent.getFolder());
-            if (folderFile.exists()){
-                folderFile.delete();
-            }
-        }
-    }
-
-    public static void saveTorrent(Torrent torrent){
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        byte[] b = Libtorrent.saveTorrent(torrent.getId());
-        String state = Base64.encodeToString(b, Base64.DEFAULT);
-        ContentValues values=new ContentValues();
-        values.put(DataBaseInfo.getFieldNames()[6][1], torrent.getPath());
-        values.put(DataBaseInfo.getFieldNames()[6][2], state);
-        values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
-        values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
-        values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
-        values.put(DataBaseInfo.getFieldNames()[6][6], torrent.getMagnet());
-        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[6], null, values);
-    }
-
-    public static void updateTorrent(Torrent torrent){
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        ContentValues values=new ContentValues();
-        byte[] b = Libtorrent.saveTorrent(torrent.getId());
-        String state = Base64.encodeToString(b, Base64.DEFAULT);
-        values.put(DataBaseInfo.getFieldNames()[6][2], state);
-        values.put(DataBaseInfo.getFieldNames()[6][3], torrent.isDone() ? 1 : 0);
-        values.put(DataBaseInfo.getFieldNames()[6][4], torrent.getDanmuPath());
-        values.put(DataBaseInfo.getFieldNames()[6][5], torrent.getEpisodeId());
-        values.put(DataBaseInfo.getFieldNames()[6][6], torrent.getMagnet());
-        sqLiteDatabase.update(DataBaseInfo.getTableNames()[6], values, "torrent_path = ?", new String[]{torrent.getPath()});
-    }
-
-    @Override
-    public String getPackageName() {
-        if(Log.getStackTraceString(new Throwable()).contains("com.xunlei.downloadlib")) {
-            return "com.xunlei.downloadprovider";
-        }
-        return super.getPackageName();
-    }
-    @Override
-    public PackageManager getPackageManager() {
-        return super.getPackageManager();
+            LogUtils.e(msg);
+            event.setMsg(msg);
+            eventList.add(event);
+            EventBus.getDefault().post(event);
+            SPUtils.getInstance().put("patch_his", JsonUtil.toJson(eventList));
+        };
     }
 
     @Override
@@ -248,6 +214,5 @@ public class IApplication extends BaseApplication {
     @Override
     protected void attachBaseContext(Context context) {
         super.attachBaseContext(context);
-        MultiDex.install(this);
     }
 }

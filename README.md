@@ -31,35 +31,6 @@
 
 8、同步PC端追番、播放历史功能
 
-## 学习使用
-当你在编译使用此库时，会提示缺失KeyUtil.java，这个文件是保存了一些关键的密钥，由于一些原因不能公开，所以没有上传。
-你需要，在util包下，新建KeyUtil.java，复制以下内容:
-
-
-    import android.content.Context;
-    
-    public class KeyUtil {
-    
-      public static String getAppId(Context context){
-        return "";
-      }
-
-      public static String getAppId2(Context context){
-        return "";
-      }
-
-      public static String getAppSecret(Context context){
-        return "";
-      }
-
-      public static String getUmengId(Context context){
-        return "";
-      }
-    
-    }
-
-内容为空并不会影响播放相关功能，主要影响的是服务器接口方面的请求。
-
 ## 致谢
 ### 相关参与建设者：
 概念版参与开发人员：xyoye、shine5402

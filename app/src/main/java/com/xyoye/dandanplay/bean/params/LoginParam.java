@@ -86,7 +86,7 @@ public class LoginParam implements Serializable {
                     this.password +
                     this.unixTimestamp +
                     this.userName +
-                    KeyUtil.getAppSecret(context);
+                    KeyUtil.getDanDanAppSecret(context);
             hash = EncryptUtils.encryptMD5ToString(builder);
         }
     }

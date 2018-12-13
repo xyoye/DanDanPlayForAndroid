@@ -30,6 +30,7 @@ import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -220,7 +221,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                     torrent.setDanmuPath(path);
                     torrent.setEpisodeId(episodeId);
                     adapter.notifyItemChanged(position);
-                    IApplication.updateTorrent(torrent);
+                    TorrentUtil.updateTorrent(torrent);
                     ToastUtils.showShort("绑定弹幕成功");
                 }
             }

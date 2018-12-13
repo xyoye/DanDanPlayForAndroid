@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.utils.torrent;
 
 import com.github.axet.wget.SpeedInfo;
-import com.xyoye.dandanplay.app.IApplication;
 
 import java.io.Serializable;
 import java.util.List;
@@ -191,7 +190,7 @@ public class Torrent implements Serializable{
             long c = Libtorrent.torrentPendingBytesCompleted(id);
             if (l > 0 && l == c && !isDone()){
                 setDone(true);
-                IApplication.updateTorrent(this);
+                TorrentUtil.updateTorrent(this);
             }
         } else {
             done = false;

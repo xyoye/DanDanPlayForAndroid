@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,14 +10,33 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ServiceUtils;
+import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.taobao.sophix.PatchStatus;
+import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
+import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.JsonUtil;
+import com.xyoye.dandanplay.utils.smb.cybergarage.http.Date;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -38,6 +58,10 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
     RelativeLayout aboutRl;
+    @BindView(R.id.patch_rl)
+    RelativeLayout patchRl;
+    @BindView(R.id.patch_tv)
+    TextView patchTv;
     @BindView(R.id.feedback_rl)
     RelativeLayout feedbackRl;
     @BindView(R.id.version_tv)
@@ -47,9 +71,11 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
 
     private String version;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void initView() {
         setTitle("设置");
+        EventBus.getDefault().register(this);
 
         String downloadPath = AppConfig.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);
@@ -58,6 +84,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         if (AppConfig.getInstance().isAutoLoadDanmu()){
             autoLoadDanmuSw.setChecked(true);
         }
+        patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
     }
 
     @Override
@@ -67,6 +94,12 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
+        patchRl.setOnClickListener(this);
+
+        patchRl.setOnLongClickListener(v -> {
+            new PatchHisDialog(SettingActivity.this, R.style.Dialog).show();
+            return true;
+        });
 
         autoLoadDanmuSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setAutoLoadDanmu(isChecked);
@@ -97,6 +130,9 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);
+                break;
+            case R.id.patch_rl:
+                SophixManager.getInstance().queryAndLoadNewPatch();
                 break;
             case R.id.about_rl:
                 Intent intent_about = new Intent(SettingActivity.this, WebviewActivity.class);
@@ -131,6 +167,19 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 builder.show();
                 break;
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPatchEvent(PatchFixEvent event){
+        ToastUtils.showShort(event.getMsg());
+        patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

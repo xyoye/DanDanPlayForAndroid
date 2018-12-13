@@ -219,4 +219,26 @@ public class AppConfig {
         SPUtils.getInstance().put(Constants.TORRENT_UPLOAD_SPEED, speed);
     }
 
+    /**
+     * 补丁版本号
+     */
+    public int getPatchVersion(){
+        return SPUtils.getInstance().getInt(Constants.AppConfig.PATCH_VERSION, 0);
+    }
+
+    public void setPatchVersion(int version){
+        SPUtils.getInstance().put(Constants.AppConfig.PATCH_VERSION, version);
+    }
+
+    /**
+     * 自动查询补丁
+     */
+    public boolean isAutoQueryPatch(){
+        return SPUtils.getInstance().getBoolean(Constants.AppConfig.AUTO_QUERY_PATCH, true);
+    }
+
+    public void setAutoQueryPatch(boolean auto){
+        SPUtils.getInstance().put(Constants.AppConfig.AUTO_QUERY_PATCH, auto);
+    }
+
 }

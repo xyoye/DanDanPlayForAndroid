@@ -109,7 +109,7 @@ public class TorrentTask{
         if (torrent.getId() == -1)
             return;
         Libtorrent.stopTorrent(torrent.getId());
-        IApplication.updateTorrent(torrent);
+        TorrentUtil.updateTorrent(torrent);
         StatsTorrent b = Libtorrent.torrentStats(torrent.getId());
         torrent.downloaded.end(b.getDownloaded());
         torrent.uploaded.end(b.getUploaded());

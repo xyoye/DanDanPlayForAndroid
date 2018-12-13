@@ -55,7 +55,7 @@ public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> im
     @Override
     public void register(RegisterParam param) {
         param.setScreenName(param.getUserName());
-        param.setAppId(KeyUtil.getAppId(getView().getRegisterContext()));
+        param.setAppId(KeyUtil.getDanDanAppId(getView().getRegisterContext()));
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getRegisterContext());
         RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifeful()) {

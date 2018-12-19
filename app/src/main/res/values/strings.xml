@@ -53,6 +53,24 @@
         from zh.wikipedia.org
     </string>
 
+    <string name="about_download">
+        下载速度慢原因：\n
+        &#160;&#160;1、种子资源不行，需要找其他资源下载\n
+        &#160;&#160;2、tracker不足，你可以到tracker管理页面了解添加tracker\n\n
+        种子资源不属弹弹所有，所以并不保证资源的可用性与下载速度。\n\n
+
+        注：长按下载项可对其进行管理
+    </string>
+
+    <string name="mkv_tips">
+        检测到视频格式为MVK，建议到播放器设置中修改设置\n\n
+        方案一：使用ijk播放器，设置像素格式为YV12或OpenGL ES2\n
+        方案二：使用ijk_exo播放器，切换播放器即可\n\n
+
+        注1：播放器对MKV格式视频内容并不完全支持，可能会出现没有显示内嵌字幕的情况。\n
+        注2：此提示只会出现一次。
+    </string>
+
     <string name="what_is_sophix">
         热修复是一种允许APP在不重新发布版本的情况下修复线上的bug的技术。\n\n
 

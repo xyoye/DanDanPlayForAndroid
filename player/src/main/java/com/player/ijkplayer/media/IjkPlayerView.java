@@ -30,6 +30,7 @@ import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -62,6 +63,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.IDanmakuView;
 import com.player.danmaku.danmaku.loader.ILoader;
@@ -91,6 +93,7 @@ import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SDCardUtils;
 import com.player.ijkplayer.utils.SoftInputUtils;
 import com.player.ijkplayer.utils.StringUtils;
+import com.player.ijkplayer.utils.TrackAdapter;
 import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
@@ -298,7 +301,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     //像素格式
     private String mUsingPixelFormat = "";
 
-    private List<AudioTrack> audioTrackList = new ArrayList<>();
+    private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
+    private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
     private List<String> blockList = new ArrayList<>();
     private BaseRvAdapter<String> blockAdapter;
     private SQLiteDatabase sqLiteDatabase;
@@ -458,16 +462,35 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 ITrackInfo[] info = mVideoView.getTrackInfo();
                 if (info != null){
-                    int selectTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-                    int sortN = 1;
+                    int selectAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+                    int selectSubtitleTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE);
+                    int audioN = 1;
+                    int subtitleN = 1;
                     for (int i = 0; i < info.length; i++) {
                         if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO){
-                            AudioTrack audioTrack = new AudioTrack();
-                            audioTrack.setName("音频#"+sortN+"（"+info[i].getLanguage().toUpperCase()+"）");
-                            audioTrack.setStream(i);
-                            if (i == selectTrack) audioTrack.setSelect(true);
-                            sortN ++;
-                            audioTrackList.add(audioTrack);
+                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                            String name = TextUtils.isEmpty(info[i].getTitle())
+                                    ? (TextUtils.isEmpty(info[i].getLanguage())
+                                        ? "UND"
+                                        : info[i].getLanguage())
+                                    : info[i].getTitle();
+                            videoInfoTrack.setName("音频流#"+audioN+"（"+name+"）");
+                            videoInfoTrack.setStream(i);
+                            if (i == selectAudioTrack) videoInfoTrack.setSelect(true);
+                            audioN ++;
+                            audioTrackList.add(videoInfoTrack);
+                        }else if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE){
+                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                            String name = TextUtils.isEmpty(info[i].getTitle())
+                                    ? (TextUtils.isEmpty(info[i].getLanguage())
+                                    ? "UND"
+                                    : info[i].getLanguage())
+                                    : info[i].getTitle();
+                            videoInfoTrack.setName("字幕流#"+audioN+"（"+name+"）");
+                            videoInfoTrack.setStream(i);
+                            if (i == selectSubtitleTrack) videoInfoTrack.setSelect(true);
+                            subtitleN ++;
+                            subtitleTrackList.add(videoInfoTrack);
                         }
                     }
                 }
@@ -479,9 +502,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
                 Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
                 mLoadingView.setVisibility(GONE);
-//                Activity activity = (Activity) getContext();
-//                if (activity != null)
-//                    activity.finish();
                 return false;
             }
         });
@@ -3357,53 +3377,65 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * ============================ 音频 ============================
      */
-    private RadioGroup audioRadioGroup;
-    private RadioButton[] radioButtons;
+    private RecyclerView audioRv;
+    private RecyclerView subtitleRv;
+    private LinearLayout audioRl;
+    private LinearLayout subtitleRl;
+    private TrackAdapter audioAdapter;
+    private TrackAdapter subtitleAdapter;
 
     private void _initAudioView(){
-        audioRadioGroup = findViewById(R.id.audio_radio_group);
-        radioButtons = new RadioButton[10];
-        radioButtons[0] = findViewById(R.id.audio_radio_bt1);
-        radioButtons[1] = findViewById(R.id.audio_radio_bt2);
-        radioButtons[2] = findViewById(R.id.audio_radio_bt3);
-        radioButtons[3] = findViewById(R.id.audio_radio_bt4);
-        radioButtons[4] = findViewById(R.id.audio_radio_bt5);
-        radioButtons[5] = findViewById(R.id.audio_radio_bt6);
-        radioButtons[6] = findViewById(R.id.audio_radio_bt7);
-        radioButtons[7] = findViewById(R.id.audio_radio_bt8);
-        radioButtons[8] = findViewById(R.id.audio_radio_bt9);
-        radioButtons[9] = findViewById(R.id.audio_radio_bt10);
+        audioRv = this.findViewById(R.id.audio_track_rv);
+        subtitleRv = this.findViewById(R.id.subtitle_track_rv);
+        audioRl = this.findViewById(R.id.audio_track_ll);
+        subtitleRl = this.findViewById(R.id.subtitle_track_ll);
 
-        for (int i = 0; i < audioTrackList.size(); i++) {
-            radioButtons[i].setText(audioTrackList.get(i).getName());
-            radioButtons[i].setChecked(audioTrackList.get(i).isSelect());
-            radioButtons[i].setVisibility(VISIBLE);
+        if (audioTrackList == null || audioTrackList.size() <= 0){
+            audioTrackList = new ArrayList<>();
+            audioRl.setVisibility(GONE);
+        }
+        if (subtitleTrackList == null || subtitleTrackList.size() <= 0){
+            subtitleTrackList = new ArrayList<>();
+            subtitleRl.setVisibility(GONE);
         }
 
-        audioRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        audioAdapter = new TrackAdapter(R.layout.item_video_track, audioTrackList);
+        audioRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        audioRv.setItemViewCacheSize(10);
+        audioRv.setAdapter(audioAdapter);
+
+        subtitleAdapter = new TrackAdapter(R.layout.item_video_track, subtitleTrackList);
+        subtitleRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        subtitleRv.setItemViewCacheSize(10);
+        subtitleRv.setAdapter(subtitleAdapter);
+
+        audioAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.audio_radio_bt1) {
-                    mVideoView.selectTrack(audioTrackList.get(0).getStream());
-                } else if (checkedId == R.id.audio_radio_bt2) {
-                    mVideoView.selectTrack(audioTrackList.get(1).getStream());
-                } else if (checkedId == R.id.audio_radio_bt3) {
-                    mVideoView.selectTrack(audioTrackList.get(2).getStream());
-                } else if (checkedId == R.id.audio_radio_bt4) {
-                    mVideoView.selectTrack(audioTrackList.get(3).getStream());
-                } else if (checkedId == R.id.audio_radio_bt5) {
-                    mVideoView.selectTrack(audioTrackList.get(4).getStream());
-                } else if (checkedId == R.id.audio_radio_bt6) {
-                    mVideoView.selectTrack(audioTrackList.get(5).getStream());
-                } else if (checkedId == R.id.audio_radio_bt7) {
-                    mVideoView.selectTrack(audioTrackList.get(6).getStream());
-                } else if (checkedId == R.id.audio_radio_bt8) {
-                    mVideoView.selectTrack(audioTrackList.get(7).getStream());
-                } else if (checkedId == R.id.audio_radio_bt9) {
-                    mVideoView.selectTrack(audioTrackList.get(8).getStream());
-                } else if (checkedId == R.id.audio_radio_bt10) {
-                    mVideoView.selectTrack(audioTrackList.get(9).getStream());
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                mVideoView.selectTrack(audioTrackList.get(position).getStream());
+                for (int i = 0; i < audioTrackList.size(); i++) {
+                    VideoInfoTrack track = audioTrackList.get(i);
+                    if (i != position)
+                        track.setSelect(false);
+                    else
+                        track.setSelect(true);
                 }
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        subtitleAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                mVideoView.selectTrack(subtitleTrackList.get(position).getStream());
+                for (int i = 0; i < subtitleTrackList.size(); i++) {
+                    VideoInfoTrack track = subtitleTrackList.get(i);
+                    if (i != position)
+                        track.setSelect(false);
+                    else
+                        track.setSelect(true);
+                }
+                adapter.notifyDataSetChanged();
             }
         });
     }

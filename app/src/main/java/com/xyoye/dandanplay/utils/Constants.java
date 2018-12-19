@@ -35,6 +35,8 @@ public class Constants {
         public static final String PATCH_VERSION = "patch_version";
         //自动查询补丁模式
         public static final String AUTO_QUERY_PATCH = "auto_query_patch";
+        //展示MKV提示
+        public static final String SHOW_MKV_TIPS = "show_mkv_tips";
     }
 
     //文件排序方式

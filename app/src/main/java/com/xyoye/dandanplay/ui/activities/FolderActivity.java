@@ -400,14 +400,33 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Override
     public void openIntentVideo(VideoBean videoBean){
         if (!isLan){
-            String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
-            Intent intent = new Intent(this, PlayerActivity.class);
-            intent.putExtra("title", title);
-            intent.putExtra("path", videoBean.getVideoPath());
-            intent.putExtra("danmu_path",videoBean.getDanmuPath());
-            intent.putExtra("current", videoBean.getCurrentPosition());
-            intent.putExtra("episode_id", videoBean.getEpisodeId());
-            startActivity(intent);
+            if (AppConfig.getInstance().isShowMkvTips() && FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals(".MKV")){
+                new CommonDialog.Builder(this)
+                        .setAutoDismiss()
+                        .setOkListener(dialog -> {
+                            String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
+                            Intent intent = new Intent(FolderActivity.this, PlayerActivity.class);
+                            intent.putExtra("title", title);
+                            intent.putExtra("path", videoBean.getVideoPath());
+                            intent.putExtra("danmu_path",videoBean.getDanmuPath());
+                            intent.putExtra("current", videoBean.getCurrentPosition());
+                            intent.putExtra("episode_id", videoBean.getEpisodeId());
+                            startActivity(intent);
+                        })
+                        .setCancelListener(dialog -> launchActivity(PlayerSettingActivity.class))
+                        .setDismissListener(dialog -> AppConfig.getInstance().hideMkvTips())
+                        .build()
+                        .show(getResources().getString(R.string.mkv_tips), "关于MKV格式", "我知道了", "前往设置");
+            }else {
+                String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
+                Intent intent = new Intent(FolderActivity.this, PlayerActivity.class);
+                intent.putExtra("title", title);
+                intent.putExtra("path", videoBean.getVideoPath());
+                intent.putExtra("danmu_path",videoBean.getDanmuPath());
+                intent.putExtra("current", videoBean.getCurrentPosition());
+                intent.putExtra("episode_id", videoBean.getEpisodeId());
+                startActivity(intent);
+            }
         }else {
             if(ServiceUtils.isServiceRunning(SmbService.class)){
                 String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";

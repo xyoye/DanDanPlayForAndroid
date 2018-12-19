@@ -7,9 +7,9 @@ import java.util.Date;
  * Created by long on 2016/10/18.
  */
 
-public final class StringUtils {
+public final class TimeFormatUtils {
 
-    private StringUtils() {
+    private TimeFormatUtils() {
         throw new AssertionError();
     }
 

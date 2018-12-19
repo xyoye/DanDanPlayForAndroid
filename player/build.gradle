@@ -32,21 +32,16 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["recycler"]
-
-    api 'org.greenrobot:eventbus:3.1.1'
-
-    api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'
-
-    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
-
-    implementation 'com.google.android.exoplayer:exoplayer:r1.5.11'
-
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
-
     // Required for instrumented tests
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
+    api 'org.greenrobot:eventbus:3.1.1'
+    api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    api 'com.blankj:utilcode:1.21.2'
+    implementation 'com.google.android.exoplayer:exoplayer:r1.5.11'
 }
 
 if (rootProject.file('gradle/gradle-mvn-push.gradle').exists()) {

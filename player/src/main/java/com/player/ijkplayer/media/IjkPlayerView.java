@@ -92,7 +92,7 @@ import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SDCardUtils;
 import com.player.ijkplayer.utils.SoftInputUtils;
-import com.player.ijkplayer.utils.StringUtils;
+import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.TrackAdapter;
 import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.BlockItem;
@@ -129,7 +129,7 @@ import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 import static android.view.GestureDetector.OnGestureListener;
 import static android.view.GestureDetector.SimpleOnGestureListener;
 import static android.widget.SeekBar.OnSeekBarChangeListener;
-import static com.player.ijkplayer.utils.StringUtils.generateTime;
+import static com.player.ijkplayer.utils.TimeFormatUtils.generateTime;
 import static tv.danmaku.ijk.media.player.IMediaPlayer.OnInfoListener;
 
 /**
@@ -934,7 +934,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             // 全屏切换显示的控制栏不一样
             if (mIsFullscreen) {
                 // 只在显示控制栏的时候才设置时间，因为控制栏通常不显示且单位为分钟，所以不做实时更新
-                mTvSystemTime.setText(StringUtils.getCurFormatTime());
+                mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
                 mFullscreenTopBar.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 mWindowTopBar.setVisibility(View.GONE);
                 mIvPlayerLock.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
@@ -3494,7 +3494,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _initReceiver() {
         mPbBatteryLevel = findViewById(R.id.pb_battery);
         mTvSystemTime = findViewById(R.id.tv_system_time);
-        mTvSystemTime.setText(StringUtils.getCurFormatTime());
+        mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
         mBatteryReceiver = new BatteryBroadcastReceiver();
         mScreenReceiver = new ScreenBroadcastReceiver();
         //注册接受广播

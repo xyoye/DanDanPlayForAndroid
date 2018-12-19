@@ -52,8 +52,10 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     RelativeLayout pathRl;
     @BindView(R.id.auto_load_danmu_sw)
     Switch autoLoadDanmuSw;
-    @BindView(R.id.download_rl)
-    RelativeLayout downloadRl;
+    @BindView(R.id.bilibili_download_rl)
+    RelativeLayout bilibiliDownloadRl;
+    @BindView(R.id.extra_so_rl)
+    RelativeLayout extraSoRl;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
@@ -90,7 +92,8 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     @Override
     public void initListener() {
         pathRl.setOnClickListener(this);
-        downloadRl.setOnClickListener(this);
+        bilibiliDownloadRl.setOnClickListener(this);
+        extraSoRl.setOnClickListener(this);
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
@@ -125,8 +128,13 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 intent.putExtra("file_type", FileManagerActivity.DEFAULT_FOLDER);
                 startActivityForResult(intent, SELECT_SETTING_FOLDER);
                 break;
-            case R.id.download_rl:
+            case R.id.bilibili_download_rl:
                 launchActivity(DownloadBilibiliActivity.class);
+                break;
+            case R.id.extra_so_rl:
+                SPUtils.getInstance().put("ijk_ffmpeg_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijkffmpeg.so");
+                SPUtils.getInstance().put("ijk_sdl_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijksdl.so");
+                SPUtils.getInstance().put("ijk_player_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijkplayer.so");
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);

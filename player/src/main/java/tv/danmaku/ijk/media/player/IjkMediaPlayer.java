@@ -45,6 +45,8 @@ import android.view.SurfaceHolder;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.player.ijkplayer.utils.SoFileUtil;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -54,6 +56,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -183,39 +186,14 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
         public void loadLibrary(String libName) throws UnsatisfiedLinkError, SecurityException {
             System.loadLibrary(libName);
         }
+
+        @SuppressLint("UnsafeDynamicallyLoadedCode")
+        @Override
+        public void load(String libName) throws UnsatisfiedLinkError, SecurityException {
+            System.load(libName);
+        }
     };
 
-    private static boolean useLocal = true;
-    private static String ijk_ffmpeg_url = "";
-    private static String ijk_sdl_url = "";
-    private static String ijk_player_url = "";
-
-    public static void initLoad () {
-        ijk_ffmpeg_url = SPUtils.getInstance().getString("ijk_ffmpeg_so_path");
-        ijk_sdl_url = SPUtils.getInstance().getString("ijk_sdl_so_path");
-        ijk_player_url = SPUtils.getInstance().getString("ijk_player_so_path");
-//        String ijk_ffmpeg_md5 = SPUtils.getInstance().getString("ijk_ffmpeg_so_md5");
-//        String ijk_sdl_md5 = SPUtils.getInstance().getString("ijk_sdl_so_md5");
-//        String ijk_player_md5 = SPUtils.getInstance().getString("ijk_player_so_md5");
-        if (StringUtils.isEmpty(ijk_ffmpeg_url) || StringUtils.isEmpty(ijk_sdl_url) || StringUtils.isEmpty(ijk_player_url))
-            return;
-//        if (StringUtils.isEmpty(ijk_ffmpeg_md5) || StringUtils.isEmpty(ijk_sdl_md5) || StringUtils.isEmpty(ijk_player_md5))
-//            return;
-
-        File ijk_ffmpeg_file = new File(ijk_ffmpeg_url);
-        if (!ijk_ffmpeg_file.exists()) return;
-//        if (!ijk_ffmpeg_md5.equals(EncryptUtils.encryptMD5File2String(ijk_ffmpeg_file))) return;
-
-        File ijk_sdl_file = new File(ijk_sdl_url);
-        if (!ijk_sdl_file.exists()) return;
-//        if (!ijk_sdl_md5.equals(EncryptUtils.encryptMD5File2String(ijk_sdl_file))) return;
-
-        File ijk_player_file = new File(ijk_player_url);
-        if (!ijk_player_file.exists()) return;
-//        if (!ijk_player_md5.equals(EncryptUtils.encryptMD5File2String(ijk_player_file))) return;
-
-        useLocal = false;
-    }
 
     private static volatile boolean mIsLibLoaded = false;
     public static void loadLibrariesOnce(IjkLibLoader libLoader) {
@@ -223,14 +201,15 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
             if (!mIsLibLoaded) {
                 if (libLoader == null)
                     libLoader = sLocalLibLoader;
-                if (useLocal){
+
+                if (SoFileUtil.getLoadedFile().size() <= 0){
                     libLoader.loadLibrary("ijkffmpeg");
                     libLoader.loadLibrary("ijksdl");
                     libLoader.loadLibrary("ijkplayer");
                 }else {
-                    libLoader.loadLibrary(ijk_ffmpeg_url);
-                    libLoader.loadLibrary(ijk_sdl_url);
-                    libLoader.loadLibrary(ijk_player_url);
+                    for (String so_path : SoFileUtil.getLoadedFile()){
+                        libLoader.load(so_path);
+                    }
                 }
                 mIsLibLoaded = true;
             }
@@ -270,7 +249,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
     }
 
     private void initPlayer(IjkLibLoader libLoader) {
-        initLoad();
         loadLibrariesOnce(libLoader);
         initNativeOnce();
 

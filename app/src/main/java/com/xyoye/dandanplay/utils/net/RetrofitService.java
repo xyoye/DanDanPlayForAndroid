@@ -29,6 +29,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 /**
  * Created by YE on 2018/7/9.
@@ -107,4 +108,8 @@ public interface RetrofitService {
 
     @POST("/Magnet/Parse")
     Observable<ResponseBody> downloadTorrent(@Body RequestBody requestBody);
+
+    @Streaming
+    @GET("/{abi}")
+    Observable<ResponseBody> downloadSo(@Path("abi") String abi);
 }

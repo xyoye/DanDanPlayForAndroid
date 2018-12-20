@@ -32,6 +32,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.player.ijkplayer.utils.ContextUtil;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.taobao.sophix.PatchStatus;
 import com.taobao.sophix.SophixManager;
@@ -102,6 +103,9 @@ public class IApplication extends BaseApplication {
         if (AppConfig.getInstance().isAutoQueryPatch()){
             SophixManager.getInstance().queryAndLoadNewPatch();
         }
+
+        //Context 工具
+        ContextUtil.getInstans().initContext(this.getApplicationContext());
     }
 
     public static Handler getMainHandler(){

@@ -82,4 +82,6 @@ public abstract class CommOtherDataObserver<T> implements Observer<T>  {
     public abstract void onSuccess(T t);
 
     public abstract void onError(int errorCode, String message);
+
+    public void onProgress(int progress, long total){ }
 }

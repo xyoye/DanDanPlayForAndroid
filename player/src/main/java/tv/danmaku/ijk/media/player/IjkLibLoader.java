@@ -20,4 +20,6 @@ package tv.danmaku.ijk.media.player;
 public interface IjkLibLoader {
     void loadLibrary(String libName) throws UnsatisfiedLinkError,
             SecurityException;
+    void load(String libName) throws UnsatisfiedLinkError,
+            SecurityException;
 }

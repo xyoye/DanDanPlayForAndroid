@@ -118,6 +118,14 @@ public class CommonDialog extends Dialog {
             CommonDialog.this.show();
     }
 
+    public void showExtra(String content, String extra, String ok){
+        contentTv.setText(content);
+        extraTv.setText(extra);
+        okTv.setText(ok);
+        if (!((Activity)context).isFinishing())
+            CommonDialog.this.show();
+    }
+
     public void show(String content, String tips, String ok, String cancel){
         contentTv.setText(content);
         tipsTv.setText(tips);

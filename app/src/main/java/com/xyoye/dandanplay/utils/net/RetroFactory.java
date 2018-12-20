@@ -57,7 +57,7 @@ public class RetroFactory {
         return resRetrofitService;
     }
 
-    public static RetrofitService getDownloadInstance(){
+    public static RetrofitService getTorrentInstance(){
         if (downloadRetrofitService == null){
             downloadRetrofitService = new Retrofit.Builder()
                     .baseUrl(downloadUrl)

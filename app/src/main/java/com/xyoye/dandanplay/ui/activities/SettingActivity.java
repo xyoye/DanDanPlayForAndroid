@@ -2,43 +2,43 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ServiceUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.taobao.sophix.PatchStatus;
+import com.player.ijkplayer.utils.SoFileUtil;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.FileDownloadBean;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
+import com.xyoye.dandanplay.bean.params.DownloadSoParam;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
-import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.JsonUtil;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.Date;
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by YE on 2018/7/24.
@@ -87,6 +87,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
             autoLoadDanmuSw.setChecked(true);
         }
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
+        dialog = new ProgressDialog(SettingActivity.this);
     }
 
     @Override
@@ -132,9 +133,25 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 launchActivity(DownloadBilibiliActivity.class);
                 break;
             case R.id.extra_so_rl:
-                SPUtils.getInstance().put("ijk_ffmpeg_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijkffmpeg.so");
-                SPUtils.getInstance().put("ijk_sdl_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijksdl.so");
-                SPUtils.getInstance().put("ijk_player_so_path", AppConfig.getInstance().getDownloadFolder()+"/.extra_so/libijkplayer.so");
+                //armeabi、armeabi-v7a、arm64-v8a、x86、x86_64
+                String CPU_ABI = android.os.Build.CPU_ABI;
+                ToastUtils.showShort(CPU_ABI);
+                String useSO = SoFileUtil.getLoadedFile().size() <= 0
+                        ? "本地库"
+                        : "扩展库";
+                new CommonDialog.Builder(SettingActivity.this)
+                        .setOkListener(dialog -> {
+                            SPUtils.getInstance().put("use_extra_so", false);
+                            FileUtils.deleteFilesInDir(AppConfig.getInstance().getDownloadFolder()+"/.extra_so");
+                            SPUtils.getInstance().put("use_extra_so", downloadExtraSo());
+                        })
+                        .setExtraListener(dialog -> {
+                            FileUtils.deleteFilesInDir(AppConfig.getInstance().getDownloadFolder()+"/.extra_so");
+                            SPUtils.getInstance().put("use_extra_so", false);
+                        })
+                        .setAutoDismiss()
+                        .build()
+                        .showExtra("你正在使用的库为："+useSO, "移除扩展库", "加载扩展库");
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);
@@ -175,6 +192,41 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 builder.show();
                 break;
         }
+    }
+
+    ProgressDialog dialog;
+
+    private boolean downloadExtraSo(){
+        DownloadSoParam param = new DownloadSoParam();
+        param.setAbi(Build.CPU_ABI);
+        param.setFolder(AppConfig.getInstance().getDownloadFolder()+"/.extra_so");
+        param.setFileName(Build.CPU_ABI+".zip");
+        FileDownloadBean.downloadSo(param, new CommOtherDataObserver<FileDownloadBean>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                super.onSubscribe(d);
+                dialog.setMax(200);
+                dialog.setMessage("正在下载扩展库");
+            }
+
+            @Override
+            public void onSuccess(FileDownloadBean bean) {
+                dialog.dismiss();
+                dialog.setMessage("下载完成，正在解压");
+                dialog.setProgress(101);
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onProgress(int progress, long total) {
+                dialog.setProgress(progress);
+            }
+        }, new NetworkConsumer());
+        return true;
     }
 
     @SuppressLint("SetTextI18n")

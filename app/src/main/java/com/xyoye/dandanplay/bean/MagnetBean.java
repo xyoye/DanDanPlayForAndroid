@@ -234,7 +234,7 @@ public class MagnetBean implements Parcelable{
 
     public static void downloadTorrent(String magnet, CommOtherDataObserver<ResponseBody> observer, NetworkConsumer consumer){
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), magnet);
-        RetroFactory.getDownloadInstance().downloadTorrent(requestBody)
+        RetroFactory.getTorrentInstance().downloadTorrent(requestBody)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

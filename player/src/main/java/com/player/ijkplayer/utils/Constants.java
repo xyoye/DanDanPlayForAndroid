@@ -6,6 +6,32 @@ package com.player.ijkplayer.utils;
  */
 public final class Constants {
 
+    public static class ARMEABI_V7A{
+        public static final String ijkffmpeg_md5 = "";
+        public static final String ijksdl_md5 = "";
+        public static final String ijkplayer_md5 = "";
+    }
+    public static class ARMEABI{
+        public static final String ijkffmpeg_md5 = "";
+        public static final String ijksdl_md5 = "";
+        public static final String ijkplayer_md5 = "";
+    }
+    public static class ARM64_V8A{
+        public static final String ijkffmpeg_md5 = "";
+        public static final String ijksdl_md5 = "";
+        public static final String ijkplayer_md5 = "";
+    }
+    public static class X86{
+        public static final String ijkffmpeg_md5 = "";
+        public static final String ijksdl_md5 = "";
+        public static final String ijkplayer_md5 = "";
+    }
+    public static class X86_64{
+        public static final String ijkffmpeg_md5 = "";
+        public static final String ijksdl_md5 = "";
+        public static final String ijkplayer_md5 = "";
+    }
+
     public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 
     //播放器

@@ -101,7 +101,7 @@
         android:layout_gravity="end"
         android:visibility="gone">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -244,114 +244,57 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:text="音频选择"/>
-
-                <RadioGroup
-                    android:id="@+id/audio_radio_group"
+                <LinearLayout
+                    android:id="@+id/audio_track_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
+                    android:orientation="vertical">
 
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt1"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="14sp"
+                        android:text="音频选择"/>
 
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt2"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/audio_track_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp">
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
 
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt3"
+                <LinearLayout
+                    android:id="@+id/subtitle_track_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:textSize="14sp"
+                        android:text="字幕选择"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/subtitle_track_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt8"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt9"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-
-                    <RadioButton
-                        android:id="@+id/audio_radio_bt10"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@android:color/white"
-                        android:checked="true"
-                        android:visibility="gone"/>
-                </RadioGroup>
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp">
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
             </LinearLayout>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
 
     <!--弹幕设置-->

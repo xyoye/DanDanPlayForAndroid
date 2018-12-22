@@ -241,4 +241,14 @@ public class AppConfig {
         SPUtils.getInstance().put(Constants.AppConfig.AUTO_QUERY_PATCH, auto);
     }
 
+    /**
+     * MKV提示
+     */
+    public boolean isShowMkvTips(){
+        return SPUtils.getInstance().getBoolean(Constants.AppConfig.SHOW_MKV_TIPS, true);
+    }
+
+    public void hideMkvTips(){
+        SPUtils.getInstance().put(Constants.AppConfig.SHOW_MKV_TIPS, false);
+    }
 }

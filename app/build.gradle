@@ -73,8 +73,6 @@ dependencies {
     implementation 'com.jaeger.statusbarutil:library:1.4.0'
     implementation 'me.yokeyword:fragmentation:1.3.6'
     implementation 'com.github.axet:libtorrent:0.13.35'
-    implementation 'com.blankj:utilcode:1.21.2'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 

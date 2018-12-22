@@ -179,6 +179,13 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.about_download:
+                new CommonDialog.Builder(DownloadMangerActivity.this)
+                        .hideCancel()
+                        .setAutoDismiss()
+                        .build()
+                        .show(getResources().getString(R.string.about_download), "关于下载", "确定", "");
+                break;
             case R.id.all_start:
                 EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_START, null));
                 break;

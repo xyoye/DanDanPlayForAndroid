@@ -4,6 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.FolderActivity">
 
+    <item android:id="@+id/about_download"
+        android:icon="@mipmap/ic_help"
+        android:title="说明"
+        app:showAsAction="ifRoom"/>
+
     <item
         android:id="@+id/all_start"
         android:orderInCategory="100"

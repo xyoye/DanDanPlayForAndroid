@@ -144,8 +144,120 @@
                 <data android:scheme="mms"></data>
                 <data android:scheme="mmst"></data>
                 <data android:scheme="mmsh"></data>
+                <data android:scheme="http"></data>
+                <data android:scheme="https"></data>
                 <data android:scheme="httplive"></data>
                 <data android:scheme="udp"></data>
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" >
+                </category>
+                <action android:name="android.intent.action.VIEW" >
+                </action>
+                <category android:name="android.intent.category.BROWSABLE"  >
+                </category>
+                <data android:mimeType="video/*" >
+                </data>
+                <data android:mimeType="audio/*" >
+                </data>
+                <data android:mimeType="application/mp4" >
+                </data>
+                <data android:mimeType="*/rmvb" >
+                </data>
+                <data android:mimeType="*/avi" >
+                </data>
+                <data android:mimeType="*/mkv" >
+                </data>
+                <data android:mimeType="application/mpeg*" >
+                </data>
+                <data android:mimeType="application/ogg" >
+                </data>
+                <data android:mimeType="application/vnd.rn-realmedia*" >
+                </data>
+                <data android:mimeType="application/3gpp*" >
+                </data>
+                <data android:mimeType="application/vnd.3gp*" >
+                </data>
+                <data android:mimeType="application/vnd.dvb*" >
+                </data>
+                <data android:mimeType="application/vnd.dolby*" >
+                </data>
+                <data android:mimeType="application/octet-stream" >
+                </data>
+            </intent-filter>
+            <intent-filter >
+                <action
+                    android:name="android.intent.action.VIEW" >
+                </action>
+                <category
+                    android:name="android.intent.category.LAUNCHER" >
+                </category>
+                <category
+                    android:name="android.intent.category.DEFAULT" >
+                </category>
+                <category
+                    android:name="android.intent.category.BROWSABLE" >
+                </category>
+                <data
+                    android:mimeType="audio/*"
+                    android:scheme="http" >
+                </data>
+                <data
+                    android:mimeType="audio/*"
+                    android:scheme="rtsp" >
+                </data>
+                <data
+                    android:mimeType="audio/*"
+                    android:scheme="file" >
+                </data>
+                <data
+                    android:mimeType="audio/*"
+                    android:scheme="content" >
+                </data>
+                <data
+                    android:mimeType="audio/*"
+                    android:scheme="mms" >
+                </data>
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="http" >
+                </data>
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="rtsp" >
+                </data>
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="file" >
+                </data>
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="content" >
+                </data>
+                <data
+                    android:mimeType="video/*"
+                    android:scheme="mms" >
+                </data>
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" >
+                </action>
+                <category android:name="android.intent.category.DEFAULT" >
+                </category>
+                <data android:scheme="content" >
+                </data>
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" >
+                </action>
+                <category android:name="android.intent.category.DEFAULT" >
+                </category>
+                <category android:name="android.intent.category.BROWSABLE" >
+                </category>
+                <data android:scheme="rtsp" >
+                </data>
+                <data android:scheme="mms" >
+                </data>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"></action>
@@ -170,12 +282,14 @@
                 <data android:mimeType="audio/mpegurl"></data>
                 <data android:mimeType="audio/x-mpegurl"></data>
             </intent-filter>
-            <intent-filter tools:ignore="AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW"></action>
 
                 <category android:name="android.intent.category.DEFAULT"></category>
                 <category android:name="android.intent.category.BROWSABLE"></category>
 
+                <data android:scheme="file"></data>
+                <data android:scheme="content"></data>
                 <data android:mimeType="video/*"></data>
                 <data android:mimeType="application/sdp"></data>
                 <data android:mimeType="application/mp4"></data>
@@ -189,6 +303,18 @@
                 <data android:mimeType="application/x-ogg"></data>
                 <data android:mimeType="audio/mpegurl"></data>
                 <data android:mimeType="audio/x-mpegurl"></data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW">
+                </action>
+                <category android:name="android.intent.category.DEFAULT">
+                </category>
+                <category android:name="android.intent.category.BROWSABLE">
+                </category>
+                <data android:scheme="http">
+                </data>
+                <data android:mimeType="video/*">
+                </data>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"></action>

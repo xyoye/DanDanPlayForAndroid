@@ -24,6 +24,7 @@ public class TrackAdapter extends BaseQuickAdapter<VideoInfoTrack, BaseViewHolde
     public void convert(BaseViewHolder helper, VideoInfoTrack item) {
         helper.setText(R.id.track_name_tv, item.getName())
                 .setChecked(R.id.track_select_cb, item.isSelect())
-                .addOnClickListener(R.id.track_ll);
+                .addOnClickListener(R.id.track_ll)
+                .addOnClickListener(R.id.track_select_cb);
     }
 }

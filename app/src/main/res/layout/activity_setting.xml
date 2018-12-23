@@ -134,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:text="扩展功能1"/>
+                    android:text="扩展功能"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -170,13 +170,15 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/diver_color"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/extra_so_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="?android:attr/selectableItemBackground"
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

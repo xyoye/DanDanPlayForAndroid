@@ -241,6 +241,18 @@
                             android:textSize="14sp"
                             android:text="1.5"/>
 
+                        <TextView
+                            android:id="@+id/speed200_tv"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:gravity="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:text="2.0"/>
+
                     </LinearLayout>
                 </LinearLayout>
 

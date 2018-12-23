@@ -1086,18 +1086,14 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
                     if (mIsUsingMediaCodec) {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
-                        if (mIsUsingMediaCodecAutoRotate) {
-                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
-                        } else {
-                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
-                        }
-                        if (mIsMediaCodecHandleResolutionChange) {
-                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
-                        } else {
-                            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
-                        }
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "analyzeduration", "2000000");
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "probsize", "4096");
                     } else {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
                     }
 
                     if (mIsUsingMediaCodecH265){
@@ -1122,7 +1118,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
                     ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
 
-                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+                    ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 0);
                 }
                 mediaPlayer = ijkMediaPlayer;
             }
@@ -1216,9 +1212,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private boolean mIsUsingMediaCodec = false;
     //H265硬解码
     private boolean mIsUsingMediaCodecH265 = false;
-    //硬解码时自动旋转
-    private boolean mIsUsingMediaCodecAutoRotate = false;
-    private boolean mIsMediaCodecHandleResolutionChange = false;
     //openSLES
     private boolean mIsUsingOpenSLES = false;
     //MediaDataSource
@@ -1238,14 +1231,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     public void setIsUsingMediaCodecH265(boolean mIsUsingMediaCodecH265){
         this.mIsUsingMediaCodecH265 = mIsUsingMediaCodecH265;
-    }
-
-    public void setIsUsingMediaCodecAutoRotate(boolean mIsUsingMediaCodecAutoRotate) {
-        this.mIsUsingMediaCodecAutoRotate = mIsUsingMediaCodecAutoRotate;
-    }
-
-    public void setIsMediaCodecHandleResolutionChange(boolean mIsMediaCodecHandleResolutionChange) {
-        this.mIsMediaCodecHandleResolutionChange = mIsMediaCodecHandleResolutionChange;
     }
 
     public void setIsUsingOpenSLES(boolean mIsUsingOpenSLES) {

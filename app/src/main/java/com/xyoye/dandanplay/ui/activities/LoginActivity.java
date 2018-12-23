@@ -102,7 +102,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
             userNameLayout.setError("用户名不能为空");
         } else if (StringUtils.isEmpty(password)) {
             userPasswordLayout.setErrorEnabled(true);
-            userNameLayout.setError("密码不能为空");
+            userPasswordLayout.setError("密码不能为空");
         } else {
             userNameLayout.setErrorEnabled(false);
             userPasswordLayout.setErrorEnabled(false);

@@ -118,10 +118,10 @@ public class CommonDialog extends Dialog {
             CommonDialog.this.show();
     }
 
-    public void showExtra(String content, String extra, String ok){
+    public void showExtra(String content, String extra, String cancel){
         contentTv.setText(content);
         extraTv.setText(extra);
-        okTv.setText(ok);
+        cancelTv.setText(cancel);
         if (!((Activity)context).isFinishing())
             CommonDialog.this.show();
     }
@@ -167,6 +167,21 @@ public class CommonDialog extends Dialog {
 
         public Builder hideTips(){
             this.isShowTips = false;
+            return this;
+        }
+
+        public Builder setShowExtra(boolean showExtra){
+            this.isShowExtra = showExtra;
+            return this;
+        }
+
+        public Builder setHideOk(boolean hideOk){
+            this.isHideOk = hideOk;
+            return this;
+        }
+
+        public Builder setHideCancel(boolean Chideancel){
+            this.isHideCancel = Chideancel;
             return this;
         }
 

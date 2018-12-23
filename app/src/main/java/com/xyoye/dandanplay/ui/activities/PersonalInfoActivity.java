@@ -15,7 +15,7 @@ import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
-import com.xyoye.dandanplay.ui.weight.dialog.ChangeScreenNameDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import org.greenrobot.eventbus.EventBus;
@@ -103,7 +103,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.screen_name_rl:
-                ChangeScreenNameDialog dialog = new ChangeScreenNameDialog(PersonalInfoActivity.this, R.style.Dialog);
+                CommonEditTextDialog dialog = new CommonEditTextDialog(PersonalInfoActivity.this, R.style.Dialog, 1);
                 dialog.show();
                 break;
             case R.id.password_rl:

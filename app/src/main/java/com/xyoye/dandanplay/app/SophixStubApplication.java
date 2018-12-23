@@ -45,7 +45,7 @@ public class SophixStubApplication extends SophixApplication {
         //idSecret, appSecret, rsaSecret
         instance.setContext(this)
                 .setAppVersion(appVersion)
-                .setSecretMetaData(KeyUtil.getSophixIdSecret(this), KeyUtil.getSophixAppSecret(this), KeyUtil.getSophixResSecret(this))
+                .setSecretMetaData(null, null, null)
                 .setEnableDebug(false)
                 .setEnableFullLog()
                 .initialize();

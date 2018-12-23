@@ -27,6 +27,7 @@ import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,7 +51,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private PersonalFragment personalFragment;
     private BaseAppFragment previousFragment;
 
-    private MenuItem menuMainItem, menuLanItem;
+    private MenuItem menuMainItem, menuLanItem, menuNetItem, menuSettingItem;
     private int fragFlag = 1;
 
     private long touchTime = 0;
@@ -118,6 +119,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     previousFragment = homeFragment;
                     menuMainItem.setVisible(false);
                     menuLanItem.setVisible(false);
+                    menuNetItem.setVisible(false);
+                    menuSettingItem.setVisible(false);
                     fragFlag = 0;
                     return true;
                 case R.id.navigation_play:
@@ -132,8 +135,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     previousFragment = playFragment;
                     menuMainItem.setVisible(true);
                     menuLanItem.setVisible(true);
-                    menuMainItem.setTitle("添加文件夹");
-                    menuMainItem.setIcon(R.mipmap.ic_add);
+                    menuNetItem.setVisible(true);
+                    menuSettingItem.setVisible(false);
                     fragFlag = 1;
                     return true;
                 case R.id.navigation_personal:
@@ -145,10 +148,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         mDelegate.showHideFragment(personalFragment, previousFragment);
                     }
                     previousFragment = personalFragment;
-                    menuMainItem.setVisible(true);
+                    menuMainItem.setVisible(false);
                     menuLanItem.setVisible(false);
-                    menuMainItem.setTitle("设置");
-                    menuMainItem.setIcon(R.drawable.ic_settings_white);
+                    menuNetItem.setVisible(false);
+                    menuSettingItem.setVisible(true);
                     fragFlag = 2;
                     return true;
             }
@@ -186,8 +189,12 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menuMainItem = menu.findItem(R.id.menu_item_mian);
         menuLanItem = menu.findItem(R.id.menu_item_lan);
+        menuNetItem = menu.findItem(R.id.menu_item_network);
+        menuSettingItem = menu.findItem(R.id.menu_item_setting);
         menuMainItem.setVisible(true);
         menuLanItem.setVisible(true);
+        menuNetItem.setVisible(true);
+        menuSettingItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -196,17 +203,19 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_mian:
-                if (fragFlag == 1){
-                    Intent intent = new Intent(this, FileManagerActivity.class);
-                    intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
-                    startActivityForResult(intent, SELECT_FOLDER);
-                }else if (fragFlag == 2){
-                    launchActivity(SettingActivity.class);
-                }
+                Intent intent = new Intent(this, FileManagerActivity.class);
+                intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
+                startActivityForResult(intent, SELECT_FOLDER);
                 break;
             case R.id.menu_item_lan:
                 launchActivity(LanFolderActivity.class);
                 EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
+                break;
+            case R.id.menu_item_network:
+                new CommonEditTextDialog(this, R.style.Dialog, 0).show();
+                break;
+            case R.id.menu_item_setting:
+                launchActivity(SettingActivity.class);
                 break;
         }
         return super.onOptionsItemSelected(item);

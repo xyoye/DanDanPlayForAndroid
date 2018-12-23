@@ -8,12 +8,24 @@
         android:id="@+id/menu_item_lan"
         android:orderInCategory="100"
         android:title="局域网"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/menu_item_mian"
         android:orderInCategory="100"
         android:title="添加文件夹"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_item_network"
+        android:orderInCategory="100"
+        android:title="网络串流"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_item_setting"
+        android:orderInCategory="100"
+        android:title="设置"
         app:showAsAction="ifRoom"
-        android:icon="@mipmap/ic_add"/>
+        android:icon="@drawable/ic_settings_white"/>
 </menu>

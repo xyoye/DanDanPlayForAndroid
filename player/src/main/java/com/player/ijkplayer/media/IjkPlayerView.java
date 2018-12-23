@@ -463,7 +463,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 ITrackInfo[] info = mVideoView.getTrackInfo();
                 if (info != null){
                     int selectAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-                    int selectSubtitleTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE);
+                    int selectSubtitleTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT);
                     int audioN = 1;
                     int subtitleN = 1;
                     for (int i = 0; i < info.length; i++) {
@@ -479,14 +479,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                             if (i == selectAudioTrack) videoInfoTrack.setSelect(true);
                             audioN ++;
                             audioTrackList.add(videoInfoTrack);
-                        }else if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE){
+                        }else if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT){
                             VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
                             String name = TextUtils.isEmpty(info[i].getTitle())
                                     ? (TextUtils.isEmpty(info[i].getLanguage())
-                                    ? "UND"
-                                    : info[i].getLanguage())
+                                        ? "UND"
+                                        : info[i].getLanguage())
                                     : info[i].getTitle();
-                            videoInfoTrack.setName("字幕流#"+audioN+"（"+name+"）");
+                            videoInfoTrack.setName("字幕流#"+subtitleN+"（"+name+"）");
                             videoInfoTrack.setStream(i);
                             if (i == selectSubtitleTrack) videoInfoTrack.setSelect(true);
                             subtitleN ++;
@@ -795,8 +795,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     public void setUsingMediaCodeC(boolean isUse){
         mUsingMediaCodec = isUse;
-        mVideoView.setIsUsingMediaCodec(isUse);
-        mVideoView.setIsUsingMediaCodecAutoRotate(isUse);
     }
 
     /**
@@ -1279,6 +1277,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mVideoView.setSpeed(1.5f);
             mDanmakuContext.setDanmuTimeRate(1.5f);
             setPlayerSpeedView(5);
+        }else if (id == R.id.speed200_tv){
+            mVideoView.setSpeed(2.0f);
+            mDanmakuContext.setDanmuTimeRate(2.0f);
+            setPlayerSpeedView(6);
         }else if (id == R.id.subtitle_extra_time_reduce){
             extraUpdateTime -= 0.5f;
             subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
@@ -3316,7 +3318,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * ============================ 倍速 ============================
      */
     private LinearLayout speedCtrlLL;
-    private TextView speed50Tv, speed75Tv,speed100Tv,speed125Tv, speed150Tv;
+    private TextView speed50Tv, speed75Tv,speed100Tv,speed125Tv, speed150Tv, speed200Tv;
 
     public void _initPlayerSpeedCtrl(){
         speedCtrlLL = findViewById(R.id.speed_ctrl_ll);
@@ -3325,11 +3327,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         speed100Tv = findViewById(R.id.speed100_tv);
         speed125Tv = findViewById(R.id.speed125_tv);
         speed150Tv = findViewById(R.id.speed150_tv);
+        speed200Tv = findViewById(R.id.speed200_tv);
         speed50Tv.setOnClickListener(this);
         speed75Tv.setOnClickListener(this);
         speed100Tv.setOnClickListener(this);
         speed125Tv.setOnClickListener(this);
         speed150Tv.setOnClickListener(this);
+        speed200Tv.setOnClickListener(this);
 
         setPlayerSpeedView(3);
     }
@@ -3342,6 +3346,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 2:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3349,6 +3354,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 3:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3356,6 +3362,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 4:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3363,6 +3370,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 5:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -3370,6 +3378,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                break;
+            case 6:
+                speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                speed200Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 break;
         }
     }
@@ -3412,30 +3429,40 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         audioAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                mVideoView.selectTrack(audioTrackList.get(position).getStream());
                 for (int i = 0; i < audioTrackList.size(); i++) {
-                    VideoInfoTrack track = audioTrackList.get(i);
-                    if (i != position)
-                        track.setSelect(false);
-                    else
-                        track.setSelect(true);
+                    if (i == position)continue;
+                    mVideoView.deselectTrack(audioTrackList.get(i).getStream());
+                    audioTrackList.get(i).setSelect(false);
                 }
-                adapter.notifyDataSetChanged();
+                if (audioTrackList.get(position).isSelect()){
+                    mVideoView.deselectTrack(audioTrackList.get(position).getStream());
+                    audioTrackList.get(position).setSelect(false);
+                }else {
+                    mVideoView.selectTrack(audioTrackList.get(position).getStream());
+                    audioTrackList.get(position).setSelect(true);
+                    mVideoView.seekTo(mVideoView.getCurrentPosition());
+                }
+                audioAdapter.notifyDataSetChanged();
             }
         });
 
         subtitleAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                mVideoView.selectTrack(subtitleTrackList.get(position).getStream());
                 for (int i = 0; i < subtitleTrackList.size(); i++) {
-                    VideoInfoTrack track = subtitleTrackList.get(i);
-                    if (i != position)
-                        track.setSelect(false);
-                    else
-                        track.setSelect(true);
+                    if (i == position)continue;
+                    mVideoView.deselectTrack(subtitleTrackList.get(i).getStream());
+                    subtitleTrackList.get(i).setSelect(false);
                 }
-                adapter.notifyDataSetChanged();
+                if (subtitleTrackList.get(position).isSelect()){
+                    mVideoView.deselectTrack(subtitleTrackList.get(position).getStream());
+                    subtitleTrackList.get(position).setSelect(false);
+                }else {
+                    mVideoView.selectTrack(subtitleTrackList.get(position).getStream());
+                    subtitleTrackList.get(position).setSelect(true);
+                    mVideoView.seekTo(mVideoView.getCurrentPosition());
+                }
+                subtitleAdapter.notifyDataSetChanged();
             }
         });
     }

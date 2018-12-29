@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +18,7 @@ import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -48,7 +46,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String videoTitle;
     private String danmuPath;
     private int currentPosition;
-    private int episodeId = 0;
+    private int episodeId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,72 +55,41 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer = new IjkPlayerView(this);
         setContentView(mPlayer);
 
-        if (!Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+        if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+            //外部打开
+            if (!StringUtils.isEmpty(getIntent().getDataString())) {
+                videoPath = getIntent().getDataString();
+                videoTitle = FileUtils.getFileName(videoPath);
+                currentPosition = 0;
+                episodeId = 0;
+                new DanmuSelectDialog(this, type -> {
+                    switch (type){
+                        case "not":
+                            danmuPath = "";
+                            initPlayer();
+                            mPlayer.start();
+                            break;
+                        case "network":
+
+                            break;
+                        case "local":
+
+                            break;
+                    }
+                });
+            } else {
+                ToastUtils.showShort("解析视频地址失败");
+                return;
+            }
+        } else {
             videoPath = getIntent().getStringExtra("path");
             videoTitle = getIntent().getStringExtra("title");
             danmuPath = getIntent().getStringExtra("danmu_path");
             currentPosition = getIntent().getIntExtra("current", 0);
             episodeId = getIntent().getIntExtra("episode_id", 0);
-        } else {
-            //外部打开
-            if (getIntent().getDataString() == null || "".equals(getIntent().getDataString())) {
-                videoPath = "";
-            } else {
-                videoPath = getIntent().getDataString();
-            }
-            //获取标题
-            if (videoPath != null && videoPath.contains("/")) {
-                int titleLocation = videoPath.lastIndexOf("/") + 1;
-                if (titleLocation < videoPath.length())
-                    videoTitle = videoPath.substring(titleLocation, videoPath.length());
-                else
-                    videoTitle = "";
-            } else {
-                videoTitle = "";
-                videoPath = "";
-
-            }
-            //获取弹幕：先从数据库根据path拿，未匹配到则从相同目录下拿
-            if (videoPath.contains(".") && !StringUtils.isEmpty(videoTitle)) {
-                String danmuPathTemp;
-                boolean isGetDanmuPath = false;
-                String folderPath = FileUtils.getDirName(videoPath);
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                String sql = "SELECT danmu_path FROM file WHERE folder_path=? AND file_path=?";
-                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoTitle});
-                if (cursor != null && cursor.getCount() != 0) {
-                    cursor.moveToNext();
-                    danmuPathTemp = cursor.getString(0);
-                    episodeId = cursor.getInt(6);
-                    cursor.close();
-                    if (!StringUtils.isEmpty(danmuPathTemp)) {
-                        File damuFile = new File(danmuPathTemp);
-                        if (damuFile.exists()) {
-                            danmuPath = danmuPathTemp;
-                            isGetDanmuPath = true;
-                        }
-                    }
-                }
-                if (!isGetDanmuPath) {
-                    int extLocation = videoPath.lastIndexOf(".");
-                    danmuPathTemp = videoPath.substring(0, extLocation) + ".xml";
-                    File damuFile = new File(danmuPathTemp);
-                    if (damuFile.exists()) {
-                        danmuPath = danmuPathTemp;
-                    } else {
-                        danmuPath = "";
-                    }
-                }
-            }
-            //上次播放默认为0
-            currentPosition = 0;
-
-            if (videoPath == null || "".equals(videoPath)) {
-                ToastUtils.showShort("解析视频地址失败");
-                return;
-            }
+            initPlayer();
+            mPlayer.start();
         }
-        initPlayer();
     }
 
     private void initPlayer() {
@@ -135,6 +102,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
         }
 
+        //播放器配置
         boolean mediaCodeC = AppConfig.getInstance().isOpenMediaCodeC();
         boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
         boolean openSLES = AppConfig.getInstance().isOpenSLES();
@@ -167,9 +135,9 @@ public class PlayerActivity extends AppCompatActivity {
                     }
 
                 });
-        mPlayer.start();
     }
 
+    //上传一条弹幕
     private void uploadDanmu(BaseDanmaku data) {
         double dTime = new BigDecimal(data.getTime() / 1000)
                 .setScale(3, BigDecimal.ROUND_HALF_UP)
@@ -251,6 +219,7 @@ public class PlayerActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    //保存进度
     private void saveCurrent(int currentPosition) {
         SaveCurrentEvent event = new SaveCurrentEvent();
         event.setCurrentPosition(currentPosition);

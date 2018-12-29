@@ -187,7 +187,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                         String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
 
                         Intent mail_intent = new Intent(Intent.ACTION_SEND);
-                        mail_intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com,shine_5402@126.com"});
+                        mail_intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"yeshao1997@outlook.com"});
                         mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
                         mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
                         mail_intent.setType("text/plain");

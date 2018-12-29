@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="100dp"
+    android:layout_marginBottom="100dp"
+    android:layout_gravity="center"
+    android:layout_marginLeft="25dp"
+    android:layout_marginRight="25dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_corner_5">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="14sp"
+        android:textColor="@color/black_color"
+        android:text="检测到从外部打开播放器，是否需要选择弹幕？" />
+
+    <RadioButton
+        android:id="@+id/dont_show_rb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textSize="14sp"
+        android:textColor="@color/black_color"
+        android:text="不要再提示"/>
+
+    <LinearLayout
+        android:id="@+id/select_detail_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="以后直接到："/>
+
+        <RadioButton
+            android:id="@+id/select_danmu_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_color"
+            android:text="选择弹幕页面"/>
+
+        <RadioButton
+            android:id="@+id/select_player_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_color"
+            android:text="播放视频页面"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/cancel_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/bg_dialog_item_left"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/gray_color3"
+            android:text="取消"/>
+
+        <TextView
+            android:id="@+id/confirm_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/bg_dialog_item_left"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/theme_color"
+            android:text="选择"/>
+    </LinearLayout>
+</LinearLayout>

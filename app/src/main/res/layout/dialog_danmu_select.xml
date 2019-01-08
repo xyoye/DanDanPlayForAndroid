@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="400dp"
     android:layout_height="wrap_content"
-    android:layout_marginTop="100dp"
-    android:layout_marginBottom="100dp"
     android:layout_gravity="center"
     android:layout_marginLeft="25dp"
     android:layout_marginRight="25dp"
@@ -21,8 +19,8 @@
         android:textColor="@color/black_color"
         android:text="检测到从外部打开播放器，是否需要选择弹幕？" />
 
-    <RadioButton
-        android:id="@+id/dont_show_rb"
+    <CheckBox
+        android:id="@+id/dont_show_cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -30,8 +28,8 @@
         android:textColor="@color/black_color"
         android:text="不要再提示"/>
 
-    <LinearLayout
-        android:id="@+id/select_detail_ll"
+    <RadioGroup
+        android:id="@+id/select_detail_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -51,6 +49,7 @@
             android:layout_marginStart="10dp"
             android:textSize="14sp"
             android:textColor="@color/black_color"
+            android:checked="true"
             android:text="选择弹幕页面"/>
 
         <RadioButton
@@ -61,7 +60,7 @@
             android:textSize="14sp"
             android:textColor="@color/black_color"
             android:text="播放视频页面"/>
-    </LinearLayout>
+    </RadioGroup>
 
     <LinearLayout
         android:layout_width="match_parent"

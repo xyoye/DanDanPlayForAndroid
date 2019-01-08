@@ -86,7 +86,7 @@ public class LanFolderPresenterImpl extends BaseMvpPresenterImpl<LanFolderView> 
 
     @Override
     public void searchFolder(){
-        String device  = SPUtils.getInstance().getString(Constants.AppConfig.SMB_DEVICE);
+        String device  = SPUtils.getInstance().getString(Constants.Config.SMB_DEVICE);
         if (StringUtils.isEmpty(device)){
             ToastUtils.showShort("请先选择共享设备");
             getView().refreshFolder(new ArrayList<>());

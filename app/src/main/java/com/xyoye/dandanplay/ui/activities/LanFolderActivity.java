@@ -83,7 +83,7 @@ public class LanFolderActivity extends BaseMvpActivity<LanFolderPresenter> imple
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(mAdapter);
 
-        String device = SPUtils.getInstance().getString(Constants.AppConfig.SMB_DEVICE);
+        String device = SPUtils.getInstance().getString(Constants.Config.SMB_DEVICE);
         if (StringUtils.isEmpty(device)){
             launchActivity(LanDeviceDeviceActivity.class);
         }else {

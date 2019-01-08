@@ -28,7 +28,7 @@ public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 
     public void showLoadingDialog() {
         if (dialog == null || !dialog.isShowing()) {
-            dialog = new BaseLoadingDialog(this);
+            dialog = new BaseLoadingDialog(BaseMvcActivity.this);
             dialog.show();
         }
     }

@@ -17,7 +17,6 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
-import com.xyoye.dandanplay.utils.CommonUtils;
 
 import org.greenrobot.eventbus.EventBus;
 

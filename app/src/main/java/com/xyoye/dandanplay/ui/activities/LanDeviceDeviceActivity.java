@@ -108,7 +108,7 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
         device.setAnonymous(deviceBean.isAnonymous());
         adapter.notifyItemChanged(position);
         //保存设备数据
-        SPUtils.getInstance().put(Constants.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
+        SPUtils.getInstance().put(Constants.Config.SMB_DEVICE, JsonUtil.toJson(device));
 
         String smbUrl;
         if (StringUtils.isEmpty(device.getAccount()) || device.isAnonymous()){
@@ -151,7 +151,7 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
             adapter.notifyDataSetChanged();
         }
         //保存设备数据
-        SPUtils.getInstance().put(Constants.AppConfig.SMB_DEVICE, JsonUtil.toJson(device));
+        SPUtils.getInstance().put(Constants.Config.SMB_DEVICE, JsonUtil.toJson(device));
 
         String smbUrl;
         if (StringUtils.isEmpty(device.getAccount()) || device.isAnonymous()){
@@ -197,7 +197,7 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
         new CommonDialog.Builder(this)
                 .setAutoDismiss()
                 .setOkListener(dialog1 -> {
-                    SPUtils.getInstance().remove(Constants.AppConfig.SMB_DEVICE);
+                    SPUtils.getInstance().remove(Constants.Config.SMB_DEVICE);
                     LanDeviceBean lanDeviceBean = lanDeviceList.get(event.getPosition());
                     lanDeviceBean.setAccount("");
                     lanDeviceBean.setAnonymous(false);

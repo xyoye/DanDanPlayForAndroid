@@ -9,17 +9,20 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
 import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
+import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -40,8 +43,10 @@ import java.math.BigDecimal;
 
 public class PlayerActivity extends AppCompatActivity {
     private static final int SELECT_SUBTITLE = 101;
+    private static final int SELECT_DANMU = 102;
 
     com.player.ijkplayer.media.IjkPlayerView mPlayer;
+    private boolean isInit = false;
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
@@ -62,24 +67,33 @@ public class PlayerActivity extends AppCompatActivity {
                 videoTitle = FileUtils.getFileName(videoPath);
                 currentPosition = 0;
                 episodeId = 0;
-                new DanmuSelectDialog(this, type -> {
-                    switch (type){
-                        case "not":
+                if (AppConfig.getInstance().isShowOuterChainDanmuDialog()){
+                    new DanmuSelectDialog(this, isSelectDanmu -> {
+                        if (isSelectDanmu){
+                            Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
+                            intent.putExtra("path", videoPath);
+                            intent.putExtra("is_lan", true);
+                            startActivityForResult(intent, SELECT_DANMU);
+                        }else {
                             danmuPath = "";
                             initPlayer();
                             mPlayer.start();
-                            break;
-                        case "network":
-
-                            break;
-                        case "local":
-
-                            break;
+                        }
+                    }).show();
+                }else {
+                    if (AppConfig.getInstance().isOuterChainDanmuSelect()){
+                        Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
+                        intent.putExtra("path", videoPath);
+                        intent.putExtra("is_lan", true);
+                        startActivityForResult(intent, SELECT_DANMU);
+                    }else {
+                        danmuPath = "";
+                        initPlayer();
+                        mPlayer.start();
                     }
-                });
+                }
             } else {
                 ToastUtils.showShort("解析视频地址失败");
-                return;
             }
         } else {
             videoPath = getIntent().getStringExtra("path");
@@ -89,6 +103,8 @@ public class PlayerActivity extends AppCompatActivity {
             episodeId = getIntent().getIntExtra("episode_id", 0);
             initPlayer();
             mPlayer.start();
+            if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
+                addPlayHistory(episodeId);
         }
     }
 
@@ -135,6 +151,7 @@ public class PlayerActivity extends AppCompatActivity {
                     }
 
                 });
+        isInit = true;
     }
 
     //上传一条弹幕
@@ -154,7 +171,7 @@ public class PlayerActivity extends AppCompatActivity {
         UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>() {
             @Override
             public void onSuccess(UploadDanmuBean bean) {
-                Log.i("DanmuUpload", "onSuccess: text：" + data.text + "  cid：" + bean.getCid());
+                LogUtils.d("upload danmu success: text：" + data.text + "  cid：" + bean.getCid());
             }
 
             @Override
@@ -162,6 +179,23 @@ public class PlayerActivity extends AppCompatActivity {
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
+    }
+
+    //增加播放历史
+    private void addPlayHistory(int episodeId){
+        if (episodeId > 0){
+            PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>() {
+                @Override
+                public void onSuccess(CommJsonEntity commJsonEntity) {
+                    LogUtils.d("add history success: episodeId：" + episodeId);
+                }
+
+                @Override
+                public void onError(int errorCode, String message) {
+                    LogUtils.e("add history fail: episodeId：" + episodeId+"  message："+message);
+                }
+            }, new NetworkConsumer());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -182,6 +216,13 @@ public class PlayerActivity extends AppCompatActivity {
             if (requestCode == SELECT_SUBTITLE) {
                 String subtitlePath = data.getStringExtra("subtitle");
                 mPlayer.setSubtitleSource("", subtitlePath);
+            }else if (requestCode == SELECT_DANMU){
+                danmuPath = data.getStringExtra("path");
+                episodeId = data.getIntExtra("episode_id", 0);
+                initPlayer();
+                mPlayer.start();
+                if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
+                    addPlayHistory(episodeId);
             }
         }
     }
@@ -196,13 +237,15 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        mPlayer.onResume();
+        if (isInit)
+            mPlayer.onResume();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        mPlayer.onPause();
+        if (isInit)
+            mPlayer.onPause();
         super.onPause();
     }
 

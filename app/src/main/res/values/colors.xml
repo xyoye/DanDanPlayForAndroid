@@ -20,7 +20,6 @@
 
     <!-- 常用 -->
     <color name="transparent">#00000000</color>
-    <color name="divide">#FFcccccc</color>
     <color name="white">#ffffff</color>
     <color name="black_overlay">#66000000</color>
     <color name="ared">#e3010f</color>
@@ -44,6 +43,7 @@
     <color name="gray_color2">#777777</color>
     <color name="gray_color3">#9b9b9b</color>
     <color name="gray_color4">#c8c8c8</color>
+    <color name="gray_color5">#99f6f6f6</color>
     <color name="result_view">#b0000000</color>
     <!--  半透明 -->
     <color name="viewfinder_mask">#60000000</color>
@@ -54,4 +54,5 @@
     <color name="transparent_color">#00000000</color>
     <!-- 主题 -->
     <color name="theme_color">#2095f4</color>
+    <color name="theme_color_light">#4ea9f4</color>
 </resources>

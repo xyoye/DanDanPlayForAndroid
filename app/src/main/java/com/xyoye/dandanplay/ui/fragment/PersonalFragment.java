@@ -158,16 +158,14 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 break;
             case R.id.favorite_rl:
                 if (AppConfig.getInstance().isLogin()){
-                    Intent intent = new Intent(getContext(), PersonalFavoriteActivity.class);
-                    startActivity(intent);
+                    launchActivity(PersonalFavoriteActivity.class);
                 }else {
                     ToastUtils.showShort("请登录后再进行此操作");
                 }
                 break;
             case R.id.history_rl:
                 if (AppConfig.getInstance().isLogin()){
-                    Intent intent = new Intent(getContext(), PersonalHistoryActivity.class);
-                    startActivity(intent);
+                    launchActivity(PersonalHistoryActivity.class);
                 }else {
                     ToastUtils.showShort("请登录后再进行此操作");
                 }

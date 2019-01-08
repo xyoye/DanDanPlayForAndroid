@@ -48,7 +48,7 @@ public class FindLanDevicesTask implements Runnable {
         LanDeviceBean saveDevice = null;
         //确保保存的设备能新增进去
         boolean isAddSaveDevice = false;
-        String device = SPUtils.getInstance().getString(Constants.AppConfig.SMB_DEVICE);
+        String device = SPUtils.getInstance().getString(Constants.Config.SMB_DEVICE);
         if (!StringUtils.isEmpty(device)){
             saveDevice = JsonUtil.fromJson(device, LanDeviceBean.class);
         }

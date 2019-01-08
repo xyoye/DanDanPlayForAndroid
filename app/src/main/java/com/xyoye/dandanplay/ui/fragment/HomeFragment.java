@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,13 +11,20 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
+import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
+import com.xyoye.dandanplay.ui.activities.SearchActivity;
 import com.xyoye.dandanplay.ui.activities.WebviewActivity;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
@@ -27,6 +35,7 @@ import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -37,13 +46,16 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by YE on 2018/6/29 0029.
  */
 
 
-public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements HomeFragmentView{
+public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements HomeFragmentView {
     @BindView(R.id.scroll_layout)
     ScrollableLayout scrollableLayout;
     @BindView(R.id.banner)
@@ -57,8 +69,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
     AnimaFragmentAdapter fragmentAdapter;
     List<AnimeFragment> fragmentList;
+    Unbinder unbinder;
 
-    public static HomeFragment newInstance(){
+    public static HomeFragment newInstance() {
         return new HomeFragment();
     }
 
@@ -96,30 +109,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 presenter.getHomeFragmentData());
     }
 
-    @Override
-    public void setBanners(List<String> images, List<String> titles, List<String> urls) {
-        banner.releaseBanner();
-        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
-        banner.setImageLoader(new GlideImageLoader());
-        banner.setImages(images);
-        banner.setBannerAnimation(Transformer.DepthPage);
-        banner.setBannerTitles(titles);
-        banner.isAutoPlay(true);
-        banner.setDelayTime(5000);
-        banner.setIndicatorGravity(BannerConfig.CENTER);
-        banner.setOnBannerListener(position -> {
-            String url = urls.get(position);
-            String title = titles.get(position);
-            Intent intent = new Intent(getContext(), WebviewActivity.class);
-            intent.putExtra("title", title);
-            intent.putExtra("link", url);
-            startActivity(intent);
-        });
-        banner.start();
-    }
-
     private void initIndicator(List<String> dateList) {
         CommonNavigator commonNavigator = new CommonNavigator(getBaseActivity());
+        commonNavigator.setAdjustMode(true);
         commonNavigator.setAdapter(new CommonNavigatorAdapter() {
             @Override
             public int getCount() {
@@ -178,9 +170,56 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         fragmentAdapter = new AnimaFragmentAdapter(getChildFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.setOffscreenPageLimit(2);
-        magicIndicator.onPageSelected( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
-        viewPager.setCurrentItem( Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+        magicIndicator.onPageSelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+        viewPager.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
         bindViewPager(magicIndicator, viewPager);
+    }
+
+    @OnClick({R.id.search_ll, R.id.list_ll, R.id.follow_ll, R.id.history_ll})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.search_ll:
+                launchActivity(SearchActivity.class);
+                break;
+            case R.id.list_ll:
+                break;
+            case R.id.follow_ll:
+                if (AppConfig.getInstance().isLogin()){
+                    launchActivity(PersonalFavoriteActivity.class);
+                }else {
+                    ToastUtils.showShort("请登录后再进行此操作");
+                }
+                break;
+            case R.id.history_ll:
+                if (AppConfig.getInstance().isLogin()){
+                    launchActivity(PersonalHistoryActivity.class);
+                }else {
+                    ToastUtils.showShort("请登录后再进行此操作");
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void setBanners(List<String> images, List<String> titles, List<String> urls) {
+        banner.releaseBanner();
+        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
+        banner.setImageLoader(new GlideImageLoader());
+        banner.setImages(images);
+        banner.setBannerAnimation(Transformer.Default);
+        banner.setBannerTitles(titles);
+        banner.isAutoPlay(true);
+        banner.setDelayTime(5000);
+        banner.setIndicatorGravity(BannerConfig.CENTER);
+        banner.setOnBannerListener(position -> {
+            String url = urls.get(position);
+            String title = titles.get(position);
+            Intent intent = new Intent(getContext(), WebviewActivity.class);
+            intent.putExtra("title", title);
+            intent.putExtra("link", url);
+            startActivity(intent);
+        });
+        banner.start();
     }
 
     @Override
@@ -211,6 +250,20 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 magicIndicator.onPageScrollStateChanged(state);
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     private class AnimaFragmentAdapter extends FragmentPagerAdapter {

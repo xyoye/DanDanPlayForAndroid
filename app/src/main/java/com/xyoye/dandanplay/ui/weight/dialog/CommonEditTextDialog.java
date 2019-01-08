@@ -16,9 +16,9 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
-import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -87,13 +87,19 @@ public class CommonEditTextDialog extends Dialog {
                     CommonEditTextDialog.this.dismiss();
                 }
             }else {
-                if (StringUtils.isEmpty(editText.getText().toString())) {
+                //昵称。长度不能超过50个字符，可以使用中文。
+                String screenName = editText.getText().toString();
+                if (StringUtils.isEmpty(screenName)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("昵称不能为空");
-                } else {
-                    String screenName = editText.getText().toString();
-                    changeScreenName(screenName);
+                    return;
                 }
+                if (screenName.length() > 50) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("昵称长度过长");
+                    return;
+                }
+                changeScreenName(screenName);
             }
         });
     }

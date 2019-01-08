@@ -37,10 +37,22 @@ public class FindVideoTask extends AsyncTask<Context, Integer, List<VideoBean>> 
 
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
-            Cursor exCursor = context.getContentResolver()
-                    .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            Cursor cursor = context.getContentResolver() .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                             null, null, null, null);
-            getVideo(exCursor);
+            if (cursor == null) return new ArrayList<>();
+            while (cursor.moveToNext()) {
+                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
+                File file = new File(path);
+                if (!file.exists()) {
+                    continue;
+                }
+                VideoBean videoBean = new VideoBean();
+                videoBean.setVideoPath(file.getAbsolutePath());
+                videoBean.setVideoDuration(cursor.getLong(
+                        cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
+                videoList.add(videoBean);
+            }
+            cursor.close();
         }
 
         return videoList;
@@ -51,22 +63,6 @@ public class FindVideoTask extends AsyncTask<Context, Integer, List<VideoBean>> 
         if (listener != null) {
             listener.onResult(VideoBeans);
         }
-    }
-
-    private void getVideo(Cursor cursor) {
-        while (cursor.moveToNext()) {
-            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
-            File file = new File(path);
-            if (!file.exists()) {
-                continue;
-            }
-            VideoBean videoBean = new VideoBean();
-            videoBean.setVideoPath(file.getAbsolutePath());
-            videoBean.setVideoDuration(cursor.getLong(
-                    cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
-            videoList.add(videoBean);
-        }
-        cursor.close();
     }
 
     public interface QueryListener {

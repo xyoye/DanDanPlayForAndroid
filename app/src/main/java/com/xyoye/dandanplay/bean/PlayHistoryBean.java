@@ -1,11 +1,14 @@
 package com.xyoye.dandanplay.bean;
 
+import com.xyoye.dandanplay.bean.params.HistoryParam;
+import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -152,6 +155,18 @@ public class PlayHistoryBean extends CommJsonEntity implements Serializable {
 
     public static void getPlayHistory(CommJsonObserver<PlayHistoryBean> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getPlayHistory()
+                .doOnSubscribe(consumer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public static void addPlayHistory(int episodeId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+        HistoryParam historyParam = new HistoryParam();
+        historyParam.setEpisodeIdList(new ArrayList<>());
+        historyParam.getEpisodeIdList().add(episodeId);
+        String json = JsonUtil.toJson(historyParam);
+        RetroFactory.getInstance().addPlayHistory(historyParam)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

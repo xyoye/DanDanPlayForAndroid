@@ -26,8 +26,8 @@ public class AppConfig {
      * 首次进入app
      */
     public boolean isFirstStart(){
-        boolean isFirst = SPUtils.getInstance().getBoolean(Constants.AppConfig.FIRST_OPEN_APP, true);
-        if (isFirst) SPUtils.getInstance().put(Constants.AppConfig.FIRST_OPEN_APP, false);
+        boolean isFirst = SPUtils.getInstance().getBoolean(Constants.Config.FIRST_OPEN_APP, true);
+        if (isFirst) SPUtils.getInstance().put(Constants.Config.FIRST_OPEN_APP, false);
         return isFirst;
     }
 
@@ -35,100 +35,100 @@ public class AppConfig {
      * 昵称
      */
     public String getUserScreenName(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.USER_SCREEN_NAME, "");
+        return SPUtils.getInstance().getString(Constants.Config.USER_SCREEN_NAME, "");
     }
 
     public void saveUserScreenName(String userScreenName){
-        SPUtils.getInstance().put(Constants.AppConfig.USER_SCREEN_NAME, userScreenName);
+        SPUtils.getInstance().put(Constants.Config.USER_SCREEN_NAME, userScreenName);
     }
 
     /**
      * 用户名
      */
     public String getUserName(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.USER_NAME, "");
+        return SPUtils.getInstance().getString(Constants.Config.USER_NAME, "");
     }
 
     public void saveUserName(String username){
-        SPUtils.getInstance().put(Constants.AppConfig.USER_NAME, username);
+        SPUtils.getInstance().put(Constants.Config.USER_NAME, username);
     }
 
     /**
      * 用户头像
      */
     public String getUserImage(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.USER_IMAGE, "");
+        return SPUtils.getInstance().getString(Constants.Config.USER_IMAGE, "");
     }
 
     public void saveUserImage(String userImage){
-        SPUtils.getInstance().put(Constants.AppConfig.USER_IMAGE, userImage);
+        SPUtils.getInstance().put(Constants.Config.USER_IMAGE, userImage);
     }
     
     /**
      * 是否已登陆
      */
     public boolean isLogin(){
-        return SPUtils.getInstance().getBoolean(Constants.AppConfig.IS_LOGIN);
+        return SPUtils.getInstance().getBoolean(Constants.Config.IS_LOGIN);
     }
 
     public void setLogin(boolean isLogin){
-        SPUtils.getInstance().put(Constants.AppConfig.IS_LOGIN, isLogin);
+        SPUtils.getInstance().put(Constants.Config.IS_LOGIN, isLogin);
     }
 
     /**
      * 文件夹排序
      */
     public int getFolderSortType(){
-        String type = SPUtils.getInstance().getString(Constants.AppConfig.FOLDER_COLLECTIONS, Constants.Collection.NAME_ASC+"");
+        String type = SPUtils.getInstance().getString(Constants.Config.FOLDER_COLLECTIONS, Constants.Collection.NAME_ASC+"");
         return Integer.valueOf(type);
     }
 
     public void saveFolderSortType(int type){
-        SPUtils.getInstance().put(Constants.AppConfig.FOLDER_COLLECTIONS, type+"");
+        SPUtils.getInstance().put(Constants.Config.FOLDER_COLLECTIONS, type+"");
     }
 
     /**
      * Token
      */
     public String getToken(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.TOKEN, "");
+        return SPUtils.getInstance().getString(Constants.Config.TOKEN, "");
     }
 
     public void saveToken(String token){
-        SPUtils.getInstance().put(Constants.AppConfig.TOKEN, token);
+        SPUtils.getInstance().put(Constants.Config.TOKEN, token);
     }
 
     /**
      * 下载目录
      */
     public String getDownloadFolder(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.LOCAL_DOWNLOAD_FOLDER, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
+        return SPUtils.getInstance().getString(Constants.Config.LOCAL_DOWNLOAD_FOLDER, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
     }
 
     public void setDownloadFolder(String path){
-        SPUtils.getInstance().put(Constants.AppConfig.LOCAL_DOWNLOAD_FOLDER, path);
+        SPUtils.getInstance().put(Constants.Config.LOCAL_DOWNLOAD_FOLDER, path);
     }
 
     /**
      * SD卡路径
      */
     public String getSDFolderUri(){
-        return SPUtils.getInstance().getString(Constants.AppConfig.LOCAL_SDCARD_FOLDER, "");
+        return SPUtils.getInstance().getString(Constants.Config.LOCAL_SDCARD_FOLDER, "");
     }
 
     public void setSDFolderUri(String uri){
-        SPUtils.getInstance().put(Constants.AppConfig.LOCAL_SDCARD_FOLDER, uri);
+        SPUtils.getInstance().put(Constants.Config.LOCAL_SDCARD_FOLDER, uri);
     }
 
     /**
      * 自动匹配弹幕
      */
     public boolean isAutoLoadDanmu(){
-        return SPUtils.getInstance().getBoolean(Constants.AppConfig.AUTO_LOAD_DANMU);
+        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_DANMU);
     }
 
     public void setAutoLoadDanmu(boolean auto){
-        SPUtils.getInstance().put(Constants.AppConfig.AUTO_LOAD_DANMU, auto);
+        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_DANMU, auto);
     }
 
     /**
@@ -223,32 +223,54 @@ public class AppConfig {
      * 补丁版本号
      */
     public int getPatchVersion(){
-        return SPUtils.getInstance().getInt(Constants.AppConfig.PATCH_VERSION, 0);
+        return SPUtils.getInstance().getInt(Constants.Config.PATCH_VERSION, 0);
     }
 
     public void setPatchVersion(int version){
-        SPUtils.getInstance().put(Constants.AppConfig.PATCH_VERSION, version);
+        SPUtils.getInstance().put(Constants.Config.PATCH_VERSION, version);
     }
 
     /**
      * 自动查询补丁
      */
     public boolean isAutoQueryPatch(){
-        return SPUtils.getInstance().getBoolean(Constants.AppConfig.AUTO_QUERY_PATCH, true);
+        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_QUERY_PATCH, true);
     }
 
     public void setAutoQueryPatch(boolean auto){
-        SPUtils.getInstance().put(Constants.AppConfig.AUTO_QUERY_PATCH, auto);
+        SPUtils.getInstance().put(Constants.Config.AUTO_QUERY_PATCH, auto);
     }
 
     /**
      * MKV提示
      */
     public boolean isShowMkvTips(){
-        return SPUtils.getInstance().getBoolean(Constants.AppConfig.SHOW_MKV_TIPS, true);
+        return SPUtils.getInstance().getBoolean(Constants.Config.SHOW_MKV_TIPS, true);
     }
 
     public void hideMkvTips(){
-        SPUtils.getInstance().put(Constants.AppConfig.SHOW_MKV_TIPS, false);
+        SPUtils.getInstance().put(Constants.Config.SHOW_MKV_TIPS, false);
+    }
+
+    /**
+     * 外链展示选择弹幕提示框
+     */
+    public boolean isShowOuterChainDanmuDialog(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.SHOW_OUTER_CHAIN_DANMU_DIALOG, true);
+    }
+
+    public void setShowOuterChainDanmuDialog(boolean isShow){
+        SPUtils.getInstance().put(Constants.Config.SHOW_OUTER_CHAIN_DANMU_DIALOG, isShow);
+    }
+
+    /**
+     * 外链打开是否进入选择弹幕页面
+     */
+    public boolean isOuterChainDanmuSelect(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.OUTER_CHAIN_DANMU_SELECT, true);
+    }
+
+    public void setOuterChainDanmuSelect(boolean isOpen){
+        SPUtils.getInstance().put(Constants.Config.OUTER_CHAIN_DANMU_SELECT, isOpen);
     }
 }

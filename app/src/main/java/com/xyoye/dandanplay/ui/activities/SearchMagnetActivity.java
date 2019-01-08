@@ -63,9 +63,6 @@ public class SearchMagnetActivity extends BaseMvpActivity<SearchMagnetPresenter>
     private AnimeTypeBean.TypesBean typesBean;
     private SubGroupBean.SubgroupsBean subgroupsBean;
 
-    private List<AnimeTypeBean.TypesBean> typeList;
-    private List<SubGroupBean.SubgroupsBean> subgroupList;
-
     private String oldSearchTerm;
     private String animeTitle;
 
@@ -85,8 +82,6 @@ public class SearchMagnetActivity extends BaseMvpActivity<SearchMagnetPresenter>
         searchMagnetEt.setText(oldSearchTerm);
 
         presenter.searchMagnet(oldSearchTerm, -1,-1);
-        typeList = presenter.getTypeList();
-        subgroupList = presenter.getSubGroupList();
     }
 
     @Override
@@ -98,12 +93,14 @@ public class SearchMagnetActivity extends BaseMvpActivity<SearchMagnetPresenter>
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.search_magnet_type_tv:
+                List<AnimeTypeBean.TypesBean> typeList = presenter.getTypeList();
                 if (typeList.size() > 0){
                     SelectInfoDialog<AnimeTypeBean.TypesBean> selectTypeDialog = new SelectInfoDialog<>(SearchMagnetActivity.this, R.style.Dialog, SelectInfoEvent.TYPE, typeList);
                     selectTypeDialog.show();
                 }
                 break;
             case R.id.search_magnet_subgroup_tv:
+                List<SubGroupBean.SubgroupsBean> subgroupList = presenter.getSubGroupList();
                 if (subgroupList.size() > 0){
                     SelectInfoDialog<SubGroupBean.SubgroupsBean> selectSubgroupDialog = new SelectInfoDialog<>(SearchMagnetActivity.this, R.style.Dialog, SelectInfoEvent.SUBGROUP, subgroupList);
                     selectSubgroupDialog.show();

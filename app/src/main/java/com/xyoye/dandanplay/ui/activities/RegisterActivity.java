@@ -86,21 +86,58 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
         String password = userPasswordEt.getText().toString();
         String email = userEmailEt.getText().toString();
 
+        /*
+         * 用户名               只能包含英文或数字，长度为5-20位，首位不能为数字。
+         * 密码                长度为5到20位之间。
+         * 备用邮箱（找回密码用）  长度不能超过50个字符。
+         */
         if (StringUtils.isEmpty(userName)) {
             userNameLayout.setErrorEnabled(true);
             userNameLayout.setError("用户名不能为空");
-        } else if (StringUtils.isEmpty(password)) {
+            return;
+        }
+        if (userName.length()<5 || userName.length()>20){
+            userNameLayout.setErrorEnabled(true);
+            userNameLayout.setError("用户名字长度为5-20个字符");
+            return;
+        }
+        if (!userName.matches("[0-9a-zA-Z]*")){
+            userNameLayout.setErrorEnabled(true);
+            userNameLayout.setError("只能包含英文或数字");
+            return;
+        }
+        if (userName.substring(0,1).matches("[0-9]*")){
+            userNameLayout.setErrorEnabled(true);
+            userNameLayout.setError("用户名不能以数字开头");
+            return;
+        }
+
+        if (StringUtils.isEmpty(password)) {
             userPasswordLayout.setErrorEnabled(true);
-            userNameLayout.setError("密码不能为空");
-        } else if (StringUtils.isEmpty(email)) {
+            userPasswordLayout.setError("密码不能为空");
+            return;
+        }
+        if (password.length()<5 || password.length()>20) {
+            userPasswordLayout.setErrorEnabled(true);
+            userPasswordLayout.setError("密码长度为5-20个字符");
+            return;
+        }
+
+        if (StringUtils.isEmpty(email)) {
             userEmailLayout.setErrorEnabled(true);
             userEmailLayout.setError("邮箱不能为空");
-        }else {
-            userNameLayout.setErrorEnabled(false);
-            userPasswordLayout.setErrorEnabled(false);
-            userEmailLayout.setErrorEnabled(false);
-            presenter.register(new RegisterParam(userName, password, email));
+            return;
         }
+        if (email.length() > 50) {
+            userEmailLayout.setErrorEnabled(true);
+            userEmailLayout.setError("邮箱长度为50个字符以内");
+            return;
+        }
+
+        userNameLayout.setErrorEnabled(false);
+        userPasswordLayout.setErrorEnabled(false);
+        userEmailLayout.setErrorEnabled(false);
+        presenter.register(new RegisterParam(userName, password, email));
     }
 
     @Override

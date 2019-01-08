@@ -85,14 +85,27 @@ public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresen
         if (StringUtils.isEmpty(oldPassword)) {
             oldPasswordLayout.setErrorEnabled(true);
             oldPasswordLayout.setError("旧密码不能为空");
-        } else if (StringUtils.isEmpty(newPassword)) {
+            return;
+        }
+        if (StringUtils.isEmpty(newPassword)) {
             newPasswordLayout.setErrorEnabled(true);
             newPasswordLayout.setError("新密码不能为空");
-        }else {
-            oldPasswordLayout.setErrorEnabled(false);
-            newPasswordLayout.setErrorEnabled(false);
-            presenter.change(new ChangePasswordParam(oldPassword, newPassword));
+            return;
         }
+        if (oldPassword.length()<5 || oldPassword.length()>20) {
+            oldPasswordLayout.setErrorEnabled(true);
+            oldPasswordLayout.setError("旧密码长度为5-20个字符");
+            return;
+        }
+        if (newPassword.length()<5 || newPassword.length()>20) {
+            newPasswordLayout.setErrorEnabled(true);
+            newPasswordLayout.setError("新密码长度为5-20个字符");
+            return;
+        }
+
+        oldPasswordLayout.setErrorEnabled(false);
+        newPasswordLayout.setErrorEnabled(false);
+        presenter.change(new ChangePasswordParam(oldPassword, newPassword));
     }
 
     @Override

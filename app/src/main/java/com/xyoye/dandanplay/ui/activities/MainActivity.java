@@ -109,7 +109,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 playFragment.unrigisterEventBus();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    setTitle("公告与番组");
+                    setTitle("弹弹play");
                     if (homeFragment == null) {
                         homeFragment = HomeFragment.newInstance();
                         mDelegate.showHideFragment(homeFragment);

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/history_info_rl"
+        android:layout_width="match_parent"
+        android:layout_height="45.5dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp">
+
+        <ImageView
+            android:id="@+id/history_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:padding="7dp"
+            android:src="@mipmap/ic_search_history_grey"/>
+
+        <TextView
+            android:id="@+id/history_text_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/history_iv"
+            android:layout_marginStart="5dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_color"
+            android:text="测试"/>
+
+        <ImageView
+            android:id="@+id/delete_history_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="7dp"
+            android:src="@mipmap/ic_delete_gray"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/diver_color"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/delete_all_rl"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="12sp"
+            android:textColor="@color/black_color"
+            android:text="删除所有搜索记录"/>
+    </RelativeLayout>
+
+</RelativeLayout>

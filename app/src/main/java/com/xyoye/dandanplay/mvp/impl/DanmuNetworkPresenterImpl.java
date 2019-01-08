@@ -33,6 +33,11 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
 
     @Override
     public void init() {
+
+    }
+
+    @Override
+    public void process(Bundle savedInstanceState) {
         getView().showLoading();
         String videoPath = getView().getVideoPath();
 
@@ -53,11 +58,6 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
             String anime = FileUtils.getFileNameNoExtension(videoPath);
             searchDanmu(anime, "");
         }
-    }
-
-    @Override
-    public void process(Bundle savedInstanceState) {
-
     }
 
     @Override

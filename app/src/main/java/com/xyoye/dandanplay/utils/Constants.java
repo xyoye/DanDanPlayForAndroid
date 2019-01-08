@@ -8,7 +8,7 @@ package com.xyoye.dandanplay.utils;
 public class Constants {
     public static String BilibiliUrl = "http://comment.bilibili.com/";
 
-    public static class AppConfig {
+    public static class Config {
         //首次进入app
         public static final String FIRST_OPEN_APP = "first_open_app";
         //本地下载目录
@@ -37,6 +37,10 @@ public class Constants {
         public static final String AUTO_QUERY_PATCH = "auto_query_patch";
         //展示MKV提示
         public static final String SHOW_MKV_TIPS = "show_mkv_tips";
+        //展示外链视频选择弹幕弹窗
+        public static final String SHOW_OUTER_CHAIN_DANMU_DIALOG = "show_outer_chain_danmu_dialog";
+        //外链打开时是否选择弹幕
+        public static final String OUTER_CHAIN_DANMU_SELECT = "outer_chain_danmu_select";
     }
 
     //文件排序方式

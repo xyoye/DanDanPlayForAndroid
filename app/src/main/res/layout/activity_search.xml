@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/theme_color"
+        android:focusableInTouchMode="true">
+
+        <ImageView
+            android:id="@+id/return_iv"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:paddingTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingBottom="5dp"
+            android:paddingEnd="5dp"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/ic_back_white"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/return_iv"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/background_search">
+
+            <EditText
+                android:id="@+id/search_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/subgroup_tv"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:singleLine="true"
+                android:background="@null"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_color5"
+                android:hint="搜索：番剧+空格+集数"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/subgroup_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/type_tv"
+                android:gravity="center"
+                android:maxEms="3"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:padding="3dp"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:text="字幕组"/>
+
+            <TextView
+                android:id="@+id/type_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/search_iv"
+                android:gravity="center"
+                android:maxEms="3"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:padding="3dp"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:text="选分类"/>
+
+            <ImageView
+                android:id="@+id/search_iv"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:paddingTop="5dp"
+                android:paddingStart="5dp"
+                android:paddingBottom="5dp"
+                android:paddingEnd="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/ic_search_white"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/history_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_overlay">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/history_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/search_result_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

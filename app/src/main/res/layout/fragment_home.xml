@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:orientation="vertical">
-
     <com.xyoye.dandanplay.ui.weight.ScrollableLayout
         android:id="@+id/scroll_layout"
         android:layout_width="wrap_content"
@@ -16,13 +15,117 @@
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="170dp"
+            android:padding="5dp">
             <com.youth.banner.Banner
                 android:id="@+id/banner"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="170dp">
             </com.youth.banner.Banner>
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:gravity="center_horizontal">
+            <LinearLayout
+                android:id="@+id/search_ll"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:padding="9dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/ic_home_search"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_color3"
+                    android:textSize="12sp"
+                    android:text="搜索"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/list_ll"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:padding="9.5dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/ic_home_list"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_color3"
+                    android:textSize="12sp"
+                    android:text="番剧"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/follow_ll"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:padding="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/ic_home_follow"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_color3"
+                    android:textSize="12sp"
+                    android:text="关注"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/history_ll"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:padding="9dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@mipmap/ic_home_hostory"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_color3"
+                    android:textSize="12sp"
+                    android:text="历史"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@color/diver_color"/>
 
         <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
             android:id="@+id/magic_indicator"
@@ -30,6 +133,7 @@
             android:layout_height="40dp"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
+            android:gravity="center"
             app:tabMode="scrollable" />
 
         <android.support.v4.view.ViewPager

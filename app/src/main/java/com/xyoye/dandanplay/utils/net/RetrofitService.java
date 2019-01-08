@@ -14,6 +14,7 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
+import com.xyoye.dandanplay.bean.params.HistoryParam;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -108,6 +110,11 @@ public interface RetrofitService {
 
     @POST("/Magnet/Parse")
     Observable<ResponseBody> downloadTorrent(@Body RequestBody requestBody);
+
+    @POST("/api/v2/playhistory")
+    Observable<CommJsonEntity> addPlayHistory(@Body HistoryParam params);
+
+    //-----------------------------------------------------------
 
     @Streaming
     @GET("/{abi}")

@@ -43,7 +43,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/divide"/>
+        android:background="@color/diver_color"/>
 
     <LinearLayout
         android:id="@+id/loading_ll"

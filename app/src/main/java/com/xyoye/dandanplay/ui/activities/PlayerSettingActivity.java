@@ -52,6 +52,8 @@ public class PlayerSettingActivity extends AppCompatActivity {
     LinearLayout selectPixelFormatLl;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.outer_china_danmu_cb)
+    CheckBox outerChinaDanmuCb;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -114,10 +116,12 @@ public class PlayerSettingActivity extends AppCompatActivity {
         boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
         boolean openSLES = AppConfig.getInstance().isOpenSLES();
         boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
+        boolean outerChinaDialog = AppConfig.getInstance().isShowOuterChainDanmuDialog();
         mediaCodeCCb.setChecked(mediaCodeC);
         mediaCodeCH265Cb.setChecked(mediaCodeCH265);
         openSlesCb.setChecked(openSLES);
         surfaceRendersCb.setChecked(surfaceRenders);
+        outerChinaDanmuCb.setChecked(outerChinaDialog);
     }
 
     private void initListener() {
@@ -133,6 +137,9 @@ public class PlayerSettingActivity extends AppCompatActivity {
         });
         surfaceRendersCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setSurfaceRenders(isChecked);
+        });
+        outerChinaDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            AppConfig.getInstance().setShowOuterChainDanmuDialog(isChecked);
         });
     }
 
@@ -159,7 +166,7 @@ public class PlayerSettingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;

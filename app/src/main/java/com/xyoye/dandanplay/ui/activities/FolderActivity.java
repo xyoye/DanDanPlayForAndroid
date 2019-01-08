@@ -361,14 +361,8 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @SuppressLint("CheckResult")
     @Override
     public void downloadDanmu(DanmuMatchBean.MatchesBean matchesBean){
-        new RxPermissions(this).
-                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    if (granted) {
-                        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, matchesBean);
-                        dialog.show();
-                    }
-                });
+        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, matchesBean);
+        dialog.show();
     }
 
     @Override

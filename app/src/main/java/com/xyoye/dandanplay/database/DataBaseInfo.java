@@ -6,7 +6,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 13;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -35,7 +35,7 @@ public class DataBaseInfo {
                 {"_id", "title", "description", "url", "image_url"},
                 {"_id", "type_id", "type_name"},
                 {"_id", "subgroup_id", "subgroup_name"},
-                {"_id", "torrent_path", "torrent_state", "torrent_done", "torrent_danmu_path", "torrent_episode_id", "torrent_magnet"},
+                {"_id", "torrent_path", "anime_title", "torrent_state", "torrent_done", "torrent_danmu_path", "torrent_episode_id", "torrent_magnet"},
                 {"_id", "folder", "file_path", "danmu_path", "current_position", "danmu_episode_id"},
                 {"_id", "tracker"},
                 {"_id", "text", "time"}
@@ -48,7 +48,7 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "TEXT", "INTEGER", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "TEXT", "INTEGER", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)", "INTEGER", "INTEGER" },
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "INTEGER"}

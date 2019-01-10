@@ -1,5 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +15,10 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.player.ijkplayer.utils.AnimHelper;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -29,6 +35,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,6 +67,8 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     RelativeLayout historyRl;
 
     private boolean isSearch = false;
+    private String animeTitle;
+    private String searchWord;
     private int typeId = -1;
     private int subgroupsId = -1;
 
@@ -81,14 +90,14 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
     @Override
     public void initView() {
-        searchEt.postDelayed(() ->
-                KeyboardUtils.showSoftInput(searchEt), 200);
-
         historyList = new ArrayList<>();
         resultList = new ArrayList<>();
+        animeTitle = getIntent().getStringExtra("anime_title");
+        animeTitle = StringUtils.isEmpty(animeTitle) ? "" : animeTitle;
+        searchWord = getIntent().getStringExtra("search_word");
+        boolean isAnime = getIntent().getBooleanExtra("is_anime", false);
 
         historyAdapter = new BaseRvAdapter<SearchHistoryBean>(historyList) {
-
             @NonNull
             @Override
             public AdapterItem<SearchHistoryBean> onCreateItem(int viewType) {
@@ -114,14 +123,19 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         resultRv.setItemViewCacheSize(10);
         resultRv.setAdapter(resultAdapter);
 
-        presenter.getSearchHistory();
+        presenter.getSearchHistory(isAnime);
+        if (!isAnime){
+            searchEt.postDelayed(() ->
+                    KeyboardUtils.showSoftInput(searchEt), 200);
+        }
     }
 
     @Override
     public void initListener() {
         searchEt.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus)
-                historyRl.setVisibility(View.VISIBLE);
+            if (hasFocus){
+                AnimHelper.doShowAnimator(historyRl);
+            }
         });
     }
 
@@ -133,7 +147,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 if (historyRl.getVisibility() == View.GONE || !isSearch)
                     SearchActivity.this.finish();
                 else{
-                    historyRl.setVisibility(View.GONE);
+                    AnimHelper.doHideAnimator(historyRl);
                     searchEt.clearFocus();
                 }
                 break;
@@ -212,6 +226,18 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         search(event.getSearchText());
     }
 
+    @SuppressLint("CheckResult")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MagnetBean.ResourcesBean model) {
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        presenter.downloadTorrent(animeTitle, model.getMagnet());
+                    }
+                });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -225,12 +251,14 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     @Override
-    public void refreshHistory(List<SearchHistoryBean> historyBeanList) {
+    public void refreshHistory(List<SearchHistoryBean> historyBeanList, boolean doSearch) {
         if (historyBeanList != null) {
             historyList.clear();
             historyList.addAll(historyBeanList);
             historyAdapter.notifyDataSetChanged();
         }
+        if (doSearch)
+            search(searchWord);
     }
 
     @Override
@@ -243,8 +271,27 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         }
     }
 
+    @Override
+    public void downloadTorrentOver(String torrentPath, String magnet) {
+        Intent intent = new Intent(this, DownloadMangerActivity.class);
+        for (Torrent torrent : IApplication.torrentList){
+            if (torrentPath.equals(torrent.getPath())){
+                startActivity(intent);
+                return;
+            }
+        }
+        intent.putExtra("torrent_path", torrentPath);
+        intent.putExtra("anime_folder", animeTitle);
+        intent.putExtra("torrent_magnet", magnet);
+        startActivity(intent);
+    }
+
     private void search(String searchText) {
-        historyRl.setVisibility(View.GONE);
+        AnimHelper.doHideAnimator(historyRl);
+        searchEt.setText(searchText);
+        searchEt.clearFocus();
+        KeyboardUtils.hideSoftInput(searchEt);
+
         boolean isExist = false;
         int existN = -1;
         for (int i=0; i<historyList.size(); i++){
@@ -269,9 +316,6 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             historyAdapter.notifyDataSetChanged();
             presenter.updateHistory(historyBean.get_id());
         }
-        searchEt.setText(searchText);
-        searchEt.clearFocus();
-        KeyboardUtils.hideSoftInput(searchEt);
         presenter.search(searchText, typeId, subgroupsId);
     }
 
@@ -296,7 +340,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             if (historyRl.getVisibility() == View.GONE || !isSearch)
                 SearchActivity.this.finish();
             else{
-                historyRl.setVisibility(View.GONE);
+                AnimHelper.doHideAnimator(historyRl);
                 KeyboardUtils.hideSoftInput(searchEt);
                 searchEt.clearFocus();
             }

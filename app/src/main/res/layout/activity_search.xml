@@ -91,22 +91,27 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/history_rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black_overlay">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/history_rv"
+            android:id="@+id/search_result_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>
+
+        <RelativeLayout
+            android:id="@+id/history_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_overlay"
+            android:visibility="gone">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/history_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/search_result_rv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
-
 </LinearLayout>

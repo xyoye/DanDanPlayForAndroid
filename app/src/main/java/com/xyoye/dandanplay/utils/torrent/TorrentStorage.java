@@ -1,5 +1,8 @@
 package com.xyoye.dandanplay.utils.torrent;
 
+import com.blankj.utilcode.util.StringUtils;
+import com.xyoye.dandanplay.utils.AppConfig;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -27,7 +30,10 @@ public class TorrentStorage implements FileStorageTorrent {
     @Override
     public void createZeroLengthFile(String hash, String path) throws Exception {
         Torrent torrent = hashs.get(hash);
-        File ff = new File(torrent.getFolder(), path);
+        String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                ? AppConfig.getInstance().getDownloadFolder()
+                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+        File ff = new File(folder, path);
         ff.createNewFile();
     }
 
@@ -37,7 +43,10 @@ public class TorrentStorage implements FileStorageTorrent {
         synchronized (hashs) {
             torrent = hashs.get(hash);
         }
-        File p = new File(torrent.getFolder());
+        String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                ? AppConfig.getInstance().getDownloadFolder()
+                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+        File p = new File(folder);
         try {
             File f = new File(p, path);
             RandomAccessFile r = new RandomAccessFile(f, "r");
@@ -68,7 +77,10 @@ public class TorrentStorage implements FileStorageTorrent {
             torrent = hashs.get(hash);
         }
         try {
-            File f = new File(torrent.getFolder(), path);
+            String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                    ? AppConfig.getInstance().getDownloadFolder()
+                    : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+            File f = new File(folder, path);
             if (f.exists())
                 f.delete();
         } catch (IllegalArgumentException e) {
@@ -83,8 +95,11 @@ public class TorrentStorage implements FileStorageTorrent {
             torrent = hashs.get(hash);
         }
         try {
-            File f1 = new File(torrent.getFolder(), s1);
-            File f2 = new File(torrent.getFolder(), s2);
+            String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                    ? AppConfig.getInstance().getDownloadFolder()
+                    : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+            File f1 = new File(folder, s1);
+            File f2 = new File(folder, s2);
             f1.renameTo(f2);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -99,7 +114,10 @@ public class TorrentStorage implements FileStorageTorrent {
             torrent = hashs.get(hash);
         }
         try {
-            File f = new File(torrent.getFolder(), path);
+            String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                    ? AppConfig.getInstance().getDownloadFolder()
+                    : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+            File f = new File(folder, path);
             File p = f.getParentFile();
             if (!p.exists() && !p.mkdirs())
                 throw new IOException("unable to create dir");

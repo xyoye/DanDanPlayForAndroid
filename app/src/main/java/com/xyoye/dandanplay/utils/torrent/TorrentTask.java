@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -43,14 +44,9 @@ public class TorrentTask{
 
     //解析torrent内容
     private Torrent prepareTorrent(Torrent oldTorrent){
-        String downloadFolder = AppConfig.getInstance().getDownloadFolder();
-        downloadFolder += oldTorrent.getFolder();
         Torrent torrent = new Torrent();
         torrent.setPath(oldTorrent.getPath());
-        if (oldTorrent.getFolder().endsWith("/"))
-            torrent.setFolder(downloadFolder);
-        else
-            torrent.setFolder(downloadFolder+"/");
+        torrent.setAnimeTitle(oldTorrent.getAnimeTitle());
         torrent.setEpisodeId(oldTorrent.getEpisodeId());
         torrent.setDanmuPath(oldTorrent.getDanmuPath());
         torrent.setDone(oldTorrent.isDone());
@@ -64,6 +60,10 @@ public class TorrentTask{
             ToastUtils.showShort("找不到种子文件，目前暂不支持读取SD卡文件");
             throw new RuntimeException(e);
         }
+
+        String downloadFolder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                ? AppConfig.getInstance().getDownloadFolder()
+                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
         File folder = new File(downloadFolder);
         if (!folder.exists()){
             if (!folder.mkdirs()){

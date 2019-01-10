@@ -100,6 +100,9 @@
 
         <activity android:name=".ui.activities.SearchActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.AnimeSeasonActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

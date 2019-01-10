@@ -1,5 +1,7 @@
 package com.player.ijkplayer.utils;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -31,6 +33,44 @@ public final class AnimHelper {
         AnimatorSet set = new AnimatorSet();
         set.setDuration(duration);
         set.playTogether(translationX, alpha);
+        set.start();
+    }
+
+    /**
+     * 执行展示动画
+     * @param view
+     */
+    public static void doShowAnimator(final View view){
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 0, 1);
+        AnimatorSet set = new AnimatorSet();
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                view.setVisibility(View.VISIBLE);
+                super.onAnimationStart(animation);
+            }
+        });
+        set.setDuration(250);
+        set.playTogether(alpha);
+        set.start();
+    }
+
+    /**
+     * 执行隐藏动画
+     * @param view
+     */
+    public static void doHideAnimator(final View view){
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(view, "alpha", 1, 0);
+        AnimatorSet set = new AnimatorSet();
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
+                super.onAnimationEnd(animation);
+            }
+        });
+        set.setDuration(250);
+        set.playTogether(alpha);
         set.start();
     }
 

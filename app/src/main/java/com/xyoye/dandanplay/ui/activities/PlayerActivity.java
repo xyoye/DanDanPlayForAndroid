@@ -71,7 +71,7 @@ public class PlayerActivity extends AppCompatActivity {
                     new DanmuSelectDialog(this, isSelectDanmu -> {
                         if (isSelectDanmu){
                             Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
-                            intent.putExtra("path", videoPath);
+                            intent.putExtra("video_path", videoPath);
                             intent.putExtra("is_lan", true);
                             startActivityForResult(intent, SELECT_DANMU);
                         }else {
@@ -83,7 +83,7 @@ public class PlayerActivity extends AppCompatActivity {
                 }else {
                     if (AppConfig.getInstance().isOuterChainDanmuSelect()){
                         Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
-                        intent.putExtra("path", videoPath);
+                        intent.putExtra("video_path", videoPath);
                         intent.putExtra("is_lan", true);
                         startActivityForResult(intent, SELECT_DANMU);
                     }else {

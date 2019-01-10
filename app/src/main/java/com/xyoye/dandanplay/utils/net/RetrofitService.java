@@ -12,6 +12,7 @@ import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
+import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
@@ -27,7 +28,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -113,6 +113,12 @@ public interface RetrofitService {
 
     @POST("/api/v2/playhistory")
     Observable<CommJsonEntity> addPlayHistory(@Body HistoryParam params);
+
+    @GET("/api/v2/bangumi/season/anime")
+    Observable<SeasonAnimeBean> getAnimeSeason();
+
+    @GET("/api/v2/bangumi/season/anime/{year}/{month}")
+    Observable<AnimeBeans> getSeasonAnime(@Path("year") String year, @Path("month") String month);
 
     //-----------------------------------------------------------
 

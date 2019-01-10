@@ -45,6 +45,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
+    private String videoPath;
     private BaseRvAdapter<DanmuMatchBean.MatchesBean> adapter;
 
 
@@ -55,6 +56,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 1));
+        videoPath = getIntent().getStringExtra("video_path");
     }
 
     @Override
@@ -97,7 +99,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
 
     @Override
     public String getVideoPath() {
-        return getIntent().getStringExtra("path");
+        return videoPath;
     }
 
     @Override
@@ -130,7 +132,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
                 .subscribe(granted -> {
                     if (granted) {
                         DanmuMatchBean.MatchesBean bean = event.getModel();
-                        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, bean);
+                        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, videoPath, bean);
                         dialog.show();
                     }
                 });

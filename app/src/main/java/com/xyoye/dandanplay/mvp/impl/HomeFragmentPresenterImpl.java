@@ -14,11 +14,13 @@ import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -129,6 +131,14 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
             public void onSuccess(AnimeBeans animeBeans) {
                 List<AnimeBeans> beansList = new ArrayList<>();
                 initList(beansList);
+                if (AppConfig.getInstance().isLogin()){
+                    Collections.sort(animeBeans.getBangumiList(), (o1, o2) -> {
+                        // 返回值为int类型，大于0表示正序，小于0表示逆序
+                        if (o1.isIsFavorited()) return -1;
+                        if (o2.isIsFavorited()) return 1;
+                        return 0;
+                    });
+                }
                 for (AnimeBeans.BangumiListBean bean : animeBeans.getBangumiList()){
                     switch (bean.getAirDay()){
                         case 0:

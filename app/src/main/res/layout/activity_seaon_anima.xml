@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:text="年份："/>
+
+            <TextView
+                android:id="@+id/year_01_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/year_02_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/year_03_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/year_other_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text="其它"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:text="季度："/>
+
+            <TextView
+                android:id="@+id/month_10_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text="10月"/>
+
+            <TextView
+                android:id="@+id/month_7_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text="7月"/>
+
+            <TextView
+                android:id="@+id/month_4_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text="4月"/>
+
+            <TextView
+                android:id="@+id/month_1_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textSize="14sp"
+                android:textColor="@color/black_color"
+                android:text="1月"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/diver_color"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/anima_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp">
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

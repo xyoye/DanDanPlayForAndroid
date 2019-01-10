@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
@@ -38,11 +39,13 @@ public class DanmuDownloadDialog extends Dialog{
 
     private DanmuMatchBean.MatchesBean bean;
     private Context context;
+    private String videoPath;
 
-    public DanmuDownloadDialog(@NonNull Context context, int themeResId, DanmuMatchBean.MatchesBean bean) {
+    public DanmuDownloadDialog(@NonNull Context context, int themeResId, String videoPath, DanmuMatchBean.MatchesBean bean) {
         super(context, themeResId);
         this.bean = bean;
         this.context = context;
+        this.videoPath = videoPath;
     }
 
     @Override
@@ -68,18 +71,29 @@ public class DanmuDownloadDialog extends Dialog{
                 }else {
                     List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
                     statusTv.setText("开始保存...");
-                    String path = AppConfig.getInstance().getDownloadFolder()
-                            + "/" + bean.getAnimeTitle()+"_"
+                    String danmuName = bean.getAnimeTitle()+"_"
                             + bean.getEpisodeTitle().replace(" ","_")
                             + ".xml";
+                    String danmuPath;
+                    //如果视频文件在下载路径中，下载弹幕至视频所在文件夹
+                    //否则下载弹幕至默认下载文件夹
+                    if (FileUtils.getDirName(videoPath).startsWith(AppConfig.getInstance().getDownloadFolder())){
+                        danmuPath = FileUtils.getDirName(videoPath)
+                                + "/_danmu"
+                                + "/" + danmuName;
+                    }else {
+                        danmuPath = AppConfig.getInstance().getDownloadFolder()
+                                + "/_danmu"
+                                + "/" + danmuName;
+                    }
                     //去除内容时间一样的弹幕
-                    CommonUtils.saveDanmu(comments,path);
+                    CommonUtils.saveDanmu(comments, danmuPath);
 
                     statusTv.setText("保存完成！");
-                    ToastUtils.showShort("下载完成："+path);
+                    ToastUtils.showShort("下载完成："+danmuPath);
 
                     EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(path, bean.getEpisodeId(), false));
+                            new OpenDanmuFolderEvent(danmuPath, bean.getEpisodeId(), false));
                 }
                 if (DanmuDownloadDialog.this.isShowing() && context!=null && getOwnerActivity() != null)
                     DanmuDownloadDialog.this.cancel();

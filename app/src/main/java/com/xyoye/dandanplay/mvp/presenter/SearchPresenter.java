@@ -15,7 +15,7 @@ public interface SearchPresenter extends BaseMvpPresenter {
 
     List<SubGroupBean.SubgroupsBean> getSubGroupList();
 
-    void getSearchHistory();
+    void getSearchHistory(boolean doSearch);
 
     void addHistory(String text);
 
@@ -26,4 +26,6 @@ public interface SearchPresenter extends BaseMvpPresenter {
     void deleteAllHistory();
 
     void search(String text, int type, int subgroup);
+
+    void downloadTorrent(String animeTitle, String magnet);
 }

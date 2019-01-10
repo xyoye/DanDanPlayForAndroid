@@ -219,7 +219,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openDanmuSetting(OpenDanmuSettingEvent event){
         Intent intent = new Intent(FolderActivity.this, DanmuNetworkActivity.class);
-        intent.putExtra("path", event.getVideoPath());
+        intent.putExtra("video_path", event.getVideoPath());
         intent.putExtra("position", event.getVideoPosition());
         intent.putExtra("is_lan", isLan);
         startActivityForResult(intent, SELECT_NETWORK_DANMU);
@@ -361,7 +361,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @SuppressLint("CheckResult")
     @Override
     public void downloadDanmu(DanmuMatchBean.MatchesBean matchesBean){
-        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, matchesBean);
+        DanmuDownloadDialog dialog = new DanmuDownloadDialog(this, R.style.Dialog, selectVideoBean.getVideoPath(), matchesBean);
         dialog.show();
     }
 

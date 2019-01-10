@@ -19,6 +19,7 @@ import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -130,19 +131,19 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
 
         downloadInfoRl.setOnLongClickListener(v -> {
             showActionView(torrent,true);
-            if (torrent.isDone()) playActionLl.setVisibility(View.VISIBLE);
-            if (torrent.isDone() || (Libtorrent.torrentPendingBytesCompleted(torrent.getId()) > 16 * 1024 * 1024))
-                bindDanmuActionLl.setVisibility(View.VISIBLE);
             deleteActionLl.setVisibility(View.VISIBLE);
             closeActionLl.setVisibility(View.VISIBLE);
+            if (torrent.isDone())
+                playActionLl.setVisibility(View.VISIBLE);
+            if (torrent.isDone() || (Libtorrent.torrentPendingBytesCompleted(torrent.getId()) > 16 * 1024 * 1024))
+                bindDanmuActionLl.setVisibility(View.VISIBLE);
             if (!StringUtils.isEmpty(torrent.getMagnet()))
                 infoActionLl.setVisibility(View.VISIBLE);
             return false;
         });
 
-        downloadCtrlRl.setOnClickListener(v -> {
-            setAction(torrent);
-        });
+        downloadCtrlRl.setOnClickListener(v -> setAction(torrent));
+
         playActionLl.setOnClickListener(v -> {
             showActionView(torrent,false);
             long l = Libtorrent.torrentFilesCount(torrent.getId());
@@ -150,12 +151,14 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
                     if (CommonUtils.isMediaFile(playFile.getPath())) {
-                        String videoTitle = playFile.getPath();
-                        if (!torrent.getFolder().endsWith("/")) torrent.setFolder(torrent.getFolder() + "/");
-                        String path = torrent.getFolder() + videoTitle;
-                        String danmuPath = torrent.getDanmuPath();
                         int episodeId = torrent.getEpisodeId();
-
+                        String videoTitle = playFile.getPath();
+                        String danmuPath = torrent.getDanmuPath();
+                        String path;
+                        if (!StringUtils.isEmpty(torrent.getAnimeTitle()))
+                            path = AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle() + "/" + videoTitle;
+                        else
+                            path = AppConfig.getInstance().getDownloadFolder() + "/" + videoTitle;
                         Intent intent = new Intent(context, PlayerActivity.class);
                         intent.putExtra("path", path);
                         intent.putExtra("title", videoTitle);
@@ -176,9 +179,13 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
                 if (playFile.getCheck()) {
                     if (CommonUtils.isMediaFile(playFile.getPath())) {
-                        String path = torrent.getFolder() + "/" + playFile.getPath();
+                        String path;
+                        if (!StringUtils.isEmpty(torrent.getAnimeTitle()))
+                            path = AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle() + "/" + playFile.getPath();
+                        else
+                            path = AppConfig.getInstance().getDownloadFolder() + "/" + playFile.getPath();
                         Intent intent = new Intent(context, DanmuNetworkActivity.class);
-                        intent.putExtra("path", path);
+                        intent.putExtra("video_path", path);
                         intent.putExtra("position", position);
                         Activity activity = (Activity) context;
                         activity.startActivityForResult(intent, DownloadMangerActivity.BIND_DANMU);
@@ -199,6 +206,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
         deleteActionLl.setOnClickListener(v -> {
             new CommonDialog.Builder(context)
                     .setAutoDismiss()
+                    .showExtra()
                     .setOkListener(dialog ->
                             EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrent)))
                     .setExtraListener(dialog ->

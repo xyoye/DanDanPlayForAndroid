@@ -22,6 +22,7 @@ import com.xyoye.dandanplay.bean.AnimeBeans;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.SearchActivity;
@@ -182,6 +183,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 launchActivity(SearchActivity.class);
                 break;
             case R.id.list_ll:
+                launchActivity(AnimeSeasonActivity.class);
                 break;
             case R.id.follow_ll:
                 if (AppConfig.getInstance().isLogin()){

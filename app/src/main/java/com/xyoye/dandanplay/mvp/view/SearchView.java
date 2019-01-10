@@ -12,7 +12,9 @@ import java.util.List;
  */
 
 public interface SearchView extends BaseMvpView, LoadDataView {
-    void refreshHistory(List<SearchHistoryBean> historyList);
+    void refreshHistory(List<SearchHistoryBean> historyList, boolean doSearch);
 
     void refreshSearch(List<MagnetBean.ResourcesBean> searchResult);
+
+    void downloadTorrentOver(String torrentPath, String magnet);
 }

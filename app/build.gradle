@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.github.axet:libtorrent:0.13.35'
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    implementation 'com.contrarywind:Android-PickerView:4.1.6'
 
     implementation('com.github.axet:wget:1.4.2') {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'

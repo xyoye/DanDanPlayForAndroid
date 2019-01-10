@@ -126,7 +126,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         if (!StringUtils.isEmpty(torrentPath)) {
             Torrent torrent = new Torrent();
             torrent.setPath(torrentPath);
-            torrent.setFolder(animeFolder+"/");
+            torrent.setAnimeTitle(StringUtils.isEmpty(animeFolder) ? "" : animeFolder);
             torrent.setMagnet(torrentMagnet);
             EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_START, torrent));
         }
@@ -221,11 +221,11 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         if (resultCode == RESULT_OK){
             if (requestCode == DownloadMangerActivity.BIND_DANMU){
                 int episodeId = data.getIntExtra("episode_id", -1);
-                String path = data.getStringExtra("path");
+                String danmuPath = data.getStringExtra("path");
                 int position = data.getIntExtra("position", -1);
                 if (position != -1){
                     Torrent torrent = IApplication.torrentList.get(position);
-                    torrent.setDanmuPath(path);
+                    torrent.setDanmuPath(danmuPath);
                     torrent.setEpisodeId(episodeId);
                     adapter.notifyItemChanged(position);
                     TorrentUtil.updateTorrent(torrent);

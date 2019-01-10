@@ -231,11 +231,10 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
             String temp = episode.substring(1, episode.length()-1);
             episode = isInt(temp) ? temp : episode;
         }
-        Intent intent = new Intent(AnimeDetailActivity.this, SearchMagnetActivity.class);
-        intent.putExtra("anime", animeDetailBean.getBangumi().getSearchKeyword());
+        Intent intent = new Intent(AnimeDetailActivity.this, SearchActivity.class);
         intent.putExtra("anime_title", "/"+animeDetailBean.getBangumi().getAnimeTitle());
-        intent.putExtra("episode_title", episode);
-        intent.putExtra("episode_id", event.getEpisodeId());
+        intent.putExtra("search_word", animeDetailBean.getBangumi().getSearchKeyword() + "" + episode);
+        intent.putExtra("is_anime", true);
         startActivity(intent);
     }
 

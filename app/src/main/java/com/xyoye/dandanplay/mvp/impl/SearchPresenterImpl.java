@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -16,21 +18,26 @@ import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+
 /**
  * Created by xyy on 2019/1/8.
  */
 
 public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implements SearchPresenter {
+    private String downloadPath;
 
     public SearchPresenterImpl(SearchView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -62,7 +69,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     @Override
-    public void getSearchHistory() {
+    public void getSearchHistory(boolean doSearch) {
         List<SearchHistoryBean> historyBeanList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM search_history ORDER BY time DESC", new String[]{});
@@ -81,7 +88,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         //添加清除所有搜索记录，id = -1、text = ""作为标志
         if (historyBeanList.size() > 0)
             historyBeanList.add(new SearchHistoryBean(-1, "", -1));
-        getView().refreshHistory(historyBeanList);
+        getView().refreshHistory(historyBeanList, doSearch);
     }
 
     @Override
@@ -169,5 +176,47 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
+    }
+
+    @Override
+    public void downloadTorrent(String animeTitle, String magnet) {
+        downloadPath = AppConfig.getInstance().getDownloadFolder();
+        downloadPath = StringUtils.isEmpty(animeTitle)
+                ? downloadPath
+                : downloadPath+"/"+animeTitle;
+
+        String donePath = isTorrentExist(downloadPath , magnet);
+        if (!StringUtils.isEmpty(donePath)){
+            getView().downloadTorrentOver(donePath, magnet);
+            return;
+        }
+
+        getView().showLoading();
+        MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
+            @Override
+            public void onSuccess(ResponseBody responseBody) {
+                downloadPath += "/_torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+                FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
+                getView().hideLoading();
+                getView().downloadTorrentOver(downloadPath, magnet);
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                LogUtils.e(message);
+                ToastUtils.showShort("下载种子文件失败");
+            }
+        }, new NetworkConsumer());
+    }
+
+    //判断该种子是否已存在
+    private String isTorrentExist(String savePath, String magnet){
+        String path = savePath + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+        File file = new File(path);
+        if (file.exists())
+            return path;
+        else
+            return "";
     }
 }

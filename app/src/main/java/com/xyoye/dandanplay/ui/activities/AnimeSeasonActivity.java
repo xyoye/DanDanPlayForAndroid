@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,10 +21,12 @@ import com.xyoye.dandanplay.mvp.impl.AnimaSeasonPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaSeasonView;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,8 +37,13 @@ import butterknife.OnClick;
  */
 
 public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> implements AnimaSeasonView {
+    public static final int SORT_FOLLOW = 0;
+    public static final int SORT_NAME = 1;
+    public static final int SORT_RETA = 2;
     private int selectYear, selectMonth;
     private int nowYear, nowMonth;
+
+    private int sortType = 1;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -317,5 +326,36 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_season_sort, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.sort_by_follow:
+                if (AppConfig.getInstance().isLogin()){
+                    sortType = SORT_FOLLOW;
+                    AppConfig.getInstance().saveSeasonSortType(SORT_FOLLOW);
+                } else {
+                    ToastUtils.showShort("请先登录再进行此操作");
+                }
+                break;
+            case R.id.sort_by_name:
+                sortType = SORT_NAME;
+                AppConfig.getInstance().saveSeasonSortType(SORT_NAME);
+                break;
+            case R.id.sort_by_rate:
+                sortType = SORT_RETA;
+                AppConfig.getInstance().saveSeasonSortType(SORT_RETA);
+                break;
+        }
+        presenter.sortAnima(animaList, sortType);
+        animaAdapter.notifyDataSetChanged();
+        return super.onOptionsItemSelected(item);
     }
 }

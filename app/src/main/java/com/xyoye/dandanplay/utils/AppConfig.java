@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.utils;
 import android.os.Environment;
 
 import com.blankj.utilcode.util.SPUtils;
+import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
 
 /**
  * Created by YE on 2018/7/2.
@@ -85,6 +86,17 @@ public class AppConfig {
 
     public void saveFolderSortType(int type){
         SPUtils.getInstance().put(Constants.Config.FOLDER_COLLECTIONS, type+"");
+    }
+
+    /**
+     * 季番排序
+     */
+    public int getSeasonSortType(){
+        return SPUtils.getInstance().getInt(Constants.Config.SEASON_SORT, 0);
+    }
+
+    public void saveSeasonSortType(int type){
+        SPUtils.getInstance().put(Constants.Config.SEASON_SORT, type);
     }
 
     /**

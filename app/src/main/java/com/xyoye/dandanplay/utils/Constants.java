@@ -41,6 +41,8 @@ public class Constants {
         public static final String SHOW_OUTER_CHAIN_DANMU_DIALOG = "show_outer_chain_danmu_dialog";
         //外链打开时是否选择弹幕
         public static final String OUTER_CHAIN_DANMU_SELECT = "outer_chain_danmu_select";
+        //季番排序
+        public static final String SEASON_SORT = "season_sort";
     }
 
     //文件排序方式

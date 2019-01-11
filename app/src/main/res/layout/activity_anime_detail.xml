@@ -16,80 +16,96 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_marginTop="16dp">
 
             <ImageView
                 android:id="@+id/anima_image_iv"
                 android:layout_width="140dp"
                 android:layout_height="180dp"
-                android:elevation="5dp"
+                android:layout_marginStart="16dp"
                 tools:ignore="contentDescription" />
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/anima_info_ll"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:minHeight="180dp"
                 android:layout_toEndOf="@id/anima_image_iv"
-                android:orientation="vertical"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp">
+                android:stretchColumns="1">
 
                 <TextView
                     android:id="@+id/anima_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="2"
+                    android:layout_marginBottom="8dp"
                     android:textColor="@color/text_black"
-                    android:textSize="18sp"
-                    tools:text="测试番剧" />
+                    android:textSize="16sp"
+                    tools:text="" />
 
-                <TextView
-                    android:id="@+id/anima_onair_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="14sp"
-                    tools:text="状态：连载中" />
+                <TableRow>
+                    <TextView
+                            android:id="@+id/anima_onair_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            tools:text="状态：" />
 
-                <TextView
-                    android:id="@+id/anima_airday_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text=""
-                    android:textSize="14sp"
-                    tools:text="日期：星期三" />
+                    <TextView
+                        android:id="@+id/anima_favorited_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/theme_color"
+                        android:textSize="14sp"
+                        tools:text="未关注" />
+                </TableRow>
 
-                <TextView
-                    android:id="@+id/anima_rating_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text=""
-                    android:textSize="14sp"
-                    tools:text="评分：8" />
+                <TableRow
+                    android:layout_marginTop="4dp">
 
-                <TextView
-                    android:id="@+id/anima_favorited_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text=""
-                    android:textColor="@color/theme_color"
-                    android:textSize="14sp"
-                    tools:text="未关注" />
+                    <TextView
+                        android:id="@+id/anima_airday_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14sp"
+                        tools:text="日期：" />
 
-                <TextView
-                    android:id="@+id/anima_restricted_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text=""
-                    android:textColor="@color/text_red"
-                    android:textSize="22sp"
-                    android:visibility="gone" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/anima_rating_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text=""
+                        android:textSize="14sp"
+                        tools:text="评分：" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:id="@+id/last_watch_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="14sp"
+                        tools:text="类型：" />
+
+                    <TextView
+                        android:id="@+id/anima_restricted_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="R18"
+                        android:textColor="@color/text_red"
+                        android:textSize="14sp"
+                        android:visibility="gone"/>
+                </TableRow>
+
+            </TableLayout>
 
             <com.xyoye.dandanplay.ui.weight.ExpandableTextView
                 android:id="@+id/anima_intro_tv"
@@ -100,17 +116,18 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:text="" />
-        </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@color/diver_color"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/diver_color"
+                android:layout_below="@+id/anima_intro_tv"/>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/anima_episode_tips"
@@ -120,12 +137,18 @@
                 android:text="@string/anima_episode_tips_string"
                 android:textColor="@color/text_black"
                 android:textSize="16sp"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/anima_episode_tips" />
+                android:layout_height="match_parent"
+                android:layout_below="@+id/anima_episode_tips">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"/>
+            </RelativeLayout>
         </RelativeLayout>
 
     </com.xyoye.dandanplay.ui.weight.ScrollableLayout>

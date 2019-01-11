@@ -457,10 +457,10 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o2.getVideoPath()), FileUtils.getFileNameNoExtension(o1.getVideoPath())));
         }else if (type == Constants.Collection.DURATION_ASC){
             Collections.sort(videoList,
-                    (o1, o2) -> o1.getVideoDuration() > o2.getVideoDuration() ? 1 : -1);
+                    (o1, o2) -> Long.compare(o1.getVideoDuration(), o2.getVideoDuration()));
         }else if (type == Constants.Collection.DURATION_DESC){
             Collections.sort(videoList,
-                    (o1, o2) -> o1.getVideoDuration() < o2.getVideoDuration() ? 1 : -1);
+                    (o1, o2) -> Long.compare(o2.getVideoDuration(), o1.getVideoDuration()));
         }
         AppConfig.getInstance().saveFolderSortType(type);
     }

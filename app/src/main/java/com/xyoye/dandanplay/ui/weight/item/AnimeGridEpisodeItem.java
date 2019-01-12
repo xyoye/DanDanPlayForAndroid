@@ -1,8 +1,10 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.event.SearchMagnetEvent;
@@ -13,11 +15,11 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/21.
+ * Created by YE on 2019/1/13.
  */
 
 
-public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> {
+public class AnimeGridEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> {
     @BindView(R.id.episode_number)
     TextView episodeNumber;
     @BindView(R.id.episode_title)
@@ -28,13 +30,13 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
     private View mView;
     private boolean isGrid = false;
 
-    public AnimeEpisodeItem(boolean isGrid) {
+    public AnimeGridEpisodeItem(boolean isGrid) {
         this.isGrid = isGrid;
     }
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anime_episode;
+        return R.layout.item_anime_grid_episode;
     }
 
     @Override
@@ -47,6 +49,7 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onUpdateViews(AnimeDetailBean.BangumiBean.EpisodesBean model, int position) {
         String info = model.getEpisodeTitle();
@@ -62,7 +65,7 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
         }
 
         lastWatchTv.setVisibility(isGrid ? View.VISIBLE : View.GONE);
-        lastWatchTv.setText(model.getLastWatched());
+        lastWatchTv.setText("上次观看："+ (StringUtils.isEmpty(model.getLastWatched()) ? "无" : model.getLastWatched()));
 
         mView.setOnClickListener(v ->
                 EventBus.getDefault().post(new SearchMagnetEvent(position, infoArray[0], model.getEpisodeId())));

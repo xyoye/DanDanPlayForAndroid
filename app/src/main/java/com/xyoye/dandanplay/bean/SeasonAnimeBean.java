@@ -71,7 +71,7 @@ public class SeasonAnimeBean extends CommJsonEntity {
                 .subscribe(observer);
     }
 
-    public static void getSeasonAnimas(String year, String month, CommJsonObserver<AnimeBeans> observer, NetworkConsumer consumer){
+    public static void getSeasonAnimas(String year, String month, CommJsonObserver<BangumiBean> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().getSeasonAnime(year, month)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

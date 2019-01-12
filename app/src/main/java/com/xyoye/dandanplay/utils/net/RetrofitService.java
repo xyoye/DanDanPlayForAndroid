@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.utils.net;
 
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -58,7 +58,7 @@ public interface RetrofitService {
     Observable<BannerBeans> getBanner();
 
     @GET("api/v2/bangumi/shin")
-    Observable<AnimeBeans> getAnimes();
+    Observable<BangumiBean> getAnimes();
 
     @GET("api/v2/bangumi/{animeId}")
     Observable<AnimeDetailBean> getAnimaDetail(@Path("animeId") String animaId);
@@ -118,7 +118,7 @@ public interface RetrofitService {
     Observable<SeasonAnimeBean> getAnimeSeason();
 
     @GET("/api/v2/bangumi/season/anime/{year}/{month}")
-    Observable<AnimeBeans> getSeasonAnime(@Path("year") String year, @Path("month") String month);
+    Observable<BangumiBean> getSeasonAnime(@Path("year") String year, @Path("month") String month);
 
     //-----------------------------------------------------------
 

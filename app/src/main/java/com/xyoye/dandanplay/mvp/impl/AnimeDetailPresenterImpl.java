@@ -9,6 +9,7 @@ import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -30,7 +31,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     @Override
     public void process(Bundle savedInstanceState) {
-        getAnimaDetail(getView().getAnimaId());
+
     }
 
     @Override
@@ -48,9 +49,10 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     }
 
-    private void getAnimaDetail(String animaId){
+    @Override
+    public void getAnimeDetail(String animeId) {
         getView().showLoading();
-        AnimeDetailBean.getAnimaDetail(animaId, new CommJsonObserver<AnimeDetailBean>(getLifeful()) {
+        AnimeDetailBean.getAnimaDetail(animeId, new CommJsonObserver<AnimeDetailBean>(getLifeful()) {
             @Override
             public void onSuccess(AnimeDetailBean animeDetailBean) {
                 getView().hideLoading();
@@ -62,6 +64,38 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
                 getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    @Override
+    public void followConfirm(String animeId) {
+        AnimeDetailBean.addFavorite(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+            @Override
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                getView().afterFollow(true);
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+                LogUtils.e(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    @Override
+    public void followCancel(String animeId) {
+        AnimeDetailBean.reduceFavorite(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+            @Override
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                getView().afterFollow(false);
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+                LogUtils.e(message);
             }
         }, new NetworkConsumer());
     }

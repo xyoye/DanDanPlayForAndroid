@@ -20,8 +20,9 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
+
     /**
-     * bangumi : {"episodes":[{"episodeId":0,"episodeTitle":"string","lastWatched":"2018-07-20T08:52:03.745Z","airDate":"2018-07-20T08:52:03.745Z"}],"summary":"string","bangumiUrl":"string","rating":0,"userRating":0,"favoriteStatus":"favorited","ratingDetails":{},"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true}
+     * bangumi : {"type":"tvseries","typeDescription":"string","episodes":[{"episodeId":0,"episodeTitle":"string","lastWatched":"2019-01-12T10:24:06.628Z","airDate":"2019-01-12T10:24:06.628Z"}],"summary":"string","bangumiUrl":"string","userRating":0,"favoriteStatus":"favorited","comment":"string","ratingDetails":{},"relateds":[{"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true,"rating":0}],"similars":[{"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true,"rating":0}],"tags":[{"id":0,"name":"string"}],"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true,"rating":0}
      */
 
     private BangumiBean bangumi;
@@ -34,15 +35,20 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
         this.bangumi = bangumi;
     }
 
-    public static class BangumiBean implements Serializable {
+    public static class BangumiBean {
         /**
-         * episodes : [{"episodeId":0,"episodeTitle":"string","lastWatched":"2018-07-20T08:52:03.745Z","airDate":"2018-07-20T08:52:03.745Z"}]
+         * type : tvseries
+         * typeDescription : string
+         * episodes : [{"episodeId":0,"episodeTitle":"string","lastWatched":"2019-01-12T10:24:06.628Z","airDate":"2019-01-12T10:24:06.628Z"}]
          * summary : string
          * bangumiUrl : string
-         * rating : 0
          * userRating : 0
          * favoriteStatus : favorited
+         * comment : string
          * ratingDetails : {}
+         * relateds : [{"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true,"rating":0}]
+         * similars : [{"animeId":0,"animeTitle":"string","imageUrl":"string","searchKeyword":"string","isOnAir":true,"airDay":0,"isFavorited":true,"isRestricted":true,"rating":0}]
+         * tags : [{"id":0,"name":"string"}]
          * animeId : 0
          * animeTitle : string
          * imageUrl : string
@@ -51,13 +57,16 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
          * airDay : 0
          * isFavorited : true
          * isRestricted : true
+         * rating : 0
          */
 
+        private String type;
+        private String typeDescription;
         private String summary;
         private String bangumiUrl;
-        private double rating;
         private int userRating;
         private String favoriteStatus;
+        private String comment;
         private RatingDetailsBean ratingDetails;
         private int animeId;
         private String animeTitle;
@@ -67,7 +76,27 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
         private int airDay;
         private boolean isFavorited;
         private boolean isRestricted;
+        private int rating;
         private List<EpisodesBean> episodes;
+        private List<AnimeBean> relateds;
+        private List<AnimeBean> similars;
+        private List<TagsBean> tags;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getTypeDescription() {
+            return typeDescription;
+        }
+
+        public void setTypeDescription(String typeDescription) {
+            this.typeDescription = typeDescription;
+        }
 
         public String getSummary() {
             return summary;
@@ -85,14 +114,6 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
             this.bangumiUrl = bangumiUrl;
         }
 
-        public double getRating() {
-            return rating;
-        }
-
-        public void setRating(double rating) {
-            this.rating = rating;
-        }
-
         public int getUserRating() {
             return userRating;
         }
@@ -107,6 +128,14 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
         public void setFavoriteStatus(String favoriteStatus) {
             this.favoriteStatus = favoriteStatus;
+        }
+
+        public String getComment() {
+            return comment;
+        }
+
+        public void setComment(String comment) {
+            this.comment = comment;
         }
 
         public RatingDetailsBean getRatingDetails() {
@@ -181,6 +210,14 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
             this.isRestricted = isRestricted;
         }
 
+        public int getRating() {
+            return rating;
+        }
+
+        public void setRating(int rating) {
+            this.rating = rating;
+        }
+
         public List<EpisodesBean> getEpisodes() {
             return episodes;
         }
@@ -189,15 +226,39 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
             this.episodes = episodes;
         }
 
-        public static class RatingDetailsBean implements Serializable {
+        public List<AnimeBean> getRelateds() {
+            return relateds;
         }
 
-        public static class EpisodesBean implements Serializable {
+        public void setRelateds(List<AnimeBean> relateds) {
+            this.relateds = relateds;
+        }
+
+        public List<AnimeBean> getSimilars() {
+            return similars;
+        }
+
+        public void setSimilars(List<AnimeBean> similars) {
+            this.similars = similars;
+        }
+
+        public List<TagsBean> getTags() {
+            return tags;
+        }
+
+        public void setTags(List<TagsBean> tags) {
+            this.tags = tags;
+        }
+
+        public static class RatingDetailsBean {
+        }
+
+        public static class EpisodesBean {
             /**
              * episodeId : 0
              * episodeTitle : string
-             * lastWatched : 2018-07-20T08:52:03.745Z
-             * airDate : 2018-07-20T08:52:03.745Z
+             * lastWatched : 2019-01-12T10:24:06.628Z
+             * airDate : 2019-01-12T10:24:06.628Z
              */
 
             private int episodeId;
@@ -235,6 +296,32 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
             public void setAirDate(String airDate) {
                 this.airDate = airDate;
+            }
+        }
+
+        public static class TagsBean {
+            /**
+             * id : 0
+             * name : string
+             */
+
+            private int id;
+            private String name;
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
             }
         }
     }

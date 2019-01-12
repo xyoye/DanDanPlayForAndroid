@@ -10,8 +10,7 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 
 
 public interface AnimeDetailView extends BaseMvpView, LoadDataView{
+    void showAnimeDetail(AnimeDetailBean detailBean);
 
-    String getAnimaId();
-
-    void showAnimeDetail(AnimeDetailBean bean);
+    void afterFollow(boolean isFollow);
 }

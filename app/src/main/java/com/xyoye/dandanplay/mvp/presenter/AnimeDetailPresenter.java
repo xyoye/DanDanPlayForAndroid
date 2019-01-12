@@ -8,4 +8,10 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 
 public interface AnimeDetailPresenter extends BaseMvpPresenter {
+
+    void getAnimeDetail(String animeId);
+
+    void followConfirm(String animeId);
+
+    void followCancel(String animeId);
 }

@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.weight;
+package com.xyoye.dandanplay.utils;
 
 import android.content.Context;
 import android.net.Uri;

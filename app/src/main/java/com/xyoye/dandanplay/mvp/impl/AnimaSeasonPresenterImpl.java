@@ -2,10 +2,10 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimaSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaSeasonView;
@@ -61,17 +61,17 @@ public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonVi
     @Override
     public void getSeasonAnima(int year, int month) {
         getView().showLoading();
-        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<AnimeBeans>() {
+        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<BangumiBean>() {
             @Override
-            public void onSuccess(AnimeBeans animeBeans) {
+            public void onSuccess(BangumiBean bangumiBean) {
                 getView().hideLoading();
-                if (animeBeans != null){
+                if (bangumiBean != null){
                     int sortType = AppConfig.getInstance().getSeasonSortType();
                     if (!AppConfig.getInstance().isLogin() && sortType == 0){
                         sortType = SORT_NAME;
                     }
-                    sortAnima(animeBeans.getBangumiList(), sortType);
-                    getView().refreshAnimas(animeBeans.getBangumiList());
+                    sortAnima(bangumiBean.getBangumiList(), sortType);
+                    getView().refreshAnimas(bangumiBean.getBangumiList());
                 }
                 else
                     getView().refreshAnimas(new ArrayList<>());
@@ -87,7 +87,7 @@ public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonVi
     }
 
     @Override
-    public void sortAnima(List<AnimeBeans.BangumiListBean> animaList, int sortType){
+    public void sortAnima(List<AnimeBean> animaList, int sortType){
         if (sortType == SORT_FOLLOW){
             Collections.sort(animaList, (o1, o2) ->
                     Boolean.compare(o2.isIsFavorited(), o1.isIsFavorited()));

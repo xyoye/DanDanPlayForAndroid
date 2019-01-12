@@ -8,7 +8,8 @@ import android.os.Bundle;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
@@ -39,7 +40,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
 
     private CountDownLatch countDownLatch = null;
     private List<BannerBeans.BannersBean> bannerList;
-    private List<AnimeBeans> animeBeansList;
+    private List<BangumiBean> bangumiBeanList;
 
     public HomeFragmentPresenterImpl(HomeFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -48,7 +49,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
     @Override
     public void init() {
         bannerList = new ArrayList<>();
-        animeBeansList = new ArrayList<>();
+        bangumiBeanList = new ArrayList<>();
     }
 
     @Override
@@ -126,20 +127,20 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
 
     @Override
     public void getAnimaList(){
-        AnimeBeans.getAnimes(new CommJsonObserver<AnimeBeans>(getLifeful()) {
+        BangumiBean.getAnimes(new CommJsonObserver<BangumiBean>(getLifeful()) {
             @Override
-            public void onSuccess(AnimeBeans animeBeans) {
-                List<AnimeBeans> beansList = new ArrayList<>();
+            public void onSuccess(BangumiBean bangumiBean) {
+                List<BangumiBean> beansList = new ArrayList<>();
                 initList(beansList);
                 if (AppConfig.getInstance().isLogin()){
-                    Collections.sort(animeBeans.getBangumiList(), (o1, o2) -> {
+                    Collections.sort(bangumiBean.getBangumiList(), (o1, o2) -> {
                         // 返回值为int类型，大于0表示正序，小于0表示逆序
                         if (o1.isIsFavorited()) return -1;
                         if (o2.isIsFavorited()) return 1;
                         return 0;
                     });
                 }
-                for (AnimeBeans.BangumiListBean bean : animeBeans.getBangumiList()){
+                for (AnimeBean bean : bangumiBean.getBangumiList()){
                     switch (bean.getAirDay()){
                         case 0:
                             beansList.get(0).getBangumiList().add(bean);
@@ -166,7 +167,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
                 }
                 if (countDownLatch != null){
                     countDownLatch.countDown();
-                    HomeFragmentPresenterImpl.this.animeBeansList = beansList;
+                    HomeFragmentPresenterImpl.this.bangumiBeanList = beansList;
                 }else {
                     getView().initViewPager(beansList);
                 }
@@ -219,7 +220,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
                             urls.add(banner.getUrl());
                         }
 
-                        getView().refreshUI(images, titles, urls, animeBeansList);
+                        getView().refreshUI(images, titles, urls, bangumiBeanList);
                     }
 
                     @Override
@@ -234,28 +235,28 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
                 });
     }
 
-    private void initList(List<AnimeBeans> beansList){
-        AnimeBeans animeBeans00 = new AnimeBeans();
-        AnimeBeans animeBeans01 = new AnimeBeans();
-        AnimeBeans animeBeans02 = new AnimeBeans();
-        AnimeBeans animeBeans03 = new AnimeBeans();
-        AnimeBeans animeBeans04 = new AnimeBeans();
-        AnimeBeans animeBeans05 = new AnimeBeans();
-        AnimeBeans animeBeans06 = new AnimeBeans();
-        animeBeans00.setBangumiList(new ArrayList<>());
-        animeBeans01.setBangumiList(new ArrayList<>());
-        animeBeans02.setBangumiList(new ArrayList<>());
-        animeBeans03.setBangumiList(new ArrayList<>());
-        animeBeans04.setBangumiList(new ArrayList<>());
-        animeBeans05.setBangumiList(new ArrayList<>());
-        animeBeans06.setBangumiList(new ArrayList<>());
-        beansList.add(animeBeans00);
-        beansList.add(animeBeans01);
-        beansList.add(animeBeans02);
-        beansList.add(animeBeans03);
-        beansList.add(animeBeans04);
-        beansList.add(animeBeans05);
-        beansList.add(animeBeans06);
+    private void initList(List<BangumiBean> beansList){
+        BangumiBean bangumiBean00 = new BangumiBean();
+        BangumiBean bangumiBean01 = new BangumiBean();
+        BangumiBean bangumiBean02 = new BangumiBean();
+        BangumiBean bangumiBean03 = new BangumiBean();
+        BangumiBean bangumiBean04 = new BangumiBean();
+        BangumiBean bangumiBean05 = new BangumiBean();
+        BangumiBean bangumiBean06 = new BangumiBean();
+        bangumiBean00.setBangumiList(new ArrayList<>());
+        bangumiBean01.setBangumiList(new ArrayList<>());
+        bangumiBean02.setBangumiList(new ArrayList<>());
+        bangumiBean03.setBangumiList(new ArrayList<>());
+        bangumiBean04.setBangumiList(new ArrayList<>());
+        bangumiBean05.setBangumiList(new ArrayList<>());
+        bangumiBean06.setBangumiList(new ArrayList<>());
+        beansList.add(bangumiBean00);
+        beansList.add(bangumiBean01);
+        beansList.add(bangumiBean02);
+        beansList.add(bangumiBean03);
+        beansList.add(bangumiBean04);
+        beansList.add(bangumiBean05);
+        beansList.add(bangumiBean06);
     }
 
     private void setBanners(List<BannerBeans.BannersBean> bannerBeans){

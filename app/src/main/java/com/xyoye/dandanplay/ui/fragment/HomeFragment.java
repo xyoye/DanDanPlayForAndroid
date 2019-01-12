@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseFragment;
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
@@ -141,9 +141,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     @Override
-    public void initViewPager(List<AnimeBeans> beans) {
+    public void initViewPager(List<BangumiBean> beans) {
         fragmentList = new ArrayList<>();
-        for (AnimeBeans bean : beans) {
+        for (BangumiBean bean : beans) {
             fragmentList.add(AnimeFragment.newInstance(bean));
         }
         if (fragmentList.size() > 0) {
@@ -225,7 +225,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     }
 
     @Override
-    public void refreshUI(List<String> images, List<String> titles, List<String> urls, List<AnimeBeans> beans) {
+    public void refreshUI(List<String> images, List<String> titles, List<String> urls, List<BangumiBean> beans) {
         setBanners(images, titles, urls);
         initViewPager(beans);
 

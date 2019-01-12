@@ -25,6 +25,7 @@ package com.xyoye.dandanplay.ui.weight;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +51,8 @@ public class ScrollableHelper {
          * @return ScrollView/ListView/RecycelerView..'s instance
          */
         View getScrollableView();
+
+        RecyclerView getChildView();
     }
 
     public void setCurrentScrollableContainer(ScrollableContainer scrollableContainer) {
@@ -61,6 +64,13 @@ public class ScrollableHelper {
             return null;
         }
         return mCurrentScrollableCainer.getScrollableView();
+    }
+
+    public RecyclerView getChildView(){
+        if (mCurrentScrollableCainer == null) {
+            return null;
+        }
+        return mCurrentScrollableCainer.getChildView();
     }
 
     /**
@@ -84,6 +94,11 @@ public class ScrollableHelper {
         }
         if (scrollableView instanceof RecyclerView) {
             boolean top = isRecyclerViewTop((RecyclerView) scrollableView);
+            LogUtils.i("isTop", top + "");
+            return top;
+        }
+        if (scrollableView instanceof NestedScrollView) {
+            boolean top = isNestedScrollViewTop((NestedScrollView) scrollableView);
             LogUtils.i("isTop", top + "");
             return top;
         }
@@ -118,6 +133,14 @@ public class ScrollableHelper {
             int firstVisiblePosition = adapterView.getFirstVisiblePosition();
             View childAt = adapterView.getChildAt(0);
             return childAt == null || (firstVisiblePosition == 0 && childAt.getTop() == 0);
+        }
+        return false;
+    }
+
+    private static boolean isNestedScrollViewTop(NestedScrollView nestedScrollView) {
+        if (nestedScrollView != null) {
+            int scrollViewY = nestedScrollView.getScrollY();
+            return scrollViewY <= 0;
         }
         return false;
     }
@@ -168,6 +191,8 @@ public class ScrollableHelper {
             }
         } else if (scrollableView instanceof ScrollView) {
             ((ScrollView) scrollableView).fling(velocityY);
+        }  else if (scrollableView instanceof NestedScrollView) {
+            ((NestedScrollView) scrollableView).fling(velocityY);
         } else if (scrollableView instanceof RecyclerView) {
             ((RecyclerView) scrollableView).fling(0, velocityY);
         } else if (scrollableView instanceof WebView) {

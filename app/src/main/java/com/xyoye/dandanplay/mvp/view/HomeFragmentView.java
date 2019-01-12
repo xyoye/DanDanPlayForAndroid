@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.mvp.view;
 
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public interface HomeFragmentView extends BaseMvpView{
     void setBanners(List<String> images, List<String> titles, List<String> urls);
 
-    void initViewPager(List<AnimeBeans> beans);
+    void initViewPager(List<BangumiBean> beans);
 
-    void refreshUI(List<String> images, List<String> titles, List<String> urls, List<AnimeBeans> beans);
+    void refreshUI(List<String> images, List<String> titles, List<String> urls, List<BangumiBean> beans);
 }

@@ -9,7 +9,8 @@ import android.view.View;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaView;
@@ -32,10 +33,10 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
     @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
 
-    public static AnimeFragment newInstance(AnimeBeans animeBeans){
+    public static AnimeFragment newInstance(BangumiBean bangumiBean){
         AnimeFragment animeFragment = new AnimeFragment();
         Bundle args = new Bundle();
-        args.putSerializable("anima", animeBeans);
+        args.putSerializable("anima", bangumiBean);
         animeFragment.setArguments(args);
         return animeFragment;
     }
@@ -53,13 +54,13 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
 
     @Override
     public void initView() {
-        AnimeBeans animeBeans;
+        BangumiBean bangumiBean;
         Bundle args = getArguments();
         if (args == null) return;
-        animeBeans = (AnimeBeans)getArguments().getSerializable("anima");
-        if (animeBeans ==null) return;
+        bangumiBean = (BangumiBean)getArguments().getSerializable("anima");
+        if (bangumiBean ==null) return;
 
-        List<AnimeBeans.BangumiListBean> bangumiList = animeBeans.getBangumiList();
+        List<AnimeBean> bangumiList = bangumiBean.getBangumiList();
 
         if (AppConfig.getInstance().isLogin()){
             Collections.sort(bangumiList, (o1, o2) -> {
@@ -69,10 +70,10 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
                 return 0;
             });
         }
-        BaseRvAdapter<AnimeBeans.BangumiListBean> adapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(bangumiList) {
+        BaseRvAdapter<AnimeBean> adapter = new BaseRvAdapter<AnimeBean>(bangumiList) {
             @NonNull
             @Override
-            public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {
+            public AdapterItem<AnimeBean> onCreateItem(int viewType) {
                 return new AnimeItem();
             }
         };
@@ -89,5 +90,10 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
     @Override
     public View getScrollableView() {
         return recyclerView;
+    }
+
+    @Override
+    public RecyclerView getChildView() {
+        return null;
     }
 }

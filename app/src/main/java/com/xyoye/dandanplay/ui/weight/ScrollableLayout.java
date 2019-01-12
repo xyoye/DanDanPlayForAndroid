@@ -63,6 +63,7 @@ public class ScrollableLayout extends LinearLayout {
 
     private View mHeadView;
     private ViewPager childViewPager;
+    private View childView;
 
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
@@ -174,6 +175,9 @@ public class ScrollableLayout extends LinearLayout {
                 initOrResetVelocityTracker();
                 mVelocityTracker.addMovement(ev);
                 mScroller.forceFinished(true);
+                if (childView != null){
+                    childView.getParent().requestDisallowInterceptTouchEvent(true);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mDisallowIntercept) {
@@ -197,6 +201,9 @@ public class ScrollableLayout extends LinearLayout {
 
                     if (childViewPager != null) {
                         childViewPager.requestDisallowInterceptTouchEvent(true);
+                    }
+                    if (childView != null){
+                        childView.getParent().requestDisallowInterceptTouchEvent(false);
                     }
                     scrollBy(0, (int) (deltaY + 0.5));
                 }
@@ -362,6 +369,7 @@ public class ScrollableLayout extends LinearLayout {
                 childViewPager = (ViewPager) childAt;
             }
         }
+        childView = mHelper.getChildView();
         super.onFinishInflate();
     }
 }

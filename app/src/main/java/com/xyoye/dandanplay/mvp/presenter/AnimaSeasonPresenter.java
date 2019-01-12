@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface AnimaSeasonPresenter extends BaseMvpPresenter {
 
     void getSeasonAnima(int year, int month);
 
-    void sortAnima(List<AnimeBeans.BangumiListBean> animaList, int sortType);
+    void sortAnima(List<AnimeBean> animaList, int sortType);
 }

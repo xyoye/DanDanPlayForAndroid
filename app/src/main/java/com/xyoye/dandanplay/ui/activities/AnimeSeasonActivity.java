@@ -16,7 +16,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimaSeasonPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimaSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimaSeasonView;
@@ -26,7 +27,6 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -66,8 +66,8 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
     @BindView(R.id.month_1_tv)
     TextView month1Tv;
 
-    private BaseRvAdapter<AnimeBeans.BangumiListBean> animaAdapter;
-    private List<AnimeBeans.BangumiListBean> animaList;
+    private BaseRvAdapter<AnimeBean> animaAdapter;
+    private List<AnimeBean> animaList;
 
     @NonNull
     @Override
@@ -86,10 +86,10 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
         setTitle("季度番剧");
         animaRv.setLayoutManager(new GridLayoutManager(this, 3));
         animaList = new ArrayList<>();
-        animaAdapter = new BaseRvAdapter<AnimeBeans.BangumiListBean>(animaList) {
+        animaAdapter = new BaseRvAdapter<AnimeBean>(animaList) {
             @NonNull
             @Override
-            public AdapterItem<AnimeBeans.BangumiListBean> onCreateItem(int viewType) {
+            public AdapterItem<AnimeBean> onCreateItem(int viewType) {
                 return new AnimeItem();
             }
         };
@@ -305,7 +305,7 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
     }
 
     @Override
-    public void refreshAnimas(List<AnimeBeans.BangumiListBean> animas) {
+    public void refreshAnimas(List<AnimeBean> animas) {
         if (animas != null){
             animaList.clear();
             animaList.addAll(animas);

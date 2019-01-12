@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.view;
 
-import com.xyoye.dandanplay.bean.AnimeBeans;
+import com.xyoye.dandanplay.bean.AnimeBean;
+import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 
@@ -12,5 +13,5 @@ import java.util.List;
 
 public interface AnimaSeasonView extends BaseMvpView, LoadDataView{
 
-    void refreshAnimas(List<AnimeBeans.BangumiListBean> animas);
+    void refreshAnimas(List<AnimeBean> animas);
 }

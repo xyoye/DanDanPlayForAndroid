@@ -7,7 +7,7 @@
     <string name="home_title">公告与番组</string>
     <string name="anime_detail_title">番组详情</string>
     <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
-    <string name="anima_episode_tips_string">剧集列表：</string>
+    <string name="anima_episode_tips_string">剧集列表</string>
     <string name="menu_favorite_string">关注</string>
     <string name="play_title">媒体库</string>
     <string name="folder_icon_resouces">Folder Icon</string>

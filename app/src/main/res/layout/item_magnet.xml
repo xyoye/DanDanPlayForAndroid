@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80.5dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@color/white">
 
     <RelativeLayout
@@ -20,24 +21,24 @@
             android:gravity="start"
             android:textSize="14sp"
             android:textColor="@color/text_black"
-            android:maxLines="2"
             android:ellipsize="end"
-            android:text="测试测试测试测试测试测测试测试"/>
+            android:text=""/>
 
         <TextView
             android:id="@+id/magnet_size_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:textSize="18sp"
             android:textColor="@color/orange"
-            android:text="719.3MB"/>
+            android:text=""/>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="10.5dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
@@ -51,7 +52,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text="雪飘字幕组"/>
+            android:text=""/>
 
         <TextView
             android:id="@+id/magnet_type_tv"
@@ -61,7 +62,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text="动画/新番连载"/>
+            android:text=""/>
 
         <TextView
             android:id="@+id/magnet_time_tv"
@@ -71,13 +72,12 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text="2018-06-12 10:08:00"/>
+            android:text=""/>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_alignParentBottom="true"
         android:background="@color/diver_color"/>
 
-</RelativeLayout>
+</LinearLayout>

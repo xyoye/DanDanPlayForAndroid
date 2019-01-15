@@ -11,6 +11,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="11dp"
         android:layout_marginStart="10dp"
+        android:focusableInTouchMode="true"
         android:layout_toStartOf="@+id/download_ctrl_rl"
         android:orientation="vertical">
 
@@ -20,8 +21,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:ellipsize="start"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:ellipsize="marquee"
             android:singleLine="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:text="测试标题"
             android:textColor="@color/text_black"
             android:textSize="12sp" />

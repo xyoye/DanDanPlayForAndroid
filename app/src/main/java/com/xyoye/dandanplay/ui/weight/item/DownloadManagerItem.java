@@ -299,6 +299,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             return;
         }
 
+        downloadTitleTv.clearFocus();
         switch (Libtorrent.torrentStatus(torrent.getId())) {
             case Libtorrent.StatusQueued:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
@@ -320,6 +321,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("下载中");
+                //downloadTitleTv.requestFocus();
                 break;
         }
     }

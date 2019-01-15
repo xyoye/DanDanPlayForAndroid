@@ -43,8 +43,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
     TextView titleTv;
     @BindView(R.id.danmu_tips_iv)
     ImageView danmuTipsIv;
-    @BindView(R.id.danmu_setting_rl)
-    RelativeLayout danmuSetting;
     @BindView(R.id.video_info_rl)
     RelativeLayout videoInfoRl;
     @BindView(R.id.delete_action_ll)
@@ -107,12 +105,12 @@ public class VideoItem implements AdapterItem<VideoBean> {
         if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {
-            danmuTipsIv.setImageResource(R.drawable.ic_danmaku_inexist);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_inexist);
         } else {
-            danmuTipsIv.setImageResource(R.drawable.ic_danmaku_exists);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_exists);
         }
 
-        danmuSetting.setOnClickListener(v -> {
+        danmuTipsIv.setOnClickListener(v -> {
             OpenDanmuSettingEvent event = new OpenDanmuSettingEvent(model.getVideoPath(), position);
             EventBus.getDefault().post(event);
         });

@@ -52,8 +52,6 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
         magnetTypeTv.setText(model.getTypeName());
         magnetTimeTv.setText(model.getPublishDate());
 
-
-
         mView.setOnClickListener(v -> {
             EventBus.getDefault().post(model);
         });

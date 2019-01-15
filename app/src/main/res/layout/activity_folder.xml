@@ -14,9 +14,9 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
-            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="0.5dp"/>
     </RelativeLayout>
 
 </LinearLayout>

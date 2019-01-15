@@ -12,10 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -26,15 +26,15 @@
                     android:id="@+id/anima_image_iv"
                     android:layout_width="140dp"
                     android:layout_height="180dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     tools:ignore="contentDescription" />
 
                 <TableLayout
                     android:id="@+id/anima_info_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_margin="10dp"
                     android:minHeight="180dp"
                     android:layout_toEndOf="@id/anima_image_iv"
                     android:stretchColumns="1">
@@ -130,7 +130,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
                 android:text="" />
 
             <View
@@ -145,7 +144,6 @@
             android:id="@+id/episode_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/info_ll"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -180,6 +178,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/diver_color" />
         </LinearLayout>
 
         <LinearLayout
@@ -193,14 +197,8 @@
                 android:id="@+id/recommend_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/diver_color" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -218,6 +216,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/diver_color" />
             </LinearLayout>
 
             <LinearLayout
@@ -227,10 +230,6 @@
                 android:layout_marginTop="5dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:background="@color/diver_color" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

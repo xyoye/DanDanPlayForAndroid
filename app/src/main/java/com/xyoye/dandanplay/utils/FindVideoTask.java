@@ -1,7 +1,10 @@
 package com.xyoye.dandanplay.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,11 +37,10 @@ public class FindVideoTask extends AsyncTask<Context, Integer, List<VideoBean>> 
     @Override
     protected List<VideoBean> doInBackground(Context... params) {
         Context context = params[0];
-
-        if (Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Cursor cursor = context.getContentResolver() .query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                            null, null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                    null, null, null, null);
             if (cursor == null) return new ArrayList<>();
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
@@ -46,15 +48,25 @@ public class FindVideoTask extends AsyncTask<Context, Integer, List<VideoBean>> 
                 if (!file.exists()) {
                     continue;
                 }
+
+                int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
+                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
+
                 VideoBean videoBean = new VideoBean();
+                videoBean.set_id(_id);
                 videoBean.setVideoPath(file.getAbsolutePath());
-                videoBean.setVideoDuration(cursor.getLong(
-                        cursor.getColumnIndex(MediaStore.Video.Media.DURATION)));
+                videoBean.setVideoDuration(duration);
+                videoBean.setVideoSize(size);
                 videoList.add(videoBean);
             }
-            cursor.close();
-        }
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if (cursor != null)
+                cursor.close();
+        }
         return videoList;
     }
 

@@ -2,9 +2,12 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -77,7 +80,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 String filePath = videoBean.getVideoPath();
                 String folderPath = FileUtils.getDirName(filePath);
                 long duration = videoBean.getVideoDuration();
-                saveData(folderPath, filePath, duration);
+                long fileSize = videoBean.getVideoSize();
+                int fileId = videoBean.get_id();
+                saveData(folderPath, filePath, duration, fileSize, fileId);
             }
             getView().hideLoading();
             getView().refreshAdapter(getFolderList());
@@ -108,7 +113,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                         String folderPath = FileUtils.getDirName(filePath);
                         fmmr.setDataSource(filePath);
                         long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
-                        saveData(folderPath, filePath, duration);
+                        saveData(folderPath, filePath, duration, file1.length(), 0);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -134,11 +139,13 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         }
     }
 
-    private void saveData(String folderPath, String filePath, long duration){
+    private void saveData(String folderPath, String filePath, long duration, long fileSize, int fileId){
         ContentValues values=new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
         values.put(DataBaseInfo.getFieldNames()[2][2], filePath);
         values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(duration));
+        values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(fileSize));
+        values.put(DataBaseInfo.getFieldNames()[2][8], fileId);
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
                 " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +

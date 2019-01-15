@@ -217,11 +217,15 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 continue;
             }
 
-            String danmuPath = cursor.getString(3);
-            int currentPosition = cursor.getInt(4);
-            long duration = Long.parseLong(cursor.getString(5));
-            int episodeId = cursor.getInt(6);
-            videoBeans.add(new VideoBean(filePath, danmuPath, currentPosition, duration, episodeId));
+            VideoBean videoBean = new VideoBean();
+            videoBean.setVideoPath(filePath);
+            videoBean.setDanmuPath(cursor.getString(3));
+            videoBean.setCurrentPosition(cursor.getInt(4));
+            videoBean.setVideoDuration(Long.parseLong(cursor.getString(5)));
+            videoBean.setEpisodeId(cursor.getInt(6));
+            videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
+            videoBean.set_id(cursor.getInt(8));
+            videoBeans.add(videoBean);
         }
         cursor.close();
         return videoBeans;

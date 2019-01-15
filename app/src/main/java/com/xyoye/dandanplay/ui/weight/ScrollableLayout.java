@@ -35,7 +35,17 @@ import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
+
 /**
+ * Created by YE on 2019/1/15.
+ *
+ * 关于滑动悬停机制理解
+ *
+ * 设置头部布局，计算头部布局高度
+ * 滑动时判断头部布局是否全部隐藏，隐藏后将滑动事件传递到设置的view（recyclerView等）
+ * 上滑时，判断设置的view（recyclerView等）是否已到到最高的，确认后将事件传递回ScrollableLayout
+ *
+ * 增加：动态改变头部布局数量，修改后需要重新计算头部布局view数量
  */
 public class ScrollableLayout extends LinearLayout {
 
@@ -61,9 +71,9 @@ public class ScrollableLayout extends LinearLayout {
     private boolean isClickHead;
     private boolean isClickHeadExpand;
 
-    private View mHeadView;
+    private View[] mHeadView;
     private ViewPager childViewPager;
-    private View childView;
+    private int viewCount = 1;
 
     private Scroller mScroller;
     private VelocityTracker mVelocityTracker;
@@ -155,6 +165,19 @@ public class ScrollableLayout extends LinearLayout {
         mDisallowIntercept = disallowIntercept;
     }
 
+    /**
+     * 设置头部布局中view的数量
+     * @param viewCount
+     */
+    public void setHeadCount(int viewCount){
+        this.viewCount = viewCount;
+        this.requestLayout();
+    }
+
+    public int getHeadCount(){
+        return this.viewCount;
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float currentX = ev.getX();
@@ -175,9 +198,6 @@ public class ScrollableLayout extends LinearLayout {
                 initOrResetVelocityTracker();
                 mVelocityTracker.addMovement(ev);
                 mScroller.forceFinished(true);
-                if (childView != null){
-                    childView.getParent().requestDisallowInterceptTouchEvent(true);
-                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mDisallowIntercept) {
@@ -201,9 +221,6 @@ public class ScrollableLayout extends LinearLayout {
 
                     if (childViewPager != null) {
                         childViewPager.requestDisallowInterceptTouchEvent(true);
-                    }
-                    if (childView != null){
-                        childView.getParent().requestDisallowInterceptTouchEvent(false);
                     }
                     scrollBy(0, (int) (deltaY + 0.5));
                 }
@@ -348,19 +365,33 @@ public class ScrollableLayout extends LinearLayout {
     }
 
     @Override
+    public void requestLayout() {
+        super.requestLayout();
+        mHeadView = null;
+        mHeadView = new View[viewCount];
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        mHeadView = getChildAt(0);
-        measureChildWithMargins(mHeadView, widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0);
-        LayoutParams lp = (LayoutParams) mHeadView.getLayoutParams();
-        maxY = mHeadView.getMeasuredHeight() + lp.topMargin;
-        mHeadHeight = mHeadView.getMeasuredHeight();
+        //头部布局为布局内第一个View
+        maxY = 0;
+        mHeadHeight = 0;
+        for (int i=0; i<viewCount; i++){
+            mHeadView[i] = getChildAt(i);
+            measureChildWithMargins(mHeadView[i], widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0);
+            LayoutParams lp = (LayoutParams) mHeadView[i].getLayoutParams();
+            maxY += mHeadView[i].getMeasuredHeight() + lp.topMargin;
+            mHeadHeight += mHeadView[i].getMeasuredHeight();
+        }
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) + maxY, MeasureSpec.EXACTLY));
     }
 
     @Override
     protected void onFinishInflate() {
-        if (mHeadView != null && !mHeadView.isClickable()) {
-            mHeadView.setClickable(true);
+        for (int i=0; i<viewCount; i++){
+            if (mHeadView[i] != null && !mHeadView[i].isClickable()) {
+                mHeadView[i].setClickable(true);
+            }
         }
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -369,7 +400,6 @@ public class ScrollableLayout extends LinearLayout {
                 childViewPager = (ViewPager) childAt;
             }
         }
-        childView = mHelper.getChildView();
         super.onFinishInflate();
     }
 }

@@ -209,6 +209,11 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     if (granted) {
+                        //通知系统刷新
+                        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                        intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+                        if (getContext() != null)
+                            getContext().sendBroadcast(intent);
                         presenter.getVideoList();
                     }
                 });

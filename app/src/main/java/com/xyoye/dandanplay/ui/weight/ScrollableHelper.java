@@ -37,8 +37,6 @@ import android.widget.ScrollView;
 
 import com.blankj.utilcode.util.LogUtils;
 
-/**
- */
 public class ScrollableHelper {
 
     private ScrollableContainer mCurrentScrollableCainer;
@@ -51,26 +49,17 @@ public class ScrollableHelper {
          * @return ScrollView/ListView/RecycelerView..'s instance
          */
         View getScrollableView();
-
-        RecyclerView getChildView();
     }
 
     public void setCurrentScrollableContainer(ScrollableContainer scrollableContainer) {
         this.mCurrentScrollableCainer = scrollableContainer;
     }
 
-    private View getScrollableView() {
+    public View getScrollableView() {
         if (mCurrentScrollableCainer == null) {
             return null;
         }
         return mCurrentScrollableCainer.getScrollableView();
-    }
-
-    public RecyclerView getChildView(){
-        if (mCurrentScrollableCainer == null) {
-            return null;
-        }
-        return mCurrentScrollableCainer.getChildView();
     }
 
     /**

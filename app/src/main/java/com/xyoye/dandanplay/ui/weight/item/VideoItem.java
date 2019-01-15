@@ -1,5 +1,10 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -9,17 +14,20 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
 import com.xyoye.dandanplay.bean.event.VideoActionEvent;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.ImageLoadTask;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by YE on 2018/6/30 0030.
@@ -68,16 +76,19 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onUpdateViews(final VideoBean model, final int position) {
+        coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
         if (!model.isNotCover()){
-            ImageLoadTask task = new ImageLoadTask(coverIv);
-            coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
-            coverIv.setTag(model.getVideoPath());
-            task.execute(model.getVideoPath());
+            io.reactivex.Observable
+                    .create((ObservableOnSubscribe<Bitmap>) emitter ->
+                            emitter.onNext(getBitmap(model.get_id())))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(bitmap -> coverIv.setImageBitmap(bitmap));
         }else {
-            coverIv.setScaleType(ImageView.ScaleType.CENTER);
-            coverIv.setImageResource(R.mipmap.ic_smb_video);
+            coverIv.setImageBitmap(BitmapFactory.decodeResource(mView.getResources(), R.mipmap.ic_smb_video));
         }
 
         if (!StringUtils.isEmpty(model.getDanmuPath())){
@@ -128,5 +139,23 @@ public class VideoItem implements AdapterItem<VideoBean> {
             EventBus.getDefault().post(new VideoActionEvent(VideoActionEvent.DELETE, position));
             videoActionLl.setVisibility(View.GONE);
         });
+    }
+
+    private Bitmap getBitmap(int _id){
+        Bitmap bitmap;
+        if (_id == 0){
+            bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
+            bitmap.eraseColor(Color.parseColor("#000000"));
+        }else {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inDither = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            bitmap = MediaStore.Video.Thumbnails.getThumbnail(IApplication.get_context().getContentResolver(), _id, MediaStore.Images.Thumbnails.MICRO_KIND, options);;
+        }
+        if (bitmap == null){
+            bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
+            bitmap.eraseColor(Color.parseColor("#000000"));
+        }
+        return bitmap;
     }
 }

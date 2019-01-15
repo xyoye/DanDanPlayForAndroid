@@ -92,8 +92,4 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
         return recyclerView;
     }
 
-    @Override
-    public RecyclerView getChildView() {
-        return null;
-    }
 }

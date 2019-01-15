@@ -14,11 +14,10 @@ import com.blankj.utilcode.util.ConvertUtils;
 
 public class RoundImageView extends android.support.v7.widget.AppCompatImageView {
 
-    private Context mContext;
     float width,height;
     private int mRadiusPx;
 
-    public RoundImageView(Context context) {
+    public RoundImageView(Context context){
         this(context, null);
     }
 
@@ -28,7 +27,6 @@ public class RoundImageView extends android.support.v7.widget.AppCompatImageView
 
     public RoundImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
         mRadiusPx = ConvertUtils.dp2px(5);
     }
 

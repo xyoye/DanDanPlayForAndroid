@@ -6,7 +6,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 13;
+    public static final int DATABASE_VERSION = 14;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -31,7 +31,7 @@ public class DataBaseInfo {
         FieldNames = new String[][] {
                 {"_id", "folder_path"},
                 {"_id", "folder_path", "file_number"},
-                {"_id", "folder_path", "file_path", "danmu_path", "current_position", "duration", "danmu_episode_id"},
+                {"_id", "folder_path", "file_path", "danmu_path", "current_position", "duration", "danmu_episode_id", "file_size", "file_id"},
                 {"_id", "title", "description", "url", "image_url"},
                 {"_id", "type_id", "type_name"},
                 {"_id", "subgroup_id", "subgroup_name"},
@@ -44,7 +44,7 @@ public class DataBaseInfo {
         FieldTypes = new String[][] {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","INTEGER NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER" },
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER","VARCHAR(255)", "INTEGER" },
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},

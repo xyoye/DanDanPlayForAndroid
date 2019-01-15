@@ -8,8 +8,10 @@ import java.io.Serializable;
 
 
 public class VideoBean implements Serializable {
+    private int _id;
     private String videoPath;
     private long videoDuration;
+    private long videoSize;
     private String danmuPath;
     private int currentPosition;
     private int episodeId;
@@ -35,6 +37,14 @@ public class VideoBean implements Serializable {
         this.episodeId = episodeId;
     }
 
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
     public String getVideoPath() {
         return videoPath;
     }
@@ -57,6 +67,14 @@ public class VideoBean implements Serializable {
 
     public void setVideoDuration(long videoDuration) {
         this.videoDuration = videoDuration;
+    }
+
+    public long getVideoSize() {
+        return videoSize;
+    }
+
+    public void setVideoSize(long videoSize) {
+        this.videoSize = videoSize;
     }
 
     public String getDanmuPath() {

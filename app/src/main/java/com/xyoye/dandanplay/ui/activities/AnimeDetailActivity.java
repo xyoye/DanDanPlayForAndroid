@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -30,7 +28,6 @@ import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
-import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
@@ -51,12 +48,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-
 /**
  * Created by YE on 2018/7/20.
  */
 
-public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView, ScrollableHelper.ScrollableContainer{
+public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView{
     @BindView(R.id.toolbar)
     android.support.v7.widget.Toolbar toolBar;
     @BindView(R.id.scroll_layout)
@@ -77,8 +73,6 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     TextView animaRestrictedTv;
     @BindView(R.id.anima_intro_tv)
     ExpandableTextView animaIntroTv;
-    @BindView(R.id.nested_scroll_view)
-    NestedScrollView nestedScrollView;
     @BindView(R.id.anime_type_tv)
     TextView animeTypeTv;
     @BindView(R.id.anima_info_ll)
@@ -99,8 +93,10 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     ImageView exitSelectIv;
     @BindView(R.id.episode_grid_rv)
     RecyclerView episodeGridRv;
-    @BindView(R.id.normal_episode_ll)
+    @BindView(R.id.episode_ll)
     LinearLayout normalEpisodeLL;
+    @BindView(R.id.recommend_all_ll)
+    LinearLayout recommendAllLL;
     @BindView(R.id.select_episode_ll)
     LinearLayout selectEpisodeLl;
 
@@ -179,11 +175,21 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
         animaId = getIntent().getStringExtra("animaId");
         presenter.getAnimeDetail(animaId);
+
+        scrollableLayout.setHeadCount(2);
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void initListener() {
-
+//        scrollableLayout.getHelper().setCurrentScrollableContainer(() -> episodeGridRv);
+        scrollableLayout.getHelper().setCurrentScrollableContainer(() -> {
+            if (scrollableLayout.getHeadCount() == 2){
+                return moreRv;
+            }else {
+                return episodeGridRv;
+            }
+        });
     }
 
     @NonNull
@@ -377,23 +383,17 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.select_episode_tv:
+                scrollableLayout.setHeadCount(1);
                 selectEpisodeLl.setVisibility(View.VISIBLE);
                 normalEpisodeLL.setVisibility(View.GONE);
+                recommendAllLL.setVisibility(View.GONE);
                 break;
             case R.id.exit_select_iv:
+                scrollableLayout.setHeadCount(2);
                 selectEpisodeLl.setVisibility(View.GONE);
+                recommendAllLL.setVisibility(View.VISIBLE);
                 normalEpisodeLL.setVisibility(View.VISIBLE);
                 break;
         }
-    }
-
-    @Override
-    public View getScrollableView() {
-        return nestedScrollView;
-    }
-
-    @Override
-    public RecyclerView getChildView() {
-        return moreRv;
     }
 }

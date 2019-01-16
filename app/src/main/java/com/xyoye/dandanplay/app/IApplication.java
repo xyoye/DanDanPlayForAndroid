@@ -67,6 +67,7 @@ public class IApplication extends BaseApplication {
     public static List<Torrent> torrentList = new ArrayList<>();
     public static TorrentStorage torrentStorage = new TorrentStorage();
     public static List<String> trackers = new ArrayList<>();
+    public static List<String> cloudFilterList = new ArrayList<>();
 
     public static Handler mainHandler;
 

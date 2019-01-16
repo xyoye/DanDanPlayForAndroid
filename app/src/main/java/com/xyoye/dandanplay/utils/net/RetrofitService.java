@@ -119,10 +119,4 @@ public interface RetrofitService {
 
     @GET("/api/v2/bangumi/season/anime/{year}/{month}")
     Observable<BangumiBean> getSeasonAnime(@Path("year") String year, @Path("month") String month);
-
-    //-----------------------------------------------------------
-
-    @Streaming
-    @GET("/{abi}")
-    Observable<ResponseBody> downloadSo(@Path("abi") String abi);
 }

@@ -285,4 +285,26 @@ public class AppConfig {
     public void setOuterChainDanmuSelect(boolean isOpen){
         SPUtils.getInstance().put(Constants.Config.OUTER_CHAIN_DANMU_SELECT, isOpen);
     }
+
+    /**
+     * 开启弹幕云过滤
+     */
+    public boolean isCloudDanmuFilter(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.CLOUD_DANMU_FILTER, false);
+    }
+
+    public void setCloudDanmuFilter(boolean isOpen){
+        SPUtils.getInstance().put(Constants.Config.CLOUD_DANMU_FILTER, isOpen);
+    }
+
+    /**
+     * 上次更新云过滤的时间
+     */
+    public long getUpdateFilterTime(){
+        return SPUtils.getInstance().getLong(Constants.Config.UPDATE_FILTER_TIME, 0);
+    }
+
+    public void setUpdateFilterTime(long time){
+        SPUtils.getInstance().put(Constants.Config.UPDATE_FILTER_TIME, time);
+    }
 }

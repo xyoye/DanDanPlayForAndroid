@@ -1,48 +1,35 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.EncryptUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.player.ijkplayer.utils.SoFileUtil;
 import com.taobao.sophix.SophixManager;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.FileDownloadBean;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
-import com.xyoye.dandanplay.bean.params.DownloadSoParam;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
-import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-
 import butterknife.BindView;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by YE on 2018/7/24.
@@ -56,10 +43,10 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     RelativeLayout pathRl;
     @BindView(R.id.auto_load_danmu_sw)
     Switch autoLoadDanmuSw;
+    @BindView(R.id.cloud_filter_sw)
+    Switch cloudFilterSw;
     @BindView(R.id.bilibili_download_rl)
     RelativeLayout bilibiliDownloadRl;
-    @BindView(R.id.extra_so_rl)
-    RelativeLayout extraSoRl;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
@@ -76,7 +63,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     TextView pathTv;
 
     private String version;
-    private ProgressDialog dialog;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -91,6 +77,9 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         if (AppConfig.getInstance().isAutoLoadDanmu()){
             autoLoadDanmuSw.setChecked(true);
         }
+        if (AppConfig.getInstance().isCloudDanmuFilter()){
+            cloudFilterSw.setChecked(true);
+        }
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
         dialog = new ProgressDialog(SettingActivity.this);
     }
@@ -99,7 +88,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     public void initListener() {
         pathRl.setOnClickListener(this);
         bilibiliDownloadRl.setOnClickListener(this);
-        extraSoRl.setOnClickListener(this);
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
@@ -112,6 +100,9 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
 
         autoLoadDanmuSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setAutoLoadDanmu(isChecked);
+        });
+        cloudFilterSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            AppConfig.getInstance().setCloudDanmuFilter(isChecked);
         });
     }
 
@@ -136,32 +127,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 break;
             case R.id.bilibili_download_rl:
                 launchActivity(DownloadBilibiliActivity.class);
-                break;
-            case R.id.extra_so_rl:
-                //armeabi、armeabi-v7a、arm64-v8a、x86、x86_64
-                // TODO: 2018/12/23 动态加载so库未成功，还需后续测试
-                boolean isLoadExtra = SoFileUtil.getLoadedFile().size() > 0;
-                String useSO = !isLoadExtra ? "本地库" : "扩展库";
-                new CommonDialog.Builder(SettingActivity.this)
-                        .setCancelListener(dialog -> {
-                            SPUtils.getInstance().put("use_extra_so", false);
-                            new RxPermissions(this).
-                                    request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                    .subscribe(granted -> {
-                                        if (granted) {
-                                            loadExtraSo(false);
-                                        }
-                                    });
-                        })
-                        .setExtraListener(dialog -> {
-                            SPUtils.getInstance().put("use_extra_so", false);
-                        })
-                        .setAutoDismiss()
-                        .hideOk()
-                        .setHideCancel(isLoadExtra)
-                        .setShowExtra(isLoadExtra)
-                        .build()
-                        .showExtra("你正在使用的库为："+useSO, "移除扩展库", "加载扩展库");
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);
@@ -202,82 +167,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 builder.show();
                 break;
         }
-    }
-
-    /**
-     * 加载扩展文件，已存在直接加载，不存在调起下载
-     * @param isNet 是否下载后加载
-     */
-    private void loadExtraSo(boolean isNet){
-        String zipSoPath = AppConfig.getInstance().getDownloadFolder()+"/.extra_so/"+Build.CPU_ABI+".zip";
-        File zipSoFile = new File(zipSoPath);
-        if (zipSoFile.exists()){
-            String soZipMd5 = EncryptUtils.encryptMD5File2String(zipSoFile);
-            //验证已存在的文件是否为正确文件
-            if (SoFileUtil.checkZipSoMd5(soZipMd5)){
-                if (SoFileUtil.loadSoFile(this, zipSoPath)){
-                    //这里需要让app重新加载so库                    ToastUtils.showShort("加载扩展文件成功");
-                    //IjkMediaPlayer.mIsLibLoaded = false;
-                    SPUtils.getInstance().put("use_extra_so", true);
-                }else {
-                    ToastUtils.showShort("加载扩展文件失败："+SoFileUtil.exception);
-                }
-            }else {
-                if (!isNet){
-                    downloadExtraSo();
-                } else {
-                    ToastUtils.showShort("校验下载文件失败");
-                }
-            }
-        }else {
-            if (!isNet){
-                downloadExtraSo();
-            }else {
-                ToastUtils.showShort("下载文件不存在");
-            }
-        }
-    }
-
-    /**
-     * 下载扩展文件
-     */
-    private void downloadExtraSo(){
-        DownloadSoParam param = new DownloadSoParam();
-        param.setAbi(Build.CPU_ABI);
-        param.setFolder(AppConfig.getInstance().getDownloadFolder()+"/.extra_so");
-        param.setFileName(Build.CPU_ABI+".zip");
-        FileDownloadBean.downloadSo(param, new CommOtherDataObserver<FileDownloadBean>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                super.onSubscribe(d);
-                dialog.setMax(100);
-                dialog.setMessage("正在下载扩展库");
-            }
-
-            @Override
-            public void onSuccess(FileDownloadBean bean) {
-                dialog.dismiss();
-                dialog.setProgress(100);
-                new RxPermissions(SettingActivity.this).
-                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .subscribe(granted -> {
-                            if (granted) {
-                                loadExtraSo(true);
-                            }
-                        });
-                ToastUtils.showShort("下载完成，正在加载扩展文件");
-            }
-
-            @Override
-            public void onError(int errorCode, String message) {
-                dialog.dismiss();
-            }
-
-            @Override
-            public void onProgress(int progress, long total) {
-                dialog.setProgress(progress);
-            }
-        }, new NetworkConsumer());
     }
 
     @SuppressLint("SetTextI18n")

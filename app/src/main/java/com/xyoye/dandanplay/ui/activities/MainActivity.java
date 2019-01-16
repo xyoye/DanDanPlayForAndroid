@@ -52,7 +52,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private BaseAppFragment previousFragment;
 
     private MenuItem menuMainItem, menuLanItem, menuNetItem, menuSettingItem;
-    private int fragFlag = 1;
 
     private long touchTime = 0;
 
@@ -121,7 +120,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     menuLanItem.setVisible(false);
                     menuNetItem.setVisible(false);
                     menuSettingItem.setVisible(false);
-                    fragFlag = 0;
                     return true;
                 case R.id.navigation_play:
                     setTitle("媒体库");
@@ -137,7 +135,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     menuLanItem.setVisible(true);
                     menuNetItem.setVisible(true);
                     menuSettingItem.setVisible(false);
-                    fragFlag = 1;
                     return true;
                 case R.id.navigation_personal:
                     setTitle("个人中心");
@@ -152,7 +149,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     menuLanItem.setVisible(false);
                     menuNetItem.setVisible(false);
                     menuSettingItem.setVisible(true);
-                    fragFlag = 2;
                     return true;
             }
             return false;

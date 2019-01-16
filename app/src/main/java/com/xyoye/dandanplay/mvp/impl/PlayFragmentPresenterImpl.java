@@ -126,16 +126,20 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * RxJava递归查询内存中的视频文件
      */
     private Observable<File> listFiles(final File f){
-        String name = FileUtils.getFileName(f.getAbsolutePath());
-        if ("ANDROID".equals(name.toUpperCase()) ||
-                name.startsWith("com") ||
+        String name = FileUtils.getFileName(f.getAbsolutePath()).toUpperCase();
+        if ("ANDROID".equals(name) ||
+                name.startsWith("COM") ||
                 name.startsWith(".")){
             return Observable.just(f).filter(file -> false);
         }
         if(f.isDirectory()){
-            return Observable.fromArray(f.listFiles()).flatMap(this::listFiles);
+            return Observable
+                    .fromArray(f.listFiles())
+                    .flatMap(this::listFiles);
         } else {
-            return Observable.just(f).filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+            return Observable
+                    .just(f)
+                    .filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
         }
     }
 

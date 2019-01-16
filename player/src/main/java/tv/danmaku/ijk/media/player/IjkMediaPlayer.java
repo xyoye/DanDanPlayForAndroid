@@ -42,13 +42,6 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
-import com.blankj.utilcode.util.EncryptUtils;
-import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.player.ijkplayer.utils.SoFileUtil;
-
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,7 +49,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -204,16 +196,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
                 libLoader.loadLibrary("ijkffmpeg");
                 libLoader.loadLibrary("ijksdl");
                 libLoader.loadLibrary("ijkplayer");
-                //动态加载so库还需测试
-//                if (SoFileUtil.getLoadedFile().size() <= 0){
-//                    libLoader.loadLibrary("ijkffmpeg");
-//                    libLoader.loadLibrary("ijksdl");
-//                    libLoader.loadLibrary("ijkplayer");
-//                }else {
-//                    for (String so_path : SoFileUtil.getLoadedFile()){
-//                        libLoader.load(so_path);
-//                    }
-//                }
                 mIsLibLoaded = true;
             }
         }

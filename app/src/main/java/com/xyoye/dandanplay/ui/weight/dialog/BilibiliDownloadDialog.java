@@ -372,7 +372,7 @@ public class BilibiliDownloadDialog extends Dialog {
     /**
      * 下载xml
      */
-    public String getXmlString(String cid){
+    private String getXmlString(String cid){
         InputStream in = null;
         InputStream flin = null;
         Scanner sc = null;
@@ -381,6 +381,7 @@ public class BilibiliDownloadDialog extends Dialog {
             URL url = new URL(xmlUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
+            conn.setConnectTimeout(10000);
             conn.connect();
 
             in = conn.getInputStream();

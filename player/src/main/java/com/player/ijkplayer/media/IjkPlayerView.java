@@ -672,6 +672,22 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
+     * 是否开启云弹幕过滤
+     */
+    public IjkPlayerView setCloudFilterStatus(boolean isOpen) {
+        isOpenCloudFilter = isOpen;
+        return this;
+    }
+
+    /**
+     * 设置云屏蔽数据
+     */
+    public IjkPlayerView setCloudFilterData(List<String> data) {
+        cloudFilterList = data;
+        return this;
+    }
+
+    /**
      * 设置是否显示清晰度选择按钮
      * 需要在全屏后使用生效
      * @param isShow
@@ -2300,6 +2316,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private RelativeLayout mMoreBlockRl;
     private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
     private EditText danmuExtraTimeEt;
+    private Switch mDanmuCloudFilter;
 
     //弹幕屏蔽
     private RelativeLayout mBlockView;
@@ -2357,8 +2374,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private boolean isShowTop = true;
     private boolean isShowMobile = true;
     private boolean isShowBottom = true;
-
+    //弹幕时间偏移
     private int danmuExtraTime;
+    //是否开启云屏蔽
+    private boolean isOpenCloudFilter = false;
+    //云屏蔽数据
+    private List<String> cloudFilterList = new ArrayList<>();
+
     /**
      * 弹幕初始化
      */
@@ -2397,6 +2419,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mBlockInputEt = findViewById(R.id.block_input_et);
         mBlockAddBt = findViewById(R.id.add_block_bt);
         mBlockRecyclerView = findViewById(R.id.block_recycler);
+        mDanmuCloudFilter = findViewById(R.id.cloud_filter_sw);
+        mDanmuCloudFilter.setChecked(isOpenCloudFilter);
 
         mDanmuSpeedFast.setOnClickListener(this);
         mDanmuSpeedMiddle.setOnClickListener(this);
@@ -2595,6 +2619,25 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 return true;
             }
         });
+
+        mDanmuCloudFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mDanmakuListener.setCloudFilter(isChecked);
+                changeCloudFilter(isChecked);
+            }
+        });
+    }
+
+    /**
+     * 云屏蔽管理
+     */
+    private void changeCloudFilter(boolean isOpen){
+        if (isOpen){
+            mDanmakuContext.addBlockKeyWord(cloudFilterList);
+        }else {
+            mDanmakuContext.removeKeyWordBlackList(cloudFilterList);
+        }
     }
 
     /**
@@ -2618,6 +2661,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             for (String block : blockList){
                 mDanmakuContext.addBlockKeyWord(block);
             }
+            if (isOpenCloudFilter)
+                changeCloudFilter(true);
             mDanmakuContext.preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
             //同步弹幕和video，貌似没法保持同步，可能我用的有问题，先注释掉- -
 //            mDanmakuContext.setDanmakuSync(new VideoDanmakuSync(this));

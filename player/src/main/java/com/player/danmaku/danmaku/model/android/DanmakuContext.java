@@ -286,6 +286,24 @@ public class DanmakuContext implements Cloneable {
     }
 
     /**
+     * 移除所有屏蔽的关键词
+     * @param keywords
+     * @return
+     */
+    public DanmakuContext removeKeyWordBlackList(List<String> keywords){
+        if (keywords == null){
+            return this;
+        }
+        for (String keyword : keywords) {
+            mUserKeyWordBlackList.remove(keyword);
+        }
+        setFilterData(DanmakuFilters.TAG_KEY_WORD_FILTER, mUserKeyWordBlackList);
+        mGlobalFlagValues.updateFilterFlag();
+        notifyConfigureChanged(DanmakuConfigTag.KEY_WORD_BLACK_LIST, mUserKeyWordBlackList);
+        return this;
+    }
+
+    /**
      *添加屏蔽关键词
      * @return
      */
@@ -294,6 +312,21 @@ public class DanmakuContext implements Cloneable {
             return this;
         }
         Collections.addAll(mUserKeyWordBlackList,keywords);
+        setFilterData(DanmakuFilters.TAG_KEY_WORD_FILTER, mUserKeyWordBlackList);
+        mGlobalFlagValues.updateFilterFlag();
+        notifyConfigureChanged(DanmakuConfigTag.KEY_WORD_BLACK_LIST, mUserKeyWordBlackList);
+        return this;
+    }
+
+    /**
+     *添加屏蔽关键词
+     * @return
+     */
+    public DanmakuContext addBlockKeyWord(List<String> keywords){
+        if (keywords == null){
+            return this;
+        }
+        mUserKeyWordBlackList.addAll(keywords);
         setFilterData(DanmakuFilters.TAG_KEY_WORD_FILTER, mUserKeyWordBlackList);
         mGlobalFlagValues.updateFilterFlag();
         notifyConfigureChanged(DanmakuConfigTag.KEY_WORD_BLACK_LIST, mUserKeyWordBlackList);

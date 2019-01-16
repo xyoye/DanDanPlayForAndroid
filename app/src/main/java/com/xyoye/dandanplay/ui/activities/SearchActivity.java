@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -136,6 +137,19 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             if (hasFocus){
                 AnimHelper.doShowAnimator(historyRl);
             }
+        });
+
+        searchEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                String searchText = searchEt.getText().toString().trim();
+                if (StringUtils.isEmpty(searchText)) {
+                    ToastUtils.showShort("请输入搜索条件");
+                    return false;
+                }
+                search(searchText);
+                return true;
+            }
+            return false;
         });
     }
 

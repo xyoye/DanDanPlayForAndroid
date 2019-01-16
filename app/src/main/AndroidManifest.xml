@@ -83,9 +83,6 @@
             android:name=".ui.activities.ChangePasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.SearchMagnetActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activities.LanDeviceDeviceActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -137,8 +137,13 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         favoriteRl.setOnClickListener(this);
         historyRl.setOnClickListener(this);
 
-        refresh.setOnRefreshListener(() ->
-                presenter.getFragmentData());
+        refresh.setOnRefreshListener(() ->{
+            if (AppConfig.getInstance().isLogin()){
+                presenter.getFragmentData();
+            }else {
+                refresh.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -206,7 +211,9 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void onSupportVisible(){
-        presenter.getFragmentData();
+        if (AppConfig.getInstance().isLogin()){
+            presenter.getFragmentData();
+        }
         changeView();
     }
 }

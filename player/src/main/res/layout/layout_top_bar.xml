@@ -588,6 +588,32 @@
                 </LinearLayout>
 
                 <RelativeLayout
+                    android:id="@+id/cloud_filter_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:text="弹幕云屏蔽"/>
+
+                    <Switch
+                        android:id="@+id/cloud_filter_sw"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"/>
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/more_block_rl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

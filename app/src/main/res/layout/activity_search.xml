@@ -43,6 +43,7 @@
                 android:textColor="@color/white"
                 android:textColorHint="@color/gray_color5"
                 android:hint="搜索：番剧+空格+集数"
+                android:imeOptions="actionDone"
                 android:text=""/>
 
             <TextView

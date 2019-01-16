@@ -43,6 +43,10 @@ public class Constants {
         public static final String OUTER_CHAIN_DANMU_SELECT = "outer_chain_danmu_select";
         //季番排序
         public static final String SEASON_SORT = "season_sort";
+        //弹幕云过滤
+        public static final String CLOUD_DANMU_FILTER = "cloud_danmu_filter";
+        //更新弹幕云过滤的时间
+        public static final String UPDATE_FILTER_TIME = "update_filter_time";
     }
 
     //文件排序方式

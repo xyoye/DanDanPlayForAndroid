@@ -55,4 +55,6 @@
     <!-- 主题 -->
     <color name="theme_color">#2095f4</color>
     <color name="theme_color_light">#4ea9f4</color>
+    <color name="download_light">#88c1e1fa</color>
+    <color name="download_dark">#664ea9f4</color>
 </resources>

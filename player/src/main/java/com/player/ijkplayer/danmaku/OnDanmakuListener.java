@@ -17,4 +17,9 @@ public interface OnDanmakuListener<T> {
      * @param data  弹幕数据，默认为{@link com.player.danmaku.danmaku.model.BaseDanmaku}，如果设置自定义类型则为自定义格式
      */
     void onDataObtain(T data);
+
+    /**
+     * 开启 or 关闭云屏蔽
+     */
+    void setCloudFilter(boolean isOpen);
 }

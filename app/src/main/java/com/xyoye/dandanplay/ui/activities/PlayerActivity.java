@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +18,12 @@ import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
 import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -35,6 +39,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -138,6 +144,8 @@ public class PlayerActivity extends AppCompatActivity {
                 .setDanmakuSource(inputStream)
                 .showOrHideDanmaku(true)
                 .setTitle(videoTitle)
+                .setCloudFilterData(IApplication.cloudFilterList)
+                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
                 .setQualityButtonVisibility(false)
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
@@ -148,6 +156,11 @@ public class PlayerActivity extends AppCompatActivity {
                     @Override
                     public void onDataObtain(BaseDanmaku data) {
                         uploadDanmu(data);
+                    }
+
+                    @Override
+                    public void setCloudFilter(boolean isOpen) {
+                        AppConfig.getInstance().setCloudDanmuFilter(isOpen);
                     }
 
                 });

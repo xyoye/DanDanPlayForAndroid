@@ -66,7 +66,7 @@ public class AnimeTypeBean {
         RetroFactory.getResInstance().getAnimeType()
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
                 .subscribe(observer);
     }
 }

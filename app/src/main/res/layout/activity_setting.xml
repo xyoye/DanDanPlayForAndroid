@@ -170,20 +170,17 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"
-            android:visibility="gone"/>
+            android:background="@color/diver_color"/>
 
         <RelativeLayout
-            android:id="@+id/extra_so_rl"
+            android:id="@+id/cloud_filter_rl"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:visibility="gone">
+            android:layout_height="48dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/extra_so_arrow_tip"
+                android:layout_toStartOf="@+id/cloud_filter_sw"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="vertical">
@@ -202,27 +199,16 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:textColor="@color/text_black"
-                    android:text="动态库，下载扩展以支持更多播放格式"/>
+                    android:text="弹幕云过滤"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/extra_so_arrow_tip"
+            <Switch
+                android:id="@+id/cloud_filter_sw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/extra_so_arrow_iv"
-                android:layout_marginEnd="5dp"
-                android:textSize="12sp"
-                android:text="下载"/>
-
-            <ImageView
-                android:id="@+id/extra_so_arrow_iv"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_right_dark"/>
+                android:layout_marginEnd="10dp"/>
         </RelativeLayout>
 
         <View

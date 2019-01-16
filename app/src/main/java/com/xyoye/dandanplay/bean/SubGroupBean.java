@@ -64,7 +64,7 @@ public class SubGroupBean {
         RetroFactory.getResInstance().getSubGroup()
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
                 .subscribe(observer);
     }
 }

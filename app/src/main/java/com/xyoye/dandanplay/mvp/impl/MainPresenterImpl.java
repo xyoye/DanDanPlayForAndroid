@@ -182,7 +182,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT filter FROM cloud_filter",new String[]{});
         while (cursor.moveToNext()){
-            String text = cursor.getString(1);
+            String text = cursor.getString(0);
             cloudFilter.add(text);
         }
         cursor.close();

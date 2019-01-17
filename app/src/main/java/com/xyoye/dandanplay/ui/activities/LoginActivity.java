@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -21,6 +22,7 @@ import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.impl.LoginPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
+import com.xyoye.dandanplay.utils.KeyUtil;
 
 import butterknife.BindView;
 
@@ -45,8 +47,6 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     TextInputLayout userPasswordLayout;
     @BindView(R.id.user_name_layout)
     TextInputLayout userNameLayout;
-
-    private boolean isPShow = false;
 
     @Override
     public void initView() {
@@ -106,13 +106,14 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
         } else {
             userNameLayout.setErrorEnabled(false);
             userPasswordLayout.setErrorEnabled(false);
-            presenter.login(new LoginParam(userName, password));
+            LoginParam param = new LoginParam();
+            param.setUserName(userName);
+            param.setPassword(password);
+            param.setAppId(KeyUtil.getDanDanAppId(this));
+            param.setUnixTimestamp(System.currentTimeMillis()/1000);
+            param.buildHash(this);
+            presenter.login(param);
         }
-    }
-
-    @Override
-    public Context getPersonalContext() {
-        return this;
     }
 
     @Override
@@ -124,11 +125,6 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     }
 
     @Override
-    public Activity getActivity() {
-        return this;
-    }
-
-    @Override
     protected void setStatusBar() {
         StatusBarUtil.setTranslucentForImageView(this, 0,null);
     }
@@ -136,5 +132,20 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog();
+    }
+
+    @Override
+    public void hideLoading() {
+        dismissLoadingDialog();
+    }
+
+    @Override
+    public void showError(String message) {
+        ToastUtils.showShort(message);
     }
 }

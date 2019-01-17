@@ -21,6 +21,7 @@ import com.xyoye.dandanplay.mvp.presenter.DanmuLocalPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuLocalView;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +29,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,11 +52,13 @@ public class FileManagerActivity extends BaseMvpActivity<DanmuLocalPresenter> im
     RecyclerView recyclerView;
 
     private BaseRvAdapter<DanmuFolderBean> adapter;
+    private List<DanmuFolderBean> folderBeanList;
     private int fileType;
 
     @Override
     public void initView() {
         fileType = getFileType();
+        folderBeanList = new ArrayList<>();
 
         if (fileType == FILE_FOLDER || fileType == DEFAULT_FOLDER){
             setTitle("选择文件夹");
@@ -64,11 +68,20 @@ public class FileManagerActivity extends BaseMvpActivity<DanmuLocalPresenter> im
             setTitle("选择字幕");
         }
 
-
+        adapter = new BaseRvAdapter<DanmuFolderBean>(folderBeanList) {
+            @NonNull
+            @Override
+            public AdapterItem<DanmuFolderBean> onCreateItem(int viewType) {
+                return new FileManagerItem();
+            }
+        };
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1,0,0,0));
+        recyclerView.setAdapter(adapter);
+
+        presenter.listFile(AppConfig.getInstance().getDownloadFolder());
     }
 
     @Override
@@ -89,19 +102,9 @@ public class FileManagerActivity extends BaseMvpActivity<DanmuLocalPresenter> im
 
     @Override
     public void refreshAdapter(List<DanmuFolderBean> beans) {
-        if (adapter == null){
-            adapter = new BaseRvAdapter<DanmuFolderBean>(beans) {
-                @NonNull
-                @Override
-                public AdapterItem<DanmuFolderBean> onCreateItem(int viewType) {
-                    return new FileManagerItem();
-                }
-            };
-            recyclerView.setAdapter(adapter);
-        }else {
-            adapter.setData(beans);
-            adapter.notifyDataSetChanged();
-        }
+        folderBeanList.clear();
+        folderBeanList.addAll(beans);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

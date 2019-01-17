@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -34,8 +35,6 @@ public class SearchDanmuDialog extends Dialog {
     EditText episodeEt;
     @BindView(R.id.anime_et)
     EditText animeEt;
-    @BindView(R.id.search_danmu_bt)
-    Button searchDanmuBt;
 
     public SearchDanmuDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -60,16 +59,20 @@ public class SearchDanmuDialog extends Dialog {
         });
     }
 
-    @OnClick(R.id.search_danmu_bt)
-    public void onViewClicked() {
-        String anime = animeEt.getText().toString().trim();
-        String episode;
-        if (episodeRb.isChecked()){
-            episode = episodeEt.getText().toString().trim();
-        }else {
-            episode = "movie";
+    @OnClick({R.id.cancel_tv, R.id.confirm_tv})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.confirm_tv:
+                String anime = animeEt.getText().toString().trim();
+                String episode;
+                if (episodeRb.isChecked()){
+                    episode = episodeEt.getText().toString().trim();
+                }else {
+                    episode = "movie";
+                }
+                EventBus.getDefault().post(new SearchDanmuEvent(anime, episode));
+                break;
         }
         SearchDanmuDialog.this.dismiss();
-        EventBus.getDefault().post(new SearchDanmuEvent(anime, episode));
     }
 }

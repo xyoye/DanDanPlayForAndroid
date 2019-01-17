@@ -54,6 +54,7 @@ public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> im
 
     @Override
     public void register(RegisterParam param) {
+        getView().showLoading();
         param.setScreenName(param.getUserName());
         param.setAppId(KeyUtil.getDanDanAppId(getView().getRegisterContext()));
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
@@ -61,12 +62,13 @@ public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> im
         RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifeful()) {
             @Override
             public void onSuccess(RegisterBean registerBean) {
-                ToLoginDialog dialog = new ToLoginDialog(getView().getRegisterContext(), R.style.Dialog, 0);
-                dialog.show();
+                getView().hideLoading();
+                getView().registerSuccess();
             }
 
             @Override
             public void onError(int errorCode, String message) {
+                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }

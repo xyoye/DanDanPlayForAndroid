@@ -155,9 +155,9 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
     @OnClick({R.id.return_iv, R.id.subgroup_tv, R.id.type_tv, R.id.search_iv})
     public void onViewClicked(View view) {
+        KeyboardUtils.hideSoftInput(searchEt);
         switch (view.getId()) {
             case R.id.return_iv:
-                KeyboardUtils.hideSoftInput(searchEt);
                 if (historyRl.getVisibility() == View.GONE || !isSearch)
                     SearchActivity.this.finish();
                 else{

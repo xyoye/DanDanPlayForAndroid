@@ -33,11 +33,6 @@ public class ResetPasswordParam implements Serializable {
     private long unixTimestamp;
     private String hash;
 
-    public ResetPasswordParam(String userName, String email){
-        this.userName = userName;
-        this.email = email;
-    }
-
     public String getAppId() {
         return appId;
     }

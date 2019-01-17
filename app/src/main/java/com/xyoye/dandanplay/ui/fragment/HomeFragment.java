@@ -23,6 +23,7 @@ import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
+import com.xyoye.dandanplay.ui.activities.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.SearchActivity;
@@ -89,8 +90,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
     @Override
     public void initView() {
-        presenter.getBannerList();
-        presenter.getAnimaList();
         refresh.setColorSchemeResources(R.color.theme_color);
 
         List<String> dateList = new ArrayList<>();
@@ -108,6 +107,9 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     public void initListener() {
         refresh.setOnRefreshListener(() ->
                 presenter.getHomeFragmentData());
+
+        refresh.setRefreshing(true);
+        presenter.getHomeFragmentData();
     }
 
     private void initIndicator(List<String> dateList) {
@@ -189,14 +191,14 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 if (AppConfig.getInstance().isLogin()){
                     launchActivity(PersonalFavoriteActivity.class);
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    launchActivity(LoginActivity.class);
                 }
                 break;
             case R.id.history_ll:
                 if (AppConfig.getInstance().isLogin()){
                     launchActivity(PersonalHistoryActivity.class);
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    launchActivity(LoginActivity.class);
                 }
                 break;
         }
@@ -252,14 +254,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 magicIndicator.onPageScrollStateChanged(state);
             }
         });
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        unbinder = ButterKnife.bind(this, rootView);
-        return rootView;
     }
 
     @Override

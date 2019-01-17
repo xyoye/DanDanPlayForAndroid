@@ -54,15 +54,17 @@ public class ChangePasswordPresenterImpl extends BaseMvpPresenterImpl<ChangePass
 
     @Override
     public void change(ChangePasswordParam param) {
+        getView().showLoading();
         PersonalBean.changePassword(param, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
-                ToLoginDialog dialog = new ToLoginDialog(getView().getChangeContext(), R.style.Dialog,2);
-                dialog.show();
+                getView().hideLoading();
+                getView().changeSuccess();
             }
 
             @Override
             public void onError(int errorCode, String message) {
+                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }

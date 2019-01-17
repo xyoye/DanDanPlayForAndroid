@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
@@ -68,6 +69,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
                 AppConfig.getInstance().saveUserScreenName("");
                 AppConfig.getInstance().saveUserImage("");
                 AppConfig.getInstance().saveToken("");
+                IApplication.isUpdateUserInfo = true;
 
                 launchActivity(LoginActivity.class);
                 PersonalInfoActivity.this.finish();
@@ -115,6 +117,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ChangeScreenNameEvent event){
         screenNameTv.setText(event.getScreenName());
+        IApplication.isUpdateUserInfo = true;
     }
 
     @Override

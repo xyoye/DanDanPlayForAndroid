@@ -33,11 +33,6 @@ public class LoginParam implements Serializable {
     private long unixTimestamp;
     private String hash;
 
-    public LoginParam(String userName, String password) {
-        this.userName = userName;
-        this.password = password;
-    }
-
     public String getUserName() {
         return userName;
     }

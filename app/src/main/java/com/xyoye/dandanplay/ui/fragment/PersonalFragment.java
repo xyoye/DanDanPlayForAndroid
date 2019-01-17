@@ -1,12 +1,10 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -14,6 +12,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
@@ -104,14 +103,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
             }
         };
         historyRecyclerView.setAdapter(historyAdapter);
-
-
-        if (AppConfig.getInstance().isLogin()){
-            presenter.getFragmentData();
-        }else {
-            refreshUI(null, null);
-        }
-        changeView();
     }
 
     public void changeView(){
@@ -165,14 +156,14 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 if (AppConfig.getInstance().isLogin()){
                     launchActivity(PersonalFavoriteActivity.class);
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    launchActivity(LoginActivity.class);
                 }
                 break;
             case R.id.history_rl:
                 if (AppConfig.getInstance().isLogin()){
                     launchActivity(PersonalHistoryActivity.class);
                 }else {
-                    ToastUtils.showShort("请登录后再进行此操作");
+                    launchActivity(LoginActivity.class);
                 }
                 break;
         }
@@ -211,9 +202,15 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void onSupportVisible(){
-        if (AppConfig.getInstance().isLogin()){
-            presenter.getFragmentData();
+        if (IApplication.isUpdateUserInfo){
+            IApplication.isUpdateUserInfo = false;
+            if (AppConfig.getInstance().isLogin()){
+                refresh.setRefreshing(true);
+                presenter.getFragmentData();
+            }else {
+                refreshUI(null, null);
+            }
+            changeView();
         }
-        changeView();
     }
 }

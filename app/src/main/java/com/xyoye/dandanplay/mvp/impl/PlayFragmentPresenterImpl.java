@@ -2,12 +2,10 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -18,7 +16,6 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.FindVideoTask;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
@@ -28,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
@@ -71,54 +68,104 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void getVideoList() {
         getView().showLoading();
-        FindVideoTask findVideoTask = new FindVideoTask();
-        findVideoTask.setQueryListener(videoList -> {
-            for (VideoBean videoBean : videoList){
-                String filePath = videoBean.getVideoPath();
-                String folderPath = FileUtils.getDirName(filePath);
-                long duration = videoBean.getVideoDuration();
-                long fileSize = videoBean.getVideoSize();
-                int fileId = videoBean.get_id();
-                saveData(folderPath, filePath, duration, fileSize, fileId);
-            }
-            getView().hideLoading();
-            getView().refreshAdapter(getFolderList());
-        });
-        findVideoTask.execute(getApplicationContext());
+        Observable.just(getApplicationContext())
+                .map(context -> {
+                    try {
+                        Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                null, null, null, null);
+                        if (cursor == null) return getFolderList();
+                        while (cursor.moveToNext()) {
+                            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
+                            File file = new File(path);
+                            if (!file.exists()) {
+                                continue;
+                            }
+
+                            int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// 视频的id
+                            long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                            long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
+
+                            VideoBean videoBean = new VideoBean();
+                            videoBean.set_id(_id);
+                            videoBean.setVideoPath(file.getAbsolutePath());
+                            videoBean.setVideoDuration(duration);
+                            videoBean.setVideoSize(size);
+                            saveData(videoBean);
+                        }
+                        cursor.close();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    return getFolderList();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(videoList -> {
+                    getView().hideLoading();
+                    getView().refreshAdapter(videoList);
+                });
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void deleteFolder(String folderPath) {
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        sqLiteDatabase.delete("file", "folder_path = ?" , new String[]{folderPath});
-        sqLiteDatabase.delete("folder", "folder_path = ?" , new String[]{folderPath});
-        getView().refreshAdapter(getFolderList());
+        Observable.create((ObservableOnSubscribe<List<FolderBean>>) emitter ->{
+                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                    sqLiteDatabase.delete("file", "folder_path = ?" , new String[]{folderPath});
+                    sqLiteDatabase.delete("folder", "folder_path = ?" , new String[]{folderPath});
+                    emitter.onNext(getFolderList());
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(folderList -> getView().refreshAdapter(folderList));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void listFolder(String path) {
-        File file = new File(path);
+        File rootFile = new File(path);
         final FFmpegMediaMetadataRetriever fmmr = new FFmpegMediaMetadataRetriever();
-        Observable.just(file)
+        Observable.just(rootFile)
                 .flatMap(this::listFiles)
+                .map(file -> {
+                    String filePath = file.getAbsolutePath();
+                    fmmr.setDataSource(filePath);
+                    long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
+                    VideoBean videoBean = new VideoBean();
+                    videoBean.setVideoPath(filePath);
+                    videoBean.setVideoDuration(duration);
+                    videoBean.setVideoSize(file.length());
+                    videoBean.set_id(0);
+                    saveData(videoBean);
+                    return true;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(file1 -> {
-                    try {
-                        String filePath = file1.getAbsolutePath();
-                        String folderPath = FileUtils.getDirName(filePath);
-                        fmmr.setDataSource(filePath);
-                        long duration = Long.parseLong(fmmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
-                        saveData(folderPath, filePath, duration, file1.length(), 0);
-                    }catch (Exception e){
-                        e.printStackTrace();
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
-                    fmmr.release();
-                    getView().refreshAdapter(getFolderList());
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getView().refreshAdapter(getFolderList());
+                        fmmr.release();
+                    }
                 });
     }
 
@@ -143,18 +190,19 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         }
     }
 
-    private void saveData(String folderPath, String filePath, long duration, long fileSize, int fileId){
+    private void saveData(VideoBean videoBean){
+        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
         ContentValues values=new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
-        values.put(DataBaseInfo.getFieldNames()[2][2], filePath);
-        values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(duration));
-        values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(fileSize));
-        values.put(DataBaseInfo.getFieldNames()[2][8], fileId);
+        values.put(DataBaseInfo.getFieldNames()[2][2], videoBean.getVideoPath());
+        values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(videoBean.getVideoDuration()));
+        values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(videoBean.getVideoSize()));
+        values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
                 " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
                 "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, filePath});
+        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoBean.getVideoPath()});
         if (!cursor.moveToNext()) {
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
         }

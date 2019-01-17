@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -32,10 +33,6 @@ public class AddTrackerDialog extends Dialog {
 
     @BindView(R.id.tracker_et)
     EditText trackerEt;
-    @BindView(R.id.cancel_rl)
-    RelativeLayout cancelRl;
-    @BindView(R.id.confirm_rl)
-    RelativeLayout confirmRl;
 
     public AddTrackerDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -48,27 +45,45 @@ public class AddTrackerDialog extends Dialog {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.cancel_rl, R.id.confirm_rl})
+    @OnClick({R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.cancel_rl:
+            case R.id.cancel_tv:
                 AddTrackerDialog.this.dismiss();
                 break;
-            case R.id.confirm_rl:
+            case R.id.confirm_tv:
                 String tracker = trackerEt.getText().toString().trim();
                 if (!StringUtils.isEmpty(tracker)){
-                    if (IApplication.trackers.contains(tracker)){
-                        ToastUtils.showShort("该tracker已存在");
-                        return;
+                    if (!tracker.contains("\n")){
+                        if (IApplication.trackers.contains(tracker)){
+                            ToastUtils.showShort("该tracker已存在");
+                            return;
+                        }
+                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                        ContentValues values=new ContentValues();
+                        values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
+                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
+                        IApplication.trackers.add(tracker);
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_TRACKER));
+                        ToastUtils.showShort("已添加");
+                        AddTrackerDialog.this.dismiss();
+                    }else {
+                        String[] trackers = tracker.split("\n");
+                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                        for (String tra : trackers) {
+                            tra = tra.replace(" ", "");
+                            if (IApplication.trackers.contains(tra)) {
+                                continue;
+                            }
+                            ContentValues values = new ContentValues();
+                            values.put(DataBaseInfo.getFieldNames()[8][1], tra);
+                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
+                            IApplication.trackers.add(tra);
+                        }
+                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_TRACKER));
+                        ToastUtils.showShort("已添加");
+                        AddTrackerDialog.this.dismiss();
                     }
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    ContentValues values=new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-                    IApplication.trackers.add(tracker);
-                    EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_TRACKER));
-                    ToastUtils.showShort("已添加");
-                    AddTrackerDialog.this.dismiss();
                 }else {
                     ToastUtils.showShort("tracker不能为空");
                 }

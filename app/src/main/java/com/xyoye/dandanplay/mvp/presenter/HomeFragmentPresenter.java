@@ -8,8 +8,5 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 
 public interface HomeFragmentPresenter extends BaseMvpPresenter {
-    void getBannerList();
-    void getAnimaList();
-
     void getHomeFragmentData();
 }

@@ -55,18 +55,17 @@ public class ResetPasswordPresenterImpl extends BaseMvpPresenterImpl<ResetPasswo
 
     @Override
     public void reset(ResetPasswordParam param) {
-        param.setAppId(KeyUtil.getDanDanAppId(getView().getResetContext()));
-        param.setUnixTimestamp(System.currentTimeMillis()/1000);
-        param.buildHash(getView().getResetContext());
+        getView().showLoading();
         PersonalBean.resetPassword(param, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
-                ToLoginDialog dialog = new ToLoginDialog(getView().getResetContext(), R.style.Dialog,1);
-                dialog.show();
+                getView().hideLoading();
+                getView().resetSuccess();
             }
 
             @Override
             public void onError(int errorCode, String message) {
+                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }

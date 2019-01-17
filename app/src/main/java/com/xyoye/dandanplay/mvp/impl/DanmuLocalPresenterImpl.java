@@ -35,8 +35,6 @@ public class DanmuLocalPresenterImpl extends BaseMvpPresenterImpl<DanmuLocalView
     @Override
     public void init() {
         fileType = getView().getFileType();
-        String path = AppConfig.getInstance().getDownloadFolder();
-        listFile(path);
     }
 
     @Override

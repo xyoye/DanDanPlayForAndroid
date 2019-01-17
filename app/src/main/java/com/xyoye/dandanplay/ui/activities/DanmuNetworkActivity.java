@@ -31,9 +31,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static com.xyoye.dandanplay.ui.activities.FolderActivity.SELECT_NETWORK_DANMU;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -52,6 +55,13 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     @Override
     public void initView() {
         setTitle("选择网络弹幕");
+        adapter = new BaseRvAdapter<DanmuMatchBean.MatchesBean>(new ArrayList<>()) {
+            @NonNull
+            @Override
+            public AdapterItem<DanmuMatchBean.MatchesBean> onCreateItem(int viewType) {
+                return new DanmuNetworkItem();
+            }
+        };
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
@@ -109,19 +119,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
 
     @Override
     public void refreshAdapter(List<DanmuMatchBean.MatchesBean> beans) {
-        if (adapter == null) {
-            adapter = new BaseRvAdapter<DanmuMatchBean.MatchesBean>(beans) {
-                @NonNull
-                @Override
-                public AdapterItem<DanmuMatchBean.MatchesBean> onCreateItem(int viewType) {
-                    return new DanmuNetworkItem();
-                }
-            };
-            recyclerView.setAdapter(adapter);
-        } else {
-            adapter.setData(beans);
-            adapter.notifyDataSetChanged();
-        }
+        adapter.setData(beans);
     }
 
     @SuppressLint("CheckResult")
@@ -153,19 +151,21 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         intent.putExtra("path", path);
         intent.putExtra("position", getIntent().getIntExtra("position", -1));
         setResult(RESULT_OK, intent);
-        finish();
+        finishActivity(SELECT_NETWORK_DANMU);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
     }
 
     @Override

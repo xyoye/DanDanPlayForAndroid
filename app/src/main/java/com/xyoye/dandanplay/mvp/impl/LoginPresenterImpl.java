@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.params.LoginParam;
@@ -52,12 +53,12 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
 
     @Override
     public void login(LoginParam param){
-        param.setAppId(KeyUtil.getDanDanAppId(getView().getPersonalContext()));
-        param.setUnixTimestamp(System.currentTimeMillis()/1000);
-        param.buildHash(getView().getPersonalContext());
+        getView().showLoading();
         PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifeful()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
+                getView().hideLoading();
+                IApplication.isUpdateUserInfo = true;
                 AppConfig.getInstance().setLogin(true);
                 AppConfig.getInstance().saveUserScreenName(personalBean.getScreenName());
                 AppConfig.getInstance().saveUserName(param.getUserName());
@@ -69,6 +70,7 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
 
             @Override
             public void onError(int errorCode, String message) {
+                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }

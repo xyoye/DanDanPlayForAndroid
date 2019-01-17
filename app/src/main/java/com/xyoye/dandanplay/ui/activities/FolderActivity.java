@@ -88,9 +88,18 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         String folderTitle = FileUtils.getFileNameNoExtension(folderPath.substring(0, folderPath.length()-1));
         setTitle(folderTitle);
 
+        adapter = new BaseRvAdapter<VideoBean>(videoList) {
+            @NonNull
+            @Override
+            public AdapterItem<VideoBean> onCreateItem(int viewType) {
+                return new VideoItem();
+            }
+        };
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
+        recyclerView.setAdapter(adapter);
 
         presenter.getVideoList(folderPath);
     }
@@ -104,18 +113,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         videoList.clear();
         videoList.addAll(beans);
         sort(AppConfig.getInstance().getFolderSortType());
-        if (adapter == null){
-            adapter = new BaseRvAdapter<VideoBean>(videoList) {
-                @NonNull
-                @Override
-                public AdapterItem<VideoBean> onCreateItem(int viewType) {
-                    return new VideoItem();
-                }
-            };
-            recyclerView.setAdapter(adapter);
-        }else {
-            adapter.notifyDataSetChanged();
-        }
+        adapter.notifyDataSetChanged();
     }
 
     @NonNull
@@ -337,7 +335,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 String danmuPath = data.getStringExtra("path");
                 int episodeId = data.getIntExtra("episode_id", 0);
                 int position = data.getIntExtra("position", -1);
-                if (position < 0) return;
+                if (position < 0 || position > videoList.size()) return;
 
                 String videoPath = videoList.get(position).getVideoPath();
                 presenter.updateDanmu(danmuPath, episodeId, new String[]{folderPath, videoPath});

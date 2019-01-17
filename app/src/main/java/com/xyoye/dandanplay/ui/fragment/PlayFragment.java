@@ -38,6 +38,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -54,7 +55,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
-    private LinearLayoutManager layoutManager;
     private BaseRvAdapter<FolderBean> adapter;
 
     public static PlayFragment newInstance() {
@@ -77,8 +77,15 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void initView() {
         refresh.setColorSchemeResources(R.color.theme_color);
 
-        layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        adapter = new BaseRvAdapter<FolderBean>(new ArrayList<>()) {
+            @NonNull
+            @Override
+            public AdapterItem<FolderBean> onCreateItem(int viewType) {
+                return new FolderItem();
+            }
+        };
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(adapter);
@@ -93,20 +100,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
-        if (adapter == null) {
-            adapter = new BaseRvAdapter<FolderBean>(beans) {
-                @NonNull
-                @Override
-                public AdapterItem<FolderBean> onCreateItem(int viewType) {
-                    return new FolderItem();
-                }
-            };
-            if (recyclerView != null)
-                recyclerView.setAdapter(adapter);
-        } else {
-            adapter.setData(beans);
-            adapter.notifyDataSetChanged();
-        }
+        adapter.setData(beans);
         hideLoading();
         if (refresh != null)
             refresh.setRefreshing(false);

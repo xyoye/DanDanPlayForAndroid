@@ -148,7 +148,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inDither = false;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
-            bitmap = MediaStore.Video.Thumbnails.getThumbnail(IApplication.get_context().getContentResolver(), _id, MediaStore.Images.Thumbnails.MICRO_KIND, options);;
+            bitmap = MediaStore.Video.Thumbnails.getThumbnail(IApplication.get_context().getContentResolver(), _id, MediaStore.Images.Thumbnails.MICRO_KIND, options);
         }
         if (bitmap == null){
             bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);

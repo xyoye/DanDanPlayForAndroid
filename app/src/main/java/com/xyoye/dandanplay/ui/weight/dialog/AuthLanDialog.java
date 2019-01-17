@@ -37,10 +37,6 @@ public class AuthLanDialog extends Dialog {
     TextInputEditText lanDomainEt;
     @BindView(R.id.anonymous_cb)
     CheckBox anonymousCb;
-    @BindView(R.id.lan_cancel_bt)
-    Button lanCancelBt;
-    @BindView(R.id.lan_login_bt)
-    Button lanLoginBt;
     @BindView(R.id.lan_ip_et)
     TextInputEditText lanIpEt;
     @BindView(R.id.lan_ip_layout)
@@ -73,13 +69,13 @@ public class AuthLanDialog extends Dialog {
         lanIpLayout.setVisibility(isShowIp ? View.VISIBLE : View.GONE);
     }
 
-    @OnClick({R.id.lan_cancel_bt, R.id.lan_login_bt})
+    @OnClick({R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.lan_cancel_bt:
+            case R.id.cancel_tv:
                 AuthLanDialog.this.dismiss();
                 break;
-            case R.id.lan_login_bt:
+            case R.id.confirm_tv:
                 boolean anonymous = anonymousCb.isChecked();
                 String account = lanAccountEt.getText().toString();
                 String password = lanPasswordEt.getText().toString();

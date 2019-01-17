@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -11,12 +10,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ResetPasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ResetPasswordView;
+import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
+import com.xyoye.dandanplay.utils.KeyUtil;
 
 import butterknife.BindView;
 
@@ -90,12 +93,35 @@ public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresente
         }else {
             userNameLayout.setErrorEnabled(false);
             userEmailLayout.setErrorEnabled(false);
-            presenter.reset(new ResetPasswordParam(userName, email));
+            ResetPasswordParam param = new ResetPasswordParam();
+            param.setUserName(userName);
+            param.setEmail(email);
+            param.setAppId(KeyUtil.getDanDanAppId(this));
+            param.setUnixTimestamp(System.currentTimeMillis()/1000);
+            param.buildHash(this);
+            presenter.reset(param);
         }
     }
 
     @Override
-    public Context getResetContext() {
-        return this;
+    public void resetSuccess() {
+        IApplication.isUpdateUserInfo = true;
+        ToLoginDialog dialog = new ToLoginDialog(this, R.style.Dialog,1, ResetPasswordActivity.this::finish);
+        dialog.show();
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog();
+    }
+
+    @Override
+    public void hideLoading() {
+        dismissLoadingDialog();
+    }
+
+    @Override
+    public void showError(String message) {
+        ToastUtils.showShort(message);
     }
 }

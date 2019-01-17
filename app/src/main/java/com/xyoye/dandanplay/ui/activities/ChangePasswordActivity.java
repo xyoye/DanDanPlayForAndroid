@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -10,20 +9,24 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ChangePasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ChangePasswordView;
+import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
+import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
 
 /**
  * Created by YE on 2018/8/11.
  */
-
 
 public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresenter> implements ChangePasswordView, View.OnClickListener {
     @BindView(R.id.return_iv)
@@ -109,7 +112,34 @@ public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresen
     }
 
     @Override
-    public Context getChangeContext() {
-        return this;
+    public void changeSuccess() {
+        ToLoginDialog dialog = new ToLoginDialog(this, R.style.Dialog, 2, () -> {
+            AppConfig.getInstance().setLogin(false);
+            AppConfig.getInstance().saveUserName("");
+            AppConfig.getInstance().saveUserScreenName("");
+            AppConfig.getInstance().saveUserImage("");
+            AppConfig.getInstance().saveToken("");
+            if (ActivityUtils.isActivityExistsInStack(PersonalInfoActivity.class))
+                ActivityUtils.finishActivity(PersonalInfoActivity.class);
+            IApplication.isUpdateUserInfo = true;
+            launchActivity(LoginActivity.class);
+            ChangePasswordActivity.this.finish();
+        });
+        dialog.show();
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog();
+    }
+
+    @Override
+    public void hideLoading() {
+        dismissLoadingDialog();
+    }
+
+    @Override
+    public void showError(String message) {
+        ToastUtils.showShort(message);
     }
 }

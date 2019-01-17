@@ -71,8 +71,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
 
     }
 
-    @Override
-    public void getBannerList(){
+    private void getBannerList(){
         BannerBeans.getBanner(new CommJsonObserver<BannerBeans>(getLifeful()) {
             @Override
             public void onSuccess(BannerBeans bannerBean) {
@@ -125,8 +124,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
         }, new NetworkConsumer());
     }
 
-    @Override
-    public void getAnimaList(){
+    private void getAnimaList(){
         BangumiBean.getAnimes(new CommJsonObserver<BangumiBean>(getLifeful()) {
             @Override
             public void onSuccess(BangumiBean bangumiBean) {

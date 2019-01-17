@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jaeger.library.StatusBarUtil;
@@ -39,6 +41,11 @@ public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements Open
 
     @Override
     public void initView() {
+        //定义全屏参数
+        int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        //设置当前窗体为全屏显示
+        Window window = getWindow();
+        window.setFlags(flag, flag);
         setBgRes();
     }
 

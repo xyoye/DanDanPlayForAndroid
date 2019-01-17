@@ -6,9 +6,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
         android:background="@drawable/bg_corner_5">
 
         <ScrollView

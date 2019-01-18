@@ -95,7 +95,7 @@ public class DanmuDownloadDialog extends Dialog{
                     EventBus.getDefault().post(
                             new OpenDanmuFolderEvent(danmuPath, bean.getEpisodeId(), false));
                 }
-                if (DanmuDownloadDialog.this.isShowing() && context!=null && getOwnerActivity() != null)
+                if (DanmuDownloadDialog.this.isShowing())
                     DanmuDownloadDialog.this.cancel();
             }
 

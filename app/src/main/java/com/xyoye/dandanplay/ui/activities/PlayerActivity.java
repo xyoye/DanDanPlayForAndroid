@@ -138,14 +138,14 @@ public class PlayerActivity extends AppCompatActivity {
             mPlayer.setSkipTip(currentPosition);
         }
         mPlayer.enableOrientation()
+                .setCloudFilterData(IApplication.cloudFilterList)
+                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
                 .setVideoPath(videoPath)
                 .setMediaQuality(IjkPlayerView.MEDIA_QUALITY_HIGH)
                 .enableDanmaku()
                 .setDanmakuSource(inputStream)
                 .showOrHideDanmaku(true)
                 .setTitle(videoTitle)
-                .setCloudFilterData(IApplication.cloudFilterList)
-                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
                 .setQualityButtonVisibility(false)
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override

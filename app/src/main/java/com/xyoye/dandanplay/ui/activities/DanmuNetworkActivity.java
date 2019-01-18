@@ -152,7 +152,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         intent.putExtra("path", path);
         intent.putExtra("position", getIntent().getIntExtra("position", -1));
         setResult(RESULT_OK, intent);
-        finishActivity(SELECT_NETWORK_DANMU);
+        finish();
     }
 
     @Override

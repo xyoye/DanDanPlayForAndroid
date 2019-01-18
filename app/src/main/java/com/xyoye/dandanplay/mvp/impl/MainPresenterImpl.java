@@ -169,9 +169,9 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             ContentValues values = new ContentValues();
             for (int i=0; i<filters.size(); i++){
                 values.put("filter", filters.get(i));
+                //写入数据库
+                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[10], null, values);
             }
-            //写入数据库
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[10], null, values);
         }).start();
     }
 

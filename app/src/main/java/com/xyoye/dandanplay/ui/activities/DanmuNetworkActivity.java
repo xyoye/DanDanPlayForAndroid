@@ -66,6 +66,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 1));
+        recyclerView.setAdapter(adapter);
         videoPath = getIntent().getStringExtra("video_path");
     }
 

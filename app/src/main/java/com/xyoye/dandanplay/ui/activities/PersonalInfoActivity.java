@@ -105,7 +105,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.screen_name_rl:
-                CommonEditTextDialog dialog = new CommonEditTextDialog(PersonalInfoActivity.this, R.style.Dialog, 1);
+                CommonEditTextDialog dialog = new CommonEditTextDialog(PersonalInfoActivity.this, R.style.Dialog, CommonEditTextDialog.SCREEN_NAME);
                 dialog.show();
                 break;
             case R.id.password_rl:

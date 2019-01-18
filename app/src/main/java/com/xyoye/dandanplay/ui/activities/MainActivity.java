@@ -208,7 +208,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
                 break;
             case R.id.menu_item_network:
-                new CommonEditTextDialog(this, R.style.Dialog, 0).show();
+                new CommonEditTextDialog(this, R.style.Dialog, CommonEditTextDialog.NETWORK_LINK).show();
                 break;
             case R.id.menu_item_setting:
                 launchActivity(SettingActivity.class);

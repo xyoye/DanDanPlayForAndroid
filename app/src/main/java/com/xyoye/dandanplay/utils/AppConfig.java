@@ -210,28 +210,6 @@ public class AppConfig {
     }
 
     /**
-     * 下载速度限制
-     */
-    public int getTorrentDownloadSpeed(){
-        return SPUtils.getInstance().getInt(Constants.TORRENT_DOWNLOAD_SPEED, -1);
-    }
-
-    public void setTorrentDownloadSpeed(int speed){
-        SPUtils.getInstance().put(Constants.TORRENT_DOWNLOAD_SPEED, speed);
-    }
-
-    /**
-     * 上传速度限制
-     */
-    public int getTorrentUploadSpeed(){
-        return SPUtils.getInstance().getInt(Constants.TORRENT_UPLOAD_SPEED, -1);
-    }
-
-    public void setTorrentUploadSpeed(int speed){
-        SPUtils.getInstance().put(Constants.TORRENT_UPLOAD_SPEED, speed);
-    }
-
-    /**
      * 补丁版本号
      */
     public int getPatchVersion(){

@@ -34,6 +34,9 @@ import butterknife.OnClick;
 
 
 public class CommonEditTextDialog extends Dialog {
+    public static final int NETWORK_LINK = 0;
+    public static final int SCREEN_NAME = 1;
+
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
     @BindView(R.id.edit_et)
@@ -54,11 +57,11 @@ public class CommonEditTextDialog extends Dialog {
         setContentView(R.layout.dialog_common_edittext);
         ButterKnife.bind(this);
 
-        if (type == 0) {
+        if (type == NETWORK_LINK) {
             titleTv.setText("网络串流");
             editText.setHint("https://");
             editText.setMaxLines(5);
-        } else {
+        } else if (type == SCREEN_NAME){
             titleTv.setText("修改昵称");
             editText.setHint("昵称");
             editText.setMaxLines(1);
@@ -90,7 +93,7 @@ public class CommonEditTextDialog extends Dialog {
                 CommonEditTextDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
-                if (type == 0) {
+                if (type == NETWORK_LINK) {
                     if (StringUtils.isEmpty(editText.getText().toString())) {
                         inputLayout.setErrorEnabled(true);
                         inputLayout.setError("链接不能为空");
@@ -109,7 +112,7 @@ public class CommonEditTextDialog extends Dialog {
                         getContext().startActivity(intent);
                         CommonEditTextDialog.this.dismiss();
                     }
-                } else {
+                } else if (type == SCREEN_NAME){
                     //昵称。长度不能超过50个字符，可以使用中文。
                     String screenName = editText.getText().toString();
                     if (StringUtils.isEmpty(screenName)) {

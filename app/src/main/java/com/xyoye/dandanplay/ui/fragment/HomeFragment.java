@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,11 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.bean.BangumiBean;
@@ -48,9 +44,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * Created by YE on 2018/6/29 0029.
@@ -71,7 +65,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
     AnimaFragmentAdapter fragmentAdapter;
     List<AnimeFragment> fragmentList;
-    Unbinder unbinder;
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -259,7 +252,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
     }
 
     private class AnimaFragmentAdapter extends FragmentPagerAdapter {

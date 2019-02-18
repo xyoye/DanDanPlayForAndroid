@@ -1,13 +1,10 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -23,8 +20,8 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -39,8 +36,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -48,7 +43,6 @@ import java.util.List;
 
 
 public class PlayerActivity extends AppCompatActivity {
-    private static final int SELECT_SUBTITLE = 101;
     private static final int SELECT_DANMU = 102;
 
     com.player.ijkplayer.media.IjkPlayerView mPlayer;
@@ -218,18 +212,15 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(OpenSubtitleFileEvent event) {
-        Intent intent = new Intent(this, FileManagerActivity.class);
-        intent.putExtra("file_type", FileManagerActivity.FILE_SUBTITLE);
-        startActivityForResult(intent, SELECT_SUBTITLE);
+        new FileManagerDialog(this, videoPath, FileManagerDialog.SELECT_SUBTITLE, path ->
+                mPlayer.setSubtitleSource("", path)
+        ).show();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_SUBTITLE) {
-                String subtitlePath = data.getStringExtra("subtitle");
-                mPlayer.setSubtitleSource("", subtitlePath);
-            }else if (requestCode == SELECT_DANMU){
+            if (requestCode == SELECT_DANMU){
                 danmuPath = data.getStringExtra("path");
                 episodeId = data.getIntExtra("episode_id", 0);
                 initPlayer();

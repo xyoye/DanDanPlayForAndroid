@@ -20,14 +20,6 @@ public class VideoBean implements Serializable {
     public VideoBean() {
     }
 
-    public VideoBean(String videoPath, String danmuPath, int currentPosition, long videoDuration, int episodeId) {
-        this.videoPath = videoPath;
-        this.danmuPath = danmuPath;
-        this.currentPosition = currentPosition;
-        this.videoDuration = videoDuration;
-        this.episodeId = episodeId;
-    }
-
     public VideoBean(String videoPath, boolean notCover, long videoDuration, String danmuPath, int currentPosition, int episodeId) {
         this.videoPath = videoPath;
         this.notCover = notCover;

@@ -246,7 +246,9 @@ public class CommonUtils {
      */
     public static boolean isMediaFile(String fileName){
         switch (com.blankj.utilcode.util.FileUtils.getFileExtension(fileName).toLowerCase()){
+            case "3gp":
             case "avi":
+            case "flv":
             case "mp4":
             case "m4v":
             case "mkv":
@@ -256,7 +258,6 @@ public class CommonUtils {
             case "mpe":
             case "rm":
             case "rmvb":
-            case "3gp":
             case "wmv":
             case "asf":
             case "asx":

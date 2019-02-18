@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.VideoScanActivity">
+
+    <include
+        layout="@layout/layout_toolbar"
+        android:id="@+id/toolbar_layout"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/folder_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_layout"
+        android:layout_above="@+id/bottom_rl">
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:id="@+id/bottom_rl"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/diver_color"/>
+
+        <TextView
+            android:id="@+id/scan_folder_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_color"
+            android:text="扫描文件夹"/>
+
+        <TextView
+            android:id="@+id/scan_file_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/scan_folder_tv"
+            android:layout_marginStart="7dp"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/black_color"
+            android:text="扫描文件" />
+
+        <TextView
+            android:id="@+id/delete_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="12dp"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
+            android:clickable="false"
+            android:text="删除" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

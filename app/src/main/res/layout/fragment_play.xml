@@ -13,8 +13,7 @@
             android:id="@+id/rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:paddingTop="5dp"/>
+            android:background="@color/white"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

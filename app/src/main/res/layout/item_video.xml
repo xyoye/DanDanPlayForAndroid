@@ -51,7 +51,7 @@
             android:maxLines="3"
             android:textColor="@color/text_black"
             android:textSize="14sp"
-            android:text="测试标测试标题测测试标测试标题测试标题测试标题测试标题测试标题题试标题测试标题测试标题测试标题题" />
+            android:text="" />
     </LinearLayout>
 
     <RelativeLayout
@@ -160,11 +160,4 @@
                 android:text="关闭"/>
         </LinearLayout>
     </LinearLayout>
-
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/diver_color"
-        android:layout_alignParentBottom="true"/>
 </RelativeLayout>

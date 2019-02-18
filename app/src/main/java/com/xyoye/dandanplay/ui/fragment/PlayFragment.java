@@ -90,12 +90,13 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(adapter);
 
-        getVideoList();
+        refresh.setRefreshing(true);
+        refreshVideo(false);
     }
 
     @Override
     public void initListener() {
-        refresh.setOnRefreshListener(this::getVideoList);
+        refresh.setOnRefreshListener(() -> refreshVideo(true));
     }
 
     @Override
@@ -194,11 +195,11 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void listFolderEvent(ListFolderEvent event){
-        presenter.listFolder(event.getPath());
+        presenter.getVideoFormDatabase();
     }
 
     @SuppressLint("CheckResult")
-    private void getVideoList(){
+    private void refreshVideo(boolean isAll){
         new RxPermissions(this).
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
@@ -208,7 +209,10 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                         intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
                         if (getContext() != null)
                             getContext().sendBroadcast(intent);
-                        presenter.getVideoList();
+                        if (isAll)
+                            presenter.getVideoFormSystemAndSave();
+                        else
+                            presenter.getVideoFormSystem();
                     }
                 });
     }
@@ -238,7 +242,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             EventBus.getDefault().register(this);
     }
 
-    public void unrigisterEventBus(){
+    public void unregisterEventBus(){
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
     }

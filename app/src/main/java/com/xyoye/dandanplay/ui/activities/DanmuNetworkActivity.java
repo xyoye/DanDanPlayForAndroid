@@ -23,6 +23,7 @@ import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
 import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -31,12 +32,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-
-import static com.xyoye.dandanplay.ui.activities.FolderActivity.SELECT_NETWORK_DANMU;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -44,7 +44,6 @@ import static com.xyoye.dandanplay.ui.activities.FolderActivity.SELECT_NETWORK_D
 
 
 public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter> implements DanmuNetworkView {
-    public final static int SELECT_DANMU = 101;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
@@ -79,9 +78,13 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.local_danmu:
-                Intent intent = new Intent(this, FileManagerActivity.class);
-                intent.putExtra("file_type", FileManagerActivity.FILE_DANMU);
-                startActivityForResult(intent, SELECT_DANMU);
+                new FileManagerDialog(this, FileManagerDialog.SELECT_DANMU, path ->{
+                    Intent intent = getIntent();
+                    intent.putExtra("path", path);
+                    intent.putExtra("position", getIntent().getIntExtra("position", -1));
+                    setResult(RESULT_OK, intent);
+                    DanmuNetworkActivity.this.finish();
+                }).show();
                 break;
             case R.id.search_danmu:
                 SearchDanmuDialog danmuDialog = new SearchDanmuDialog(DanmuNetworkActivity.this, R.style.Dialog);
@@ -182,19 +185,5 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_DANMU) {
-                Intent intent = getIntent();
-                intent.putExtra("path", data.getStringExtra("danmu"));
-                intent.putExtra("position", getIntent().getIntExtra("position", -1));
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        }
     }
 }

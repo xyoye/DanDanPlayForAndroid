@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,6 +27,7 @@ import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,7 +37,6 @@ import libtorrent.Libtorrent;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView {
-    public final static int SELECT_FOLDER = 103;
 
     @BindView(R.id.fragment_container)
     FrameLayout fragmentContainer;
@@ -105,7 +104,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public void initListener() {
         navigationView.setOnNavigationItemSelectedListener(item -> {
             if (playFragment != null)
-                playFragment.unrigisterEventBus();
+                playFragment.unregisterEventBus();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     setTitle("弹弹play");
@@ -183,7 +182,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menuMainItem = menu.findItem(R.id.menu_item_mian);
+        menuMainItem = menu.findItem(R.id.menu_item_scan);
         menuLanItem = menu.findItem(R.id.menu_item_lan);
         menuNetItem = menu.findItem(R.id.menu_item_network);
         menuSettingItem = menu.findItem(R.id.menu_item_setting);
@@ -198,10 +197,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_mian:
-                Intent intent = new Intent(this, FileManagerActivity.class);
-                intent.putExtra("file_type", FileManagerActivity.FILE_FOLDER);
-                startActivityForResult(intent, SELECT_FOLDER);
+            case R.id.menu_item_scan:
+                launchActivity(VideoScanActivity.class);
                 break;
             case R.id.menu_item_lan:
                 launchActivity(LanFolderActivity.class);
@@ -217,24 +214,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         return super.onOptionsItemSelected(item);
     }
 
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_FOLDER) {
-                String folderPath = data.getStringExtra("folder");
-                EventBus.getDefault().post(new ListFolderEvent(folderPath));
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (playFragment != null){
-            playFragment.unrigisterEventBus();
+            playFragment.unregisterEventBus();
         }
     }
 }

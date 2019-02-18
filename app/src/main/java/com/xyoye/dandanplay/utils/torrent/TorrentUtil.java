@@ -28,7 +28,7 @@ import libtorrent.Libtorrent;
 
 public class TorrentUtil {
     //初始化种子工具
-    public static void initLibTorrent(Context context){
+    public static void initLibTorrent(){
         String announces = "udp://exodus.desync.com:6969\nudp://tracker.leechers-paradise.org:6969";
         Libtorrent.setDefaultAnnouncesList(announces);
         Libtorrent.setVersion("dandanplay-beta");
@@ -38,24 +38,6 @@ public class TorrentUtil {
             throw new RuntimeException(Libtorrent.error());
         Libtorrent.setUploadRate(-1);
         Libtorrent.setDownloadRate(-1);
-        if (AppConfig.getInstance().isFirstStart()) {
-            IApplication.trackers = CommonUtils.readTracker(context);
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            for (String tracker : IApplication.trackers){
-                ContentValues values=new ContentValues();
-                values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-            }
-        }else {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[8];
-            Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
-            while (cursor.moveToNext()){
-                String tracker = cursor.getString(1);
-                IApplication.trackers.add(tracker);
-            }
-            cursor.close();
-        }
     }
 
     //加载种子历史

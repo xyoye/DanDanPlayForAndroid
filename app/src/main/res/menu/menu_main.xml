@@ -11,9 +11,9 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/menu_item_mian"
+        android:id="@+id/menu_item_scan"
         android:orderInCategory="100"
-        android:title="添加文件夹"
+        android:title="扫描"
         app:showAsAction="never"/>
 
     <item

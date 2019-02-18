@@ -89,10 +89,34 @@ public class IApplication extends BaseApplication {
         //播放器配置
         PlayerConfigShare.initPlayerConfigShare(this);
 
-        //LibTorrent
         new Thread(() -> {
-            TorrentUtil.initLibTorrent(this);
+            //LibTorrent
+            TorrentUtil.initLibTorrent();
             TorrentUtil.loadTorrent();
+            //首次打开App
+            if (AppConfig.getInstance().isFirstStart()) {
+                //trackers数据
+                IApplication.trackers = CommonUtils.readTracker(this);
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                for (String tracker : IApplication.trackers){
+                    ContentValues values = new ContentValues();
+                    values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
+                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
+                }
+                //扫描文件夹
+                ContentValues values = new ContentValues();
+                values.put(DataBaseInfo.getFieldNames()[11][1], AppConfig.getInstance().getDownloadFolder());
+                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[11], null, values);
+            }else {
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[8];
+                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
+                while (cursor.moveToNext()){
+                    String tracker = cursor.getString(1);
+                    IApplication.trackers.add(tracker);
+                }
+                cursor.close();
+            }
         }).start();
 
         //Fragmentation

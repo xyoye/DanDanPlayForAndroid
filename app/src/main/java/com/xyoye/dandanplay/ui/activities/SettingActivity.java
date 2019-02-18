@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,6 +20,7 @@ import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -37,8 +37,6 @@ import butterknife.BindView;
 
 
 public class SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
-    public final static int SELECT_SETTING_FOLDER = 105;
-
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
     @BindView(R.id.auto_load_danmu_sw)
@@ -121,9 +119,10 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.path_rl:
-                Intent intent = new Intent(SettingActivity.this, FileManagerActivity.class);
-                intent.putExtra("file_type", FileManagerActivity.DEFAULT_FOLDER);
-                startActivityForResult(intent, SELECT_SETTING_FOLDER);
+                new FileManagerDialog(this, FileManagerDialog.SELECT_FOLDER, path -> {
+                    pathTv.setText(path);
+                    AppConfig.getInstance().setDownloadFolder(path);
+                }).show();
                 break;
             case R.id.bilibili_download_rl:
                 launchActivity(DownloadBilibiliActivity.class);
@@ -180,16 +179,5 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == SELECT_SETTING_FOLDER){
-                String folderPath = data.getStringExtra("folder");
-                pathTv.setText(folderPath);
-                AppConfig.getInstance().setDownloadFolder(folderPath);
-            }
-        }
     }
 }

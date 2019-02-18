@@ -4,13 +4,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.DanmuFolderBean;
-import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
+import com.xyoye.dandanplay.bean.FileManagerBean;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -19,13 +16,18 @@ import butterknife.BindView;
  */
 
 
-public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
+public class FileManagerItem implements AdapterItem<FileManagerBean> {
     @BindView(R.id.iv)
     ImageView iv;
     @BindView(R.id.tv)
     TextView tv;
 
     private View mView;
+    private FileManagerDialog.OnItemClickListener listener;
+
+    public FileManagerItem(FileManagerDialog.OnItemClickListener listener){
+        this.listener = listener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -43,15 +45,15 @@ public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
     }
 
     @Override
-    public void onUpdateViews(final DanmuFolderBean model, int position) {
+    public void onUpdateViews(final FileManagerBean model, int position) {
         if (model.getFile() == null){
             mView.setVisibility(View.GONE);
             return;
         }
 
-        if (model.isFolder() && model.isParent()){
+        if (model.isFolder() && model.hasParent()){
             iv.setImageResource(R.drawable.ic_chevron_left_dark);
-        }else if (model.isFolder() && !model.isParent()){
+        }else if (model.isFolder() && !model.hasParent()){
             iv.setImageResource(R.drawable.ic_folder_dark);
         }else {
             iv.setImageResource(R.drawable.ic_xml_file);
@@ -59,20 +61,13 @@ public class FileManagerItem implements AdapterItem<DanmuFolderBean> {
 
         tv.setText(model.getName());
 
-        mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (model.isParent()){
-                    String parentPath = FileUtils.getDirName(model.getFile().getAbsolutePath());
-                    EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(parentPath,-1, true));
-                }else if(model.isFolder()){
-                    EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(), -1,true));
-                }else {
-                    EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(model.getFile().getAbsolutePath(),-1, false));
-                }
+        mView.setOnClickListener(v -> {
+            if (model.hasParent()){
+                listener.onItemClick(model.getFile().getParentFile().getAbsolutePath(), true);
+            }else if(model.isFolder()){
+                listener.onItemClick(model.getFile().getAbsolutePath(), true);
+            }else {
+                listener.onItemClick(model.getFile().getAbsolutePath(), false);
             }
         });
     }

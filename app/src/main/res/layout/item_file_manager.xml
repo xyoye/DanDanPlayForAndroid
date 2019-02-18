@@ -2,24 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout2"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="46dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
     android:background="@color/white">
 
     <ImageView
         android:id="@+id/iv"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:layout_marginStart="16dp"
         android:src="@drawable/ic_folder_dark" />
 
     <TextView
         android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/iv"
+        android:textSize="14sp"
         android:text="测试文件名" />
 
 </RelativeLayout>

@@ -8,20 +8,20 @@ import java.io.Serializable;
  */
 
 
-public class DanmuFolderBean implements Serializable{
+public class FileManagerBean implements Serializable{
     private File file;
     private String name;
     private boolean isFolder;
-    private boolean isParent = false;
+    private boolean hasParent;
 
-    public DanmuFolderBean() {
+    public FileManagerBean() {
     }
 
-    public DanmuFolderBean(File file, String name, boolean isFolder, boolean isParent) {
+    public FileManagerBean(File file, String name, boolean isFolder, boolean hasParent) {
         this.file = file;
         this.name = name;
         this.isFolder = isFolder;
-        this.isParent = isParent;
+        this.hasParent = hasParent;
     }
 
     public File getFile() {
@@ -48,11 +48,11 @@ public class DanmuFolderBean implements Serializable{
         isFolder = folder;
     }
 
-    public boolean isParent() {
-        return isParent;
+    public boolean hasParent() {
+        return hasParent;
     }
 
-    public void setParent(boolean parent) {
-        isParent = parent;
+    public void setParent(boolean has) {
+        hasParent = has;
     }
 }

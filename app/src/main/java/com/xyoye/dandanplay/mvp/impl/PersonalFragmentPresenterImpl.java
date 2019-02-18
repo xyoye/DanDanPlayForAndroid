@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -20,6 +21,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -131,6 +133,7 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenterImpl<Personal
         }, new NetworkConsumer());
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void getFragmentData() {
         countDownLatch = new CountDownLatch(2);
@@ -147,27 +150,8 @@ public class PersonalFragmentPresenterImpl extends BaseMvpPresenterImpl<Personal
             e.onComplete();
         }).subscribeOn(Schedulers.newThread())
           .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Observer<Boolean>() {
-              @Override
-              public void onSubscribe(Disposable d) {
-
-              }
-
-              @Override
-              public void onNext(Boolean b) {
-                  getView().refreshUI(animeFavoriteBean, playHistoryBean);
-              }
-
-              @Override
-              public void onError(Throwable e) {
-
-              }
-
-              @Override
-              public void onComplete() {
-
-              }
-          });
+          .subscribe(aBoolean ->
+                  getView().refreshUI(animeFavoriteBean, playHistoryBean));
     }
 
 }

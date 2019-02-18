@@ -139,6 +139,12 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             }
         });
 
+        historyRl.setOnClickListener(v -> {
+            AnimHelper.doHideAnimator(historyRl);
+            searchEt.clearFocus();
+            KeyboardUtils.hideSoftInput(searchEt);
+        });
+
         searchEt.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE){
                 String searchText = searchEt.getText().toString().trim();

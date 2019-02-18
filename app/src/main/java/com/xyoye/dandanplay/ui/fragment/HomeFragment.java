@@ -23,7 +23,7 @@ import com.xyoye.dandanplay.ui.activities.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.SearchActivity;
-import com.xyoye.dandanplay.ui.activities.WebviewActivity;
+import com.xyoye.dandanplay.ui.activities.WebViewActivity;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
 import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
@@ -211,7 +211,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         banner.setOnBannerListener(position -> {
             String url = urls.get(position);
             String title = titles.get(position);
-            Intent intent = new Intent(getContext(), WebviewActivity.class);
+            Intent intent = new Intent(getContext(), WebViewActivity.class);
             intent.putExtra("title", title);
             intent.putExtra("link", url);
             startActivity(intent);

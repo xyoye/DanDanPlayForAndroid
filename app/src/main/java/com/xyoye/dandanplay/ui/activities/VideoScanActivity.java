@@ -4,15 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +15,8 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -40,18 +35,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class VideoScanActivity extends AppCompatActivity {
+public class VideoScanActivity extends BaseMvcActivity {
 
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.folder_rv)
     RecyclerView folderRv;
     @BindView(R.id.delete_tv)
@@ -63,20 +55,13 @@ public class VideoScanActivity extends AppCompatActivity {
     private VideoScanItem.OnFolderCheckListener onItemCheckListener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_scan);
-        ButterKnife.bind(this);
+    protected int initPageLayoutID() {
+        return R.layout.activity_video_scan;
+    }
 
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
-
+    @Override
+    public void initPageView() {
         setTitle("扫描管理");
-
         onItemCheckListener = (isCheck, position) -> {
             folderList.get(position).setCheck(isCheck);
             if (isCheck){
@@ -109,6 +94,11 @@ public class VideoScanActivity extends AppCompatActivity {
         folderRv.setAdapter(adapter);
 
         queryScanFolder();
+    }
+
+    @Override
+    public void initPageViewListener() {
+
     }
 
     @OnClick({R.id.scan_folder_tv, R.id.scan_file_tv, R.id.delete_tv})

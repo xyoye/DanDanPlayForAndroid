@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.BilibiliDownloadDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 
@@ -25,7 +26,7 @@ import butterknife.ButterKnife;
  * Created by YE on 2018/7/28.
  */
 
-public class DownloadBilibiliActivity extends AppCompatActivity implements View.OnClickListener{
+public class DownloadBilibiliActivity extends BaseMvcActivity implements View.OnClickListener{
     public final static int SELECT_WEB = 106;
 
     @BindView(R.id.toolbar)
@@ -42,22 +43,17 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
     TextInputEditText urlInputEt;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTitle(R.string.bilibili_danmaku_download_tip);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download_bilibili);
-        ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar =  getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
-
-        initListener();
+    protected int initPageLayoutID() {
+        return R.layout.activity_download_bilibili;
     }
 
-    private void initListener(){
+    @Override
+    public void initPageView() {
+
+    }
+
+    @Override
+    public void initPageViewListener() {
         downloadAvButton.setOnClickListener(this);
         downloadUrlButton.setOnClickListener(this);
         selectUrlBt.setOnClickListener(this);
@@ -89,7 +85,7 @@ public class DownloadBilibiliActivity extends AppCompatActivity implements View.
                 }
                 break;
             case R.id.select_url_bt:
-                Intent intent = new Intent(DownloadBilibiliActivity.this, WebviewActivity.class);
+                Intent intent = new Intent(DownloadBilibiliActivity.this, WebViewActivity.class);
                 intent.putExtra("title","选择链接");
                 intent.putExtra("link", "http://www.bilibili.com");
                 intent.putExtra("isSelect", true);

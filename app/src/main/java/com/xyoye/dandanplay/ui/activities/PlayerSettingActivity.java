@@ -1,11 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,8 +10,8 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.event.PlayerSettingEvent;
 import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -25,14 +21,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by xyy on 2018/9/29.
  */
 
-public class PlayerSettingActivity extends AppCompatActivity {
+public class PlayerSettingActivity extends BaseMvcActivity {
 
     @BindView(R.id.player_type_tv)
     TextView playerTypeTv;
@@ -56,27 +51,16 @@ public class PlayerSettingActivity extends AppCompatActivity {
     CheckBox outerChinaDanmuCb;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_setting);
-        ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
-
-        setTitle("播放器设置");
-
-        initView();
-
-        initListener();
+    protected int initPageLayoutID() {
+        return R.layout.activity_player_setting;
     }
 
-    private void initView() {
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void initPageView() {
+        setTitle("播放器设置");
+        EventBus.getDefault().register(this);
+
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType) {
             case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
@@ -124,23 +108,18 @@ public class PlayerSettingActivity extends AppCompatActivity {
         outerChinaDanmuCb.setChecked(outerChinaDialog);
     }
 
-    private void initListener() {
-        mediaCodeCCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setOpenMediaCodeC(isChecked);
-        });
-        mediaCodeCH265Cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setOpenMediaCodeCH265(isChecked);
-        });
-        openSlesCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setOpenSLES(isChecked);
-
-        });
-        surfaceRendersCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setSurfaceRenders(isChecked);
-        });
-        outerChinaDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setShowOuterChainDanmuDialog(isChecked);
-        });
+    @Override
+    public void initPageViewListener() {
+        mediaCodeCCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setOpenMediaCodeC(isChecked));
+        mediaCodeCH265Cb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setOpenMediaCodeCH265(isChecked));
+        openSlesCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setOpenSLES(isChecked));
+        surfaceRendersCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setSurfaceRenders(isChecked));
+        outerChinaDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setShowOuterChainDanmuDialog(isChecked));
     }
 
     @OnClick({R.id.select_player_type_ll, R.id.select_pixel_format_ll})

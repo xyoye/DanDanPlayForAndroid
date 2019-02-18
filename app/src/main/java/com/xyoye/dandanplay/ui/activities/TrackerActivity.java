@@ -3,36 +3,29 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
-import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseItemDraggableAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemSwipeListener;
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.AddTrackerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.Constants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,10 +34,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TrackerActivity extends AppCompatActivity {
+public class TrackerActivity extends BaseMvcActivity {
 
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
@@ -58,26 +50,13 @@ public class TrackerActivity extends AppCompatActivity {
     private TrackerAdapter trackerAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tracker);
-        ButterKnife.bind(this);
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar =  getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
-
-        setTitle("tracker管理");
-
-        initView();
-
-        initListener();
+    protected int initPageLayoutID() {
+        return R.layout.activity_tracker;
     }
 
-    private void initView(){
+    @Override
+    public void initPageView() {
+        setTitle("tracker管理");
         trackerAdapter = new TrackerAdapter(R.layout.item_tracker, IApplication.trackers);
         trackerRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         trackerRv.setItemViewCacheSize(10);
@@ -109,7 +88,8 @@ public class TrackerActivity extends AppCompatActivity {
         });
     }
 
-    private void initListener(){
+    @Override
+    public void initPageViewListener() {
         addTrackerBt.setOnLongClickListener(v -> {
             new CommonDialog.Builder(TrackerActivity.this)
                     .setOkListener(dialog -> {

@@ -1,7 +1,6 @@
 ﻿#这里定义的是一些额外的Tracker地址
 #每次建立新的任务时这些地址将被添加到bt种子的tracker列表中并按顺序连接
 #如果您有其他可用的tracker地址欢迎写邮件推荐给我们 feedback@acplay.net
-#HoleServer=182.150.53.60:8080
 
 #-----动画相关的Tracker start-----
 http://www.loushao.net:8080/announce
@@ -12,7 +11,7 @@ http://tracker.minglong.org:8080/announce
 http://open.touki.ru/announce.php
 #-----动画相关的Tracker end-----
 
-#-----以下内容来自https://newtrackon.com/api/stable start-----
+#-----以下内容来自newtrackon.com start-----
 http://tracker.tfile.me:80/announce
 udp://bt.xxx-tracker.com:2710/announce
 udp://tracker.tiny-vps.com:6969/announce
@@ -51,7 +50,7 @@ udp://peerfect.org:6969/announce
 udp://tracker.opentrackr.org:1337/announce
 udp://retracker.lanta-net.ru:2710/announce
 udp://public.popcorn-tracker.org:6969/announce
-#-----以上内容来自https://newtrackon.com/api/stable end-----
+#-----以上内容来自newtrackon.com end-----
 
 #-----以下内容由酷安-坂本dalao收集提供 start-----
 http://tracker.minglong.org:8080/announce

@@ -134,7 +134,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 SophixManager.getInstance().queryAndLoadNewPatch();
                 break;
             case R.id.about_rl:
-                Intent intent_about = new Intent(SettingActivity.this, WebviewActivity.class);
+                Intent intent_about = new Intent(SettingActivity.this, WebViewActivity.class);
                 intent_about.putExtra("title","关于");
                 intent_about.putExtra("link", "file:///android_asset/About_in_application.html");
                 startActivity(intent_about);

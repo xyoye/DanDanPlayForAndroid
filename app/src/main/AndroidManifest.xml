@@ -46,7 +46,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activities.WebviewActivity"
+            android:name=".ui.activities.WebViewActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.AnimeDetailActivity"

@@ -92,7 +92,8 @@ public class TorrentTask{
             }
             if (Libtorrent.torrentTrackersCount(torrent.getId()) == 0){
                 for (String tracker : IApplication.trackers){
-                    Libtorrent.torrentTrackerAdd(torrent.getId(), tracker);
+                    if (!StringUtils.isEmpty(tracker) && !tracker.startsWith("#"))
+                        Libtorrent.torrentTrackerAdd(torrent.getId(), tracker);
                 }
             }
             LogUtils.e("tracker:"+Libtorrent.torrentTrackersCount(torrent.getId()));

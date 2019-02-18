@@ -20,7 +20,7 @@ public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor());
+        StatusBarUtil.setColor(this, getToolbarColor(), 0);
     }
 
 

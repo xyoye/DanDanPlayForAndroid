@@ -25,9 +25,6 @@ public final class Constants {
     public static final String DANMU_TOP = "danmu_top";
     public static final String DANMU_BOTTOM = "danmu_bottom";
     public static final String DANMU_MOBILE = "danmu_mobile";
-    public static final float DANMU_SPEED_FAST = 0.8f;
-    public static final float DANMU_SPEED_MIDDLE = 1.0f;
-    public static final float DANMU_SPEED_SLOW = 1.2f;
 
     //字幕
     public static final String SUBTITLE_CHINESE_SIZE = "subtitle_chinese_size";

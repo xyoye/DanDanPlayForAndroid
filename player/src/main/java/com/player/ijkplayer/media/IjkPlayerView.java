@@ -1191,27 +1191,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             _showDanmuSetting(false);
             _showSubtitleSetting(true);
             resetHideControllerBar();
-        } else if (id == R.id.speed_fast_tv){
-            mDanmuSpeedFast.setTextColor(getResources().getColor(R.color.theme_color));
-            mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
-            mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
-            PlayerConfigShare.getInstance().saveDanmuSpeed(Constants.DANMU_SPEED_FAST);
-            mDanmakuContext.setScrollSpeedFactor(Constants.DANMU_SPEED_FAST);
-            resetHideControllerBar();
-        }else if (id == R.id.speed_middle_tv){
-            mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
-            mDanmuSpeedMiddle.setTextColor(getResources().getColor(R.color.theme_color));
-            mDanmuSpeedSlow.setTextColor(getResources().getColor(android.R.color.white));
-            PlayerConfigShare.getInstance().saveDanmuSpeed(Constants.DANMU_SPEED_MIDDLE);
-            mDanmakuContext.setScrollSpeedFactor(Constants.DANMU_SPEED_MIDDLE);
-            resetHideControllerBar();
-        }else if (id == R.id.speed_slow_tv){
-            mDanmuSpeedFast.setTextColor(getResources().getColor(android.R.color.white));
-            mDanmuSpeedMiddle.setTextColor(getResources().getColor(android.R.color.white));
-            mDanmuSpeedSlow.setTextColor(getResources().getColor(R.color.theme_color));
-            PlayerConfigShare.getInstance().saveDanmuSpeed(Constants.DANMU_SPEED_SLOW);
-            mDanmakuContext.setScrollSpeedFactor(Constants.DANMU_SPEED_SLOW);
-            resetHideControllerBar();
         }else if (id == R.id.mobile_danmu_iv){
             isShowMobile = !isShowMobile;
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
@@ -2309,9 +2288,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     //弹幕设置相关组件
     private SeekBar mDanmuSizeSb;
     private TextView mDanmuSizeTv;
+    private SeekBar mDanmuSpeedSb;
+    private TextView mDanmuSpeedTv;
     private SeekBar mDanmuAlphaSb;
     private TextView mDanmuAlphaTv;
-    private TextView mDanmuSpeedFast, mDanmuSpeedMiddle, mDanmuSpeedSlow;
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
     private RelativeLayout mMoreBlockRl;
     private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
@@ -2401,11 +2381,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         //弹幕设置相关
         mDanmuSizeTv = findViewById(R.id.danmu_size_tv);
         mDanmuSizeSb = findViewById(R.id.danmu_size_sb);
+        mDanmuSpeedTv = findViewById(R.id.danmu_speed_tv);
+        mDanmuSpeedSb = findViewById(R.id.danmu_speed_sb);
         mDanmuAlphaTv = findViewById(R.id.danmu_alpha_tv);
         mDanmuAlphaSb = findViewById(R.id.danmu_alpha_sb);
-        mDanmuSpeedFast = findViewById(R.id.speed_fast_tv);
-        mDanmuSpeedMiddle = findViewById(R.id.speed_middle_tv);
-        mDanmuSpeedSlow = findViewById(R.id.speed_slow_tv);
         mDanmuMobileIv = findViewById(R.id.mobile_danmu_iv);
         mDanmuTopIv = findViewById(R.id.top_danmu_iv);
         mDanmuBottomIv = findViewById(R.id.bottom_danmu_iv);
@@ -2422,9 +2401,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuCloudFilter = findViewById(R.id.cloud_filter_sw);
         mDanmuCloudFilter.setChecked(isOpenCloudFilter);
 
-        mDanmuSpeedFast.setOnClickListener(this);
-        mDanmuSpeedMiddle.setOnClickListener(this);
-        mDanmuSpeedSlow.setOnClickListener(this);
         mDanmuMobileIv.setOnClickListener(this);
         mDanmuTopIv.setOnClickListener(this);
         mDanmuBottomIv.setOnClickListener(this);
@@ -2452,20 +2428,27 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 
         //弹幕文字大小初始化
         mDanmuSizeSb.setMax(100);
-        int progress = PlayerConfigShare.getInstance().getDanmuSize();
-        float calcProgress = (float) progress;
-        mDanmuTextSize = calcProgress/50;
-        mDanmuSizeTv.setText(progress + "%");
-        mDanmuSizeSb.setProgress(progress);
+        int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
+        float calcProgressSize = (float) progressSize;
+        mDanmuTextSize = calcProgressSize/50;
+        mDanmuSizeTv.setText(progressSize + "%");
+        mDanmuSizeSb.setProgress(progressSize);
+        //弹幕速度大小初始化
+        mDanmuSpeedSb.setMax(100);
+        int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
+        float calcProgressSpeed = (float) progressSpeed;
+        mDanmuSpeed = calcProgressSpeed/40 > 2.4f
+                ? 2.4f
+                : calcProgressSpeed/40 ;
+        mDanmuSpeedTv.setText(progressSpeed + "%");
+        mDanmuSpeedSb.setProgress(progressSpeed);
         //弹幕文字透明度初始化
         mDanmuAlphaSb.setMax(100);
-        int progressA = PlayerConfigShare.getInstance().getDanmuAlpha();
-        float calcProgressA = (float) progressA;
-        mDanmuTextAlpha = calcProgressA/100;
-        mDanmuAlphaTv.setText(progressA + "%");
-        mDanmuAlphaSb.setProgress(progressA);
-        //弹幕速度大小
-        mDanmuSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
+        int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
+        float calcProgressAlpha = (float) progressAlpha;
+        mDanmuTextAlpha = calcProgressAlpha/100;
+        mDanmuAlphaTv.setText(progressAlpha + "%");
+        mDanmuAlphaSb.setProgress(progressAlpha);
         //弹幕屏蔽初始化
         isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
         isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
@@ -2478,13 +2461,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             blockList.add(blockText);
         }
         cursor.close();
-
-        if (mDanmuSpeed == Constants.DANMU_SPEED_FAST)
-            mDanmuSpeedFast.setTextColor(getResources().getColor(R.color.theme_color));
-        else if (mDanmuSpeed == Constants.DANMU_SPEED_MIDDLE)
-            mDanmuSpeedMiddle.setTextColor(getResources().getColor(R.color.theme_color));
-        else
-            mDanmuSpeedSlow.setTextColor(getResources().getColor(R.color.theme_color));
 
         if (isShowMobile) mDanmuMobileIv.setImageResource(R.mipmap.ic_mobile_unselect);
         if (isShowTop) mDanmuTopIv.setImageResource(R.mipmap.ic_top_unselect);
@@ -2571,6 +2547,31 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         });
 
+        mDanmuSpeedSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress == 0 ) progress = 1;
+                mDanmuSpeedTv.setText(progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (progress == 0 ) progress = 1;
+                float calcProgress = (float) progress;
+                float speed = calcProgress/40 > 2.4f
+                        ? 2.4f
+                        : calcProgress/40;
+                mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
+                PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
+            }
+        });
+
         mDanmuAlphaSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -2654,7 +2655,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuContext.setDuplicateMergingEnabled(true);//是否启用合并重复弹幕
             mDanmakuContext.setScaleTextSize(mDanmuTextSize);
             mDanmakuContext.setDanmakuTransparency(mDanmuTextAlpha);
-            mDanmakuContext.setScrollSpeedFactor(mDanmuSpeed);
+            mDanmakuContext.setScrollSpeedFactor(2.5f-mDanmuSpeed);
             mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
             mDanmakuContext.setFTDanmakuVisibility(isShowTop);
             mDanmakuContext.setFBDanmakuVisibility(isShowBottom);

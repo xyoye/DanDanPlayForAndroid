@@ -165,7 +165,6 @@ public class PlayHistoryBean extends CommJsonEntity implements Serializable {
         HistoryParam historyParam = new HistoryParam();
         historyParam.setEpisodeIdList(new ArrayList<>());
         historyParam.getEpisodeIdList().add(episodeId);
-        String json = JsonUtil.toJson(historyParam);
         RetroFactory.getInstance().addPlayHistory(historyParam)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())

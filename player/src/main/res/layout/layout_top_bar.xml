@@ -369,6 +369,38 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="弹幕速度"/>
+
+                    <TextView
+                        android:id="@+id/danmu_speed_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="50%"/>
+                </RelativeLayout>
+
+                <SeekBar
+                    android:id="@+id/danmu_speed_sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
@@ -397,57 +429,6 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginTop="5dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="速度大小"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/speed_fast_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:text="快"/>
-                    <TextView
-                        android:id="@+id/speed_middle_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:text="中"/>
-                    <TextView
-                        android:id="@+id/speed_slow_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:text="慢"/>
-                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"

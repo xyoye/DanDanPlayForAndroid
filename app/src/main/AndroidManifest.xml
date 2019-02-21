@@ -96,6 +96,10 @@
         <activity
             android:name=".ui.activities.AnimeSeasonActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".ui.activities.VideoScanActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -123,6 +127,12 @@
         <meta-data
             android:name="com.taobao.android.hotfix.RSASECRET"
             android:value="MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDn4k0VFipUUeEGIRWPFNQkHaRhaNjLbaasmz0x2eqXvQUC0GvNgEH3U0yJfph8FdfKgkSHvXr700jLse9GYbBXIi7rxZWVqsDYOirENeObXRLR3D9y5c/fdPUWWoPq+RB/5gSPjuEhbunQJc0wXprlVR42HWlGy1tiRZmMaE1qu48dNDPhlwYkfNKk8p6f58A9yeabSHgbr2+pkcJ25VT8adzM4dKq44m/PRIocNVod/rCorQTUlOwyySndu8ZrNtXdHxouhPU38Hpgwj2cKZVy6UbkkXxba3GveVdhhraqba0bj6PIMEmXzRMkhh2FqLmQluOsMQFYiB8aR+Ya6pbAgMBAAECggEBAInT3xFLjXl0+ZWVEKVtMfMNk2k60rGHyWwLEcKRznjGpzXXAFyzgYIqhvGqx6Ppr8v0xhsQqwsHuNsqNhjVc+U2skD9vj2pstpTKJxbk6ADIG6QxT3cD0S41fylbIe75uy+obNar8IZlOxdq6q2cMcjYsOzk6G6ueSdjfkA/hMTqwY/snKXWhiEkBkoNlFX02ZmuVGnj0VfNfgnKfrvnLhL+zMN3h/IDXGuX6MudXew5fnSO6xKjZ4+Zju3pOvG2Sh09BqooofYg4iO4NNMm2eSdN7aAx4qfy44Kh1qHniRUhjdfu1EWwA86vwsyWDo9GWpYNqADdrQXyGQevodanECgYEA9Q7a3LlQC3W5Xa/pbsGOiqZzU5RLpn2SaAkO/IhUmRsYe4xFwGpJg6+hGaDdor/Iy2WTGdNRP4vrV+np6tss252Sq6gDLa84m2aFwDS3LoztVhYnKZIn88/2T69n9O7R6Zb0k6gQR/jp5lVYY/HUAvSrG92dWl1BEraUasD18XUCgYEA8jzcHaN5fGlz0KmkO85TSi+UuDi0VpzZMw7YRalrQ3HoPyaauQ+7cKh/gYri9nkP8CM20ERn5wrxCoqX709daWSXgqfKA+oXiIEN97Yirb0G3gQf4F61sFaMinwGivPSlCzlQA1oxWGCAajJBu3/yyf7H9vCuJ5Sikvzq1/PYo8CgYEApFjCDyV4uTbKijpfoxfMMNBQp8zcr1unxH3Ovy3vDn9NfA4m+VRO2TIAKN/pxCw6za3haYB/DM8ZlmwZpJg5DVAv/U9AUnMg05d+O9kewOligkl5Gjga8ziVR/urDGjd/npurFgaEyqsMv0pul2Egjb0SkvmK6Q+7/3iq3Wde8ECgYEAvaT//wQ43DoCvd3SAjBp7K6LlB5wsU5ijSKWFxOoMkk/NhGXGENEz9Ja4KRHRAdLfwlSpIKphax/QW13vZc43oYuR8/szFu8yNWghcpGJBbVBYPdIN+FBuT7an/m72or9m2fnSHiYIUSLxJhL9esZvSKGksGi1sH69XCkuyTg+kCgYBHYnlbY6dNTrMxaXRpqJNTLxlutGyJTH/83mu10L/AW/zxY9wLoRVqnnLICRDLk2kHWh4vduUhGNsuTa+oqsKPpMUjOVaOTGnhMzYtIn1Ramyt8m16/axdeSeZnd9GVtqe5zEvNPop4BG1N2SRuew42lDXkbofVo7tfKfbh03HMg==" />
+
+        <activity
+            android:name=".ui.activities.PlayerExoActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape">
+        </activity>
 
         <activity
             android:name=".ui.activities.PlayerActivity"
@@ -1129,7 +1139,6 @@
                 <data android:pathPattern=".*..*..*..*..*..*..*..*..*..*..*..*..*..*..*.wtv" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.VideoScanActivity"></activity>
     </application>
 
 </manifest>

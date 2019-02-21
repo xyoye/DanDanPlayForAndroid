@@ -411,7 +411,11 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                         .show(getResources().getString(R.string.mkv_tips), "关于MKV格式", "我知道了", "前往设置");
             }else {
                 String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
-                Intent intent = new Intent(FolderActivity.this, PlayerActivity.class);
+                Intent intent;
+                if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
+                    intent = new Intent(FolderActivity.this, PlayerExoActivity.class);
+                else
+                    intent = new Intent(FolderActivity.this, PlayerActivity.class);
                 intent.putExtra("title", title);
                 intent.putExtra("path", videoBean.getVideoPath());
                 intent.putExtra("danmu_path",videoBean.getDanmuPath());

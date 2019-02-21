@@ -324,7 +324,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         } else {
             throw new IllegalArgumentException("Context must be AppCompatActivity");
         }
-        View.inflate(context, R.layout.layout_player_view, this);
+        View.inflate(context, R.layout.layout_ijk_player_view, this);
         mVideoView = findViewById(R.id.video_view);
         mPlayerThumb = findViewById(R.id.iv_thumb);
         mLoadingView = findViewById(R.id.pb_loading);

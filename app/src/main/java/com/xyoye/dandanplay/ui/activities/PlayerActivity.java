@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +16,14 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
-import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
+import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
+import com.player.ijkplayer.receiver.ScreenBroadcastReceiver;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.player.ijkplayer.receiver.PlayerReceiverListener;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -42,7 +46,7 @@ import java.math.BigDecimal;
  */
 
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity implements PlayerReceiverListener {
     private static final int SELECT_DANMU = 102;
 
     com.player.ijkplayer.media.IjkPlayerView mPlayer;
@@ -53,12 +57,20 @@ public class PlayerActivity extends AppCompatActivity {
     private int currentPosition;
     private int episodeId;
 
+    private BatteryBroadcastReceiver batteryReceiver;
+    private ScreenBroadcastReceiver screenReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         mPlayer = new IjkPlayerView(this);
         setContentView(mPlayer);
+
+        batteryReceiver = new BatteryBroadcastReceiver(this);
+        screenReceiver = new ScreenBroadcastReceiver(this);
+        PlayerActivity.this.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        PlayerActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             //外部打开
@@ -141,6 +153,16 @@ public class PlayerActivity extends AppCompatActivity {
                 .showOrHideDanmaku(true)
                 .setTitle(videoTitle)
                 .setQualityButtonVisibility(false)
+                .setOnInfoListener((mp, what, extra) -> {
+                    if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
+                        new FileManagerDialog(PlayerActivity.this,
+                                videoPath,
+                                FileManagerDialog.SELECT_SUBTITLE,
+                                path -> mPlayer.setSubtitlePath(path)
+                        ).show();
+                    }
+                    return true;
+                })
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
@@ -210,13 +232,6 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer.removeBlock(text);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(OpenSubtitleFileEvent event) {
-        new FileManagerDialog(this, videoPath, FileManagerDialog.SELECT_SUBTITLE, path ->
-                mPlayer.setSubtitleSource("", path)
-        ).show();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -236,6 +251,8 @@ public class PlayerActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         saveCurrent(mPlayer.getCurPosition());
         mPlayer.onDestroy();
+        this.unregisterReceiver(batteryReceiver);
+        this.unregisterReceiver(screenReceiver);
         super.onDestroy();
     }
 
@@ -266,6 +283,12 @@ public class PlayerActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mPlayer.configurationChanged(newConfig);
+    }
+
     //保存进度
     private void saveCurrent(int currentPosition) {
         SaveCurrentEvent event = new SaveCurrentEvent();
@@ -273,5 +296,15 @@ public class PlayerActivity extends AppCompatActivity {
         event.setFolderPath(FileUtils.getDirName(videoPath));
         event.setVideoPath(videoPath);
         EventBus.getDefault().post(event);
+    }
+
+    @Override
+    public void onBatteryChanged(int status, int progress) {
+        mPlayer.setBatteryChanged(status, progress);
+    }
+
+    @Override
+    public void onScreenLocked() {
+        mPlayer.onScreenLocked();
     }
 }

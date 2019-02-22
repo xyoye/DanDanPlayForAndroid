@@ -1,22 +1,17 @@
 package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -36,7 +31,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -44,11 +38,8 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -63,6 +54,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.IDanmakuView;
@@ -84,32 +78,28 @@ import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.database.DataBaseHelper;
 import com.player.ijkplayer.database.DataBaseInfo;
 import com.player.ijkplayer.database.DataBaseManager;
+import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.Constants;
 import com.player.ijkplayer.utils.MotionEventUtils;
 import com.player.ijkplayer.utils.NavUtils;
-import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.player.ijkplayer.utils.PlayerConfigShare;
-import com.player.ijkplayer.utils.SDCardUtils;
 import com.player.ijkplayer.utils.SoftInputUtils;
 import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.TrackAdapter;
 import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
-import com.player.ijkplayer.widgets.ShareDialog;
+import com.player.ijkplayer.widgets.SettingDanmuView;
+import com.player.ijkplayer.widgets.SettingSubtitleView;
 import com.player.subtitle.SubtitleView;
 import com.player.subtitle.util.FatalParsingException;
 import com.player.subtitle.util.SubtitleFormat;
 import com.player.subtitle.util.TimedTextFileFormat;
 import com.player.subtitle.util.TimedTextObject;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
@@ -117,6 +107,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -136,6 +127,8 @@ import static tv.danmaku.ijk.media.player.IMediaPlayer.OnInfoListener;
  * Created by long on 2016/10/24.
  */
 public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
+    //打开字幕选择
+    public static final int INTENT_OPEN_SUBTITLE = 1001;
 
     // 进度条最大值
     private static final int MAX_VIDEO_SEEK = 1000;
@@ -172,10 +165,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private MarqueeTextView mTvTitle;
     // 全屏下的TopBar
     private LinearLayout mFullscreenTopBar;
-    // 窗口模式的后退键
-    private ImageView mIvBackWindow;
-    // 窗口模式的TopBar
-    private FrameLayout mWindowTopBar;
     // 播放键
     private ImageView mIvPlay;
     private ImageView mIvPlayCircle;
@@ -198,8 +187,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     //----------------设置start------------
     //比例、弹幕、字幕、速度
     private RadioGroup mAspectRatioOptions;
-    private LinearLayout mDanmuSettingLL;
-    private LinearLayout mSubtitleSettingLL;
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
@@ -229,9 +216,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 TimedTextObject subtitleObj = (TimedTextObject) msg.obj;
                 isShowSubtitle = true;
                 isLoadSubtitle = true;
-                subtitleSwitch.setChecked(true);
-                subtitleLoadStatusTv.setText("（已加载）");
-                subtitleLoadStatusTv.setTextColor(getResources().getColor(R.color.theme_color));
+                mSettingSubtitleView.setSubtitleLoadStatus(true);
                 mSubtitleView.setData(subtitleObj);
                 mSubtitleView.start();
                 Toast.makeText(getContext(), "加载字幕成功", Toast.LENGTH_LONG).show();
@@ -335,8 +320,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mIvBack = findViewById(R.id.iv_back);
         mTvTitle = findViewById(R.id.tv_title);
         mFullscreenTopBar = findViewById(R.id.fullscreen_top_bar);
-        mIvBackWindow = findViewById(R.id.iv_back_window);
-        mWindowTopBar = findViewById(R.id.window_top_bar);
         mIvPlay = findViewById(R.id.iv_play);
         mTvCurTime = findViewById(R.id.tv_cur_time);
         mPlayerSeek = findViewById(R.id.player_seek);
@@ -354,8 +337,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
         //设置-layout
         mPlayerSettingLL = findViewById(R.id.player_setting_ll);
-        mDanmuSettingLL = findViewById(R.id.danmu_setting_ll);
-        mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
+        //mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
         mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
 
         mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
@@ -383,7 +365,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mIvPlay.setOnClickListener(this);
         mIvBack.setOnClickListener(this);
         mIvFullscreen.setOnClickListener(this);
-        mIvBackWindow.setOnClickListener(this);
         mIvPlayerLock.setOnClickListener(this);
         mIvPlayCircle.setOnClickListener(this);
         mTvRecoverScreen.setOnClickListener(this);
@@ -398,18 +379,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         });
         mPlayerSettingLL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        mDanmuSettingLL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        mSubtitleSettingLL.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
@@ -569,13 +538,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuView.release();
             mDanmakuView = null;
         }
-        if (mShareDialog != null) {
-            mShareDialog.dismiss();
-            mShareDialog = null;
-        }
-        // 注销广播
-        mAttachActivity.unregisterReceiver(mBatteryReceiver);
-        mAttachActivity.unregisterReceiver(mScreenReceiver);
         // 关闭屏幕常亮
         mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         return curPosition;
@@ -716,12 +678,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     public void start() {
         if (mIsPlayComplete) {
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.seekTo((long) 0 - (danmuExtraTime * 1000));
+                mDanmakuView.seekTo((long) 0 - mSettingDanmuView.getDanmuExtraTime());
                 mDanmakuView.pause();
             }
             mIsPlayComplete = false;
         }
         if (!mVideoView.isPlaying()) {
+            mIvPlayCircle.setVisibility(GONE);
             mIvPlay.setSelected(true);
             mVideoView.start();
             // 更新进度
@@ -737,8 +700,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             _loadDanmaku();
             //加载字幕
             subtitlePath = getSubtitlePath();
-            if (!"".equals(subtitlePath))
-                setSubtitleSource("", subtitlePath);
+            if (!StringUtils.isEmpty(subtitlePath)){
+                setSubtitleSource("utf-8");
+                mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
+            }
         }
         // 视频播放时开启屏幕常亮
         mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -760,6 +725,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mIvPlay.setSelected(false);
         if (mVideoView.isPlaying()) {
             mVideoView.pause();
+            mIvPlayCircle.setVisibility(VISIBLE);
         }
         if (isLoadSubtitle) mSubtitleView.pause();
         _pauseDanmaku();
@@ -919,7 +885,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
 //        mPlayerThumb.setVisibility(View.GONE);
         mFlTouchLayout.setVisibility(View.GONE);
         mFullscreenTopBar.setVisibility(View.GONE);
-        mWindowTopBar.setVisibility(View.GONE);
         mLlBottomBar.setVisibility(View.GONE);
         if (!isTouchLock) {
             mIvPlayerLock.setVisibility(View.GONE);
@@ -950,7 +915,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 // 只在显示控制栏的时候才设置时间，因为控制栏通常不显示且单位为分钟，所以不做实时更新
                 mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
                 mFullscreenTopBar.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
-                mWindowTopBar.setVisibility(View.GONE);
                 mIvPlayerLock.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 if (mIsEnableDanmaku) {
                     mDanmakuPlayerSeek.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
@@ -959,7 +923,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                     mTvRecoverScreen.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 }
             } else {
-                mWindowTopBar.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 mFullscreenTopBar.setVisibility(View.GONE);
                 mIvPlayerLock.setVisibility(View.GONE);
                 if (mIsEnableDanmaku) {
@@ -1071,7 +1034,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         if (isShow) {
             _hideAllView(true);
             mPlayerSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mPlayerSettingLL, dip2px(getContext(), 300), 0, 600);
+            AnimHelper.doSlide(mPlayerSettingLL, ConvertUtils.dp2px( 300), 0, 600);
         } else {
             mPlayerSettingLL.setVisibility(GONE);
         }
@@ -1085,10 +1048,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _showDanmuSetting(boolean isShow){
         if (isShow) {
             _hideAllView(true);
-            mDanmuSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mDanmuSettingLL, dip2px(getContext(), 300), 0, 600);
+            mSettingDanmuView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingDanmuView, ConvertUtils.dp2px(  300), 0, 600);
         } else {
-            mDanmuSettingLL.setVisibility(GONE);
+            mSettingDanmuView.setVisibility(GONE);
         }
     }
 
@@ -1100,10 +1063,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _showSubtitleSetting(boolean isShow){
         if (isShow) {
             _hideAllView(true);
-            mSubtitleSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSubtitleSettingLL, dip2px(getContext(), 300), 0, 600);
+            mSettingSubtitleView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingSubtitleView, ConvertUtils.dp2px(300), 0, 600);
         } else {
-            mSubtitleSettingLL.setVisibility(GONE);
+            mSettingSubtitleView.setVisibility(GONE);
         }
     }
 
@@ -1170,9 +1133,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mEtDanmakuContent.setText("");
         } else if (id == R.id.input_options_more) {
             _toggleMoreColorOptions();
-        } else if (id == R.id.iv_screenshot) {
-            _doScreenshot();
-        } else if (id == R.id.tv_recover_screen) {
+        }else if (id == R.id.tv_recover_screen) {
             mVideoView.resetVideoView(true);
             mIsNeedRecoverScreen = false;
             mTvRecoverScreen.setVisibility(GONE);
@@ -1191,67 +1152,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             _showDanmuSetting(false);
             _showSubtitleSetting(true);
             resetHideControllerBar();
-        }else if (id == R.id.mobile_danmu_iv){
-            isShowMobile = !isShowMobile;
-            mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
-            PlayerConfigShare.getInstance().setShowMobileDanmu(isShowMobile);
-            mDanmuMobileIv.setImageResource(isShowMobile
-                    ? R.mipmap.ic_mobile_unselect
-                    : R.mipmap.ic_mobile_select);
-            resetHideControllerBar();
-        }else if (id == R.id.top_danmu_iv){
-            isShowTop = !isShowTop;
-            mDanmakuContext.setFTDanmakuVisibility(isShowTop);
-            PlayerConfigShare.getInstance().setShowMobileDanmu(isShowTop);
-            mDanmuTopIv.setImageResource(isShowTop
-                    ? R.mipmap.ic_top_unselect
-                    : R.mipmap.ic_top_select);
-            resetHideControllerBar();
-        }else if (id == R.id.bottom_danmu_iv){
-            isShowBottom = !isShowBottom;
-            mDanmakuContext.setFBDanmakuVisibility(isShowBottom);
-            PlayerConfigShare.getInstance().setShowMobileDanmu(isShowBottom);
-            mDanmuBottomIv.setImageResource(isShowBottom
-                    ? R.mipmap.ic_bottom_unselect
-                    : R.mipmap.ic_bottom_select);
-            resetHideControllerBar();
-        }else if (id == R.id.more_block_rl){
-            _showDanmuSetting(false);
-            _showMoreDanmuBlock(true);
         }else if (id == R.id.block_view_cancel_iv){
             _showMoreDanmuBlock(false);
         }else if (id == R.id.add_block_bt){
             String blockText = mBlockInputEt.getText().toString().trim();
             addBlock(blockText);
-        }else if (id == R.id.subtitle_change_source_tv){
-            EventBus.getDefault().post(new OpenSubtitleFileEvent());
-        }else if (id == R.id.only_chinese_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE);
-            setSubtitleLanguageType();
-        }else if (id == R.id.only_english_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_ENGLISH);
-            setSubtitleLanguageType();
-        }else if (id == R.id.both_language_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE_ENGLISH);
-            setSubtitleLanguageType();
-        }else if (id == R.id.encoding_utf_8){
-            if (!"".equals(subtitlePath))
-                setSubtitleSource("utf-8", subtitlePath);
-        }else if (id == R.id.encoding_utf_16){
-            if (!"".equals(subtitlePath))
-                setSubtitleSource("utf-16", subtitlePath);
-        }else if (id == R.id.encoding_gbk){
-            if (!"".equals(subtitlePath))
-                setSubtitleSource("gbk", subtitlePath);
-        }else if (id == R.id.encoding_other){
-            encodingInputLL.setVisibility(VISIBLE);
-        }else if (id == R.id.add_encoding_tv){
-            String encoding = encodingEt.getText().toString().trim();
-            if (!"".equals(encoding) && !"".equals(subtitlePath)){
-                setSubtitleSource(encoding, subtitlePath);
-            }else{
-                Toast.makeText(getContext(), "编码格式不能为空", Toast.LENGTH_LONG).show();
-            }
         }else if (id == R.id.speed50_tv){
             mVideoView.setSpeed(0.5f);
             mDanmakuContext.setDanmuTimeRate(0.5f);
@@ -1276,24 +1181,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mVideoView.setSpeed(2.0f);
             mDanmakuContext.setDanmuTimeRate(2.0f);
             setPlayerSpeedView(6);
-        }else if (id == R.id.subtitle_extra_time_reduce){
-            extraUpdateTime -= 0.5f;
-            subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
-        }else if (id == R.id.subtitle_extra_time_add){
-            extraUpdateTime += 0.5f;
-            subExtraTimeEt.setText(String.valueOf(extraUpdateTime));
-        }else if (id == R.id.danmu_extra_time_add){
-            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
-                danmuExtraTime += 1;
-                mDanmakuView.seekTo(mDanmakuView.getCurrentTime() - 1000);
-                danmuExtraTimeEt.setText(String.valueOf(danmuExtraTime));
-            }
-        }else if (id == R.id.danmu_extra_time_reduce){
-            if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
-                danmuExtraTime -= 1;
-                mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + 1000);
-                danmuExtraTimeEt.setText(String.valueOf(danmuExtraTime));
-            }
         }
     }
 
@@ -1888,9 +1775,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         @Override
         public boolean onInfo(IMediaPlayer iMediaPlayer, int status, int extra) {
             _switchStatus(status);
-            if (mOutsideInfoListener != null) {
-                mOutsideInfoListener.onInfo(iMediaPlayer, status, extra);
-            }
             return true;
         }
     };
@@ -1984,8 +1868,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @param l The callback that will be run
      */
-    public void setOnInfoListener(OnInfoListener l) {
+    public IjkPlayerView setOnInfoListener(OnInfoListener l) {
         mOutsideInfoListener = l;
+        return this;
     }
 
     /**
@@ -2279,24 +2164,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private ImageView mIvCancelSend;
     // 发送弹幕
     private ImageView mIvDoSend;
-    //弹幕设置
+    //设置
     private ImageView mPlayerSetting;
     private LinearLayout mPlayerSettingLL;
     private TextView mDanmuSettings;
     private ImageView mSubtitleSettings;
 
-    //弹幕设置相关组件
-    private SeekBar mDanmuSizeSb;
-    private TextView mDanmuSizeTv;
-    private SeekBar mDanmuSpeedSb;
-    private TextView mDanmuSpeedTv;
-    private SeekBar mDanmuAlphaSb;
-    private TextView mDanmuAlphaTv;
-    private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
-    private RelativeLayout mMoreBlockRl;
-    private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
-    private EditText danmuExtraTimeEt;
-    private Switch mDanmuCloudFilter;
+    //弹幕设置
+    private SettingDanmuView mSettingDanmuView;
 
     //弹幕屏蔽
     private RelativeLayout mBlockView;
@@ -2344,18 +2219,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private int mMoreOptionsWidth = INVALID_VALUE;
     // 弹幕要跳转的目标位置，等视频播放再跳转，不然老出现只有弹幕在动的情况
     private long mDanmakuTargetPosition = INVALID_VALUE;
-    //弹幕文字大小
-    private float mDanmuTextSize;
-    //弹幕文字大小
-    private float mDanmuTextAlpha;
-    //弹幕速度大小
-    private float mDanmuSpeed;
-    //弹幕屏蔽获取
-    private boolean isShowTop = true;
-    private boolean isShowMobile = true;
-    private boolean isShowBottom = true;
-    //弹幕时间偏移
-    private int danmuExtraTime;
     //是否开启云屏蔽
     private boolean isOpenCloudFilter = false;
     //云屏蔽数据
@@ -2366,6 +2229,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     private void _initDanmaku() {
+        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
         // 弹幕控制
         mDanmakuView = findViewById(R.id.sv_danmaku);
         mIvDanmakuControl = findViewById(R.id.iv_danmaku_control);
@@ -2378,37 +2242,15 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmakuPlayerSeek = findViewById(R.id.danmaku_player_seek);
         mDanmakuPlayerSeek.setMax(MAX_VIDEO_SEEK);
         mDanmakuPlayerSeek.setOnSeekBarChangeListener(mSeekListener);
-        //弹幕设置相关
-        mDanmuSizeTv = findViewById(R.id.danmu_size_tv);
-        mDanmuSizeSb = findViewById(R.id.danmu_size_sb);
-        mDanmuSpeedTv = findViewById(R.id.danmu_speed_tv);
-        mDanmuSpeedSb = findViewById(R.id.danmu_speed_sb);
-        mDanmuAlphaTv = findViewById(R.id.danmu_alpha_tv);
-        mDanmuAlphaSb = findViewById(R.id.danmu_alpha_sb);
-        mDanmuMobileIv = findViewById(R.id.mobile_danmu_iv);
-        mDanmuTopIv = findViewById(R.id.top_danmu_iv);
-        mDanmuBottomIv = findViewById(R.id.bottom_danmu_iv);
-        mMoreBlockRl = findViewById(R.id.more_block_rl);
-        addDanmuExtraTimeTv = findViewById(R.id.danmu_extra_time_add);
-        reduceDanmuExtraTimeTv = findViewById(R.id.danmu_extra_time_reduce);
-        danmuExtraTimeEt = findViewById(R.id.danmu_extra_time_et);
         //弹幕屏蔽相关
         mBlockView = findViewById(R.id.block_setting_view);
         mBlockViewCancelIv = findViewById(R.id.block_view_cancel_iv);
         mBlockInputEt = findViewById(R.id.block_input_et);
         mBlockAddBt = findViewById(R.id.add_block_bt);
         mBlockRecyclerView = findViewById(R.id.block_recycler);
-        mDanmuCloudFilter = findViewById(R.id.cloud_filter_sw);
-        mDanmuCloudFilter.setChecked(isOpenCloudFilter);
 
-        mDanmuMobileIv.setOnClickListener(this);
-        mDanmuTopIv.setOnClickListener(this);
-        mDanmuBottomIv.setOnClickListener(this);
-        mMoreBlockRl.setOnClickListener(this);
         mBlockAddBt.setOnClickListener(this);
         mBlockViewCancelIv.setOnClickListener(this);
-        addDanmuExtraTimeTv.setOnClickListener(this);
-        reduceDanmuExtraTimeTv.setOnClickListener(this);
 
         mIvDanmakuControl.setOnClickListener(this);
         mTvOpenEditDanmaku.setOnClickListener(this);
@@ -2419,40 +2261,102 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuSettings.setOnClickListener(this);
         mSubtitleSettings.setOnClickListener(this);
 
-        danmuExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        danmuExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-        danmuExtraTimeEt.setSingleLine(true);
+        int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
+        int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
+        int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
+        boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
+        boolean isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
+        boolean isShowBottom = PlayerConfigShare.getInstance().isShowBottomDanmu();
+        mSettingDanmuView
+                .setOffsetTime(0.5f)
+                .setDanmuSize(progressSize)
+                .setDanmuSpeed(progressSpeed)
+                .setDanmuAlpha(progressAlpha)
+                .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
+                .setListener(new SettingDanmuView.SettingDanmuListener() {
+                    @Override
+                    public void setDanmuSize(int progress) {
+                        mDanmakuContext.setScaleTextSize((float) progress/50);
+                        PlayerConfigShare.getInstance().saveDanmuSize(progress);
+                    }
+
+                    @Override
+                    public void setDanmuSpeed(int progress) {
+                        float speed = (float) progress / 40;
+                        speed = speed>2.4f ? 2.4f : speed;
+                        mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
+                        PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
+                    }
+
+                    @Override
+                    public void setDanmuAlpha(int progress) {
+                        mDanmakuContext.setDanmakuTransparency((float) progress/100);
+                        PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
+                    }
+
+                    @Override
+                    public void setExtraTime(int time) {
+                        if (mDanmakuView != null && mDanmakuView.isPrepared()){
+                            try {
+                                mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
+                            }catch (Exception e){
+                                Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void setCloudFilter(boolean isChecked) {
+                        mDanmakuListener.setCloudFilter(isChecked);
+                        changeCloudFilter(isChecked);
+                    }
+
+                    @Override
+                    public void setDanmuMobEnable(boolean enable) {
+                        mDanmakuContext.setR2LDanmakuVisibility(enable);
+                        PlayerConfigShare.getInstance().setShowMobileDanmu(enable);
+                        resetHideControllerBar();
+                    }
+
+                    @Override
+                    public void setDanmuTopEnable(boolean enable) {
+                        mDanmakuContext.setFTDanmakuVisibility(enable);
+                        PlayerConfigShare.getInstance().setShowMobileDanmu(enable);
+                        resetHideControllerBar();
+                    }
+
+                    @Override
+                    public void setDanmuBotEnable(boolean enable) {
+                        mDanmakuContext.setFBDanmakuVisibility(enable);
+                        PlayerConfigShare.getInstance().setShowMobileDanmu(enable);
+                        resetHideControllerBar();
+                    }
+
+                    @Override
+                    public void setBlockViewShow() {
+                        _showDanmuSetting(false);
+                        _showMoreDanmuBlock(true);
+                    }
+
+                    @Override
+                    public void setExtraTimeAdd(int time) {
+                        if (mDanmakuView != null && mDanmakuView.isPrepared()){
+                            mDanmakuView.seekTo(mDanmakuView.getCurrentTime() - time);
+                        }
+                    }
+
+                    @Override
+                    public void setExtraTimeReduce(int time) {
+                        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
+                            mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
+                        }
+                    }
+                })
+                .init();
 
         DataBaseManager.initializeInstance(new DataBaseHelper(getContext()));
         sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
 
-        //弹幕文字大小初始化
-        mDanmuSizeSb.setMax(100);
-        int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
-        float calcProgressSize = (float) progressSize;
-        mDanmuTextSize = calcProgressSize/50;
-        mDanmuSizeTv.setText(progressSize + "%");
-        mDanmuSizeSb.setProgress(progressSize);
-        //弹幕速度大小初始化
-        mDanmuSpeedSb.setMax(100);
-        int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
-        float calcProgressSpeed = (float) progressSpeed;
-        mDanmuSpeed = calcProgressSpeed/40 > 2.4f
-                ? 2.4f
-                : calcProgressSpeed/40 ;
-        mDanmuSpeedTv.setText(progressSpeed + "%");
-        mDanmuSpeedSb.setProgress(progressSpeed);
-        //弹幕文字透明度初始化
-        mDanmuAlphaSb.setMax(100);
-        int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
-        float calcProgressAlpha = (float) progressAlpha;
-        mDanmuTextAlpha = calcProgressAlpha/100;
-        mDanmuAlphaTv.setText(progressAlpha + "%");
-        mDanmuAlphaSb.setProgress(progressAlpha);
-        //弹幕屏蔽初始化
-        isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
-        isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
-        isShowBottom = PlayerConfigShare.getInstance().isShowBottomDanmu();
         mBlockRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
         //获取所有屏蔽
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM block" ,new String[]{});
@@ -2461,10 +2365,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             blockList.add(blockText);
         }
         cursor.close();
-
-        if (isShowMobile) mDanmuMobileIv.setImageResource(R.mipmap.ic_mobile_unselect);
-        if (isShowTop) mDanmuTopIv.setImageResource(R.mipmap.ic_top_unselect);
-        if (isShowBottom) mDanmuBottomIv.setImageResource(R.mipmap.ic_bottom_unselect);
 
         int navigationBarHeight = NavUtils.getNavigationBarHeight(mAttachActivity);
         if (navigationBarHeight > 0) {
@@ -2525,107 +2425,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             }
         });
 
-        mDanmuSizeSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0 ) progress = 1;
-                mDanmuSizeTv.setText(progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0 ) progress = 1;
-                float calcProgress = (float) progress;
-                mDanmakuContext.setScaleTextSize(calcProgress/50);
-                PlayerConfigShare.getInstance().saveDanmuSize(progress);
-            }
-        });
-
-        mDanmuSpeedSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0 ) progress = 1;
-                mDanmuSpeedTv.setText(progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0 ) progress = 1;
-                float calcProgress = (float) progress;
-                float speed = calcProgress/40 > 2.4f
-                        ? 2.4f
-                        : calcProgress/40;
-                mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
-                PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
-            }
-        });
-
-        mDanmuAlphaSb.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0 ) progress = 1;
-                mDanmuAlphaTv.setText(progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0 ) progress = 1;
-                float calcProgress = (float) progress;
-                mDanmakuContext.setDanmakuTransparency(calcProgress/100);
-                PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
-            }
-        });
-
-        danmuExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
-                        try {
-                            String extraTime = danmuExtraTimeEt.getText().toString().trim();
-                            int extraTimeLong = Integer.valueOf(extraTime);
-                            mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + (danmuExtraTime- extraTimeLong) * 1000);
-                            danmuExtraTime = extraTimeLong;
-                        }catch (Exception e){
-                            Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
-
         mBlockView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
-            }
-        });
-
-        mDanmuCloudFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mDanmakuListener.setCloudFilter(isChecked);
-                changeCloudFilter(isChecked);
             }
         });
     }
@@ -2653,12 +2456,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             // 设置弹幕
             mDanmakuContext = DanmakuContext.create();
             mDanmakuContext.setDuplicateMergingEnabled(true);//是否启用合并重复弹幕
-            mDanmakuContext.setScaleTextSize(mDanmuTextSize);
-            mDanmakuContext.setDanmakuTransparency(mDanmuTextAlpha);
-            mDanmakuContext.setScrollSpeedFactor(2.5f-mDanmuSpeed);
-            mDanmakuContext.setR2LDanmakuVisibility(isShowMobile);
-            mDanmakuContext.setFTDanmakuVisibility(isShowTop);
-            mDanmakuContext.setFBDanmakuVisibility(isShowBottom);
+            mDanmakuContext.setScaleTextSize(mSettingDanmuView.getmDanmuTextSize());
+            mDanmakuContext.setDanmakuTransparency(mSettingDanmuView.getmDanmuTextAlpha());
+            mDanmakuContext.setScrollSpeedFactor(2.5f- mSettingDanmuView.getmDanmuSpeed());
+            mDanmakuContext.setR2LDanmakuVisibility(mSettingDanmuView.isShowMobile());
+            mDanmakuContext.setFTDanmakuVisibility(mSettingDanmuView.isShowTop());
+            mDanmakuContext.setFBDanmakuVisibility(mSettingDanmuView.isShowBottom());
             for (String block : blockList){
                 mDanmakuContext.addBlockKeyWord(block);
             }
@@ -2880,7 +2683,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }else {
             Toast.makeText(getContext(), "添加屏蔽成功", Toast.LENGTH_LONG).show();
             mBlockInputEt.setText("");
-            hideKeyBoard(mBlockInputEt);
+            KeyboardUtils.hideSoftInput(mBlockInputEt);
             //添加到显示界面
             blockList.add(blockText);
             blockAdapter.notifyDataSetChanged();
@@ -2945,7 +2748,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private void _resumeDanmaku() {
         if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
             if (mDanmakuTargetPosition != INVALID_VALUE) {
-                mDanmakuView.seekTo(mDanmakuTargetPosition - danmuExtraTime*1000);
+                mDanmakuView.seekTo(mDanmakuTargetPosition - mSettingDanmuView.getDanmuExtraTime());
                 mDanmakuTargetPosition = INVALID_VALUE;
             } else {
                 mDanmakuView.resume();
@@ -3038,223 +2841,86 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     //字幕相关组件
     private SubtitleView mSubtitleView;
-    private Switch subtitleSwitch;
-    private SeekBar subtitleCnSB;
-    private SeekBar subtitleUSSB;
-    private TextView subtitleChangeSourceTv;
-    private TextView subtitleLoadStatusTv;
-    private TextView subtitleCnSizeTv;
-    private TextView subtitleUSSizeTv;
-    private TextView onlyCnShowTv, onlyUsShowTv, bothLanguageTv;
-    private TextView encodingUtf8, encodingUtf16, encodingGbk, encodingOther;
-    private TextView addEncodingTv;
-    private LinearLayout encodingInputLL;
-    private EditText encodingEt;
-    private TextView addExtraTimeTv, reduceExtraTimeTv;
-    private EditText subExtraTimeEt;
+    private SettingSubtitleView mSettingSubtitleView;
 
     //字幕
     private String subtitlePath = "";
     private boolean isLoadSubtitle = false;
     private boolean isShowSubtitle = false;
-    private int subtitleChineseProgress, subtitleEnglishProgress;
-    private float subtitleChineseSize, subtitleEnglishSize;
-    // 额外控制字幕时间，用于调整字幕进度
-    private float extraUpdateTime;
 
     String subtitleEncoding;
 
     public void _initSubtitle(){
         //字幕相关
         mSubtitleView = findViewById(R.id.subtitle_view);
-        subtitleLoadStatusTv = findViewById(R.id.subtitle_load_status_tv);
-        subtitleSwitch = findViewById(R.id.subtitle_sw);
-        subtitleChangeSourceTv = findViewById(R.id.subtitle_change_source_tv);
-        subtitleCnSizeTv = findViewById(R.id.subtitle_chinese_size_tv);
-        subtitleCnSB = findViewById(R.id.subtitle_chinese_size_sb);
-        subtitleUSSizeTv = findViewById(R.id.subtitle_english_size_tv);
-        subtitleUSSB = findViewById(R.id.subtitle_english_size_sb);
-        onlyCnShowTv = findViewById(R.id.only_chinese_tv);
-        onlyUsShowTv = findViewById(R.id.only_english_tv);
-        bothLanguageTv = findViewById(R.id.both_language_tv);
-        encodingUtf8 = findViewById(R.id.encoding_utf_8);
-        encodingUtf16 = findViewById(R.id.encoding_utf_16);
-        encodingGbk = findViewById(R.id.encoding_gbk);
-        encodingOther = findViewById(R.id.encoding_other);
-        addEncodingTv = findViewById(R.id.add_encoding_tv);
-        encodingInputLL = findViewById(R.id.input_encoding_ll);
-        encodingEt = findViewById(R.id.input_encoding_et);
-        addExtraTimeTv = findViewById(R.id.subtitle_extra_time_add);
-        reduceExtraTimeTv = findViewById(R.id.subtitle_extra_time_reduce);
-        subExtraTimeEt = findViewById(R.id.subtitle_extra_time_et);
+        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
 
-        subtitleChangeSourceTv.setOnClickListener(this);
-        subtitleSwitch.setOnClickListener(this);
-        onlyCnShowTv.setOnClickListener(this);
-        onlyUsShowTv.setOnClickListener(this);
-        bothLanguageTv.setOnClickListener(this);
-        encodingUtf8.setOnClickListener(this);
-        encodingUtf16.setOnClickListener(this);
-        encodingGbk.setOnClickListener(this);
-        encodingOther.setOnClickListener(this);
-        addEncodingTv.setOnClickListener(this);
-        addExtraTimeTv.setOnClickListener(this);
-        reduceExtraTimeTv.setOnClickListener(this);
-
-        subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        subExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-        subExtraTimeEt.setSingleLine(true);
-
-        subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
-        subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
-
-        subtitleCnSB.setMax(100);
-        subtitleChineseSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
-        subtitleCnSizeTv.setText(subtitleChineseProgress + "%");
-        subtitleCnSB.setProgress(subtitleChineseProgress);
-        subtitleUSSB.setMax(100);
-        subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
-        subtitleUSSizeTv.setText(subtitleEnglishProgress + "%");
-        subtitleUSSB.setProgress(subtitleEnglishProgress);
+        int subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
+        int subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
+        float subtitleChineseSize = (float) subtitleChineseProgress / 100 * ConvertUtils.dp2px(18);
+        float subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * ConvertUtils.dp2px(18);
         mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
 
         subtitleEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
 
-        setSubtitleLanguageType();
-        setSubtitleEncodingType();
-
-        subtitleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isLoadSubtitle && isChecked){
-                    subtitleSwitch.setChecked(false);
-                    Toast.makeText(getContext(), "未加载字幕源", Toast.LENGTH_LONG).show();
-                }
-                if (isChecked){
-                    isShowSubtitle = true;
-                    mSubtitleView.show();
-                    mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
-                }else {
-                    isShowSubtitle = false;
-                    mSubtitleView.hide();
-                }
-            }
-        });
-        subtitleCnSB.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0 ) progress = 1;
-                subtitleCnSizeTv.setText(progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0 ) progress = 1;
-                float calcProgress = (float) progress;
-                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
-                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,textSize);
-                PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
-            }
-        });
-        subtitleUSSB.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0 ) progress = 1;
-                subtitleUSSizeTv.setText(progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (progress == 0 ) progress = 1;
-                float calcProgress = (float) progress;
-                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
-                mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
-                PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
-            }
-        });
-        subExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    try {
-                        String extraTime = subExtraTimeEt.getText().toString().trim();
-                        extraUpdateTime = Float.valueOf(extraTime);
-                    }catch (Exception e){
-                        Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    /**
-     * 设置字幕显示语言类型
-     */
-    private void setSubtitleLanguageType(){
-        int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
-        switch (languageType){
-            case Constants.SUBTITLE_ENGLISH:
-                onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                onlyUsShowTv.setBackgroundColor(Color.parseColor("#33ffffff"));
-                bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_ENGLISH);
-                break;
-            case Constants.SUBTITLE_CHINESE_ENGLISH:
-                onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                onlyUsShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                bothLanguageTv.setBackgroundColor(Color.parseColor("#33ffffff"));
-                mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_BOTH);
-                break;
-            default:
-                onlyCnShowTv.setBackgroundColor(Color.parseColor("#33ffffff"));
-                onlyUsShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_CHINA);
-                break;
-        }
-    }
-    /**
-     * 设置字幕编码格式
-     */
-    private void setSubtitleEncodingType(){
-        encodingUtf8.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingUtf16.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingGbk.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingOther.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
         isLoadSubtitle = false;
-        switch (subtitleEncoding.toUpperCase()){
-            case "UTF-8":
-            case "":
-                encodingUtf8.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
-                break;
-            case "UTF-16":
-                encodingUtf16.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
-                break;
-            case "GBK":
-                encodingGbk.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
-                break;
-            default:
-                encodingOther.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(VISIBLE);
-                break;
-        }
+        int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
+        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
+        mSettingSubtitleView
+                .setSubtitleLanguageType(languageType)
+                .initSubtitleCnSize(subtitleChineseProgress)
+                .initSubtitleEnSize(subtitleEnglishProgress)
+                .initListener(new SettingSubtitleView.SettingSubtitleListener() {
+                    @Override
+                    public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
+                        if (!isLoadSubtitle && isChecked){
+                            switchView.setChecked(false);
+                            Toast.makeText(getContext(), "未加载字幕源", Toast.LENGTH_LONG).show();
+                        }
+                        if (isChecked){
+                            isShowSubtitle = true;
+                            mSubtitleView.show();
+                            mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
+                        }else {
+                            isShowSubtitle = false;
+                            mSubtitleView.hide();
+                        }
+                    }
+
+                    @Override
+                    public void setSubtitleCnSize(int progress) {
+                        float calcProgress = (float) progress;
+                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(18);
+                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,textSize);
+                        PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
+                    }
+
+                    @Override
+                    public void setSubtitleEnSize(int progress) {
+                        float calcProgress = (float) progress;
+                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(18);
+                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
+                        PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
+                    }
+
+                    @Override
+                    public void setOpenSubtitleSelector() {
+                        mOutsideInfoListener.onInfo(null, INTENT_OPEN_SUBTITLE, 0);
+                    }
+
+                    @Override
+                    public void setSubtitleLanguageType(int type) {
+                        PlayerConfigShare.getInstance().setSubtitleLanguageType(type);
+                        mSubtitleView.setLanguage(type);
+                    }
+
+                    @Override
+                    public void setSubtitleEncoding(String encoding) {
+                        if (!"".equals(subtitlePath))
+                            setSubtitleSource(encoding);
+                    }
+                })
+                .init();
     }
 
     /**
@@ -3290,73 +2956,62 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 设置字幕源
      */
-    public void setSubtitleSource(String encoding, String path){
+    public void setSubtitlePath(String path){
         subtitlePath = path;
-        if ("".equals(encoding.trim())) {
-            subtitleEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
-        }else{
-            subtitleEncoding = encoding;
-            PlayerConfigShare.getInstance().setSubtitleEncoding(subtitleEncoding);
-        }
-        setSubtitleEncodingType();
-        subtitleSwitch.setChecked(false);
+        setSubtitleSource("utf-8");
+        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
+    }
+
+    public void setSubtitleSource(String encoding){
+        isLoadSubtitle = false;
         isShowSubtitle = false;
-        subtitleLoadStatusTv.setText("（未加载）");
-        subtitleLoadStatusTv.setTextColor(Color.parseColor("#ff0000"));
+        subtitleEncoding = encoding;
+        mSettingSubtitleView.setSubtitleLoadStatus(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Looper.prepare();
-                    if("".equals(subtitlePath)){
-                        Toast.makeText(getContext(), "字幕文件不存在", Toast.LENGTH_LONG).show();
-                        Looper.loop();
-                        return;
-                    }
-                    //解析字幕文件
-                    File subtitleFile = new File(subtitlePath);
-                    InputStream subtitleFileIs = new FileInputStream(subtitleFile);
-                    TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
-
-                    if (format != null){
-                        Charset charset;
-                        try {
-                            charset = Charset.forName(subtitleEncoding);
-                        }catch (Exception exception){
-                            isLoadSubtitle = false;
-                            Toast.makeText(getContext(), "解析编码格式失败", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                            return;
-                        }
-
-                        TimedTextObject subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, charset);
-                        if(subtitleObj != null && subtitleObj.captions.size() > 0){
-                            Message message = new Message();
-                            message.what = MSG_SET_SUBTITLE_SOURCE;
-                            message.obj = subtitleObj;
-                            mHandler.sendMessage(message);
+                    if (!StringUtils.isEmpty(subtitlePath)){
+                        //解析字幕文件
+                        File subtitleFile = new File(subtitlePath);
+                        InputStream subtitleFileIs = new FileInputStream(subtitleFile);
+                        TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
+                        if (format != null){
+                            Charset charset = Charset.forName(subtitleEncoding);
+                            TimedTextObject subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, charset);
+                            if(subtitleObj != null && subtitleObj.captions.size() > 0){
+                                Message message = new Message();
+                                message.what = MSG_SET_SUBTITLE_SOURCE;
+                                message.obj = subtitleObj;
+                                mHandler.sendMessage(message);
+                            }else {
+                                Toast.makeText(getContext(), "无法解析字幕内容，试试切换编码格式", Toast.LENGTH_LONG).show();
+                                Looper.loop();
+                            }
                         }else {
-                            isLoadSubtitle = false;
-                            Toast.makeText(getContext(), "无法解析字幕内容，试试切换编码格式", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
                             Looper.loop();
                         }
                     }else {
-                        isLoadSubtitle = false;
-                        Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "字幕文件不存在", Toast.LENGTH_LONG).show();
                         Looper.loop();
                     }
                 } catch (FatalParsingException | IOException e) {
-                    isLoadSubtitle = false;
+                    e.printStackTrace();
                     Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
                     Looper.loop();
-                    e.printStackTrace();
+                } catch (UnsupportedCharsetException ex){
+                    ex.printStackTrace();
+                    Toast.makeText(getContext(), "解析编码格式失败", Toast.LENGTH_LONG).show();
+                    Looper.loop();
                 }
             }
         }).start();
     }
 
     private void updateSubtitle(){
-        long position = mVideoView.getCurrentPosition() + (int)(extraUpdateTime * 1000);
+        long position = mVideoView.getCurrentPosition() + (int)(mSettingSubtitleView.getTimeOffset() * 1000);
         mSubtitleView.seekTo(position);
     }
 
@@ -3514,7 +3169,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * ============================ 电量、时间、锁屏、截屏 ============================
+     * ============================ 电量、时间、锁屏 ============================
      */
 
     // 电量显示
@@ -3523,43 +3178,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private TextView mTvSystemTime;
     // 截图按钮
     private ImageView mIvScreenshot;
-    // 电量变化广播接收器
-    private BatteryBroadcastReceiver mBatteryReceiver;
-    // 锁屏状态广播接收器
-    private ScreenBroadcastReceiver mScreenReceiver;
     // 判断是否出现锁屏,有则需要重新设置渲染器，不然视频会没有动画只有声音
     private boolean mIsScreenLocked = false;
-    // 截图分享弹框
-    private ShareDialog mShareDialog;
-    // 对话框点击监听，内部和外部
-    private ShareDialog.OnDialogClickListener mDialogClickListener;
-    private ShareDialog.OnDialogClickListener mInsideDialogClickListener = new ShareDialog.OnDialogClickListener() {
-        @Override
-        public void onShare(Bitmap bitmap, Uri uri) {
-            if (mDialogClickListener != null) {
-                mDialogClickListener.onShare(bitmap, mVideoView.getUri());
-            }
-            File file = new File(mSaveDir, System.currentTimeMillis() + ".jpg");
-            try {
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                bos.flush();
-                bos.close();
-                Toast.makeText(mAttachActivity, "保存成功，路径为:" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Toast.makeText(mAttachActivity, "保存本地失败", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    };
-    private ShareDialog.OnDialogDismissListener mDialogDismissListener = new ShareDialog.OnDialogDismissListener() {
-        @Override
-        public void onDismiss() {
-            recoverFromEditVideo();
-        }
-    };
-    // 截图保存路径
-    private File mSaveDir;
 
     /**
      * 初始化电量、锁屏、时间处理
@@ -3568,115 +3188,25 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mPbBatteryLevel = findViewById(R.id.pb_battery);
         mTvSystemTime = findViewById(R.id.tv_system_time);
         mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
-        mBatteryReceiver = new BatteryBroadcastReceiver();
-        mScreenReceiver = new ScreenBroadcastReceiver();
-        //注册接受广播
-        mAttachActivity.registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        mAttachActivity.registerReceiver(mScreenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        mIvScreenshot = findViewById(R.id.iv_screenshot);
-        mIvScreenshot.setOnClickListener(this);
-        if (SDCardUtils.isAvailable()) {
-            _createSaveDir(SDCardUtils.getRootPath() + File.separator + "IjkPlayView");
-        }
     }
 
-    /**
-     * 截图
-     */
-    private void _doScreenshot() {
-        editVideo();
-        _showShareDialog(mVideoView.getScreenshot());
-    }
 
     /**
-     * 显示对话框
-     *
-     * @param bitmap
+     * 电量改变
      */
-    private void _showShareDialog(Bitmap bitmap) {
-        if (mShareDialog == null) {
-            mShareDialog = new ShareDialog();
-            mShareDialog.setClickListener(mInsideDialogClickListener);
-            mShareDialog.setDismissListener(mDialogDismissListener);
-            if (mDialogClickListener != null) {
-                mShareDialog.setShareMode(true);
-            }
-        }
-        mShareDialog.setScreenshotPhoto(bitmap);
-        mShareDialog.show(mAttachActivity.getSupportFragmentManager(), "share");
-    }
-
-    /**
-     * 设置截图分享监听
-     *
-     * @param dialogClickListener
-     * @return
-     */
-    public IjkPlayerView setDialogClickListener(ShareDialog.OnDialogClickListener dialogClickListener) {
-        mDialogClickListener = dialogClickListener;
-        if (mShareDialog != null) {
-            mShareDialog.setShareMode(true);
-        }
-        return this;
-    }
-
-    /**
-     * 创建目录
-     *
-     * @param path
-     */
-    private void _createSaveDir(String path) {
-        mSaveDir = new File(path);
-        if (!mSaveDir.exists()) {
-            mSaveDir.mkdirs();
-        } else if (!mSaveDir.isDirectory()) {
-            mSaveDir.delete();
-            mSaveDir.mkdirs();
-        }
-    }
-
-    /**
-     * 设置截图保存路径
-     *
-     * @param path
-     */
-    public IjkPlayerView setSaveDir(String path) {
-        _createSaveDir(path);
-        return this;
-    }
-
-    /**
-     * 接受电量改变广播
-     */
-    class BatteryBroadcastReceiver extends BroadcastReceiver {
-
-        // 低电量临界值
-        private static final int BATTERY_LOW_LEVEL = 15;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // 接收电量变化信息
-            if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
-                int level = intent.getIntExtra("level", 0);
-                int scale = intent.getIntExtra("scale", 100);
-                // 电量百分比
-                int curPower = level * 100 / scale;
-                int status = intent.getIntExtra("status", BatteryManager.BATTERY_HEALTH_UNKNOWN);
-                // SecondaryProgress 用来展示低电量，Progress 用来展示正常电量
-                if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-                    mPbBatteryLevel.setSecondaryProgress(0);
-                    mPbBatteryLevel.setProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_charging);
-                } else if (curPower < BATTERY_LOW_LEVEL) {
-                    mPbBatteryLevel.setProgress(0);
-                    mPbBatteryLevel.setSecondaryProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_red);
-                } else {
-                    mPbBatteryLevel.setSecondaryProgress(0);
-                    mPbBatteryLevel.setProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery);
-                }
-            }
+    public void setBatteryChanged(int status, int progress){
+        if (status == BatteryBroadcastReceiver.BATTERY_STATUS_SPA) {
+            mPbBatteryLevel.setSecondaryProgress(0);
+            mPbBatteryLevel.setProgress(progress);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_charging);
+        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_LOW) {
+            mPbBatteryLevel.setSecondaryProgress(progress);
+            mPbBatteryLevel.setProgress(0);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_red);
+        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_NOR){
+            mPbBatteryLevel.setSecondaryProgress(0);
+            mPbBatteryLevel.setProgress(progress);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery);
         }
     }
 
@@ -3689,34 +3219,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * 锁屏状态广播接收者
+     * 屏幕被锁定
      */
-    private class ScreenBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                mIsScreenLocked = true;
-            }
-        }
-    }
-
-    /**
-     * dip转px
-     * param context
-     * param dipValue
-     * return
-     */
-    public static int dip2px(Context context, float dipValue) {
-
-        return (int) TypedValue.applyDimension(1, dipValue
-                , context.getApplicationContext().getResources().getDisplayMetrics());
-    }
-
-    public static void hideKeyBoard(View view){
-        InputMethodManager imm =
-                (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) return;
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    public void onScreenLocked(){
+        mIsScreenLocked = true;
     }
 }

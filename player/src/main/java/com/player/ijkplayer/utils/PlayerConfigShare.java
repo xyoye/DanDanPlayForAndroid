@@ -2,6 +2,8 @@ package com.player.ijkplayer.utils;
 
 import android.content.Context;
 
+import com.player.subtitle.SubtitleView;
+
 /**
  * Created by YE on 2018/7/2.
  */
@@ -89,7 +91,7 @@ public class PlayerConfigShare {
 
     public int getSubtitleLanguageType(){
         int type = getShare().loadIntSharedPreference(Constants.SUBTITLE_LANGUAGE);
-        return type == 0 ? Constants.SUBTITLE_CHINESE : type;
+        return type == 0 ? SubtitleView.LANGUAGE_TYPE_CHINA : type;
     }
 
     public void setSubtitleLanguageType(int languageType){

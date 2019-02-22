@@ -14,14 +14,12 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.exoplayer.ExoPlayerView;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -199,13 +197,6 @@ public class PlayerExoActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(String text) {
         mPlayer.removeBlock(text);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(OpenSubtitleFileEvent event) {
-        new FileManagerDialog(this, videoPath, FileManagerDialog.SELECT_SUBTITLE, path ->
-                mPlayer.setSubtitleSource("", path)
-        ).show();
     }
 
     @Override

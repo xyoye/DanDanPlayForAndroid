@@ -412,10 +412,12 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
             }else {
                 String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
                 Intent intent;
-                if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
-                    intent = new Intent(FolderActivity.this, PlayerExoActivity.class);
-                else
-                    intent = new Intent(FolderActivity.this, PlayerActivity.class);
+                // TODO: 2019/2/22 播放器解耦未完成前，不使用exoplayer 
+//                if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
+//                    intent = new Intent(FolderActivity.this, PlayerExoActivity.class);
+//                else
+//                    intent = new Intent(FolderActivity.this, PlayerActivity.class);
+                intent = new Intent(FolderActivity.this, PlayerActivity.class);
                 intent.putExtra("title", title);
                 intent.putExtra("path", videoBean.getVideoPath());
                 intent.putExtra("danmu_path",videoBean.getDanmuPath());

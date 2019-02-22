@@ -10,7 +10,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -106,28 +105,21 @@ import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.Constants;
 import com.player.ijkplayer.utils.MotionEventUtils;
 import com.player.ijkplayer.utils.NavUtils;
-import com.player.ijkplayer.utils.OpenSubtitleFileEvent;
 import com.player.ijkplayer.utils.PlayerConfigShare;
-import com.player.ijkplayer.utils.SDCardUtils;
 import com.player.ijkplayer.utils.SoftInputUtils;
 import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.TrackAdapter;
 import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
-import com.player.ijkplayer.widgets.ShareDialog;
 import com.player.subtitle.SubtitleView;
 import com.player.subtitle.util.FatalParsingException;
 import com.player.subtitle.util.SubtitleFormat;
 import com.player.subtitle.util.TimedTextFileFormat;
 import com.player.subtitle.util.TimedTextObject;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -352,8 +344,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
         //设置-layout
         mPlayerSettingLL = findViewById(R.id.player_setting_ll);
-        mDanmuSettingLL = findViewById(R.id.danmu_setting_ll);
-        mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
+        //mDanmuSettingLL = findViewById(R.id.danmu_setting_ll);
+        //mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
         mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
 
         controlDispatcher = new DefaultControlDispatcher();
@@ -580,10 +572,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
             // don't forget release!
             mDanmakuView.release();
             mDanmakuView = null;
-        }
-        if (mShareDialog != null) {
-            mShareDialog.dismiss();
-            mShareDialog = null;
         }
         // 注销广播
         mAttachActivity.unregisterReceiver(mBatteryReceiver);
@@ -1086,9 +1074,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
             mEtDanmakuContent.setText("");
         } else if (id == R.id.input_options_more) {
             _toggleMoreColorOptions();
-        } else if (id == R.id.iv_screenshot) {
-            _doScreenshot();
-        } else if (id == R.id.tv_recover_screen) {
+        }else if (id == R.id.tv_recover_screen) {
             mIsNeedRecoverScreen = false;
             mTvRecoverScreen.setVisibility(GONE);
         }else if(id == R.id.player_settings_iv){
@@ -1139,15 +1125,15 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
             String blockText = mBlockInputEt.getText().toString().trim();
             addBlock(blockText);
         }else if (id == R.id.subtitle_change_source_tv){
-            EventBus.getDefault().post(new OpenSubtitleFileEvent());
+
         }else if (id == R.id.only_chinese_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE);
+            PlayerConfigShare.getInstance().setSubtitleLanguageType(SubtitleView.LANGUAGE_TYPE_CHINA);
             setSubtitleLanguageType();
         }else if (id == R.id.only_english_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_ENGLISH);
+            PlayerConfigShare.getInstance().setSubtitleLanguageType(SubtitleView.LANGUAGE_TYPE_ENGLISH);
             setSubtitleLanguageType();
         }else if (id == R.id.both_language_tv){
-            PlayerConfigShare.getInstance().setSubtitleLanguageType(Constants.SUBTITLE_CHINESE_ENGLISH);
+            PlayerConfigShare.getInstance().setSubtitleLanguageType(SubtitleView.LANGUAGE_TYPE_BOTH);
             setSubtitleLanguageType();
         }else if (id == R.id.encoding_utf_8){
             if (!"".equals(subtitlePath))
@@ -3034,13 +3020,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private void setSubtitleLanguageType(){
         int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
         switch (languageType){
-            case Constants.SUBTITLE_ENGLISH:
+            case SubtitleView.LANGUAGE_TYPE_ENGLISH:
                 onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 onlyUsShowTv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 mSubtitleView.setLanguage(SubtitleView.LANGUAGE_TYPE_ENGLISH);
                 break;
-            case Constants.SUBTITLE_CHINESE_ENGLISH:
+            case SubtitleView.LANGUAGE_TYPE_BOTH:
                 onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 onlyUsShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 bothLanguageTv.setBackgroundColor(Color.parseColor("#33ffffff"));
@@ -3357,37 +3343,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private ScreenBroadcastReceiver mScreenReceiver;
     // 判断是否出现锁屏,有则需要重新设置渲染器，不然视频会没有动画只有声音
     private boolean mIsScreenLocked = false;
-    // 截图分享弹框
-    private ShareDialog mShareDialog;
-    // 对话框点击监听，内部和外部
-    private ShareDialog.OnDialogClickListener mDialogClickListener;
-    private ShareDialog.OnDialogClickListener mInsideDialogClickListener = new ShareDialog.OnDialogClickListener() {
-        @Override
-        public void onShare(Bitmap bitmap, Uri uri) {
-            if (mDialogClickListener != null) {
-                mDialogClickListener.onShare(bitmap, contentUri);
-            }
-            File file = new File(mSaveDir, System.currentTimeMillis() + ".jpg");
-            try {
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                bos.flush();
-                bos.close();
-                Toast.makeText(mAttachActivity, "保存成功，路径为:" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Toast.makeText(mAttachActivity, "保存本地失败", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    };
-    private ShareDialog.OnDialogDismissListener mDialogDismissListener = new ShareDialog.OnDialogDismissListener() {
-        @Override
-        public void onDismiss() {
-            recoverFromEditVideo();
-        }
-    };
-    // 截图保存路径
-    private File mSaveDir;
 
     /**
      * 初始化电量、锁屏、时间处理
@@ -3401,76 +3356,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         //注册接受广播
         mAttachActivity.registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mAttachActivity.registerReceiver(mScreenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
-        mIvScreenshot = findViewById(R.id.iv_screenshot);
-        mIvScreenshot.setOnClickListener(this);
-        if (SDCardUtils.isAvailable()) {
-            _createSaveDir(SDCardUtils.getRootPath() + File.separator + "IjkPlayView");
-        }
-    }
-
-    /**
-     * 截图
-     */
-    private void _doScreenshot() {
-        editVideo();
-        _showShareDialog(mVideoView.getDrawingCache());
-    }
-
-    /**
-     * 显示对话框
-     *
-     * @param bitmap
-     */
-    private void _showShareDialog(Bitmap bitmap) {
-        if (mShareDialog == null) {
-            mShareDialog = new ShareDialog();
-            mShareDialog.setClickListener(mInsideDialogClickListener);
-            mShareDialog.setDismissListener(mDialogDismissListener);
-            if (mDialogClickListener != null) {
-                mShareDialog.setShareMode(true);
-            }
-        }
-        mShareDialog.setScreenshotPhoto(bitmap);
-        mShareDialog.show(mAttachActivity.getSupportFragmentManager(), "share");
-    }
-
-    /**
-     * 设置截图分享监听
-     *
-     * @param dialogClickListener
-     * @return
-     */
-    public ExoPlayerView setDialogClickListener(ShareDialog.OnDialogClickListener dialogClickListener) {
-        mDialogClickListener = dialogClickListener;
-        if (mShareDialog != null) {
-            mShareDialog.setShareMode(true);
-        }
-        return this;
-    }
-
-    /**
-     * 创建目录
-     *
-     * @param path
-     */
-    private void _createSaveDir(String path) {
-        mSaveDir = new File(path);
-        if (!mSaveDir.exists()) {
-            mSaveDir.mkdirs();
-        } else if (!mSaveDir.isDirectory()) {
-            mSaveDir.delete();
-            mSaveDir.mkdirs();
-        }
-    }
-
-    /**
-     * 设置截图保存路径
-     *
-     * @param path
-     */
-    public ExoPlayerView setSaveDir(String path) {
-        _createSaveDir(path);
-        return this;
     }
 
     /**

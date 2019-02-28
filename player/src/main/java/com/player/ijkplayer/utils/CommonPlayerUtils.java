@@ -1,5 +1,10 @@
 package com.player.ijkplayer.utils;
 
+import android.widget.Toast;
+
+import com.blankj.utilcode.util.ToastUtils;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -7,9 +12,9 @@ import java.util.Date;
  * Created by long on 2016/10/18.
  */
 
-public final class StringUtils {
+public final class CommonPlayerUtils {
 
-    private StringUtils() {
+    private CommonPlayerUtils() {
         throw new AssertionError();
     }
 
@@ -49,5 +54,34 @@ public final class StringUtils {
     public static String getCurFormatTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(new Date(System.currentTimeMillis()));
+    }
+
+
+    /**
+     * 解析视频同名字幕
+     */
+    public static String getSubtitlePath(String filePath){
+        //可加载的字幕格式
+        String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
+        if (filePath == null || "".equals(filePath)){
+            ToastUtils.showShort("获取视频路径失败");
+            return "";
+        }
+        //获取可用的同名字幕文件
+        String fileNamePath = "";
+        String path = "";
+        if (filePath.contains(".")){
+            int lastDot = filePath.lastIndexOf(".");
+            fileNamePath = filePath.substring(0, lastDot);
+        }
+        for (String anExtArray : extArray) {
+            String tempPath = fileNamePath + "." +anExtArray;
+            File tempFile = new File(tempPath);
+            if (tempFile.exists()) {
+                path = tempPath;
+                break;
+            }
+        }
+        return path;
     }
 }

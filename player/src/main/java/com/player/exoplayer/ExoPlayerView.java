@@ -343,7 +343,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuSettings = findViewById(R.id.danmu_settings_tv);
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
         //设置-layout
-        mPlayerSettingLL = findViewById(R.id.player_setting_ll);
+        //mPlayerSettingLL = findViewById(R.id.player_setting_ll);
         //mDanmuSettingLL = findViewById(R.id.danmu_setting_ll);
         //mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
         mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);

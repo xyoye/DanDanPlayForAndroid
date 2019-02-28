@@ -2368,8 +2368,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             if (isOpenCloudFilter)
                 changeCloudFilter(true);
             mDanmakuContext.preventOverlapping(overlappingEnablePair); //设置防弹幕重叠，null为允许重叠
-            //同步弹幕和video，貌似没法保持同步，可能我用的有问题，先注释掉- -
-//            mDanmakuContext.setDanmakuSync(new VideoDanmakuSync(this));
             //自己的设
             if (mDanmakuParser == null) {
                 mDanmakuParser = new BaseDanmakuParser() {
@@ -2382,7 +2380,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuView.setCallback(new DrawHandler.Callback() {
                 @Override
                 public void prepared() {
-                    // 这里处理下有时调用 _resumeDanmaku() 时弹幕还没 prepared 的情况
                     if (mVideoView.isPlaying() && !mIsBufferingStart) {
                         mDanmakuView.start();
                     }
@@ -2439,7 +2436,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         }
         try {
             mDanmakuLoader.load(stream);
-        } catch (IllegalDataException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         IDataSource<?> dataSource = mDanmakuLoader.getDataSource();

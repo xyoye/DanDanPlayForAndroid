@@ -58,6 +58,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.exoplayer2.C;
@@ -101,7 +103,9 @@ import com.player.ijkplayer.database.DataBaseHelper;
 import com.player.ijkplayer.database.DataBaseInfo;
 import com.player.ijkplayer.database.DataBaseManager;
 import com.player.ijkplayer.media.VideoInfoTrack;
+import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.utils.AnimHelper;
+import com.player.ijkplayer.utils.CommonPlayerUtils;
 import com.player.ijkplayer.utils.Constants;
 import com.player.ijkplayer.utils.MotionEventUtils;
 import com.player.ijkplayer.utils.NavUtils;
@@ -112,6 +116,9 @@ import com.player.ijkplayer.utils.TrackAdapter;
 import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
+import com.player.ijkplayer.widgets.SettingDanmuView;
+import com.player.ijkplayer.widgets.SettingSubtitleView;
+import com.player.ijkplayer.widgets.SettingVideoView;
 import com.player.subtitle.SubtitleView;
 import com.player.subtitle.util.FatalParsingException;
 import com.player.subtitle.util.SubtitleFormat;
@@ -195,11 +202,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private ImageView mIvPlayerLock;
     // 还原屏幕
     private TextView mTvRecoverScreen;
-    //----------------设置start------------
-    //比例、弹幕、字幕、速度
-    private RadioGroup mAspectRatioOptions;
-    private LinearLayout mDanmuSettingLL;
-    private LinearLayout mSubtitleSettingLL;
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
@@ -287,6 +289,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     // 选项列表高度
     private int mAspectOptionsHeight;
 
+    //字幕设置
+    private SettingSubtitleView mSettingSubtitleView;
+    //弹幕设置
+    private SettingDanmuView mSettingDanmuView;
+    //视频设置
+    private SettingVideoView mSettingVideoView;
+
     private DefaultControlDispatcher controlDispatcher;
 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
@@ -343,28 +352,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuSettings = findViewById(R.id.danmu_settings_tv);
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
         //设置-layout
-        //mPlayerSettingLL = findViewById(R.id.player_setting_ll);
-        //mDanmuSettingLL = findViewById(R.id.danmu_setting_ll);
-        //mSubtitleSettingLL = findViewById(R.id.subtitle_setting_ll);
-        mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
+        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
+        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
+        mSettingVideoView = findViewById(R.id.video_setting_view);
 
         controlDispatcher = new DefaultControlDispatcher();
         mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
-        mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.aspect_fit_parent) {
-                    mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                } else if (checkedId == R.id.aspect_fit_screen) {
-                    mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-                } else if (checkedId == R.id.aspect_16_and_9) {
-                    mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
-                } else if (checkedId == R.id.aspect_4_and_3) {
-                    mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
-                }
-                AnimHelper.doClipViewHeight(mAspectRatioOptions, mAspectOptionsHeight, 0, 150);
-            }
-        });
+
         _initVideoSkip();
         _initReceiver();
         _initSubtitle();
@@ -384,24 +378,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                 _showDanmuSetting(false);
                 _showSubtitleSetting(false);
                 return false;
-            }
-        });
-        mPlayerSettingLL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        mDanmuSettingLL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        mSubtitleSettingLL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
             }
         });
     }
@@ -573,9 +549,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
             mDanmakuView.release();
             mDanmakuView = null;
         }
-        // 注销广播
-        mAttachActivity.unregisterReceiver(mBatteryReceiver);
-        mAttachActivity.unregisterReceiver(mScreenReceiver);
         // 关闭屏幕常亮
         mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         return curPosition;
@@ -963,31 +936,15 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * 切换视频分辨率控制
-     */
-//    private void _toggleMediaQuality() {
-//        if (mFlMediaQuality.getVisibility() == GONE) {
-//            mFlMediaQuality.setVisibility(VISIBLE);
-//        }
-//        if (mIsShowQuality) {
-//            ViewCompat.animate(mFlMediaQuality).translationX(mFlMediaQuality.getWidth()).setDuration(DEFAULT_QUALITY_TIME);
-//            mIsShowQuality = false;
-//        } else {
-//            ViewCompat.animate(mFlMediaQuality).translationX(0).setDuration(DEFAULT_QUALITY_TIME);
-//            mIsShowQuality = true;
-//        }
-//    }
-
-    /**
      * 显示设置列表
      */
     private void _showPlayerSetting(boolean isShow) {
         if (isShow) {
             _hideAllView(true);
-            mPlayerSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mPlayerSettingLL, dip2px(getContext(), 300), 0, 600);
+            mSettingVideoView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingVideoView, ConvertUtils.dp2px(300), 0, 600);
         } else {
-            mPlayerSettingLL.setVisibility(GONE);
+            mSettingVideoView.setVisibility(GONE);
         }
     }
 
@@ -997,10 +954,10 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private void _showDanmuSetting(boolean isShow){
         if (isShow) {
             _hideAllView(true);
-            mDanmuSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mDanmuSettingLL, dip2px(getContext(), 300), 0, 600);
+            mSettingDanmuView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingDanmuView, ConvertUtils.dp2px(300), 0, 600);
         } else {
-            mDanmuSettingLL.setVisibility(GONE);
+            mSettingDanmuView.setVisibility(GONE);
         }
     }
 
@@ -1010,10 +967,10 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private void _showSubtitleSetting(boolean isShow){
         if (isShow) {
             _hideAllView(true);
-            mSubtitleSettingLL.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSubtitleSettingLL, dip2px(getContext(), 300), 0, 600);
+            mSettingSubtitleView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingSubtitleView, ConvertUtils.dp2px(300), 0, 600);
         } else {
-            mSubtitleSettingLL.setVisibility(GONE);
+            mSettingSubtitleView.setVisibility(GONE);
         }
     }
 
@@ -2094,7 +2051,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private ImageView mIvDoSend;
     //弹幕设置
     private ImageView mPlayerSetting;
-    private LinearLayout mPlayerSettingLL;
     private TextView mDanmuSettings;
     private ImageView mSubtitleSettings;
 
@@ -2693,7 +2649,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         }else {
             Toast.makeText(getContext(), "添加屏蔽成功", Toast.LENGTH_LONG).show();
             mBlockInputEt.setText("");
-            hideKeyBoard(mBlockInputEt);
+            KeyboardUtils.hideSoftInput(mBlockInputEt);
             //添加到显示界面
             blockList.add(blockText);
             blockAdapter.notifyDataSetChanged();
@@ -2922,11 +2878,11 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
 
         subtitleCnSB.setMax(100);
-        subtitleChineseSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
+        subtitleChineseSize = (float) subtitleEnglishProgress / 100 * ConvertUtils.dp2px( 18);
         subtitleCnSizeTv.setText(subtitleChineseProgress + "%");
         subtitleCnSB.setProgress(subtitleChineseProgress);
         subtitleUSSB.setMax(100);
-        subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * dip2px(getContext(), 18);
+        subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * ConvertUtils.dp2px(18);
         subtitleUSSizeTv.setText(subtitleEnglishProgress + "%");
         subtitleUSSB.setProgress(subtitleEnglishProgress);
         mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
@@ -2970,7 +2926,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                 int progress = seekBar.getProgress();
                 if (progress == 0 ) progress = 1;
                 float calcProgress = (float) progress;
-                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
+                float textSize = (calcProgress/100) * ConvertUtils.dp2px( 18);
                 mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,textSize);
                 PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
             }
@@ -2992,7 +2948,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                 int progress = seekBar.getProgress();
                 if (progress == 0 ) progress = 1;
                 float calcProgress = (float) progress;
-                float textSize = (calcProgress/100) * dip2px(getContext(), 18);
+                float textSize = (calcProgress/100) * ConvertUtils.dp2px(18);
                 mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
                 PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
             }
@@ -3335,12 +3291,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     private ProgressBar mPbBatteryLevel;
     // 系统时间显示
     private TextView mTvSystemTime;
-    // 截图按钮
-    private ImageView mIvScreenshot;
-    // 电量变化广播接收器
-    private BatteryBroadcastReceiver mBatteryReceiver;
-    // 锁屏状态广播接收器
-    private ScreenBroadcastReceiver mScreenReceiver;
     // 判断是否出现锁屏,有则需要重新设置渲染器，不然视频会没有动画只有声音
     private boolean mIsScreenLocked = false;
 
@@ -3351,47 +3301,24 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         mPbBatteryLevel = findViewById(R.id.pb_battery);
         mTvSystemTime = findViewById(R.id.tv_system_time);
         mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
-        mBatteryReceiver = new BatteryBroadcastReceiver();
-        mScreenReceiver = new ScreenBroadcastReceiver();
-        //注册接受广播
-        mAttachActivity.registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        mAttachActivity.registerReceiver(mScreenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     /**
-     * 接受电量改变广播
+     * 电量改变
      */
-    class BatteryBroadcastReceiver extends BroadcastReceiver {
-
-        // 低电量临界值
-        private static final int BATTERY_LOW_LEVEL = 15;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null || intent.getAction() == null)
-                return;
-            // 接收电量变化信息
-            if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
-                int level = intent.getIntExtra("level", 0);
-                int scale = intent.getIntExtra("scale", 100);
-                // 电量百分比
-                int curPower = level * 100 / scale;
-                int status = intent.getIntExtra("status", BatteryManager.BATTERY_HEALTH_UNKNOWN);
-                // SecondaryProgress 用来展示低电量，Progress 用来展示正常电量
-                if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-                    mPbBatteryLevel.setSecondaryProgress(0);
-                    mPbBatteryLevel.setProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_charging);
-                } else if (curPower < BATTERY_LOW_LEVEL) {
-                    mPbBatteryLevel.setProgress(0);
-                    mPbBatteryLevel.setSecondaryProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_red);
-                } else {
-                    mPbBatteryLevel.setSecondaryProgress(0);
-                    mPbBatteryLevel.setProgress(curPower);
-                    mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery);
-                }
-            }
+    public void setBatteryChanged(int status, int progress){
+        if (status == BatteryBroadcastReceiver.BATTERY_STATUS_SPA) {
+            mPbBatteryLevel.setSecondaryProgress(0);
+            mPbBatteryLevel.setProgress(progress);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_charging);
+        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_LOW) {
+            mPbBatteryLevel.setSecondaryProgress(progress);
+            mPbBatteryLevel.setProgress(0);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_red);
+        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_NOR){
+            mPbBatteryLevel.setSecondaryProgress(0);
+            mPbBatteryLevel.setProgress(progress);
+            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery);
         }
     }
 
@@ -3404,35 +3331,10 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * 锁屏状态广播接收者
+     * 屏幕被锁定
      */
-    private class ScreenBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                mIsScreenLocked = true;
-            }
-        }
-    }
-
-    /**
-     * dip转px
-     * param context
-     * param dipValue
-     * return
-     */
-    public static int dip2px(Context context, float dipValue) {
-
-        return (int) TypedValue.applyDimension(1, dipValue
-                , context.getApplicationContext().getResources().getDisplayMetrics());
-    }
-
-    public static void hideKeyBoard(View view){
-        InputMethodManager imm =
-                (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm == null) return;
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    public void onScreenLocked(){
+        mIsScreenLocked = true;
     }
 
     //视频是否正在播放

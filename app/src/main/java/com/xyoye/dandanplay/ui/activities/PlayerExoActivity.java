@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +16,17 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.exoplayer.ExoPlayerView;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
+import com.player.ijkplayer.media.IjkPlayerView;
+import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
+import com.player.ijkplayer.receiver.PlayerReceiverListener;
+import com.player.ijkplayer.receiver.ScreenBroadcastReceiver;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -40,7 +47,7 @@ import java.math.BigDecimal;
  */
 
 
-public class PlayerExoActivity extends AppCompatActivity {
+public class PlayerExoActivity extends AppCompatActivity implements PlayerReceiverListener {
     private static final int SELECT_DANMU = 102;
 
     ExoPlayerView mPlayer;
@@ -51,12 +58,20 @@ public class PlayerExoActivity extends AppCompatActivity {
     private int currentPosition;
     private int episodeId;
 
+    private BatteryBroadcastReceiver batteryReceiver;
+    private ScreenBroadcastReceiver screenReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         mPlayer = new ExoPlayerView(this);
         setContentView(mPlayer);
+
+        batteryReceiver = new BatteryBroadcastReceiver(this);
+        screenReceiver = new ScreenBroadcastReceiver(this);
+        PlayerExoActivity.this.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        PlayerExoActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             //外部打开
@@ -122,6 +137,7 @@ public class PlayerExoActivity extends AppCompatActivity {
             mPlayer.setSkipTip(currentPosition);
         }
         mPlayer.init()
+                .enableOrientation()
                 .alwaysFullScreen()
                 .setCloudFilterData(IApplication.cloudFilterList)
                 .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
@@ -130,6 +146,16 @@ public class PlayerExoActivity extends AppCompatActivity {
                 .setDanmakuSource(inputStream)
                 .showOrHideDanmaku(true)
                 .setTitle(videoTitle)
+                .setOnInfoListener((mp, what, extra) -> {
+                    if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
+                        new FileManagerDialog(PlayerExoActivity.this,
+                                videoPath,
+                                FileManagerDialog.SELECT_SUBTITLE,
+                                path -> mPlayer.setSubtitlePath(path)
+                        ).show();
+                    }
+                    return true;
+                })
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
@@ -218,6 +244,8 @@ public class PlayerExoActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
         saveCurrent(mPlayer.getCurPosition());
         mPlayer.onDestroy();
+        this.unregisterReceiver(batteryReceiver);
+        this.unregisterReceiver(screenReceiver);
         super.onDestroy();
     }
 
@@ -248,6 +276,12 @@ public class PlayerExoActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mPlayer.configurationChanged(newConfig);
+    }
+
     //保存进度
     private void saveCurrent(long currentPosition) {
         SaveCurrentEvent event = new SaveCurrentEvent();
@@ -255,5 +289,15 @@ public class PlayerExoActivity extends AppCompatActivity {
         event.setFolderPath(FileUtils.getDirName(videoPath));
         event.setVideoPath(videoPath);
         EventBus.getDefault().post(event);
+    }
+
+    @Override
+    public void onBatteryChanged(int status, int progress) {
+        mPlayer.setBatteryChanged(status, progress);
+    }
+
+    @Override
+    public void onScreenLocked() {
+        mPlayer.onScreenLocked();
     }
 }

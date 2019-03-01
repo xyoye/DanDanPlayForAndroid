@@ -42,7 +42,6 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
     private SettingVideoListener listener;
-    private int mAspectOptionsHeight;
 
     public SettingVideoView(Context context) {
         this(context, null);
@@ -66,8 +65,6 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         subtitleRl = this.findViewById(R.id.subtitle_track_ll);
         mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
 
-
-        mAspectOptionsHeight = getResources().getDimensionPixelSize(R.dimen.aspect_btn_size) * 4;
         mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -80,7 +77,6 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
                 } else if (checkedId == R.id.aspect_4_and_3) {
                     listener.setAspectRatio(IRenderView.AR_4_3_FIT_PARENT);
                 }
-                AnimHelper.doClipViewHeight(mAspectRatioOptions, mAspectOptionsHeight, 0, 150);
             }
         });
 
@@ -132,6 +128,10 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         subtitleAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                //ijk播放器不提供字幕流管理
+                if (subtitleTrackList.size() == 1 && subtitleTrackList.get(0).getStream() == -1)
+                    return;
+
                 for (int i = 0; i < subtitleTrackList.size(); i++) {
                     if (i == position)continue;
                     listener.deselectTrack(subtitleTrackList.get(i).getStream());

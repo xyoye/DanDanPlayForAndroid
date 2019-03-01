@@ -389,36 +389,27 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
                 ITrackInfo[] info = mVideoView.getTrackInfo();
                 if (info != null){
                     int selectAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-                    int selectSubtitleTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT);
                     int audioN = 1;
-                    int subtitleN = 1;
                     for (int i = 0; i < info.length; i++) {
-                        if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO){
+                        if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
                             VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
                             String name = TextUtils.isEmpty(info[i].getTitle())
                                     ? (TextUtils.isEmpty(info[i].getLanguage())
-                                        ? "UND"
-                                        : info[i].getLanguage())
+                                    ? "UND"
+                                    : info[i].getLanguage())
                                     : info[i].getTitle();
-                            videoInfoTrack.setName("音频流#"+audioN+"（"+name+"）");
+                            videoInfoTrack.setName("音频流#" + audioN + "（" + name + "）");
                             videoInfoTrack.setStream(i);
                             if (i == selectAudioTrack) videoInfoTrack.setSelect(true);
-                            audioN ++;
+                            audioN++;
                             audioTrackList.add(videoInfoTrack);
-                        }else if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT){
-                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            String name = TextUtils.isEmpty(info[i].getTitle())
-                                    ? (TextUtils.isEmpty(info[i].getLanguage())
-                                        ? "UND"
-                                        : info[i].getLanguage())
-                                    : info[i].getTitle();
-                            videoInfoTrack.setName("字幕流#"+subtitleN+"（"+name+"）");
-                            videoInfoTrack.setStream(i);
-                            if (i == selectSubtitleTrack) videoInfoTrack.setSelect(true);
-                            subtitleN ++;
-                            subtitleTrackList.add(videoInfoTrack);
                         }
                     }
+                    VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                    videoInfoTrack.setName("IJK播放器不支持字幕流管理");
+                    videoInfoTrack.setStream(-1);
+                    videoInfoTrack.setSelect(true);
+                    subtitleTrackList.add(videoInfoTrack);
                     mSettingVideoView.setSubtitleTrackList(subtitleTrackList);
                     mSettingVideoView.setVideoTrackList(audioTrackList);
                 }

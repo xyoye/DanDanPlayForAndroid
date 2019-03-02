@@ -320,6 +320,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mDanmuSettings = findViewById(R.id.danmu_settings_tv);
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
 
+        mSettingVideoView = findViewById(R.id.video_setting_view);
+        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
+        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
+
         _initMediaQuality();
         _initVideoSkip();
         _initReceiver();
@@ -482,7 +486,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         // 记录播放进度
         int curPosition = mVideoView.getCurrentPosition();
         mVideoView.destroy();
-        IjkMediaPlayer.native_profileEnd();
         if (mDanmakuView != null) {
             // don't forget release!
             mDanmakuView.release();
@@ -676,7 +679,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mIvPlay.setSelected(false);
         if (mVideoView.isPlaying()) {
             mVideoView.pause();
-            mIvPlayCircle.setVisibility(VISIBLE);
+            //暂停时的按钮
+            //mIvPlayCircle.setVisibility(VISIBLE);
         }
         if (isLoadSubtitle) mSubtitleView.pause();
         _pauseDanmaku();
@@ -826,7 +830,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     private void _setControlBarVisible(boolean isShowBar) {
         if (mIsNeverPlay) {
-            mIvPlayCircle.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
+            //mIvPlayCircle.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
         } else if (mIsForbidTouch) {
             mIvPlayerLock.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
         } else {
@@ -2122,7 +2126,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     private void _initDanmaku() {
-        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
         // 弹幕控制
         mDanmakuView = findViewById(R.id.sv_danmaku);
         mIvDanmakuControl = findViewById(R.id.iv_danmaku_control);
@@ -2743,7 +2746,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     public void _initSubtitle(){
         //字幕相关
         mSubtitleView = findViewById(R.id.subtitle_view);
-        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
 
         int subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
         int subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
@@ -2881,7 +2883,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private SettingVideoView mSettingVideoView;
 
     public void _initVideoSetting(){
-        mSettingVideoView = findViewById(R.id.video_setting_view);
         mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
                     @Override
                     public void selectTrack(int streamId, String language, boolean isAudio) {

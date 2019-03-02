@@ -38,6 +38,7 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     private TrackAdapter audioAdapter;
     private TrackAdapter subtitleAdapter;
     private RadioGroup mAspectRatioOptions;
+    private boolean isExoPlayer = false;
 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
@@ -109,17 +110,29 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         audioAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                for (int i = 0; i < audioTrackList.size(); i++) {
-                    if (i == position)continue;
-                    listener.deselectTrack(audioTrackList.get(i).getStream());
-                    audioTrackList.get(i).setSelect(false);
-                }
-                if (audioTrackList.get(position).isSelect()){
-                    listener.deselectTrack(audioTrackList.get(position).getStream());
-                    audioTrackList.get(position).setSelect(false);
+                if (isExoPlayer){
+                    for (int i = 0; i < audioTrackList.size(); i++) {
+                        if (i == position)
+                            audioTrackList.get(i).setSelect(true);
+                        else
+                            audioTrackList.get(i).setSelect(false);
+                    }
+                    listener.selectTrack(-1, audioTrackList.get(position).getLanguage(), true);
                 }else {
-                    listener.selectTrack(audioTrackList.get(position).getStream());
-                    audioTrackList.get(position).setSelect(true);
+                    //deselectAll except position
+                    for (int i = 0; i < audioTrackList.size(); i++) {
+                        if (i == position)continue;
+                        listener.deselectTrack(audioTrackList.get(i).getStream(), audioTrackList.get(i).getLanguage(), true);
+                        audioTrackList.get(i).setSelect(false);
+                    }
+                    //select or deselect position
+                    if (audioTrackList.get(position).isSelect()){
+                        listener.deselectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                        audioTrackList.get(position).setSelect(false);
+                    }else {
+                        listener.selectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                        audioTrackList.get(position).setSelect(true);
+                    }
                 }
                 audioAdapter.notifyDataSetChanged();
             }
@@ -128,23 +141,30 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         subtitleAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                //ijk播放器不提供字幕流管理
-                if (subtitleTrackList.size() == 1 && subtitleTrackList.get(0).getStream() == -1)
-                    return;
+                //ijk播放器暂不提供字幕流管理
+                if (isExoPlayer){
+                    for (int i = 0; i < subtitleTrackList.size(); i++) {
+                        if (i == position)
+                            subtitleTrackList.get(i).setSelect(true);
+                        else
+                            subtitleTrackList.get(i).setSelect(false);
+                    }
+                    listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
+                    subtitleAdapter.notifyDataSetChanged();
+                }
 
-                for (int i = 0; i < subtitleTrackList.size(); i++) {
-                    if (i == position)continue;
-                    listener.deselectTrack(subtitleTrackList.get(i).getStream());
-                    subtitleTrackList.get(i).setSelect(false);
-                }
-                if (subtitleTrackList.get(position).isSelect()){
-                    listener.deselectTrack(subtitleTrackList.get(position).getStream());
-                    subtitleTrackList.get(position).setSelect(false);
-                }else {
-                    listener.selectTrack(subtitleTrackList.get(position).getStream());
-                    subtitleTrackList.get(position).setSelect(true);
-                }
-                subtitleAdapter.notifyDataSetChanged();
+//                for (int i = 0; i < subtitleTrackList.size(); i++) {
+//                    if (i == position)continue;
+//                    listener.deselectTrack(subtitleTrackList.get(i).getStream(), subtitleTrackList.get(i).getLanguage(), false);
+//                    subtitleTrackList.get(i).setSelect(false);
+
+//                if (subtitleTrackList.get(position).isSelect()){
+//                    listener.deselectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), false);
+//                    subtitleTrackList.get(position).setSelect(false);
+//                }else {
+//                    listener.selectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), false);
+//                    subtitleTrackList.get(position).setSelect(true);
+//                }
             }
         });
 
@@ -184,6 +204,11 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
 
     public SettingVideoView setSettingListener(SettingVideoListener listener){
         this.listener = listener;
+        return this;
+    }
+
+    public SettingVideoView setExoPlayerType(){
+        this.isExoPlayer = true;
         return this;
     }
 
@@ -259,8 +284,8 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     }
 
     public interface SettingVideoListener{
-        void selectTrack(int streamId);
-        void deselectTrack(int streamId);
+        void selectTrack(int streamId, String language, boolean isAudio);
+        void deselectTrack(int streamId, String language, boolean isAudio);
         void setSpeed(float speed);
         void setAspectRatio(int type);
     }

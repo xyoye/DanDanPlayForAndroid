@@ -335,7 +335,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 String danmuPath = data.getStringExtra("path");
                 int episodeId = data.getIntExtra("episode_id", 0);
                 int position = data.getIntExtra("position", -1);
-                if (position < 0 || position > videoList.size()) return;
+                if (position < 0 || position > videoList.size() || videoList.size() == 0) return;
 
                 String videoPath = videoList.get(position).getVideoPath();
                 presenter.updateDanmu(danmuPath, episodeId, new String[]{folderPath, videoPath});

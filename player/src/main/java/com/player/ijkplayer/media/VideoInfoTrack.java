@@ -8,6 +8,7 @@ public class VideoInfoTrack {
     private int stream;
     private String name;
     private boolean isSelect;
+    private String language;
 
     public VideoInfoTrack() {
     }
@@ -40,5 +41,13 @@ public class VideoInfoTrack {
 
     public void setSelect(boolean select) {
         isSelect = select;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

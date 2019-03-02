@@ -97,31 +97,33 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
     @SuppressLint("CheckResult")
     @Override
     public void authLan(LanDeviceBean deviceBean, int position, boolean isAdd){
-        Observable.create((ObservableOnSubscribe<LanDeviceBean>) emitter -> {
-            try {
-                NtlmPasswordAuthenticator auth = new NtlmPasswordAuthenticator(deviceBean.getDomain(), deviceBean.getAccount(), deviceBean.getPassword());
-                context = SingletonContext.getInstance().withCredentials(auth);
-                Address address = context.getNameServiceClient().getByName(deviceBean.getIp());
-                context.getTransportPool().logon(context, address);
-                SmbFile smbFile = new SmbFile("smb://"+deviceBean.getIp(), context);
-                smbFile.listFiles();
-                if (isAdd){
-                    //为新增设备添加设备名
+        Observable
+                .create((ObservableOnSubscribe<LanDeviceBean>) emitter -> {
                     try {
-                        Address nameAddress = SingletonContext.getInstance().getNameServiceClient().getByName(deviceBean.getIp());
-                        nameAddress.firstCalledName();
-                        deviceBean.setDeviceName(nameAddress.nextCalledName(SingletonContext.getInstance()));
-                    }catch (UnknownHostException e){
-                        deviceBean.setDeviceName("UnKnow");
+                        NtlmPasswordAuthenticator auth = new NtlmPasswordAuthenticator(deviceBean.getDomain(), deviceBean.getAccount(), deviceBean.getPassword());
+                        context = SingletonContext.getInstance().withCredentials(auth);
+                        Address address = context.getNameServiceClient().getByName(deviceBean.getIp());
+                        context.getTransportPool().logon(context, address);
+                        SmbFile smbFile = new SmbFile("smb://"+deviceBean.getIp(), context);
+                        smbFile.listFiles();
+                        if (isAdd){
+                            //为新增设备添加设备名
+                            try {
+                                Address nameAddress = SingletonContext.getInstance().getNameServiceClient().getByName(deviceBean.getIp());
+                                nameAddress.firstCalledName();
+                                deviceBean.setDeviceName(nameAddress.nextCalledName(SingletonContext.getInstance()));
+                            }catch (UnknownHostException e){
+                                deviceBean.setDeviceName("UnKnow");
+                            }
+                        }
+                        emitter.onNext(deviceBean);
+                    } catch (SmbException e) {
+                        getView().showError("登陆设备失败：请检查账号密码或防火墙："+SmbException.getMessageByCode(e.getNtStatus()));
+                        e.printStackTrace();
                     }
-                }
-                emitter.onNext(deviceBean);
-            } catch (SmbException e) {
-                getView().showError("登陆设备失败："+SmbException.getMessageByCode(e.getNtStatus()));
-                e.printStackTrace();
-            }
-            emitter.onComplete();
-        }).subscribeOn(Schedulers.newThread())
+                    emitter.onComplete();
+                })
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(deviceBean1 -> {
                     if (!isAdd){

@@ -264,6 +264,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     private Matrix mSaveMatrix = new Matrix();
     // 是否需要显示恢复屏幕按钮
     private boolean mIsNeedRecoverScreen = false;
+    private String videoPath;
 
     //渲染器
     private boolean mUsingSurfaceRenders = true;
@@ -552,6 +553,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * @return
      */
     public IjkPlayerView setVideoPath(String url) {
+        videoPath = url;
         return setVideoPath(Uri.parse(url));
     }
 
@@ -648,7 +650,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
             // 放这边装载弹幕，不然会莫名其妙出现多切几次到首页会弹幕自动播放问题，这里处理下
             _loadDanmaku();
             //加载字幕
-            subtitlePath = CommonPlayerUtils.getSubtitlePath(mVideoView.getUri().getPath());
+            subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
             if (!StringUtils.isEmpty(subtitlePath)){
                 setSubtitleSource("utf-8");
                 mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
@@ -2882,13 +2884,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
         mSettingVideoView = findViewById(R.id.video_setting_view);
         mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
                     @Override
-                    public void selectTrack(int streamId) {
+                    public void selectTrack(int streamId, String language, boolean isAudio) {
                         mVideoView.selectTrack(streamId);
                         mVideoView.seekTo(mVideoView.getCurrentPosition());
                     }
 
                     @Override
-                    public void deselectTrack(int streamId) {
+                    public void deselectTrack(int streamId, String language, boolean isAudio) {
                         mVideoView.deselectTrack(streamId);
                     }
 

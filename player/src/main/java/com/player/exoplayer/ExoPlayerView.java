@@ -63,6 +63,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -194,7 +195,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
-    private Uri contentUri;
+    private String videoPath;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -278,6 +279,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
 
     private DefaultControlDispatcher controlDispatcher;
 
+    private DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
     private List<String> blockList = new ArrayList<>();
@@ -301,7 +304,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         } else {
             throw new IllegalArgumentException("Context must be AppCompatActivity");
         }
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(mAttachActivity);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
         View.inflate(context, R.layout.layout_exo_player_view, this);
         mVideoView = findViewById(R.id.exo_player_view);
         mVideoView.setUseController(false);
@@ -430,8 +433,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                                 for (int j = 0; j < trackGroup.length; j++){
                                     Format format = trackGroup.getFormat(j);
                                     VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                                    videoInfoTrack.setName("音频流#"+audioN+"（"+format.label+"）");
+                                    videoInfoTrack.setName("音频流#"+audioN+"（"+format.language+"）");
                                     videoInfoTrack.setStream(i);
+                                    videoInfoTrack.setLanguage(format.language);
                                     if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
                                         videoInfoTrack.setSelect(true);
                                     audioN ++;
@@ -441,8 +445,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                                 for (int j = 0; j < trackGroup.length; j++) {
                                     Format format = trackGroup.getFormat(j);
                                     VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                                    videoInfoTrack.setName("字幕流#"+subtitleN+"（"+format.label+"）");
+                                    videoInfoTrack.setName("字幕流#"+subtitleN+"（"+format.language+"）");
                                     videoInfoTrack.setStream(i);
+                                    videoInfoTrack.setLanguage(format.language);
                                     if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
                                         videoInfoTrack.setSelect(true);
                                     subtitleN ++;
@@ -580,6 +585,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      * 设置播放资源
      */
     public ExoPlayerView setVideoPath(String url) {
+        videoPath = url;
         return setVideoPath(Uri.parse(url));
     }
 
@@ -587,7 +593,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      * 设置播放资源
      */
     public ExoPlayerView setVideoPath(Uri uri) {
-        contentUri = uri;
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mAttachActivity, Util.getUserAgent(mAttachActivity, "com.xyoye.dandanplay.player"));
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
         exoPlayer.prepare(videoSource);
@@ -670,7 +675,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
             // 放这边装载弹幕，不然会莫名其妙出现多切几次到首页会弹幕自动播放问题，这里处理下
             _loadDanmaku();
             //加载字幕
-            subtitlePath = CommonPlayerUtils.getSubtitlePath(contentUri.getPath());
+            subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
             if (!StringUtils.isEmpty(subtitlePath)){
                 setSubtitleSource("utf-8");
                 mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
@@ -2769,14 +2774,19 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         mSettingVideoView = findViewById(R.id.video_setting_view);
         mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
             @Override
-            public void selectTrack(int streamId) {
-//                mVideoView.selectTrack(streamId);
-//                mVideoView.seekTo(mVideoView.getCurrentPosition());
+            public void selectTrack(int streamId, String language, boolean isAudio) {
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
+                if (isAudio){
+                    parametersBuilder.setPreferredAudioLanguage(language);
+                }else {
+                    parametersBuilder.setPreferredTextLanguage(language);
+                }
+                trackSelector.setParameters(parametersBuilder);
             }
 
             @Override
-            public void deselectTrack(int streamId) {
-//                mVideoView.deselectTrack(streamId);
+            public void deselectTrack(int streamId, String language, boolean isAudio) {
+
             }
 
             @Override
@@ -2797,7 +2807,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                     mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
                 }
             }
-        });
+        })
+        .setExoPlayerType();
     }
 
     /**

@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -61,6 +62,8 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -405,55 +408,51 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
         }
         exoPlayer.addListener(new Player.EventListener() {
             @Override
-            public void onLoadingChanged(boolean isLoading) {
-                if (!isLoading){
-                    TrackGroupArray trackGroupArray = exoPlayer.getCurrentTrackGroups();
-                    if (trackGroupArray != null){
-                        TrackSelectionArray trackSelections = exoPlayer.getCurrentTrackSelections();
-                        String audioId = "";
-                        String subtitleId = "";
-                        int audioN = 1;
-                        int subtitleN = 1;
-                        for (TrackSelection selection : trackSelections.getAll()){
-                            if (selection == null) continue;
-                            Format selectionFormat = selection.getSelectedFormat();
-                            if (MimeTypes.isAudio(selectionFormat.sampleMimeType)){
-                                audioId = selectionFormat.id;
-                                continue;
-                            }
-                            if (MimeTypes.isText(selectionFormat.sampleMimeType)){
-                                subtitleId = selectionFormat.id;
-                            }
+            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+                subtitleTrackList.clear();
+                audioTrackList.clear();
+                String audioId = "";
+                String subtitleId = "";
+                int audioN = 1;
+                int subtitleN = 1;
+                for (TrackSelection selection : trackSelections.getAll()){
+                    if (selection == null) continue;
+                    Format selectionFormat = selection.getSelectedFormat();
+                    if (MimeTypes.isAudio(selectionFormat.sampleMimeType)){
+                        audioId = selectionFormat.id;
+                        continue;
+                    }
+                    if (MimeTypes.isText(selectionFormat.sampleMimeType)){
+                        subtitleId = selectionFormat.id;
+                    }
+                }
+                for (int i = 0; i < trackGroups.length; i++) {
+                    TrackGroup trackGroup = trackGroups.get(i);
+                    if (trackGroup.length < 1) continue;
+                    Format tempFormat = trackGroup.getFormat(0);
+                    if (MimeTypes.isAudio(tempFormat.sampleMimeType)){
+                        for (int j = 0; j < trackGroup.length; j++){
+                            Format format = trackGroup.getFormat(j);
+                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                            videoInfoTrack.setName("音频流#"+audioN+"（"+format.language+"）");
+                            videoInfoTrack.setStream(i);
+                            videoInfoTrack.setLanguage(format.language);
+                            if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
+                                videoInfoTrack.setSelect(true);
+                            audioN ++;
+                            audioTrackList.add(videoInfoTrack);
                         }
-                        for (int i = 0; i < trackGroupArray.length; i++) {
-                            TrackGroup trackGroup = trackGroupArray.get(i);
-                            if (trackGroup.length < 1) continue;
-                            Format tempFormat = trackGroup.getFormat(0);
-                            if (MimeTypes.isAudio(tempFormat.sampleMimeType)){
-                                for (int j = 0; j < trackGroup.length; j++){
-                                    Format format = trackGroup.getFormat(j);
-                                    VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                                    videoInfoTrack.setName("音频流#"+audioN+"（"+format.language+"）");
-                                    videoInfoTrack.setStream(i);
-                                    videoInfoTrack.setLanguage(format.language);
-                                    if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
-                                        videoInfoTrack.setSelect(true);
-                                    audioN ++;
-                                    audioTrackList.add(videoInfoTrack);
-                                }
-                            }else if (MimeTypes.isText(tempFormat.sampleMimeType)){
-                                for (int j = 0; j < trackGroup.length; j++) {
-                                    Format format = trackGroup.getFormat(j);
-                                    VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                                    videoInfoTrack.setName("字幕流#"+subtitleN+"（"+format.language+"）");
-                                    videoInfoTrack.setStream(i);
-                                    videoInfoTrack.setLanguage(format.language);
-                                    if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
-                                        videoInfoTrack.setSelect(true);
-                                    subtitleN ++;
-                                    subtitleTrackList.add(videoInfoTrack);
-                                }
-                            }
+                    }else if (MimeTypes.isText(tempFormat.sampleMimeType)){
+                        for (int j = 0; j < trackGroup.length; j++) {
+                            Format format = trackGroup.getFormat(j);
+                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                            videoInfoTrack.setName("字幕流#"+subtitleN+"（"+format.language+"）");
+                            videoInfoTrack.setStream(i);
+                            videoInfoTrack.setLanguage(format.language);
+                            if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
+                                videoInfoTrack.setSelect(true);
+                            subtitleN ++;
+                            subtitleTrackList.add(videoInfoTrack);
                         }
                     }
                     mSettingVideoView.setSubtitleTrackList(subtitleTrackList);

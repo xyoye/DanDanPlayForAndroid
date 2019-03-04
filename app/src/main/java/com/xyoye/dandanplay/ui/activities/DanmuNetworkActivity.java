@@ -159,6 +159,12 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     }
 
     @Override
+    public void onBackPressed() {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this))

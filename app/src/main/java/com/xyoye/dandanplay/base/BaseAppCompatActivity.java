@@ -62,7 +62,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtils.i("Activity", "onCreate");
+        LogUtils.d("Activity", "onCreate");
         super.onCreate(savedInstanceState);
         onBeforeSetContentLayout();
         setContentView(initPageLayoutID());
@@ -140,7 +140,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        LogUtils.i("Activity", "onDestroy");
+        LogUtils.d("Activity", "onDestroy");
         isDestroyed = true;
         mDelegate.onDestroy();
         super.onDestroy();
@@ -310,13 +310,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.i("Activity", "onResume");
+        LogUtils.d("Activity", "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.i("Activity", "onPause");
+        LogUtils.d("Activity", "onPause");
     }
 
 

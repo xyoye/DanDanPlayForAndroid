@@ -83,12 +83,12 @@ public class ScrollableHelper {
         }
         if (scrollableView instanceof RecyclerView) {
             boolean top = isRecyclerViewTop((RecyclerView) scrollableView);
-            LogUtils.i("isTop", top + "");
+            LogUtils.d("isTop", top + "");
             return top;
         }
         if (scrollableView instanceof NestedScrollView) {
             boolean top = isNestedScrollViewTop((NestedScrollView) scrollableView);
-            LogUtils.i("isTop", top + "");
+            LogUtils.d("isTop", top + "");
             return top;
         }
         if (scrollableView instanceof WebView) {

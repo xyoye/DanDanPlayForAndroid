@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.player.ijkplayer.receiver.PlayerReceiverListener;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -75,7 +77,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             //外部打开
             if (!StringUtils.isEmpty(getIntent().getDataString())) {
-                videoPath = getIntent().getDataString();
+                Uri data = getIntent().getData();
+                videoPath = CommonUtils.getRealFilePath(PlayerActivity.this, data);
                 videoTitle = FileUtils.getFileName(videoPath);
                 currentPosition = 0;
                 episodeId = 0;
@@ -84,7 +87,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                         if (isSelectDanmu){
                             Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
                             intent.putExtra("video_path", videoPath);
-                            intent.putExtra("is_lan", true);
+                            intent.putExtra("is_lan", false);
                             startActivityForResult(intent, SELECT_DANMU);
                         }else {
                             danmuPath = "";
@@ -96,7 +99,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     if (AppConfig.getInstance().isOuterChainDanmuSelect()){
                         Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
                         intent.putExtra("video_path", videoPath);
-                        intent.putExtra("is_lan", true);
+                        intent.putExtra("is_lan", false);
                         startActivityForResult(intent, SELECT_DANMU);
                     }else {
                         danmuPath = "";
@@ -243,6 +246,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
                     addPlayHistory(episodeId);
             }
+        }else if (resultCode == RESULT_CANCELED){
+            danmuPath = "";
+            initPlayer();
+            mPlayer.start();
         }
     }
 

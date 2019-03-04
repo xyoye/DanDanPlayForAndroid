@@ -85,7 +85,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
         mDelegate.setUserVisibleHint(isVisibleToUser);
-        LogUtils.i(TAG,"setUserVisibleHint====>"+isVisibleToUser+"====>"+position);
+        LogUtils.d(TAG,"setUserVisibleHint====>"+isVisibleToUser+"====>"+position);
         if (isActivityCreated) {
             if (isVisibleToUser) {
                 if (isFirstVisible) {
@@ -101,7 +101,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtils.i(TAG,"onCreate====>"+position);
+        LogUtils.d(TAG,"onCreate====>"+position);
         super.onCreate(savedInstanceState);
         mDelegate.onCreate(savedInstanceState);
         init();
@@ -114,13 +114,13 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogUtils.i(TAG,"onCreateView====>"+position+"====>"+isActivityCreated+"====>"+isFirstVisible);
+        LogUtils.d(TAG,"onCreateView====>"+position+"====>"+isActivityCreated+"====>"+isFirstVisible);
         return inflater.inflate(initPageLayoutId(), container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        LogUtils.i(TAG,"onViewCreated====>"+position);
+        LogUtils.d(TAG,"onViewCreated====>"+position);
         mFragmentView = view;
         unbind = ButterKnife.bind(this, mFragmentView);
         mDelegate.onActivityCreated(savedInstanceState);
@@ -130,7 +130,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        LogUtils.i(TAG,"onActivityCreated====>"+position+"_"+getUserVisibleHint());
+        LogUtils.d(TAG,"onActivityCreated====>"+position+"_"+getUserVisibleHint());
         super.onActivityCreated(savedInstanceState);
         isActivityCreated = true;
         if (getUserVisibleHint() || mIsVisibleToUser) {
@@ -145,7 +145,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onDestroyView() {
-        LogUtils.i(TAG,"onDestroyView====>"+position);
+        LogUtils.d(TAG,"onDestroyView====>"+position);
         super.onDestroyView();
         unbind.unbind();
         mDelegate.onDestroyView();
@@ -154,7 +154,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onDetach() {
-        LogUtils.i(TAG,"onDetach====>"+position);
+        LogUtils.d(TAG,"onDetach====>"+position);
         super.onDetach();
         //noinspection TryWithIdenticalCatches
         try {
@@ -173,7 +173,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public boolean getUserVisibleHint() {
-        LogUtils.i(TAG,"getUserVisibleHint====>"+super.getUserVisibleHint()+"====>"+position);
+        LogUtils.d(TAG,"getUserVisibleHint====>"+super.getUserVisibleHint()+"====>"+position);
         return super.getUserVisibleHint();
     }
 
@@ -182,23 +182,23 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
      * 用于ViewPager下的页面懒加载，在一个生命周期内只会调用一次
      */
     protected void onPageFirstVisible() {
-        LogUtils.i(TAG,"onPageFirstVisible====>"+position);
+        LogUtils.d(TAG,"onPageFirstVisible====>"+position);
     }
 
     /**
      * 逻辑处理
      */
     protected void process(Bundle savedInstanceState) {
-        LogUtils.i(TAG,"process====>"+position);
+        LogUtils.d(TAG,"process====>"+position);
     }
 
     protected void onPageStart() {
-        LogUtils.i(TAG,"onPageStart====>"+super.getUserVisibleHint()+"====>"+position);
+        LogUtils.d(TAG,"onPageStart====>"+super.getUserVisibleHint()+"====>"+position);
         lazyLoad();
     }
 
     protected void onPageEnd() {
-        LogUtils.i(TAG,"onPageEnd====>"+super.getUserVisibleHint()+"====>"+position);
+        LogUtils.d(TAG,"onPageEnd====>"+super.getUserVisibleHint()+"====>"+position);
     }
 
     /**

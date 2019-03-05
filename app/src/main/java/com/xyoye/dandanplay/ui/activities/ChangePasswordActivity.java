@@ -1,13 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -23,44 +17,33 @@ import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by YE on 2018/8/11.
  */
 
-public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresenter> implements ChangePasswordView, View.OnClickListener {
-    @BindView(R.id.return_iv)
-    ImageView returnIv;
-    @BindView(R.id.user_old_password_et)
-    TextInputEditText oldPasswordEt;
-    @BindView(R.id.user_new_password_et)
-    TextInputEditText newPasswordEt;
-    @BindView(R.id.user_old_password_layout)
-    TextInputLayout oldPasswordLayout;
-    @BindView(R.id.user_new_password_layout)
-    TextInputLayout newPasswordLayout;
-    @BindView(R.id.change_bt)
-    Button changeBt;
+public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresenter> implements ChangePasswordView {
+
+    @BindView(R.id.old_password_et)
+    EditText oldPasswordEt;
+    @BindView(R.id.new_password_et)
+    EditText newPasswordEt;
 
     @Override
     public void initView() {
-        //定义全屏参数
-        int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        //设置当前窗体为全屏显示
-        Window window = getWindow();
-        window.setFlags(flag, flag);
+        setTitle("修改密码");
     }
 
     @Override
     public void initListener() {
-        returnIv.setOnClickListener(this);
-        changeBt.setOnClickListener(this);
+
     }
 
     @NonNull
     @Override
     protected ChangePasswordPresenter initPresenter() {
-        return new ChangePasswordPresenterImpl(this,this);
+        return new ChangePasswordPresenterImpl(this, this);
     }
 
     @Override
@@ -68,46 +51,27 @@ public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresen
         return R.layout.activity_change_password;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.return_iv:
-                ChangePasswordActivity.this.finish();
-                break;
-            case R.id.change_bt:
-                change();
-                break;
-        }
-    }
-
-    private void change(){
+    private void change() {
 
         String oldPassword = oldPasswordEt.getText().toString();
         String newPassword = newPasswordEt.getText().toString();
 
         if (StringUtils.isEmpty(oldPassword)) {
-            oldPasswordLayout.setErrorEnabled(true);
-            oldPasswordLayout.setError("旧密码不能为空");
+            ToastUtils.showShort("旧密码不能为空");
             return;
         }
         if (StringUtils.isEmpty(newPassword)) {
-            newPasswordLayout.setErrorEnabled(true);
-            newPasswordLayout.setError("新密码不能为空");
+            ToastUtils.showShort("新密码不能为空");
             return;
         }
-        if (oldPassword.length()<5 || oldPassword.length()>20) {
-            oldPasswordLayout.setErrorEnabled(true);
-            oldPasswordLayout.setError("旧密码长度为5-20个字符");
+        if (oldPassword.length() < 5 || oldPassword.length() > 20) {
+            ToastUtils.showShort("旧密码长度为5-20个字符");
             return;
         }
-        if (newPassword.length()<5 || newPassword.length()>20) {
-            newPasswordLayout.setErrorEnabled(true);
-            newPasswordLayout.setError("新密码长度为5-20个字符");
+        if (newPassword.length() < 5 || newPassword.length() > 20) {
+            ToastUtils.showShort("新密码长度为5-20个字符");
             return;
         }
-
-        oldPasswordLayout.setErrorEnabled(false);
-        newPasswordLayout.setErrorEnabled(false);
         presenter.change(new ChangePasswordParam(oldPassword, newPassword));
     }
 
@@ -141,5 +105,10 @@ public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresen
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
+    }
+
+    @OnClick(R.id.reset_bt)
+    public void onViewClicked() {
+        change();
     }
 }

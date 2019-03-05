@@ -1,21 +1,14 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import android.text.InputType;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.LoginParam;
@@ -25,44 +18,30 @@ import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.utils.KeyUtil;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by YE on 2018/7/22.
  */
 
-public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements LoginView, View.OnClickListener {
-    @BindView(R.id.login_return_iv)
-    ImageView loginReturnIv;
-    @BindView(R.id.user_name_et)
-    TextInputEditText userNameEt;
-    @BindView(R.id.user_password_et)
-    TextInputEditText userPasswordEt;
-    @BindView(R.id.login_bt)
-    Button loginBt;
-    @BindView(R.id.reset_password_tv)
-    TextView resetPasswordTv;
-    @BindView(R.id.register_tv)
-    TextView registerTv;
-    @BindView(R.id.user_password_layout)
-    TextInputLayout userPasswordLayout;
-    @BindView(R.id.user_name_layout)
-    TextInputLayout userNameLayout;
+public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements LoginView {
+    @BindView(R.id.account_et)
+    EditText accountEt;
+    @BindView(R.id.password_et)
+    EditText passwordEt;
+    @BindView(R.id.eye_iv)
+    ImageView eyeIv;
+
+    private boolean isPasswordShow = false;
 
     @Override
     public void initView() {
-        //定义全屏参数
-        int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        //设置当前窗体为全屏显示
-        Window window = getWindow();
-        window.setFlags(flag, flag);
+        setTitle("登录");
     }
 
     @Override
     public void initListener() {
-        loginReturnIv.setOnClickListener(this);
-        loginBt.setOnClickListener(this);
-        resetPasswordTv.setOnClickListener(this);
-        registerTv.setOnClickListener(this);
+
     }
 
     @NonNull
@@ -76,44 +55,33 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
         return R.layout.activity_login;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login_return_iv:
-                launchMain();
-                break;
-            case R.id.login_bt:
-                login();
-                break;
-            case R.id.reset_password_tv:
-                launchActivity(ResetPasswordActivity.class);
-                break;
-            case R.id.register_tv:
-                launchActivity(RegisterActivity.class);
-                break;
-        }
-    }
-
     private void login() {
-        String userName = userNameEt.getText().toString();
-        String password = userPasswordEt.getText().toString();
+        String userName = accountEt.getText().toString();
+        String password = passwordEt.getText().toString();
         if (StringUtils.isEmpty(userName)) {
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("用户名不能为空");
+            ToastUtils.showShort("用户名不能为空");
         } else if (StringUtils.isEmpty(password)) {
-            userPasswordLayout.setErrorEnabled(true);
-            userPasswordLayout.setError("密码不能为空");
+            ToastUtils.showShort("密码不能为空");
         } else {
-            userNameLayout.setErrorEnabled(false);
-            userPasswordLayout.setErrorEnabled(false);
             LoginParam param = new LoginParam();
             param.setUserName(userName);
             param.setPassword(password);
             param.setAppId(KeyUtil.getDanDanAppId(this));
-            param.setUnixTimestamp(System.currentTimeMillis()/1000);
+            param.setUnixTimestamp(System.currentTimeMillis() / 1000);
             param.buildHash(this);
             presenter.login(param);
         }
+    }
+
+    @Override
+    protected void onBeforeFinish() {
+        launchMain();
+    }
+
+    @Override
+    public void onBackPressed() {
+        launchMain();
+        super.onBackPressed();
     }
 
     @Override
@@ -122,11 +90,6 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
             launchActivity(MainActivity.class);
         else
             this.finish();
-    }
-
-    @Override
-    protected void setStatusBar() {
-        StatusBarUtil.setTranslucentForImageView(this, 0,null);
     }
 
     @Override
@@ -147,5 +110,30 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
+    }
+
+    @OnClick({R.id.eye_iv, R.id.login_bt, R.id.to_register_tv, R.id.to_reset_password_tv})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.eye_iv:
+                isPasswordShow = !isPasswordShow;
+                passwordEt.setInputType(isPasswordShow
+                        ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        : (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                passwordEt.setSelection(passwordEt.length());
+                eyeIv.setImageResource(isPasswordShow
+                        ? R.mipmap.ic_eye_open
+                        : R.mipmap.ic_eye_close);
+                break;
+            case R.id.login_bt:
+                login();
+                break;
+            case R.id.to_register_tv:
+                launchActivity(RegisterActivity.class);
+                break;
+            case R.id.to_reset_password_tv:
+                launchActivity(ResetPasswordActivity.class);
+                break;
+        }
     }
 }

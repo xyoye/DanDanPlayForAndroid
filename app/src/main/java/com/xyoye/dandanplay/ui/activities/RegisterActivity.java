@@ -2,12 +2,9 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
+import android.text.InputType;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
@@ -22,43 +19,34 @@ import com.xyoye.dandanplay.mvp.view.RegisterView;
 import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by YE on 2018/8/5.
  */
 
 
-public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> implements RegisterView, View.OnClickListener {
-    @BindView(R.id.return_iv)
-    ImageView returnIv;
-    @BindView(R.id.user_name_et)
-    TextInputEditText userNameEt;
-    @BindView(R.id.user_password_et)
-    TextInputEditText userPasswordEt;
-    @BindView(R.id.user_email_et)
-    TextInputEditText userEmailEt;
-    @BindView(R.id.user_password_layout)
-    TextInputLayout userPasswordLayout;
-    @BindView(R.id.user_name_layout)
-    TextInputLayout userNameLayout;
-    @BindView(R.id.user_email_layout)
-    TextInputLayout userEmailLayout;
-    @BindView(R.id.register_bt)
-    Button registerBt;
+public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> implements RegisterView {
+
+    @BindView(R.id.account_et)
+    EditText accountEt;
+    @BindView(R.id.email_et)
+    EditText emailEt;
+    @BindView(R.id.password_et)
+    EditText passwordEt;
+    @BindView(R.id.eye_iv)
+    ImageView eyeIv;
+
+    private boolean isPasswordShow = false;
 
     @Override
     public void initView() {
-        //定义全屏参数
-        int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        //设置当前窗体为全屏显示
-        Window window = getWindow();
-        window.setFlags(flag, flag);
+        setTitle("注册");
     }
 
     @Override
     public void initListener() {
-        returnIv.setOnClickListener(this);
-        registerBt.setOnClickListener(this);
+
     }
 
     @NonNull
@@ -72,22 +60,10 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
         return R.layout.activity_register;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.return_iv:
-                RegisterActivity.this.finish();
-                break;
-            case R.id.register_bt:
-                register();
-                break;
-        }
-    }
-
-    private void register(){
-        String userName = userNameEt.getText().toString();
-        String password = userPasswordEt.getText().toString();
-        String email = userEmailEt.getText().toString();
+    private void register() {
+        String userName = accountEt.getText().toString();
+        String password = passwordEt.getText().toString();
+        String email = emailEt.getText().toString();
 
         /*
          * 用户名               只能包含英文或数字，长度为5-20位，首位不能为数字。
@@ -95,51 +71,39 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
          * 备用邮箱（找回密码用）  长度不能超过50个字符。
          */
         if (StringUtils.isEmpty(userName)) {
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("用户名不能为空");
+            ToastUtils.showShort("用户名不能为空");
             return;
         }
-        if (userName.length()<5 || userName.length()>20){
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("用户名字长度为5-20个字符");
+        if (userName.length() < 5 || userName.length() > 20) {
+            ToastUtils.showShort("用户名字长度为5-20个字符");
             return;
         }
-        if (!userName.matches("[0-9a-zA-Z]*")){
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("只能包含英文或数字");
+        if (!userName.matches("[0-9a-zA-Z]*")) {
+            ToastUtils.showShort("只能包含英文或数字");
             return;
         }
-        if (userName.substring(0,1).matches("[0-9]*")){
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("用户名不能以数字开头");
+        if (userName.substring(0, 1).matches("[0-9]*")) {
+            ToastUtils.showShort("用户名不能以数字开头");
             return;
         }
 
         if (StringUtils.isEmpty(password)) {
-            userPasswordLayout.setErrorEnabled(true);
-            userPasswordLayout.setError("密码不能为空");
+            ToastUtils.showShort("密码不能为空");
             return;
         }
-        if (password.length()<5 || password.length()>20) {
-            userPasswordLayout.setErrorEnabled(true);
-            userPasswordLayout.setError("密码长度为5-20个字符");
+        if (password.length() < 5 || password.length() > 20) {
+            ToastUtils.showShort("密码长度为5-20个字符");
             return;
         }
 
         if (StringUtils.isEmpty(email)) {
-            userEmailLayout.setErrorEnabled(true);
-            userEmailLayout.setError("邮箱不能为空");
+            ToastUtils.showShort("邮箱不能为空");
             return;
         }
         if (email.length() > 50) {
-            userEmailLayout.setErrorEnabled(true);
-            userEmailLayout.setError("邮箱长度为50个字符以内");
+            ToastUtils.showShort("邮箱长度为50个字符以内");
             return;
         }
-
-        userNameLayout.setErrorEnabled(false);
-        userPasswordLayout.setErrorEnabled(false);
-        userEmailLayout.setErrorEnabled(false);
         presenter.register(new RegisterParam(userName, password, email));
     }
 
@@ -168,5 +132,24 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
+    }
+
+    @OnClick({R.id.eye_iv, R.id.register_bt})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.eye_iv:
+                isPasswordShow = !isPasswordShow;
+                passwordEt.setInputType(isPasswordShow
+                        ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        : (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                passwordEt.setSelection(passwordEt.length());
+                eyeIv.setImageResource(isPasswordShow
+                        ? R.mipmap.ic_eye_open
+                        : R.mipmap.ic_eye_close);
+                break;
+            case R.id.register_bt:
+                register();
+                break;
+        }
     }
 }

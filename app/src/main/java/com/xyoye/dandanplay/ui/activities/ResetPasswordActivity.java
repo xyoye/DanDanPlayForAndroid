@@ -1,13 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -22,39 +16,28 @@ import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 import com.xyoye.dandanplay.utils.KeyUtil;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * Created by YE on 2018/8/11.
  */
 
 
-public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresenter> implements ResetPasswordView, View.OnClickListener{
-    @BindView(R.id.return_iv)
-    ImageView returnIv;
-    @BindView(R.id.user_name_et)
-    TextInputEditText userNameEt;
-    @BindView(R.id.user_email_et)
-    TextInputEditText userEmailEt;
-    @BindView(R.id.user_name_layout)
-    TextInputLayout userNameLayout;
-    @BindView(R.id.user_email_layout)
-    TextInputLayout userEmailLayout;
-    @BindView(R.id.reset_bt)
-    Button resetBt;
+public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresenter> implements ResetPasswordView {
+
+    @BindView(R.id.account_et)
+    EditText accountEt;
+    @BindView(R.id.email_et)
+    EditText emailEt;
 
     @Override
     public void initView() {
-        //定义全屏参数
-        int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        //设置当前窗体为全屏显示
-        Window window = getWindow();
-        window.setFlags(flag, flag);
+        setTitle("重置密码");
     }
 
     @Override
     public void initListener() {
-        returnIv.setOnClickListener(this);
-        resetBt.setOnClickListener(this);
+
     }
 
     @NonNull
@@ -68,36 +51,20 @@ public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresente
         return R.layout.activity_reset_password;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.return_iv:
-                ResetPasswordActivity.this.finish();
-                break;
-            case R.id.reset_bt:
-                reset();
-                break;
-        }
-    }
-
-    private void reset(){
-        String userName = userNameEt.getText().toString();
-        String email = userEmailEt.getText().toString();
+    private void reset() {
+        String userName = accountEt.getText().toString();
+        String email = emailEt.getText().toString();
 
         if (StringUtils.isEmpty(userName)) {
-            userNameLayout.setErrorEnabled(true);
-            userNameLayout.setError("用户名不能为空");
+            ToastUtils.showShort("用户名不能为空");
         } else if (StringUtils.isEmpty(email)) {
-            userEmailLayout.setErrorEnabled(true);
-            userEmailLayout.setError("邮箱不能为空");
-        }else {
-            userNameLayout.setErrorEnabled(false);
-            userEmailLayout.setErrorEnabled(false);
+            ToastUtils.showShort("邮箱不能为空");
+        } else {
             ResetPasswordParam param = new ResetPasswordParam();
             param.setUserName(userName);
             param.setEmail(email);
             param.setAppId(KeyUtil.getDanDanAppId(this));
-            param.setUnixTimestamp(System.currentTimeMillis()/1000);
+            param.setUnixTimestamp(System.currentTimeMillis() / 1000);
             param.buildHash(this);
             presenter.reset(param);
         }
@@ -106,7 +73,7 @@ public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresente
     @Override
     public void resetSuccess() {
         IApplication.isUpdateUserInfo = true;
-        ToLoginDialog dialog = new ToLoginDialog(this, R.style.Dialog,1, ResetPasswordActivity.this::finish);
+        ToLoginDialog dialog = new ToLoginDialog(this, R.style.Dialog, 1, ResetPasswordActivity.this::finish);
         dialog.show();
     }
 
@@ -123,5 +90,10 @@ public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresente
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
+    }
+
+    @OnClick(R.id.reset_bt)
+    public void onViewClicked() {
+        reset();
     }
 }

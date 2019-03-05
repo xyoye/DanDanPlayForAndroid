@@ -8,11 +8,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.provider.DocumentFile;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -21,16 +23,20 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
+import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
-import com.xyoye.dandanplay.bean.event.ListFolderEvent;
+import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerExoActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,6 +60,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
     RecyclerView recyclerView;
+    @BindView(R.id.fast_play_bt)
+    FloatingActionButton fastPlayBt;
 
     private BaseRvAdapter<FolderBean> adapter;
 
@@ -89,6 +97,25 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
         recyclerView.setAdapter(adapter);
+
+        fastPlayBt.setOnClickListener(v -> {
+            String videoInfo = AppConfig.getInstance().getLastPlayVideo();
+            if (!StringUtils.isEmpty(videoInfo)){
+                VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
+                Intent intent;
+                if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
+                    intent = new Intent(getContext(), PlayerExoActivity.class);
+                else
+                    intent = new Intent(getContext(), PlayerActivity.class);
+                String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
+                intent.putExtra("title", title);
+                intent.putExtra("path", videoBean.getVideoPath());
+                intent.putExtra("danmu_path", videoBean.getDanmuPath());
+                intent.putExtra("current", videoBean.getVideoDuration());
+                intent.putExtra("episode_id", videoBean.getEpisodeId());
+                startActivity(intent);
+            }
+        });
 
         refresh.setRefreshing(true);
         refreshVideo(false);
@@ -194,8 +221,11 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void listFolderEvent(ListFolderEvent event){
-        presenter.getVideoFormDatabase();
+    public void refreshFolderEvent(RefreshFolderEvent event){
+        if (event.isReGetData())
+            presenter.getVideoFormDatabase();
+        else
+            adapter.notifyDataSetChanged();
     }
 
     @SuppressLint("CheckResult")

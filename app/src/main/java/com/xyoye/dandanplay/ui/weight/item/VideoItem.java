@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
 import com.xyoye.dandanplay.bean.event.VideoActionEvent;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -58,6 +60,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
     @BindView(R.id.close_action_ll)
     LinearLayout closeActionLl;
     private View mView;
+    private Context mContext;
 
     @Override
     public int getLayoutResId() {
@@ -67,6 +70,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
     @Override
     public void initItemViews(View itemView) {
         mView = itemView;
+        mContext = mView.getContext();
     }
 
     @Override
@@ -99,7 +103,13 @@ public class VideoItem implements AdapterItem<VideoBean> {
             unbindDanmuActionLl.setEnabled(false);
         }
 
+        //是否为上次播放的视频
+        boolean isLastPlayVideo = AppConfig.getInstance().getLastPlayPath(false).equals(model.getVideoPath());
+
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
+        titleTv.setTextColor(isLastPlayVideo
+                ? mContext.getResources().getColor(R.color.theme_color)
+                : mContext.getResources().getColor(R.color.text_black));
 
         durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
         if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);

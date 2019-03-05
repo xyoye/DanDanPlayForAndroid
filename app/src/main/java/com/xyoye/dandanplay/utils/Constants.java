@@ -47,6 +47,8 @@ public class Constants {
         public static final String CLOUD_DANMU_FILTER = "cloud_danmu_filter";
         //更新弹幕云过滤的时间
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
+        //上次播放的视频
+        public static final String LAST_PLAY_VIDEO = "last_play_video";
     }
 
     //文件排序方式

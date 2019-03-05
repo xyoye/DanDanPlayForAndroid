@@ -1,8 +1,12 @@
 package com.xyoye.dandanplay.utils;
 
 import android.os.Environment;
+import android.support.annotation.NonNull;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.StringUtils;
+import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
 
 /**
@@ -284,5 +288,30 @@ public class AppConfig {
 
     public void setUpdateFilterTime(long time){
         SPUtils.getInstance().put(Constants.Config.UPDATE_FILTER_TIME, time);
+    }
+
+    /**
+     * 上次播放的视频
+     */
+    public String getLastPlayVideo(){
+        return SPUtils.getInstance().getString(Constants.Config.LAST_PLAY_VIDEO, "");
+    }
+
+    /**
+     * 上次播放的路径信息
+     * @param isFolder
+     */
+    public @NonNull String getLastPlayPath(boolean isFolder){
+        String videoInfo = SPUtils.getInstance().getString(Constants.Config.LAST_PLAY_VIDEO, "");
+        if (StringUtils.isEmpty(videoInfo))
+            return "";
+        VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
+        return isFolder
+                ? FileUtils.getDirName(videoBean.getVideoPath())
+                : videoBean.getVideoPath();
+    }
+
+    public void setLastPlayVideo(String videoInfo){
+        SPUtils.getInstance().put(Constants.Config.LAST_PLAY_VIDEO, videoInfo);
     }
 }

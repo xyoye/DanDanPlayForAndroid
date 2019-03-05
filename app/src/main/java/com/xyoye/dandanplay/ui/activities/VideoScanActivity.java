@@ -20,7 +20,7 @@ import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.ListFolderEvent;
+import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
@@ -113,7 +113,7 @@ public class VideoScanActivity extends BaseMvcActivity {
                     queryFormSystem(videoBean, path);
                     boolean added = saveData(videoBean);
                     if (added)
-                        EventBus.getDefault().post(new ListFolderEvent());
+                        EventBus.getDefault().post(new RefreshFolderEvent(true));
                     ToastUtils.showShort(added ? "扫描成功" : "文件已存在");
                 }).show();
                 break;
@@ -190,7 +190,7 @@ public class VideoScanActivity extends BaseMvcActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> {
-                    EventBus.getDefault().post(new ListFolderEvent());
+                    EventBus.getDefault().post(new RefreshFolderEvent(true));
                     ToastUtils.showShort("扫描完成");
                 });
     }

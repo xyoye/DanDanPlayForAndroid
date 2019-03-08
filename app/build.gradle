@@ -47,16 +47,13 @@ dependencies {
     implementation rootProject.ext.dependencies["appcompat-v4"]
     implementation rootProject.ext.dependencies["design"]
     implementation 'com.android.support:cardview-v7:27.1.1'
-
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     androidTestImplementation rootProject.ext.dependencies["espresso-core"]
     // Required for instrumented tests
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     testImplementation 'junit:junit:4.12'
-
     implementation 'com.tencent.bugly:crashreport_upgrade:1.3.5'
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
-
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'com.youth.banner:banner:1.4.10'
@@ -76,9 +73,11 @@ dependencies {
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
-
     implementation('com.github.axet:wget:1.4.2') {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation files('libs/jlibtorrent-1.2.0.19.jar')
+    implementation files('libs/jlibtorrent-android-arm-1.2.0.19.jar')
+    implementation files('libs/jlibtorrent-android-x86-1.2.0.19.jar')
 }

@@ -53,7 +53,7 @@ public class TorrentService extends Service {
     public void onEvent(TorrentEvent event){
         switch (event.getAction()){
             case TorrentEvent.EVENT_START:
-                Torrent torrent = torrentTask.prepare(event.getTorrent());
+                Torrent torrent = event.getTorrent();
                 if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
                     IApplication.torrentList.add(torrent);
                     IApplication.torrentStorage.addHash(torrent.getHash(), torrent);

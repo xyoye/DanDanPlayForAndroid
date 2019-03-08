@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="50dp"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
+
+    <LinearLayout
+        android:id="@+id/check_ll"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/download_status_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/ic_downloading"/>
+
+        <TextView
+            android:id="@+id/progress_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="2dp"
+            android:textSize="12sp"
+            android:textColor="@color/text_gray"
+            android:layout_gravity="center_horizontal"
+            android:text="99%"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/file_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/check_ll"
+        android:layout_toStartOf="@+id/danmu_bind_iv"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="3dp"
+        android:textSize="14sp"
+        android:textColor="@color/text_black"
+        android:text=""/>
+
+    <ImageView
+        android:id="@+id/danmu_bind_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:src="@mipmap/ic_danmu_unexists"/>
+
+</RelativeLayout>

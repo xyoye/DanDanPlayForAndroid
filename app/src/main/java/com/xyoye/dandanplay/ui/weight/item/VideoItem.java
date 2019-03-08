@@ -115,9 +115,9 @@ public class VideoItem implements AdapterItem<VideoBean> {
         if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_inexist);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
         } else {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_exists);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
         }
 
         danmuTipsIv.setOnClickListener(v -> {

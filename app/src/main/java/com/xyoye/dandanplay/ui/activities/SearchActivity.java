@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,10 +34,13 @@ import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
+import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
+import com.xyoye.dandanplay.utils.torrent.TorrentTask;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +51,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import libtorrent.File;
+import libtorrent.Libtorrent;
 
 /**
  * Created by xyy on 2019/1/8.
@@ -300,10 +306,26 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 return;
             }
         }
-        intent.putExtra("torrent_path", torrentPath);
-        intent.putExtra("anime_folder", animeTitle);
-        intent.putExtra("torrent_magnet", magnet);
-        startActivity(intent);
+        Torrent torrent = new Torrent();
+        torrent.setPath(torrentPath);
+        torrent.setMagnet(magnet);
+        torrent.setAnimeTitle(animeTitle);
+        torrent = new TorrentTask(SearchActivity.this).prepare(torrent);
+        if (torrent == null){
+            ToastUtils.showShort("解析种子文件失败，请重试");
+            return;
+        }
+        new TorrentFileCheckDialog(SearchActivity.this, torrent, resultTorrent -> {
+            //设置是否选中文件
+            for (Torrent.TorrentFile torrentFile : resultTorrent.getTorrentFileList()){
+                Libtorrent.torrentFilesCheckFilter(resultTorrent.getId(), torrentFile.getPath(), torrentFile.isCheck());
+                File file = Libtorrent.torrentFiles(resultTorrent.getId(), torrentFile.getId());
+                System.out.println("");
+            }
+            String torrentStr = JsonUtil.toJson(resultTorrent);
+            intent.putExtra("torrent", torrentStr);
+            startActivity(intent);
+        }).show();
     }
 
     private void search(String searchText) {

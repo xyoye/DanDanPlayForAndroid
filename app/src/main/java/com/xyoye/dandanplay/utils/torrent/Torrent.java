@@ -151,12 +151,17 @@ public class Torrent implements Serializable{
         this.torrentFileList = torrentFileList;
     }
 
-    public static class TorrentFile{
+    public static class TorrentFile implements Serializable{
         private long id;
         private long torrentId;
         private boolean isCheck;
+        private long length;
+        private long completed;
+        private String originPath;
         private String path;
         private String name;
+        private String danmuPath;
+        private int episodeId;
 
         public long getId() {
             return id;
@@ -182,6 +187,14 @@ public class Torrent implements Serializable{
             isCheck = check;
         }
 
+        public String getOriginPath() {
+            return originPath;
+        }
+
+        public void setOriginPath(String originPath) {
+            this.originPath = originPath;
+        }
+
         public String getPath() {
             return path;
         }
@@ -196,6 +209,42 @@ public class Torrent implements Serializable{
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public long getLength() {
+            return length;
+        }
+
+        public void setLength(long length) {
+            this.length = length;
+        }
+
+        public long getCompleted() {
+            return completed;
+        }
+
+        public void setCompleted(long completed) {
+            this.completed = completed;
+        }
+
+        public String getDanmuPath() {
+            return danmuPath;
+        }
+
+        public void setDanmuPath(String danmuPath) {
+            this.danmuPath = danmuPath;
+        }
+
+        public int getEpisodeId() {
+            return episodeId;
+        }
+
+        public void setEpisodeId(int episodeId) {
+            this.episodeId = episodeId;
+        }
+
+        public boolean isDone() {
+            return completed == length;
         }
     }
 

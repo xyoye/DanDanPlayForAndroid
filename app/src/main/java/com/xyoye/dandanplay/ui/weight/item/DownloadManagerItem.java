@@ -16,9 +16,9 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
-import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -188,19 +188,14 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                         intent.putExtra("video_path", path);
                         intent.putExtra("position", position);
                         Activity activity = (Activity) context;
-                        activity.startActivityForResult(intent, DownloadMangerActivity.BIND_DANMU);
+                        activity.startActivityForResult(intent, TorrentDownloadDetailDialog.BIND_DANMU);
                         return;
                     }
                 }
             }
         });
         infoActionLl.setOnClickListener(v -> {
-            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData mClipData = ClipData.newPlainText("Label", torrent.getMagnet());
-            if (clipboardManager != null){
-                clipboardManager.setPrimaryClip(mClipData);
-                ToastUtils.showShort("已复制链接");
-            }
+            new TorrentDownloadDetailDialog(context, position).show();
             showActionView(torrent,false);
         });
         deleteActionLl.setOnClickListener(v -> {

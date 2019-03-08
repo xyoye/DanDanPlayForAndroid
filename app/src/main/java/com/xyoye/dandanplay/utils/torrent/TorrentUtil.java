@@ -75,6 +75,9 @@ public class TorrentUtil {
             torrent.setSize(Libtorrent.torrentBytesLength(id));
             long fileCount = Libtorrent.torrentFilesCount(id);
             List<Torrent.TorrentFile> torrentFileList = new ArrayList<>();
+            String downloadFolder = StringUtils.isEmpty(torrent.getAnimeTitle())
+                    ? AppConfig.getInstance().getDownloadFolder()
+                    : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
             for (int i=0; i<fileCount; i++){
                 libtorrent.File libFile = Libtorrent.torrentFiles(id, i);
                 Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
@@ -82,7 +85,7 @@ public class TorrentUtil {
                 torrentFile.setTorrentId(id);
                 torrentFile.setCheck(libFile.getCheck());
                 torrentFile.setName(FileUtils.getFileName(libFile.getPath()));
-                torrentFile.setPath(libFile.getPath());
+                torrentFile.setPath(downloadFolder +"/"+ libFile.getPath());
                 torrentFileList.add(torrentFile);
             }
             torrent.setTorrentFileList(torrentFileList);
@@ -171,8 +174,11 @@ public class TorrentUtil {
             torrentFile.setId(i);
             torrentFile.setTorrentId(id);
             torrentFile.setCheck(libFile.getCheck());
-            torrentFile.setName(libFile.getPath());
-            torrentFile.setPath(downloadFolder + "/" +libFile.getPath());
+            torrentFile.setName(FileUtils.getFileName(libFile.getPath()));
+            torrentFile.setPath(downloadFolder+libFile.getPath());
+            torrentFile.setOriginPath(libFile.getPath());
+            torrentFile.setCompleted(libFile.getBytesCompleted());
+            torrentFile.setLength(libFile.getLength());
             torrentFileList.add(torrentFile);
         }
         torrent.setTorrentFileList(torrentFileList);

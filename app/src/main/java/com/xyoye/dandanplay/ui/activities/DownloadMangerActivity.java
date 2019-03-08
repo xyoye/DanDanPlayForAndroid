@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -14,19 +15,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
+import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
+import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
@@ -34,6 +37,7 @@ import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -45,7 +49,6 @@ import libtorrent.Libtorrent;
  */
 
 public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView {
-    public final static int BIND_DANMU = 1001;
     @BindView(R.id.download_rv)
     RecyclerView downloadRv;
 
@@ -118,18 +121,12 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     public void refreshAdapter(List<Torrent> torrentList) {
 
     }
+
     @Override
     public void startNewTask(){
-        String torrentPath = getIntent().getStringExtra("torrent_path");
-        String animeFolder = getIntent().getStringExtra("anime_folder");
-        String torrentMagnet = getIntent().getStringExtra("torrent_magnet");
-        if (!StringUtils.isEmpty(torrentPath)) {
-            Torrent torrent = new Torrent();
-            torrent.setPath(torrentPath);
-            torrent.setAnimeTitle(StringUtils.isEmpty(animeFolder) ? "" : animeFolder);
-            torrent.setMagnet(torrentMagnet);
-            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_START, torrent));
-        }
+        String torrentStr = getIntent().getStringExtra("torrent");
+        Torrent torrent = JsonUtil.fromJson(torrentStr, Torrent.class);
+        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_START, torrent));
         mHandler.sendEmptyMessageDelayed(0, 1000);
     }
 
@@ -219,7 +216,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            if (requestCode == DownloadMangerActivity.BIND_DANMU){
+            if (requestCode == TorrentDownloadDetailDialog.BIND_DANMU){
                 int episodeId = data.getIntExtra("episode_id", -1);
                 String danmuPath = data.getStringExtra("path");
                 int position = data.getIntExtra("position", -1);
@@ -248,9 +245,17 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent event){
         if (event.getMsg() == MessageEvent.UPDATE_DOWNLOAD_MANAGER)
             adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(TorrentBindDanmuStartEvent event){
+        Intent intent = new Intent(DownloadMangerActivity.this, DanmuNetworkActivity.class);
+        intent.putExtra("video_path", event.getPath());
+        intent.putExtra("position", event.getPosition());
+        startActivity(intent);
     }
 }

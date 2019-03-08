@@ -53,8 +53,8 @@ public class TorrentTask{
         torrent.setMagnet(oldTorrent.getMagnet());
 
         byte[] torrentData;
-        File torrentFile = new File(oldTorrent.getPath());
         try {
+            File torrentFile = new File(oldTorrent.getPath());
             torrentData = FileUtils.readFileToByteArray(torrentFile);
         } catch (IOException e) {
             ToastUtils.showShort("找不到种子文件，目前暂不支持读取SD卡文件");

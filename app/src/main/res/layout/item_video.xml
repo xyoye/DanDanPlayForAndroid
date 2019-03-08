@@ -69,7 +69,7 @@
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:contentDescription="@string/load_danmaku"
-        android:src="@mipmap/ic_danmaku_exists"/>
+        android:src="@mipmap/ic_danmu_exists"/>
 
     <LinearLayout
         android:id="@+id/video_action_ll"

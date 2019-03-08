@@ -183,7 +183,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         downloadPath = AppConfig.getInstance().getDownloadFolder();
         downloadPath = StringUtils.isEmpty(animeTitle)
                 ? downloadPath
-                : downloadPath+"/"+animeTitle;
+                : downloadPath+animeTitle;
 
         String donePath = isTorrentExist(downloadPath , magnet);
         if (!StringUtils.isEmpty(donePath)){

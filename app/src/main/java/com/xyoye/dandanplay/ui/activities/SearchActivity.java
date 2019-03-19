@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,11 +46,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import libtorrent.File;
 import libtorrent.Libtorrent;
 
 /**
@@ -317,11 +316,19 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         }
         new TorrentFileCheckDialog(SearchActivity.this, torrent, resultTorrent -> {
             //设置是否选中文件
-            for (Torrent.TorrentFile torrentFile : resultTorrent.getTorrentFileList()){
-                Libtorrent.torrentFilesCheckFilter(resultTorrent.getId(), torrentFile.getPath(), torrentFile.isCheck());
-                File file = Libtorrent.torrentFiles(resultTorrent.getId(), torrentFile.getId());
-                System.out.println("");
+            Iterator iterator = resultTorrent.getTorrentFileList().iterator();
+            while (iterator.hasNext()){
+                Torrent.TorrentFile torrentFile = (Torrent.TorrentFile)iterator.next();
+                //setCheck
+                Libtorrent.torrentFilesCheck(resultTorrent.getId(), torrentFile.getId(), torrentFile.isCheck());
+                libtorrent.File libFile = Libtorrent.torrentFiles(resultTorrent.getId(), torrentFile.getId());
+                libFile.setCheck(torrentFile.isCheck());
+                //remove form list
+                if (!torrentFile.isCheck())
+                    iterator.remove();
             }
+            //delete unSelect
+            Libtorrent.torrentFileDeleteUnselected(resultTorrent.getId());
             String torrentStr = JsonUtil.toJson(resultTorrent);
             intent.putExtra("torrent", torrentStr);
             startActivity(intent);

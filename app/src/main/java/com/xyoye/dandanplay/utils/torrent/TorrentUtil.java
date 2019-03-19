@@ -161,7 +161,7 @@ public class TorrentUtil {
         if (id == -1) return false;
         String downloadFolder = StringUtils.isEmpty(torrent.getAnimeTitle())
                 ? AppConfig.getInstance().getDownloadFolder()
-                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+                : AppConfig.getInstance().getDownloadFolder() + torrent.getAnimeTitle();
         torrent.setHash(Libtorrent.torrentHash(id));
         torrent.setId(id);
         torrent.setTitle(Libtorrent.torrentName(id));
@@ -175,7 +175,7 @@ public class TorrentUtil {
             torrentFile.setTorrentId(id);
             torrentFile.setCheck(libFile.getCheck());
             torrentFile.setName(FileUtils.getFileName(libFile.getPath()));
-            torrentFile.setPath(downloadFolder+libFile.getPath());
+            torrentFile.setPath(downloadFolder +"/"+ libFile.getPath());
             torrentFile.setOriginPath(libFile.getPath());
             torrentFile.setCompleted(libFile.getBytesCompleted());
             torrentFile.setLength(libFile.getLength());

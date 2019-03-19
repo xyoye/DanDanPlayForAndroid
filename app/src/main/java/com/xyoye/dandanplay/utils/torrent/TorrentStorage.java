@@ -27,15 +27,15 @@ public class TorrentStorage implements FileStorageTorrent {
         hashs.remove(hash);
     }
 
-    @Override
-    public void createZeroLengthFile(String hash, String path) throws Exception {
-        Torrent torrent = hashs.get(hash);
-        String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
-                ? AppConfig.getInstance().getDownloadFolder()
-                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
-        File ff = new File(folder, path);
-        ff.createNewFile();
-    }
+//    @Override
+//    public void createZeroLengthFile(String hash, String path) throws Exception {
+//        Torrent torrent = hashs.get(hash);
+//        String folder = StringUtils.isEmpty(torrent.getAnimeTitle())
+//                ? AppConfig.getInstance().getDownloadFolder()
+//                : AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle();
+//        File ff = new File(folder, path);
+//        ff.createNewFile();
+//    }
 
     @Override
     public long readFileAt(String hash, String path, Buffer buf, long off) throws Exception {

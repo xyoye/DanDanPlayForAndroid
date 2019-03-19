@@ -69,7 +69,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.11.2'
     implementation 'com.jaeger.statusbarutil:library:1.4.0'
     implementation 'me.yokeyword:fragmentation:1.3.6'
-    implementation 'com.github.axet:libtorrent:0.13.35'
+    implementation 'com.github.axet:libtorrent:0.13.38'
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
@@ -77,7 +77,4 @@ dependencies {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    implementation files('libs/jlibtorrent-1.2.0.19.jar')
-    implementation files('libs/jlibtorrent-android-arm-1.2.0.19.jar')
-    implementation files('libs/jlibtorrent-android-x86-1.2.0.19.jar')
 }

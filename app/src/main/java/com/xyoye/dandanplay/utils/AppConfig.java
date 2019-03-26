@@ -118,7 +118,7 @@ public class AppConfig {
      * 下载目录
      */
     public String getDownloadFolder(){
-        return SPUtils.getInstance().getString(Constants.Config.LOCAL_DOWNLOAD_FOLDER, Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer");
+        return SPUtils.getInstance().getString(Constants.Config.LOCAL_DOWNLOAD_FOLDER, Constants.DefaultConfig.downloadPath);
     }
 
     public void setDownloadFolder(String path){

@@ -32,10 +32,12 @@ import com.xyoye.dandanplay.bean.event.SelectInfoEvent;
 import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -99,7 +101,6 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         historyList = new ArrayList<>();
         resultList = new ArrayList<>();
         animeTitle = getIntent().getStringExtra("anime_title");
-        animeTitle = StringUtils.isEmpty(animeTitle) ? "" : animeTitle;
         searchWord = getIntent().getStringExtra("search_word");
         boolean isAnime = getIntent().getBooleanExtra("is_anime", false);
 
@@ -258,7 +259,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     if (granted) {
-                        presenter.downloadTorrent(animeTitle, model.getMagnet());
+                        presenter.searchLocalTorrent(model.getMagnet());
                     }
                 });
     }
@@ -329,10 +330,28 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             }
             //delete unSelect
             Libtorrent.torrentFileDeleteUnselected(resultTorrent.getId());
-            String torrentStr = JsonUtil.toJson(resultTorrent);
-            intent.putExtra("torrent", torrentStr);
+            intent.putExtra("torrent", resultTorrent);
             startActivity(intent);
         }).show();
+    }
+
+    @Override
+    public void downloadExisted(String torrentPath, String magnet) {
+        new CommonDialog.Builder(this)
+                .setOkListener(dialog -> downloadTorrentOver(torrentPath, magnet))
+                .setCancelListener(dialog -> presenter.downloadTorrent(magnet))
+                .setAutoDismiss()
+                .build()
+                .show("检测到种子文件已存在是否重新下载", "用旧的", "重新下载");
+    }
+
+    @Override
+    public String getDownloadFolder() {
+        String downloadFolder = AppConfig.getInstance().getDownloadFolder();
+        downloadFolder = StringUtils.isEmpty(animeTitle)
+                ? downloadFolder
+                : downloadFolder + "/" + animeTitle;
+        return downloadFolder;
     }
 
     private void search(String searchText) {

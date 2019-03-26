@@ -27,5 +27,7 @@ public interface SearchPresenter extends BaseMvpPresenter {
 
     void search(String text, int type, int subgroup);
 
-    void downloadTorrent(String animeTitle, String magnet);
+    void searchLocalTorrent(String magnet);
+
+    void downloadTorrent(String magnet);
 }

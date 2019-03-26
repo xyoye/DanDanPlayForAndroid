@@ -1,25 +1,14 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
-import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
-import com.xyoye.dandanplay.ui.activities.PlayerActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -29,7 +18,6 @@ import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
-import libtorrent.File;
 import libtorrent.Libtorrent;
 
 /**
@@ -37,7 +25,6 @@ import libtorrent.Libtorrent;
  */
 
 public class DownloadManagerItem implements AdapterItem<Torrent> {
-    private long DAY = 24 * 60 * 60 * 1000;
 
     @BindView(R.id.download_title_tv)
     TextView downloadTitleTv;
@@ -55,25 +42,9 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
     TextView downloadStatusTv;
     @BindView(R.id.download_ctrl_rl)
     RelativeLayout downloadCtrlRl;
-    @BindView(R.id.play_action_ll)
-    LinearLayout playActionLl;
-    @BindView(R.id.bind_danmu_action_ll)
-    LinearLayout bindDanmuActionLl;
-    @BindView(R.id.info_action_ll)
-    LinearLayout infoActionLl;
-    @BindView(R.id.delete_action_ll)
-    LinearLayout deleteActionLl;
-    @BindView(R.id.close_action_ll)
-    LinearLayout closeActionLl;
-    @BindView(R.id.torrent_action_ll)
-    LinearLayout torrentActionLl;
-    @BindView(R.id.bind_danmu_iv)
-    ImageView bindDanmuIv;
-    @BindView(R.id.bind_danmu_tv)
-    TextView bindDanmuTv;
-
 
     private Context context;
+    private String statusStr;
 
     @Override
     public int getLayoutResId() {
@@ -108,143 +79,19 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
 
             downloadTitleTv.setText(torrent.getTitle());
             downloadDurationPb.setProgress(progress);
-            downloadSpeedTv.setText(getSpeed(torrent));
+            downloadSpeedTv.setText(TorrentUtil.getSpeed(context, torrent));
             downloadDurationTv.setText(duration);
             setStatus(torrent);
         }
 
-        if (torrent.isLongCheck()){
-            torrentActionLl.setVisibility(View.VISIBLE);
-        }else {
-            torrentActionLl.setVisibility(View.GONE);
-        }
-
-        if (!StringUtils.isEmpty(torrent.getDanmuPath())) {
-            bindDanmuIv.setImageResource(R.mipmap.ic_download_binded_danmu);
-            bindDanmuTv.setText("已绑定");
-            bindDanmuTv.setTextColor(context.getResources().getColor(R.color.theme_color));
-        }else {
-            bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
-            bindDanmuTv.setText("弹幕");
-            bindDanmuTv.setTextColor(context.getResources().getColor(R.color.white));
-        }
-
         downloadInfoRl.setOnLongClickListener(v -> {
-            showActionView(torrent,true);
-            deleteActionLl.setVisibility(View.VISIBLE);
-            closeActionLl.setVisibility(View.VISIBLE);
-            if (torrent.isDone())
-                playActionLl.setVisibility(View.VISIBLE);
-            if (torrent.isDone() || (Libtorrent.torrentPendingBytesCompleted(torrent.getId()) > 16 * 1024 * 1024))
-                bindDanmuActionLl.setVisibility(View.VISIBLE);
-            if (!StringUtils.isEmpty(torrent.getMagnet()))
-                infoActionLl.setVisibility(View.VISIBLE);
-            return false;
+            new TorrentDownloadDetailDialog(context, position, statusStr).show();
+            return true;
         });
 
-        downloadCtrlRl.setOnClickListener(v -> setAction(torrent));
+        downloadInfoRl.setOnClickListener(v ->  new TorrentDownloadDetailDialog(context, position, statusStr).show());
 
-        playActionLl.setOnClickListener(v -> {
-            showActionView(torrent,false);
-            long l = Libtorrent.torrentFilesCount(torrent.getId());
-            for (long i = 0; i < l; i++) {
-                File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
-                if (playFile.getCheck()) {
-                    if (CommonUtils.isMediaFile(playFile.getPath())) {
-                        int episodeId = torrent.getEpisodeId();
-                        String videoTitle = playFile.getPath();
-                        String danmuPath = torrent.getDanmuPath();
-                        String path;
-                        if (!StringUtils.isEmpty(torrent.getAnimeTitle()))
-                            path = AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle() + "/" + videoTitle;
-                        else
-                            path = AppConfig.getInstance().getDownloadFolder() + "/" + videoTitle;
-                        Intent intent = new Intent(context, PlayerActivity.class);
-                        intent.putExtra("path", path);
-                        intent.putExtra("title", videoTitle);
-                        intent.putExtra("danmu_path", danmuPath);
-                        intent.putExtra("current", 0);
-                        intent.putExtra("episode_id", episodeId);
-                        context.startActivity(intent);
-                        return;
-                    }
-                }
-            }
-            ToastUtils.showShort("未找到可播放视频");
-        });
-        bindDanmuActionLl.setOnClickListener(v -> {
-            showActionView(torrent,false);
-            long l = Libtorrent.torrentFilesCount(torrent.getId());
-            for (long i = 0; i < l; i++) {
-                File playFile = Libtorrent.torrentFiles(torrent.getId(), i);
-                if (playFile.getCheck()) {
-                    if (CommonUtils.isMediaFile(playFile.getPath())) {
-                        String path;
-                        if (!StringUtils.isEmpty(torrent.getAnimeTitle()))
-                            path = AppConfig.getInstance().getDownloadFolder() + "/" + torrent.getAnimeTitle() + "/" + playFile.getPath();
-                        else
-                            path = AppConfig.getInstance().getDownloadFolder() + "/" + playFile.getPath();
-                        Intent intent = new Intent(context, DanmuNetworkActivity.class);
-                        intent.putExtra("video_path", path);
-                        intent.putExtra("position", position);
-                        Activity activity = (Activity) context;
-                        activity.startActivityForResult(intent, TorrentDownloadDetailDialog.BIND_DANMU);
-                        return;
-                    }
-                }
-            }
-        });
-        infoActionLl.setOnClickListener(v -> {
-            new TorrentDownloadDetailDialog(context, position).show();
-            showActionView(torrent,false);
-        });
-        deleteActionLl.setOnClickListener(v -> {
-            new CommonDialog.Builder(context)
-                    .setAutoDismiss()
-                    .showExtra()
-                    .setOkListener(dialog ->
-                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrent)))
-                    .setExtraListener(dialog ->
-                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_FILE, torrent)))
-                    .build()
-                    .show( "确认删除任务？","删除任务和文件");
-            showActionView(torrent,false);
-        });
-        closeActionLl.setOnClickListener(v -> showActionView(torrent,false));
-    }
-
-    private String getSpeed(Torrent torrent) {
-        if (torrent.isDone()) return "- · ↓ 0B/s · ↑ 0B/s";
-        if (torrent.isError()) return "- · ↓ 0B/s · ↑ 0B/s";
-        String str = "";
-        switch (Libtorrent.torrentStatus(torrent.getId())) {
-            case Libtorrent.StatusQueued:
-            case Libtorrent.StatusPaused:
-                str += "- · ↓ 0B/s · ↑ 0B/s";
-                break;
-            case Libtorrent.StatusSeeding:
-            case Libtorrent.StatusChecking:
-            case Libtorrent.StatusDownloading:
-                long c = 0;
-                if (Libtorrent.metaTorrent(torrent.getId())) {
-                    long p = Libtorrent.torrentPendingBytesLength(torrent.getId());
-                    c = p - Libtorrent.torrentPendingBytesCompleted(torrent.getId());
-                }
-                int a = torrent.downloaded.getAverageSpeed();
-                String left = "∞";
-                if (c > 0 && a > 0) {
-                    long diff = c * 1000 / a;
-                    int diffDays = (int) (diff / (DAY));
-                    if (diffDays < 30)
-                        left = "" + TorrentUtil.formatDuration(context, diff) + "";
-                }
-                str += left;
-                str += " · ↓ " + CommonUtils.convertFileSize(torrent.downloaded.getCurrentSpeed()) + context.getString(R.string.per_second);
-                str += " · ↑ " + CommonUtils.convertFileSize(torrent.uploaded.getCurrentSpeed()) + context.getString(R.string.per_second);
-                break;
-        }
-
-        return str.trim();
+        downloadCtrlRl.setOnClickListener(v -> changeStatus(torrent, position));
     }
 
     private int getProgress(Torrent torrent) {
@@ -277,6 +124,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
             downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
             downloadStatusTv.setText("连接中");
+            statusStr = "connecting";
             return;
         }
 
@@ -284,6 +132,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
             downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
             downloadStatusTv.setText("已完成");
+            statusStr = "done";
             return;
         }
 
@@ -291,6 +140,7 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
             downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
             downloadStatusTv.setText("错误");
+            statusStr = "error";
             return;
         }
 
@@ -299,27 +149,36 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
                 downloadStatusTv.setText("等待中");
+                statusStr = "queued";
                 break;
             case Libtorrent.StatusChecking:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
                 downloadStatusTv.setText("连接中");
+                statusStr = "checking";
                 break;
             case Libtorrent.StatusPaused:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("已暂停");
+                statusStr = "paused";
                 break;
             case Libtorrent.StatusSeeding:
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
+                downloadStatusTv.setText("下载中");
+                statusStr = "seeding";
+                break;
             case Libtorrent.StatusDownloading:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("下载中");
+                statusStr = "downloading";
                 break;
         }
     }
 
-    private void setAction(Torrent torrent) {
+    private void changeStatus(Torrent torrent, int position) {
         if (torrent.isDone()) return;
         if (torrent.isError()) return;
 
@@ -327,22 +186,12 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
             case Libtorrent.StatusChecking:
             case Libtorrent.StatusSeeding:
             case Libtorrent.StatusDownloading:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_PAUSE, torrent));
+                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_PAUSE, position));
                 break;
             case Libtorrent.StatusPaused:
             case Libtorrent.StatusQueued:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_RESUME, torrent));
+                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_RESUME, position));
                 break;
-        }
-    }
-
-    private void showActionView(Torrent torrent, boolean isShow){
-        if (isShow){
-            torrent.setLongCheck(true);
-            torrentActionLl.setVisibility(View.VISIBLE);
-        }else {
-            torrent.setLongCheck(false);
-            torrentActionLl.setVisibility(View.GONE);
         }
     }
 }

@@ -11,16 +11,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
 import com.xyoye.dandanplay.ui.weight.item.TorrentDetailDownloadFileItem;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
+import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,7 +35,6 @@ import butterknife.OnClick;
  */
 
 public class TorrentDownloadDetailDialog extends Dialog {
-    public final static int BIND_DANMU = 1001;
     @BindView(R.id.name_tv)
     TextView nameTv;
     @BindView(R.id.path_tv)
@@ -44,13 +43,21 @@ public class TorrentDownloadDetailDialog extends Dialog {
     TextView magnetTv;
     @BindView(R.id.file_rv)
     RecyclerView fileRv;
+    @BindView(R.id.status_tv)
+    TextView statusTv;
 
+    private Context context;
     private Torrent mTorrent;
+    private int torrentPosition;
     private BaseRvAdapter<Torrent.TorrentFile> fileAdapter;
+    private String statusStr;
 
-    public TorrentDownloadDetailDialog(@NonNull Context context, int torrentPosition) {
+    public TorrentDownloadDetailDialog(@NonNull Context context, int torrentPosition, String statusStr) {
         super(context, R.style.Dialog);
+        this.context = context;
+        this.torrentPosition = torrentPosition;
         this.mTorrent = IApplication.torrentList.get(torrentPosition);
+        this.statusStr = statusStr;
     }
 
     @Override
@@ -59,16 +66,12 @@ public class TorrentDownloadDetailDialog extends Dialog {
         setContentView(R.layout.dialog_download_torrent_detail);
         ButterKnife.bind(this, this);
 
-        String downloadPath = AppConfig.getInstance().getDownloadFolder();
-        downloadPath = StringUtils.isEmpty(mTorrent.getAnimeTitle())
-                ? downloadPath
-                : downloadPath+mTorrent.getAnimeTitle();
-
         nameTv.setText(mTorrent.getTitle());
-        pathTv.setText(downloadPath);
+        pathTv.setText(mTorrent.getPath());
         magnetTv.setText(mTorrent.getMagnet());
+        statusTv.setText(statusStr);
 
-        fileRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        fileRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
         fileAdapter = new BaseRvAdapter<Torrent.TorrentFile>(mTorrent.getTorrentFileList()) {
@@ -79,10 +82,9 @@ public class TorrentDownloadDetailDialog extends Dialog {
             }
         };
         fileRv.setAdapter(fileAdapter);
-
     }
 
-    @OnClick({R.id.dialog_cancel_iv, R.id.path_tv, R.id.magnet_tv})
+    @OnClick({R.id.dialog_cancel_iv, R.id.path_tv, R.id.magnet_tv, R.id.delete_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.dialog_cancel_iv:
@@ -106,6 +108,21 @@ public class TorrentDownloadDetailDialog extends Dialog {
                     ToastUtils.showShort("已复制Magnet：" + magnet);
                 }
                 break;
+            case R.id.delete_tv:
+                new CommonDialog.Builder(context)
+                        .setAutoDismiss()
+                        .showExtra()
+                        .setOkListener(dialog -> {
+                            TorrentDownloadDetailDialog.this.dismiss();
+                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrentPosition));
+                        })
+                        .setExtraListener(dialog -> {
+                            TorrentDownloadDetailDialog.this.dismiss();
+                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_FILE, torrentPosition));
+                        })
+                        .build()
+                        .show( "确认删除任务？","删除任务和文件");
+                break;
         }
 
     }
@@ -117,6 +134,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
             Torrent.TorrentFile torrentFile = mTorrent.getTorrentFileList().get(position);
             torrentFile.setDanmuPath(event.getDanmuPath());
             torrentFile.setEpisodeId(event.getEpisodeId());
+            TorrentUtil.updateTorrentDanmu(mTorrent.getPath(), torrentFile.getPath(), event.getDanmuPath(), event.getEpisodeId());
             fileAdapter.notifyItemChanged(position);
             ToastUtils.showShort("绑定弹幕成功");
         }

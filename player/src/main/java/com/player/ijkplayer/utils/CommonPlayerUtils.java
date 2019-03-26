@@ -2,11 +2,13 @@ package com.player.ijkplayer.utils;
 
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by long on 2016/10/18.
@@ -60,28 +62,35 @@ public final class CommonPlayerUtils {
     /**
      * 解析视频同名字幕
      */
-    public static String getSubtitlePath(String filePath){
-        //可加载的字幕格式
-        String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
-        if (filePath == null || "".equals(filePath)){
-            ToastUtils.showShort("获取视频路径失败");
+    public static String getSubtitlePath(String videoPath){
+        if (videoPath == null || "".equals(videoPath)){
+            ToastUtils.showShort("解析视频路径失败");
             return "";
         }
-        //获取可用的同名字幕文件
-        String fileNamePath = "";
-        String path = "";
-        if (filePath.contains(".")){
-            int lastDot = filePath.lastIndexOf(".");
-            fileNamePath = filePath.substring(0, lastDot);
-        }
-        for (String anExtArray : extArray) {
-            String tempPath = fileNamePath + "." +anExtArray;
-            File tempFile = new File(tempPath);
-            if (tempFile.exists()) {
-                path = tempPath;
-                break;
+        File videoFile = new File(videoPath);
+        if (!videoFile.exists())
+            return "";
+
+        //可加载的字幕格式
+        String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
+        String videoFolder = FileUtils.getDirName(videoPath);
+        String videoName = FileUtils.getFileNameNoExtension(videoPath);
+
+        //遍历父文件夹
+        File folderFile = new File(videoFolder);
+        for (File file : folderFile.listFiles()){
+            String path = file.getAbsolutePath();
+            //以视频名称开头
+            if (path.startsWith(videoName)){
+                for (String ext : extArray){
+                    //已可用字幕格式结尾，文件大小大于0
+                    if (path.endsWith(ext) && file.length() > 0){
+                        return path;
+                    }
+                }
             }
         }
-        return path;
+
+        return "";
     }
 }

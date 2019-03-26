@@ -17,4 +17,8 @@ public interface SearchView extends BaseMvpView, LoadDataView {
     void refreshSearch(List<MagnetBean.ResourcesBean> searchResult);
 
     void downloadTorrentOver(String torrentPath, String magnet);
+
+    void downloadExisted(String torrentPath, String magnet);
+
+    String getDownloadFolder();
 }

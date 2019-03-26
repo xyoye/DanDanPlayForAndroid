@@ -102,6 +102,16 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             String videoInfo = AppConfig.getInstance().getLastPlayVideo();
             if (!StringUtils.isEmpty(videoInfo)){
                 VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
+                //视频文件是否已被删除
+                File videoFile = new File(videoBean.getVideoPath());
+                if (!videoFile.exists())
+                    return;
+                //弹幕文件是否已被删除
+                File danmuFile = new File(videoBean.getDanmuPath());
+                if (!danmuFile.exists())
+                    videoBean.setDanmuPath("");
+
+                //选择的播放器
                 Intent intent;
                 if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
                     intent = new Intent(getContext(), PlayerExoActivity.class);

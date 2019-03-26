@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -21,19 +20,19 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
+import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
-import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
+import com.xyoye.dandanplay.utils.torrent.TorrentStartEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +48,8 @@ import libtorrent.Libtorrent;
  */
 
 public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView {
+    private static final int DIALOG_BIND_DANMU = 1001;
+
     @BindView(R.id.download_rv)
     RecyclerView downloadRv;
 
@@ -62,7 +63,14 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
             if(msg.what == 0) {
                 for (int i=0; i<IApplication.torrentList.size(); i++){
                     Torrent torrent = IApplication.torrentList.get(i);
-                    if (torrent.isDone()) continue;
+                    if (torrent.isDone()){
+                        if (torrent.isUpdate()){
+                            adapter.notifyItemChanged(i);
+                            torrent.setUpdate(false);
+                        }else {
+                            continue;
+                        }
+                    }
                     if (torrent.isUpdate()){
                         adapter.notifyItemChanged(i);
                         if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
@@ -124,9 +132,8 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
     @Override
     public void startNewTask(){
-        String torrentStr = getIntent().getStringExtra("torrent");
-        Torrent torrent = JsonUtil.fromJson(torrentStr, Torrent.class);
-        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_START, torrent));
+        Torrent torrent = (Torrent)getIntent().getSerializableExtra("torrent");
+        EventBus.getDefault().post(new TorrentStartEvent(torrent));
         mHandler.sendEmptyMessageDelayed(0, 1000);
     }
 
@@ -184,19 +191,19 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                         .show(getResources().getString(R.string.about_download), "关于下载", "确定", "");
                 break;
             case R.id.all_start:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_START, null));
+                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_START, -1));
                 break;
             case R.id.all_pause:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_PAUSE, null));
+                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_PAUSE, -1));
                 break;
             case R.id.all_delete:
                 new CommonDialog.Builder(this)
                         .showExtra()
                         .setAutoDismiss()
                         .setOkListener(dialog ->
-                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, null)))
+                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, -1)))
                         .setExtraListener(dialog ->
-                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, null)))
+                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, -1)))
                         .build()
                         .show("确认删除所有任务？","删除任务和文件");
                 break;
@@ -216,17 +223,16 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            if (requestCode == TorrentDownloadDetailDialog.BIND_DANMU){
+            if (requestCode == DIALOG_BIND_DANMU){
                 int episodeId = data.getIntExtra("episode_id", -1);
                 String danmuPath = data.getStringExtra("path");
                 int position = data.getIntExtra("position", -1);
                 if (position != -1){
-                    Torrent torrent = IApplication.torrentList.get(position);
-                    torrent.setDanmuPath(danmuPath);
-                    torrent.setEpisodeId(episodeId);
-                    adapter.notifyItemChanged(position);
-                    TorrentUtil.updateTorrent(torrent);
-                    ToastUtils.showShort("绑定弹幕成功");
+                    TorrentBindDanmuEndEvent bindDanmuEndEvent = new TorrentBindDanmuEndEvent();
+                    bindDanmuEndEvent.setDanmuPath(danmuPath);
+                    bindDanmuEndEvent.setEpisodeId(episodeId);
+                    bindDanmuEndEvent.setPosition(position);
+                    EventBus.getDefault().post(bindDanmuEndEvent);
                 }
             }
         }
@@ -256,6 +262,6 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         Intent intent = new Intent(DownloadMangerActivity.this, DanmuNetworkActivity.class);
         intent.putExtra("video_path", event.getPath());
         intent.putExtra("position", event.getPosition());
-        startActivity(intent);
+        startActivityForResult(intent, DIALOG_BIND_DANMU);
     }
 }

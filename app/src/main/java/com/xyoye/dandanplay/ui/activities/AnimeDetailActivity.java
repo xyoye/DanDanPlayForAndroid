@@ -344,7 +344,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
             episode = CommonUtils.isNum(temp) ? temp : episode;
         }
         Intent intent = new Intent(AnimeDetailActivity.this, SearchActivity.class);
-        intent.putExtra("anime_title", "/" + animeDetailBean.getBangumi().getAnimeTitle());
+        intent.putExtra("anime_title", animeDetailBean.getBangumi().getAnimeTitle());
         intent.putExtra("search_word", animeDetailBean.getBangumi().getSearchKeyword() + " " + episode);
         intent.putExtra("is_anime", true);
         startActivity(intent);

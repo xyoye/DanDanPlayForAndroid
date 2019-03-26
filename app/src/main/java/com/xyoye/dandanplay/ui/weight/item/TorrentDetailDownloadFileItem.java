@@ -63,8 +63,10 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         fileNameTv.setText(model.getName());
 
+        File realFile = new File(model.getPath());
+
         mView.setOnClickListener(v -> {
-            if (model.getCompleted() == model.getLength() && CommonUtils.isMediaFile(model.getName())) {
+            if (realFile.length() >= model.getLength() && CommonUtils.isMediaFile(model.getName())) {
                 Intent intent = new Intent(mView.getContext(), PlayerActivity.class);
                 intent.putExtra("path", model.getPath());
                 intent.putExtra("title", model.getName());
@@ -77,8 +79,7 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         danmuBindIv.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getPath())){
-                File realFile = new File(model.getPath());
-                if (model.isDone() || (realFile.length() > 16 * 1024 * 1024)){
+                if (realFile.length() > 16 * 1024 * 1024){
                     EventBus.getDefault().post(new TorrentBindDanmuStartEvent(model.getPath(), position));
                 }else {
                     ToastUtils.showShort("需下载16M后才能匹配弹幕");

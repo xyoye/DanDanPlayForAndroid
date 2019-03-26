@@ -57,14 +57,15 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@color/text_black"
-                android:text="番剧："/>
+                android:text="标题："/>
 
             <TextView
                 android:id="@+id/name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/name_tips"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textColor="@color/text_black"
                 android:text=""/>
         </RelativeLayout>
@@ -80,12 +81,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@color/text_black"
-                android:text="下载路径："/>
+                android:text="路径："/>
 
             <TextView
                 android:id="@+id/path_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/path_tips"
                 android:textSize="12sp"
                 android:textColor="@color/theme_color_light"
@@ -103,16 +105,52 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="@color/text_black"
-                android:text="magnet："/>
+                android:text="链接："/>
 
             <TextView
                 android:id="@+id/magnet_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/magnet_tips"
                 android:textSize="12sp"
                 android:textColor="@color/theme_color_light"
                 android:text=""/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/status_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textSize="14sp"
+                android:textColor="@color/text_black"
+                android:text="状态："/>
+
+            <TextView
+                android:id="@+id/status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/status_tips"
+                android:layout_centerVertical="true"
+                android:textSize="12sp"
+                android:textColor="@color/theme_color_light"
+                android:text=""/>
+
+            <TextView
+                android:id="@+id/delete_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textSize="12sp"
+                android:textColor="@color/red_color"
+                android:text="删除任务"/>
         </RelativeLayout>
 
         <View

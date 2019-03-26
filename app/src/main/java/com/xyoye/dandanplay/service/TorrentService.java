@@ -22,6 +22,7 @@ import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.torrent.TorrentStartEvent;
 import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
 import com.xyoye.dandanplay.utils.torrent.TorrentTask;
 import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
@@ -50,36 +51,45 @@ public class TorrentService extends Service {
     private Runnable refresh;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartEvent(TorrentStartEvent event){
+        Torrent torrent = event.getTorrent();
+        if (torrent == null)
+            return;
+        if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
+
+            IApplication.torrentList.add(torrent);
+            IApplication.torrentStorage.addHash(torrent.getHash(), torrent);
+
+            TorrentUtil.saveTorrent(torrent);
+
+            if (!torrentTask.start(torrent))
+                torrent.setError(true);
+            showNotification();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TorrentEvent event){
+        if (event.getPosition() >= IApplication.torrentList.size()) {
+            LogUtils.e("even position error");
+            return;
+        }
+        Torrent torrent = IApplication.torrentList.get(event.getPosition());
         switch (event.getAction()){
-            case TorrentEvent.EVENT_START:
-                Torrent torrent = event.getTorrent();
-                if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
-                    IApplication.torrentList.add(torrent);
-                    IApplication.torrentStorage.addHash(torrent.getHash(), torrent);
-                    TorrentUtil.saveTorrent(torrent);
-                    if (!torrentTask.start(torrent))
-                        torrent.setError(true);
-                    showNotification();
-                }
-                break;
             case TorrentEvent.EVENT_RESUME:
-                if (!torrentTask.start(event.getTorrent()))
-                    event.getTorrent().setError(true);
+                if (!torrentTask.start(torrent))
+                    torrent.setError(true);
                 break;
             case TorrentEvent.EVENT_PAUSE:
-                torrentTask.pause(event.getTorrent());
-                break;
-            case TorrentEvent.EVENT_STOP:
-                torrentTask.pause(event.getTorrent());
+                torrentTask.pause(event.getPosition());
                 break;
             case TorrentEvent.EVENT_DELETE_TASK:
-                torrentTask.pause(event.getTorrent());
-                TorrentUtil.deleteTorrent(event.getTorrent(), false);
+                torrentTask.pause(event.getPosition());
+                TorrentUtil.deleteTorrent(torrent, false);
                 Iterator<Torrent> iteratorTask = IApplication.torrentList.iterator();
                 while (iteratorTask.hasNext()){
                     Torrent t = iteratorTask.next();
-                    if (t.getPath().endsWith(event.getTorrent().getPath())){
+                    if (t.getPath().endsWith(torrent.getPath())){
                         iteratorTask.remove();
                         IApplication.torrentStorage.removeHash(t.getHash());
                         EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
@@ -87,12 +97,12 @@ public class TorrentService extends Service {
                 }
                 break;
             case TorrentEvent.EVENT_DELETE_FILE:
-                torrentTask.pause(event.getTorrent());
-                TorrentUtil.deleteTorrent(event.getTorrent(), true);
+                torrentTask.pause(event.getPosition());
+                TorrentUtil.deleteTorrent(torrent, true);
                 Iterator<Torrent> iteratorFile = IApplication.torrentList.iterator();
                 while (iteratorFile.hasNext()){
                     Torrent t = iteratorFile.next();
-                    if (t.getPath().endsWith(event.getTorrent().getPath())){
+                    if (t.getPath().endsWith(torrent.getPath())){
                         iteratorFile.remove();
                         IApplication.torrentStorage.removeHash(t.getHash());
                         EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
@@ -170,7 +180,7 @@ public class TorrentService extends Service {
             uploaded.step(bytesInfo.getUploaded());
             for (Torrent torrent : IApplication.torrentList){
                 if (Libtorrent.torrentActive(torrent.getId())) {
-                    torrent.update();
+                    TorrentUtil.updateTorrent(torrent);
                 }
             }
             notificationManager.notify(NOTIFICATION_ID, showNotification());

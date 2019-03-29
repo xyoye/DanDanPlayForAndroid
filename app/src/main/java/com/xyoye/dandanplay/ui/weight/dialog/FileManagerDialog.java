@@ -41,7 +41,7 @@ public class FileManagerDialog extends Dialog{
     public final static int SELECT_SUBTITLE = 1003;
     public final static int SELECT_VIDEO = 1004;
 
-    private String rootPath = Environment.getExternalStorageDirectory().getPath();
+    private String rootPath;
 
     @BindView(R.id.title_tv)
     TextView titleTv;
@@ -51,6 +51,8 @@ public class FileManagerDialog extends Dialog{
     RecyclerView fileRv;
     @BindView(R.id.confirm_tv)
     TextView confirmTv;
+    @BindView(R.id.default_tv)
+    TextView defaultTv;
 
     private Context mContext;
     private BaseRvAdapter<FileManagerBean> adapter;
@@ -60,6 +62,7 @@ public class FileManagerDialog extends Dialog{
     private OnItemClickListener itemClickListener;
     private String originFolder;
     private int openType;
+    private boolean showDefault = true;
 
     public FileManagerDialog(@NonNull Context context, int openType, OnSelectedListener listener) {
         super(context, R.style.Dialog);
@@ -77,6 +80,11 @@ public class FileManagerDialog extends Dialog{
                 : originFolder;
         this.openType = openType;
         this.listener = listener;
+    }
+
+    public FileManagerDialog hideDefault(){
+        showDefault = false;
+        return this;
     }
 
     @Override
@@ -125,6 +133,14 @@ public class FileManagerDialog extends Dialog{
                 return new FileManagerItem(itemClickListener);
             }
         };
+
+        defaultTv.setVisibility(showDefault ? View.VISIBLE : View.GONE);
+        if (showDefault){
+            rootPath = "/";
+        }else {
+             rootPath = Environment.getExternalStorageDirectory().getPath();
+        }
+
         fileRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);

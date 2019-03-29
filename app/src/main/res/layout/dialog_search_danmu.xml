@@ -96,6 +96,7 @@
                     android:layout_toEndOf="@+id/episode_start_tips"
                     android:inputType="number"
                     android:singleLine="true"
+                    android:textSize="14sp"
                     android:layout_centerVertical="true"/>
 
                 <TextView
@@ -120,6 +121,25 @@
             </RelativeLayout>
 
         </RadioGroup>
+        <!--
+            有人反馈过搜索不全来着，具体忘了，所以先不改
+
+                <RadioButton
+                    android:id="@+id/other_rb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/other_et"
+                    android:text=""/>
+                <EditText
+                    android:id="@+id/other_et"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:hint="其它"/>
+        -->
 
         <LinearLayout
             android:layout_width="match_parent"

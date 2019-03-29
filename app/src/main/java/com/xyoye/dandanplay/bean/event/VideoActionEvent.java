@@ -6,7 +6,6 @@ package com.xyoye.dandanplay.bean.event;
 
 
 public class VideoActionEvent {
-    public final static int DELETE = 101;
     public final static int UN_BIND = 102;
 
     private int actionType;

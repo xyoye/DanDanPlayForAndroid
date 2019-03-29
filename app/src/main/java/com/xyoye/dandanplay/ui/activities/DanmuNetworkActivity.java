@@ -21,7 +21,7 @@ import com.xyoye.dandanplay.bean.event.SearchDanmuEvent;
 import com.xyoye.dandanplay.mvp.impl.DanmuNetworkPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
-import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setItemViewCacheSize(10);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(0, 0, 0, 1));
+        recyclerView.addItemDecoration(new ItemDecorationSpaces(0, 0, 0, 1));
         recyclerView.setAdapter(adapter);
         videoPath = getIntent().getStringExtra("video_path");
     }

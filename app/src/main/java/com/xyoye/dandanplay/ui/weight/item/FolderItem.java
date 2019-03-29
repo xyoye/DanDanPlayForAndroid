@@ -65,10 +65,5 @@ public class FolderItem implements AdapterItem<FolderBean>{
                 : mContext.getResources().getColor(R.color.text_gray));
 
         mView.setOnClickListener(v -> EventBus.getDefault().post(new OpenFolderEvent(model.getFolderPath())));
-
-        mView.setOnLongClickListener(v -> {
-            EventBus.getDefault().post(new DeleteFolderEvent(model.getFolderPath(), position));
-            return true;
-        });
     }
 }

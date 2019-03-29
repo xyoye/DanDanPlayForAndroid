@@ -81,32 +81,6 @@
         android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/delete_action_ll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="3dp"
-                android:padding="5dp"
-                android:src="@mipmap/ic_download_delete"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:text="删除"/>
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/unbind_danmu_action_ll"
             android:layout_width="0dp"
             android:layout_weight="1"

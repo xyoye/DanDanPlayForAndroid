@@ -29,7 +29,7 @@ import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
-import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeMoreItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeRecommendItem;
@@ -157,16 +157,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
         episodeLinearRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         episodeLinearRv.setNestedScrollingEnabled(false);
-        episodeLinearRv.addItemDecoration(new SpacesItemDecoration(10));
+        episodeLinearRv.addItemDecoration(new ItemDecorationSpaces(10));
         episodeLinearRv.setAdapter(episodeLinearAdapter);
 
         episodeGridRv.setLayoutManager(new GridLayoutManager(this, 2));
-        episodeGridRv.addItemDecoration(new SpacesItemDecoration(0, 10 ,10,10, 2));
+        episodeGridRv.addItemDecoration(new ItemDecorationSpaces(0, 10 ,10,10, 2));
         episodeGridRv.setAdapter(episodeGridAdapter);
 
         recommendRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recommendRv.setNestedScrollingEnabled(false);
-        recommendRv.addItemDecoration(new SpacesItemDecoration(10));
+        recommendRv.addItemDecoration(new ItemDecorationSpaces(10));
         recommendRv.setAdapter(recommendAdapter);
 
         moreRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

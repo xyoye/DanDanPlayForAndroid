@@ -140,6 +140,12 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     }
 
     @Override
+    public void refreshOver() {
+        if (refresh != null)
+            refresh.setRefreshing(false);
+    }
+
+    @Override
     public void showLoading() {
 
     }

@@ -110,9 +110,13 @@ public class FileManagerDialog extends Dialog{
         listFolder(originFolder);
     }
 
-    @OnClick({R.id.cancel_tv, R.id.confirm_tv})
+    @OnClick({R.id.default_tv, R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.default_tv:
+                String defaultPath = Environment.getExternalStorageDirectory().getPath();
+                listFolder(defaultPath);
+                break;
             case R.id.cancel_tv:
                 FileManagerDialog.this.dismiss();
                 break;
@@ -189,7 +193,7 @@ public class FileManagerDialog extends Dialog{
                     fileList.add(info);
                 } else if (openType == SELECT_DANMU){
                     String ext = FileUtils.getFileExtension(file);
-                    if ("xml".equals(ext)){
+                    if ("XML".equals(ext.toUpperCase())){
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
@@ -220,12 +224,12 @@ public class FileManagerDialog extends Dialog{
             }
             Collections.sort(fileList, (o1, o2) ->
                     Collator.getInstance(Locale.CHINESE).compare( o1.getName(), o2.getName()));
-
-            if (!rootPath.equals(folder.getAbsolutePath()))
-                fileList.add(0, new FileManagerBean(folder, ".." ,true, true));
-
-            updateView(fileList);
         }
+
+        if (!rootPath.equals(folder.getAbsolutePath()))
+            fileList.add(0, new FileManagerBean(folder, ".." ,true, true));
+
+        updateView(fileList);
     }
 
     private void updateView(List<FileManagerBean> fileList){

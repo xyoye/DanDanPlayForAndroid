@@ -39,7 +39,7 @@ public class SmbService extends Service {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //创建NotificationChannel
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.smbservice.playchannel", "共享播放服务", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.smbservice.playchannel", "SMB服务", NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
             channel.setVibrationPattern(new long[]{0});
             channel.enableLights(false);
@@ -68,7 +68,7 @@ public class SmbService extends Service {
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("弹弹play")
-                .setContentText("已开启共享播放")
+                .setContentText("已开启SMB服务")
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())

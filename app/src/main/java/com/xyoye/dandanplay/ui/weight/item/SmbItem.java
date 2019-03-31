@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -73,7 +74,11 @@ public class SmbItem implements AdapterItem<SmbBean> {
                 smbNameTv.setText(folderName);
                 break;
             case Constants.SmbType.FILE:
-                smbCoverIv.setImageResource(R.mipmap.ic_smb_file);
+                if(CommonUtils.isMediaFile(model.getUrl())){
+                    smbCoverIv.setImageResource(R.mipmap.ic_smb_video);
+                }else {
+                    smbCoverIv.setImageResource(R.mipmap.ic_smb_file);
+                }
                 smbUrlTv.setVisibility(View.GONE);
                 smbNameTv.setText(model.getName());
                 break;

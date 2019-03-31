@@ -18,9 +18,7 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SmbPresenter;
 import com.xyoye.dandanplay.mvp.view.SmbView;
 import com.xyoye.dandanplay.service.SmbService;
-import com.xyoye.dandanplay.ui.activities.PlayerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerExoActivity;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -320,17 +318,15 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
         String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";
         String videoUrl = httpUrl + smbBean.getUrl().replace("smb://", "smb=");
 
-        Intent intent;
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
-            intent = new Intent(getView().getContext(), PlayerExoActivity.class);
-        else
-            intent = new Intent(getView().getContext(), PlayerActivity.class);
+        // TODO: 2019/3/31 IJK莫名的不能播放smb转http的视频，暂时只支持exo 
+        Intent intent = new Intent(getView().getContext(), PlayerExoActivity.class);
         String title = FileUtils.getFileNameNoExtension(videoUrl);
         intent.putExtra("title", title);
         intent.putExtra("path", videoUrl);
         intent.putExtra("danmu_path", "");
         intent.putExtra("current", 0);
         intent.putExtra("episode_id", 0);
+        intent.putExtra("extra_smb", true);
         getView().getContext().startActivity(intent);
     }
 

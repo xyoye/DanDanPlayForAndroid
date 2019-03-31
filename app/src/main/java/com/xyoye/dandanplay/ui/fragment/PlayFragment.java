@@ -102,9 +102,11 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 if (!videoFile.exists())
                     return;
                 //弹幕文件是否已被删除
-                File danmuFile = new File(videoBean.getDanmuPath());
-                if (!danmuFile.exists())
-                    videoBean.setDanmuPath("");
+                if (!StringUtils.isEmpty(videoBean.getDanmuPath())){
+                    File danmuFile = new File(videoBean.getDanmuPath());
+                    if (!danmuFile.exists())
+                        videoBean.setDanmuPath("");
+                }
 
                 //选择的播放器
                 Intent intent;

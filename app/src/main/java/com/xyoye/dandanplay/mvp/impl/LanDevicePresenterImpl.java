@@ -12,14 +12,14 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
-import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.bean.SmbBean2;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.LanDevicePresenter;
 import com.xyoye.dandanplay.mvp.view.LanDeviceView;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.smb.FindLanDevicesTask;
+import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 
 import java.net.MalformedURLException;
@@ -81,9 +81,9 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
         io.reactivex.Observable.create((ObservableOnSubscribe<List<LanDeviceBean>>) emitter -> {
             String localIp = new LocalIPUtil(mContext).getLocalIp();
             if (!StringUtils.isEmpty(localIp)){
-                new FindLanDevicesTask(localIp, deviceList -> {
+                new SearchSmbDevicesTask(localIp, deviceList -> {
                     Collections.sort(deviceList);
-                    emitter.onNext(deviceList);
+                    //emitter.onNext(deviceList);
                 }).run();
             }else {
                 getView().showError("获取手机IP地址失败");
@@ -139,7 +139,7 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
     @Override
     public void searchVideo(String smbUrl){
         Observable.create((ObservableOnSubscribe<Integer>) emitter -> {
-            List<SmbBean> beanList = traverseFolder(smbUrl);
+            List<SmbBean2> beanList = traverseFolder(smbUrl);
             updateSmbDataBase(beanList);
             emitter.onNext(beanList.size());
         }).subscribeOn(Schedulers.newThread())
@@ -151,24 +151,24 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
     }
 
     //遍历链接下所有视频文件
-    private List<SmbBean> traverseFolder(String smbUrl){
+    private List<SmbBean2> traverseFolder(String smbUrl){
         try {
             SmbFile smbFile = new SmbFile(smbUrl, context);
             if (smbFile.isFile() && CommonUtils.isMediaFile(smbUrl)){
-                SmbBean smbBean = new SmbBean();
-                smbBean.setName(smbFile.getName());
-                smbBean.setUrl(smbUrl);
-                List<SmbBean> smbBeanList = new ArrayList<>();
-                LogUtils.e("add smb video file: " + smbBean.getUrl());
-                smbBeanList.add(smbBean);
-                return smbBeanList;
+                SmbBean2 smbBean2 = new SmbBean2();
+                smbBean2.setName(smbFile.getName());
+                smbBean2.setUrl(smbUrl);
+                List<SmbBean2> smbBean2List = new ArrayList<>();
+                LogUtils.e("add smb video file: " + smbBean2.getUrl());
+                smbBean2List.add(smbBean2);
+                return smbBean2List;
             }else if (smbFile.isDirectory()){
                 SmbFile[] smbFiles = smbFile.listFiles();
-                List<SmbBean> smbBeanList = new ArrayList<>();
+                List<SmbBean2> smbBean2List = new ArrayList<>();
                 for (SmbFile file : smbFiles) {
-                    smbBeanList.addAll(traverseFolder(file.getPath()));
+                    smbBean2List.addAll(traverseFolder(file.getPath()));
                 }
-                return smbBeanList;
+                return smbBean2List;
             }
         } catch (SmbException | MalformedURLException e) {
             e.printStackTrace();
@@ -177,13 +177,13 @@ public class LanDevicePresenterImpl extends BaseMvpPresenterImpl<LanDeviceView> 
     }
 
     //更新数据库
-    private void updateSmbDataBase(List<SmbBean> beanList){
+    private void updateSmbDataBase(List<SmbBean2> beanList){
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         sqLiteDatabase.delete(DataBaseInfo.getTableNames()[7], "", new String[]{});
-        for (SmbBean smbBean : beanList){
+        for (SmbBean2 smbBean2 : beanList){
             ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[7][1], FileUtils.getDirName(smbBean.getUrl()));
-            values.put(DataBaseInfo.getFieldNames()[7][2], smbBean.getUrl());
+            values.put(DataBaseInfo.getFieldNames()[7][1], FileUtils.getDirName(smbBean2.getUrl()));
+            values.put(DataBaseInfo.getFieldNames()[7][2], smbBean2.getUrl());
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[7], null,values);
         }
     }

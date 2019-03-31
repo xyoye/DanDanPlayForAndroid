@@ -1,0 +1,26 @@
+package com.xyoye.dandanplay.mvp.presenter;
+
+import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
+
+/**
+ * Created by YE on 2019/3/30.
+ */
+
+public interface SmbPresenter extends BaseMvpPresenter {
+    void querySqlDevice();
+
+    void queryLanDevice();
+
+    void addSqlDevice(SmbBean smbBean);
+
+    void updateSqlDevice(SmbBean smbBean);
+
+    void loginSmb(SmbBean smbBean);
+
+    void listSmbFolder(SmbBean smbBean);
+
+    void openSmbFile(SmbBean smbBean);
+
+    void returnParentFolder();
+}

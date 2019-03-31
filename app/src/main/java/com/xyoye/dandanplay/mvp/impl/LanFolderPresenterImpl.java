@@ -14,7 +14,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.LanDeviceBean;
-import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.bean.SmbBean2;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.LanFolderPresenter;
@@ -100,7 +100,7 @@ public class LanFolderPresenterImpl extends BaseMvpPresenterImpl<LanFolderView> 
             smbUrl = "smb://"+lanDeviceBean.getAccount()+":"+lanDeviceBean.getPassword()+"@"+lanDeviceBean.getIp()+"/";
         }
         Observable.create((ObservableOnSubscribe<List<FolderBean>>) emitter -> {
-            List<SmbBean> beanList = traverseFolder(smbUrl);
+            List<SmbBean2> beanList = traverseFolder(smbUrl);
             updateSmbDataBase(beanList);
             List<FolderBean> folderBeanList = getFolderFormDataBase();
             emitter.onNext(folderBeanList);
@@ -130,24 +130,24 @@ public class LanFolderPresenterImpl extends BaseMvpPresenterImpl<LanFolderView> 
     }
 
     //遍历链接下所有视频文件
-    private List<SmbBean> traverseFolder(String smbUrl){
+    private List<SmbBean2> traverseFolder(String smbUrl){
         try {
             SmbFile smbFile = new SmbFile(smbUrl);
             if (smbFile.isFile() && CommonUtils.isMediaFile(smbUrl)){
-                SmbBean smbBean = new SmbBean();
-                smbBean.setName(smbFile.getName());
-                smbBean.setUrl(smbUrl);
-                List<SmbBean> smbBeanList = new ArrayList<>();
-                LogUtils.e("add smb video file: " + smbBean.getUrl());
-                smbBeanList.add(smbBean);
-                return smbBeanList;
+                SmbBean2 smbBean2 = new SmbBean2();
+                smbBean2.setName(smbFile.getName());
+                smbBean2.setUrl(smbUrl);
+                List<SmbBean2> smbBean2List = new ArrayList<>();
+                LogUtils.e("add smb video file: " + smbBean2.getUrl());
+                smbBean2List.add(smbBean2);
+                return smbBean2List;
             }else if (smbFile.isDirectory()){
                 SmbFile[] smbFiles = smbFile.listFiles();
-                List<SmbBean> smbBeanList = new ArrayList<>();
+                List<SmbBean2> smbBean2List = new ArrayList<>();
                 for (SmbFile file : smbFiles) {
-                    smbBeanList.addAll(traverseFolder(file.getPath()));
+                    smbBean2List.addAll(traverseFolder(file.getPath()));
                 }
-                return smbBeanList;
+                return smbBean2List;
             }
         } catch (MalformedURLException | SmbException e) {
             e.printStackTrace();
@@ -156,13 +156,13 @@ public class LanFolderPresenterImpl extends BaseMvpPresenterImpl<LanFolderView> 
     }
 
     //更新数据库
-    private void updateSmbDataBase(List<SmbBean> beanList){
+    private void updateSmbDataBase(List<SmbBean2> beanList){
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         sqLiteDatabase.delete(DataBaseInfo.getTableNames()[7], "", new String[]{});
-        for (SmbBean smbBean : beanList){
+        for (SmbBean2 smbBean2 : beanList){
             ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[7][1], FileUtils.getDirName(smbBean.getUrl()));
-            values.put(DataBaseInfo.getFieldNames()[7][2], smbBean.getUrl());
+            values.put(DataBaseInfo.getFieldNames()[7][1], FileUtils.getDirName(smbBean2.getUrl()));
+            values.put(DataBaseInfo.getFieldNames()[7][2], smbBean2.getUrl());
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[7], null,values);
         }
     }

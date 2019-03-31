@@ -62,6 +62,13 @@ public class Constants {
         public static final String danmuFolder = "/_danmu";
     }
 
+    public static class SmbType{
+        public static final int SQL_DEVICE = 1;
+        public static final int LAN_DEVICE = 2;
+        public static final int FOLDER = 3;
+        public static final int FILE = 4;
+    }
+
     //文件排序方式
     public static class Collection {
         public static final int NAME_ASC = 1;

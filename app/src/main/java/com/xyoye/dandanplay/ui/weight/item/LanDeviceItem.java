@@ -52,7 +52,7 @@ public class LanDeviceItem implements AdapterItem<LanDeviceBean> {
         if (StringUtils.isEmpty(model.getAccount()) && !model.isAnonymous()){
             deviceIv.setImageResource(R.mipmap.ic_lan_device_shallow);
         }else {
-            deviceIv.setImageResource(R.mipmap.ic_lan_device);
+            deviceIv.setImageResource(R.mipmap.ic_smb_lan_device);
         }
 
         mView.setOnClickListener(v -> EventBus.getDefault().post(new OpenLanEvent(position)));

@@ -200,8 +200,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 launchActivity(VideoScanActivity.class);
                 break;
             case R.id.menu_item_lan:
-                launchActivity(LanFolderActivity.class);
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
+                launchActivity(SmbActivity.class);
+                //EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
                 break;
             case R.id.menu_item_network:
                 new CommonEditTextDialog(this, R.style.Dialog, CommonEditTextDialog.NETWORK_LINK).show();

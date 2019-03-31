@@ -85,7 +85,7 @@ public class LanFolderActivity extends BaseMvpActivity<LanFolderPresenter> imple
 
         String device = SPUtils.getInstance().getString(Constants.Config.SMB_DEVICE);
         if (StringUtils.isEmpty(device)){
-            launchActivity(LanDeviceDeviceActivity.class);
+            launchActivity(LanDeviceActivity.class);
         }else {
             presenter.getFolders();
         }
@@ -138,7 +138,7 @@ public class LanFolderActivity extends BaseMvpActivity<LanFolderPresenter> imple
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_update_device:
-                launchActivity(LanDeviceDeviceActivity.class);
+                launchActivity(LanDeviceActivity.class);
                 break;
         }
         return super.onOptionsItemSelected(item);

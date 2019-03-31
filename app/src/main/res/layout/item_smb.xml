@@ -9,13 +9,13 @@
     android:background="?android:attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/device_iv"
+        android:id="@+id/smb_cover_iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@mipmap/ic_smb_lan_device"/>
 
     <TextView
-        android:id="@+id/device_ip_tv"
+        android:id="@+id/smb_url_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -24,13 +24,16 @@
         android:singleLine="true"/>
 
     <TextView
-        android:id="@+id/device_name_tv"
+        android:id="@+id/smb_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"
         android:layout_marginEnd="3dp"
+        android:gravity="center"
         android:textSize="14sp"
         android:textColor="@color/black_color"
-        android:text="设备名"/>
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text=""/>
 
 </LinearLayout>

@@ -24,7 +24,7 @@ import com.xyoye.dandanplay.bean.event.UpdateDeviceEvent;
 import com.xyoye.dandanplay.mvp.impl.LanDevicePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LanDevicePresenter;
 import com.xyoye.dandanplay.mvp.view.LanDeviceView;
-import com.xyoye.dandanplay.ui.weight.dialog.AuthLanDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.SmbDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.LanDeviceItem;
 import com.xyoye.dandanplay.utils.Constants;
@@ -43,7 +43,7 @@ import butterknife.BindView;
  * Created by xyy on 2018/11/19.
  */
 
-public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter> implements LanDeviceView {
+public class LanDeviceActivity extends BaseMvpActivity<LanDevicePresenter> implements LanDeviceView {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.device_rv)
@@ -53,7 +53,7 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
 
     private BaseRvAdapter<LanDeviceBean> adapter;
     private List<LanDeviceBean> lanDeviceList = new ArrayList<>();
-    private AuthLanDialog authLanDialog;
+    private SmbDialog smbDialog;
 
     @NonNull
     @Override
@@ -96,8 +96,8 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
 
     @Override
     public void authSuccess(LanDeviceBean deviceBean, int position) {
-        if (authLanDialog != null && authLanDialog.isShowing())
-            authLanDialog.dismiss();
+        if (smbDialog != null && smbDialog.isShowing())
+            smbDialog.dismiss();
         ToastUtils.showShort("登陆成功");
         showLoadingDialog("开始搜索视频文件");
         
@@ -128,8 +128,8 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
 
     @Override
     public void addDevice(LanDeviceBean device) {
-        if (authLanDialog != null && authLanDialog.isShowing())
-            authLanDialog.dismiss();
+        if (smbDialog != null && smbDialog.isShowing())
+            smbDialog.dismiss();
         ToastUtils.showShort("添加设备成功");
         showLoadingDialog("开始搜索视频文件");
 
@@ -177,8 +177,8 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
         if (!StringUtils.isEmpty(deviceBean.getAccount()) || deviceBean.isAnonymous()){
             presenter.authLan(deviceBean, event.getPosition(), false);
         }else {
-            authLanDialog = new AuthLanDialog(this, R.style.Dialog, deviceBean, event.getPosition(), false);
-            authLanDialog.show();
+            //smbDialog = new SmbDialog(this, deviceBean, event.getPosition(), false);
+            smbDialog.show();
         }
     }
 
@@ -218,8 +218,8 @@ public class LanDeviceDeviceActivity extends BaseMvpActivity<LanDevicePresenter>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_item_lan_device:
-                authLanDialog = new AuthLanDialog(this, R.style.Dialog, null, 0, true);
-                authLanDialog.show();
+                //smbDialog = new SmbDialog(this, null, 0, true);
+                smbDialog.show();
                 break;
         }
         return super.onOptionsItemSelected(item);

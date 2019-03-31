@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
+import com.xyoye.dandanplay.ui.activities.SmbActivity;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
@@ -61,10 +62,7 @@ public class SmbService extends Service {
     }
 
     private Notification buildNotification(Intent oldIntent){
-        Intent intent = new Intent(this, FolderActivity.class);
-        intent.putExtra("is_lan", oldIntent.getBooleanExtra("is_lan", false));
-        intent.putExtra(OpenFolderEvent.FOLDERPATH, oldIntent.getStringExtra(OpenFolderEvent.FOLDERPATH));
-
+        Intent intent = new Intent(this, SmbActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent,0);
 
         Notification.Builder builder = new Notification.Builder(this)

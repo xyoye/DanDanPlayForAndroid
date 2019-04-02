@@ -11,10 +11,12 @@ ext{
 
     dependencies = [
             "appcompat-v7" : 'com.android.support:appcompat-v7:27.1.1',
-            "recycler" : 'com.android.support:recyclerview-v7:27.1.1',
             "appcompat-v4" : 'com.android.support:support-v4:27.1.1',
+            "design" : 'com.android.support:design:27.1.1',
+            "cardview" : 'com.android.support:cardview-v7:27.1.1',
+            "recycler" : 'com.android.support:recyclerview-v7:27.1.1',
             "espresso-core" : 'com.android.support.test.espresso:espresso-core:3.0.2',
             "junit" : 'junit:junit:4.12',
-            "design" : 'com.android.support:design:27.1.1'
+            "runner" : 'com.android.support.test:runner:1.0.2'
     ]
 }

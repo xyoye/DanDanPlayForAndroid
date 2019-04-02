@@ -99,21 +99,9 @@
         <activity
             android:name=".ui.activities.ChangePasswordActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--局域网设备-->
-        <activity
-            android:name=".ui.activities.LanDeviceActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--局域网设备下文件夹-->
-        <activity
-            android:name=".ui.activities.LanFolderActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--SMB-->
         <activity
             android:name=".ui.activities.SmbActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--局域网设备下文件夹下视频-->
-        <activity
-            android:name=".ui.activities.LanVideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--Tracker管理-->
         <activity

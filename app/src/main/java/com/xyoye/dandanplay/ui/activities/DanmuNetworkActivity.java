@@ -116,11 +116,6 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     }
 
     @Override
-    public boolean isLan() {
-        return getIntent().getBooleanExtra("is_lan", false);
-    }
-
-    @Override
     public void refreshAdapter(List<DanmuMatchBean.MatchesBean> beans) {
         adapter.setData(beans);
     }

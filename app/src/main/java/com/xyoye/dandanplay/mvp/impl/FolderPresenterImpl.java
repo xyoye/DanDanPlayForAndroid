@@ -38,8 +38,6 @@ import io.reactivex.schedulers.Schedulers;
 
 
 public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
-    // is smb file view
-    private boolean isLan;
 
     public FolderPresenterImpl(FolderView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -47,7 +45,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void init() {
-        isLan = getView().isLan();
+
     }
 
     @Override
@@ -74,9 +72,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     @Override
     public void getVideoList(String folderPath) {
         io.reactivex.Observable.create((ObservableOnSubscribe<List<VideoBean>>) emitter ->
-                    emitter.onNext(isLan ?
-                            getLanVideo(folderPath) :
-                            getDataBaseVideo(folderPath)))
+                    emitter.onNext(getDataBaseVideo(folderPath)))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(videoBeanList -> getView().refreshAdapter(videoBeanList));
@@ -89,14 +85,8 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             ContentValues values = new ContentValues();
             values.put("danmu_path", danmuPath);
             values.put("danmu_episode_id", episodeId);
-            String whereCase;
-            if (!isLan){
-                whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-                sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values, whereCase, whereArgs);
-            }else {
-                whereCase = DataBaseInfo.getFieldNames()[7][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[7][2]+" =? ";
-                sqLiteDatabase.update(DataBaseInfo.getTableNames()[7],values, whereCase, whereArgs);
-            }
+            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+            sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values, whereCase, whereArgs);
         }).start();
     }
 
@@ -106,14 +96,8 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
             ContentValues values = new ContentValues();
             values.put("current_position", event.getCurrentPosition());
-            String whereCase;
-            if (!isLan){
-                whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-                sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
-            }else {
-                whereCase = DataBaseInfo.getFieldNames()[7][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[7][2]+" =? ";
-                sqLiteDatabase.update(DataBaseInfo.getTableNames()[7], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
-            }
+            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+            sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
         }).start();
     }
 
@@ -121,28 +105,24 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     public void deleteFile(String filePath) {
         new Thread(() -> {
             SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            if (!isLan){
-                String folderPath = FileUtils.getDirName(filePath);
-                //delete file
-                String whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[2], whereCase, new String[]{folderPath, filePath});
-                //folder file number reduce, if number-1 == 0, delete folder
-                String sql = "SELECT * FROM folder WHERE folder_path = ?";
-                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath});
-                if (cursor.moveToNext()){
-                    int number = cursor.getInt(2);
-                    if (number > 2){
-                        ContentValues values = new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[1][2], --number);
-                        sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values, "folder_path = ?", new String[]{folderPath});
-                    }else {
-                        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[1], "folder_path = ?", new String[]{folderPath});
-                    }
+            String folderPath = FileUtils.getDirName(filePath);
+            //delete file
+            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[2], whereCase, new String[]{folderPath, filePath});
+            //folder file number reduce, if number-1 == 0, delete folder
+            String sql = "SELECT * FROM folder WHERE folder_path = ?";
+            Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath});
+            if (cursor.moveToNext()){
+                int number = cursor.getInt(2);
+                if (number > 2){
+                    ContentValues values = new ContentValues();
+                    values.put(DataBaseInfo.getFieldNames()[1][2], --number);
+                    sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values, "folder_path = ?", new String[]{folderPath});
+                }else {
+                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[1], "folder_path = ?", new String[]{folderPath});
                 }
-                cursor.close();
-            }else {
-                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[7], "file_path = ?", new String[]{filePath});
             }
+            cursor.close();
         }).start();
     }
 

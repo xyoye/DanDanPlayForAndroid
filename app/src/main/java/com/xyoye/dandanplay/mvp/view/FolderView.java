@@ -21,6 +21,4 @@ public interface FolderView extends BaseMvpView, LoadDataView {
     void noMatchDanmu(String videoPath);
 
     void openIntentVideo(VideoBean videoBean);
-
-    Boolean isLan();
 }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -17,19 +16,19 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                
-                <ImageView
-                    android:layout_width=""
-                    android:layout_height="" />
+
+                <com.xyoye.dandanplay.ui.weight.SemicircleView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/login_bg"
+                    app:distance_top="150dp"
+                    app:curvature="3"
+                    app:mask_out_color="#ffffff"
+                    app:mask_in_color="#44ffffff"/>
 
                 <include layout="@layout/layout_toolbar"
                     android:visibility="gone"/>
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="10dp"/>
 
                 <com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout
                     android:layout_width="match_parent"
@@ -37,11 +36,12 @@
                     android:orientation="vertical"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginTop="35dp"
+                    android:layout_marginTop="80dp"
                     android:layout_marginBottom="15dp"
+                    android:background="@color/white"
                     app:shadowRadius="2dp"
                     app:shadowElevation="3dp"
-                    app:shadowAlpha="0.1">
+                    app:shadowAlpha="0.8">
 
                     <com.xyoye.dandanplay.ui.weight.ExpandableTextView
                         android:id="@+id/anima_intro_tv"
@@ -50,6 +50,23 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
                         android:text="" />
+                </com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout>
+
+                <com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="65dp"
+                    android:background="@color/white"
+                    app:shadowRadius="2dp"
+                    app:shadowElevation="3dp"
+                    app:shadowAlpha="1">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="100dp"
+                        android:src="@mipmap/login_bg"
+                        android:scaleType="centerCrop"/>
                 </com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout>
             </RelativeLayout>
 

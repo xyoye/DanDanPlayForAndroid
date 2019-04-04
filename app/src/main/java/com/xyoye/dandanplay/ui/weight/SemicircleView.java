@@ -5,14 +5,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
 
@@ -23,17 +18,17 @@ import com.xyoye.dandanplay.R;
  */
 
 public class SemicircleView extends android.support.v7.widget.AppCompatImageView {
-    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
     private Bitmap mForeground;
-    private Bitmap mBackground;
-    private Canvas mForeCanvas;
-    private Paint mPaint;
 
     //曲率
     private float mCurvature;
     //距离顶部
     private float mDistanceTop;
+    //遮罩外层颜色
+    private int maskOutColor;
+    //遮罩内层颜色
+    private int maskInColor;
 
     public SemicircleView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -42,37 +37,52 @@ public class SemicircleView extends android.support.v7.widget.AppCompatImageView
     public SemicircleView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SemicircleView, defStyle, 0);
-        mCurvature = a.getFloat(R.styleable.SemicircleView_curvature, 1.0f);
-        mDistanceTop = a.getDimension(R.styleable.SemicircleView_distance_top, getHeight()/2);
-        a.recycle();
-
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SemicircleView, defStyle, 0);
+        mCurvature = typedArray.getFloat(R.styleable.SemicircleView_curvature, 1);
+        mDistanceTop = typedArray.getDimension(R.styleable.SemicircleView_distance_top, 0);
+        maskOutColor = typedArray.getColor(R.styleable.SemicircleView_mask_out_color, maskOutColor);
+        maskInColor = typedArray.getColor(R.styleable.SemicircleView_mask_in_color, maskInColor);
+        typedArray.recycle();
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        initSource(getWidth(), getHeight());
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onDraw(Canvas canvas) {
-        float mRadius = getRadius(getMeasuredWidth(), mDistanceTop) * mCurvature;
-        float mStartX = getMeasuredWidth() / 2;
-        float mStartY = mDistanceTop - mRadius;
-        mForeCanvas.drawCircle(mStartX, mStartY, mRadius, mPaint);
-        //在新的图层上面绘制
-        int layer = canvas.saveLayer(0, 0, getWidth(), getHeight(), null);
-        canvas.drawBitmap(mBackground, 0, 0, null);
+        super.onDraw(canvas);
         canvas.drawBitmap(mForeground, 0, 0, null);
-        canvas.restoreToCount(layer);
+    }
+
+    private void initSource(int width, int height){
+        //获取半径 * 曲率，曲率越大，半径越大
+        float mRadius = getRadius(width, mDistanceTop) * mCurvature;
+        //计算圆点
+        float mStartX = (float) (width / 2);
+        float mStartY = mDistanceTop - mRadius;
+
+        Paint mPaint = new Paint();
+        //遮罩圆形区域内颜色
+        mPaint.setColor(maskInColor);
+        mPaint.setAntiAlias(true);
+        //显示相交部分
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+        //遮罩圆形区域外部
+        mForeground = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        //遮罩圆形区域外部颜色
+        mForeground.eraseColor(maskOutColor);
+
+        Canvas mForeCanvas = new Canvas(mForeground);
+        mForeCanvas.drawCircle(mStartX, mStartY, mRadius, mPaint);
     }
 
 
-    //过三点取圆半径
+    //过三点求圆半径
     private float getRadius(float width , float top){
         double x1,y1, x2,y2, x3,y3;
         double a, b, c, g, e, f;
@@ -101,70 +111,5 @@ public class SemicircleView extends android.support.v7.widget.AppCompatImageView
 
         double R = Math.sqrt((X-x1)*(X-x1)+(Y-y1)*(Y-y1));
         return (float)R;
-    }
-
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        mForeground = bm.copy(Bitmap.Config.ARGB_8888, true);
-        initSource();
-        invalidate();
-    }
-
-    @Override
-    public void setImageDrawable(Drawable drawable) {
-        super.setImageDrawable(drawable);
-        mForeground = getBitmapFromDrawable(drawable).copy(Bitmap.Config.ARGB_8888, true);
-        initSource();
-        invalidate();
-    }
-
-    @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-        mForeground = getBitmapFromDrawable(getDrawable()).copy(Bitmap.Config.ARGB_8888, true);
-        initSource();
-        invalidate();
-    }
-
-    @Override
-    public void setImageURI(Uri uri) {
-        super.setImageURI(uri);
-        mForeground = getBitmapFromDrawable(getDrawable()).copy(Bitmap.Config.ARGB_8888, true);
-        initSource();
-        invalidate();
-    }
-
-    private void initSource(){
-        mForeCanvas = new Canvas(mForeground);
-        mBackground = Bitmap.createBitmap(mForeground.getWidth(), mForeground.getWidth(), Bitmap.Config.RGB_565);
-        mBackground.eraseColor(Color.parseColor("#88000000"));
-    }
-
-    private Bitmap getBitmapFromDrawable(Drawable drawable) {
-        if (drawable == null) {
-            return null;
-        }
-
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-
-        try {
-            Bitmap bitmap;
-
-            if (drawable instanceof ColorDrawable) {
-                bitmap = Bitmap.createBitmap(2, 2, BITMAP_CONFIG);
-            } else {
-                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
-            }
-
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        } catch (OutOfMemoryError e) {
-            return null;
-        }
     }
 }

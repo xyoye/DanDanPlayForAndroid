@@ -8,6 +8,8 @@
     <declare-styleable name="SemicircleView">
         <attr name="curvature" format="float" />
         <attr name="distance_top" format="dimension" />
+        <attr name="mask_out_color" format="color|reference"/>
+        <attr name="mask_in_color" format="color|reference"/>
     </declare-styleable>
 
     <declare-styleable name="ShadowLayout">

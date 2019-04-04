@@ -4,4 +4,48 @@
         <attr name="border_width" format="dimension" />
         <attr name="border_color" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="SemicircleView">
+        <attr name="curvature" format="float" />
+        <attr name="distance_top" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ShadowLayout">
+        <attr name="shadowRadius" format="dimension" />
+        <attr name="shadowElevation" format="dimension" />
+        <attr name="shadowAlpha" format="float" />
+
+        <attr name="bottomDividerHeight" format="dimension" />
+        <attr name="bottomDividerColor" format="color|reference" />
+        <attr name="bottomDividerInsetLeft" format="dimension" />
+        <attr name="bottomDividerInsetRight" format="dimension" />
+        <attr name="topDividerHeight" format="dimension" />
+        <attr name="topDividerColor" format="color|reference" />
+        <attr name="topDividerInsetLeft" format="dimension" />
+        <attr name="topDividerInsetRight" format="dimension" />
+        <attr name="leftDividerWidth" format="dimension" />
+        <attr name="leftDividerColor" format="color|reference" />
+        <attr name="leftDividerInsetTop" format="dimension" />
+        <attr name="leftDividerInsetBottom" format="dimension" />
+        <attr name="rightDividerWidth" format="dimension" />
+        <attr name="rightDividerColor" format="color|reference" />
+        <attr name="rightDividerInsetTop" format="dimension" />
+        <attr name="rightDividerInsetBottom" format="dimension" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderWidth" format="dimension" />
+        <attr name="outerNormalColor" format="color|reference" />
+        <attr name="hideRadiusSide" format="enum">
+            <enum name="none" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+            <enum name="left" value="4" />
+        </attr>
+        <attr name="showBorderOnlyBeforeL" format="boolean" />
+        <attr name="outlineInsetTop" format="dimension" />
+        <attr name="outlineInsetLeft" format="dimension" />
+        <attr name="outlineInsetRight" format="dimension" />
+        <attr name="outlineInsetBottom" format="dimension" />
+        <attr name="outlineExcludePadding" format="boolean" />
+    </declare-styleable>
 </resources>

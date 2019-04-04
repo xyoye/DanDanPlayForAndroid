@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;

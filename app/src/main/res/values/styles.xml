@@ -23,6 +23,13 @@
         <item name="elevation">0dp</item>
     </style>
 
+    <style name="ActivityTranslucentTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="ToolBar" parent="AppBaseTheme">
         <item name="colorButtonNormal">@color/colorTextIcons</item>
         <item name="colorControlNormal">@color/colorTextIcons</item>

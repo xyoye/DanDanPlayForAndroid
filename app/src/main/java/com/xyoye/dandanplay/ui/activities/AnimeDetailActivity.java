@@ -447,9 +447,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         ToastUtils.showShort(message);
     }
 
-    @OnClick({R.id.select_episode_tv, R.id.exit_select_iv})
+    @OnClick({R.id.anima_image_iv, R.id.select_episode_tv, R.id.exit_select_iv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.anima_image_iv:
+                if (animeDetailBean != null){
+                    Intent intent = new Intent(AnimeDetailActivity.this, ImagePreviewActivity.class);
+                    intent.putExtra("image_url", animeDetailBean.getBangumi().getImageUrl());
+                    startActivity(intent);
+                }
+                break;
             case R.id.select_episode_tv:
                 scrollableLayout.setHeadCount(1);
                 selectEpisodeLl.setVisibility(View.VISIBLE);

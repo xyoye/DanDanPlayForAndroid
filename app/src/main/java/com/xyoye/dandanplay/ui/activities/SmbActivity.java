@@ -204,6 +204,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
             for (SmbBean smbBean : smbList) {
                 if (smbBean.getUrl().equals(scanBean.getUrl())) {
                     scanIterator.remove();
+                    break;
                 }
             }
         }

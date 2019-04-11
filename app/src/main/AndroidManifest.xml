@@ -117,8 +117,11 @@
         <activity
             android:name=".ui.activities.AnimeSeasonActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--扫码管理-->
+        <!--扫描管理-->
         <activity android:name=".ui.activities.VideoScanActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <!--图片预览-->
+        <activity android:name=".ui.activities.ImagePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
         <activity

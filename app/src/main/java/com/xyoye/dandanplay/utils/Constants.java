@@ -60,6 +60,8 @@ public class Constants {
         public static final String torrentFolder = "/_torrent";
         //默认弹幕下载文件夹名
         public static final String danmuFolder = "/_danmu";
+        //默认番剧封面缓存路径
+        public static final String animeCover = downloadPath + "/_cover";
     }
 
     public static class SmbType{

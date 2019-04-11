@@ -107,6 +107,7 @@ public class ImagePreviewActivity extends BaseMvcActivity {
     }
 
     private void switchScreenStatus(boolean isFullScreen){
+        if (backIv == null) return;
         if (isFullScreen){
             WindowManager.LayoutParams attrs = getWindow().getAttributes();
             attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
@@ -137,5 +138,11 @@ public class ImagePreviewActivity extends BaseMvcActivity {
             e.printStackTrace();
             ToastUtils.showShort("保存失败");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        IApplication.getMainHandler().removeCallbacks(hideViewRunnable);
     }
 }

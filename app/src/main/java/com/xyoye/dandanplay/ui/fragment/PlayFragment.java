@@ -97,6 +97,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
             String videoInfo = AppConfig.getInstance().getLastPlayVideo();
             if (!StringUtils.isEmpty(videoInfo)){
                 VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
+                if (videoBean == null)
+                    return;
                 //视频文件是否已被删除
                 File videoFile = new File(videoBean.getVideoPath());
                 if (!videoFile.exists())

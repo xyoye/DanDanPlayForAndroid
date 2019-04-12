@@ -173,6 +173,9 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Override
     protected void onResume() {
         super.onResume();
+        if(adapter != null){
+            adapter.notifyDataSetChanged();
+        }
         if (ServiceUtils.isServiceRunning(SmbService.class)){
             stopService(new Intent(this, SmbService.class));
         }

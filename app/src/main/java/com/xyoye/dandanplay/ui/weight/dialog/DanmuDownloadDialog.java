@@ -14,6 +14,7 @@ import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -79,11 +80,11 @@ public class DanmuDownloadDialog extends Dialog{
                     //否则下载弹幕至默认下载文件夹
                     if (FileUtils.getDirName(videoPath).startsWith(AppConfig.getInstance().getDownloadFolder())){
                         danmuPath = FileUtils.getDirName(videoPath)
-                                + "/_danmu"
+                                + Constants.DefaultConfig.danmuFolder
                                 + "/" + danmuName;
                     }else {
                         danmuPath = AppConfig.getInstance().getDownloadFolder()
-                                + "/_danmu"
+                                + Constants.DefaultConfig.danmuFolder
                                 + "/" + danmuName;
                     }
                     //去除内容时间一样的弹幕

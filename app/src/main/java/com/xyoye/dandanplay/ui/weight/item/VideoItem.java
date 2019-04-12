@@ -47,8 +47,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
     ImageView danmuTipsIv;
     @BindView(R.id.video_info_rl)
     RelativeLayout videoInfoRl;
-    @BindView(R.id.delete_action_ll)
-    LinearLayout deleteActionLl;
     @BindView(R.id.bind_danmu_iv)
     ImageView bindDanmuIv;
     @BindView(R.id.bind_danmu_tv)
@@ -115,9 +113,9 @@ public class VideoItem implements AdapterItem<VideoBean> {
         if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_inexist);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
         } else {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmaku_exists);
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
         }
 
         danmuTipsIv.setOnClickListener(v -> {
@@ -139,12 +137,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         unbindDanmuActionLl.setOnClickListener(v -> {
             EventBus.getDefault().post(new VideoActionEvent(VideoActionEvent.UN_BIND, position));
-            videoActionLl.setVisibility(View.GONE);
-        });
-
-
-        deleteActionLl.setOnClickListener(v -> {
-            EventBus.getDefault().post(new VideoActionEvent(VideoActionEvent.DELETE, position));
             videoActionLl.setVisibility(View.GONE);
         });
     }

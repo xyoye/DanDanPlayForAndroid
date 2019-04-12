@@ -33,10 +33,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["recycler"]
-    // Required for local unit tests (JUnit 4 framework)
-    testImplementation 'junit:junit:4.12'
-    // Required for instrumented tests
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    implementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["runner"]
 
     api 'org.greenrobot:eventbus:3.1.1'
     api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'

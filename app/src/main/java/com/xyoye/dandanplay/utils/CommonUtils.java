@@ -25,7 +25,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -202,7 +204,7 @@ public class CommonUtils {
         FileOutputStream fos;
         BufferedWriter bw = null;
         try {
-            String localPath = path + "/" + fileName+".xml";
+            String localPath = path + Constants.DefaultConfig.danmuFolder+ "/" + fileName+".xml";
 
             File folder = new File(path);
             if (!folder.exists()) {
@@ -298,4 +300,17 @@ public class CommonUtils {
         return data;
     }
 
+    /**
+     * 通过当前时间获取当前文件名
+     * @param header 头部："COV"
+     * @param tail  尾部：".jpg";
+     * @return  "/COV_20190227_090701.jpg"
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static String getCurrentFileName(String header, String tail){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        String curTime  = formatter.format(curDate);
+        return "/"+header+"_"+curTime+tail;
+    }
 }

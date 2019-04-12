@@ -73,6 +73,40 @@ public class PlayerExoActivity extends AppCompatActivity implements PlayerReceiv
         PlayerExoActivity.this.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         PlayerExoActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
+        boolean isSmbPlay = getIntent().getBooleanExtra("extra_smb", false);
+        if (isSmbPlay){
+            videoPath = getIntent().getStringExtra("path");
+            videoTitle = getIntent().getStringExtra("title");
+            currentPosition = 0;
+            episodeId = 0;
+            if (AppConfig.getInstance().isShowOuterChainDanmuDialog()){
+                new DanmuSelectDialog(this, isSelectDanmu -> {
+                    if (isSelectDanmu){
+                        Intent intent = new Intent(PlayerExoActivity.this, DanmuNetworkActivity.class);
+                        intent.putExtra("video_path", videoPath);
+                        intent.putExtra("is_lan", true);
+                        startActivityForResult(intent, SELECT_DANMU);
+                    }else {
+                        danmuPath = "";
+                        initPlayer();
+                        mPlayer.start();
+                    }
+                }).show();
+            }else {
+                if (AppConfig.getInstance().isOuterChainDanmuSelect()){
+                    Intent intent = new Intent(PlayerExoActivity.this, DanmuNetworkActivity.class);
+                    intent.putExtra("video_path", videoPath);
+                    intent.putExtra("is_lan", true);
+                    startActivityForResult(intent, SELECT_DANMU);
+                }else {
+                    danmuPath = "";
+                    initPlayer();
+                    mPlayer.start();
+                }
+            }
+            return;
+        }
+
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             //外部打开
             if (!StringUtils.isEmpty(getIntent().getDataString())) {
@@ -236,6 +270,13 @@ public class PlayerExoActivity extends AppCompatActivity implements PlayerReceiv
                 if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
                     addPlayHistory(episodeId);
             }
+        }else if (resultCode == RESULT_CANCELED){
+            danmuPath = "";
+            episodeId = 0;
+            initPlayer();
+            mPlayer.start();
+            if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
+                addPlayHistory(episodeId);
         }
     }
 

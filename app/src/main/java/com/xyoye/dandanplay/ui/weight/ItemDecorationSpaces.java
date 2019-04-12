@@ -6,17 +6,18 @@ import android.view.View;
 
 /**
  * Created by Administrator on 2015/12/29.
+ * 空白的分割线
  */
-public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
+public class ItemDecorationSpaces extends RecyclerView.ItemDecoration {
 
     private int top, left, right, bottom;
     private int spanCount;
 
-    public SpacesItemDecoration(int space) {
+    public ItemDecorationSpaces(int space) {
         this(space, space, space, space);
     }
 
-    public SpacesItemDecoration(int top, int left, int right, int bottom) {
+    public ItemDecorationSpaces(int top, int left, int right, int bottom) {
         this.top = top;
         this.left = left;
         this.right = right;
@@ -24,7 +25,7 @@ public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
         this.spanCount = 0;
     }
 
-    public SpacesItemDecoration(int top, int left, int right, int bottom, int spanCount) {
+    public ItemDecorationSpaces(int top, int left, int right, int bottom, int spanCount) {
         this.top = top;
         this.left = left;
         this.right = right;

@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.utils;
 
+import android.os.Environment;
+
 /**
  * Created by YE on 2018/6/29 0029.
  */
@@ -49,6 +51,24 @@ public class Constants {
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
         //上次播放的视频
         public static final String LAST_PLAY_VIDEO = "last_play_video";
+    }
+
+    public static class DefaultConfig{
+        //默认下载文件夹
+        public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
+        //默认种子下载文件夹名
+        public static final String torrentFolder = "/_torrent";
+        //默认弹幕下载文件夹名
+        public static final String danmuFolder = "/_danmu";
+        //默认番剧封面缓存路径
+        public static final String animeCover = downloadPath + "/_cover";
+    }
+
+    public static class SmbType{
+        public static final int SQL_DEVICE = 1;
+        public static final int LAN_DEVICE = 2;
+        public static final int FOLDER = 3;
+        public static final int FILE = 4;
     }
 
     //文件排序方式

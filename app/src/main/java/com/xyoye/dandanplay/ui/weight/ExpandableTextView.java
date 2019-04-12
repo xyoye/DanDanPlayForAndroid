@@ -4,7 +4,11 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.Build;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,10 +35,9 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private final int STATE_EXPANDED = 3; //文本行数超过限定行数,被点击全文展开
 
     /* 默认最高行数 */
-    private static final int MAX_COLLAPSED_LINES = 3;
+    private static final int MAX_COLLAPSED_LINES = 1;
     private Map<Integer, Integer> mCollapsedStatus = new HashMap<>();
-    private TextView tv_expandable_content;
-    private TextView tv_expand_or_collapse;
+    private TextView contentTv, extraTv;
 
     private boolean forceRefresh;//是否每次setText都重新获取文本行数
     private float textViewWidthPx;
@@ -107,59 +110,71 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     private void findViews() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_expandable_textview, this);
-        tv_expandable_content = findViewById(R.id.tv_expandable_content);
-        tv_expand_or_collapse = findViewById(R.id.tv_expand_or_collapse);
-
+        contentTv = findViewById(R.id.content_tv);
+        extraTv = findViewById(R.id.extra_tv);
         setOnClickListener(this);
     }
 
-    public void setText(String text) {
-        this.setText(text, 0);
-    }
-
-    public void setText(String text, final int index) {
+    public void setText(String text, int maxWith) {
         if (forceRefresh) {
-            mCollapsedStatus.put(index, null);
+            mCollapsedStatus.put(0, null);
         }
 
-        this.position = index;
-        Integer state = mCollapsedStatus.get(index);
+        SpannableString spanText;
 
+        this.position = 0;
+        //获取状态
+        Integer state = mCollapsedStatus.get(0);
         if (state == null) {
-            int lineCount = getLineCount(text);
-//            L.i("================================lineCount:" + lineCount + "======================================");
+            //获取行数
+            int lineCount = getLineCount(text + "[收起]", maxWith);
+            //大于最大行数
             if (lineCount > MAX_COLLAPSED_LINES) {
-                tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
-                tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
-                mCollapsedStatus.put(index, STATE_COLLAPSED);
+                //添加“收起”后缀
+                text += "[收起]";
+                spanText = new SpannableString(text);
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.theme_color));
+                spanText.setSpan(colorSpan, text.length()-4, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+                //设置最大行数现在
+                contentTv.setMaxLines(MAX_COLLAPSED_LINES);
+                //显示“展开”
+                extraTv.setVisibility(VISIBLE);
+                //保存当前状态
+                mCollapsedStatus.put(0, STATE_COLLAPSED);
             } else {
-                tv_expandable_content.setMaxLines(lineCount);
-                tv_expand_or_collapse.setVisibility(View.GONE);
-                mCollapsedStatus.put(index, STATE_NOT_OVERFLOW);
-
+                spanText = new SpannableString(text);
+                contentTv.setMaxLines(lineCount);
+                extraTv.setVisibility(GONE);
+                mCollapsedStatus.put(0, STATE_NOT_OVERFLOW);
             }
-            tv_expandable_content.setText(text);
+            contentTv.setText(spanText);
         } else {
-            //如果之前已经初始化过了，则使用保存的状态，无需再获取一次
             switch (state) {
                 case STATE_NOT_OVERFLOW:
-                    tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
-                    tv_expand_or_collapse.setVisibility(View.GONE);
+                    spanText = new SpannableString(text);
+
+                    extraTv.setVisibility(GONE);
+                    contentTv.setMaxLines(MAX_COLLAPSED_LINES);
                     break;
                 case STATE_COLLAPSED:
-                    tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
-                    tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
+                    text += "[收起]";
+                    spanText = new SpannableString(text);
+                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.theme_color));
+                    spanText.setSpan(colorSpan, text.length()-4, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    extraTv.setVisibility(VISIBLE);
+                    contentTv.setMaxLines(MAX_COLLAPSED_LINES);
                     break;
                 case STATE_EXPANDED:
-                    tv_expandable_content.setMaxLines(Integer.MAX_VALUE);
-                    tv_expand_or_collapse.setVisibility(View.VISIBLE);
-                    tv_expand_or_collapse.setCompoundDrawablesRelativeWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_up_gray, 0, 0);
+                default:
+                    spanText = new SpannableString(text);
+
+                    extraTv.setVisibility(GONE);
+                    contentTv.setMaxLines(Integer.MAX_VALUE);
                     break;
             }
-            tv_expandable_content.setText(text);
+            contentTv.setText(spanText);
         }
 
         setVisibility(TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE);
@@ -169,18 +184,17 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     @Override
     public void onClick(View v) {
         int state = mCollapsedStatus.get(position);
-        //两种状态下对应动作
         if (state == STATE_COLLAPSED) {
-            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_up_gray, 0, 0);
-            tv_expandable_content.setMaxLines(Integer.MAX_VALUE);
+            contentTv.setMaxLines(Integer.MAX_VALUE);
+            extraTv.setVisibility(GONE);
             mCollapsedStatus.put(position, STATE_EXPANDED);
 
             if (null != expandStatusChangedListener) {
                 expandStatusChangedListener.onChanged(true);
             }
         } else if (state == STATE_EXPANDED) {
-            tv_expand_or_collapse.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_keyboard_arrow_down_gray, 0, 0);
-            tv_expandable_content.setMaxLines(MAX_COLLAPSED_LINES);
+            contentTv.setMaxLines(MAX_COLLAPSED_LINES);
+            extraTv.setVisibility(VISIBLE);
             mCollapsedStatus.put(position, STATE_COLLAPSED);
 
             if (null != expandStatusChangedListener) {
@@ -189,14 +203,21 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         }
     }
 
-    public int getLineCount(String text) {
+    public int getLineCount(String text, int maxWidth) {
         Paint paint = new Paint();
-        paint.setTextSize(tv_expandable_content.getTextSize());
-        paint.setTypeface(tv_expandable_content.getTypeface());
+        paint.setTextSize(contentTv.getTextSize());
+        paint.setTypeface(contentTv.getTypeface());
 
-        List<String> strings = splitWordsIntoStringsThatFit(text, textViewWidthPx, paint);
+        TextPaint mTextPaint = contentTv.getPaint();
+        mTextPaint.setTextSize(contentTv.getTextSize());
+        int mTextViewWidth = (int) mTextPaint.measureText(text);
 
-        return strings.size();
+        int lineCount = mTextViewWidth / maxWidth;
+        int ext = mTextViewWidth % maxWidth;
+
+        if (ext > 0) lineCount++;
+
+        return lineCount;
     }
 
 

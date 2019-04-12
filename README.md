@@ -1,4 +1,4 @@
-# DanDanPlayForAndroid
+# [DanDanPlayForAndroid](https://github.com/xyoye/DanDanPlayForAndroid)
 
 ![MIT License](https://img.shields.io/badge/licence-MIT-green.svg)
 
@@ -15,23 +15,21 @@
 
 ## 功能
 
-1、支持视频倍速播放
+1、支持视频+弹幕播放
 
-2、支持局域网播放
+2、支持局域网视频播放
 
-3、支持本地加载弹幕和网络查询加载弹幕
+3、支持网络串流播放
 
-4、提供多种弹幕调整方式，如大小、速度、屏蔽、透明度等
+4、支持弹幕匹配与下载
 
-5、提供字幕加载
+5、支持番剧搜索与下载
 
-6、提供音源切换
+6、支持字幕加载
 
-7、支持番剧下载
+7、提供多种弹幕调整方式，如大小、速度、屏蔽、透明度等
 
-8、支持网络串流播放
-
-9、同步PC端追番、播放历史功能
+8、同步PC端追番、播放历史功能
 
 ## 致谢
 ### 相关参与建设者：
@@ -42,9 +40,11 @@
 2.x版本开发者：shiwentao666
 
 ### 开源库
-由于相关使用的开源库过多，这里仅列举主要功能实现库。
-- DanmakuFlameMaster
-- ijkplayer
-- jcifs-ng
-- jsoup
+此处仅列举主要功能实现库
+- [DanmakuFlameMaster](https://github.com/bilibili/DanmakuFlameMaster)
+- [ijkplayer](https://github.com/bilibili/ijkplayer)
+- [ExoPlayer](https://github.com/google/ExoPlayer)
+- [lbitorrent](https://gitlab.com/axet/libtorrent)
+- [jcifs-ng](https://github.com/AgNO3/jcifs-ng)
+- [jsoup](https://github.com/jhy/jsoup)
 - ...

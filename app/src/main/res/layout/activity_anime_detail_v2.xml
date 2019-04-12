@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include layout="@layout/layout_toolbar_gradient"/>
+
+    <com.xyoye.dandanplay.ui.weight.ScrollableLayout
+        android:id="@+id/scroll_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.xyoye.dandanplay.ui.weight.SemicircleView
+                android:id="@+id/cover_bg_iv"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:scaleType="fitXY"
+                app:distance_top="170dp"
+                app:curvature="3"
+                app:mask_out_color="#ffffff"
+                app:mask_in_color="#33000000"/>
+
+            <com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout
+                android:id="@+id/detail_info_rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="105dp"
+                android:layout_marginBottom="15dp"
+                android:background="@color/white"
+                app:shadowRadius="2dp"
+                app:shadowElevation="3dp"
+                app:shadowAlpha="0.8">
+
+                <TableLayout
+                    android:id="@+id/anima_info_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/anima_image_iv"
+                    android:stretchColumns="1">
+
+                    <TextView
+                        android:id="@+id/anima_title_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:textColor="@color/text_black"
+                        android:textSize="16sp"
+                        tools:text="" />
+
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/anima_onair_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            tools:text="状态：" />
+
+                        <TextView
+                            android:id="@+id/anima_favorited_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text=""
+                            android:textColor="@color/theme_color"
+                            android:textSize="14sp"
+                            tools:text="未关注" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/anima_airday_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="14sp"
+                            tools:text="日期：" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:text="评分：" />
+                            <TextView
+                                android:id="@+id/anima_rating_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="14sp"
+                                android:textColor="@color/orange"
+                                android:text=""/>
+                        </LinearLayout>
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:id="@+id/anime_type_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textSize="14sp"
+                            tools:text="类型：" />
+
+                        <TextView
+                            android:id="@+id/anima_restricted_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="R18"
+                            android:textColor="@color/text_red"
+                            android:textSize="14sp"
+                            android:visibility="gone"/>
+                    </TableRow>
+
+                </TableLayout>
+
+                <com.xyoye.dandanplay.ui.weight.ExpandableTextView
+                    android:id="@+id/anima_intro_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/anima_info_ll"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="" />
+            </com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout>
+
+            <com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout
+                android:layout_width="90dp"
+                android:layout_height="110dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="90dp"
+                android:background="@color/white"
+                app:shadowRadius="2dp"
+                app:shadowElevation="3dp"
+                app:shadowAlpha="1">
+
+                <ImageView
+                    android:id="@+id/anima_image_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"/>
+            </com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/episode_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/anima_episode_tips_string"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/select_episode_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="5dp"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray_color3"
+                    android:text="选集  >" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/episode_linear_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/diver_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/recommend_all_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/episode_ll"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/recommend_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="相关推荐"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recommend_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/diver_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/more_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="更多推荐"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/more_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/select_episode_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_centerVertical="true"
+                    android:text="选集"
+                    android:textColor="@color/text_black"
+                    android:textSize="16sp" />
+                <ImageView
+                    android:id="@+id/exit_select_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="13dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@mipmap/ic_dialog_cancel"/>
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/episode_grid_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+    </com.xyoye.dandanplay.ui.weight.ScrollableLayout>
+
+</RelativeLayout>

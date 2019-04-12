@@ -2,12 +2,14 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -20,15 +22,20 @@ import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.internal.fuseable.ScalarCallable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -105,51 +112,14 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     @SuppressLint("CheckResult")
     @Override
     public void getVideoFormSystemAndSave() {
-        Observable.just(getApplicationContext())
+        Observable.just(getView().getContext())
                 //刷新媒体文件
-                .map(context -> {
-                    Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                            null, null, null, null);
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-
-                            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
-                            int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
-                            long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
-                            long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
-
-                            VideoBean videoBean = new VideoBean();
-                            videoBean.set_id(_id);
-                            videoBean.setVideoPath(path);
-                            videoBean.setVideoDuration(duration);
-                            videoBean.setVideoSize(size);
-                            saveData(videoBean);
-                        }
-                        cursor.close();
-                    }
-                    return true;
-                })
+                .map(this::queryVideoFormMediaStore)
                 //获取保存的扫描文件夹
-                .map(over -> {
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    Cursor folderCursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[11], null, null, null, null, null, null);
-                    File[] files;
-                    int count = 0;
-                    if (folderCursor.getCount() == 0)
-                        return new File[]{};
-                    else
-                        files = new File[folderCursor.getCount()];
-
-                    while (folderCursor.moveToNext()) {
-                        folderCursor.getCount();
-                        files[count] = new File(folderCursor.getString(1));
-                        count ++;
-                    }
-                    folderCursor.close();
-                    return files;
-                })
+                .map(over -> queryVideoFormPath())
                 //遍历文件夹
-                .flatMap((Function<File[], ObservableSource<File>>) fileList -> Observable
+                .flatMap(
+                        (Function<File[], ObservableSource<File>>) fileList -> Observable
                         .fromArray(fileList)
                         .flatMap(this::listFiles)
                 )
@@ -166,8 +136,69 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoList ->
-                        getView().refreshAdapter(videoList));
+                .subscribe(new Observer<List<FolderBean>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<FolderBean> folderBeans) {
+                       getView().refreshAdapter(folderBeans);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getView().refreshOver();
+                    }
+                });
+    }
+
+    private boolean queryVideoFormMediaStore(Context context){
+        Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
+                int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
+                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
+
+                VideoBean videoBean = new VideoBean();
+                videoBean.set_id(_id);
+                videoBean.setVideoPath(path);
+                videoBean.setVideoDuration(duration);
+                videoBean.setVideoSize(size);
+                saveData(videoBean);
+            }
+            cursor.close();
+        }
+        return true;
+    }
+
+    private File[] queryVideoFormPath(){
+        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        Cursor folderCursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[11], null, null, null, null, null, null);
+        File[] files;
+        int count = 0;
+        if (folderCursor.getCount() == 0)
+            return new File[]{};
+        else
+            files = new File[folderCursor.getCount()];
+
+        while (folderCursor.moveToNext()) {
+            folderCursor.getCount();
+            files[count] = new File(folderCursor.getString(1));
+            count ++;
+        }
+        folderCursor.close();
+        return files;
     }
 
     @SuppressLint("CheckResult")
@@ -178,20 +209,6 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(videoList -> getView().refreshAdapter(videoList));
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    public void deleteFolder(String folderPath) {
-        Observable.create((ObservableOnSubscribe<List<FolderBean>>) emitter ->{
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete("file", "folder_path = ?" , new String[]{folderPath});
-                    sqLiteDatabase.delete("folder", "folder_path = ?" , new String[]{folderPath});
-                    emitter.onNext(getFolderList());
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(folderList -> getView().refreshAdapter(folderList));
     }
 
     //遍历视频文件

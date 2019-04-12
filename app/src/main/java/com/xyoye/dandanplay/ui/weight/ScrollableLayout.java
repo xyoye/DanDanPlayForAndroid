@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
@@ -56,6 +57,7 @@ public class ScrollableLayout extends LinearLayout {
 
     private int minY = 0;
     private int maxY = 0;
+    private int extraY = 0;
     private int mHeadHeight;
     private int mExpandHeight;
     private int mTouchSlop;
@@ -150,6 +152,16 @@ public class ScrollableLayout extends LinearLayout {
 
     public int getMaxY() {
         return maxY;
+    }
+
+    public void addHeadView(View view){
+        if (view instanceof ViewGroup){
+            ViewGroup.LayoutParams lp = view.getLayoutParams();
+            extraY -= lp.height;
+        }else {
+            LayoutParams lp = (LayoutParams)view.getLayoutParams();
+            extraY -= view.getMeasuredHeight() + lp.topMargin;
+        }
     }
 
     public boolean isHeadTop() {
@@ -383,6 +395,7 @@ public class ScrollableLayout extends LinearLayout {
             maxY += mHeadView[i].getMeasuredHeight() + lp.topMargin;
             mHeadHeight += mHeadView[i].getMeasuredHeight();
         }
+        maxY += extraY;
         super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) + maxY, MeasureSpec.EXACTLY));
     }
 

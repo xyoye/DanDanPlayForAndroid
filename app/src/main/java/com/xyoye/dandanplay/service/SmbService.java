@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
+import com.xyoye.dandanplay.ui.activities.SmbActivity;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
@@ -38,7 +39,7 @@ public class SmbService extends Service {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //创建NotificationChannel
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.smbservice.playchannel", "共享播放服务", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.smbservice.playchannel", "SMB服务", NotificationManager.IMPORTANCE_LOW);
             channel.enableVibration(false);
             channel.setVibrationPattern(new long[]{0});
             channel.enableLights(false);
@@ -61,16 +62,13 @@ public class SmbService extends Service {
     }
 
     private Notification buildNotification(Intent oldIntent){
-        Intent intent = new Intent(this, FolderActivity.class);
-        intent.putExtra("is_lan", oldIntent.getBooleanExtra("is_lan", false));
-        intent.putExtra(OpenFolderEvent.FOLDERPATH, oldIntent.getStringExtra(OpenFolderEvent.FOLDERPATH));
-
+        Intent intent = new Intent(this, SmbActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent,0);
 
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("弹弹play")
-                .setContentText("已开启共享播放")
+                .setContentText("已开启SMB服务")
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())

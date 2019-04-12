@@ -3,11 +3,8 @@ package com.xyoye.dandanplay.utils.smb;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.dandanplay.bean.LanDeviceBean;
+import com.xyoye.dandanplay.bean.SmbBean;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.JsonUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -27,14 +24,14 @@ import jcifs.context.SingletonContext;
  * Created by xyy on 2018/11/19.
  */
 
-public class FindLanDevicesTask implements Runnable {
-    private final static String TAG = FindLanDevicesTask.class.getSimpleName();
+public class SearchSmbDevicesTask implements Runnable {
+    private final static String TAG = SearchSmbDevicesTask.class.getSimpleName();
 
     private String mLocalIp;
     private boolean mAbort;
     private FindLanDevicesListener mListener;
 
-    public FindLanDevicesTask(String ip, FindLanDevicesListener listener){
+    public SearchSmbDevicesTask(String ip, FindLanDevicesListener listener){
         mLocalIp = ip;
         mListener = listener;
     }
@@ -45,14 +42,7 @@ public class FindLanDevicesTask implements Runnable {
 
     @Override
     public void run() {
-        LanDeviceBean saveDevice = null;
-        //确保保存的设备能新增进去
-        boolean isAddSaveDevice = false;
-        String device = SPUtils.getInstance().getString(Constants.Config.SMB_DEVICE);
-        if (!StringUtils.isEmpty(device)){
-            saveDevice = JsonUtil.fromJson(device, LanDeviceBean.class);
-        }
-        List<LanDeviceBean> deviceList = new ArrayList<>();
+        List<SmbBean> deviceList = new ArrayList<>();
         String netRange = mLocalIp.substring(0, mLocalIp.lastIndexOf(".") + 1);
         LinkedList<SocketChannel> sockets = new LinkedList<>();
         Selector selector;
@@ -111,8 +101,7 @@ public class FindLanDevicesTask implements Runnable {
                     if (v) {
                         int ipNumber = sockets.indexOf(currentChannel) + 1;
                         String ip = netRange.concat(String.valueOf(ipNumber));
-                        String deviceName;
-                        deviceName = "UnKnow";
+                        String deviceName = "UnKnow";
                         try {
                             Address address = SingletonContext.getInstance().getNameServiceClient().getByName(ip);
                             address.firstCalledName();
@@ -120,39 +109,33 @@ public class FindLanDevicesTask implements Runnable {
                         } catch (UnknownHostException e) {
                             e.printStackTrace();
                         }
-                        if (saveDevice != null && saveDevice.getIp().equals(ip)){
-                            saveDevice.setDeviceName(deviceName);
-                            deviceList.add(saveDevice);
-                            isAddSaveDevice = true;
-                        }else {
-                            deviceList.add(new LanDeviceBean(ip, deviceName));
-                        }
+
+                        SmbBean smbBean = new SmbBean();
+                        smbBean.setUrl(ip);
+                        smbBean.setName(deviceName);
+                        smbBean.setSmbType(Constants.SmbType.LAN_DEVICE);
+                        deviceList.add(smbBean);
                         Log.d(TAG, "found share at " + ip);
                     }
                 }
             }
         }
 
-        if(saveDevice != null && !isAddSaveDevice){
-            deviceList.add(saveDevice);
-        }
-
         for(SocketChannel socketChannel: sockets) {
             try {
                 socketChannel.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) { }
         }
         try {
             if (selector != null)
                 selector.close();
-        } catch (IOException ignored) {
+        } catch (IOException ignored) { }
 
-        }
         mListener.onEnd(deviceList);
     }
 
 
     public interface FindLanDevicesListener{
-        void onEnd(List<LanDeviceBean> deviceList);
+        void onEnd(List<SmbBean> deviceList);
     }
 }

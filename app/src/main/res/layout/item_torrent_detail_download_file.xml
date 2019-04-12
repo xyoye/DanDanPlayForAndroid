@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="50dp"
+    android:paddingTop="3dp"
+    android:paddingBottom="3dp">
+
+    <TextView
+        android:id="@+id/file_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/danmu_bind_iv"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="3dp"
+        android:textSize="14sp"
+        android:textColor="@color/text_black"
+        android:text=""/>
+
+    <ImageView
+        android:id="@+id/danmu_bind_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:src="@mipmap/ic_danmu_unexists"/>
+
+</RelativeLayout>

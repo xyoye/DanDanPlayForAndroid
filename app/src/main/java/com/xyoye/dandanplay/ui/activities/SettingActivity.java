@@ -122,7 +122,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 new FileManagerDialog(this, FileManagerDialog.SELECT_FOLDER, path -> {
                     pathTv.setText(path);
                     AppConfig.getInstance().setDownloadFolder(path);
-                }).show();
+                }).hideDefault().show();
                 break;
             case R.id.bilibili_download_rl:
                 launchActivity(DownloadBilibiliActivity.class);

@@ -12,7 +12,7 @@
         android:id="@+id/device_iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@mipmap/ic_lan_device"/>
+        android:src="@mipmap/ic_smb_lan_device"/>
 
     <TextView
         android:id="@+id/device_ip_tv"

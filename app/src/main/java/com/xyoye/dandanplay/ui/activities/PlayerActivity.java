@@ -32,6 +32,7 @@ import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,6 +125,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     }
 
     private void initPlayer() {
+        if (StringUtils.isEmpty(videoPath)){
+            ToastUtils.showShort("播放地址不能为空");
+            PlayerActivity.this.finish();
+            return;
+        }
         InputStream inputStream = null;
         if (!TextUtils.isEmpty(danmuPath) && FileUtils.isFileExists(danmuPath)) {
             try {

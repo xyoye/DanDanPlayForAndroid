@@ -5,10 +5,8 @@ package com.xyoye.dandanplay.utils.torrent;
  */
 
 public class TorrentEvent {
-    public final static int EVENT_START = 100;              //开始
     public final static int EVENT_RESUME = 101;             //继续
     public final static int EVENT_PAUSE = 102;              //暂停
-    public final static int EVENT_STOP = 103;               //停止
     public final static int EVENT_DELETE_FILE = 104;        //删除一个任务
     public final static int EVENT_DELETE_TASK = 105;        //删除一个任务和文件
     public final static int EVENT_ALL_PAUSE = 106;          //暂停所有
@@ -17,14 +15,14 @@ public class TorrentEvent {
     public final static int EVENT_ALL_DELETE_TASK = 109;    //删除所以任务
 
     private int action;
-    private Torrent torrent;
+    private int position;
 
     public TorrentEvent() {
     }
 
-    public TorrentEvent(int action, Torrent torrent) {
+    public TorrentEvent(int action, int position) {
         this.action = action;
-        this.torrent = torrent;
+        this.position = position;
     }
 
     public int getAction() {
@@ -35,11 +33,11 @@ public class TorrentEvent {
         this.action = action;
     }
 
-    public Torrent getTorrent() {
-        return torrent;
+    public int getPosition() {
+        return position;
     }
 
-    public void setTorrent(Torrent torrent) {
-        this.torrent = torrent;
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

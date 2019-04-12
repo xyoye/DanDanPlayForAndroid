@@ -19,6 +19,7 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -37,7 +38,6 @@ import okhttp3.ResponseBody;
  */
 
 public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implements SearchPresenter {
-    private String downloadPath;
 
     public SearchPresenterImpl(SearchView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -179,23 +179,24 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     @Override
-    public void downloadTorrent(String animeTitle, String magnet) {
-        downloadPath = AppConfig.getInstance().getDownloadFolder();
-        downloadPath = StringUtils.isEmpty(animeTitle)
-                ? downloadPath
-                : downloadPath+"/"+animeTitle;
-
-        String donePath = isTorrentExist(downloadPath , magnet);
-        if (!StringUtils.isEmpty(donePath)){
-            getView().downloadTorrentOver(donePath, magnet);
-            return;
+    public void searchLocalTorrent(String magnet) {
+        String torrentPath = isTorrentExist(magnet);
+        if (!StringUtils.isEmpty(torrentPath)){
+            getView().downloadExisted(torrentPath, magnet);
+        }else {
+            downloadTorrent(magnet);
         }
+    }
 
+    @Override
+    public void downloadTorrent(String magnet){
         getView().showLoading();
         MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
             @Override
             public void onSuccess(ResponseBody responseBody) {
-                downloadPath += "/_torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+                String downloadPath = getView().getDownloadFolder();
+                downloadPath += Constants.DefaultConfig.torrentFolder;
+                downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
                 getView().hideLoading();
                 getView().downloadTorrentOver(downloadPath, magnet);
@@ -211,12 +212,21 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     //判断该种子是否已存在
-    private String isTorrentExist(String savePath, String magnet){
-        String path = savePath + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
-        File file = new File(path);
-        if (file.exists())
-            return path;
-        else
-            return "";
+    private String isTorrentExist(String magnet){
+        String downloadPath = getView().getDownloadFolder();
+        downloadPath += Constants.DefaultConfig.torrentFolder;
+        downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
+        File file = new File(downloadPath);
+        if (file.exists()){
+            return downloadPath;
+        } else{
+            downloadPath = AppConfig.getInstance().getDownloadFolder();
+            downloadPath +=  Constants.DefaultConfig.torrentFolder;
+            downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
+            if (file.exists())
+                return downloadPath;
+            else
+                return "";
+        }
     }
 }

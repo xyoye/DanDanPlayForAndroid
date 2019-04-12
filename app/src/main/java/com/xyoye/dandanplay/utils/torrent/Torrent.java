@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.utils.torrent;
 
-import com.github.axet.wget.SpeedInfo;
+import com.blankj.utilcode.util.StringUtils;
+import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.utils.Constants;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,20 +18,15 @@ public class Torrent implements Serializable{
     private long id;
     private String title;
     private String path;
-    private String danmuPath;
-    private int episodeId;
     private String animeTitle;
     private String hash;
     private long size;
     private boolean done;
     private boolean error;
     private int status = -1;
-    private boolean isLongCheck;
     private boolean update;
     private String magnet;
     private List<TorrentFile> torrentFileList;
-    public SpeedInfo downloaded = new SpeedInfo();
-    public SpeedInfo uploaded = new SpeedInfo();
 
     public long getId() {
         return id;
@@ -55,12 +52,11 @@ public class Torrent implements Serializable{
         this.path = path;
     }
 
-    public String getDanmuPath() {
-        return danmuPath;
-    }
-
-    public void setDanmuPath(String danmuPath) {
-        this.danmuPath = danmuPath;
+    public String getParentFolder(){
+        if (!StringUtils.isEmpty(path) && path.contains(Constants.DefaultConfig.torrentFolder)){
+            return path.split(Constants.DefaultConfig.torrentFolder)[0];
+        }
+        return Constants.DefaultConfig.downloadPath;
     }
 
     public String getAnimeTitle() {
@@ -69,14 +65,6 @@ public class Torrent implements Serializable{
 
     public void setAnimeTitle(String animeTitle) {
         this.animeTitle = animeTitle;
-    }
-
-    public int getEpisodeId() {
-        return episodeId;
-    }
-
-    public void setEpisodeId(int episodeId) {
-        this.episodeId = episodeId;
     }
 
     public String getHash() {
@@ -119,14 +107,6 @@ public class Torrent implements Serializable{
         this.error = error;
     }
 
-    public boolean isLongCheck() {
-        return isLongCheck;
-    }
-
-    public void setLongCheck(boolean longCheck) {
-        isLongCheck = longCheck;
-    }
-
     public boolean isUpdate() {
         return update;
     }
@@ -151,12 +131,16 @@ public class Torrent implements Serializable{
         this.torrentFileList = torrentFileList;
     }
 
-    public static class TorrentFile{
+    public static class TorrentFile implements Serializable{
         private long id;
         private long torrentId;
         private boolean isCheck;
+        private long length;
+        private String originPath;
         private String path;
         private String name;
+        private String danmuPath;
+        private int episodeId;
 
         public long getId() {
             return id;
@@ -182,6 +166,14 @@ public class Torrent implements Serializable{
             isCheck = check;
         }
 
+        public String getOriginPath() {
+            return originPath;
+        }
+
+        public void setOriginPath(String originPath) {
+            this.originPath = originPath;
+        }
+
         public String getPath() {
             return path;
         }
@@ -197,32 +189,29 @@ public class Torrent implements Serializable{
         public void setName(String name) {
             this.name = name;
         }
-    }
 
-    public void update(){
-        StatsTorrent stats = Libtorrent.torrentStats(id);
-        downloaded.step(stats.getDownloaded());
-        uploaded.step(stats.getUploaded());
-        if (Libtorrent.metaTorrent(id)) {
-            long l = Libtorrent.torrentPendingBytesLength(id);
-            long c = Libtorrent.torrentPendingBytesCompleted(id);
-            if (l > 0 && l == c && !isDone()){
-                setDone(true);
-                TorrentUtil.updateTorrent(this);
-            }
-        } else {
-            done = false;
+        public long getLength() {
+            return length;
+        }
+
+        public void setLength(long length) {
+            this.length = length;
+        }
+
+        public String getDanmuPath() {
+            return danmuPath;
+        }
+
+        public void setDanmuPath(String danmuPath) {
+            this.danmuPath = danmuPath;
+        }
+
+        public int getEpisodeId() {
+            return episodeId;
+        }
+
+        public void setEpisodeId(int episodeId) {
+            this.episodeId = episodeId;
         }
     }
-
-    public boolean completed() {
-        if (Libtorrent.metaTorrent(id)) {
-            long l = Libtorrent.torrentPendingBytesLength(id);
-            long c = Libtorrent.torrentPendingBytesCompleted(id);
-            return l > 0 && l == c;
-        } else {
-            return false;
-        }
-    }
-
 }

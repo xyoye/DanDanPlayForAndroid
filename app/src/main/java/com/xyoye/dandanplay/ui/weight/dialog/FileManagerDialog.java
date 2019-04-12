@@ -41,7 +41,7 @@ public class FileManagerDialog extends Dialog{
     public final static int SELECT_SUBTITLE = 1003;
     public final static int SELECT_VIDEO = 1004;
 
-    private String rootPath = Environment.getExternalStorageDirectory().getPath();
+    private String rootPath;
 
     @BindView(R.id.title_tv)
     TextView titleTv;
@@ -51,6 +51,8 @@ public class FileManagerDialog extends Dialog{
     RecyclerView fileRv;
     @BindView(R.id.confirm_tv)
     TextView confirmTv;
+    @BindView(R.id.default_tv)
+    TextView defaultTv;
 
     private Context mContext;
     private BaseRvAdapter<FileManagerBean> adapter;
@@ -60,6 +62,7 @@ public class FileManagerDialog extends Dialog{
     private OnItemClickListener itemClickListener;
     private String originFolder;
     private int openType;
+    private boolean showDefault = true;
 
     public FileManagerDialog(@NonNull Context context, int openType, OnSelectedListener listener) {
         super(context, R.style.Dialog);
@@ -77,6 +80,11 @@ public class FileManagerDialog extends Dialog{
                 : originFolder;
         this.openType = openType;
         this.listener = listener;
+    }
+
+    public FileManagerDialog hideDefault(){
+        showDefault = false;
+        return this;
     }
 
     @Override
@@ -102,9 +110,13 @@ public class FileManagerDialog extends Dialog{
         listFolder(originFolder);
     }
 
-    @OnClick({R.id.cancel_tv, R.id.confirm_tv})
+    @OnClick({R.id.default_tv, R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.default_tv:
+                String defaultPath = Environment.getExternalStorageDirectory().getPath();
+                listFolder(defaultPath);
+                break;
             case R.id.cancel_tv:
                 FileManagerDialog.this.dismiss();
                 break;
@@ -125,6 +137,14 @@ public class FileManagerDialog extends Dialog{
                 return new FileManagerItem(itemClickListener);
             }
         };
+
+        defaultTv.setVisibility(showDefault ? View.VISIBLE : View.GONE);
+        if (showDefault){
+            rootPath = "/";
+        }else {
+             rootPath = Environment.getExternalStorageDirectory().getPath();
+        }
+
         fileRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
@@ -173,7 +193,7 @@ public class FileManagerDialog extends Dialog{
                     fileList.add(info);
                 } else if (openType == SELECT_DANMU){
                     String ext = FileUtils.getFileExtension(file);
-                    if ("xml".equals(ext)){
+                    if ("XML".equals(ext.toUpperCase())){
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
@@ -204,12 +224,12 @@ public class FileManagerDialog extends Dialog{
             }
             Collections.sort(fileList, (o1, o2) ->
                     Collator.getInstance(Locale.CHINESE).compare( o1.getName(), o2.getName()));
-
-            if (!rootPath.equals(folder.getAbsolutePath()))
-                fileList.add(0, new FileManagerBean(folder, ".." ,true, true));
-
-            updateView(fileList);
         }
+
+        if (!rootPath.equals(folder.getAbsolutePath()))
+            fileList.add(0, new FileManagerBean(folder, ".." ,true, true));
+
+        updateView(fileList);
     }
 
     private void updateView(List<FileManagerBean> fileList){

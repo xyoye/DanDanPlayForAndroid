@@ -1,22 +1,35 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -29,13 +42,16 @@ import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
-import com.xyoye.dandanplay.ui.weight.SpacesItemDecoration;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
+import com.xyoye.dandanplay.ui.weight.SemicircleView;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeMoreItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeRecommendItem;
+import com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -99,10 +115,15 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     LinearLayout recommendAllLL;
     @BindView(R.id.select_episode_ll)
     LinearLayout selectEpisodeLl;
+    @BindView(R.id.cover_bg_iv)
+    SemicircleView coverBgView;
+    @BindView(R.id.detail_info_rl)
+    ShadowRelativeLayout detailIfoRl;
 
     private AnimeDetailBean animeDetailBean;
     MenuItem favoriteItem = null;
     private boolean isFavorite = false;
+    private int toolbarHeight;
     private String animaId = "";
 
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeLinearAdapter;
@@ -116,8 +137,22 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     List<AnimeBean> moreList;
 
     @Override
+    protected void setStatusBar() {
+
+    }
+
+    @Override
     public void initView() {
-        setTitle(R.string.anime_detail_title);
+        int statusBarHeight = ConvertUtils.dp2px(20);
+        toolBar.setPadding(0, statusBarHeight,0,0);
+        ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
+        toolbarParams.height += statusBarHeight;
+        toolbarHeight = toolbarParams.height;
+
+        scrollableLayout.addHeadView(toolBar);
+        toolBar.setBackgroundColor(Color.parseColor("#002095f4"));
+        toolBar.setTitleTextColor(Color.parseColor("#00ffffff"));
+
         episodeLinearList = new ArrayList<>();
         episodeGridList = new ArrayList<>();
         recommendList = new ArrayList<>();
@@ -157,16 +192,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
         episodeLinearRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         episodeLinearRv.setNestedScrollingEnabled(false);
-        episodeLinearRv.addItemDecoration(new SpacesItemDecoration(10));
+        episodeLinearRv.addItemDecoration(new ItemDecorationSpaces(10));
         episodeLinearRv.setAdapter(episodeLinearAdapter);
 
         episodeGridRv.setLayoutManager(new GridLayoutManager(this, 2));
-        episodeGridRv.addItemDecoration(new SpacesItemDecoration(0, 10 ,10,10, 2));
+        episodeGridRv.addItemDecoration(new ItemDecorationSpaces(0, 10 ,10,10, 2));
         episodeGridRv.setAdapter(episodeGridAdapter);
 
         recommendRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recommendRv.setNestedScrollingEnabled(false);
-        recommendRv.addItemDecoration(new SpacesItemDecoration(10));
+        recommendRv.addItemDecoration(new ItemDecorationSpaces(10));
         recommendRv.setAdapter(recommendAdapter);
 
         moreRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -179,15 +214,39 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         scrollableLayout.setHeadCount(2);
     }
 
-    @SuppressLint("CheckResult")
     @Override
     public void initListener() {
-//        scrollableLayout.getHelper().setCurrentScrollableContainer(() -> episodeGridRv);
         scrollableLayout.getHelper().setCurrentScrollableContainer(() -> {
             if (scrollableLayout.getHeadCount() == 2){
                 return moreRv;
             }else {
                 return episodeGridRv;
+            }
+        });
+
+        scrollableLayout.setOnScrollListener((currentY, maxY) -> {
+            //从详情信息头部计算位移
+            int scrollY = currentY - detailIfoRl.getTop();
+            //最大的计算范围为详情底部
+            int maxScrollY = detailIfoRl.getBottom() - toolbarHeight - detailIfoRl.getTop();
+
+            //未到达详情头部一律透明
+            if (scrollY < 0){
+                toolBar.setBackgroundColor(Color.parseColor("#002095f4"));
+                toolBar.setTitleTextColor(Color.parseColor("#00ffffff"));
+            }
+            //大于详情底部一律不透明
+            else if (scrollY > maxScrollY){
+                toolBar.setBackgroundColor(Color.parseColor("#ff2095f4"));
+                toolBar.setTitleTextColor(Color.parseColor("#ffffffff"));
+            }
+            //按位移量计算计算透明度
+            else {
+                int alpha = (scrollY  * 255) / maxScrollY;
+                String alphaStr = Integer.toHexString(alpha).toUpperCase();
+                if (alphaStr.length() == 1) alphaStr =  "0" + alphaStr;
+                toolBar.setBackgroundColor(Color.parseColor("#"+alphaStr+"2095f4"));
+                toolBar.setTitleTextColor(Color.parseColor("#"+alphaStr+"ffffff"));
             }
         });
     }
@@ -200,7 +259,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_anime_detail;
+        return R.layout.activity_anime_detail_v2;
     }
 
     @Override
@@ -240,6 +299,14 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 .load(bean.getBangumi().getImageUrl())
                 .apply(options)
                 .into(animaImageIv);
+
+        Glide.with(this)
+                .load(bean.getBangumi().getImageUrl())
+                .apply(options)
+                .into(coverBgView);
+
+        this.setTitle(bean.getBangumi().getAnimeTitle());
+
         //标题
         animaTitleTv.setText(bean.getBangumi().getAnimeTitle());
         //连载状态
@@ -278,7 +345,8 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         else
             animaRestrictedTv.setVisibility(View.GONE);
         //简介
-        animaIntroTv.setText("简介：" + bean.getBangumi().getSummary());
+        String summary = StringUtils.isEmpty(bean.getBangumi().getSummary()) ? "无" : bean.getBangumi().getSummary();
+        animaIntroTv.setText("简介：" + summary, detailIfoRl.getMeasuredWidth());
         //剧集
         episodeGridList.addAll(bean.getBangumi().getEpisodes());
         episodeLinearList.addAll(bean.getBangumi().getEpisodes());
@@ -344,7 +412,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
             episode = CommonUtils.isNum(temp) ? temp : episode;
         }
         Intent intent = new Intent(AnimeDetailActivity.this, SearchActivity.class);
-        intent.putExtra("anime_title", "/" + animeDetailBean.getBangumi().getAnimeTitle());
+        intent.putExtra("anime_title", animeDetailBean.getBangumi().getAnimeTitle());
         intent.putExtra("search_word", animeDetailBean.getBangumi().getSearchKeyword() + " " + episode);
         intent.putExtra("is_anime", true);
         startActivity(intent);
@@ -379,9 +447,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         ToastUtils.showShort(message);
     }
 
-    @OnClick({R.id.select_episode_tv, R.id.exit_select_iv})
+    @OnClick({R.id.anima_image_iv, R.id.select_episode_tv, R.id.exit_select_iv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.anima_image_iv:
+                if (animeDetailBean != null){
+                    Intent intent = new Intent(AnimeDetailActivity.this, ImagePreviewActivity.class);
+                    intent.putExtra("image_url", animeDetailBean.getBangumi().getImageUrl());
+                    startActivity(intent);
+                }
+                break;
             case R.id.select_episode_tv:
                 scrollableLayout.setHeadCount(1);
                 selectEpisodeLl.setVisibility(View.VISIBLE);

@@ -1,13 +1,9 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,21 +11,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.SDCardUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
+import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.event.VideoActionEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
@@ -43,7 +37,6 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -80,13 +73,10 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     private int selectPosition;
     private String folderPath;
 
-    private boolean isSmbLan = false;
-
     @Override
     public void initView() {
         videoList = new ArrayList<>();
         folderPath = getIntent().getStringExtra(OpenFolderEvent.FOLDERPATH);
-        isSmbLan = getIntent().getBooleanExtra("is_lan", false);
         String folderTitle = FileUtils.getFileNameNoExtension(folderPath.substring(0, folderPath.length()-1));
         setTitle(folderTitle);
 
@@ -183,6 +173,9 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Override
     protected void onResume() {
         super.onResume();
+        if(adapter != null){
+            adapter.notifyDataSetChanged();
+        }
         if (ServiceUtils.isServiceRunning(SmbService.class)){
             stopService(new Intent(this, SmbService.class));
         }
@@ -204,7 +197,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         //未设置弹幕情况下，1、开启自动加载时自动加载，2、自动匹配相同目录下同名弹幕，3、匹配默认下载目录下同名弹幕
         if (StringUtils.isEmpty(videoBean.getDanmuPath())){
             String path = videoBean.getVideoPath();
-            if (AppConfig.getInstance().isAutoLoadDanmu() && !isSmbLan){
+            if (AppConfig.getInstance().isAutoLoadDanmu()){
                 if (!StringUtils.isEmpty(path)){
                     presenter.getDanmu(path);
                 }
@@ -221,7 +214,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         Intent intent = new Intent(FolderActivity.this, DanmuNetworkActivity.class);
         intent.putExtra("video_path", event.getVideoPath());
         intent.putExtra("position", event.getVideoPosition());
-        intent.putExtra("is_lan", isSmbLan);
         startActivityForResult(intent, SELECT_NETWORK_DANMU);
     }
 
@@ -253,79 +245,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 adapter.notifyItemChanged(event.getPosition());
                 String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
                 presenter.updateDanmu("", -1, new String[]{folderPath, videoBean.getVideoPath()});
-                break;
-            case VideoActionEvent.DELETE:
-                new CommonDialog.Builder(this)
-                        .setAutoDismiss()
-                        .setOkListener(dialog -> {
-                            if(isSmbLan){
-                                presenter.deleteFile(videoBean.getVideoPath());
-                                videoList.remove(event.getPosition());
-                                adapter.notifyDataSetChanged();
-                                return;
-                            }
-
-                            String rootPhonePath = Environment.getExternalStorageDirectory().getPath();
-                            if (!videoBean.getVideoPath().startsWith(rootPhonePath)){
-                                String SDFolderUri = AppConfig.getInstance().getSDFolderUri();
-                                if (com.blankj.utilcode.util.StringUtils.isEmpty(SDFolderUri)) {
-                                    new CommonDialog.Builder(this)
-                                            .setAutoDismiss()
-                                            .setOkListener(dialog1 -> {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                                                    intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                                                    startActivityForResult(intent, DIRECTORY_CHOOSE_REQ_CODE);
-                                                } else {
-                                                    ToastUtils.showShort("当前build sdk版本不支持SD卡授权");
-                                                }
-                                            })
-                                            .build()
-                                            .show("外置存储文件操作需要手动授权，确认跳转后，请选择外置存储卡");
-                                }else {
-                                    DocumentFile documentFile = DocumentFile.fromTreeUri(this, Uri.parse(SDFolderUri));
-                                    List<String> rootPaths = SDCardUtils.getSDCardPaths();
-                                    for (String rootPath : rootPaths){
-                                        if (videoBean.getVideoPath().startsWith(rootPath)){
-                                            String folder = videoBean.getVideoPath().replace(rootPath, "");
-                                            String[] folders = folder.split("/");
-                                            for (int i = 0; i < folders.length; i++) {
-                                                String aFolder = folders[i];
-                                                if(com.blankj.utilcode.util.StringUtils.isEmpty(aFolder))continue;
-                                                documentFile = documentFile.findFile(aFolder);
-                                                if (documentFile == null || !documentFile.exists()){
-                                                    ToastUtils.showShort("找不到该文件");
-                                                    return;
-                                                }
-                                                if (i == folders.length-1){
-                                                    documentFile.delete();
-                                                    presenter.deleteFile(videoBean.getVideoPath());
-                                                    videoList.remove(event.getPosition());
-                                                    adapter.notifyDataSetChanged();
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }else {
-                                new RxPermissions(this).
-                                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        .subscribe(granted -> {
-                                            if (granted) {
-                                                File file = new File(videoBean.getVideoPath());
-                                                if (file.exists())
-                                                    file.delete();
-                                                presenter.deleteFile(videoBean.getVideoPath());
-
-                                                videoList.remove(event.getPosition());
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        });
-                            }
-                        })
-                        .build()
-                        .show("确认删除该文件？");
                 break;
         }
     }
@@ -367,74 +286,44 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public void noMatchDanmu(String videoPath) {
-        if (!isSmbLan){
-            String danmuPath = videoPath.substring(0, videoPath.lastIndexOf("."))+ ".xml";
-            File file = new File(danmuPath);
+        String danmuPath = videoPath.substring(0, videoPath.lastIndexOf("."))+ ".xml";
+        File file = new File(danmuPath);
+        if (file.exists()){
+            selectVideoBean.setDanmuPath(danmuPath);
+            ToastUtils.showShort("匹配到相同目录下同名弹幕");
+        }else {
+            String name = FileUtils.getFileNameNoExtension(videoPath)+ ".xml";
+            danmuPath = AppConfig.getInstance().getDownloadFolder()+ "/" + name;
+            file = new File(danmuPath);
             if (file.exists()){
                 selectVideoBean.setDanmuPath(danmuPath);
-                ToastUtils.showShort("匹配到相同目录下同名弹幕");
-            }else {
-                String name = FileUtils.getFileNameNoExtension(videoPath)+ ".xml";
-                danmuPath = AppConfig.getInstance().getDownloadFolder()+ "/" + name;
-                file = new File(danmuPath);
-                if (file.exists()){
-                    selectVideoBean.setDanmuPath(danmuPath);
-                    ToastUtils.showShort("匹配到下载目录下同名弹幕");
-                }
+                ToastUtils.showShort("匹配到下载目录下同名弹幕");
             }
         }
         openIntentVideo(selectVideoBean);
     }
 
     @Override
-    public Boolean isLan() {
-        return getIntent().getBooleanExtra("is_lan", false);
-    }
-
-    @Override
     public void openIntentVideo(VideoBean videoBean){
-        //文件播放
-        if (!isSmbLan){
-           boolean isExoPlayer = AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER;
-            if (!isExoPlayer && FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals(".MKV") && AppConfig.getInstance().isShowMkvTips()){
-                new CommonDialog.Builder(this)
-                        .setAutoDismiss()
-                        .setOkListener(dialog -> launchPlay(videoBean, true))
-                        .setCancelListener(dialog -> launchActivity(PlayerSettingActivity.class))
-                        .setDismissListener(dialog -> AppConfig.getInstance().hideMkvTips())
-                        .build()
-                        .show(getResources().getString(R.string.mkv_tips), "关于MKV格式", "我知道了", "前往设置");
-            }else {
-                launchPlay(videoBean, true);
-            }
-        }
-        //局域网
-        else {
-            if(ServiceUtils.isServiceRunning(SmbService.class)){
-                String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";
-                String mSmbUrl = videoBean.getVideoPath().replace("smb://", "smb=");
-                videoBean.setVideoPath(httpUrl+mSmbUrl);
-                launchPlay(videoBean, false);
-            }else {
-                Intent intent = new Intent(this, SmbService.class);
-                intent.putExtra("is_lan", isSmbLan);
-                intent.putExtra(OpenFolderEvent.FOLDERPATH, folderPath);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    startForegroundService(intent);
-                }else {
-                    startService(intent);
-                }
-                presenter.observeService(videoBean);
-            }
+        boolean isExoPlayer = AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER;
+        if (!isExoPlayer && FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals(".MKV") && AppConfig.getInstance().isShowMkvTips()){
+            new CommonDialog.Builder(this)
+                    .setAutoDismiss()
+                    .setOkListener(dialog -> launchPlay(videoBean))
+                    .setCancelListener(dialog -> launchActivity(PlayerSettingActivity.class))
+                    .setDismissListener(dialog -> AppConfig.getInstance().hideMkvTips())
+                    .build()
+                    .show(getResources().getString(R.string.mkv_tips), "关于MKV格式", "我知道了", "前往设置");
+        }else {
+            launchPlay(videoBean);
         }
     }
 
     /**
      * 启动播放器
      * @param videoBean 数据
-     * @param isRecord 是否记录此次播放
      */
-    private void launchPlay(VideoBean videoBean, boolean isRecord){
+    private void launchPlay(VideoBean videoBean){
         Intent intent;
         if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
             intent = new Intent(this, PlayerExoActivity.class);
@@ -447,11 +336,10 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         intent.putExtra("current", videoBean.getVideoDuration());
         intent.putExtra("episode_id", videoBean.getEpisodeId());
 
-        if (isRecord){
-            String videoInfo = JsonUtil.toJson(videoBean);
-            AppConfig.getInstance().setLastPlayVideo(videoInfo);
-            EventBus.getDefault().post(new RefreshFolderEvent(false));
-        }
+        //记录此次播放
+        String videoInfo = JsonUtil.toJson(videoBean);
+        AppConfig.getInstance().setLastPlayVideo(videoInfo);
+        EventBus.getDefault().post(new RefreshFolderEvent(false));
 
         startActivity(intent);
     }

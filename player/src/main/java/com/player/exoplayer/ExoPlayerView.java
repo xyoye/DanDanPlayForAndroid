@@ -371,9 +371,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      */
     @SuppressLint("ClickableViewAccessibility")
     private void _initMediaPlayer() {
-        // 加载 IjkMediaPlayer 库
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
         // 声音
         mAudioManager = (AudioManager) mAttachActivity.getSystemService(Context.AUDIO_SERVICE);
         if (mAudioManager != null)
@@ -2261,9 +2258,14 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
                 @Override
                 public void prepared() {
                     // 这里处理下有时调用 _resumeDanmaku() 时弹幕还没 prepared 的情况
-                    if (isVideoPlaying() && !mIsBufferingStart) {
-                        mDanmakuView.start();
-                    }
+                    mAttachActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isVideoPlaying() && !mIsBufferingStart) {
+                                mDanmakuView.start();
+                            }
+                        }
+                    });
                 }
 
                 @Override

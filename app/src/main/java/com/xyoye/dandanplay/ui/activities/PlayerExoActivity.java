@@ -55,7 +55,7 @@ public class PlayerExoActivity extends AppCompatActivity implements PlayerReceiv
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
-    private int currentPosition;
+    private long currentPosition;
     private int episodeId;
 
     private BatteryBroadcastReceiver batteryReceiver;
@@ -146,7 +146,7 @@ public class PlayerExoActivity extends AppCompatActivity implements PlayerReceiv
             videoPath = getIntent().getStringExtra("path");
             videoTitle = getIntent().getStringExtra("title");
             danmuPath = getIntent().getStringExtra("danmu_path");
-            currentPosition = getIntent().getIntExtra("current", 0);
+            currentPosition = getIntent().getLongExtra("current", 0);
             episodeId = getIntent().getIntExtra("episode_id", 0);
             initPlayer();
             mPlayer.start();

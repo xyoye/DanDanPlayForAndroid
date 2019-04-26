@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,10 +65,11 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
                 ? "连载中"
                 : "已完结");
 
-        mView.setOnClickListener(v ->{
-            Intent intent = new Intent(mView.getContext(), AnimeDetailActivity.class);
-            intent.putExtra("animaId", model.getAnimeId()+"");
-            mView.getContext().startActivity(intent);
-        });
+        mView.setOnClickListener(v ->
+                AnimeDetailActivity.launchAnimeDetail(
+                        (Activity)mView.getContext(),
+                        model.getAnimeId()+"",
+                        imageView)
+        );
     }
 }

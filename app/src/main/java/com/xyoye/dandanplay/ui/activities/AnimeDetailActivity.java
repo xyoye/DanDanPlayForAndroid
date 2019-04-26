@@ -1,14 +1,11 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,20 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -41,8 +34,8 @@ import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
-import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
+import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.SemicircleView;
 import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeMoreItem;
@@ -51,7 +44,6 @@ import com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -470,5 +462,13 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 normalEpisodeLL.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    public static void launchAnimeDetail(Activity activity, String animaId, ImageView imageView){
+        Intent intent = new Intent(activity, AnimeDetailActivity.class);
+        intent.putExtra("animaId", animaId);
+        ActivityOptionsCompat optionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageView, "share_image");
+        activity.startActivity(intent,optionsCompat.toBundle());
     }
 }

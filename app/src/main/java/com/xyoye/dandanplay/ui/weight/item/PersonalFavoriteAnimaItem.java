@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -61,10 +61,11 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.
         String status = "进度:"+model.getEpisodeWatched()+"话(全"+model.getEpisodeTotal()+"话)";
         statusTv.setText(status);
 
-        mView.setOnClickListener(v ->{
-            Intent intent = new Intent(mView.getContext(), AnimeDetailActivity.class);
-            intent.putExtra("animaId", model.getAnimeId()+"");
-            mView.getContext().startActivity(intent);
-        });
+        mView.setOnClickListener(v ->
+                AnimeDetailActivity.launchAnimeDetail(
+                        (Activity)mView.getContext(),
+                        model.getAnimeId()+"",
+                        imageView)
+        );
     }
 }

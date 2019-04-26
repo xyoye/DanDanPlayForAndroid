@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBean;
-import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -88,10 +87,11 @@ public class AnimeItem implements AdapterItem<AnimeBean> {
                 .apply(options)
                 .into(imageView);
 
-        mView.setOnClickListener(v ->{
-            Intent intent = new Intent(mView.getContext(), AnimeDetailActivity.class);
-            intent.putExtra("animaId", model.getAnimeId()+"");
-            mView.getContext().startActivity(intent);
-        });
+        mView.setOnClickListener(v ->
+                AnimeDetailActivity.launchAnimeDetail(
+                        (Activity)mView.getContext(),
+                        model.getAnimeId()+"",
+                        imageView)
+        );
     }
 }

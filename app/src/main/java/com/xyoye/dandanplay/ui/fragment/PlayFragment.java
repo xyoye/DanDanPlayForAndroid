@@ -27,8 +27,7 @@ import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
-import com.xyoye.dandanplay.ui.activities.PlayerActivity;
-import com.xyoye.dandanplay.ui.activities.PlayerExoActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.JsonUtil;
@@ -110,19 +109,12 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                         videoBean.setDanmuPath("");
                 }
 
-                //选择的播放器
-                Intent intent;
-                if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
-                    intent = new Intent(getContext(), PlayerExoActivity.class);
-                else
-                    intent = new Intent(getContext(), PlayerActivity.class);
-                String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
-                intent.putExtra("title", title);
-                intent.putExtra("path", videoBean.getVideoPath());
-                intent.putExtra("danmu_path", videoBean.getDanmuPath());
-                intent.putExtra("current", videoBean.getVideoDuration());
-                intent.putExtra("episode_id", videoBean.getEpisodeId());
-                startActivity(intent);
+                PlayerManagerActivity.launchPlayer(getContext(),
+                        FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
+                        videoBean.getVideoPath(),
+                        videoBean.getDanmuPath(),
+                        videoBean.getCurrentPosition(),
+                        videoBean.getEpisodeId());
             }
         });
 

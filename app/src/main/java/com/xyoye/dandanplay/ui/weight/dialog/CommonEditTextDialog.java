@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.weight.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -16,7 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
-import com.xyoye.dandanplay.ui.activities.PlayerActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -103,13 +102,14 @@ public class CommonEditTextDialog extends Dialog {
                         String title = link;
                         if (lastEx < link.length())
                             title = link.substring(lastEx, link.length());
-                        Intent intent = new Intent(getContext(), PlayerActivity.class);
-                        intent.putExtra("title", title);
-                        intent.putExtra("path", link);
-                        intent.putExtra("danmu_path", "");
-                        intent.putExtra("current", 0);
-                        intent.putExtra("episode_id", "");
-                        getContext().startActivity(intent);
+//                        Intent intent = new Intent(getContext(), PlayerActivity.class);
+//                        intent.putExtra("title", title);
+//                        intent.putExtra("path", link);
+//                        intent.putExtra("danmu_path", "");
+//                        intent.putExtra("current", 0);
+//                        intent.putExtra("episode_id", "");
+//                        getContext().startActivity(intent);
+                        PlayerManagerActivity.launchPlayer(getContext(), title, link, "", 0, 0);
                         CommonEditTextDialog.this.dismiss();
                     }
                 } else if (type == SCREEN_NAME){

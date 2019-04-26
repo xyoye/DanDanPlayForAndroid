@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class SaveCurrentEvent implements Serializable {
     private String folderPath;
     private String videoPath;
-    private int currentPosition;
+    private long currentPosition;
 
     public SaveCurrentEvent() {
     }
@@ -37,11 +37,11 @@ public class SaveCurrentEvent implements Serializable {
         this.videoPath = videoPath;
     }
 
-    public int getCurrentPosition() {
+    public long getCurrentPosition() {
         return currentPosition;
     }
 
-    public void setCurrentPosition(int currentPosition) {
+    public void setCurrentPosition(long currentPosition) {
         this.currentPosition = currentPosition;
     }
 }

@@ -139,7 +139,7 @@ import static com.player.ijkplayer.utils.TimeFormatUtils.generateTime;
 /**
  * Created by long on 2016/10/24.
  */
-public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
+public class ExoPlayerView extends FrameLayout implements View.OnClickListener, PlayerViewListener {
 
     // 进度条最大值
     private static final int MAX_VIDEO_SEEK = 1000;
@@ -484,6 +484,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * Activity.onResume() 里调用
      */
+    @Override
     public void onResume() {
         Log.i("TTAG", "onResume");
         if (mIsScreenLocked) {
@@ -502,6 +503,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * Activity.onPause() 里调用
      */
+    @Override
     public void onPause() {
         Log.i("TTAG", "onPause");
         mCurPosition = exoPlayer.getCurrentPosition();
@@ -514,6 +516,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @return 返回播放进度
      */
+    @Override
     public long onDestroy() {
         // 记录播放进度
         long curPosition = exoPlayer.getCurrentPosition();
@@ -534,6 +537,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      * @param keyCode
      * @return
      */
+    @Override
     public boolean handleVolumeKey(int keyCode) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             _setVolume(true);
@@ -549,6 +553,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 回退，全屏时退回竖屏
      */
+    @Override
     public boolean onBackPressed() {
         if (recoverFromEditVideo()) {
             return true;
@@ -1184,6 +1189,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
      * SYSTEM_UI_FLAG_IMMERSIVE：沉浸式，从顶部下滑出现状态栏和导航栏会固定住
      * SYSTEM_UI_FLAG_IMMERSIVE_STICKY：黏性沉浸式，从顶部下滑出现状态栏和导航栏过几秒后会缩回去
      */
+    @Override
     public void configurationChanged(Configuration newConfig) {
         _refreshOrientationEnable();
         // 沉浸式只能在SDK19以上实现
@@ -1852,15 +1858,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * 返回当前进度
-     *
-     * @return
-     */
-    public long getCurPosition() {
-        return exoPlayer.getCurrentPosition();
-    }
-
-    /**
      * 设置跳转提示
      *
      * @param targetPosition 目标进度,单位:ms
@@ -2435,6 +2432,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 移除屏蔽的弹幕
      */
+    @Override
     public void removeBlock(String text){
         if (blockList.contains(text)){
             //从界面移除
@@ -2835,6 +2833,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 电量改变
      */
+    @Override
     public void setBatteryChanged(int status, int progress){
         if (status == BatteryBroadcastReceiver.BATTERY_STATUS_SPA) {
             mPbBatteryLevel.setSecondaryProgress(0);
@@ -2862,6 +2861,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 屏幕被锁定
      */
+    @Override
     public void onScreenLocked(){
         mIsScreenLocked = true;
     }

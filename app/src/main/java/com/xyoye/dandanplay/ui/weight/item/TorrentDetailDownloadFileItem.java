@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +9,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
-import com.xyoye.dandanplay.ui.activities.PlayerActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -68,13 +66,20 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         mView.setOnClickListener(v -> {
             if (realFile.length() >= model.getLength() && CommonUtils.isMediaFile(model.getName())) {
-                Intent intent = new Intent(mView.getContext(), PlayerActivity.class);
-                intent.putExtra("path", model.getPath());
-                intent.putExtra("title", model.getName());
-                intent.putExtra("danmu_path", model.getDanmuPath());
-                intent.putExtra("current", 0);
-                intent.putExtra("episode_id", model.getEpisodeId());
-                mView.getContext().startActivity(intent);
+//                Intent intent = new Intent(mView.getContext(), PlayerActivity.class);
+//                intent.putExtra("path", model.getPath());
+//                intent.putExtra("title", model.getName());
+//                intent.putExtra("danmu_path", model.getDanmuPath());
+//                intent.putExtra("current", 0);
+//                intent.putExtra("episode_id", model.getEpisodeId());
+//                mView.getContext().startActivity(intent);
+                PlayerManagerActivity.launchPlayer(
+                        mView.getContext(),
+                        model.getPath(),
+                        model.getName(),
+                        model.getDanmuPath(),
+                        0,
+                        model.getEpisodeId());
             }
         });
 

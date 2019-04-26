@@ -324,24 +324,18 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
      * @param videoBean 数据
      */
     private void launchPlay(VideoBean videoBean){
-        Intent intent;
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER)
-            intent = new Intent(this, PlayerExoActivity.class);
-        else
-            intent = new Intent(this, PlayerActivity.class);
-        String title = FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
-        intent.putExtra("title", title);
-        intent.putExtra("path", videoBean.getVideoPath());
-        intent.putExtra("danmu_path", videoBean.getDanmuPath());
-        intent.putExtra("current", videoBean.getVideoDuration());
-        intent.putExtra("episode_id", videoBean.getEpisodeId());
-
         //记录此次播放
         String videoInfo = JsonUtil.toJson(videoBean);
         AppConfig.getInstance().setLastPlayVideo(videoInfo);
         EventBus.getDefault().post(new RefreshFolderEvent(false));
 
-        startActivity(intent);
+        PlayerManagerActivity.launchPlayer(
+                this,
+                FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
+                videoBean.getVideoPath(),
+                videoBean.getDanmuPath(),
+                videoBean.getCurrentPosition(),
+                videoBean.getEpisodeId());
     }
 
     public void sort(int type){

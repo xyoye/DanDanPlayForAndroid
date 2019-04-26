@@ -67,6 +67,7 @@ import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
+import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.adapter.AdapterItem;
 import com.player.ijkplayer.adapter.BaseRvAdapter;
@@ -125,7 +126,7 @@ import static tv.danmaku.ijk.media.player.IMediaPlayer.OnInfoListener;
 /**
  * Created by long on 2016/10/24.
  */
-public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
+public class IjkPlayerView extends FrameLayout implements View.OnClickListener, PlayerViewListener{
     //打开字幕选择
     public static final int INTENT_OPEN_SUBTITLE = 1001;
 
@@ -444,6 +445,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * Activity.onResume() 里调用
      */
+    @Override
     public void onResume() {
         Log.i("TTAG", "onResume");
         if (mIsScreenLocked) {
@@ -468,6 +470,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * Activity.onPause() 里调用
      */
+    @Override
     public void onPause() {
         Log.i("TTAG", "onPause");
         mCurPosition = mVideoView.getCurrentPosition();
@@ -482,9 +485,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @return 返回播放进度
      */
-    public int onDestroy() {
+    @Override
+    public long onDestroy() {
         // 记录播放进度
-        int curPosition = mVideoView.getCurrentPosition();
+        long curPosition = mVideoView.getCurrentPosition();
         mVideoView.destroy();
         if (mDanmakuView != null) {
             // don't forget release!
@@ -502,6 +506,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      * @param keyCode
      * @return
      */
+    @Override
     public boolean handleVolumeKey(int keyCode) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             _setVolume(true);
@@ -519,6 +524,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @return
      */
+    @Override
     public boolean onBackPressed() {
         if (recoverFromEditVideo()) {
             return true;
@@ -693,8 +699,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @param position 位置
      */
-    public void seekTo(int position) {
-        mVideoView.seekTo(position);
+    public void seekTo(long position) {
+        Long positionLong = position;
+        mVideoView.seekTo(positionLong.intValue());
         if(position != 0)
             mDanmakuTargetPosition = position;
     }
@@ -1234,6 +1241,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
      *
      * @param newConfig
      */
+    @Override
     public void configurationChanged(Configuration newConfig) {
         _refreshOrientationEnable();
         // 沉浸式只能在SDK19以上实现
@@ -1944,7 +1952,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     // 跳转布局
     private View mLlSkipLayout;
     // 跳转目标时间
-    private int mSkipPosition = INVALID_VALUE;
+    private long mSkipPosition = INVALID_VALUE;
 
     /**
      * 跳转提示初始化
@@ -1959,21 +1967,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     }
 
     /**
-     * 返回当前进度
-     *
-     * @return
-     */
-    public int getCurPosition() {
-        return mVideoView.getCurrentPosition();
-    }
-
-    /**
      * 设置跳转提示
      *
      * @param targetPosition 目标进度,单位:ms
      */
-    public IjkPlayerView setSkipTip(int targetPosition) {
-        mSkipPosition = targetPosition;
+    public IjkPlayerView setSkipTip(long targetPosition) {
+        if (targetPosition > 0){
+            mSkipPosition = targetPosition;
+        }
         return this;
     }
 
@@ -2548,6 +2549,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 移除屏蔽的弹幕
      */
+    @Override
     public void removeBlock(String text){
         if (blockList.contains(text)){
             //从界面移除
@@ -2931,6 +2933,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 电量改变
      */
+    @Override
     public void setBatteryChanged(int status, int progress){
         if (status == BatteryBroadcastReceiver.BATTERY_STATUS_SPA) {
             mPbBatteryLevel.setSecondaryProgress(0);
@@ -2958,6 +2961,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener {
     /**
      * 屏幕被锁定
      */
+    @Override
     public void onScreenLocked(){
         mIsScreenLocked = true;
     }

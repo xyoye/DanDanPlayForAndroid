@@ -5,8 +5,8 @@ apply from: "config.gradle"
 buildscript {
 
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
@@ -21,8 +21,8 @@ allprojects {
     repositories {
         maven { url "http://maven.aliyun.com/nexus/content/repositories/releases" }
         maven { url 'https://jitpack.io' }
-        jcenter()
         google()
+        jcenter()
     }
 }
 

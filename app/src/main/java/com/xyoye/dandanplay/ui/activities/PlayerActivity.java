@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,27 +11,25 @@ import android.view.KeyEvent;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.exoplayer.ExoPlayerView;
+import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
+import com.player.ijkplayer.receiver.PlayerReceiverListener;
 import com.player.ijkplayer.receiver.ScreenBroadcastReceiver;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.player.ijkplayer.receiver.PlayerReceiverListener;
-import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,88 +45,55 @@ import java.math.BigDecimal;
  * Created by YE on 2018/7/4 0004.
  */
 
-
 public class PlayerActivity extends AppCompatActivity implements PlayerReceiverListener {
-    private static final int SELECT_DANMU = 102;
+    PlayerViewListener mPlayer;
 
-    com.player.ijkplayer.media.IjkPlayerView mPlayer;
     private boolean isInit = false;
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
-    private int currentPosition;
+    private long currentPosition;
     private int episodeId;
 
+    //电源广播
     private BatteryBroadcastReceiver batteryReceiver;
+    //锁屏广播
     private ScreenBroadcastReceiver screenReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        mPlayer = new IjkPlayerView(this);
-        setContentView(mPlayer);
 
+        //播放器类型
+        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER){
+            mPlayer = new ExoPlayerView(this);
+            setContentView((ExoPlayerView)mPlayer);
+        }else {
+            mPlayer = new IjkPlayerView(this);
+            setContentView((IjkPlayerView)mPlayer);
+        }
+
+        //注册监听广播
         batteryReceiver = new BatteryBroadcastReceiver(this);
         screenReceiver = new ScreenBroadcastReceiver(this);
         PlayerActivity.this.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         PlayerActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
-        if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
-            //外部打开
-            if (!StringUtils.isEmpty(getIntent().getDataString())) {
-                Uri data = getIntent().getData();
-                videoPath = CommonUtils.getRealFilePath(PlayerActivity.this, data);
-                videoTitle = FileUtils.getFileName(videoPath);
-                currentPosition = 0;
-                episodeId = 0;
-                if (AppConfig.getInstance().isShowOuterChainDanmuDialog()){
-                    new DanmuSelectDialog(this, isSelectDanmu -> {
-                        if (isSelectDanmu){
-                            Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
-                            intent.putExtra("video_path", videoPath);
-                            intent.putExtra("is_lan", false);
-                            startActivityForResult(intent, SELECT_DANMU);
-                        }else {
-                            danmuPath = "";
-                            initPlayer();
-                            mPlayer.start();
-                        }
-                    }).show();
-                }else {
-                    if (AppConfig.getInstance().isOuterChainDanmuSelect()){
-                        Intent intent = new Intent(PlayerActivity.this, DanmuNetworkActivity.class);
-                        intent.putExtra("video_path", videoPath);
-                        intent.putExtra("is_lan", false);
-                        startActivityForResult(intent, SELECT_DANMU);
-                    }else {
-                        danmuPath = "";
-                        initPlayer();
-                        mPlayer.start();
-                    }
-                }
-            } else {
-                ToastUtils.showShort("解析视频地址失败");
-            }
-        } else {
-            videoPath = getIntent().getStringExtra("path");
-            videoTitle = getIntent().getStringExtra("title");
-            danmuPath = getIntent().getStringExtra("danmu_path");
-            currentPosition = getIntent().getIntExtra("current", 0);
-            episodeId = getIntent().getIntExtra("episode_id", 0);
-            initPlayer();
-            mPlayer.start();
-            if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
-                addPlayHistory(episodeId);
-        }
+        //获取播放参数
+        videoPath = getIntent().getStringExtra("video_path");
+        videoTitle = getIntent().getStringExtra("video_title");
+        danmuPath = getIntent().getStringExtra("danmu_path");
+        currentPosition = getIntent().getIntExtra("current_position", 0);
+        episodeId = getIntent().getIntExtra("episode_id", 0);
+
+        //初始化播放器
+        initPlayer();
     }
 
+    //初始化播放器
     private void initPlayer() {
-        if (StringUtils.isEmpty(videoPath)){
-            ToastUtils.showShort("播放地址不能为空");
-            PlayerActivity.this.finish();
-            return;
-        }
+        //获取弹幕数据流
         InputStream inputStream = null;
         if (!TextUtils.isEmpty(danmuPath) && FileUtils.isFileExists(danmuPath)) {
             try {
@@ -139,57 +103,148 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
             }
         }
 
-        //播放器配置
+        //初始化不同的播放器
+        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER) {
+            initExoPlayer(inputStream);
+        }else {
+            initIjkPlayer(inputStream);
+        }
+
+        isInit = true;
+        //添加播放历史
+        if (episodeId > 0 && AppConfig.getInstance().isLogin())
+            addPlayHistory(episodeId);
+    }
+
+    private void initIjkPlayer(InputStream inputStream){
+        //ijk播放器配置
         boolean mediaCodeC = AppConfig.getInstance().isOpenMediaCodeC();
         boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
         boolean openSLES = AppConfig.getInstance().isOpenSLES();
         boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
         int playerType = AppConfig.getInstance().getPlayerType();
         String pixelFormat = AppConfig.getInstance().getPixelFormat();
-        mPlayer.init()
+
+        IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
+
+        ijkPlayerView.init()
+                //初始化ijk配置
                 .initVideoView(mediaCodeC, mediaCodeCH265, openSLES, surfaceRenders, playerType, pixelFormat)
-                .alwaysFullScreen();
-        if (currentPosition > 0) {
-            mPlayer.setSkipTip(currentPosition);
-        }
-        mPlayer.enableOrientation()
+                //总是全屏
+                .alwaysFullScreen()
+                //开启旋屏
+                .enableOrientation()
+                //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList)
+                //设置云屏蔽启用状态
                 .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
+                //设置视频路径
                 .setVideoPath(videoPath)
-                .setMediaQuality(IjkPlayerView.MEDIA_QUALITY_HIGH)
+                //启用弹幕
                 .enableDanmaku()
+                //设置弹幕数据源
                 .setDanmakuSource(inputStream)
+                //默认展示弹幕
                 .showOrHideDanmaku(true)
+                //设置标题
                 .setTitle(videoTitle)
-                .setQualityButtonVisibility(false)
+                //跳转至上一次播放进度
+                .setSkipTip(currentPosition)
+                //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
+                    //选择弹幕事件
                     if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
-                        new FileManagerDialog(PlayerActivity.this,
+                        new FileManagerDialog(
+                                PlayerActivity.this,
                                 videoPath,
                                 FileManagerDialog.SELECT_SUBTITLE,
-                                path -> mPlayer.setSubtitlePath(path)
+                                ijkPlayerView::setSubtitlePath
                         ).show();
                     }
                     return true;
                 })
+                //弹幕事件回调
                 .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
                     @Override
                     public boolean isValid() {
+                        //是否可发送弹幕
                         return (AppConfig.getInstance().isLogin() && episodeId != 0);
                     }
 
                     @Override
                     public void onDataObtain(BaseDanmaku data) {
+                        //上传弹幕
                         uploadDanmu(data);
                     }
 
                     @Override
                     public void setCloudFilter(boolean isOpen) {
+                        //启用或关闭云屏蔽
                         AppConfig.getInstance().setCloudDanmuFilter(isOpen);
                     }
 
                 });
-        isInit = true;
+        //启动播放
+        ijkPlayerView.start();
+    }
+
+    private void initExoPlayer(InputStream inputStream){
+        ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
+
+        exoPlayerView.init()
+                //总是全屏
+                .alwaysFullScreen()
+                //开启旋屏
+                .enableOrientation()
+                //设置云屏蔽数据
+                .setCloudFilterData(IApplication.cloudFilterList)
+                //设置云屏蔽启用状态
+                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
+                //设置视频路径
+                .setVideoPath(videoPath)
+                //启用弹幕
+                .enableDanmaku()
+                //设置弹幕数据源
+                .setDanmakuSource(inputStream)
+                //默认展示弹幕
+                .showOrHideDanmaku(true)
+                //设置标题
+                .setTitle(videoTitle)
+                //内部事件回调
+                .setOnInfoListener((mp, what, extra) -> {
+                    //选择弹幕事件
+                    if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
+                        new FileManagerDialog(PlayerActivity.this,
+                                videoPath,
+                                FileManagerDialog.SELECT_SUBTITLE,
+                                exoPlayerView::setSubtitlePath
+                        ).show();
+                    }
+                    return true;
+                })
+                //弹幕事件回调
+                .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
+                    @Override
+                    public boolean isValid() {
+                        //是否可发送弹幕
+                        return (AppConfig.getInstance().isLogin() && episodeId != 0);
+                    }
+
+                    @Override
+                    public void onDataObtain(BaseDanmaku data) {
+                        //上传弹幕
+                        uploadDanmu(data);
+                    }
+
+                    @Override
+                    public void setCloudFilter(boolean isOpen) {
+                        //启用或关闭云屏蔽
+                        AppConfig.getInstance().setCloudDanmuFilter(isOpen);
+                    }
+
+                });
+        //启动播放
+        exoPlayerView.start();
     }
 
     //上传一条弹幕
@@ -242,28 +297,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_DANMU){
-                danmuPath = data.getStringExtra("path");
-                episodeId = data.getIntExtra("episode_id", 0);
-                initPlayer();
-                mPlayer.start();
-                if (episodeId != 0 && episodeId != -1 && AppConfig.getInstance().isLogin())
-                    addPlayHistory(episodeId);
-            }
-        }else if (resultCode == RESULT_CANCELED){
-            danmuPath = "";
-            initPlayer();
-            mPlayer.start();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        saveCurrent(mPlayer.getCurPosition());
-        mPlayer.onDestroy();
+        saveCurrent(mPlayer.onDestroy());
         this.unregisterReceiver(batteryReceiver);
         this.unregisterReceiver(screenReceiver);
         super.onDestroy();
@@ -303,7 +339,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     }
 
     //保存进度
-    private void saveCurrent(int currentPosition) {
+    private void saveCurrent(long currentPosition) {
         SaveCurrentEvent event = new SaveCurrentEvent();
         event.setCurrentPosition(currentPosition);
         event.setFolderPath(FileUtils.getDirName(videoPath));

@@ -229,7 +229,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             String filePath = cursor.getString(2);
 
             String danmuPath = cursor.getString(3);
-            int currentPosition = cursor.getInt(4);
+            long currentPosition = cursor.getInt(4);
             int episodeId = cursor.getInt(5);
             videoBeans.add(new VideoBean(filePath, true, 0,  danmuPath, currentPosition, episodeId));
         }

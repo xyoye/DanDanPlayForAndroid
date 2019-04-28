@@ -314,4 +314,15 @@ public class AppConfig {
     public void setLastPlayVideo(String videoInfo){
         SPUtils.getInstance().put(Constants.Config.LAST_PLAY_VIDEO, videoInfo);
     }
+
+    /**
+     * 是否已备份过数据库
+     */
+    public boolean isBackupNull(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.IS_BACKUP_BLOCK, true);
+    }
+
+    public void setBackupNotNull(){
+        SPUtils.getInstance().put(Constants.Config.IS_BACKUP_BLOCK, false);
+    }
 }

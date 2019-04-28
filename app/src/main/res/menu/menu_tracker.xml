@@ -9,5 +9,16 @@
         android:icon="@mipmap/ic_help"
         android:orderInCategory="100"
         android:title="help"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/tracker_cancel"
+        android:orderInCategory="100"
+        android:title="取消"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/tracker_delete"
+        android:orderInCategory="100"
+        android:title="确定"
+        app:showAsAction="always" />
 </menu>

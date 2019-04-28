@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bluetooth_item"
+    android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/info_ll"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/check_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/tracker_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:gravity="center_vertical"
-            android:layout_marginStart="15dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="50dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@android:color/black"
             android:textSize="14sp"
             android:text=""/>
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:padding="10dp"
-            android:src="@mipmap/ic_swip_delete"/>
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.player.ijkplayer.utils;
+package com.player.ijkplayer.adapter;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -14,9 +14,9 @@ import java.util.List;
  * Created by xyy on 2018/12/19.
  */
 
-public class TrackAdapter extends BaseQuickAdapter<VideoInfoTrack, BaseViewHolder> {
+public class StreamAdapter extends BaseQuickAdapter<VideoInfoTrack, BaseViewHolder> {
 
-    public TrackAdapter(@LayoutRes int layoutResId, @Nullable List<VideoInfoTrack> data) {
+    public StreamAdapter(@LayoutRes int layoutResId, @Nullable List<VideoInfoTrack> data) {
         super(layoutResId, data);
     }
 

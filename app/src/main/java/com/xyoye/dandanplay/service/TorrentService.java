@@ -175,16 +175,18 @@ public class TorrentService extends Service {
         uploaded.start(0);
 
         refresh = () -> {
-            BytesInfo bytesInfo = Libtorrent.stats();
-            downloaded.step(bytesInfo.getDownloaded());
-            uploaded.step(bytesInfo.getUploaded());
-            for (Torrent torrent : IApplication.torrentList){
-                if (Libtorrent.torrentActive(torrent.getId())) {
-                    // TODO: 2019/4/12 这里每秒都会更新一次数据库，而且还是在主线程，得优化 
-                    TorrentUtil.updateTorrent(torrent);
+            if (IApplication.torrentList.size() > 0){
+                BytesInfo bytesInfo = Libtorrent.stats();
+                downloaded.step(bytesInfo.getDownloaded());
+                uploaded.step(bytesInfo.getUploaded());
+                for (Torrent torrent : IApplication.torrentList){
+                    if (Libtorrent.torrentActive(torrent.getId())) {
+                        // TODO: 2019/4/12 这里每秒都会更新一次数据库，而且还是在主线程，得优化
+                        TorrentUtil.updateTorrent(torrent);
+                    }
                 }
+                notificationManager.notify(NOTIFICATION_ID, showNotification());
             }
-            notificationManager.notify(NOTIFICATION_ID, showNotification());
             mHandler.postDelayed(refresh,1000);
         };
         refresh.run();

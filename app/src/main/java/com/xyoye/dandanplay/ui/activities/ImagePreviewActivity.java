@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.preview.ImageViewTouch;
 import com.xyoye.dandanplay.ui.weight.preview.ImageViewTouchBase;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 
@@ -123,7 +124,7 @@ public class ImagePreviewActivity extends BaseMvcActivity {
 
     private void saveBitmap(Bitmap bitmap){
         try {
-            String coverPath = Constants.DefaultConfig.animeCover + CommonUtils.getCurrentFileName("COV", ".jpg");
+            String coverPath = AppConfig.getInstance().getDownloadFolder() + Constants.DefaultConfig.animeCover + CommonUtils.getCurrentFileName("COV", ".jpg");
             File coverFile = new File(coverPath);
             if (!coverFile.exists()) {
                 coverFile.getParentFile().mkdirs();

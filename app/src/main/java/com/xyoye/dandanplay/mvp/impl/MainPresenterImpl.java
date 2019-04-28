@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Environment;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.app.IApplication;
@@ -20,34 +20,21 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CloudFilterHandler;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.TrackerManager;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DefaultHandler2;
-import org.xml.sax.helpers.DefaultHandler;
-
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
 
 /**
  * Created by YE on 2018/6/28 0028.
@@ -93,6 +80,30 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     @Override
     public void destroy() {
 
+    }
+
+    //Tracker
+    @Override
+    public void initTracker(){
+        new Thread(() -> {
+            //trackers数据
+            File configFolder = new File(FileUtils.getDirName(Constants.DefaultConfig.configPath));
+            if (configFolder.isFile())
+                configFolder.delete();
+            if (!configFolder.exists())
+                configFolder.mkdirs();
+
+            File trackerFile = new File(Constants.DefaultConfig.configPath);
+
+            //文件不存在，读取asset中默认的trackers，并写入文件
+            if (!trackerFile.exists()){
+                TrackerManager.resetTracker();
+            }
+            //文件存在，直接读取
+            else {
+                TrackerManager.queryTracker();
+            }
+        }).start();
     }
 
     //番剧分类
@@ -218,5 +229,49 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
         }
         return filter;
+    }
+
+    /**
+     * 备份屏蔽数据
+     */
+    @Override
+    public void backupBlockData(){
+        try {
+            //query
+            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("/data/data/com.xyoye.dandanplay/databases/db_block_data.db",null);
+            Cursor cursor = database.query("block", new String[]{"text"}, null, null, null, null, null);
+            List<String> blockList = new ArrayList<>();
+            while (cursor.moveToNext()){
+                blockList.add(cursor.getString(0));
+            }
+            cursor.close();
+            if (blockList.size() < 1) return;
+
+            //save
+            String folderPath = AppConfig.getInstance().getDownloadFolder()+ Constants.DefaultConfig.backupFolder;
+            File blockFolder = new File(folderPath);
+            if (!blockFolder.exists()){
+                blockFolder.mkdirs();
+            }
+
+            File backupFile = new File(blockFolder, "block.txt");
+            if (backupFile.exists())
+                backupFile.delete();
+            backupFile.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(backupFile);
+            for (String blockText : blockList){
+                fileWriter.append(blockText).append("\n");
+            }
+            fileWriter.flush();
+            fileWriter.close();
+
+            //delete
+            database.delete("block", null, null);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 }

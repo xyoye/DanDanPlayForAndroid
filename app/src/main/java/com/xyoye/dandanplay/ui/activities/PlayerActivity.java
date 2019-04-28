@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,8 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.database.builder.QueryBuilder;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -40,6 +43,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -59,6 +66,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private BatteryBroadcastReceiver batteryReceiver;
     //锁屏广播
     private ScreenBroadcastReceiver screenReceiver;
+    //弹幕回调
+    private OnDanmakuListener onDanmakuListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +95,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         danmuPath = getIntent().getStringExtra("danmu_path");
         currentPosition = getIntent().getIntExtra("current_position", 0);
         episodeId = getIntent().getIntExtra("episode_id", 0);
+
+        //初始化接口
+        initListener();
 
         //初始化播放器
         initPlayer();
@@ -150,6 +162,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setTitle(videoTitle)
                 //跳转至上一次播放进度
                 .setSkipTip(currentPosition)
+                //弹幕事件回调
+                .setDanmakuListener(onDanmakuListener)
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
                     //选择弹幕事件
@@ -163,29 +177,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     }
                     return true;
                 })
-                //弹幕事件回调
-                .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
-                    @Override
-                    public boolean isValid() {
-                        //是否可发送弹幕
-                        return (AppConfig.getInstance().isLogin() && episodeId != 0);
-                    }
-
-                    @Override
-                    public void onDataObtain(BaseDanmaku data) {
-                        //上传弹幕
-                        uploadDanmu(data);
-                    }
-
-                    @Override
-                    public void setCloudFilter(boolean isOpen) {
-                        //启用或关闭云屏蔽
-                        AppConfig.getInstance().setCloudDanmuFilter(isOpen);
-                    }
-
-                });
-        //启动播放
-        ijkPlayerView.start();
+                .start();
     }
 
     private void initExoPlayer(InputStream inputStream){
@@ -210,6 +202,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .showOrHideDanmaku(true)
                 //设置标题
                 .setTitle(videoTitle)
+                //弹幕事件回调
+                .setDanmakuListener(onDanmakuListener)
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
                     //选择弹幕事件
@@ -222,29 +216,63 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     }
                     return true;
                 })
-                //弹幕事件回调
-                .setDanmakuListener(new OnDanmakuListener<BaseDanmaku>() {
-                    @Override
-                    public boolean isValid() {
-                        //是否可发送弹幕
-                        return (AppConfig.getInstance().isLogin() && episodeId != 0);
-                    }
+                .start();
+    }
 
-                    @Override
-                    public void onDataObtain(BaseDanmaku data) {
-                        //上传弹幕
-                        uploadDanmu(data);
-                    }
+    private void initListener(){
+        onDanmakuListener = new OnDanmakuListener<BaseDanmaku>() {
+            @Override
+            public boolean isValid() {
+                //是否可发送弹幕
+                return (AppConfig.getInstance().isLogin() && episodeId != 0);
+            }
 
-                    @Override
-                    public void setCloudFilter(boolean isOpen) {
-                        //启用或关闭云屏蔽
-                        AppConfig.getInstance().setCloudDanmuFilter(isOpen);
-                    }
+            @Override
+            public void onDataObtain(BaseDanmaku data) {
+                //上传弹幕
+                uploadDanmu(data);
+            }
 
-                });
-        //启动播放
-        exoPlayerView.start();
+            @Override
+            public void setCloudFilter(boolean isOpen) {
+                //启用或关闭云屏蔽
+                AppConfig.getInstance().setCloudDanmuFilter(isOpen);
+            }
+
+            @Override
+            public void deleteBlock(String text) {
+                DataBaseManager.getInstance()
+                        .selectTable(13)
+                        .delete()
+                        .where(1, text)
+                        .postExecute();
+            }
+
+            @Override
+            public void addBlock(String text) {
+                DataBaseManager.getInstance()
+                        .selectTable(13)
+                        .insert()
+                        .param(1, text)
+                        .postExecute();
+            }
+
+            @Override
+            public List<String> queryBlock() {
+                List<String> blockList = new ArrayList<>();
+                Cursor cursor = DataBaseManager.getInstance()
+                    .selectTable(13)
+                    .query()
+                    .setColumns(1)
+                    .execute();
+                if (cursor != null){
+                    while (cursor.moveToNext()){
+                        blockList.add(cursor.getString(0));
+                    }
+                }
+                return blockList;
+            }
+        };
     }
 
     //上传一条弹幕

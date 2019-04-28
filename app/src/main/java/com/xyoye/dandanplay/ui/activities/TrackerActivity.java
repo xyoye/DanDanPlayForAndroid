@@ -1,36 +1,27 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Canvas;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseItemDraggableAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
-import com.chad.library.adapter.base.listener.OnItemSwipeListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
-import com.xyoye.dandanplay.bean.event.MessageEvent;
-import com.xyoye.dandanplay.database.DataBaseInfo;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.base.BaseRvAdapter;
+import com.xyoye.dandanplay.bean.TrackerBean;
 import com.xyoye.dandanplay.ui.weight.dialog.AddTrackerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.ui.weight.item.TrackerItem;
+import com.xyoye.dandanplay.utils.TrackerManager;
+import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,7 +38,10 @@ public class TrackerActivity extends BaseMvcActivity {
     @BindView(R.id.add_tracker_bt)
     FloatingActionButton addTrackerBt;
 
-    private TrackerAdapter trackerAdapter;
+    private MenuItem menuHelpItem, menuDeleteItem, menuCancelItem;
+
+    private BaseRvAdapter<TrackerBean> trackerAdapter;
+    private List<TrackerBean> trackerList;
 
     @Override
     protected int initPageLayoutID() {
@@ -57,35 +51,43 @@ public class TrackerActivity extends BaseMvcActivity {
     @Override
     public void initPageView() {
         setTitle("tracker管理");
-        trackerAdapter = new TrackerAdapter(R.layout.item_tracker, IApplication.trackers);
+
+        trackerList = new ArrayList<>();
+        trackerAdapter = new BaseRvAdapter<TrackerBean>(trackerList) {
+            @NonNull
+            @Override
+            public AdapterItem<TrackerBean> onCreateItem(int viewType) {
+                return new TrackerItem(new TrackerItem.TrackerItemListener() {
+                    @Override
+                    public void onClick(int position, boolean isChecked) {
+                        trackerList.get(position).setSelected(isChecked);
+                        trackerAdapter.notifyItemChanged(position);
+                    }
+
+                    @Override
+                    public void onLongClick(int position) {
+                        for (TrackerBean trackerBean : trackerList){
+                            trackerBean.setSelectType(true);
+                            trackerBean.setSelected(false);
+                        }
+                        trackerList.get(position).setSelected(true);
+                        trackerAdapter.notifyDataSetChanged();
+
+                        setTitle("删除tracker");
+                        menuCancelItem.setVisible(true);
+                        menuDeleteItem.setVisible(true);
+                        menuHelpItem.setVisible(false);
+                        addTrackerBt.setVisibility(View.GONE);
+                    }
+                });
+            }
+        };
+
         trackerRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         trackerRv.setItemViewCacheSize(10);
         trackerRv.setAdapter(trackerAdapter);
-        ItemDragAndSwipeCallback itemDragAndSwipeCallback = new ItemDragAndSwipeCallback(trackerAdapter);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
-        itemTouchHelper.attachToRecyclerView(trackerRv);
-        trackerAdapter.enableSwipeItem();
-        trackerAdapter.setOnItemSwipeListener(new OnItemSwipeListener() {
-            @Override
-            public void onItemSwipeStart(RecyclerView.ViewHolder viewHolder, int pos) {
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                sqLiteDatabase.delete(DataBaseInfo.getTableNames()[8], "tracker = ?" , new String[]{IApplication.trackers.get(pos)});
-            }
 
-            @Override
-            public void clearView(RecyclerView.ViewHolder viewHolder, int pos) {
-
-            }
-
-            @Override
-            public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
-            }
-
-            @Override
-            public void onItemSwipeMoving(Canvas canvas, RecyclerView.ViewHolder viewHolder, float dX, float dY, boolean isCurrentlyActive) {
-
-            }
-        });
+        updateTracker();
     }
 
     @Override
@@ -93,16 +95,8 @@ public class TrackerActivity extends BaseMvcActivity {
         addTrackerBt.setOnLongClickListener(v -> {
             new CommonDialog.Builder(TrackerActivity.this)
                     .setOkListener(dialog -> {
-                        IApplication.trackers.clear();
-                        IApplication.trackers.addAll(CommonUtils.readTracker(getApplicationContext()));
-                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[8], "", new String[]{});
-                        for (String tracker : IApplication.trackers){
-                            ContentValues values=new ContentValues();
-                            values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-                        }
-                        trackerAdapter.notifyDataSetChanged();
+                        TrackerManager.resetTracker();
+                        updateTracker();
                     })
                     .setAutoDismiss()
                     .build()
@@ -113,28 +107,18 @@ public class TrackerActivity extends BaseMvcActivity {
 
     @OnClick(R.id.add_tracker_bt)
     public void onViewClicked() {
-        AddTrackerDialog dialog = new AddTrackerDialog(this, R.style.Dialog);
+        AddTrackerDialog dialog = new AddTrackerDialog(this, R.style.Dialog, this::updateTracker);
         dialog.show();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUpdateEvent(MessageEvent event){
-        if (event.getMsg() == MessageEvent.UPDATE_TRACKER){
-            if (trackerAdapter != null)
-                trackerAdapter.notifyDataSetChanged();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -150,6 +134,40 @@ public class TrackerActivity extends BaseMvcActivity {
                         .build()
                         .show(getResources().getString(R.string.what_is_tracker), "什么是tracker", "确定", "");
                 break;
+            case R.id.tracker_delete:
+                Iterator iterator = trackerList.iterator();
+                while (iterator.hasNext()){
+                    TrackerBean trackerBean = (TrackerBean)iterator.next();
+                    if (trackerBean.isSelected()){
+                        IApplication.trackers.remove(trackerBean.getTracker());
+                        iterator.remove();
+                    }else {
+                        trackerBean.setSelectType(false);
+                        trackerBean.setSelected(false);
+                    }
+                }
+                TrackerManager.deleteTracker();
+                trackerAdapter.notifyDataSetChanged();
+
+                setTitle("tracker管理");
+                menuCancelItem.setVisible(false);
+                menuDeleteItem.setVisible(false);
+                menuHelpItem.setVisible(true);
+                addTrackerBt.setVisibility(View.VISIBLE);
+                break;
+            case R.id.tracker_cancel:
+                for (TrackerBean trackerBean : trackerList){
+                    trackerBean.setSelected(false);
+                    trackerBean.setSelectType(false);
+                }
+                trackerAdapter.notifyDataSetChanged();
+
+                setTitle("tracker管理");
+                menuCancelItem.setVisible(false);
+                menuDeleteItem.setVisible(false);
+                menuHelpItem.setVisible(true);
+                addTrackerBt.setVisibility(View.VISIBLE);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -157,18 +175,24 @@ public class TrackerActivity extends BaseMvcActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_tracker, menu);
+        menuHelpItem = menu.findItem(R.id.tracker_help);
+        menuDeleteItem = menu.findItem(R.id.tracker_delete);
+        menuCancelItem = menu.findItem(R.id.tracker_cancel);
+        menuHelpItem.setVisible(true);
+        menuDeleteItem.setVisible(false);
+        menuCancelItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
-    private class TrackerAdapter extends BaseItemDraggableAdapter<String, BaseViewHolder> {
-
-        private TrackerAdapter(@LayoutRes int layoutResId, @Nullable List<String> data) {
-            super(layoutResId, data);
+    private void updateTracker(){
+        trackerList.clear();
+        for (String tracker : IApplication.trackers){
+            TrackerBean trackerBean = new TrackerBean();
+            trackerBean.setSelected(false);
+            trackerBean.setSelectType(false);
+            trackerBean.setTracker(tracker);
+            trackerList.add(trackerBean);
         }
-
-        @Override
-        protected void convert(BaseViewHolder helper, String item) {
-            helper.setText(R.id.tracker_tv, item);
-        }
+        trackerAdapter.notifyDataSetChanged();
     }
 }

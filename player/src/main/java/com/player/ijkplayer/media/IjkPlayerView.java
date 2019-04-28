@@ -1,12 +1,9 @@
 package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -17,7 +14,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -56,6 +52,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.IDanmakuView;
 import com.player.danmaku.danmaku.loader.ILoader;
@@ -69,14 +66,10 @@ import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
 import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.R;
-import com.player.ijkplayer.adapter.AdapterItem;
-import com.player.ijkplayer.adapter.BaseRvAdapter;
+import com.player.ijkplayer.adapter.BlockAdapter;
 import com.player.ijkplayer.danmaku.BaseDanmakuConverter;
 import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.database.DataBaseHelper;
-import com.player.ijkplayer.database.DataBaseInfo;
-import com.player.ijkplayer.database.DataBaseManager;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.CommonPlayerUtils;
@@ -87,7 +80,6 @@ import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SoftInputUtils;
 import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.WindowUtils;
-import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
 import com.player.ijkplayer.widgets.SettingDanmuView;
 import com.player.ijkplayer.widgets.SettingSubtitleView;
@@ -274,9 +266,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
-    private List<String> blockList = new ArrayList<>();
-    private BaseRvAdapter<String> blockAdapter;
-    private SQLiteDatabase sqLiteDatabase;
+    private List<String> blockList;
+    private BlockAdapter blockAdapter;
 
     public IjkPlayerView(Context context) {
         this(context, null);
@@ -1781,10 +1772,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
     /**
      * 设置弹幕监听器
-     * @param danmakuListener
      */
-    public void setDanmakuListener(OnDanmakuListener danmakuListener) {
+    public IjkPlayerView setDanmakuListener(OnDanmakuListener danmakuListener) {
         mDanmakuListener = danmakuListener;
+
+        setDanmuBlockData();
+        return this;
     }
 
     /**
@@ -2251,17 +2244,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                 })
                 .init();
 
-        DataBaseManager.initializeInstance(new DataBaseHelper(getContext()));
-        sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-
         mBlockRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
-        //获取所有屏蔽
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM block" ,new String[]{});
-        while (cursor.moveToNext()){
-            String blockText = cursor.getString(1);
-            blockList.add(blockText);
-        }
-        cursor.close();
 
         int navigationBarHeight = NavUtils.getNavigationBarHeight(mAttachActivity);
         if (navigationBarHeight > 0) {
@@ -2281,13 +2264,14 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         mDanmakuTypeOptions = findViewById(R.id.input_options_group_type);
         mDanmakuColorOptions = findViewById(R.id.input_options_color_group);
 
-        blockAdapter = new BaseRvAdapter<String>(blockList) {
-            @NonNull
+        blockList = new ArrayList<>();
+        blockAdapter = new BlockAdapter(R.layout.item_block, blockList);
+        blockAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public AdapterItem<String> onCreateItem(int viewType) {
-                return new BlockItem();
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                removeBlock(blockList.get(position));
             }
-        };
+        });
         mBlockRecyclerView.setAdapter(blockAdapter);
 
         mDanmakuTextSizeOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -2328,6 +2312,17 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                 return true;
             }
         });
+    }
+
+    /**
+     * 设置弹幕屏蔽数据
+     */
+    private void setDanmuBlockData(){
+        List<String> blocks = mDanmakuListener.queryBlock();
+        if (blocks != null){
+            blockList.addAll(blocks);
+            blockAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -2556,9 +2551,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
             blockList.remove(text);
             blockAdapter.notifyDataSetChanged();
             //从数据库移除
-            sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            String whereCase = DataBaseInfo.getFieldNames()[0][1]+" = ?";
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[0], whereCase, new String[]{text});
+            if (mDanmakuListener != null){
+                mDanmakuListener.deleteBlock(text);
+            }
             //弹幕中移除
             mDanmakuContext.removeKeyWordBlackList(text);
             Toast.makeText(getContext(), "已移除-“ "+ text +" ”", Toast.LENGTH_LONG).show();
@@ -2583,9 +2578,9 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
             blockList.add(blockText);
             blockAdapter.notifyDataSetChanged();
             //添加到数据库
-            ContentValues values=new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[0][1], blockText);
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[0],null,values);
+            if(mDanmakuListener != null){
+                mDanmakuListener.addBlock(blockText);
+            }
             //添加到弹幕屏蔽
             mDanmakuContext.addBlockKeyWord(blockText);
         }

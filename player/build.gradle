@@ -38,8 +38,8 @@ dependencies {
 
     api 'org.greenrobot:eventbus:3.1.1'
     api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'
-    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     api 'com.blankj:utilcode:1.22.4'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'com.google.android.exoplayer:exoplayer:2.9.5'
 }
 

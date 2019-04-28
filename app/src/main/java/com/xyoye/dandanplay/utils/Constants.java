@@ -51,17 +51,23 @@ public class Constants {
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
         //上次播放的视频
         public static final String LAST_PLAY_VIDEO = "last_play_video";
+        //是否已备份过屏蔽数据库
+        public static final String IS_BACKUP_BLOCK = "is_backup_block";
     }
 
     public static class DefaultConfig{
         //默认下载文件夹
         public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
+        //配置路径
+        public static final String configPath = downloadPath + "/_config/config.txt";
         //默认种子下载文件夹名
         public static final String torrentFolder = "/_torrent";
         //默认弹幕下载文件夹名
         public static final String danmuFolder = "/_danmu";
         //默认番剧封面缓存路径
-        public static final String animeCover = downloadPath + "/_cover";
+        public static final String animeCover = "/_cover";
+        //默认番剧封面缓存路径
+        public static final String backupFolder = "/_backup";
     }
 
     public static class SmbType{

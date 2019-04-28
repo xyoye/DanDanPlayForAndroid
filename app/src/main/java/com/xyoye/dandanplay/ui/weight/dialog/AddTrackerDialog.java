@@ -1,25 +1,20 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.event.MessageEvent;
-import com.xyoye.dandanplay.database.DataBaseInfo;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.TrackerManager;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,8 +29,11 @@ public class AddTrackerDialog extends Dialog {
     @BindView(R.id.tracker_et)
     EditText trackerEt;
 
-    public AddTrackerDialog(@NonNull Context context, int themeResId) {
+    private TrackerDialogListener dialogListener;
+
+    public AddTrackerDialog(@NonNull Context context, int themeResId, TrackerDialogListener dialogListener) {
         super(context, themeResId);
+        this.dialogListener = dialogListener;
     }
 
     @Override
@@ -52,35 +50,39 @@ public class AddTrackerDialog extends Dialog {
                 AddTrackerDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
-                String tracker = trackerEt.getText().toString().trim();
-                if (!StringUtils.isEmpty(tracker)){
-                    if (!tracker.contains("\n")){
-                        if (IApplication.trackers.contains(tracker)){
+                String trackerText = trackerEt.getText().toString().trim();
+                if (!StringUtils.isEmpty(trackerText)){
+                    if (!trackerText.contains("\n")){
+                        if (IApplication.trackers.contains(trackerText)){
                             ToastUtils.showShort("该tracker已存在");
                             return;
                         }
-                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                        ContentValues values=new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-                        IApplication.trackers.add(tracker);
-                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_TRACKER));
+
+                        IApplication.trackers.add(trackerText);
+                        TrackerManager.addTracker(trackerText);
+                        if (dialogListener != null){
+                            dialogListener.onChanged();
+                        }
+
                         ToastUtils.showShort("已添加");
                         AddTrackerDialog.this.dismiss();
                     }else {
-                        String[] trackers = tracker.split("\n");
-                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                        for (String tra : trackers) {
-                            tra = tra.replace(" ", "");
-                            if (IApplication.trackers.contains(tra)) {
+                        List<String> trackerList = new ArrayList<>();
+                        String[] trackers = trackerText.split("\n");
+                        for (String tracker : trackers) {
+                            tracker = tracker.replace(" ", "");
+                            if (IApplication.trackers.contains(tracker)) {
                                 continue;
                             }
-                            ContentValues values = new ContentValues();
-                            values.put(DataBaseInfo.getFieldNames()[8][1], tra);
-                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-                            IApplication.trackers.add(tra);
+                            trackerList.add(tracker);
+                            IApplication.trackers.add(tracker);
                         }
-                        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_TRACKER));
+
+                        TrackerManager.addTracker(trackerList);
+                        if (dialogListener != null){
+                            dialogListener.onChanged();
+                        }
+
                         ToastUtils.showShort("已添加");
                         AddTrackerDialog.this.dismiss();
                     }
@@ -89,5 +91,9 @@ public class AddTrackerDialog extends Dialog {
                 }
                 break;
         }
+    }
+
+    public interface TrackerDialogListener{
+        void onChanged();
     }
 }

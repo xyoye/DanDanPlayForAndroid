@@ -1,23 +1,18 @@
 package com.player.exoplayer;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
@@ -52,6 +47,7 @@ import android.widget.Toast;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -62,8 +58,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MergingMediaSource;
-import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -87,14 +81,10 @@ import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
 import com.player.ijkplayer.R;
-import com.player.ijkplayer.adapter.AdapterItem;
-import com.player.ijkplayer.adapter.BaseRvAdapter;
+import com.player.ijkplayer.adapter.BlockAdapter;
 import com.player.ijkplayer.danmaku.BaseDanmakuConverter;
 import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.database.DataBaseHelper;
-import com.player.ijkplayer.database.DataBaseInfo;
-import com.player.ijkplayer.database.DataBaseManager;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
@@ -106,7 +96,6 @@ import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SoftInputUtils;
 import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.WindowUtils;
-import com.player.ijkplayer.widgets.BlockItem;
 import com.player.ijkplayer.widgets.MarqueeTextView;
 import com.player.ijkplayer.widgets.SettingDanmuView;
 import com.player.ijkplayer.widgets.SettingSubtitleView;
@@ -128,7 +117,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 import static android.view.GestureDetector.OnGestureListener;
 import static android.view.GestureDetector.SimpleOnGestureListener;
@@ -287,8 +275,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
     private List<String> blockList = new ArrayList<>();
-    private BaseRvAdapter<String> blockAdapter;
-    private SQLiteDatabase sqLiteDatabase;
+    private BlockAdapter blockAdapter;
 
     public ExoPlayerView(Context context) {
         this(context, null);
@@ -1674,8 +1661,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      * 设置弹幕监听器
      * @param danmakuListener
      */
-    public void setDanmakuListener(OnDanmakuListener danmakuListener) {
+    public ExoPlayerView setDanmakuListener(OnDanmakuListener danmakuListener) {
         mDanmakuListener = danmakuListener;
+        return this;
     }
 
     /**
@@ -2126,17 +2114,17 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                 })
                 .init();
 
-        DataBaseManager.initializeInstance(new DataBaseHelper(getContext()));
-        sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-
         mBlockRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
+
         //获取所有屏蔽
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM block" ,new String[]{});
-        while (cursor.moveToNext()){
-            String blockText = cursor.getString(1);
-            blockList.add(blockText);
+        if (mDanmakuListener != null){
+            blockList = new ArrayList<>();
+            List<String> blocks = mDanmakuListener.queryBlock();
+            if (blocks != null)
+                blockList.addAll(blocks);
+        }else {
+            blockList = new ArrayList<>();
         }
-        cursor.close();
 
         int navigationBarHeight = NavUtils.getNavigationBarHeight(mAttachActivity);
         if (navigationBarHeight > 0) {
@@ -2156,13 +2144,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mDanmakuTypeOptions = findViewById(R.id.input_options_group_type);
         mDanmakuColorOptions = findViewById(R.id.input_options_color_group);
 
-        blockAdapter = new BaseRvAdapter<String>(blockList) {
-            @NonNull
+        blockAdapter = new BlockAdapter(R.layout.item_block, blockList);
+        blockAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public AdapterItem<String> onCreateItem(int viewType) {
-                return new BlockItem();
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                removeBlock(blockList.get(position));
             }
-        };
+        });
         mBlockRecyclerView.setAdapter(blockAdapter);
 
         mDanmakuTextSizeOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -2439,9 +2427,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             blockList.remove(text);
             blockAdapter.notifyDataSetChanged();
             //从数据库移除
-            sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            String whereCase = DataBaseInfo.getFieldNames()[0][1]+" = ?";
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[0], whereCase, new String[]{text});
+            if (mDanmakuListener != null){
+                mDanmakuListener.deleteBlock(text);
+            }
             //弹幕中移除
             mDanmakuContext.removeKeyWordBlackList(text);
             Toast.makeText(getContext(), "已移除-“ "+ text +" ”", Toast.LENGTH_LONG).show();
@@ -2466,9 +2454,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             blockList.add(blockText);
             blockAdapter.notifyDataSetChanged();
             //添加到数据库
-            ContentValues values=new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[0][1], blockText);
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[0],null,values);
+            if(mDanmakuListener != null){
+                mDanmakuListener.addBlock(blockText);
+            }
             //添加到弹幕屏蔽
             mDanmakuContext.addBlockKeyWord(blockText);
         }
@@ -2615,7 +2603,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     /**
      * ============================ 字幕 ============================
      */
-//字幕相关组件
+    //字幕相关组件
     private SubtitleView mSubtitleView;
     private SettingSubtitleView mSettingSubtitleView;
 

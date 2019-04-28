@@ -1,5 +1,7 @@
 package com.player.ijkplayer.danmaku;
 
+import java.util.List;
+
 /**
  * Created by long on 2016/12/22.
  * 弹幕监听器
@@ -22,4 +24,19 @@ public interface OnDanmakuListener<T> {
      * 开启 or 关闭云屏蔽
      */
     void setCloudFilter(boolean isOpen);
+
+    /**
+     * 删除一个屏蔽
+     */
+    void deleteBlock(String text);
+
+    /**
+     * 增加一个屏蔽
+     */
+    void addBlock(String text);
+
+    /**
+     * 查询所有屏蔽
+     */
+    List<String> queryBlock();
 }

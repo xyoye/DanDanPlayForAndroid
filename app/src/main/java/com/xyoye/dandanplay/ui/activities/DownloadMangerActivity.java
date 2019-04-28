@@ -133,8 +133,10 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @Override
     public void startNewTask(){
         Torrent torrent = (Torrent)getIntent().getSerializableExtra("torrent");
-        EventBus.getDefault().post(new TorrentStartEvent(torrent));
-        mHandler.sendEmptyMessageDelayed(0, 1000);
+        if (torrent != null){
+            EventBus.getDefault().post(new TorrentStartEvent(torrent));
+            mHandler.sendEmptyMessageDelayed(0, 1000);
+        }
     }
 
     private void startTorrentService() {

@@ -17,8 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
-import com.player.ijkplayer.utils.AnimHelper;
-import com.player.ijkplayer.utils.TrackAdapter;
+import com.player.ijkplayer.adapter.StreamAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +34,8 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     private RecyclerView subtitleRv;
     private LinearLayout audioRl;
     private LinearLayout subtitleRl;
-    private TrackAdapter audioAdapter;
-    private TrackAdapter subtitleAdapter;
+    private StreamAdapter audioStreamAdapter;
+    private StreamAdapter subtitleStreamAdapter;
     private RadioGroup mAspectRatioOptions;
     private boolean isExoPlayer = false;
 
@@ -97,17 +96,17 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
             subtitleRl.setVisibility(GONE);
         }
 
-        audioAdapter = new TrackAdapter(R.layout.item_video_track, audioTrackList);
+        audioStreamAdapter = new StreamAdapter(R.layout.item_video_track, audioTrackList);
         audioRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         audioRv.setItemViewCacheSize(10);
-        audioRv.setAdapter(audioAdapter);
+        audioRv.setAdapter(audioStreamAdapter);
 
-        subtitleAdapter = new TrackAdapter(R.layout.item_video_track, subtitleTrackList);
+        subtitleStreamAdapter = new StreamAdapter(R.layout.item_video_track, subtitleTrackList);
         subtitleRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         subtitleRv.setItemViewCacheSize(10);
-        subtitleRv.setAdapter(subtitleAdapter);
+        subtitleRv.setAdapter(subtitleStreamAdapter);
 
-        audioAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+        audioStreamAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 if (isExoPlayer){
@@ -134,11 +133,11 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
                         audioTrackList.get(position).setSelect(true);
                     }
                 }
-                audioAdapter.notifyDataSetChanged();
+                audioStreamAdapter.notifyDataSetChanged();
             }
         });
 
-        subtitleAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+        subtitleStreamAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 //ijk播放器暂不提供字幕流管理
@@ -150,7 +149,7 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
                             subtitleTrackList.get(i).setSelect(false);
                     }
                     listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
-                    subtitleAdapter.notifyDataSetChanged();
+                    subtitleStreamAdapter.notifyDataSetChanged();
                 }
 
 //                for (int i = 0; i < subtitleTrackList.size(); i++) {
@@ -215,14 +214,14 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     public void setVideoTrackList(List<VideoInfoTrack> audioTrackList){
         this.audioTrackList.clear();
         this.audioTrackList.addAll(audioTrackList);
-        this.audioAdapter.notifyDataSetChanged();
+        this.audioStreamAdapter.notifyDataSetChanged();
         this.audioRl.setVisibility(audioTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
     public void setSubtitleTrackList(List<VideoInfoTrack> subtitleTrackList){
         this.subtitleTrackList.clear();
         this.subtitleTrackList.addAll(subtitleTrackList);
-        this.subtitleAdapter.notifyDataSetChanged();
+        this.subtitleStreamAdapter.notifyDataSetChanged();
         this.subtitleRl.setVisibility(subtitleTrackList.size() < 1 ? GONE : VISIBLE);
     }
 

@@ -18,20 +18,14 @@ package com.xyoye.dandanplay.app;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.multidex.MultiDex;
-import android.util.Base64;
-import android.util.Log;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.player.ijkplayer.utils.ContextUtil;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.taobao.sophix.PatchStatus;
@@ -39,11 +33,9 @@ import com.taobao.sophix.SophixManager;
 import com.taobao.sophix.listener.PatchLoadStatusListener;
 import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
-import com.xyoye.dandanplay.database.DataBaseHelper;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
@@ -52,14 +44,9 @@ import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import libtorrent.Libtorrent;
 import me.yokeyword.fragmentation.BuildConfig;
 import me.yokeyword.fragmentation.Fragmentation;
 
@@ -84,7 +71,7 @@ public class IApplication extends BaseApplication {
         SophixManager.getInstance().setPatchLoadStatusStub(getPatchLoadListener());
 
         //数据库
-        initDatabase(new DataBaseHelper(this));
+        DataBaseManager.init(this);
 
         //播放器配置
         PlayerConfigShare.initPlayerConfigShare(this);
@@ -93,29 +80,14 @@ public class IApplication extends BaseApplication {
             //LibTorrent
             TorrentUtil.initLibTorrent();
             TorrentUtil.loadTorrent();
+
             //首次打开App
             if (AppConfig.getInstance().isFirstStart()) {
-                //trackers数据
-                IApplication.trackers = CommonUtils.readTracker(this);
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                for (String tracker : IApplication.trackers){
-                    ContentValues values = new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[8][1], tracker);
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[8], null, values);
-                }
                 //扫描文件夹
+                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
                 ContentValues values = new ContentValues();
                 values.put(DataBaseInfo.getFieldNames()[11][1], AppConfig.getInstance().getDownloadFolder());
                 sqLiteDatabase.insert(DataBaseInfo.getTableNames()[11], null, values);
-            }else {
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[8];
-                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
-                while (cursor.moveToNext()){
-                    String tracker = cursor.getString(1);
-                    IApplication.trackers.add(tracker);
-                }
-                cursor.close();
             }
         }).start();
 

@@ -6,7 +6,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 19;
+    public static final int DATABASE_VERSION = 20;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -16,19 +16,20 @@ public class DataBaseInfo {
     static {
 
         TableNames = new String[]{
-                "traverse_folder",
-                "folder",
-                "file",
-                "banner",
-                "anime_type",
-                "subgroup",
-                "torrent",
-                "smb_device",
-                "tracker",
-                "search_history",
-                "cloud_filter",
-                "scan_folder",
-                "torrent_file"
+                "traverse_folder",  //0
+                "folder",           //1
+                "file",             //2
+                "banner",           //3
+                "anime_type",       //4
+                "subgroup",         //5
+                "torrent",          //6
+                "smb_device",       //7
+                "tracker",          //8 废弃
+                "search_history",   //9
+                "cloud_filter",     //10
+                "scan_folder",      //11
+                "torrent_file",     //12
+                "danmu_block"       //13
         };
 
         FieldNames = new String[][] {
@@ -44,7 +45,8 @@ public class DataBaseInfo {
                 {"_id", "text", "time"},
                 {"_id", "filter"},
                 {"_id", "folder_path"},
-                {"_id", "torrent_path", "torrent_file_path", "danmu_path", "danmu_episode_id"}
+                {"_id", "torrent_path", "torrent_file_path", "danmu_path", "danmu_episode_id"},
+                {"_id", "text"}
         };
 
         FieldTypes = new String[][] {
@@ -60,7 +62,8 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"}
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"}
         };
     }
 

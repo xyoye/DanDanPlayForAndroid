@@ -68,15 +68,6 @@ public class BaseApplication extends Application {
     }
 
     /**
-     * 数据库初始化
-     *
-     * @param helper
-     */
-    public void initDatabase(SQLiteOpenHelper helper) {
-        DataBaseManager.initializeInstance(helper);
-    }
-
-    /**
      * 应用内通用一个线程池
      *
      * @return

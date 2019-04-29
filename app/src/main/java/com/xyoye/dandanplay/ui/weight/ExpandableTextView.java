@@ -26,6 +26,7 @@ import java.util.Map;
 
 /**
  * Created by YE on 2018/7/21.
+ * 可折叠TextView
  */
 
 public class ExpandableTextView extends LinearLayout implements View.OnClickListener {

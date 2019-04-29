@@ -1851,7 +1851,9 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      * @param targetPosition 目标进度,单位:ms
      */
     public ExoPlayerView setSkipTip(long targetPosition) {
-        mSkipPosition = targetPosition;
+        if (targetPosition > 0){
+            mSkipPosition = targetPosition;
+        }
         return this;
     }
 

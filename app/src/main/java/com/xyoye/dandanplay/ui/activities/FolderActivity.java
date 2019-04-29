@@ -221,7 +221,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     public void saveCurrent(SaveCurrentEvent event){
         presenter.updateCurrent(event);
         adapter.getData().get(openVideoPosition).setCurrentPosition(event.getCurrentPosition());
-        adapter.notifyItemChanged(openVideoPosition);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

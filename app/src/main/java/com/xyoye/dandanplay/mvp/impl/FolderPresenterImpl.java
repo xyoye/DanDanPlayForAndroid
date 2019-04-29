@@ -216,24 +216,4 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
         cursor.close();
         return videoBeans;
     }
-
-    //获取数据库中共享文件记录
-    //get share file form database
-    private List<VideoBean> getLanVideo(String folderPath){
-        List<VideoBean> videoBeans = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-
-        String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[7]+" WHERE folder= ?";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql ,new String[]{folderPath});
-        while (cursor.moveToNext()){
-            String filePath = cursor.getString(2);
-
-            String danmuPath = cursor.getString(3);
-            long currentPosition = cursor.getInt(4);
-            int episodeId = cursor.getInt(5);
-            videoBeans.add(new VideoBean(filePath, true, 0,  danmuPath, currentPosition, episodeId));
-        }
-        cursor.close();
-        return videoBeans;
-    }
 }

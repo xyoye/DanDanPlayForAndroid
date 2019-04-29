@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.ConvertUtils;
 
 /**
  * Created by xyy on 2019/1/8.
+ * 圆角ImageView，轮播图使用
  */
 
 public class RoundImageView extends android.support.v7.widget.AppCompatImageView {

@@ -20,6 +20,7 @@ import com.xyoye.dandanplay.R;
 
 /**
  * Created by YE on 2018/7/1.
+ * 圆形ImageView
  */
 
 public class CircleImageView extends android.support.v7.widget.AppCompatImageView {

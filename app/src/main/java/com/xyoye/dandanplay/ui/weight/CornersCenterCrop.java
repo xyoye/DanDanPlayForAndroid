@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 
 /**
  * Created by YE on 2018/7/18.
+ * Glide圆角
  */
 
 public  class CornersCenterCrop extends CenterCrop {

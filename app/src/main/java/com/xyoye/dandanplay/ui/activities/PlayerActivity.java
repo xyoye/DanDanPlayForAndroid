@@ -93,7 +93,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         videoPath = getIntent().getStringExtra("video_path");
         videoTitle = getIntent().getStringExtra("video_title");
         danmuPath = getIntent().getStringExtra("danmu_path");
-        currentPosition = getIntent().getIntExtra("current_position", 0);
+        currentPosition = getIntent().getLongExtra("current_position", 0);
         episodeId = getIntent().getIntExtra("episode_id", 0);
 
         //初始化接口
@@ -204,6 +204,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setTitle(videoTitle)
                 //弹幕事件回调
                 .setDanmakuListener(onDanmakuListener)
+                //跳转至上一次播放进度
+                .setSkipTip(currentPosition)
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
                     //选择弹幕事件

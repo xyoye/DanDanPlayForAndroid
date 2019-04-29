@@ -1,87 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_corner_5">
 
-    <RelativeLayout
+    <ScrollView
+        android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_corner_5">
-
-        <ScrollView
-            android:id="@+id/scrollview"
+        android:layout_margin="15dp"
+        android:layout_alignParentTop="true"
+        android:scrollbarStyle="outsideOverlay"
+        android:background="@drawable/et_log_background">
+        <EditText
+            android:id="@+id/log_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_alignParentTop="true"
-            android:scrollbarStyle="outsideOverlay"
-            android:background="@drawable/et_log_background">
-            <EditText
-                android:id="@+id/log_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:gravity="top"
-                android:minLines="10"
-                android:maxLines="10"
-                android:textSize="14sp"
-                android:lineSpacingMultiplier="1.1"
-                android:scrollbars="vertical"
-                android:background="@null"/>
-        </ScrollView>
-
-        <LinearLayout
-            android:id="@+id/change_file_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/scrollview"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
-                android:text="文件名："/>
-
-            <EditText
-                android:id="@+id/file_name_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@android:color/black"/>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/download_start_bt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/change_file_ll"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="10dp"
-            style="@style/Widget.AppCompat.Button"
-            android:textColor="@android:color/white"
+            android:padding="5dp"
+            android:gravity="top"
+            android:minLines="10"
+            android:maxLines="10"
             android:textSize="14sp"
-            android:enabled="false"
-            android:text="开始下载"/>
+            android:lineSpacingMultiplier="1.1"
+            android:scrollbars="vertical"
+            android:background="@null"/>
+    </ScrollView>
 
-        <Button
-            android:id="@+id/download_over_bt"
+    <LinearLayout
+        android:id="@+id/change_file_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scrollview"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:text="文件名："/>
+
+        <EditText
+            android:id="@+id/file_name_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/change_file_ll"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_corner_blue"
-            style="@style/Widget.AppCompat.Button"
-            android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:text="完成"
-            android:visibility="gone"/>
-    </RelativeLayout>
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/download_start_bt"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_below="@id/change_file_ll"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:stateListAnimator="@null"
+        android:background="@drawable/btn_corner_blue"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:enabled="false"
+        android:text="开始下载"
+        tools:targetApi="lollipop" />
+
+    <Button
+        android:id="@+id/download_over_bt"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_below="@id/change_file_ll"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:stateListAnimator="@null"
+        android:background="@drawable/btn_corner_blue"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:text="完成"
+        android:visibility="gone"
+        style="@null"
+        tools:targetApi="lollipop" />
 
 </RelativeLayout>

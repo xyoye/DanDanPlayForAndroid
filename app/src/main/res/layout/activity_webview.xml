@@ -6,10 +6,10 @@
 
     <include layout="@layout/layout_toolbar" />
 
-    <com.xyoye.dandanplay.ui.weight.IWebView
-        android:id="@+id/i_webview"
+    <WebView
+        android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.xyoye.dandanplay.ui.weight.IWebView>
+    </WebView>
 
 </LinearLayout>

@@ -2,92 +2,124 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout10"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/diver_color">
-
-    <!--Toolbar-->
+    android:background="@color/white">
 
     <include layout="@layout/layout_toolbar" />
 
     <RelativeLayout
+        android:id="@+id/select_url_rl"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:background="@color/white">
-        <Button
-            android:id="@+id/download_by_av_button"
-            android:layout_width="70dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/btn_corner_blue"
-            android:textColor="@android:color/white"
-            android:text="@string/ok_button_tip" />
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackground">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout2"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@id/download_by_av_button"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp">
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:singleLine="true"
+            android:ellipsize="start"
+            android:textSize="14sp"
+            android:textColor="@color/text_black"
+            android:text="前往bilibili网站选择弹幕"/>
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/av_input_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/download_by_av_tip" />
-        </android.support.design.widget.TextInputLayout>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_arrow_right_dark"/>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/diver_color"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
         android:background="@color/white">
-        <Button
-            android:id="@+id/download_by_url_button"
-            android:layout_width="70dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/btn_corner_blue"
-            android:textColor="@android:color/white"
-            android:text="@string/ok_button_tip" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/textInputLayout"
+        <EditText
+            android:id="@+id/av_code_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@id/download_by_url_button"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp">
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/url_input_et"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/download_by_link_tip" />
-        </android.support.design.widget.TextInputLayout>
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/av_code_tv"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:textColor="@color/text_black"
+            android:hint="输入av号下载"/>
+
+        <TextView
+            android:id="@+id/av_code_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/bg_text_bt_theme"
+            android:textColor="@color/theme_color"
+            android:textSize="14sp"
+            android:text="确定"/>
+
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/select_url_bt"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/btn_corner_pink"
-        android:textColor="@android:color/white"
-        android:text="@string/choose_link_form_bilibili_button_tip"/>
+        android:layout_height="5dp"
+        android:background="@color/diver_color"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:background="@color/white">
+
+        <EditText
+            android:id="@+id/url_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/url_tv"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="14sp"
+            android:textColor="@color/text_black"
+            android:hint="输入链接下载"/>
+
+        <TextView
+            android:id="@+id/url_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/bg_text_bt_theme"
+            android:textColor="@color/theme_color"
+            android:textSize="14sp"
+            android:text="确定"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@color/diver_color"/>
 </LinearLayout>

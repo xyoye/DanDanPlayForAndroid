@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 
@@ -204,9 +205,9 @@ public class CommonUtils {
         FileOutputStream fos;
         BufferedWriter bw = null;
         try {
-            String localPath = path + Constants.DefaultConfig.danmuFolder+ "/" + fileName+".xml";
+            String localPath = path+ "/" + fileName+".xml";
 
-            File folder = new File(path);
+            File folder = new File(FileUtils.getDirName(localPath));
             if (!folder.exists()) {
                 if (folder.mkdirs()){
                     System.out.println("成功创建文件夹");

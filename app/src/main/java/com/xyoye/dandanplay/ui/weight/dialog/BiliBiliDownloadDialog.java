@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -41,7 +42,7 @@ import butterknife.ButterKnife;
  * Created by xyy on 2018/5/17.
  */
 
-public class BilibiliDownloadDialog extends Dialog {
+public class BiliBiliDownloadDialog extends Dialog {
     private final int DOWNLOAD_ONE = 1;
     private final int DOWNLOAD_LIST = 2;
 
@@ -65,7 +66,7 @@ public class BilibiliDownloadDialog extends Dialog {
     private String videoTitle;
 
     private List<String> cidList;
-    private String animaTitle;
+    private String animeTitle;
 
     private int downloadType;
 
@@ -116,7 +117,7 @@ public class BilibiliDownloadDialog extends Dialog {
         }
     });
 
-    public BilibiliDownloadDialog(@NonNull Context context, int themeResId , String keyWord, String type) {
+    public BiliBiliDownloadDialog(@NonNull Context context, int themeResId , String keyWord, String type) {
         super(context, themeResId);
         this.context = context;
         this.keyWord = keyWord;
@@ -134,20 +135,17 @@ public class BilibiliDownloadDialog extends Dialog {
         fileNameEt.setEnabled(false);
         downloadStartBt.setText("正在准备…");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if ("url".equals(type))
-                        downloadByUrl(keyWord);
-                    else
-                        downloadByAv(keyWord);
-                } catch (IOException e) {
-                    sendToastMessage("错误的视频链接");
-                    sendLogMessage("错误的视频链接");
-                    handler.sendEmptyMessage(104);
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                if ("url".equals(type))
+                    downloadByUrl(keyWord);
+                else
+                    downloadByAv(keyWord);
+            } catch (Exception e) {
+                sendToastMessage("无法获取视频信息，请检查链接或网络状态");
+                sendLogMessage("无法获取视频信息，请检查链接或网络状态");
+                handler.sendEmptyMessage(104);
+                e.printStackTrace();
             }
         }).start();
 
@@ -158,35 +156,24 @@ public class BilibiliDownloadDialog extends Dialog {
      * 初始化接口
      */
     private void initListener(){
-        downloadStartBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.sendEmptyMessage(103);
-                        if (downloadType == DOWNLOAD_ONE){
-                            downloadDanmuOne();
-                        }else if (downloadType == DOWNLOAD_LIST){
-                            downloadDanmuList();
-                        }
-                    }
-                }).start();
-            }
-        });
+        downloadStartBt.setOnClickListener(v ->
+            new Thread(() -> {
+                handler.sendEmptyMessage(103);
+                if (downloadType == DOWNLOAD_ONE){
+                    downloadDanmuOne();
+                }else if (downloadType == DOWNLOAD_LIST){
+                    downloadDanmuList();
+                }
+            }).start()
+        );
 
-        downloadOverBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BilibiliDownloadDialog.this.cancel();
-            }
-        });
+        downloadOverBt.setOnClickListener(v -> BiliBiliDownloadDialog.this.cancel());
     }
 
     /**
      * 根据url获取相关信息
      */
-    private void downloadByUrl(String url) throws IOException {
+    private void downloadByUrl(String url) throws Exception {
         if (!url.isEmpty()){
             sendLogMessage("开始连接URL...\n");
             String root = Jsoup.connect(url).timeout(10000).get().toString();
@@ -195,10 +182,10 @@ public class BilibiliDownloadDialog extends Dialog {
             if(url.contains("www.bilibili.com/video") || url.contains("m.bilibili.com/video")){
                 getVideoCid(root);
             }else if (url.contains("www.bilibili.com/bangumi") || url.contains("m.bilibili.com/bangumi")){
-                getAnimaCid(root);
+                getAnimeCid(root);
             }else {
-                sendLogMessage("错误的视频链接\n");
-                sendToastMessage("错误的视频链接");
+                sendLogMessage("获取视频链接信息失败\n");
+                sendToastMessage("获取视频链接信息失败");
                 handler.sendEmptyMessage(104);
             }
         }else {
@@ -209,36 +196,19 @@ public class BilibiliDownloadDialog extends Dialog {
     /**
      * 根据av号获取相关信息
      */
-    private void downloadByAv(String avNumber) throws IOException {
+    private void downloadByAv(String avNumber) throws Exception {
         if (avNumber.isEmpty()){
             sendToastMessage("请输入av号");
         }else {
-            String url = "https://search.bilibili.com/api/search?search_type=all&keyword=av"+avNumber;
-            sendLogMessage("开始连接URL...\n");
-            Connection.Response skuApiResponse = Jsoup.connect(url).ignoreContentType(true).execute();
-            sendLogMessage("连接URL成功\n");
-
-            JsonObject jsonObject = new JsonParser().parse(skuApiResponse.body()).getAsJsonObject();
-            JsonObject result = jsonObject.get("result").getAsJsonObject();
-            JsonArray animaArray = result.get("media_bangumi").getAsJsonArray();
-            if (animaArray.size() > 0){
-                JsonObject animaObject = animaArray.get(0).getAsJsonObject();
-                String animaUrl = animaObject.get("goto_url").getAsString();
-                downloadByUrl(animaUrl);
-            }else {
-                JsonArray videoArray = result.get("video").getAsJsonArray();
-                if (videoArray.size() > 0){
-                    JsonObject videoObject = videoArray.get(0).getAsJsonObject();
-                    String videoUrl = videoObject.get("arcurl").getAsString();
-                    if (videoUrl.contains("av"+avNumber)){
-                        downloadByUrl(videoUrl);
-                    }else {
-                        sendLogMessage("下载失败，找不到相应视频弹幕");
-                    }
-                }else {
-                    sendLogMessage("找不到av号相关视频");
-                }
+            sendLogMessage("开始转换URL...\n");
+            String url = "https://www.bilibili.com/video/av"+avNumber;
+            Connection.Response response = Jsoup.connect(url).timeout(10000).execute();
+            //普通视频不会重定向，番剧会进行重定向
+            if (!response.url().toString().equals(url)){
+                url = response.url().toString();
             }
+            sendLogMessage("转换URL成功\n");
+            downloadByUrl(url);
         }
     }
 
@@ -270,7 +240,7 @@ public class BilibiliDownloadDialog extends Dialog {
      */
     private void downloadDanmuList(){
         String path = AppConfig.getInstance().getDownloadFolder();
-        path = path + "/"+ animaTitle;
+        path = path + "/"+ animeTitle + Constants.DefaultConfig.danmuFolder;
 
         sendLogMessage("开始下载弹幕文件...\n");
         for (int i=0; i<cidList.size(); i++){
@@ -343,25 +313,25 @@ public class BilibiliDownloadDialog extends Dialog {
     /**
      * 获取番剧Cid
      */
-    private void getAnimaCid(String root){
+    private void getAnimeCid(String root){
         try {
             sendLogMessage("开始获取番剧cid列表...\n");
             int start = root.indexOf("INITIAL_STATE__=")+16;
             int end = root.indexOf(";(function()");
             String jsonText = root.substring(start,end);
             //获取标题
-            JsonObject animaInfo = new JsonParser().parse(jsonText).getAsJsonObject();
-            JsonObject animaTitleInfo = animaInfo.get("mediaInfo").getAsJsonObject();
-            animaTitle = animaTitleInfo.get("title").getAsString();
+            JsonObject animeInfo = new JsonParser().parse(jsonText).getAsJsonObject();
+            JsonObject animeTitleInfo = animeInfo.get("mediaInfo").getAsJsonObject();
+            animeTitle = animeTitleInfo.get("title").getAsString();
             //获取cid集合
-            JsonArray cidListArray = animaInfo.get("epList").getAsJsonArray();
+            JsonArray cidListArray = animeInfo.get("epList").getAsJsonArray();
             cidList = new ArrayList<>();
             for (int i=0; i<cidListArray.size(); i++){
                 JsonObject cidInfo = cidListArray.get(i).getAsJsonObject();
                 String cid = cidInfo.get("cid").getAsString();
                 cidList.add(cid);
             }
-            sendLogMessage("获取番剧【"+animaTitle+"】cid列表成功\n");
+            sendLogMessage("获取番剧【"+animeTitle+"】cid列表成功\n");
             downloadType = DOWNLOAD_LIST;
             handler.sendEmptyMessage(101);
         }catch (Exception e){

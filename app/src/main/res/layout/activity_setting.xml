@@ -148,7 +148,7 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textColor="@color/text_black"
-                        android:text="Bilibili弹幕下载"/>
+                        android:text="BiliBili弹幕下载"/>
                 </LinearLayout>
 
                 <TextView

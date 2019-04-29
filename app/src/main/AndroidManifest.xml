@@ -48,7 +48,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"/>
         <!--bilibili弹幕下载-->
         <activity
-            android:name=".ui.activities.DownloadBilibiliActivity"
+            android:name=".ui.activities.DownloadBiliBiliActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--下载管理-->
         <activity

@@ -125,7 +125,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                 }).hideDefault().show();
                 break;
             case R.id.bilibili_download_rl:
-                launchActivity(DownloadBilibiliActivity.class);
+                launchActivity(DownloadBiliBiliActivity.class);
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);

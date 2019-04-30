@@ -87,19 +87,17 @@ import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
-import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.CommonPlayerUtils;
 import com.player.ijkplayer.utils.MotionEventUtils;
 import com.player.ijkplayer.utils.NavUtils;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.utils.SoftInputUtils;
-import com.player.ijkplayer.utils.TimeFormatUtils;
 import com.player.ijkplayer.utils.WindowUtils;
-import com.player.ijkplayer.widgets.MarqueeTextView;
 import com.player.ijkplayer.widgets.SettingDanmuView;
 import com.player.ijkplayer.widgets.SettingSubtitleView;
 import com.player.ijkplayer.widgets.SettingVideoView;
+import com.player.ijkplayer.widgets.TopBarView;
 import com.player.subtitle.SubtitleView;
 import com.player.subtitle.util.FatalParsingException;
 import com.player.subtitle.util.SubtitleFormat;
@@ -158,12 +156,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     private TextView mTvFastForward;
     // 触摸信息布局
     private FrameLayout mFlTouchLayout;
-    // 全屏下的后退键
-    private ImageView mIvBack;
-    // 全屏下的标题
-    private MarqueeTextView mTvTitle;
-    // 全屏下的TopBar
-    private LinearLayout mFullscreenTopBar;
     // 播放键
     private ImageView mIvPlay;
     private ImageView mIvPlayCircle;
@@ -187,6 +179,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
     private String videoPath;
+    private String videoTitle;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -200,9 +193,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                     sendMessageDelayed(msg, 1000 - (pos % 1000));
                 }
             } else if (msg.what == MSG_ENABLE_ORIENTATION) {
-                if (mOrientationListener != null) {
-                    mOrientationListener.enable();
-                }
+                setOrientationEnable(true);
             } else if (msg.what == MSG_UPDATE_SUBTITLE){
                 if (isLoadSubtitle && isShowSubtitle){
                     updateSubtitle();
@@ -213,7 +204,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                 TimedTextObject subtitleObj = (TimedTextObject) msg.obj;
                 isShowSubtitle = true;
                 isLoadSubtitle = true;
-                mSettingSubtitleView.setSubtitleLoadStatus(true);
+                topBarView.getSubtitleSettingView().setSubtitleLoadStatus(true);
                 mSubtitleView.setData(subtitleObj);
                 mSubtitleView.start();
                 Toast.makeText(getContext(), "加载字幕成功", Toast.LENGTH_LONG).show();
@@ -305,9 +296,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mTvBrightness = findViewById(R.id.tv_brightness);
         mTvFastForward = findViewById(R.id.tv_fast_forward);
         mFlTouchLayout = findViewById(R.id.fl_touch_layout);
-        mIvBack = findViewById(R.id.iv_back);
-        mTvTitle = findViewById(R.id.tv_title);
-        mFullscreenTopBar = findViewById(R.id.fullscreen_top_bar);
         mIvPlay = findViewById(R.id.iv_play);
         mTvCurTime = findViewById(R.id.tv_cur_time);
         mPlayerSeek = findViewById(R.id.player_seek);
@@ -318,25 +306,14 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mIvPlayerLock = findViewById(R.id.iv_player_lock);
         mIvPlayCircle = findViewById(R.id.iv_play_circle);
         mTvRecoverScreen = findViewById(R.id.tv_recover_screen);
-
-        //设置-tv
-        mPlayerSetting = findViewById(R.id.player_settings_iv);
-        mDanmuSettings = findViewById(R.id.danmu_settings_tv);
-        mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
-        //设置-layout
-        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
-        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
-        mSettingVideoView = findViewById(R.id.video_setting_view);
-
         controlDispatcher = new DefaultControlDispatcher();
 
+        initTopBarView();
         _initVideoSkip();
-        _initReceiver();
         _initSubtitle();
         _initVideoSetting();
 
         mIvPlay.setOnClickListener(this);
-        mIvBack.setOnClickListener(this);
         mIvFullscreen.setOnClickListener(this);
         mIvPlayerLock.setOnClickListener(this);
         mIvPlayCircle.setOnClickListener(this);
@@ -345,10 +322,31 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mVideoView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                _showPlayerSetting(false);
-                _showDanmuSetting(false);
-                _showSubtitleSetting(false);
+                topBarView.hideItemView();
                 return false;
+            }
+        });
+    }
+
+
+    private TopBarView topBarView;
+    private void initTopBarView(){
+        topBarView = findViewById(R.id.top_bar_view);
+        topBarView.setTitleText(videoTitle);
+
+        topBarView.setSettingListener(new TopBarView.TopBarListener() {
+            @Override
+            public void onBack() {
+                if (mIsAlwaysFullScreen) {
+                    _exit();
+                    return;
+                }
+                mAttachActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
+            @Override
+            public void topBarItemClick() {
+                _hideAllView(false);
             }
         });
     }
@@ -388,7 +386,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         };
         if (mIsForbidOrientation) {
             // 禁止翻转
-            mOrientationListener.disable();
+            setOrientationEnable(false);
         }
         exoPlayer.addListener(new Player.EventListener() {
             @Override
@@ -439,8 +437,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                             subtitleTrackList.add(videoInfoTrack);
                         }
                     }
-                    mSettingVideoView.setSubtitleTrackList(subtitleTrackList);
-                    mSettingVideoView.setVideoTrackList(audioTrackList);
+                    topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
+                    topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
                 }
             }
 
@@ -478,7 +476,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             mIsScreenLocked = false;
         }
         if (!mIsForbidTouch && !mIsForbidOrientation) {
-            mOrientationListener.enable();
+            setOrientationEnable(true);
         }
         if (mCurPosition != INVALID_VALUE) {
             // 重进后 seekTo 到指定位置播放时，通常会回退到前几秒，关键帧??
@@ -495,7 +493,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         Log.i("TTAG", "onPause");
         mCurPosition = exoPlayer.getCurrentPosition();
         pause();
-        mOrientationListener.disable();
+        setOrientationEnable(false);
     }
 
     /**
@@ -597,7 +595,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      * 设置标题，全屏的时候可见
      */
     public ExoPlayerView setTitle(String title) {
-        mTvTitle.setText(title);
+        videoTitle = title;
         return this;
     }
 
@@ -635,7 +633,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         if (exoPlayer.getPlaybackState() == Player.STATE_ENDED) {
             controlDispatcher.dispatchSeekTo(exoPlayer, exoPlayer.getCurrentWindowIndex(), C.TIME_UNSET);
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.seekTo((long) 0 - mSettingDanmuView.getDanmuExtraTime());
+                mDanmakuView.seekTo((long) 0 - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuView.pause();
             }
             mIsPlayComplete = false;
@@ -649,7 +647,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
 
         if (mIsPlayComplete) {
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
-                mDanmakuView.seekTo((long) 0 - mSettingDanmuView.getDanmuExtraTime());
+                mDanmakuView.seekTo((long) 0 - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuView.pause();
             }
             mIsPlayComplete = false;
@@ -666,7 +664,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
             if (!StringUtils.isEmpty(subtitlePath)){
                 setSubtitleSource("utf-8");
-                mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
+                topBarView.getSubtitleSettingView().setSubtitleEncoding(subtitleEncoding);
             }
         }
         // 视频播放时开启屏幕常亮
@@ -778,7 +776,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     private void _hideAllView(boolean isTouchLock) {
 //        mPlayerThumb.setVisibility(View.GONE);
         mFlTouchLayout.setVisibility(View.GONE);
-        mFullscreenTopBar.setVisibility(View.GONE);
+        topBarView.setTopBarVisibility(View.GONE);
         mLlBottomBar.setVisibility(View.GONE);
         if (!isTouchLock) {
             mIvPlayerLock.setVisibility(View.GONE);
@@ -805,8 +803,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             // 全屏切换显示的控制栏不一样
             if (mIsFullscreen) {
                 // 只在显示控制栏的时候才设置时间，因为控制栏通常不显示且单位为分钟，所以不做实时更新
-                mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
-                mFullscreenTopBar.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
+                topBarView.updateSystemTime();
+                topBarView.setTopBarVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 mIvPlayerLock.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 if (mIsEnableDanmaku) {
                     mDanmakuPlayerSeek.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
@@ -815,7 +813,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                     mTvRecoverScreen.setVisibility(isShowBar ? View.VISIBLE : View.GONE);
                 }
             } else {
-                mFullscreenTopBar.setVisibility(View.GONE);
+                topBarView.setTopBarVisibility(View.GONE);
                 mIvPlayerLock.setVisibility(View.GONE);
                 if (mIsEnableDanmaku) {
                     mDanmakuPlayerSeek.setVisibility(GONE);
@@ -886,13 +884,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mIsForbidTouch = !mIsForbidTouch;
         mIvPlayerLock.setSelected(mIsForbidTouch);
         if (mIsForbidTouch) {
-            mOrientationListener.disable();
+            setOrientationEnable(false);
             _hideAllView(true);
         } else {
             if (!mIsForbidOrientation) {
-                mOrientationListener.enable();
+                setOrientationEnable(true);
             }
-            mFullscreenTopBar.setVisibility(View.VISIBLE);
+            topBarView.setTopBarVisibility(View.VISIBLE);
             mLlBottomBar.setVisibility(View.VISIBLE);
             if (mIsEnableDanmaku) {
                 mDanmakuPlayerSeek.setVisibility(VISIBLE);
@@ -903,44 +901,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         }
     }
 
-    /**
-     * 显示设置列表
-     */
-    private void _showPlayerSetting(boolean isShow) {
-        if (isShow) {
-            _hideAllView(true);
-            mSettingVideoView.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSettingVideoView, ConvertUtils.dp2px(300), 0, 600);
-        } else {
-            mSettingVideoView.setVisibility(GONE);
-        }
-    }
-
-    /**
-     * 显示弹幕设置
-     */
-    private void _showDanmuSetting(boolean isShow){
-        if (isShow) {
-            _hideAllView(true);
-            mSettingDanmuView.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSettingDanmuView, ConvertUtils.dp2px(300), 0, 600);
-        } else {
-            mSettingDanmuView.setVisibility(GONE);
-        }
-    }
-
-    /**
-     * 显示字幕设置
-     */
-    private void _showSubtitleSetting(boolean isShow){
-        if (isShow) {
-            _hideAllView(true);
-            mSettingSubtitleView.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSettingSubtitleView, ConvertUtils.dp2px(300), 0, 600);
-        } else {
-            mSettingSubtitleView.setVisibility(GONE);
-        }
-    }
 
     /**
      * 显示弹幕屏蔽列表设置
@@ -958,20 +918,12 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     public void onClick(View v) {
         _refreshHideRunnable();
         int id = v.getId();
-        if (id == R.id.iv_back) {
-            if (mIsAlwaysFullScreen) {
-                _exit();
-                return;
-            }
-            mAttachActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }else if (id == R.id.iv_play || id == R.id.iv_play_circle) {
+        if (id == R.id.iv_play || id == R.id.iv_play_circle) {
             _togglePlayStatus();
         } else if (id == R.id.iv_fullscreen) {
             _toggleFullScreen();
         } else if (id == R.id.iv_player_lock) {
-            _showPlayerSetting(false);
-            _showDanmuSetting(false);
-            _showSubtitleSetting(false);
+            topBarView.hideItemView();
             _togglePlayerLock();
         }else if (id == R.id.iv_cancel_skip) {
             mHandler.removeCallbacks(mHideSkipTipRunnable);
@@ -1002,24 +954,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         }else if (id == R.id.tv_recover_screen) {
             mIsNeedRecoverScreen = false;
             mTvRecoverScreen.setVisibility(GONE);
-        }else if(id == R.id.player_settings_iv){
-            _showPlayerSetting(true);
-            _showDanmuSetting(false);
-            _showSubtitleSetting(false);
-            resetHideControllerBar();
-        } else if (id == R.id.danmu_settings_tv){
-            _showPlayerSetting(false);
-            _showDanmuSetting(true);
-            _showSubtitleSetting(false);
-            resetHideControllerBar();
-        } else if (id == R.id.subtitle_settings_iv){
-            _showPlayerSetting(false);
-            _showDanmuSetting(false);
-            _showSubtitleSetting(true);
-            resetHideControllerBar();
-        }else if (id == R.id.more_block_rl){
-            _showDanmuSetting(false);
-            _showMoreDanmuBlock(true);
         }else if (id == R.id.block_view_cancel_iv){
             _showMoreDanmuBlock(false);
         }else if (id == R.id.add_block_bt){
@@ -1033,9 +967,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      */
     public ExoPlayerView enableOrientation() {
         mIsForbidOrientation = false;
-        if (mOrientationListener != null) {
-            mOrientationListener.enable();
-        }
+        setOrientationEnable(true);
         return this;
     }
 
@@ -1109,7 +1041,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      */
     private void _refreshOrientationEnable() {
         if (!mIsForbidOrientation) {
-            mOrientationListener.disable();
+            setOrientationEnable(false);
             mHandler.removeMessages(MSG_ENABLE_ORIENTATION);
             mHandler.sendEmptyMessageDelayed(MSG_ENABLE_ORIENTATION, 3000);
         }
@@ -1927,13 +1859,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     private ImageView mIvCancelSend;
     // 发送弹幕
     private ImageView mIvDoSend;
-    //设置
-    private ImageView mPlayerSetting;
-    private TextView mDanmuSettings;
-    private ImageView mSubtitleSettings;
-
-    //弹幕设置
-    private SettingDanmuView mSettingDanmuView;
 
     //弹幕屏蔽
     private RelativeLayout mBlockView;
@@ -1991,7 +1916,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      */
     @SuppressLint("ClickableViewAccessibility")
     private void _initDanmaku() {
-        mSettingDanmuView = findViewById(R.id.danmu_setting_view);
         // 弹幕控制
         mDanmakuView = findViewById(R.id.sv_danmaku);
         mIvDanmakuControl = findViewById(R.id.iv_danmaku_control);
@@ -2019,17 +1943,13 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         mIvCancelSend.setOnClickListener(this);
         mIvDoSend.setOnClickListener(this);
 
-        mPlayerSetting.setOnClickListener(this);
-        mDanmuSettings.setOnClickListener(this);
-        mSubtitleSettings.setOnClickListener(this);
-
         int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
         int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
         boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
         boolean isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
         boolean isShowBottom = PlayerConfigShare.getInstance().isShowBottomDanmu();
-        mSettingDanmuView
+        topBarView.getDanmuSettingView()
                 .setOffsetTime(0.5f)
                 .setDanmuSize(progressSize)
                 .setDanmuSpeed(progressSpeed)
@@ -2096,7 +2016,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
 
                     @Override
                     public void setBlockViewShow() {
-                        _showDanmuSetting(false);
+                        topBarView.hideItemView();
                         _showMoreDanmuBlock(true);
                     }
 
@@ -2216,6 +2136,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
             overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
             overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_BOTTOM, true);
             // 设置弹幕
+            SettingDanmuView mSettingDanmuView = topBarView.getDanmuSettingView();
             mDanmakuContext = DanmakuContext.create();
             mDanmakuContext.setDuplicateMergingEnabled(true);//是否启用合并重复弹幕
             mDanmakuContext.setScaleTextSize(mSettingDanmuView.getmDanmuTextSize());
@@ -2493,10 +2414,22 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
 
     /**
      * 从编辑状态返回，如取消编辑或发射弹幕后配合{@link #editVideo()}调用
-     *
+     * 关闭弹幕屏蔽、发送弹幕、三个设置界面
      * @return 是否从编辑状态回退
      */
     public boolean recoverFromEditVideo() {
+        //三个设置
+        if (topBarView.isItemShowing()){
+            topBarView.hideItemView();
+            return true;
+        }
+
+        //弹幕屏蔽
+        if (mBlockView.getVisibility() == VISIBLE){
+            mBlockView.setVisibility(GONE);
+            return true;
+        }
+
         if (mVideoStatus == NORMAL_STATUS) {
             return false;
         }
@@ -2516,7 +2449,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     private void _resumeDanmaku() {
         if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
             if (mDanmakuTargetPosition != INVALID_VALUE) {
-                mDanmakuView.seekTo(mDanmakuTargetPosition - mSettingDanmuView.getDanmuExtraTime());
+                mDanmakuView.seekTo(mDanmakuTargetPosition - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuTargetPosition = INVALID_VALUE;
             } else {
                 mDanmakuView.resume();
@@ -2607,7 +2540,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      */
     //字幕相关组件
     private SubtitleView mSubtitleView;
-    private SettingSubtitleView mSettingSubtitleView;
 
     //字幕
     private String subtitlePath = "";
@@ -2618,7 +2550,6 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     public void _initSubtitle(){
         //字幕相关
         mSubtitleView = findViewById(R.id.subtitle_view);
-        mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
 
         int subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
         int subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
@@ -2630,8 +2561,8 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
 
         isLoadSubtitle = false;
         int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
-        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
-        mSettingSubtitleView
+        topBarView.getSubtitleSettingView().setSubtitleEncoding(subtitleEncoding);
+        topBarView.getSubtitleSettingView()
                 .setSubtitleLanguageType(languageType)
                 .initSubtitleCnSize(subtitleChineseProgress)
                 .initSubtitleEnSize(subtitleEnglishProgress)
@@ -2695,7 +2626,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     public void setSubtitlePath(String path){
         subtitlePath = path;
         setSubtitleSource("utf-8");
-        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
+        topBarView.getSubtitleSettingView().setSubtitleEncoding(subtitleEncoding);
     }
 
     /**
@@ -2705,7 +2636,7 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
         isLoadSubtitle = false;
         isShowSubtitle = false;
         subtitleEncoding = encoding;
-        mSettingSubtitleView.setSubtitleLoadStatus(false);
+        topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -2750,18 +2681,16 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
     }
 
     private void updateSubtitle(){
-        long position = exoPlayer.getCurrentPosition() + (int)(mSettingSubtitleView.getTimeOffset() * 1000);
+        long position = exoPlayer.getCurrentPosition() + (int)(topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
         mSubtitleView.seekTo(position);
     }
 
     /**
      * ============================ 视频设置 ============================
      */
-    private SettingVideoView mSettingVideoView;
 
     public void _initVideoSetting(){
-        mSettingVideoView = findViewById(R.id.video_setting_view);
-        mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
+        topBarView.getPlayerSettingView().setSettingListener(new SettingVideoView.SettingVideoListener() {
             @Override
             public void selectTrack(int streamId, String language, boolean isAudio) {
                 DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
@@ -2796,6 +2725,16 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
                     mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
                 }
             }
+
+            @Override
+            public void setOrientationStatus(boolean isEnable) {
+                if (mOrientationListener != null) {
+                    if (isEnable)
+                        mOrientationListener.enable();
+                    else
+                        mOrientationListener.disable();
+                }
+            }
         })
         .setExoPlayerType();
     }
@@ -2804,40 +2743,28 @@ public class ExoPlayerView extends FrameLayout implements View.OnClickListener, 
      * ============================ 电量、时间、锁屏、截屏 ============================
      */
 
-    // 电量显示
-    private ProgressBar mPbBatteryLevel;
-    // 系统时间显示
-    private TextView mTvSystemTime;
     // 判断是否出现锁屏,有则需要重新设置渲染器，不然视频会没有动画只有声音
     private boolean mIsScreenLocked = false;
-
-    /**
-     * 初始化电量、锁屏、时间处理
-     */
-    private void _initReceiver() {
-        mPbBatteryLevel = findViewById(R.id.pb_battery);
-        mTvSystemTime = findViewById(R.id.tv_system_time);
-        mTvSystemTime.setText(TimeFormatUtils.getCurFormatTime());
-    }
 
     /**
      * 电量改变
      */
     @Override
     public void setBatteryChanged(int status, int progress){
-        if (status == BatteryBroadcastReceiver.BATTERY_STATUS_SPA) {
-            mPbBatteryLevel.setSecondaryProgress(0);
-            mPbBatteryLevel.setProgress(progress);
-            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_charging);
-        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_LOW) {
-            mPbBatteryLevel.setSecondaryProgress(progress);
-            mPbBatteryLevel.setProgress(0);
-            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery_red);
-        } else if (status == BatteryBroadcastReceiver.BATTERY_STATUS_NOR){
-            mPbBatteryLevel.setSecondaryProgress(0);
-            mPbBatteryLevel.setProgress(progress);
-            mPbBatteryLevel.setBackgroundResource(R.mipmap.ic_battery);
+        if (topBarView != null){
+            topBarView.setBatteryChanged(status, progress);
         }
+    }
+
+    private void setOrientationEnable(boolean isEnable){
+        if (mOrientationListener != null) {
+            if (isEnable)
+                mOrientationListener.enable();
+            else
+                mOrientationListener.disable();
+        }
+        if (topBarView.getPlayerSettingView() != null)
+            topBarView.getPlayerSettingView().setOrientationChangeEnable(isEnable);
     }
 
     /**

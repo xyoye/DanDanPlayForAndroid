@@ -2881,28 +2881,33 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
     public void _initVideoSetting(){
         mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
-                    @Override
-                    public void selectTrack(int streamId, String language, boolean isAudio) {
-                        mVideoView.selectTrack(streamId);
-                        mVideoView.seekTo(mVideoView.getCurrentPosition());
-                    }
+            @Override
+            public void selectTrack(int streamId, String language, boolean isAudio) {
+                mVideoView.selectTrack(streamId);
+                mVideoView.seekTo(mVideoView.getCurrentPosition());
+            }
 
-                    @Override
-                    public void deselectTrack(int streamId, String language, boolean isAudio) {
-                        mVideoView.deselectTrack(streamId);
-                    }
+            @Override
+            public void deselectTrack(int streamId, String language, boolean isAudio) {
+                mVideoView.deselectTrack(streamId);
+            }
 
-                    @Override
-                    public void setSpeed(float speed) {
-                        mVideoView.setSpeed(speed);
-                        mDanmakuContext.setDanmuTimeRate(speed);
-                    }
+            @Override
+            public void setSpeed(float speed) {
+                mVideoView.setSpeed(speed);
+                mDanmakuContext.setDanmuTimeRate(speed);
+            }
 
-                    @Override
-                    public void setAspectRatio(int type) {
-                        mVideoView.setAspectRatio(type);
-                    }
-                });
+            @Override
+            public void setAspectRatio(int type) {
+                mVideoView.setAspectRatio(type);
+            }
+
+            @Override
+            public void setOrientationStatus(boolean isEnable) {
+
+            }
+        });
     }
 
     /**

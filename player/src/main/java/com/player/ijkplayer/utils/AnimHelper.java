@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -115,5 +116,22 @@ public final class AnimHelper {
         });
         valueAnimator.setInterpolator(new AccelerateInterpolator());
         valueAnimator.start();
+    }
+
+    /**
+     * 位移动画
+     */
+    public static void viewTranslationX(View view){
+        viewTranslationX(view, view.getWidth());
+    }
+
+    /**
+     * 位移动画
+     * @param transX 位移距离
+     */
+    public static void viewTranslationX(View view, int transX){
+        if (view.getVisibility() == View.GONE)
+            view.setVisibility(View.VISIBLE);
+        ViewCompat.animate(view).translationX(transX).setDuration(500);
     }
 }

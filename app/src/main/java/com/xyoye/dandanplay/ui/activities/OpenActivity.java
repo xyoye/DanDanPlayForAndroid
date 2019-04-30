@@ -80,6 +80,7 @@ public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements Open
     @Override
     protected void setStatusBar() {
         StatusBarUtil.setTranslucentForImageView(this,null);
+        StatusBarUtil.hideFakeStatusBarView(this);
     }
 
     @Override

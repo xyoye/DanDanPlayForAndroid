@@ -9,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -32,6 +34,7 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
 
     private RecyclerView audioRv;
     private RecyclerView subtitleRv;
+    private Switch orientationChangeSw;
     private LinearLayout audioRl;
     private LinearLayout subtitleRl;
     private StreamAdapter audioStreamAdapter;
@@ -63,7 +66,8 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         subtitleRv = this.findViewById(R.id.subtitle_track_rv);
         audioRl = this.findViewById(R.id.audio_track_ll);
         subtitleRl = this.findViewById(R.id.subtitle_track_ll);
-        mAspectRatioOptions = findViewById(R.id.aspect_ratio_group);
+        mAspectRatioOptions = this.findViewById(R.id.aspect_ratio_group);
+        orientationChangeSw = this.findViewById(R.id.orientation_change_sw);
 
         mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -151,19 +155,6 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
                     listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
                     subtitleStreamAdapter.notifyDataSetChanged();
                 }
-
-//                for (int i = 0; i < subtitleTrackList.size(); i++) {
-//                    if (i == position)continue;
-//                    listener.deselectTrack(subtitleTrackList.get(i).getStream(), subtitleTrackList.get(i).getLanguage(), false);
-//                    subtitleTrackList.get(i).setSelect(false);
-
-//                if (subtitleTrackList.get(position).isSelect()){
-//                    listener.deselectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), false);
-//                    subtitleTrackList.get(position).setSelect(false);
-//                }else {
-//                    listener.selectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), false);
-//                    subtitleTrackList.get(position).setSelect(true);
-//                }
             }
         });
 
@@ -171,6 +162,13 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
+            }
+        });
+
+        orientationChangeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                listener.setOrientationStatus(isChecked);
             }
         });
 
@@ -227,6 +225,10 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
 
     public void setSpeedCtrlLLVis(boolean visibility){
         speedCtrlLL.setVisibility(visibility ? VISIBLE : GONE);
+    }
+
+    public void setOrientationChangeEnable(boolean isEnable){
+        orientationChangeSw.setChecked(isEnable);
     }
 
     public void setPlayerSpeedView(int type){
@@ -287,5 +289,6 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         void deselectTrack(int streamId, String language, boolean isAudio);
         void setSpeed(float speed);
         void setAspectRatio(int type);
+        void setOrientationStatus(boolean isEnable);
     }
 }

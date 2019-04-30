@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fl_video_box"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -43,8 +42,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <include
-        layout="@layout/layout_top_bar"/>
+    <com.player.ijkplayer.widgets.TopBarView
+        android:id="@+id/top_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.player.ijkplayer.widgets.TopBarView>
 
     <include
         layout="@layout/layout_bottom_bar"/>

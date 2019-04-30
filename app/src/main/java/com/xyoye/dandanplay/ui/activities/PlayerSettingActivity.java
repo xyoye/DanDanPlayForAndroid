@@ -31,6 +31,8 @@ public class PlayerSettingActivity extends BaseMvcActivity {
 
     @BindView(R.id.player_type_tv)
     TextView playerTypeTv;
+    @BindView(R.id.ijk_setting_ll)
+    LinearLayout ijkSettingLL;
     @BindView(R.id.select_player_type_ll)
     LinearLayout selectPlayerTypeLl;
     @BindView(R.id.media_code_c_cb)
@@ -65,13 +67,16 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         switch (playerType) {
             case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
                 playerTypeTv.setText("IJK_EXO Player");
+                ijkSettingLL.setVisibility(View.GONE);
                 break;
             case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:
                 playerTypeTv.setText("AndroidMedia Player");
+                ijkSettingLL.setVisibility(View.VISIBLE);
                 break;
             case com.player.ijkplayer.utils.Constants.IJK_PLAYER:
             default:
                 playerTypeTv.setText("IJK Player");
+                ijkSettingLL.setVisibility(View.VISIBLE);
                 break;
         }
         String pixelType = AppConfig.getInstance().getPixelFormat();
@@ -137,6 +142,11 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     @Subscribe
     public void onEvent(PlayerSettingEvent event) {
         if (event.isPlayer()) {
+            if (event.getName().equals("IJK_EXO Player")){
+                ijkSettingLL.setVisibility(View.GONE);
+            }else {
+                ijkSettingLL.setVisibility(View.VISIBLE);
+            }
             playerTypeTv.setText(event.getName());
         } else {
             pixelFormatTv.setText(event.getName());

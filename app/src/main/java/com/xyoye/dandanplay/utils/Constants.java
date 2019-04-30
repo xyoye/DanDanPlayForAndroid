@@ -65,9 +65,9 @@ public class Constants {
         //默认弹幕下载文件夹名
         public static final String danmuFolder = "/_danmu";
         //默认番剧封面缓存路径
-        public static final String animeCover = "/_cover";
-        //默认番剧封面缓存路径
-        public static final String backupFolder = "/_backup";
+        public static final String imageFolder =  downloadPath + "/_image";
+        //备份文件路径
+        public static final String backupFolder =  downloadPath + "/_backup";
     }
 
     public static class SmbType{

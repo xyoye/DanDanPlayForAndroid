@@ -124,17 +124,24 @@ public class ImagePreviewActivity extends BaseMvcActivity {
 
     private void saveBitmap(Bitmap bitmap){
         try {
-            String coverPath = AppConfig.getInstance().getDownloadFolder() + Constants.DefaultConfig.animeCover + CommonUtils.getCurrentFileName("COV", ".jpg");
-            File coverFile = new File(coverPath);
-            if (!coverFile.exists()) {
-                coverFile.getParentFile().mkdirs();
-                coverFile.createNewFile();
+            //make folder
+            File folder = new File(Constants.DefaultConfig.imageFolder);
+            if (!folder.exists())
+                folder.mkdirs();
+
+            //make file
+            File coverFile = new File(folder,  CommonUtils.getCurrentFileName("COV", ".jpg"));
+            if (coverFile.exists()) {
+                coverFile.delete();
             }
+            coverFile.createNewFile();
+
+            //save
             FileOutputStream fos = new FileOutputStream(coverFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
-            ToastUtils.showLong("保存成功："+coverPath);
+            ToastUtils.showLong("保存成功："+coverFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
             ToastUtils.showShort("保存失败");

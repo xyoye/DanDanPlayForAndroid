@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fl_video_box"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,9 +9,19 @@
     android:background="@android:color/black">
 
     <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/exo_player_view"
+        android:id="@+id/exo_player_surface_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:surface_type="surface_view">
+    </com.google.android.exoplayer2.ui.PlayerView>
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exo_player_texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:surface_type="texture_view">
     </com.google.android.exoplayer2.ui.PlayerView>
 
     <com.player.danmaku.ui.widget.DanmakuView
@@ -55,12 +66,23 @@
         android:id="@+id/iv_player_lock"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:padding="10dp"
-        android:background="@drawable/shape_player_lock_bg"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
+        android:background="@drawable/shape_player_lock_bg"
+        android:padding="12dp"
         android:src="@drawable/sel_player_lock"
-        android:visibility="gone" />
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/iv_player_shot"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/shape_player_lock_bg"
+        android:padding="12dp"
+        android:src="@mipmap/ic_video_screenshot"
+        android:visibility="gone"/>
 
     <include layout="@layout/layout_skip_tip"/>
 

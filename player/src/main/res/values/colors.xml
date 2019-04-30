@@ -14,6 +14,8 @@
 
     <color name="text_hint">#55ffffff</color>
     <color name="text_content">#ffffff</color>
+    <color name="text_black">#353535</color>
+    <color name="text_gray">#9B9B9B</color>
     
     <color name="background_gray">#a5a5a5</color>
     <color name="background_gray_light">#bababa</color>

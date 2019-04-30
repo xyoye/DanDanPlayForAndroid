@@ -248,8 +248,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             if (blockList.size() < 1) return;
 
             //save
-            String folderPath = AppConfig.getInstance().getDownloadFolder()+ Constants.DefaultConfig.backupFolder;
-            File blockFolder = new File(folderPath);
+            File blockFolder = new File(Constants.DefaultConfig.backupFolder);
             if (!blockFolder.exists()){
                 blockFolder.mkdirs();
             }

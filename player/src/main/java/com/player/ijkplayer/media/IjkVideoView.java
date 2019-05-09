@@ -1056,9 +1056,9 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
      */
     private void initRenders() {
         if (mIsUsingSurfaceRenders) {
-            setRender(RENDER_TEXTURE_VIEW);
-        } else {
             setRender(RENDER_SURFACE_VIEW);
+        } else {
+            setRender(RENDER_TEXTURE_VIEW);
         }
     }
 
@@ -1066,7 +1066,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         IMediaPlayer mediaPlayer = null;
 
         switch (mIsUsingPlayerType) {
-            case Constants.IJK_EXO_PLAYER: {
+            case Constants.EXO_PLAYER: {
                 AndroidMediaPlayer androidMediaPlayer = new AndroidMediaPlayer();
                 mediaPlayer = androidMediaPlayer;
             }

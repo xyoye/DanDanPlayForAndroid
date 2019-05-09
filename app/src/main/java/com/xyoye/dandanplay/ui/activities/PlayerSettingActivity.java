@@ -65,7 +65,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
 
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType) {
-            case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
+            case com.player.ijkplayer.utils.Constants.EXO_PLAYER:
                 playerTypeTv.setText("EXO Player");
                 ijkSettingLL.setVisibility(View.GONE);
                 break;
@@ -142,7 +142,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     @Subscribe
     public void onEvent(PlayerSettingEvent event) {
         if (event.isPlayer()) {
-            if (event.getName().equals("IJK_EXO Player")){
+            if (event.getName().equals("EXO Player")){
                 ijkSettingLL.setVisibility(View.GONE);
             }else {
                 ijkSettingLL.setVisibility(View.VISIBLE);

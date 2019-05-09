@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -21,6 +20,7 @@ import com.player.exoplayer.ExoPlayerView;
 import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.media.IjkPlayerView;
+import com.player.ijkplayer.media.IjkPlayerView_V2;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.receiver.PlayerReceiverListener;
 import com.player.ijkplayer.receiver.ScreenBroadcastReceiver;
@@ -43,8 +43,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -72,12 +70,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         super.onCreate(savedInstanceState);
 
         //播放器类型
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER){
+        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.EXO_PLAYER){
             mPlayer = new ExoPlayerView(this);
             setContentView((ExoPlayerView)mPlayer);
         }else {
-            mPlayer = new IjkPlayerView(this);
-            setContentView((IjkPlayerView)mPlayer);
+            mPlayer = new IjkPlayerView_V2(this);
+            setContentView((IjkPlayerView_V2)mPlayer);
         }
 
         //隐藏toolbar
@@ -134,7 +132,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         }
 
         //初始化不同的播放器
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER) {
+        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.EXO_PLAYER) {
             initExoPlayer(inputStream);
         }else {
             initIjkPlayer(inputStream);
@@ -147,49 +145,31 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     }
 
     private void initIjkPlayer(InputStream inputStream){
-        //ijk播放器配置
-        boolean mediaCodeC = AppConfig.getInstance().isOpenMediaCodeC();
-        boolean mediaCodeCH265 = AppConfig.getInstance().isOpenMediaCodeCH265();
-        boolean openSLES = AppConfig.getInstance().isOpenSLES();
-        boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
-        int playerType = AppConfig.getInstance().getPlayerType();
-        String pixelFormat = AppConfig.getInstance().getPixelFormat();
+        IjkPlayerView_V2 ijkPlayerView = (IjkPlayerView_V2) mPlayer;
 
-        IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
-
-        ijkPlayerView.init()
-                //初始化ijk配置
-                .initVideoView(mediaCodeC, mediaCodeCH265, openSLES, surfaceRenders, playerType, pixelFormat)
-                //总是全屏
-                .alwaysFullScreen()
-                //开启旋屏
-                .enableOrientation()
+        ijkPlayerView
                 //设置普通屏蔽弹幕
                 .setNormalFilterData(IApplication.normalFilterList)
                 //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList)
-                //设置云屏蔽启用状态
-                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
+                .setCloudFilterData(IApplication.cloudFilterList,
+                        AppConfig.getInstance().isCloudDanmuFilter())
                 //设置视频路径
                 .setVideoPath(videoPath)
-                //启用弹幕
-                .enableDanmaku()
+                //设置标题
+                .setTitle(videoTitle)
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
                 .setDanmakuSource(inputStream)
                 //默认展示弹幕
                 .showOrHideDanmaku(true)
-                //设置标题
-                .setTitle(videoTitle)
                 //跳转至上一次播放进度
                 .setSkipTip(currentPosition)
-                //弹幕事件回调
-                .setDanmakuListener(onDanmakuListener)
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
-                    //选择弹幕事件
+                    //选择字幕事件
                     if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
-                        new FileManagerDialog(
-                                PlayerActivity.this,
+                        new FileManagerDialog(PlayerActivity.this,
                                 videoPath,
                                 FileManagerDialog.SELECT_SUBTITLE,
                                 ijkPlayerView::setSubtitlePath

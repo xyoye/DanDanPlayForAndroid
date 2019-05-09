@@ -718,7 +718,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
         if (openSLES ||
                 mUsingPlayerType == Constants.IJK_ANDROID_PLAYER ||
-                mUsingPlayerType == Constants.IJK_EXO_PLAYER){
+                mUsingPlayerType == Constants.EXO_PLAYER){
             mSettingPlayerView.setSpeedCtrlLLVis(false);
         }
         return this;
@@ -2715,7 +2715,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         mSettingSubtitleView
                 .initSubtitleCnSize(subtitleChineseProgress)
                 .initSubtitleEnSize(subtitleEnglishProgress)
-                .initPlayerType(false)
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {

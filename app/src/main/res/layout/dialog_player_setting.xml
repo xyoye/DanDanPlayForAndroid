@@ -37,11 +37,11 @@
                 android:text="IJK Player"/>
 
             <RadioButton
-                android:id="@+id/player_ijk_exo_rb"
+                android:id="@+id/player_exo_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="IJK_EXO Player（测试）"/>
+                android:text="EXO Player"/>
 
             <RadioButton
                 android:id="@+id/player_android_rb"

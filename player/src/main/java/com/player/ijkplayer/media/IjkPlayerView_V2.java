@@ -1,4 +1,4 @@
-package com.player.exoplayer;
+package com.player.ijkplayer.media;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,13 +13,12 @@ import android.provider.Settings;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
-import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -34,28 +33,7 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultControlDispatcher;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.exoplayer2.util.Util;
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.IDanmakuView;
 import com.player.danmaku.danmaku.loader.ILoader;
@@ -66,21 +44,21 @@ import com.player.danmaku.danmaku.model.DanmakuTimer;
 import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
+import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.media.IRenderView;
-import com.player.ijkplayer.media.VideoInfoTrack;
 import com.player.ijkplayer.utils.AnimHelper;
 import com.player.ijkplayer.utils.CommonPlayerUtils;
+import com.player.ijkplayer.utils.Constants;
 import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.ijkplayer.widgets.BottomBarView;
 import com.player.ijkplayer.widgets.DanmuBlockView;
 import com.player.ijkplayer.widgets.DanmuPostView;
 import com.player.ijkplayer.widgets.DialogScreenShot;
 import com.player.ijkplayer.widgets.SettingDanmuView;
-import com.player.ijkplayer.widgets.SettingSubtitleView;
 import com.player.ijkplayer.widgets.SettingPlayerView;
+import com.player.ijkplayer.widgets.SettingSubtitleView;
 import com.player.ijkplayer.widgets.SkipTipView;
 import com.player.ijkplayer.widgets.TopBarView;
 import com.player.subtitle.SubtitleParser;
@@ -94,17 +72,17 @@ import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.misc.ITrackInfo;
+import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 
-import static android.view.GestureDetector.OnGestureListener;
-import static android.view.GestureDetector.SimpleOnGestureListener;
-import static android.widget.SeekBar.OnSeekBarChangeListener;
 import static com.player.ijkplayer.media.IjkPlayerView.INTENT_OPEN_SUBTITLE;
 import static com.player.ijkplayer.utils.TimeFormatUtils.generateTime;
 
 /**
- * Created by xyoye on 2019/5/7
+ * Created by xyoye on 2019/5/9.
  */
-public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
+
+public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener {
     //正常播放时，隐藏所有
     private static final int HIDE_VIEW_ALL = 0;
     //自动消失时，隐藏上下控制栏、截图、锁屏、亮度声音跳转
@@ -131,8 +109,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     // 无效变量
     private static final int INVALID_VALUE = -1;
 
-    // 原生的ExoPlayer
-    private SimpleExoPlayer exoPlayer;
     // 加载
     private ProgressBar mLoadingView;
     // 音量
@@ -185,6 +161,21 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private long mSkipPosition = INVALID_VALUE;
     //是否展示字幕
     private boolean isShowSubtitle = false;
+    // 是否播放结束
+    private boolean mIsPlayComplete = false;
+
+    //是否使用surfaceView
+    private boolean isUseSurfaceView;
+    //是否使用硬解码
+    private boolean isUsemediaCodeC;
+    //是否使用h265硬解码
+    private boolean isUsemediaCodeCH265;
+    //是否使用OpenSLES
+    private boolean isUseOpenSLES;
+    //使用播放器的类型
+    private int usePlayerType;
+    //使用播放器的格式
+    private String usePixelFormat;
 
     // 弹幕控制相关
     private DanmakuContext mDanmakuContext;
@@ -198,17 +189,16 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private long mDanmakuTargetPosition = INVALID_VALUE;
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
-    // 播放器是否已准备好，这个用来控制弹幕启动和视频同步
-    private boolean mIsExoPlayerReady = false;
-
-    private DefaultControlDispatcher controlDispatcher = new DefaultControlDispatcher();
-    private DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+    // 播放器是否已准备好
+    private boolean mIsIjkPlayerReady = false;
+    // 这个用来控制弹幕启动和视频同步
+    private boolean mIsRenderingStart = false;
 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
 
     //视频View
-    private PlayerView mVideoView;
+    private IjkVideoView mVideoView;
     //字幕View
     private SubtitleView mSubtitleView;
     //弹幕View
@@ -239,7 +229,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 //更新进度消息
                 case MSG_UPDATE_SEEK:
                     long pos = _setProgress();
-                    if (!mIsSeeking && mIsShowBar && isVideoPlaying()) {
+                    if (!mIsSeeking && mIsShowBar && mVideoView.isPlaying()) {
                         msg = obtainMessage(MSG_UPDATE_SEEK);
                         sendMessageDelayed(msg, 1000 - (pos % 1000));
                     }
@@ -251,7 +241,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 //更新字幕消息
                 case MSG_UPDATE_SUBTITLE:
                     if (topBarView.getSubtitleSettingView().isLoadSubtitle() && isShowSubtitle){
-                        long position = exoPlayer.getCurrentPosition() + (int)(topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
+                        long position = mVideoView.getCurrentPosition() + (int)(topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
                         mSubtitleView.seekTo(position);
                         msg = obtainMessage(MSG_UPDATE_SUBTITLE);
                         sendMessageDelayed(msg, 1000);
@@ -271,11 +261,11 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         }
     };
 
-    public ExoPlayerView(Context context) {
+    public IjkPlayerView_V2(Context context) {
         this(context, null);
     }
 
-    public ExoPlayerView(Context context, AttributeSet attrs) {
+    public IjkPlayerView_V2(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         initViewBefore(context);
@@ -303,9 +293,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         //获取绑定的Activity实例
         mAttachActivity = (AppCompatActivity) context;
         //加载布局
-        View.inflate(context, R.layout.layout_exo_player_view, this);
-        //获取播放器实例
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
+        View.inflate(context, R.layout.layout_ijk_player_view_v2, this);
         //屏幕翻转控制
         mOrientationListener = new OrientationEventListener(mAttachActivity) {
             @Override
@@ -335,14 +323,24 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         } catch (Settings.SettingNotFoundException var7) {
             var7.printStackTrace();
         }
+
+        //是否使用surfaceView
+        isUseSurfaceView = SPUtils.getInstance().getBoolean("surface_renders");
+        //是否使用硬解码
+        isUsemediaCodeC = SPUtils.getInstance().getBoolean("media_code_c");
+        //是否使用h265硬解码
+        isUsemediaCodeCH265 = SPUtils.getInstance().getBoolean("media_code_c_h265");
+        //是否使用OpenSLES
+        isUseOpenSLES = SPUtils.getInstance().getBoolean("open_sles");
+        //使用播放器的类型
+        usePlayerType = SPUtils.getInstance().getInt("player_type");
+        //使用播放器的格式
+        usePixelFormat = SPUtils.getInstance().getString("pixel_format");
     }
 
     private void initView() {
         //主要的控件：视频、弹幕、字幕
-        //获取渲染器模式
-        boolean isUseSurfaceView = SPUtils.getInstance().getBoolean("surface_renders");
-        //根据渲染模式获取不同的videoView
-        mVideoView = findViewById(isUseSurfaceView ? R.id.exo_player_surface_view : R.id.exo_player_texture_view);
+        mVideoView = findViewById(R.id.ijk_video_view);
         mDanmakuView = findViewById(R.id.sv_danmaku);
         mSubtitleView = findViewById(R.id.subtitle_view);
         //头部、底部、跳转提示
@@ -374,7 +372,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     @SuppressLint("ClickableViewAccessibility")
     private void initViewCallBak(){
         //底层框架的触摸事件
-        OnTouchListener mPlayerTouchListener = (v, event) -> {
+        View.OnTouchListener mPlayerTouchListener = (v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mHandler.removeCallbacks(mHideBarRunnable);
@@ -386,7 +384,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             return mGestureDetector.onTouchEvent(event);
         };
         //手势监听回调
-        OnGestureListener mPlayerGestureListener = new SimpleOnGestureListener() {
+        GestureDetector.OnGestureListener mPlayerGestureListener = new GestureDetector.SimpleOnGestureListener() {
             // 是否是按下的标识，默认为其他动作，true为按下标识，false为其他动作
             private boolean isDownTouch;
             // 是否声音控制,默认为亮度控制，true为声音控制，false为亮度控制
@@ -448,7 +446,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             }
         };
         //进度条回调
-        OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
+        SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
 
             private long curPosition;
 
@@ -457,7 +455,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 mIsSeeking = true;
                 _showControlBar(3600000);
                 mHandler.removeMessages(MSG_UPDATE_SEEK);
-                curPosition = exoPlayer.getCurrentPosition();
+                curPosition = mVideoView.getCurrentPosition();
             }
 
             @Override
@@ -465,7 +463,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 if (!fromUser) {
                     return;
                 }
-                long duration = exoPlayer.getDuration();
+                long duration = mVideoView.getDuration();
                 // 计算目标位置
                 mTargetPosition = (duration * progress) / MAX_VIDEO_SEEK;
                 int deltaTime = (int) ((mTargetPosition - curPosition) / 1000);
@@ -490,75 +488,55 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 _showControlBar(DEFAULT_HIDE_TIMEOUT);
             }
         };
-        //播放器事件回调
-        Player.EventListener playerEventListener = new Player.EventListener() {
-            @Override
-            public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-                subtitleTrackList.clear();
-                audioTrackList.clear();
-                String audioId = "";
-                String subtitleId = "";
-                for (TrackSelection selection : trackSelections.getAll()){
-                    if (selection == null) continue;
-                    Format selectionFormat = selection.getSelectedFormat();
-                    if (MimeTypes.isAudio(selectionFormat.sampleMimeType)){
-                        audioId = selectionFormat.id;
-                        continue;
-                    }
-                    if (MimeTypes.isText(selectionFormat.sampleMimeType)){
-                        subtitleId = selectionFormat.id;
+        //播放器解析事件回调
+        IMediaPlayer.OnPreparedListener ijkPreparedCallback = iMediaPlayer -> {
+            ITrackInfo[] info = mVideoView.getTrackInfo();
+            if (info != null){
+                int selectAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+                int audioN = 1;
+                for (int i = 0; i < info.length; i++) {
+                    if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
+                        VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                        String name = TextUtils.isEmpty(info[i].getTitle())
+                                ? (TextUtils.isEmpty(info[i].getLanguage())
+                                ? "UND"
+                                : info[i].getLanguage())
+                                : info[i].getTitle();
+                        videoInfoTrack.setName("音频流#" + audioN + "（" + name + "）");
+                        videoInfoTrack.setStream(i);
+                        if (i == selectAudioTrack) videoInfoTrack.setSelect(true);
+                        audioN++;
+                        audioTrackList.add(videoInfoTrack);
                     }
                 }
-                for (int i = 0; i < trackGroups.length; i++) {
-                    TrackGroup trackGroup = trackGroups.get(i);
-                    if (trackGroup.length < 1) continue;
-                    Format tempFormat = trackGroup.getFormat(0);
-                    if (MimeTypes.isAudio(tempFormat.sampleMimeType)){
-                        for (int j = 0; j < trackGroup.length; j++){
-                            Format format = trackGroup.getFormat(j);
-                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("音频流#"+(subtitleTrackList.size()+1)+"（"+format.language+"）");
-                            videoInfoTrack.setStream(i);
-                            videoInfoTrack.setLanguage(format.language);
-                            if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
-                                videoInfoTrack.setSelect(true);
-                            audioTrackList.add(videoInfoTrack);
-                        }
-                    }else if (MimeTypes.isText(tempFormat.sampleMimeType)){
-                        for (int j = 0; j < trackGroup.length; j++) {
-                            Format format = trackGroup.getFormat(j);
-                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("字幕流#"+(subtitleTrackList.size()+1)+"（"+format.language+"）");
-                            videoInfoTrack.setStream(i);
-                            videoInfoTrack.setLanguage(format.language);
-                            if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
-                                videoInfoTrack.setSelect(true);
-                            subtitleTrackList.add(videoInfoTrack);
-                        }
-                    }
-                    topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(subtitleTrackList.size() > 0);
-                    topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
-                    topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
-                }
+                VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
+                videoInfoTrack.setName("IJK播放器不支持字幕流管理");
+                videoInfoTrack.setStream(-1);
+                videoInfoTrack.setSelect(true);
+                subtitleTrackList.add(videoInfoTrack);
+                //ijk不提供内置字幕管理
+                topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(false);
+                topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
+                topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
             }
-
-            @Override
-            public void onPlayerError(ExoPlaybackException error) {
-                Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
-                mLoadingView.setVisibility(GONE);
-            }
-
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                _switchStatus(playWhenReady, playbackState);
-            }
+        };
+        //播放器错误事件回调
+        IMediaPlayer.OnErrorListener ijkErrorCallback = (iMediaPlayer, i, i1) -> {
+            Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
+            mLoadingView.setVisibility(GONE);
+            return false;
+        };
+        //播放器播放事件回调
+        IMediaPlayer.OnInfoListener ijkPlayInfoCallback = (iMediaPlayer, status, extra) -> {
+            _switchStatus(status);
+            return true;
         };
         //弹幕view绘制事件回调
         DrawHandler.Callback drawHandlerCallBack = new DrawHandler.Callback() {
             @Override
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
-                    if (isVideoPlaying() && mIsExoPlayerReady) {
+                    if (mVideoView.isPlaying() && mIsIjkPlayerReady) {
                         mDanmakuView.start();
                     }
                 });
@@ -675,7 +653,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         mFlVideoBox.setOnTouchListener(mPlayerTouchListener);
         mGestureDetector = new GestureDetector(mAttachActivity, mPlayerGestureListener);
         bottomBarView.setSeekCallBack(mSeekListener);
-        exoPlayer.addListener(playerEventListener);
+        mVideoView.setOnPreparedListener(ijkPreparedCallback);
+        mVideoView.setOnErrorListener(ijkErrorCallback);
+        mVideoView.setOnInfoListener(ijkPlayInfoCallback);
         mDanmakuView.setCallback(drawHandlerCallBack);
 
         topBarView.setCallBack(topBarCallBack);
@@ -686,11 +666,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
         mIvPlayerLock.setOnClickListener(v -> _togglePlayerLock());
         mIvScreenShot.setOnClickListener(v -> {
-            View view = mVideoView.getVideoSurfaceView();
-            if (view instanceof TextureView){
+            if (!isUseSurfaceView){
                 pause();
-                TextureView textureView = (TextureView)view;
-                new DialogScreenShot(mAttachActivity, textureView.getBitmap()).show();
+                new DialogScreenShot(mAttachActivity, mVideoView.getScreenshot()).show();
             }else {
                 ToastUtils.showShort("当前渲染器不支持截屏");
             }
@@ -710,12 +688,18 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     private void initViewAfter(){
-        //由于是根据渲染器，动态的实例化视频View，所以默认为GONE，要手动切换为VISIBLE
-        mVideoView.setVisibility(VISIBLE);
-        //不使用exo默认控制
-        mVideoView.setUseController(false);
-        //添加播放器到view
-        mVideoView.setPlayer(exoPlayer);
+        mVideoView.setIsUsingMediaCodec(isUsemediaCodeC);
+        mVideoView.setIsUsingMediaCodecH265(isUsemediaCodeCH265);
+        mVideoView.setPixelFormat(usePixelFormat);
+        mVideoView.setIsUsingOpenSLES(isUseOpenSLES);
+        mVideoView.setIsUsingSurfaceRenders(isUseSurfaceView);
+        mVideoView.setIsUsingPlayerType(usePlayerType);
+
+        //使用openSLES及MediaPlayer时不能变速播放
+        if (isUseOpenSLES || usePlayerType == Constants.IJK_ANDROID_PLAYER){
+            topBarView.getPlayerSettingView().setSpeedCtrlLLVis(false);
+        }
+
         //设置进度条最大值
         bottomBarView.setSeekMax(MAX_VIDEO_SEEK);
         //启动隐藏上下控制栏线程
@@ -803,14 +787,12 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setInterSubtitleSize(int progress) {
-                        float calcProgress = (float) progress;
-                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(40);
-                        mVideoView.getSubtitleView().setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+
                     }
 
                     @Override
                     public void setInterBackground(CaptionStyleCompat compat) {
-                        mVideoView.getSubtitleView().setStyle(compat);
+
                     }
 
                     @Override
@@ -942,41 +924,27 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         boolean allowOrientationChange = PlayerConfigShare.getInstance().isAllowOrientationChange();
         topBarView.getPlayerSettingView()
                 .setOrientationAllow(allowOrientationChange)
-                .setExoPlayerType()
                 .setSettingListener(new SettingPlayerView.SettingVideoListener() {
                     @Override
                     public void selectTrack(int streamId, String language, boolean isAudio) {
-                        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
-                        if (isAudio){
-                            parametersBuilder.setPreferredAudioLanguage(language);
-                        }else {
-                            parametersBuilder.setPreferredTextLanguage(language);
-                        }
-                        trackSelector.setParameters(parametersBuilder);
+                        mVideoView.selectTrack(streamId);
+                        mVideoView.seekTo(mVideoView.getCurrentPosition());
                     }
 
                     @Override
                     public void deselectTrack(int streamId, String language, boolean isAudio) {
-
+                        mVideoView.deselectTrack(streamId);
                     }
 
                     @Override
                     public void setSpeed(float speed) {
-                        exoPlayer.setPlaybackParameters(new PlaybackParameters(speed, speed));
+                        mVideoView.setSpeed(speed);
                         mDanmakuContext.setDanmuTimeRate(speed);
                     }
 
                     @Override
                     public void setAspectRatio(int type) {
-                        if (type == IRenderView.AR_ASPECT_FIT_PARENT) {
-                            mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                        } else if (type == IRenderView.AR_ASPECT_FILL_PARENT) {
-                            mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-                        } else if (type == IRenderView.AR_16_9_FIT_PARENT) {
-                            mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
-                        } else if (type == IRenderView.AR_4_3_FIT_PARENT) {
-                            mVideoView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
-                        }
+                        mVideoView.setAspectRatio(type);
                     }
 
                     @Override
@@ -988,7 +956,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                                 mOrientationListener.disable();
                         }
                     }
-         });
+                });
     }
 
     /**
@@ -1007,7 +975,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void onPause() {
-        mCurPosition = exoPlayer.getCurrentPosition();
+        mCurPosition = mVideoView.getCurrentPosition();
         pause();
     }
 
@@ -1017,8 +985,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     @Override
     public long onDestroy() {
         // 记录播放进度
-        long curPosition = exoPlayer.getCurrentPosition();
-        exoPlayer.release();
+        long curPosition = mVideoView.getCurrentPosition();
+        mVideoView.destroy();
         if (mDanmakuView != null) {
             // don't forget release!
             mDanmakuView.release();
@@ -1086,11 +1054,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置视频资源
      */
-    public ExoPlayerView setVideoPath(String videoPath) {
+    public IjkPlayerView_V2 setVideoPath(String videoPath) {
         loadDefaultSubtitle(videoPath);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mAttachActivity, Util.getUserAgent(mAttachActivity, "com.xyoye.dandanplay.player"));
-        MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(videoPath));
-        exoPlayer.prepare(videoSource);
+        mVideoView.setVideoURI(Uri.parse(videoPath));
         seekTo(0);
         return this;
     }
@@ -1098,7 +1064,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置弹幕资源
      */
-    public ExoPlayerView setDanmakuSource(InputStream stream) {
+    public IjkPlayerView_V2 setDanmakuSource(InputStream stream) {
         if (stream == null) {
             return this;
         }
@@ -1115,7 +1081,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置标题
      */
-    public ExoPlayerView setTitle(String title) {
+    public IjkPlayerView_V2 setTitle(String title) {
         if (topBarView != null)
             topBarView.setTitleText(title);
         return this;
@@ -1124,7 +1090,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置普通弹幕屏蔽数据
      */
-    public ExoPlayerView setNormalFilterData(List<String> blockList){
+    public IjkPlayerView_V2 setNormalFilterData(List<String> blockList){
         if (blockList != null){
             danmuBlockView.setBlockList(blockList);
             for (String block : blockList){
@@ -1141,7 +1107,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * @param data 数据源
      * @param isOpen 当前是否开启
      */
-    public ExoPlayerView setCloudFilterData(List<String> data, boolean isOpen) {
+    public IjkPlayerView_V2 setCloudFilterData(List<String> data, boolean isOpen) {
         cloudFilterList = data;
         if (isOpen){
             mDanmakuContext.addBlockKeyWord(cloudFilterList);
@@ -1152,7 +1118,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 外部接口回调
      */
-    public ExoPlayerView setOnInfoListener(IMediaPlayer.OnInfoListener l) {
+    public IjkPlayerView_V2 setOnInfoListener(IMediaPlayer.OnInfoListener l) {
         mOutsideInfoListener = l;
         return this;
     }
@@ -1160,7 +1126,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置弹幕监听器
      */
-    public ExoPlayerView setDanmakuListener(OnDanmakuListener danmakuListener) {
+    public IjkPlayerView_V2 setDanmakuListener(OnDanmakuListener danmakuListener) {
         mDanmakuListener = danmakuListener;
         return this;
     }
@@ -1168,7 +1134,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置跳转提示
      */
-    public ExoPlayerView setSkipTip(long targetPositionMs) {
+    public IjkPlayerView_V2 setSkipTip(long targetPositionMs) {
         if (targetPositionMs > 0){
             mSkipPosition = targetPositionMs;
         }
@@ -1178,7 +1144,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 显示/隐藏弹幕
      */
-    public ExoPlayerView showOrHideDanmaku(boolean isShow) {
+    public IjkPlayerView_V2 showOrHideDanmaku(boolean isShow) {
         if (isShow) {
             bottomBarView.setDanmuIvStatus(false);
             mDanmakuView.show();
@@ -1205,19 +1171,19 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         //切换播放按钮状态
         bottomBarView.setPlayIvStatus(true);
         //设置可以播放
-        exoPlayer.setPlayWhenReady(true);
-        //启动播放
-        controlDispatcher.dispatchSetPlayWhenReady(exoPlayer, true);
-        // 更新进度
-        mHandler.sendEmptyMessage(MSG_UPDATE_SEEK);
+        if (!mVideoView.isPlaying()) {
+            mVideoView.start();
+            // 更新进度
+            mHandler.sendEmptyMessage(MSG_UPDATE_SEEK);
+        }
 
         //已播放结束后，再点击播放，重新设置弹幕播放进度
-        if (exoPlayer.getPlaybackState() == Player.STATE_ENDED) {
-            controlDispatcher.dispatchSeekTo(exoPlayer, exoPlayer.getCurrentWindowIndex(), C.TIME_UNSET);
+        if (mIsPlayComplete) {
             if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                 mDanmakuView.seekTo((long) 0 - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuView.pause();
             }
+            mIsPlayComplete = false;
         }
         //已加载字幕，则播放字幕
         if (topBarView.getSubtitleSettingView().isLoadSubtitle())
@@ -1229,8 +1195,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     public void pause() {
         bottomBarView.setPlayIvStatus(false);
-        if (isVideoPlaying()) {
-            controlDispatcher.dispatchSetPlayWhenReady(exoPlayer, false);
+        if (mVideoView.isPlaying()) {
+            mVideoView.pause();
         }
         if (topBarView.getSubtitleSettingView().isLoadSubtitle())
             mSubtitleView.pause();
@@ -1242,14 +1208,15 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     public void stop() {
         pause();
-        exoPlayer.stop(false);
+        mVideoView.stopPlayback();
     }
 
     /**
      * 跳转
      */
     public void seekTo(long position) {
-        exoPlayer.seekTo(position);
+        Long positionLong = position;
+        mVideoView.seekTo(positionLong.intValue());
         if(position != 0)
             mDanmakuTargetPosition = position;
     }
@@ -1269,7 +1236,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             }else {
                 hideView(HIDE_VIEW_AUTO);
             }
-    }
+        }
     }
 
     /**
@@ -1307,7 +1274,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 切换播放状态，点击播放按钮时
      */
     private void _togglePlayStatus() {
-        if (isVideoPlaying()) {
+        if (mVideoView.isPlaying()) {
             pause();
         } else {
             start();
@@ -1358,16 +1325,16 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             return 0;
         }
         // 视频播放的当前进度
-        long position = exoPlayer.getCurrentPosition();
+        long position = mVideoView.getCurrentPosition();
         // 视频总的时长
-        long duration = exoPlayer.getDuration();
+        long duration = mVideoView.getDuration();
         if (duration > 0) {
             // 转换为 Seek 显示的进度值
             long pos = (long) MAX_VIDEO_SEEK * position / duration;
             bottomBarView.setSeekProgress((int) pos);
         }
         // 获取缓冲的进度百分比，并显示在 Seek 的次进度
-        int percent = exoPlayer.getBufferedPercentage();
+        int percent = mVideoView.getBufferPercentage();
         bottomBarView.setSeekSecondaryProgress(percent * 10);
         // 更新播放时间
         bottomBarView.setEndTime(generateTime(duration));
@@ -1393,8 +1360,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 快进或者快退滑动改变进度，这里处理触摸滑动不是拉动 SeekBar
      */
     private void _onProgressSlide(float percent) {
-        long position = exoPlayer.getCurrentPosition();
-        long duration = exoPlayer.getDuration();
+        long position = mVideoView.getCurrentPosition();
+        long duration = mVideoView.getDuration();
         // 单次拖拽最大时间差为100秒或播放时长的1/2
         long deltaMax = Math.min(100 * 1000, duration / 2);
         // 计算滑动时间
@@ -1518,10 +1485,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 手势结束调用
      */
     private void _endGesture() {
-        if (mTargetPosition >= 0 && mTargetPosition != exoPlayer.getCurrentPosition() && exoPlayer.getDuration() != 0) {
+        if (mTargetPosition >= 0 && mTargetPosition != mVideoView.getCurrentPosition() && mVideoView.getDuration() != 0) {
             // 更新视频播放进度
             seekTo((int) mTargetPosition);
-            bottomBarView.setSeekProgress((int) (mTargetPosition * MAX_VIDEO_SEEK / exoPlayer.getDuration()));
+            bottomBarView.setSeekProgress((int) (mTargetPosition * MAX_VIDEO_SEEK / mVideoView.getDuration()));
             mTargetPosition = INVALID_VALUE;
         }
         // 隐藏触摸操作显示图像
@@ -1534,32 +1501,43 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 视频播放状态处理
      */
-    private void _switchStatus(boolean playWhenReady, int status) {
+    private void _switchStatus(int status) {
         switch (status) {
-            case Player.STATE_BUFFERING:
-                mIsExoPlayerReady = false;
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                mIsIjkPlayerReady = false;
                 _pauseDanmaku();
                 if (!mIsNeverPlay) {
                     mLoadingView.setVisibility(View.VISIBLE);
                 }
-            case Player.STATE_READY:
-                mIsExoPlayerReady = true;
+            case MediaPlayerParams.STATE_PREPARING:
+                break;
+
+            case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
+                mIsRenderingStart = true;
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+                mIsIjkPlayerReady = true;
                 mLoadingView.setVisibility(View.GONE);
                 // 更新进度
                 mHandler.sendEmptyMessage(MSG_UPDATE_SEEK);
                 if (mSkipPosition != INVALID_VALUE) {
                     _showSkipTip(); // 显示跳转提示
                 }
-                if (playWhenReady) {
+                if (mVideoView.isPlaying()) {
                     _resumeDanmaku();   // 开启弹幕
                 }
                 break;
-            case Player.STATE_IDLE:
+
+            case MediaPlayerParams.STATE_PLAYING:
+                if (mIsRenderingStart && mIsIjkPlayerReady) {
+                    _resumeDanmaku();   // 开启弹幕
+                }
+                break;
+            case MediaPlayerParams.STATE_ERROR:
                 _pauseDanmaku();
                 break;
-
-            case Player.STATE_ENDED:
+            case MediaPlayerParams.STATE_COMPLETED:
                 pause();
+                mIsPlayComplete = true;
                 break;
         }
     }
@@ -1751,17 +1729,5 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private void setOrientationEnable(boolean isEnable){
         if (topBarView.getPlayerSettingView() != null)
             topBarView.getPlayerSettingView().setOrientationChangeEnable(isEnable);
-    }
-
-    /**
-     * 视频是否正在播放
-     */
-    private boolean isVideoPlaying(){
-        if (mVideoView != null && mVideoView.getPlayer() != null){
-            if (mVideoView.getPlayer().getPlayWhenReady()){
-                return mVideoView.getPlayer().getPlaybackState() == Player.STATE_READY;
-            }
-        }
-        return false;
     }
 }

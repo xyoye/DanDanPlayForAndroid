@@ -30,7 +30,7 @@ public class PlayerSettingDialog extends Dialog {
     TextView dialogTitle;
     @BindView(R.id.player_ijk_rb)
     RadioButton playerIjkRb;
-    @BindView(R.id.player_ijk_exo_rb)
+    @BindView(R.id.player_exo_rb)
     RadioButton playerIjkExoRb;
     @BindView(R.id.player_android_rb)
     RadioButton playerAndroidRb;
@@ -70,7 +70,7 @@ public class PlayerSettingDialog extends Dialog {
 
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType){
-            case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
+            case com.player.ijkplayer.utils.Constants.EXO_PLAYER:
                 playerIjkExoRb.setChecked(true);
                 break;
             case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:
@@ -118,9 +118,9 @@ public class PlayerSettingDialog extends Dialog {
                         player_name = "IJK Player";
                         AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_PLAYER);
                         break;
-                    case R.id.player_ijk_exo_rb:
-                        player_name = "IJK_EXO Player";
-                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER);
+                    case R.id.player_exo_rb:
+                        player_name = "EXO Player";
+                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.EXO_PLAYER);
                         break;
                     case R.id.player_android_rb:
                         player_name = "AndroidMedia Player";

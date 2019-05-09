@@ -5,11 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -52,10 +49,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
     //时间偏移量
     private float timeOffset;
-    //是否为IjkPlayer
-    private boolean isExoPlayer;
     //是否已加载字幕
     private boolean isLoadSubtitle = false;
+    //是否显示内置字幕控制View
+    private boolean isShowInnerCtrl = false;
     //控制回调
     private SettingSubtitleListener settingListener = null;
 
@@ -119,38 +116,33 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
     @SuppressLint("ClickableViewAccessibility")
     public void init(){
         //切换字幕显示状态
-        subtitleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isLoadSubtitle && isChecked){
+        subtitleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isLoadSubtitle && isChecked){
+                if (interSizeLL.getVisibility() == View.VISIBLE)
                     interSizeLL.setVisibility(GONE);
-                    outerTimeLL.setVisibility(VISIBLE);
-                    outerSizeLL.setVisibility(VISIBLE);
-                }else {
-                    if (isExoPlayer)
-                        interSizeLL.setVisibility(VISIBLE);
-                    outerTimeLL.setVisibility(GONE);
-                    outerSizeLL.setVisibility(GONE);
-                }
-                settingListener.setSubtitleSwitch(subtitleSwitch, isChecked);
+                outerTimeLL.setVisibility(VISIBLE);
+                outerSizeLL.setVisibility(VISIBLE);
+            }else {
+                if (isShowInnerCtrl)
+                    interSizeLL.setVisibility(VISIBLE);
+                outerTimeLL.setVisibility(GONE);
+                outerSizeLL.setVisibility(GONE);
             }
+            settingListener.setSubtitleSwitch(subtitleSwitch, isChecked);
         });
 
         //设置偏移时间
-        subExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    try {
-                        String offset = subExtraTimeEt.getText().toString().trim();
-                        timeOffset = Float.valueOf(offset);
-                    }catch (Exception e){
-                        Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
-                    }
-                    return true;
+        subExtraTimeEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                try {
+                    String offset = subExtraTimeEt.getText().toString().trim();
+                    timeOffset = Float.valueOf(offset);
+                }catch (Exception e){
+                    Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
                 }
-                return false;
+                return true;
             }
+            return false;
         });
 
         //中文文字大小
@@ -219,12 +211,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
             }
         });
 
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        this.setOnTouchListener((v, event) -> true);
     }
 
     public SettingSubtitleView initListener(SettingSubtitleListener settingListener){
@@ -255,18 +242,17 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
     }
 
     /**
-     * 根据播放器类型初始化内置文字大小
+     * 是否显示内置字幕控制View，根据字幕流决定
      */
     @SuppressLint("SetTextI18n")
-    public SettingSubtitleView initPlayerType(boolean isExo){
-        isExoPlayer = isExo;
-        interSizeLL.setVisibility(isExoPlayer ? VISIBLE : GONE);
-        if (isExoPlayer){
+    public void setInnerSubtitleCtrl(boolean hasInnerSubtitle){
+        isShowInnerCtrl = hasInnerSubtitle;
+        interSizeLL.setVisibility(isShowInnerCtrl ? VISIBLE : GONE);
+        if (isShowInnerCtrl){
             subtitleOtherSizeTv.setText("50%");
             subtitleOtherSB.setMax(100);
             subtitleOtherSB.setProgress(50);
         }
-        return this;
     }
 
     /**

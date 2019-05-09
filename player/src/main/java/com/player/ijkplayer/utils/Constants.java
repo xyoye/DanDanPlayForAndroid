@@ -8,7 +8,7 @@ public final class Constants {
     public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 
     //播放器
-    public static final int IJK_EXO_PLAYER = 1;
+    public static final int EXO_PLAYER = 1;
     public static final int IJK_ANDROID_PLAYER = 2;
     public static final int IJK_PLAYER = 3;
 

@@ -147,7 +147,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         mAppContext = context.getApplicationContext();
 
         initBackground();
-        initRenders();
 
         mVideoWidth = 0;
         mVideoHeight = 0;
@@ -1220,7 +1219,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     private boolean mIsUsingDetachedSurfaceTextureView = false;
     //surface渲染器（TurfaceView、TextureView）
-    private boolean mIsUsingSurfaceRenders = true;
+    private boolean mIsUsingSurfaceRenders = false;
     //播放器类型(ijk_exo，AndroidMedia，)
     private int mIsUsingPlayerType = Constants.IJK_PLAYER;
     //像素格式
@@ -1248,6 +1247,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
 
     public void setIsUsingSurfaceRenders(boolean mIsUsingSurfaceRenders) {
         this.mIsUsingSurfaceRenders = mIsUsingSurfaceRenders;
+        initRenders();
     }
 
     public void setIsUsingPlayerType(int mIsUsingPlayerType) {

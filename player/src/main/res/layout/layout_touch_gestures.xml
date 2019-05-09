@@ -45,7 +45,6 @@
             android:layout_gravity="center"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:text="50%"
             android:textColor="@android:color/white"/>
     </FrameLayout>
 

@@ -674,6 +674,13 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
             }
         });
 
+        //监听进度条触摸放开事件，隐藏跳转View
+        bottomBarView.setSeekBarTouchCallBack((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                hideView(HIDE_VIEW_END_GESTURE);
+            }
+            return false;
+        });
         //播放器view的触摸事件
         mVideoView.setOnTouchListener((v, event) -> {
             //关闭编辑的view

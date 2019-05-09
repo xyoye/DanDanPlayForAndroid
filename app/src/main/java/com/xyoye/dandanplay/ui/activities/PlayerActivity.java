@@ -221,7 +221,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
             @Override
             public boolean isValid() {
                 //是否可发送弹幕
-                return (AppConfig.getInstance().isLogin() && episodeId != 0);
+                if (!AppConfig.getInstance().isLogin()){
+                    ToastUtils.showShort("当前未登陆，不能发送弹幕");
+                    return false;
+                }
+                if (episodeId == 0){
+                    ToastUtils.showShort("当前弹幕不支持发送弹幕");
+                }
+                return true;
             }
 
             @Override

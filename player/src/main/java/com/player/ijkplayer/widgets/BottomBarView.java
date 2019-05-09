@@ -1,5 +1,6 @@
 package com.player.ijkplayer.widgets;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -96,6 +97,11 @@ public class BottomBarView extends LinearLayout implements View.OnClickListener{
 
     public void setSeekCallBack(SeekBar.OnSeekBarChangeListener seekCallBack){
         mDanmakuPlayerSeek.setOnSeekBarChangeListener(seekCallBack);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void setSeekBarTouchCallBack(OnTouchListener touchListener){
+        mDanmakuPlayerSeek.setOnTouchListener(touchListener);
     }
 
     public void setCallBack(BottomBarListener listener){

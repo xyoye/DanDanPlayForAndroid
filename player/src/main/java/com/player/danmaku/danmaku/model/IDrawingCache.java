@@ -3,24 +3,24 @@ package com.player.danmaku.danmaku.model;
 
 public interface IDrawingCache<T> {
 
-    public void build(int w, int h, int density, boolean checkSizeEquals, int bitsPerPixel);
+    void build(int w, int h, int density, boolean checkSizeEquals, int bitsPerPixel);
     
-    public void erase();
+    void erase();
 
-    public T get();
+    T get();
 
-    public void destroy();
+    void destroy();
 
-    public int size();
+    int size();
     
-    public int width();
+    int width();
     
-    public int height();
+    int height();
     
-    public boolean hasReferences();
+    boolean hasReferences();
     
-    public void increaseReference();
+    void increaseReference();
     
-    public void decreaseReference();
+    void decreaseReference();
 
 }

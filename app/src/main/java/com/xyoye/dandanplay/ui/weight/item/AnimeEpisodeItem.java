@@ -53,7 +53,7 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
         String[] infoArray = info.split("\\s");
         if (infoArray.length > 1) {
             episodeNumber.setText(infoArray[0]);
-            String title = info.substring(infoArray[0].length() + 1, info.length());
+            String title = info.substring(infoArray[0].length() + 1);
             episodeTitle.setText(title);
         } else if (infoArray.length == 1) {
             episodeTitle.setText(infoArray[0]);

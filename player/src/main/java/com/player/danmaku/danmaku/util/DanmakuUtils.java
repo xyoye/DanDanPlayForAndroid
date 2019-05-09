@@ -119,10 +119,7 @@ public class DanmakuUtils {
         if (obj1.text == obj2.text) {
             return true;
         }
-        if (obj1.text != null && obj1.text.equals(obj2.text)) {
-            return true;
-        }
-        return false;
+        return obj1.text != null && obj1.text.equals(obj2.text);
     }
 
     public final static int compare(BaseDanmaku obj1, BaseDanmaku obj2) {

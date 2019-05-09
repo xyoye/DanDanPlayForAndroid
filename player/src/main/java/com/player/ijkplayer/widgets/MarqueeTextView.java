@@ -2,13 +2,12 @@ package com.player.ijkplayer.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 /**
- * Created by Rukey7 on 2016/11/14.
+ * Created by xyoye on 2019/5/9
  * 跑马灯TextView
  */
-public class MarqueeTextView extends TextView {
+public class MarqueeTextView extends android.support.v7.widget.AppCompatTextView {
 
     public MarqueeTextView(Context context) {
         super(context);

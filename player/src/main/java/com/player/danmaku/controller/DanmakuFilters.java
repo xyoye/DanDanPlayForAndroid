@@ -134,8 +134,7 @@ public class DanmakuFilters {
         }
 
         public void disableType(Integer type) {
-            if (mFilterTypes.contains(type))
-                mFilterTypes.remove(type);
+            mFilterTypes.remove(type);
         }
 
         @Override
@@ -250,10 +249,7 @@ public class DanmakuFilters {
             }
 
             long elapsedTime = SystemClock.uptimeMillis() - timer.currMillisecond;
-            if (elapsedTime >= mMaxTime) {
-                return true;
-            }
-            return false;
+            return elapsedTime >= mMaxTime;
         }
 
         @Override

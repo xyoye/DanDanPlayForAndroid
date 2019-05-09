@@ -271,7 +271,7 @@ public class HTTPPacket
 					//contentLen = Long.parseLong(new String(chunkSizeLine.getBytes(), 0, chunkSizeLine.length()-2), 16);
 					contentLen = (chunkSizeLine != null) ? Long.parseLong(chunkSizeLine.trim(), 16) : 0;
 				}
-				catch (Exception e) {};
+				catch (Exception e) {}
 			}
 			else{
 				//获取文件的长度
@@ -331,7 +331,7 @@ public class HTTPPacket
 					}
 					catch (Exception e) {
 						contentLen = 0;
-					};
+					}
 				}
 				else{
 					contentLen = 0;
@@ -419,7 +419,7 @@ public class HTTPPacket
 	/** 判断firstLine的长度，如果大于0就返回true，否则返回false */
 	public boolean hasFirstLine()
 	{
-		return (0 < firstLine.length()) ? true : false;
+		return 0 < firstLine.length();
 	}
 	
 	////////////////////////////////////////////////
@@ -480,7 +480,7 @@ public class HTTPPacket
 	/** 判断名字为name的值的消息头是否存在 有此消息头返回true，否则返回false */
 	public boolean hasHeader(String name)
 	{
-		return (getHeader(name) != null) ? true : false;
+		return getHeader(name) != null;
 	}
 
 	/** 如果httpHeaderList中有HTTPHeader的名字与name相同则设置value的值
@@ -558,7 +558,7 @@ public class HTTPPacket
 	{
 		String headerValue = getHeaderValue(name);
 		if (headerValue.startsWith(startWidth) == true){
-			headerValue = headerValue.substring(1, headerValue.length());
+			headerValue = headerValue.substring(1);
 		}
 		if (headerValue.endsWith(endWidth) == true){
 			headerValue = headerValue.substring(0, headerValue.length()-1);
@@ -685,7 +685,7 @@ public class HTTPPacket
 	
 	public boolean hasContent()
 	{
-		return (content.length > 0) ? true : false;
+		return content.length > 0;
 	}
 
 	////////////////////////////////////////////////
@@ -710,7 +710,7 @@ public class HTTPPacket
 	/** 判断 contentInput 是否为null，不为null返回true，为null返回false*/
 	public boolean hasContentInputStream()
 	{
-		return (contentInput != null) ? true : false;
+		return contentInput != null;
 	}
 
 	////////////////////////////////////////////////
@@ -873,7 +873,7 @@ public class HTTPPacket
 		
 		try
 		{
-			String str[] = rangeLine.split(" |=|-|/");
+			String str[] = rangeLine.split("[ =\\-/]");
 			
 			if(2 <= str.length){
 				range[0] = Long.parseLong(str[1]);

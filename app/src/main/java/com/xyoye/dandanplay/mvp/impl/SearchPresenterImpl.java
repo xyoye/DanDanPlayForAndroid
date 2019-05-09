@@ -196,7 +196,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
             public void onSuccess(ResponseBody responseBody) {
                 String downloadPath = getView().getDownloadFolder();
                 downloadPath += Constants.DefaultConfig.torrentFolder;
-                downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
+                downloadPath += "/" + magnet.substring(20) +".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
                 getView().hideLoading();
                 getView().downloadTorrentOver(downloadPath, magnet);
@@ -215,14 +215,14 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     private String isTorrentExist(String magnet){
         String downloadPath = getView().getDownloadFolder();
         downloadPath += Constants.DefaultConfig.torrentFolder;
-        downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
+        downloadPath += "/" + magnet.substring(20) +".torrent";
         File file = new File(downloadPath);
         if (file.exists()){
             return downloadPath;
         } else{
             downloadPath = AppConfig.getInstance().getDownloadFolder();
             downloadPath +=  Constants.DefaultConfig.torrentFolder;
-            downloadPath += "/" + magnet.substring(20, magnet.length()) +".torrent";
+            downloadPath += "/" + magnet.substring(20) +".torrent";
             if (file.exists())
                 return downloadPath;
             else

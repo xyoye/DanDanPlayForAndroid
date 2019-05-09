@@ -92,11 +92,8 @@ public class HTTPHeader
 	/** 判断消息头的名字是否为null或空字符串，是返回false，否则返回true */
 	public boolean hasName()
 	{
-		if (name == null ||  name.length() <= 0){
-			return false;
-		}
-		return true;
-	}
+        return name != null && name.length() > 0;
+    }
 	
 	////////////////////////////////////////////////
 	//	static methods

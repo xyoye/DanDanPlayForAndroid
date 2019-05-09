@@ -16,6 +16,7 @@
 
 package com.player.danmaku.ui.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -350,7 +351,8 @@ public class DanmakuSurfaceView extends SurfaceView implements IDanmakuView, IDa
         handler.obtainMessage(DrawHandler.START, postion).sendToTarget();
     }
 
-	@Override
+	@SuppressLint("ClickableViewAccessibility")
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean isEventConsumed = mTouchHelper.onTouchEvent(event);
         if (!isEventConsumed) {

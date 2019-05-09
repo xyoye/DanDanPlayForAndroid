@@ -72,7 +72,6 @@ public class CommonUtils {
         long seconds = (mss % (1000 * 60)) / 1000;
         StringBuilder stringBuilder=new StringBuilder();
         if (hours == 0){
-            stringBuilder.append("");
         } else{
             if (hours < 10)
                 stringBuilder.append("0").append(String.valueOf(hours)).append(":");
@@ -244,7 +243,7 @@ public class CommonUtils {
      * 判断url
      */
     public static boolean isUrl(String str){
-        String regex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\\/])+$";
+        String regex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~/])+$";
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(str).matches();
     }

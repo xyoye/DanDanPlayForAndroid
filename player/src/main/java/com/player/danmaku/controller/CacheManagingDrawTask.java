@@ -29,6 +29,7 @@ import com.player.danmaku.danmaku.model.IDrawingCache;
 import com.player.danmaku.danmaku.model.android.CachingPolicy;
 import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.model.android.DanmakuContext.DanmakuConfigTag;
+import com.player.danmaku.danmaku.model.android.DanmakuFactory;
 import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.model.android.DrawingCache;
 import com.player.danmaku.danmaku.model.android.DrawingCachePoolManager;
@@ -819,7 +820,7 @@ public class CacheManagingDrawTask extends DrawTask {
                         buildCache(item, false);
                         if (!repositioned) {
                             long consumingTime = SystemClock.uptimeMillis() - startTime;
-                            if (consumingTime >= mContext.mDanmakuFactory.COMMON_DANMAKU_DURATION * mScreenSize) {
+                            if (consumingTime >= DanmakuFactory.COMMON_DANMAKU_DURATION * mScreenSize) {
 //                            message = "break at consumingTime out:" + consumingTime;
                                 return ACTION_BREAK;
                             }

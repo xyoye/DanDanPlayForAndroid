@@ -426,10 +426,8 @@ public class HTTPRequest extends HTTPPacket
 		if (isKeepAliveConnection() == true)
 			return true;
 		String httpVer = getHTTPVersion();
-		boolean isHTTP10 = (0 < httpVer.indexOf("1.0")) ? true : false;
-		if (isHTTP10 == true)
-			return false;
-		return true;
+		boolean isHTTP10 = 0 < httpVer.indexOf("1.0");
+		return isHTTP10 != true;
 	}
 
 	// //////////////////////////////////////////////

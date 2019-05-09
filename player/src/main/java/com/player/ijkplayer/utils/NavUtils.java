@@ -1,5 +1,6 @@
 package com.player.ijkplayer.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -37,6 +38,7 @@ public final class NavUtils {
      * @param context
      * @return
      */
+    @SuppressLint("PrivateApi")
     public static boolean checkDeviceHasNavigationBar(Context context) {
         boolean hasNavigationBar = false;
         Resources rs = context.getResources();

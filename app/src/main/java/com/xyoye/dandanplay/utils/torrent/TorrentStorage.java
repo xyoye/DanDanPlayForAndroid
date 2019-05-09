@@ -66,7 +66,7 @@ public class TorrentStorage implements FileStorageTorrent {
     }
 
     @Override
-    public void remove(String hash, String path) throws Exception {
+    public void remove(String hash, String path) {
         Torrent torrent;
         synchronized (hashs) {
             torrent = hashs.get(hash);
@@ -81,7 +81,7 @@ public class TorrentStorage implements FileStorageTorrent {
     }
 
     @Override
-    public void rename(String hash, String s1, String s2) throws Exception {
+    public void rename(String hash, String s1, String s2) {
         Torrent torrent;
         synchronized (hashs) {
             torrent = hashs.get(hash);

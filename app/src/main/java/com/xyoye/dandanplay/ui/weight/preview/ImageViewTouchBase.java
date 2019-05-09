@@ -30,7 +30,7 @@ public abstract class ImageViewTouchBase extends android.support.v7.widget.AppCo
 		 * @param drawable
 		 */
 		void onDrawableChanged(Drawable drawable);
-	};
+	}
 
 	public interface OnLayoutChangeListener {
 		/**
@@ -42,7 +42,7 @@ public abstract class ImageViewTouchBase extends android.support.v7.widget.AppCo
 		 * @param bottom
 		 */
 		void onLayoutChanged(boolean changed, int left, int top, int right, int bottom);
-	};
+	}
 
 	/**
 	 * Use this to change the {@link ImageViewTouchBase#setDisplayType(DisplayType)} of
@@ -57,7 +57,7 @@ public abstract class ImageViewTouchBase extends android.support.v7.widget.AppCo
 		FIT_TO_SCREEN,
 		/** Image will be scaled only if bigger than the bounds of this view */
 		FIT_IF_BIGGER
-	};
+	}
 
 
 	public static final String LOG_TAG = "ImageViewTouchBase";

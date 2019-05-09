@@ -345,7 +345,7 @@ public class FormatASS implements TimedTextFileFormat {
 			line+=",,0000,0000,0000,,";
 
 			//we add the caption text with \N as line breaks  and clean of XML
-			line +=  current.content.replaceAll("<br />","\\\\N").replaceAll("\\<.*?\\>", "");
+			line +=  current.content.replaceAll("<br />","\\\\N").replaceAll("<.*?>", "");
 			//and we add the caption line
 			file.add(index++,line);
 		}
@@ -526,7 +526,7 @@ public class FormatASS implements TimedTextFileFormat {
 				String captionText = line[i];
 				newCaption.rawContent = captionText;
 				//text is cleaned before being inserted into the caption
-				newCaption.content = captionText.replaceAll("\\{.*?\\}", "").replace("\n", "<br />").replace("\\N", "<br />");
+				newCaption.content = captionText.replaceAll("\\{.*?}", "").replace("\n", "<br />").replace("\\N", "<br />");
 			}
 		}
 

@@ -50,7 +50,7 @@ public class FormatTTML implements TimedTextFileFormat {
 		return parseFile(file, null);
 	}
 
-	public TimedTextObject parseFile(File file, Charset isCharset) throws IOException, FatalParsingException {
+	public TimedTextObject parseFile(File file, Charset isCharset) throws FatalParsingException {
 
 		TimedTextObject tto = new TimedTextObject();
 		tto.fileName = file.getName();
@@ -401,7 +401,7 @@ public class FormatTTML implements TimedTextFileFormat {
 			if (color.startsWith("rgba"))
 					alpha = true;
 			try {
-				values = color.split("(")[1].split(",");
+				values = color.split("\\(")[1].split(",");
 				int r,g,b,a=255;
 				r = Integer.parseInt(values[0]);
 				g = Integer.parseInt(values[1]);

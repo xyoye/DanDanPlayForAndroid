@@ -113,9 +113,11 @@ public class HTTPStatus
 		setReasonPhrase(reason);
 	}
 
-	/** 创建一个 HTTPStatus
+	/**
+	 * 创建一个 HTTPStatus
+	 * 传入一个状态行 设置 状态
 	 * @param
-	 * 传入一个状态行 设置 状态 */
+	 * */
 	public HTTPStatus(String lineStr)
 	{
 		set(lineStr);
@@ -177,11 +179,8 @@ public class HTTPStatus
 	 */
 	final public static boolean isSuccessful(int statCode)
 	{
-		if (200 <= statCode && statCode < 300){
-			return true;
-		}
-		return false;
-	}
+        return 200 <= statCode && statCode < 300;
+    }
 	
 	public boolean isSuccessful()
 	{

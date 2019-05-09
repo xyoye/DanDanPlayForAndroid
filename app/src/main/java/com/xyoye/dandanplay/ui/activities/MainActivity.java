@@ -78,7 +78,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         }
         navigationView.setSelectedItemId(R.id.navigation_play);
 
-        initTracker();
+        //延迟500ms，防止与playFragment请求权限回调冲突
+        navigationView.postDelayed(this::initTracker, 500);
 
         backupBlock();
     }

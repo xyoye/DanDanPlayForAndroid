@@ -1,5 +1,6 @@
 package com.player.ijkplayer.utils;
 
+import android.annotation.SuppressLint;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
@@ -25,6 +26,7 @@ public final class CommonPlayerUtils {
     /**
      * 时长格式化显示
      */
+    @SuppressLint("DefaultLocale")
     public static String generateTime(long time) {
         int totalSeconds = (int) (time / 1000);
         int seconds = totalSeconds % 60;
@@ -52,8 +54,8 @@ public final class CommonPlayerUtils {
 
     /**
      * 获取格式化当前时间
-     * @return
      */
+    @SuppressLint("SimpleDateFormat")
     public static String getCurFormatTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(new Date(System.currentTimeMillis()));

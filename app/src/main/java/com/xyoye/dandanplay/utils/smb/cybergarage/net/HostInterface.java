@@ -76,7 +76,7 @@ public class HostInterface
 	/** 判断是否 已分配的接口 */
 	private final static boolean hasAssignedInterface()
 	{
-		return (0 < ifAddress.length()) ? true : false;
+		return 0 < ifAddress.length();
 	}
 
 	// //////////////////////////////////////////////
@@ -106,10 +106,7 @@ public class HostInterface
 		}
 		if (USE_ONLY_IPV6_ADDR == true)
 		{
-			if (addr instanceof Inet4Address)
-			{
-				return false;
-			}
+            return !(addr instanceof Inet4Address);
 		}
 		return true;
 	}
@@ -157,8 +154,7 @@ public class HostInterface
 		{
 			Debug.warning(e);
 		}
-		;
-		return nHostAddrs;
+        return nHostAddrs;
 	}
 
 	/**
@@ -270,8 +266,7 @@ public class HostInterface
 		catch (Exception e)
 		{
 		}
-		;
-		return "";
+        return "";
 	}
 
 	// //////////////////////////////////////////////
@@ -284,12 +279,8 @@ public class HostInterface
 		try
 		{
 			InetAddress addr = InetAddress.getByName(host);
-			if (addr instanceof Inet6Address)
-			{
-				return true;
-			}
-			return false;
-		}
+            return addr instanceof Inet6Address;
+        }
 		catch (Exception e)
 		{
 		}
@@ -302,12 +293,8 @@ public class HostInterface
 		try
 		{
 			InetAddress addr = InetAddress.getByName(host);
-			if (addr instanceof Inet4Address)
-			{
-				return true;
-			}
-			return false;
-		}
+            return addr instanceof Inet4Address;
+        }
 		catch (Exception e)
 		{
 		}

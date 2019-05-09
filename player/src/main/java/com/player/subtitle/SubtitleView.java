@@ -257,7 +257,7 @@ public class SubtitleView extends LinearLayout implements ISubtitleControl, Subt
                 for(Integer key1 : temp.keySet()) {
                     Caption caption = temp.get(key1);
                     //开始时间小于当前时间，结束时间大于当前时间
-                    if (key >= caption.start.getMseconds() && key <= caption.end.getMseconds()){;
+                    if (key >= caption.start.getMseconds() && key <= caption.end.getMseconds()){
                         return caption;
                     }
                     //减少查找时间，从开始大于当前时间开始break

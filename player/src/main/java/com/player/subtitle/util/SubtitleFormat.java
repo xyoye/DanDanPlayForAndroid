@@ -10,7 +10,7 @@ public class SubtitleFormat {
         if(path.contains(".")){
             TimedTextFileFormat fileFormat = null;
             int end = path.lastIndexOf(".");
-            String ext = path.substring(end+1, path.length());
+            String ext = path.substring(end+1);
             switch (ext.toUpperCase()){
                 case "ASS":
                     fileFormat = new FormatASS();

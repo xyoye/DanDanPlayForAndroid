@@ -101,7 +101,7 @@ public class CommonEditTextDialog extends Dialog {
                         int lastEx = link.lastIndexOf("/") + 1;
                         String title = link;
                         if (lastEx < link.length())
-                            title = link.substring(lastEx, link.length());
+                            title = link.substring(lastEx);
 //                        Intent intent = new Intent(getContext(), PlayerActivity.class);
 //                        intent.putExtra("title", title);
 //                        intent.putExtra("path", link);

@@ -46,13 +46,13 @@ public class DrawHandler extends Handler {
     private FrameCallback mFrameCallback;
 
     public interface Callback {
-        public void prepared();
+        void prepared();
 
-        public void updateTimer(DanmakuTimer timer);
+        void updateTimer(DanmakuTimer timer);
 
-        public void danmakuShown(BaseDanmaku danmaku);
+        void danmakuShown(BaseDanmaku danmaku);
 
-        public void drawingFinished();
+        void drawingFinished();
 
     }
 
@@ -465,7 +465,7 @@ public class DrawHandler extends Handler {
         public void doFrame(long frameTimeNanos) {
             sendEmptyMessage(UPDATE);
         }
-    };
+    }
 
     @TargetApi(16)
     private void updateInChoreographer() {

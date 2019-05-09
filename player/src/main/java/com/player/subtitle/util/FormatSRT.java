@@ -88,7 +88,7 @@ public class FormatSRT implements TimedTextFileFormat {
 							lineCounter++;
 							line = br.readLine().trim();
 							String start = line.substring(0, 12);
-							String end = line.substring(line.length()-12, line.length());
+							String end = line.substring(line.length()-12);
 							Time time = new Time("hh:mm:ss,ms",start);
 							caption.start = time;
 							time = new Time("hh:mm:ss,ms",end);
@@ -202,7 +202,7 @@ public class FormatSRT implements TimedTextFileFormat {
 		//clean XML
 		for (int i = 0; i < lines.length; i++){
 			//this will destroy all remaining XML tags
-			lines[i] = lines[i].replaceAll("\\<.*?\\>", "");
+			lines[i] = lines[i].replaceAll("<.*?>", "");
 		}
 		return lines;
 	}

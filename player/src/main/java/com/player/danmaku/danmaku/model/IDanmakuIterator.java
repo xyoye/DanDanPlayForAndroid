@@ -2,12 +2,12 @@ package com.player.danmaku.danmaku.model;
 
 public interface IDanmakuIterator {
 
-    public BaseDanmaku next();
+    BaseDanmaku next();
     
-    public boolean hasNext();
+    boolean hasNext();
     
-    public void reset();
+    void reset();
 
-    public void remove();
+    void remove();
     
 }

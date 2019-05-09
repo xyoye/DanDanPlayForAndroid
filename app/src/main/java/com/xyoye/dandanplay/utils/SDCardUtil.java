@@ -18,45 +18,45 @@ import java.io.OutputStream;
 public class SDCardUtil {
 
     //判断文件是否在sd卡中存在，并同时创建不在的文件夹，返回创建的文件夹或者文件路径。
-    public static DocumentFile isFileExist(Context context, String rootPath, String path){
+    public static DocumentFile isFileExist(Context context, String rootPath, String path) {
         String fileName = "";
         //获取文件名
         int end = path.lastIndexOf("/");
-        if (end != -1){
-            fileName = path.substring(end+1, path.length());
+        if (end != -1) {
+            fileName = path.substring(end + 1);
         }
         //获取需要查询的文件夹
         if (path.startsWith(rootPath))
-            path = path.substring(rootPath.length(), path.length());
+            path = path.substring(rootPath.length());
         //去除开头的“/”
         if (path.startsWith("/"))
-            path = path.substring(1, path.length());
+            path = path.substring(1);
         DocumentFile rootFile = DocumentFile.fromTreeUri(context, Uri.parse(rootPath));
         String[] folderFiles = path.split("/");
-        for(int i=0; i<folderFiles.length; i++){
+        for (int i = 0; i < folderFiles.length; i++) {
             String folder = folderFiles[i];
             DocumentFile folderFile = getFolderDocumentFile(rootFile, folder);
-            if (folderFile == null){
-                if (folder.equals(fileName) && i == folderFiles.length-1){
+            if (folderFile == null) {
+                if (folder.equals(fileName) && i == folderFiles.length - 1) {
                     rootFile = rootFile.createFile("*/torrent", fileName);
                     break;
-                }else {
+                } else {
                     rootFile = rootFile.createDirectory(folder);
                 }
-            }else {
+            } else {
                 rootFile = folderFile;
-                if(folderFile.isFile())
+                if (folderFile.isFile())
                     break;
             }
         }
         return rootFile;
     }
 
-    private static DocumentFile getFolderDocumentFile(DocumentFile documentFiles, String folder){
-        for (DocumentFile documentFile : documentFiles.listFiles()){
-            if (documentFile.isDirectory() && documentFile.getName().equals(folder)){
+    private static DocumentFile getFolderDocumentFile(DocumentFile documentFiles, String folder) {
+        for (DocumentFile documentFile : documentFiles.listFiles()) {
+            if (documentFile.isDirectory() && documentFile.getName().equals(folder)) {
                 return documentFile;
-            }else if (documentFile.isFile() && folder.contains(".")){
+            } else if (documentFile.isFile() && folder.contains(".")) {
                 if (documentFile.getName().equals(folder))
                     return documentFile;
             }
@@ -64,8 +64,8 @@ public class SDCardUtil {
         return null;
     }
 
-    public static String createNewFile(Context context, DocumentFile torrentFile, InputStream inputStream){
-        if (torrentFile != null){
+    public static String createNewFile(Context context, DocumentFile torrentFile, InputStream inputStream) {
+        if (torrentFile != null) {
             try {
                 OutputStream outputStream = context.getContentResolver().openOutputStream(torrentFile.getUri());
                 if (outputStream == null) return "";

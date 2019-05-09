@@ -266,10 +266,8 @@ public class FormatSCC implements TimedTextFileFormat {
 
 										} else if ((word&0x1770)==0x1120){
 											//it is a midrow style code
-											if((word&0x001)==1)
-												//it is underlined
-												underlined = true;
-											else underlined = false;
+											//it is underlined
+											underlined = (word & 0x001) == 1;
 											//setting style for text
 											word&=0x000e;
 											word = (short)(word>>1);
@@ -354,7 +352,7 @@ public class FormatSCC implements TimedTextFileFormat {
 				
 				if(newCaption != null) {
 					//we save any last shown caption
-					newCaption.end = new Time("h:m:s:f/fps", "99:59:59:29/29.97");;
+					newCaption.end = new Time("h:m:s:f/fps", "99:59:59:29/29.97");
 				}
 				if (newCaption.start != null){
 					//we save the caption

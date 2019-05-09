@@ -130,7 +130,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
         adapter.setData(beans);
-        hideLoading();
         if (refresh != null)
             refresh.setRefreshing(false);
     }

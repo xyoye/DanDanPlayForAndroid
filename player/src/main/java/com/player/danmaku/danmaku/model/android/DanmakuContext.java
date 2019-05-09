@@ -769,8 +769,8 @@ public class DanmakuContext implements Cloneable {
     }
     
     public interface ConfigChangedCallback {
-        public boolean onDanmakuConfigChanged(DanmakuContext config, DanmakuConfigTag tag,
-                                              Object... value);
+        boolean onDanmakuConfigChanged(DanmakuContext config, DanmakuConfigTag tag,
+                                       Object... value);
     }
 
     public void registerConfigChangedCallback(ConfigChangedCallback listener) {

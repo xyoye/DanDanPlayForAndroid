@@ -21,8 +21,8 @@ public interface IDataSource<T> {
     String SCHEME_HTTPS_TAG = "https";
     String SCHEME_FILE_TAG = "file";
     
-	public T data();
+	T data();
 	
-    public void release();
+    void release();
 
 }

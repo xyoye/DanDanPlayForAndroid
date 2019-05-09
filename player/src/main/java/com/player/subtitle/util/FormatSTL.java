@@ -157,8 +157,8 @@ public class FormatSTL implements TimedTextFileFormat {
 				//TCI : Time Code In 5..8
 				String startTime = ""+ttiBlock[5]+":"+ttiBlock[6]+":"+ttiBlock[7]+":"+ttiBlock[8];
 				//TCO : Time Code Out 9..12
-				String endTime = ""+ttiBlock[9]+":"+ttiBlock[10]+":"+ttiBlock[11]+":"+ttiBlock[12];;
-				//VP : Vertical Position 13
+				String endTime = ""+ttiBlock[9]+":"+ttiBlock[10]+":"+ttiBlock[11]+":"+ttiBlock[12];
+                //VP : Vertical Position 13
 				//JC : Justification Code 14
 				int justification = ttiBlock[14];
 				//0:none, 1:left, 2:centered, 3:right
@@ -294,7 +294,7 @@ public class FormatSTL implements TimedTextFileFormat {
 			//we clean XML, span would be implemented here
 			int pos = 16;
 			for (int i = 0; i < lines.length; i++) 
-				lines[i] = lines[i].replaceAll("\\<.*?\\>", "");
+				lines[i] = lines[i].replaceAll("<.*?>", "");
 			//we code the style
 			if (currentC.style != null){
 				Style style = currentC.style;

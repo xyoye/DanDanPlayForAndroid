@@ -43,7 +43,6 @@ public class CachingPolicy {
      *
      * Note: as of {@link android.os.Build.VERSION_CODES#KITKAT},
      * any bitmap created with this configuration will be created
-     * using {@link #ARGB_8888} instead.
      */
     public int bitsPerPixelOfCache = BMP_BPP_ARGB_4444;
 
@@ -54,9 +53,6 @@ public class CachingPolicy {
 
     /**
      * 回收周期
-     *
-     * @see CACHE_PERIOD_AUTO 0: 默认
-     * @see CACHE_PERIOD_NOT_RECYCLE -1： 不回收
      */
     public long periodOfRecycle = CACHE_PERIOD_AUTO;
 

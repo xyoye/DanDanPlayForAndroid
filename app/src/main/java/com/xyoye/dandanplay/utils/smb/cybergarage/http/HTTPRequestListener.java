@@ -19,5 +19,5 @@ package com.xyoye.dandanplay.utils.smb.cybergarage.http;
 public interface HTTPRequestListener
 {
 	/** http请求接收 */
-	public void httpRequestRecieved(HTTPRequest httpReq);
+    void httpRequestRecieved(HTTPRequest httpReq);
 }

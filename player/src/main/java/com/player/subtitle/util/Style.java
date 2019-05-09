@@ -100,17 +100,17 @@ public class Style {
 			//hex format from SSA
 			StringBuilder sb = new StringBuilder();
 			sb.append(value.substring(6));
-			sb.append(value.substring(4,5));
-			sb.append(value.substring(2,3));
+			sb.append(value, 4, 5);
+			sb.append(value, 2, 3);
 			sb.append("ff");
 			color = sb.toString();
 		} else if (format.equalsIgnoreCase("&HAABBGGRR")){
 			//hex format from ASS
 			StringBuilder sb = new StringBuilder();
 			sb.append(value.substring(8));
-			sb.append(value.substring(6,7));
-			sb.append(value.substring(4,5));
-			sb.append(value.substring(2,3));
+			sb.append(value, 6, 7);
+			sb.append(value, 4, 5);
+			sb.append(value, 2, 3);
 			color = sb.toString();
 		} else if (format.equalsIgnoreCase("decimalCodedBBGGRR")){
 			//normal format from SSA

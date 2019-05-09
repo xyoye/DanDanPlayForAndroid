@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 /**
- * These objects can (should) only be created through the implementations of parseFile() in the {@link subtitleFile.TimedTextFileFormat} interface
+ * These objects can (should) only be created through the implementations of parseFile() in the {@link } interface
  * They are an object representation of a subtitle file and contain all the captions and associated styles.
  * <br><br>
  * Copyright (c) 2012 J. David Requejo <br>

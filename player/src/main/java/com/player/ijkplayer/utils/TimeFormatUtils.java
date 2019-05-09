@@ -1,5 +1,7 @@
 package com.player.ijkplayer.utils;
 
+import android.annotation.SuppressLint;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,6 +19,7 @@ public final class TimeFormatUtils {
     /**
      * 时长格式化显示
      */
+    @SuppressLint("DefaultLocale")
     public static String generateTime(long time) {
         int totalSeconds = (int) (time / 1000);
         int seconds = totalSeconds % 60;

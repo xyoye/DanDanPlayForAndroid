@@ -64,7 +64,7 @@ public class ThreadCore implements Runnable
 	/** 判断当前运行的线程是否 mThreadObject 对象  是返回true 否则返回false*/
 	public boolean isRunnable()
 	{
-		return (Thread.currentThread() == getThreadObject()) ? true : false;
+		return Thread.currentThread() == getThreadObject();
 	}
 
 	/** 停止线程并设置 mThreadObject 为null*/

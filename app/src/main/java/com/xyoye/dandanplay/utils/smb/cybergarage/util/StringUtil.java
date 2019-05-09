@@ -22,10 +22,8 @@ public final class StringUtil
 	{
 		if (value == null)
 			return false;
-		if (value.length() <= 0)
-			return false;
-		return true;
-	}
+        return value.length() > 0;
+    }
 	
 	public final static int toInteger(String value)
 	{
@@ -112,7 +110,7 @@ public final class StringUtil
 			String buf = trimStr;
 			return buf;
 		}
-		String trimStr2 = trimStr.substring(spIdx, trimStr.length());
+		String trimStr2 = trimStr.substring(spIdx);
 		spIdx = findLastNotOf(trimStr2, trimChars);
 		if (spIdx < 0) {
 			String buf = trimStr2;

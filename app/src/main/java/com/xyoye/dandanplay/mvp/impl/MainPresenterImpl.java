@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -254,6 +255,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
      * 备份屏蔽数据
      */
     @Override
+    @SuppressLint("SdCardPath")
     public void backupBlockData(){
         try {
             //query

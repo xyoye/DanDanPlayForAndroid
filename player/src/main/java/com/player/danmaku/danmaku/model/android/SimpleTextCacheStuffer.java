@@ -89,8 +89,8 @@ public class SimpleTextCacheStuffer extends BaseCacheStuffer {
         left += danmaku.padding;
         top += danmaku.padding;
         if (danmaku.borderColor != 0) {
-            left += displayerConfig.BORDER_WIDTH;
-            top += displayerConfig.BORDER_WIDTH;
+            left += AndroidDisplayer.DisplayerConfig.BORDER_WIDTH;
+            top += AndroidDisplayer.DisplayerConfig.BORDER_WIDTH;
         }
 
         displayerConfig.definePaintParams(fromWorkerThread);

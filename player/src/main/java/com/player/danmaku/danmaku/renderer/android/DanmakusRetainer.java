@@ -91,15 +91,15 @@ public class DanmakusRetainer {
 
     public interface Verifier {
 
-        public boolean skipLayout(BaseDanmaku danmaku, float fixedTop, int lines, boolean willHit);
+        boolean skipLayout(BaseDanmaku danmaku, float fixedTop, int lines, boolean willHit);
 
     }
 
     public interface IDanmakusRetainer {
 
-        public void fix(BaseDanmaku drawItem, IDisplayer disp, Verifier verifier);
+        void fix(BaseDanmaku drawItem, IDisplayer disp, Verifier verifier);
 
-        public void clear();
+        void clear();
 
     }
 
@@ -278,10 +278,7 @@ public class DanmakusRetainer {
 
         protected boolean isOutVerticalEdge(boolean overwriteInsert, BaseDanmaku drawItem,
                                             IDisplayer disp, float topPos, BaseDanmaku firstItem, BaseDanmaku lastItem) {
-            if (topPos < disp.getAllMarginTop() || (firstItem != null && firstItem.getTop() > 0) || topPos + drawItem.paintHeight > disp.getHeight()) {
-                return true;
-            }
-            return false;
+            return topPos < disp.getAllMarginTop() || (firstItem != null && firstItem.getTop() > 0) || topPos + drawItem.paintHeight > disp.getHeight();
         }
 
         @Override
@@ -297,10 +294,7 @@ public class DanmakusRetainer {
         @Override
         protected boolean isOutVerticalEdge(boolean overwriteInsert, BaseDanmaku drawItem,
                                             IDisplayer disp, float topPos, BaseDanmaku firstItem, BaseDanmaku lastItem) {
-            if (topPos + drawItem.paintHeight > disp.getHeight()) {
-                return true;
-            }
-            return false;
+            return topPos + drawItem.paintHeight > disp.getHeight();
         }
 
     }
@@ -435,10 +429,7 @@ public class DanmakusRetainer {
 
         protected boolean isOutVerticalEdge(boolean overwriteInsert, BaseDanmaku drawItem,
                                             IDisplayer disp, float topPos, BaseDanmaku firstItem, BaseDanmaku lastItem) {
-            if (topPos < disp.getAllMarginTop() || (firstItem != null && firstItem.getBottom() != disp.getHeight())) {
-                return true;
-            }
-            return false;
+            return topPos < disp.getAllMarginTop() || (firstItem != null && firstItem.getBottom() != disp.getHeight());
         }
 
         @Override

@@ -69,9 +69,9 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
         MagnetBean.searchMagnet(anime, typeId, subGroundId, new CommOtherDataObserver<MagnetBean>(getLifeful()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
-                if (magnetBean != null && magnetBean.getResources() != null){
+                if (magnetBean != null && magnetBean.getResources() != null) {
                     getView().hideLoading();
-                    for (MagnetBean.ResourcesBean bean : magnetBean.getResources()){
+                    for (MagnetBean.ResourcesBean bean : magnetBean.getResources()) {
                         bean.setEpisodeId(getView().getEpisodeId());
                     }
                     getView().refreshAdapter(magnetBean.getResources());
@@ -92,8 +92,8 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
         this.savePath = AppConfig.getInstance().getDownloadFolder() + animeTitle;
 
         //判断是否已经下载过该种子
-        String donePath = isDoneTorrent(savePath , magnet);
-        if (!StringUtils.isEmpty(donePath)){
+        String donePath = isDoneTorrent(savePath, magnet);
+        if (!StringUtils.isEmpty(donePath)) {
             getView().downloadTorrentOver(donePath, magnet);
             return;
         }
@@ -103,7 +103,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
             @Override
             public void onSuccess(ResponseBody responseBody) {
                 SearchMagnetPresenterImpl.this.savePath += "/torrent/";
-                SearchMagnetPresenterImpl.this.savePath += magnet.substring(20, magnet.length()) +".torrent";
+                SearchMagnetPresenterImpl.this.savePath += magnet.substring(20) + ".torrent";
                 FileIOUtils.writeFileFromIS(SearchMagnetPresenterImpl.this.savePath, responseBody.byteStream());
                 getView().hideLoading();
                 getView().downloadTorrentOver(SearchMagnetPresenterImpl.this.savePath, magnet);
@@ -118,8 +118,8 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
         }, new NetworkConsumer());
     }
 
-    private String isDoneTorrent(String savePath, String magnet){
-        String path = savePath + "/torrent/" + magnet.substring(20, magnet.length()) +".torrent";
+    private String isDoneTorrent(String savePath, String magnet) {
+        String path = savePath + "/torrent/" + magnet.substring(20) + ".torrent";
         File file = new File(path);
         if (file.exists())
             return path;
@@ -132,7 +132,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
         List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM anime_type", new String[]{});
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int typeId = cursor.getInt(1);
             String typeName = cursor.getString(2);
             typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
@@ -146,7 +146,7 @@ public class SearchMagnetPresenterImpl extends BaseMvpPresenterImpl<SearchMagnet
         List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM subgroup", new String[]{});
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             int subgroupId = cursor.getInt(1);
             String subgroupName = cursor.getString(2);
             subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));

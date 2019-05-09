@@ -52,7 +52,7 @@ public class PatchHisDialog extends Dialog {
         setContentView(R.layout.dialog_patch_his);
         ButterKnife.bind(this);
 
-        StringBuilder his = new StringBuilder("");
+        StringBuilder his = new StringBuilder();
         if (eventList != null && eventList.size() > 0) {
             for (int i = eventList.size() - 1; i >= 0; i--) {
                 PatchFixEvent event = eventList.get(i);

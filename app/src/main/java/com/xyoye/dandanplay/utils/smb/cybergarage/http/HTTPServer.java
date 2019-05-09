@@ -140,9 +140,8 @@ public class HTTPServer implements Runnable
 
 	/**
 	 * 设置超时时间，该方法被同步锁锁住 Set the current socket timeout
-	 * 
-	 * @param longout
-	 *            new timeout
+	 *
+	 * new timeout
 	 * @since 1.8
 	 */
 	public synchronized void setTimeout(int timeout)
@@ -237,7 +236,7 @@ public class HTTPServer implements Runnable
 	/** 判断是否创建 ServerSocket 对象 */
 	public boolean isOpened()
 	{
-		return (serverSock != null) ? true : false;
+		return serverSock != null;
 	}
 
 	// //////////////////////////////////////////////

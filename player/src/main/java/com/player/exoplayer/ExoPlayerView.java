@@ -235,7 +235,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 //更新进度消息
                 case MSG_UPDATE_SEEK:
                     long pos = _setProgress();
@@ -250,8 +250,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     break;
                 //更新字幕消息
                 case MSG_UPDATE_SUBTITLE:
-                    if (topBarView.getSubtitleSettingView().isLoadSubtitle() && isShowSubtitle){
-                        long position = exoPlayer.getCurrentPosition() + (int)(topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
+                    if (topBarView.getSubtitleSettingView().isLoadSubtitle() && isShowSubtitle) {
+                        long position = exoPlayer.getCurrentPosition() + (int) (topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
                         mSubtitleView.seekTo(position);
                         msg = obtainMessage(MSG_UPDATE_SUBTITLE);
                         sendMessageDelayed(msg, 1000);
@@ -296,7 +296,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         }
     }
 
-    private void initViewBefore(Context context){
+    private void initViewBefore(Context context) {
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalArgumentException("Context must be AppCompatActivity");
         }
@@ -372,7 +372,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void initViewCallBak(){
+    private void initViewCallBak() {
         //底层框架的触摸事件
         OnTouchListener mPlayerTouchListener = (v, event) -> {
             switch (event.getAction()) {
@@ -498,14 +498,14 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 audioTrackList.clear();
                 String audioId = "";
                 String subtitleId = "";
-                for (TrackSelection selection : trackSelections.getAll()){
+                for (TrackSelection selection : trackSelections.getAll()) {
                     if (selection == null) continue;
                     Format selectionFormat = selection.getSelectedFormat();
-                    if (MimeTypes.isAudio(selectionFormat.sampleMimeType)){
+                    if (MimeTypes.isAudio(selectionFormat.sampleMimeType)) {
                         audioId = selectionFormat.id;
                         continue;
                     }
-                    if (MimeTypes.isText(selectionFormat.sampleMimeType)){
+                    if (MimeTypes.isText(selectionFormat.sampleMimeType)) {
                         subtitleId = selectionFormat.id;
                     }
                 }
@@ -513,22 +513,22 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     TrackGroup trackGroup = trackGroups.get(i);
                     if (trackGroup.length < 1) continue;
                     Format tempFormat = trackGroup.getFormat(0);
-                    if (MimeTypes.isAudio(tempFormat.sampleMimeType)){
-                        for (int j = 0; j < trackGroup.length; j++){
+                    if (MimeTypes.isAudio(tempFormat.sampleMimeType)) {
+                        for (int j = 0; j < trackGroup.length; j++) {
                             Format format = trackGroup.getFormat(j);
                             VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("音频流#"+(subtitleTrackList.size()+1)+"（"+format.language+"）");
+                            videoInfoTrack.setName("音频流#" + (subtitleTrackList.size() + 1) + "（" + format.language + "）");
                             videoInfoTrack.setStream(i);
                             videoInfoTrack.setLanguage(format.language);
                             if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
                                 videoInfoTrack.setSelect(true);
                             audioTrackList.add(videoInfoTrack);
                         }
-                    }else if (MimeTypes.isText(tempFormat.sampleMimeType)){
+                    } else if (MimeTypes.isText(tempFormat.sampleMimeType)) {
                         for (int j = 0; j < trackGroup.length; j++) {
                             Format format = trackGroup.getFormat(j);
                             VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("字幕流#"+(subtitleTrackList.size()+1)+"（"+format.language+"）");
+                            videoInfoTrack.setName("字幕流#" + (subtitleTrackList.size() + 1) + "（" + format.language + "）");
                             videoInfoTrack.setStream(i);
                             videoInfoTrack.setLanguage(format.language);
                             if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
@@ -636,18 +636,18 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             @Override
             public void removeBlock(String text) {
                 //从数据库移除
-                if (mDanmakuListener != null){
+                if (mDanmakuListener != null) {
                     mDanmakuListener.deleteBlock(text);
                 }
                 //弹幕中移除
                 mDanmakuContext.removeKeyWordBlackList(text);
-                ToastUtils.showLong("已移除“ "+ text +" ”");
+                ToastUtils.showLong("已移除“ " + text + " ”");
             }
 
             @Override
             public void addBlock(String blockText) {
                 //添加到数据库
-                if(mDanmakuListener != null){
+                if (mDanmakuListener != null) {
                     mDanmakuListener.addBlock(blockText);
                 }
                 //添加到弹幕屏蔽
@@ -687,11 +687,11 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         mIvPlayerLock.setOnClickListener(v -> _togglePlayerLock());
         mIvScreenShot.setOnClickListener(v -> {
             View view = mVideoView.getVideoSurfaceView();
-            if (view instanceof TextureView){
+            if (view instanceof TextureView) {
                 pause();
-                TextureView textureView = (TextureView)view;
+                TextureView textureView = (TextureView) view;
                 new DialogScreenShot(mAttachActivity, textureView.getBitmap()).show();
-            }else {
+            } else {
                 ToastUtils.showShort("当前渲染器不支持截屏");
             }
         });
@@ -701,7 +701,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             //关闭编辑的view
             //不在手势操作处拦截的原因是
             //在手势操作处拦截会触发view的touch事件
-            if(isEditViewVisible()){
+            if (isEditViewVisible()) {
                 hideView(HIDE_VIEW_EDIT);
                 return true;
             }
@@ -709,7 +709,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         });
     }
 
-    private void initViewAfter(){
+    private void initViewAfter() {
         //由于是根据渲染器，动态的实例化视频View，所以默认为GONE，要手动切换为VISIBLE
         mVideoView.setVisibility(VISIBLE);
         //不使用exo默认控制
@@ -730,7 +730,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 初始化弹幕项目
      */
     @SuppressLint("UseSparseArrays")
-    private void initDanmu(){
+    private void initDanmu() {
         SettingDanmuView mSettingDanmuView = topBarView.getDanmuSettingView();
         //设置禁止重叠
         Map<Integer, Boolean> overlappingEnablePair = new HashMap<>();
@@ -751,7 +751,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         //弹幕文字透明度
         mDanmakuContext.setDanmakuTransparency(mSettingDanmuView.getmDanmuTextAlpha());
         //弹幕滚动速度
-        mDanmakuContext.setScrollSpeedFactor(2.5f- mSettingDanmuView.getmDanmuSpeed());
+        mDanmakuContext.setScrollSpeedFactor(2.5f - mSettingDanmuView.getmDanmuSpeed());
         //是否显示滚动弹幕
         mDanmakuContext.setR2LDanmakuVisibility(mSettingDanmuView.isShowMobile());
         //是否显示顶部弹幕
@@ -767,7 +767,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 初始化字幕设置View
      */
-    public void initSubtitleSettingView(){
+    public void initSubtitleSettingView() {
         int subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
         int subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
         float subtitleChineseSize = (float) subtitleChineseProgress / 100 * ConvertUtils.dp2px(18);
@@ -779,15 +779,15 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
-                        if (!topBarView.getSubtitleSettingView().isLoadSubtitle() && isChecked){
+                        if (!topBarView.getSubtitleSettingView().isLoadSubtitle() && isChecked) {
                             switchView.setChecked(false);
                             Toast.makeText(getContext(), "未加载字幕源", Toast.LENGTH_LONG).show();
                         }
-                        if (isChecked){
+                        if (isChecked) {
                             isShowSubtitle = true;
                             mSubtitleView.show();
                             mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
-                        }else {
+                        } else {
                             isShowSubtitle = false;
                             mSubtitleView.hide();
                         }
@@ -796,15 +796,15 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void setSubtitleCnSize(int progress) {
                         float calcProgress = (float) progress;
-                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(18);
-                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA,textSize);
+                        float textSize = (calcProgress / 100) * ConvertUtils.dp2px(18);
+                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA, textSize);
                         PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
                     }
 
                     @Override
                     public void setInterSubtitleSize(int progress) {
                         float calcProgress = (float) progress;
-                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(40);
+                        float textSize = (calcProgress / 100) * ConvertUtils.dp2px(40);
                         mVideoView.getSubtitleView().setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
                     }
 
@@ -816,8 +816,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void setSubtitleEnSize(int progress) {
                         float calcProgress = (float) progress;
-                        float textSize = (calcProgress/100) * ConvertUtils.dp2px(18);
-                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH,textSize);
+                        float textSize = (calcProgress / 100) * ConvertUtils.dp2px(18);
+                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH, textSize);
                         PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
                     }
 
@@ -854,30 +854,30 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 .setListener(new SettingDanmuView.SettingDanmuListener() {
                     @Override
                     public void setDanmuSize(int progress) {
-                        mDanmakuContext.setScaleTextSize((float) progress/50);
+                        mDanmakuContext.setScaleTextSize((float) progress / 50);
                         PlayerConfigShare.getInstance().saveDanmuSize(progress);
                     }
 
                     @Override
                     public void setDanmuSpeed(int progress) {
                         float speed = (float) progress / 40;
-                        speed = speed>2.4f ? 2.4f : speed;
+                        speed = speed > 2.4f ? 2.4f : speed;
                         mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
                         PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
                     }
 
                     @Override
                     public void setDanmuAlpha(int progress) {
-                        mDanmakuContext.setDanmakuTransparency((float) progress/100);
+                        mDanmakuContext.setDanmakuTransparency((float) progress / 100);
                         PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
                     }
 
                     @Override
                     public void setExtraTime(int time) {
-                        if (mDanmakuView != null && mDanmakuView.isPrepared()){
+                        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                             try {
                                 mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -886,9 +886,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void setCloudFilter(boolean isChecked) {
                         mDanmakuListener.setCloudFilter(isChecked);
-                        if (isChecked){
+                        if (isChecked) {
                             mDanmakuContext.addBlockKeyWord(cloudFilterList);
-                        }else {
+                        } else {
                             mDanmakuContext.removeKeyWordBlackList(cloudFilterList);
                         }
                     }
@@ -920,14 +920,14 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setExtraTimeAdd(int time) {
-                        if (mDanmakuView != null && mDanmakuView.isPrepared()){
+                        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
                             mDanmakuView.seekTo(mDanmakuView.getCurrentTime() - time);
                         }
                     }
 
                     @Override
                     public void setExtraTimeReduce(int time) {
-                        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
+                        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()) {
                             mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
                         }
                     }
@@ -938,7 +938,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 初始化播放器设置View
      */
-    private void initPlayerSettingView(){
+    private void initPlayerSettingView() {
         boolean allowOrientationChange = PlayerConfigShare.getInstance().isAllowOrientationChange();
         topBarView.getPlayerSettingView()
                 .setOrientationAllow(allowOrientationChange)
@@ -947,9 +947,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void selectTrack(int streamId, String language, boolean isAudio) {
                         DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
-                        if (isAudio){
+                        if (isAudio) {
                             parametersBuilder.setPreferredAudioLanguage(language);
-                        }else {
+                        } else {
                             parametersBuilder.setPreferredTextLanguage(language);
                         }
                         trackSelector.setParameters(parametersBuilder);
@@ -988,7 +988,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                                 mOrientationListener.disable();
                         }
                     }
-         });
+                });
     }
 
     /**
@@ -1069,8 +1069,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 电量改变
      */
     @Override
-    public void setBatteryChanged(int status, int progress){
-        if (topBarView != null){
+    public void setBatteryChanged(int status, int progress) {
+        if (topBarView != null) {
             topBarView.setBatteryChanged(status, progress);
         }
     }
@@ -1079,7 +1079,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 屏幕被锁定
      */
     @Override
-    public void onScreenLocked(){
+    public void onScreenLocked() {
 
     }
 
@@ -1124,13 +1124,13 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置普通弹幕屏蔽数据
      */
-    public ExoPlayerView setNormalFilterData(List<String> blockList){
-        if (blockList != null){
+    public ExoPlayerView setNormalFilterData(List<String> blockList) {
+        if (blockList != null) {
             danmuBlockView.setBlockList(blockList);
-            for (String block : blockList){
+            for (String block : blockList) {
                 mDanmakuContext.addBlockKeyWord(block);
             }
-        }else {
+        } else {
             danmuBlockView.setBlockList(new ArrayList<>());
         }
         return this;
@@ -1138,12 +1138,13 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
     /**
      * 设置云屏蔽数据
-     * @param data 数据源
+     *
+     * @param data   数据源
      * @param isOpen 当前是否开启
      */
     public ExoPlayerView setCloudFilterData(List<String> data, boolean isOpen) {
         cloudFilterList = data;
-        if (isOpen){
+        if (isOpen) {
             mDanmakuContext.addBlockKeyWord(cloudFilterList);
         }
         return this;
@@ -1169,7 +1170,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 设置跳转提示
      */
     public ExoPlayerView setSkipTip(long targetPositionMs) {
-        if (targetPositionMs > 0){
+        if (targetPositionMs > 0) {
             mSkipPosition = targetPositionMs;
         }
         return this;
@@ -1250,7 +1251,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     public void seekTo(long position) {
         exoPlayer.seekTo(position);
-        if(position != 0)
+        if (position != 0)
             mDanmakuTargetPosition = position;
     }
 
@@ -1261,15 +1262,15 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (mIsForbidTouch) {
             hideShowLockScreen(isShowBar);
         } else {
-            if(isShowBar){
+            if (isShowBar) {
                 // 只在显示控制栏的时候才设置时间，因为控制栏通常不显示且单位为分钟，所以不做实时更新
                 topBarView.updateSystemTime();
                 hideShowBar(true);
                 hideShowLockScreen(true);
-            }else {
+            } else {
                 hideView(HIDE_VIEW_AUTO);
             }
-    }
+        }
     }
 
     /**
@@ -1619,10 +1620,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 控制所有View的隐藏
      */
-    private void hideView(int hideType){
+    private void hideView(int hideType) {
         //亮度、声音、跳转，仅手势滑动结束后
-        if (hideType == HIDE_VIEW_END_GESTURE){
-            if (mFlTouchLayout.getVisibility() == VISIBLE){
+        if (hideType == HIDE_VIEW_END_GESTURE) {
+            if (mFlTouchLayout.getVisibility() == VISIBLE) {
                 mFlTouchLayout.setVisibility(GONE);
                 mSkipTimeTv.setVisibility(View.GONE);
                 mTvVolume.setVisibility(View.GONE);
@@ -1632,23 +1633,23 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         }
 
         //顶部控制栏
-        if (topBarView.getTopBarVisibility() == VISIBLE && hideType != HIDE_VIEW_EDIT){
+        if (topBarView.getTopBarVisibility() == VISIBLE && hideType != HIDE_VIEW_EDIT) {
             hideShowBar(false);
         }
         //锁屏
-        if (mIvPlayerLock.getVisibility() == VISIBLE && hideType != HIDE_VIEW_LOCK_SCREEN && hideType != HIDE_VIEW_EDIT){
+        if (mIvPlayerLock.getVisibility() == VISIBLE && hideType != HIDE_VIEW_LOCK_SCREEN && hideType != HIDE_VIEW_EDIT) {
             hideShowLockScreen(false);
         }
         //三个设置
-        if (topBarView.isItemShowing() && hideType != HIDE_VIEW_AUTO){
+        if (topBarView.isItemShowing() && hideType != HIDE_VIEW_AUTO) {
             topBarView.hideItemView();
         }
         //弹幕屏蔽
-        if (danmuBlockView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO){
+        if (danmuBlockView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO) {
             danmuBlockView.setVisibility(GONE);
         }
         //发送弹幕
-        if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO){
+        if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO) {
             danmuPostView.setVisibility(GONE);
         }
     }
@@ -1656,7 +1657,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 是否有不可自动隐藏的view正在显示
      */
-    private boolean isEditViewVisible(){
+    private boolean isEditViewVisible() {
         return topBarView.isItemShowing() ||
                 danmuBlockView.getVisibility() == VISIBLE ||
                 danmuPostView.getVisibility() == VISIBLE;
@@ -1665,33 +1666,33 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 顶栏和底栏以及截图键显示与隐藏
      */
-    private void hideShowBar(boolean isShow){
-        if (isShow){
+    private void hideShowBar(boolean isShow) {
+        if (isShow) {
             AnimHelper.viewTranslationY(bottomBarView, 0);
             bottomBarView.setVisibility(View.VISIBLE);
             topBarView.setTopBarVisibility(true);
             mIsShowBar = true;
-        }else {
+        } else {
             AnimHelper.viewTranslationY(bottomBarView, bottomBarView.getHeight());
             topBarView.setTopBarVisibility(false);
             mIsShowBar = false;
         }
         //截图键与控制栏的显示与隐藏是绑定的
-        if (isShow){
-            AnimHelper.viewTranslationX(mIvScreenShot, 0,300);
-        }else {
-            AnimHelper.viewTranslationX(mIvScreenShot, ConvertUtils.dp2px(60),300);
+        if (isShow) {
+            AnimHelper.viewTranslationX(mIvScreenShot, 0, 300);
+        } else {
+            AnimHelper.viewTranslationX(mIvScreenShot, ConvertUtils.dp2px(60), 300);
         }
     }
 
     /**
      * 锁屏键的显示与隐藏
      */
-    private void hideShowLockScreen(boolean isShow){
-        if (isShow){
-            AnimHelper.viewTranslationX(mIvPlayerLock, 0,300);
-        }else {
-            AnimHelper.viewTranslationX(mIvPlayerLock, -ConvertUtils.dp2px(60),300);
+    private void hideShowLockScreen(boolean isShow) {
+        if (isShow) {
+            AnimHelper.viewTranslationX(mIvPlayerLock, 0, 300);
+        } else {
+            AnimHelper.viewTranslationX(mIvPlayerLock, -ConvertUtils.dp2px(60), 300);
         }
     }
 
@@ -1721,22 +1722,23 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 默认加载视频同名字幕
      */
-    public void loadDefaultSubtitle(String videoPath){
+    public void loadDefaultSubtitle(String videoPath) {
         String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
-        if (!StringUtils.isEmpty(subtitlePath)){
+        if (!StringUtils.isEmpty(subtitlePath)) {
             setSubtitlePath(subtitlePath);
         }
     }
+
     /**
      * 设置字幕源
      */
-    public void setSubtitlePath(String subtitlePath){
+    public void setSubtitlePath(String subtitlePath) {
         isShowSubtitle = false;
         topBarView.getSubtitleSettingView().setLoadSubtitle(false);
         topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
         new Thread(() -> {
             TimedTextObject subtitleObj = new SubtitleParser(subtitlePath).parser();
-            if (subtitleObj != null){
+            if (subtitleObj != null) {
                 Message message = new Message();
                 message.what = MSG_SET_SUBTITLE_SOURCE;
                 message.obj = subtitleObj;
@@ -1748,7 +1750,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 是否启用旋屏
      */
-    private void setOrientationEnable(boolean isEnable){
+    private void setOrientationEnable(boolean isEnable) {
         if (topBarView.getPlayerSettingView() != null)
             topBarView.getPlayerSettingView().setOrientationChangeEnable(isEnable);
     }
@@ -1756,9 +1758,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 视频是否正在播放
      */
-    private boolean isVideoPlaying(){
-        if (mVideoView != null && mVideoView.getPlayer() != null){
-            if (mVideoView.getPlayer().getPlayWhenReady()){
+    private boolean isVideoPlaying() {
+        if (mVideoView != null && mVideoView.getPlayer() != null) {
+            if (mVideoView.getPlayer().getPlayWhenReady()) {
                 return mVideoView.getPlayer().getPlaybackState() == Player.STATE_READY;
             }
         }

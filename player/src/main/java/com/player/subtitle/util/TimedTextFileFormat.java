@@ -1,5 +1,6 @@
 package com.player.subtitle.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -36,20 +37,20 @@ public interface TimedTextFileFormat {
 	/**
 	 * This methods receives the path to a file, parses it, and returns a TimedTextObject
 	 * 
-	 * @param path String that contains the path to the file
+	 * @param file subtitle file
 	 * @return TimedTextObject representing the parsed file
 	 * @throws IOException when having trouble reading the file from the given path
 	 */
-	TimedTextObject parseFile(String fileName, InputStream is) throws IOException, FatalParsingException;
+	TimedTextObject parseFile(File file) throws IOException, FatalParsingException;
 
 	/**
 	 * This methods receives the path to a file, parses it, and returns a TimedTextObject
-	 * @param path String that contains the path to the file
+	 * @param file subtitle file
 	 * @param isCharset the Charset to use when reading the InputStream
 	 * @return TimedTextObject representing the parsed file
 	 * @throws IOException when having trouble reading the file from the given path
 	 */
-	TimedTextObject parseFile(String fileName, InputStream is, Charset isCharset) throws IOException, FatalParsingException;
+	TimedTextObject parseFile(File file, Charset isCharset) throws IOException, FatalParsingException;
 	
 	/**
 	 * This method transforms a given TimedTextObject into a formated subtitle file

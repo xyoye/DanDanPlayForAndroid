@@ -1,17 +1,14 @@
 package com.player.ijkplayer.widgets;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
 import com.player.ijkplayer.utils.AnimHelper;
@@ -31,7 +28,7 @@ public class TopBarView extends FrameLayout implements View.OnClickListener{
     private TextView danmuSettingTv;
     private ImageView playerSettingIv;
 
-    private SettingVideoView playerSettingView;
+    private SettingPlayerView playerSettingView;
     private SettingDanmuView danmuSettingView;
     private SettingSubtitleView subtitleSettingView;
 
@@ -72,21 +69,21 @@ public class TopBarView extends FrameLayout implements View.OnClickListener{
         if (id == R.id.iv_back){
             listener.onBack();
         }else if (id == R.id.subtitle_settings_iv){
+            listener.topBarItemClick();
             AnimHelper.viewTranslationX(subtitleSettingView, 0);
-            listener.topBarItemClick();
         }else if (id == R.id.danmu_settings_tv){
+            listener.topBarItemClick();
             AnimHelper.viewTranslationX(danmuSettingView, 0);
-            listener.topBarItemClick();
         }else if (id == R.id.player_settings_iv){
-            AnimHelper.viewTranslationX(playerSettingView, 0);
             listener.topBarItemClick();
+            AnimHelper.viewTranslationX(playerSettingView, 0);
         }
     }
 
     /**
      * 回调接口
      */
-    public void setSettingListener(TopBarListener listener){
+    public void setCallBack(TopBarListener listener){
         this.listener = listener;
     }
 
@@ -126,8 +123,19 @@ public class TopBarView extends FrameLayout implements View.OnClickListener{
     /**
      * 顶栏显示状态
      */
-    public void setTopBarVisibility(@PlayerNotificationManager.Visibility int visibility){
-        topBarLL.setVisibility(visibility);
+    public void setTopBarVisibility(boolean isVisible){
+        if (isVisible){
+            AnimHelper.viewTranslationY(topBarLL, 0);
+        }else {
+            AnimHelper.viewTranslationY(topBarLL, -topBarLL.getHeight());
+        }
+    }
+
+    /**
+     * 获取顶栏显示状态
+     */
+    public int getTopBarVisibility(){
+        return topBarLL.getVisibility();
     }
 
     /**
@@ -157,7 +165,7 @@ public class TopBarView extends FrameLayout implements View.OnClickListener{
     /**
      * 播放器设置view
      */
-    public SettingVideoView getPlayerSettingView(){
+    public SettingPlayerView getPlayerSettingView(){
         return playerSettingView;
     }
 

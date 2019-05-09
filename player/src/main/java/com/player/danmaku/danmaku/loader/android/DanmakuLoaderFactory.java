@@ -18,6 +18,10 @@ package com.player.danmaku.danmaku.loader.android;
 
 import com.player.danmaku.danmaku.loader.ILoader;
 
+/**
+ * 用于获取bilibili弹幕和acfun弹幕的实例
+ * 弹弹只需要bilibili的，后面删除
+ */
 public class DanmakuLoaderFactory {
 
     public static String TAG_BILI = "bili";

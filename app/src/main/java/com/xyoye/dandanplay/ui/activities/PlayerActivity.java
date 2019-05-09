@@ -6,9 +6,12 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -27,7 +30,6 @@ import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.database.DataBaseManager;
-import com.xyoye.dandanplay.database.builder.QueryBuilder;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -35,8 +37,6 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,8 +45,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -72,7 +70,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
 
         //播放器类型
         if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER){
@@ -82,6 +79,27 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
             mPlayer = new IjkPlayerView(this);
             setContentView((IjkPlayerView)mPlayer);
         }
+
+        //隐藏toolbar
+        ActionBar supportActionBar = getSupportActionBar();
+        if (supportActionBar != null) {
+            supportActionBar.hide();
+        }
+
+        //沉浸式状态栏
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //开启屏幕常亮
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //注册监听广播
         batteryReceiver = new BatteryBroadcastReceiver(this);
@@ -146,6 +164,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .alwaysFullScreen()
                 //开启旋屏
                 .enableOrientation()
+                //设置普通屏蔽弹幕
+                .setNormalFilterData(IApplication.normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList)
                 //设置云屏蔽启用状态
@@ -183,32 +203,27 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private void initExoPlayer(InputStream inputStream){
         ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
 
-        exoPlayerView.init()
-                //总是全屏
-                .alwaysFullScreen()
-                //开启旋屏
-                .enableOrientation()
+        exoPlayerView
+                //设置普通屏蔽弹幕
+                .setNormalFilterData(IApplication.normalFilterList)
                 //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList)
-                //设置云屏蔽启用状态
-                .setCloudFilterStatus(AppConfig.getInstance().isCloudDanmuFilter())
+                .setCloudFilterData(IApplication.cloudFilterList,
+                        AppConfig.getInstance().isCloudDanmuFilter())
                 //设置视频路径
                 .setVideoPath(videoPath)
-                //启用弹幕
-                .enableDanmaku()
+                //设置标题
+                .setTitle(videoTitle)
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
                 .setDanmakuSource(inputStream)
                 //默认展示弹幕
                 .showOrHideDanmaku(true)
-                //设置标题
-                .setTitle(videoTitle)
-                //弹幕事件回调
-                .setDanmakuListener(onDanmakuListener)
                 //跳转至上一次播放进度
                 .setSkipTip(currentPosition)
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
-                    //选择弹幕事件
+                    //选择字幕事件
                     if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
                         new FileManagerDialog(PlayerActivity.this,
                                 videoPath,
@@ -222,7 +237,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     }
 
     private void initListener(){
-        onDanmakuListener = new OnDanmakuListener<BaseDanmaku>() {
+        onDanmakuListener = new OnDanmakuListener() {
             @Override
             public boolean isValid() {
                 //是否可发送弹幕
@@ -257,22 +272,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                         .insert()
                         .param(1, text)
                         .postExecute();
-            }
-
-            @Override
-            public List<String> queryBlock() {
-                List<String> blockList = new ArrayList<>();
-                Cursor cursor = DataBaseManager.getInstance()
-                    .selectTable(13)
-                    .query()
-                    .setColumns(1)
-                    .execute();
-                if (cursor != null){
-                    while (cursor.moveToNext()){
-                        blockList.add(cursor.getString(0));
-                    }
-                }
-                return blockList;
             }
         };
     }
@@ -321,14 +320,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String text) {
-        mPlayer.removeBlock(text);
-    }
-
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         saveCurrent(mPlayer.onDestroy());
         this.unregisterReceiver(batteryReceiver);
         this.unregisterReceiver(screenReceiver);

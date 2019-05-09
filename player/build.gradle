@@ -27,6 +27,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -41,6 +45,7 @@ dependencies {
     api 'com.blankj:utilcode:1.22.4'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'com.google.android.exoplayer:exoplayer:2.9.5'
+    implementation 'com.github.albfernandez:juniversalchardet:2.0.2'
 }
 
 if (rootProject.file('gradle/gradle-mvn-push.gradle').exists()) {

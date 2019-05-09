@@ -10,7 +10,6 @@ import android.graphics.PointF;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.IntDef;
@@ -51,8 +50,8 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.player.danmaku.controller.DrawHandler;
 import com.player.danmaku.controller.IDanmakuView;
 import com.player.danmaku.danmaku.loader.ILoader;
@@ -67,7 +66,6 @@ import com.player.danmaku.danmaku.parser.IDataSource;
 import com.player.exoplayer.PlayerViewListener;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.adapter.BlockAdapter;
-import com.player.ijkplayer.danmaku.BaseDanmakuConverter;
 import com.player.ijkplayer.danmaku.BiliDanmakuParser;
 import com.player.ijkplayer.danmaku.OnDanmakuListener;
 import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
@@ -83,23 +81,16 @@ import com.player.ijkplayer.utils.WindowUtils;
 import com.player.ijkplayer.widgets.MarqueeTextView;
 import com.player.ijkplayer.widgets.SettingDanmuView;
 import com.player.ijkplayer.widgets.SettingSubtitleView;
-import com.player.ijkplayer.widgets.SettingVideoView;
+import com.player.ijkplayer.widgets.SettingPlayerView;
+import com.player.subtitle.SubtitleParser;
 import com.player.subtitle.SubtitleView;
-import com.player.subtitle.util.FatalParsingException;
-import com.player.subtitle.util.SubtitleFormat;
-import com.player.subtitle.util.TimedTextFileFormat;
 import com.player.subtitle.util.TimedTextObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -291,7 +282,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         mLoadingView = findViewById(R.id.pb_loading);
         mTvVolume = findViewById(R.id.tv_volume);
         mTvBrightness = findViewById(R.id.tv_brightness);
-        mTvFastForward = findViewById(R.id.tv_fast_forward);
+        mTvFastForward = findViewById(R.id.tv_skip_time);
         mFlTouchLayout = findViewById(R.id.fl_touch_layout);
         mIvBack = findViewById(R.id.iv_back);
         mTvTitle = findViewById(R.id.tv_title);
@@ -312,7 +303,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         mDanmuSettings = findViewById(R.id.danmu_settings_tv);
         mSubtitleSettings = findViewById(R.id.subtitle_settings_iv);
 
-        mSettingVideoView = findViewById(R.id.video_setting_view);
+        mSettingPlayerView = findViewById(R.id.video_setting_view);
         mSettingSubtitleView = findViewById(R.id.subtitle_setting_view);
         mSettingDanmuView = findViewById(R.id.danmu_setting_view);
 
@@ -407,8 +398,8 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                     videoInfoTrack.setStream(-1);
                     videoInfoTrack.setSelect(true);
                     subtitleTrackList.add(videoInfoTrack);
-                    mSettingVideoView.setSubtitleTrackList(subtitleTrackList);
-                    mSettingVideoView.setVideoTrackList(audioTrackList);
+                    mSettingPlayerView.setSubtitleTrackList(subtitleTrackList);
+                    mSettingPlayerView.setVideoTrackList(audioTrackList);
                 }
             }
         });
@@ -601,6 +592,18 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     }
 
     /**
+     * 设置普通弹幕屏蔽数据
+     */
+    public IjkPlayerView setNormalFilterData(List<String> blockList){
+        //初始化屏蔽
+        if (blockList != null){
+            this.blockList.addAll(blockList);
+            blockAdapter.notifyDataSetChanged();
+        }
+        return this;
+    }
+
+    /**
      * 设置是否显示清晰度选择按钮
      * 需要在全屏后使用生效
      * @param isShow
@@ -651,10 +654,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
             _loadDanmaku();
             //加载字幕
             subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
-            if (!StringUtils.isEmpty(subtitlePath)){
-                setSubtitleSource("utf-8");
-                mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
-            }
         }
         // 视频播放时开启屏幕常亮
         mAttachActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -720,7 +719,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         if (openSLES ||
                 mUsingPlayerType == Constants.IJK_ANDROID_PLAYER ||
                 mUsingPlayerType == Constants.IJK_EXO_PLAYER){
-            mSettingVideoView.setSpeedCtrlLLVis(false);
+            mSettingPlayerView.setSpeedCtrlLLVis(false);
         }
         return this;
     }
@@ -956,10 +955,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     private void _showPlayerSetting(boolean isShow) {
         if (isShow) {
             _hideAllView(true);
-            mSettingVideoView.setVisibility(VISIBLE);
-            AnimHelper.doSlide(mSettingVideoView, ConvertUtils.dp2px( 300), 0, 600);
+            mSettingPlayerView.setVisibility(VISIBLE);
+            AnimHelper.doSlide(mSettingPlayerView, ConvertUtils.dp2px( 300), 0, 600);
         } else {
-            mSettingVideoView.setVisibility(GONE);
+            mSettingPlayerView.setVisibility(GONE);
         }
     }
 
@@ -1775,8 +1774,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
      */
     public IjkPlayerView setDanmakuListener(OnDanmakuListener danmakuListener) {
         mDanmakuListener = danmakuListener;
-
-        setDanmuBlockData();
         return this;
     }
 
@@ -2092,8 +2089,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     private BaseDanmakuParser mDanmakuParser;
     // 弹幕加载器
     private ILoader mDanmakuLoader;
-    // 弹幕数据转换器
-    private BaseDanmakuConverter mDanmakuConverter;
     // 弹幕监听器
     private OnDanmakuListener mDanmakuListener;
     // 是否使能弹幕
@@ -2315,17 +2310,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     }
 
     /**
-     * 设置弹幕屏蔽数据
-     */
-    private void setDanmuBlockData(){
-        List<String> blocks = mDanmakuListener.queryBlock();
-        if (blocks != null){
-            blockList.addAll(blocks);
-            blockAdapter.notifyDataSetChanged();
-        }
-    }
-
-    /**
      * 云屏蔽管理
      */
     private void changeCloudFilter(boolean isOpen){
@@ -2411,7 +2395,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
     /**
      * 设置弹幕资源，默认资源格式需满足 bilibili 的弹幕文件格式，
-     * 配合{@link #setDanmakuCustomParser}来进行自定义弹幕解析方式，{@link #setDanmakuCustomParser}必须先调用
      *
      * @param stream 弹幕资源
      * @return
@@ -2441,7 +2424,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
 
     /**
      * 设置弹幕资源，默认资源格式需满足 bilibili 的弹幕文件格式，
-     * 配合{@link #setDanmakuCustomParser}来进行自定义弹幕解析方式，{@link #setDanmakuCustomParser}必须先调用
      *
      * @param uri 弹幕资源
      * @return
@@ -2466,21 +2448,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
             mDanmakuParser = new BiliDanmakuParser();
         }
         mDanmakuParser.load(dataSource);
-        return this;
-    }
-
-    /**
-     * 自定义弹幕解析器，配合{@link #setDanmakuSource}使用，先于{@link #setDanmakuSource}调用
-     *
-     * @param parser    解析器
-     * @param loader    加载器
-     * @param converter 转换器
-     * @return
-     */
-    public IjkPlayerView setDanmakuCustomParser(BaseDanmakuParser parser, ILoader loader, BaseDanmakuConverter converter) {
-        mDanmakuParser = parser;
-        mDanmakuLoader = loader;
-        mDanmakuConverter = converter;
         return this;
     }
 
@@ -2534,17 +2501,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         mDanmakuView.addDanmaku(danmaku);
 
         if (mDanmakuListener != null) {
-            if (mDanmakuConverter != null) {
-                mDanmakuListener.onDataObtain(mDanmakuConverter.convertDanmaku(danmaku));
-            } else {
-                mDanmakuListener.onDataObtain(danmaku);
-            }
+            mDanmakuListener.onDataObtain(danmaku);
         }
     }
     /**
      * 移除屏蔽的弹幕
      */
-    @Override
     public void removeBlock(String text){
         if (blockList.contains(text)){
             //从界面移除
@@ -2738,8 +2700,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     private boolean isLoadSubtitle = false;
     private boolean isShowSubtitle = false;
 
-    String subtitleEncoding;
-
     public void _initSubtitle(){
         //字幕相关
         mSubtitleView = findViewById(R.id.subtitle_view);
@@ -2750,15 +2710,12 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         float subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * ConvertUtils.dp2px(18);
         mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
 
-        subtitleEncoding = PlayerConfigShare.getInstance().getSubtitleEncoding();
-
         isLoadSubtitle = false;
         int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
-        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
         mSettingSubtitleView
-                .setSubtitleLanguageType(languageType)
                 .initSubtitleCnSize(subtitleChineseProgress)
                 .initSubtitleEnSize(subtitleEnglishProgress)
+                .initPlayerType(false)
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
@@ -2774,6 +2731,16 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                             isShowSubtitle = false;
                             mSubtitleView.hide();
                         }
+                    }
+
+                    @Override
+                    public void setInterSubtitleSize(int progress) {
+                        //ijk无法播放内置字幕
+                    }
+
+                    @Override
+                    public void setInterBackground(CaptionStyleCompat compat) {
+                        //ijk无法播放内置字幕
                     }
 
                     @Override
@@ -2802,12 +2769,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                         PlayerConfigShare.getInstance().setSubtitleLanguageType(type);
                         mSubtitleView.setLanguage(type);
                     }
-
-                    @Override
-                    public void setSubtitleEncoding(String encoding) {
-                        if (!"".equals(subtitlePath))
-                            setSubtitleSource(encoding);
-                    }
                 })
                 .init();
     }
@@ -2816,54 +2777,19 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
      * 设置字幕源
      */
     public void setSubtitlePath(String path){
-        subtitlePath = path;
-        setSubtitleSource("utf-8");
-        mSettingSubtitleView.setSubtitleEncoding(subtitleEncoding);
-    }
-
-    public void setSubtitleSource(String encoding){
         isLoadSubtitle = false;
         isShowSubtitle = false;
-        subtitleEncoding = encoding;
+        subtitlePath = path;
         mSettingSubtitleView.setSubtitleLoadStatus(false);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Looper.prepare();
-                    if (!StringUtils.isEmpty(subtitlePath)){
-                        //解析字幕文件
-                        File subtitleFile = new File(subtitlePath);
-                        InputStream subtitleFileIs = new FileInputStream(subtitleFile);
-                        TimedTextFileFormat format = SubtitleFormat.format(subtitlePath);
-                        if (format != null){
-                            Charset charset = Charset.forName(subtitleEncoding);
-                            TimedTextObject subtitleObj = format.parseFile(subtitleFile.getName(), subtitleFileIs, charset);
-                            if(subtitleObj != null && subtitleObj.captions.size() > 0){
-                                Message message = new Message();
-                                message.what = MSG_SET_SUBTITLE_SOURCE;
-                                message.obj = subtitleObj;
-                                mHandler.sendMessage(message);
-                            }else {
-                                Toast.makeText(getContext(), "无法解析字幕内容，试试切换编码格式", Toast.LENGTH_LONG).show();
-                                Looper.loop();
-                            }
-                        }else {
-                            Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
-                            Looper.loop();
-                        }
-                    }else {
-                        Toast.makeText(getContext(), "字幕文件不存在", Toast.LENGTH_LONG).show();
-                        Looper.loop();
-                    }
-                } catch (FatalParsingException | IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "解析字幕文件失败", Toast.LENGTH_LONG).show();
-                    Looper.loop();
-                } catch (UnsupportedCharsetException ex){
-                    ex.printStackTrace();
-                    Toast.makeText(getContext(), "解析编码格式失败", Toast.LENGTH_LONG).show();
-                    Looper.loop();
+                TimedTextObject subtitleObj = new SubtitleParser(subtitlePath).parser();
+                if (subtitleObj != null){
+                    Message message = new Message();
+                    message.what = MSG_SET_SUBTITLE_SOURCE;
+                    message.obj = subtitleObj;
+                    mHandler.sendMessage(message);
                 }
             }
         }).start();
@@ -2877,10 +2803,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     /**
      * ============================ 视频设置 ============================
      */
-    private SettingVideoView mSettingVideoView;
+    private SettingPlayerView mSettingPlayerView;
 
     public void _initVideoSetting(){
-        mSettingVideoView.setSettingListener(new SettingVideoView.SettingVideoListener() {
+        mSettingPlayerView.setSettingListener(new SettingPlayerView.SettingVideoListener() {
             @Override
             public void selectTrack(int streamId, String language, boolean isAudio) {
                 mVideoView.selectTrack(streamId);

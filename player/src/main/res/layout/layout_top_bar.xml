@@ -77,14 +77,14 @@
     </LinearLayout>
 
     <!--视频设置-->
-    <com.player.ijkplayer.widgets.SettingVideoView
+    <com.player.ijkplayer.widgets.SettingPlayerView
         android:id="@+id/video_setting_view"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:visibility="gone">
 
-    </com.player.ijkplayer.widgets.SettingVideoView>
+    </com.player.ijkplayer.widgets.SettingPlayerView>
 
     <!--弹幕设置-->
     <com.player.ijkplayer.widgets.SettingDanmuView

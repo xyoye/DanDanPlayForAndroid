@@ -1,6 +1,9 @@
 package com.player.subtitle.util;
 
+import org.mozilla.universalchardet.ReaderFactory;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,12 +40,11 @@ import java.util.Iterator;
  */
 public class FormatSRT implements TimedTextFileFormat {
 
-
-	public TimedTextObject parseFile(String fileName, InputStream is) throws IOException {
-		return parseFile(fileName, is, Charset.defaultCharset());
+	public TimedTextObject parseFile(File file) throws IOException {
+		return parseFile(file, null);
 	}
 
-	public TimedTextObject parseFile(String fileName, InputStream is, Charset isCharset) throws IOException {
+	public TimedTextObject parseFile(File file, Charset isCharset) throws IOException {
 
 		TimedTextObject tto = new TimedTextObject();
 		Caption caption = new Caption();
@@ -50,11 +52,12 @@ public class FormatSRT implements TimedTextFileFormat {
 		boolean allGood;
 
 		//first lets load the file
-		InputStreamReader in= new InputStreamReader(is, isCharset);
+		//creating a reader with correct encoding
+		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file);
 		BufferedReader br = new BufferedReader(in);
 
 		//the file name is saved
-		tto.fileName = fileName;
+		tto.fileName = file.getName();
 
 		String line = br.readLine();
 		line = line.replace("\uFEFF", ""); //remove BOM character
@@ -128,7 +131,7 @@ public class FormatSRT implements TimedTextFileFormat {
 			tto.warnings+= "unexpected end of file, maybe last caption is not complete.\n\n";
 		} finally{
 	        //we close the reader
-	       is.close();
+	       in.close();
 	     }
 		
 		tto.built = true;

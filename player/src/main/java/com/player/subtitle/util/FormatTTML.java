@@ -1,11 +1,13 @@
 package com.player.subtitle.util;
 
+import org.mozilla.universalchardet.ReaderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,21 +46,22 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 public class FormatTTML implements TimedTextFileFormat {
 
-
-	public TimedTextObject parseFile(String fileName, InputStream is) throws IOException, FatalParsingException {
-		return parseFile(fileName, is, Charset.defaultCharset());
+	public TimedTextObject parseFile(File file) throws IOException, FatalParsingException {
+		return parseFile(file, null);
 	}
 
-	public TimedTextObject parseFile(String fileName, InputStream is, Charset isCharset) throws IOException, FatalParsingException {
+	public TimedTextObject parseFile(File file, Charset isCharset) throws IOException, FatalParsingException {
 
 		TimedTextObject tto = new TimedTextObject();
-		tto.fileName = fileName;
+		tto.fileName = file.getName();
 		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
 		try {
 			dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(new InputSource(new InputStreamReader(is, isCharset)));
+			//creating a reader with correct encoding
+			InputStreamReader isr = (InputStreamReader) ReaderFactory.createReaderFromFile(file);
+			Document doc = dBuilder.parse(new InputSource(isr));
 			doc.getDocumentElement().normalize();
 			
 			//we recover the metadata

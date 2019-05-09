@@ -7,7 +7,6 @@ import android.content.res.Configuration;
  */
 
 public interface PlayerViewListener {
-    void removeBlock(String text);
 
     void onResume();
 

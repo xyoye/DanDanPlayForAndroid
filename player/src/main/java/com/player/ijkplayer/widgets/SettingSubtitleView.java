@@ -17,34 +17,45 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blankj.utilcode.util.StringUtils;
+import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.player.ijkplayer.R;
-import com.player.ijkplayer.utils.Constants;
+import com.player.ijkplayer.utils.PlayerConfigShare;
 import com.player.subtitle.SubtitleView;
+
+import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 
 /**
  * Created by xyy on 2019/2/22.
  */
 
 public class SettingSubtitleView extends LinearLayout implements View.OnClickListener{
+    //开关
     private Switch subtitleSwitch;
-    private SeekBar subtitleCnSB;
-    private SeekBar subtitleUSSB;
-    private TextView subtitleChangeSourceTv;
+    //加载状态
     private TextView subtitleLoadStatusTv;
-    private TextView subtitleCnSizeTv;
-    private TextView subtitleUSSizeTv;
+    //语言设置
     private TextView onlyCnShowTv, onlyUsShowTv, bothLanguageTv;
-    private TextView encodingUtf8, encodingUtf16, encodingGbk, encodingOther;
-    private TextView addEncodingTv;
-    private LinearLayout encodingInputLL;
-    private EditText encodingEt;
-    private TextView addExtraTimeTv, reduceExtraTimeTv;
     private EditText subExtraTimeEt;
+
+    //内置字幕设置
+    private LinearLayout interSizeLL;
+    private SeekBar subtitleOtherSB;
+    private TextView subtitleOtherSizeTv;
+    private TextView bgTB, bgTW, bgBW, bgWB, bgTT;
+
+    //外置字幕设置
+    private LinearLayout outerSizeLL, outerTimeLL;
+    private SeekBar subtitleCnSB;
+    private TextView subtitleCnSizeTv;
+    private SeekBar subtitleUSSB;
+    private TextView subtitleUSSizeTv;
 
     //时间偏移量
     private float timeOffset;
-
+    //是否为IjkPlayer
+    private boolean isExoPlayer;
+    //是否已加载字幕
+    private boolean isLoadSubtitle = false;
     //控制回调
     private SettingSubtitleListener settingListener = null;
 
@@ -58,51 +69,74 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
         subtitleSwitch = findViewById(R.id.subtitle_sw);
         subtitleLoadStatusTv = findViewById(R.id.subtitle_load_status_tv);
-        subtitleChangeSourceTv = findViewById(R.id.subtitle_change_source_tv);
         subtitleCnSizeTv = findViewById(R.id.subtitle_chinese_size_tv);
         subtitleCnSB = findViewById(R.id.subtitle_chinese_size_sb);
         subtitleUSSizeTv = findViewById(R.id.subtitle_english_size_tv);
         subtitleUSSB = findViewById(R.id.subtitle_english_size_sb);
+        subtitleOtherSizeTv = findViewById(R.id.subtitle_other_size_tv);
+        subtitleOtherSB = findViewById(R.id.subtitle_other_size_sb);
         onlyCnShowTv = findViewById(R.id.only_chinese_tv);
         onlyUsShowTv = findViewById(R.id.only_english_tv);
         bothLanguageTv = findViewById(R.id.both_language_tv);
-        encodingUtf8 = findViewById(R.id.encoding_utf_8);
-        encodingUtf16 = findViewById(R.id.encoding_utf_16);
-        encodingGbk = findViewById(R.id.encoding_gbk);
-        encodingOther = findViewById(R.id.encoding_other);
-        addEncodingTv = findViewById(R.id.add_encoding_tv);
-        encodingInputLL = findViewById(R.id.input_encoding_ll);
-        encodingEt = findViewById(R.id.input_encoding_et);
-        addExtraTimeTv = findViewById(R.id.subtitle_extra_time_add);
-        reduceExtraTimeTv = findViewById(R.id.subtitle_extra_time_reduce);
         subExtraTimeEt = findViewById(R.id.subtitle_extra_time_et);
 
-        subtitleChangeSourceTv.setOnClickListener(this);
+        bgBW = findViewById(R.id.inter_bg_black_white);
+        bgWB = findViewById(R.id.inter_bg_white_black);
+        bgTB = findViewById(R.id.inter_bg_tran_black);
+        bgTW = findViewById(R.id.inter_bg_tran_white);
+        bgTT = findViewById(R.id.inter_bg_tran_tran);
+
+        interSizeLL = findViewById(R.id.inter_size_ll);
+        outerSizeLL = findViewById(R.id.outer_size_LL);
+        outerTimeLL = findViewById(R.id.outer_time_LL);
+
         onlyCnShowTv.setOnClickListener(this);
         onlyUsShowTv.setOnClickListener(this);
         bothLanguageTv.setOnClickListener(this);
-        encodingUtf8.setOnClickListener(this);
-        encodingUtf16.setOnClickListener(this);
-        encodingGbk.setOnClickListener(this);
-        encodingOther.setOnClickListener(this);
-        addEncodingTv.setOnClickListener(this);
-        addExtraTimeTv.setOnClickListener(this);
-        reduceExtraTimeTv.setOnClickListener(this);
+
+        bgBW.setOnClickListener(this);
+        bgWB.setOnClickListener(this);
+        bgTB.setOnClickListener(this);
+        bgTW.setOnClickListener(this);
+        bgTT.setOnClickListener(this);
+
+        findViewById(R.id.subtitle_change_source_tv).setOnClickListener(this);
+        findViewById(R.id.add_encoding_tv).setOnClickListener(this);
+        findViewById(R.id.subtitle_extra_time_add).setOnClickListener(this);
+        findViewById(R.id.subtitle_extra_time_reduce).setOnClickListener(this);
 
         subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
         subExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         subExtraTimeEt.setSingleLine(true);
+
+        //默认内置字幕背景色为黑+白
+        bgBW.setBackgroundColor(Color.parseColor("#33ffffff"));
+
+        int languageType = PlayerConfigShare.getInstance().getSubtitleLanguageType();
+        setSubtitleLanguageType(languageType);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void init(){
+        //切换字幕显示状态
         subtitleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isLoadSubtitle && isChecked){
+                    interSizeLL.setVisibility(GONE);
+                    outerTimeLL.setVisibility(VISIBLE);
+                    outerSizeLL.setVisibility(VISIBLE);
+                }else {
+                    if (isExoPlayer)
+                        interSizeLL.setVisibility(VISIBLE);
+                    outerTimeLL.setVisibility(GONE);
+                    outerSizeLL.setVisibility(GONE);
+                }
                 settingListener.setSubtitleSwitch(subtitleSwitch, isChecked);
             }
         });
 
+        //设置偏移时间
         subExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -119,7 +153,9 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
             }
         });
 
+        //中文文字大小
         subtitleCnSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (progress == 0 ) progress = 1;
@@ -139,6 +175,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
             }
         });
 
+        //英文文字大小
         subtitleUSSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -159,6 +196,29 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
                 settingListener.setSubtitleEnSize(progress);
             }
         });
+
+        //内置字幕文字大小
+        subtitleOtherSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress == 0 ) progress = 1;
+                subtitleOtherSizeTv.setText(progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (progress == 0 ) progress = 1;
+                settingListener.setInterSubtitleSize(progress);
+            }
+        });
+
         this.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -172,6 +232,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         return this;
     }
 
+    /**
+     * 初始化中文文字大小
+     */
+    @SuppressLint("SetTextI18n")
     public SettingSubtitleView initSubtitleCnSize(int progress){
         subtitleCnSB.setMax(100);
         subtitleCnSizeTv.setText(progress + "%");
@@ -179,6 +243,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         return this;
     }
 
+    /**
+     * 初始化英文文字大小
+     */
+    @SuppressLint("SetTextI18n")
     public SettingSubtitleView initSubtitleEnSize(int progress){
         subtitleUSSB.setMax(100);
         subtitleUSSizeTv.setText(progress + "%");
@@ -186,7 +254,25 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         return this;
     }
 
-    public SettingSubtitleView setSubtitleLanguageType(int type){
+    /**
+     * 根据播放器类型初始化内置文字大小
+     */
+    @SuppressLint("SetTextI18n")
+    public SettingSubtitleView initPlayerType(boolean isExo){
+        isExoPlayer = isExo;
+        interSizeLL.setVisibility(isExoPlayer ? VISIBLE : GONE);
+        if (isExoPlayer){
+            subtitleOtherSizeTv.setText("50%");
+            subtitleOtherSB.setMax(100);
+            subtitleOtherSB.setProgress(50);
+        }
+        return this;
+    }
+
+    /**
+     * 设置语言类型
+     */
+    private void setSubtitleLanguageType(int type){
         switch (type){
             case SubtitleView.LANGUAGE_TYPE_ENGLISH:
                 onlyCnShowTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -204,35 +290,50 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
                 bothLanguageTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
         }
-        return this;
     }
 
-    public void setSubtitleEncoding(String encoding){
-        encodingUtf8.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingUtf16.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingGbk.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        encodingOther.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-        switch (encoding.toUpperCase()){
-            case "UTF-8":
-            case "":
-                encodingUtf8.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
+    /**
+     * 设置内置字幕背景和字体颜色
+     */
+    public void setInterBg(int type){
+        CaptionStyleCompat compat;
+
+        bgBW.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+        bgWB.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+        bgTB.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+        bgTW.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+        bgTT.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+        switch (type){
+            case 0:
+                bgBW.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = new CaptionStyleCompat(Color.WHITE, Color.BLACK, Color.TRANSPARENT, EDGE_TYPE_NONE, Color.WHITE, null);
                 break;
-            case "UTF-16":
-                encodingUtf16.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
+            case 1:
+                bgWB.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = new CaptionStyleCompat(Color.BLACK, Color.WHITE, Color.TRANSPARENT, EDGE_TYPE_NONE, Color.WHITE, null);
                 break;
-            case "GBK":
-                encodingGbk.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(GONE);
+            case 2:
+                bgTB.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = new CaptionStyleCompat(Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT, EDGE_TYPE_NONE, Color.WHITE, null);
+                break;
+            case 3:
+                bgTW.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = new CaptionStyleCompat(Color.WHITE, Color.TRANSPARENT, Color.TRANSPARENT, EDGE_TYPE_NONE, Color.WHITE, null);
+                break;
+            case 4:
+                bgTT.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = new CaptionStyleCompat(Color.TRANSPARENT, Color.TRANSPARENT, Color.TRANSPARENT, EDGE_TYPE_NONE, Color.WHITE, null);
                 break;
             default:
-                encodingOther.setBackgroundColor(Color.parseColor("#33ffffff"));
-                encodingInputLL.setVisibility(VISIBLE);
-                break;
+                bgBW.setBackgroundColor(Color.parseColor("#33ffffff"));
+                compat = CaptionStyleCompat.DEFAULT;
         }
+        settingListener.setInterBackground(compat);
     }
 
+    /**
+     * 设置外置字幕加载状态
+     */
     public void setSubtitleLoadStatus(boolean isLoad){
         if (isLoad){
             subtitleSwitch.setChecked(true);
@@ -245,8 +346,19 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         }
     }
 
+    /**
+     * 获取偏移时间
+     */
     public float getTimeOffset(){
         return timeOffset;
+    }
+
+    public boolean isLoadSubtitle() {
+        return isLoadSubtitle;
+    }
+
+    public void setLoadSubtitle(boolean loadDanmu) {
+        isLoadSubtitle = loadDanmu;
     }
 
     @Override
@@ -263,31 +375,22 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         }else if (id == R.id.both_language_tv){
             settingListener.setSubtitleLanguageType(SubtitleView.LANGUAGE_TYPE_BOTH);
             setSubtitleLanguageType(SubtitleView.LANGUAGE_TYPE_BOTH);
-        }else if (id == R.id.encoding_utf_8){
-            setSubtitleEncoding("utf-8");
-            settingListener.setSubtitleEncoding("utf-8");
-        }else if (id == R.id.encoding_utf_16){
-            setSubtitleEncoding("utf-16");
-            settingListener.setSubtitleEncoding("utf-16");
-        }else if (id == R.id.encoding_gbk){
-            setSubtitleEncoding("gbk");
-            settingListener.setSubtitleEncoding("gbk");
-        }else if (id == R.id.encoding_other){
-            encodingInputLL.setVisibility(VISIBLE);
-        }else if (id == R.id.add_encoding_tv){
-            String encoding = encodingEt.getText().toString().trim();
-            if (!StringUtils.isEmpty(encoding)){
-                setSubtitleEncoding(encoding);
-                settingListener.setSubtitleEncoding(encoding);
-            }else{
-                Toast.makeText(getContext(), "编码格式不能为空", Toast.LENGTH_LONG).show();
-            }
         }else if (id == R.id.subtitle_extra_time_reduce){
             timeOffset -= 0.5f;
             subExtraTimeEt.setText(String.valueOf(timeOffset));
         }else if (id == R.id.subtitle_extra_time_add){
             timeOffset += 0.5f;
             subExtraTimeEt.setText(String.valueOf(timeOffset));
+        }else if (id == R.id.inter_bg_black_white){
+            setInterBg(0);
+        }else if (id == R.id.inter_bg_white_black){
+            setInterBg(1);
+        }else if (id == R.id.inter_bg_tran_black){
+            setInterBg(2);
+        }else if (id == R.id.inter_bg_tran_white){
+            setInterBg(3);
+        }else if (id == R.id.inter_bg_tran_tran){
+            setInterBg(4);
         }
     }
 
@@ -298,6 +401,8 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
         void setOpenSubtitleSelector();
         void setSubtitleLanguageType(int type);
-        void setSubtitleEncoding(String encoding);
+
+        void setInterSubtitleSize(int progress);
+        void setInterBackground(CaptionStyleCompat compat);
     }
 }

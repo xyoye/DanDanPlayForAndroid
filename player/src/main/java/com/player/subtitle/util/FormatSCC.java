@@ -1,6 +1,9 @@
 package com.player.subtitle.util;
 
+import org.mozilla.universalchardet.ReaderFactory;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,12 +38,12 @@ import java.util.Iterator;
  */
 public class FormatSCC implements TimedTextFileFormat {
 
-	public TimedTextObject parseFile(String fileName, InputStream is) throws IOException, FatalParsingException {
-		return parseFile(fileName, is, Charset.defaultCharset());
+	public TimedTextObject parseFile(File file) throws IOException, FatalParsingException {
+		return parseFile(file, null);
 	}
 
-	public TimedTextObject parseFile(String fileName, InputStream is, Charset isCharset) throws IOException, FatalParsingException {
-		
+	public TimedTextObject parseFile(File file, Charset isCharset) throws IOException, FatalParsingException {
+
 		TimedTextObject tto = new TimedTextObject();
 		Caption newCaption = null;
 		
@@ -55,11 +58,13 @@ public class FormatSCC implements TimedTextFileFormat {
 		String color = null;
 
 		//first lets load the file
-		BufferedReader br = new BufferedReader(new InputStreamReader(is, isCharset));
+		//creating a reader with correct encoding
+		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file);
+		BufferedReader br = new BufferedReader(in);
 
 		//the file name is saved
-		tto.fileName = fileName;
-		tto.title = fileName;
+		tto.fileName = file.getName();
+		tto.title = file.getName();
 
 		String line;
 		int lineCounter = 0;
@@ -70,7 +75,6 @@ public class FormatSCC implements TimedTextFileFormat {
 			if (!br.readLine().trim().equalsIgnoreCase("Scenarist_SCC V1.0")){
 				//this is a fatal parsing error.
 				throw new FatalParsingException("The fist line should define the file type: \"Scenarist_SCC V1.0\"");
-
 			} else {
 				
 				createSCCStyles(tto);
@@ -367,7 +371,7 @@ public class FormatSCC implements TimedTextFileFormat {
 			tto.warnings+= "unexpected end of file at line "+lineCounter+", maybe last caption is not complete.\n\n";
 		} finally{
 			//we close the reader
-			is.close();
+			in.close();
 		}
 
 		tto.built = true;

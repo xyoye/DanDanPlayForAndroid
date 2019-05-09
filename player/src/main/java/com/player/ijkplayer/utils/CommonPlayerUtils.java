@@ -2,6 +2,7 @@ package com.player.ijkplayer.utils;
 
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -64,7 +65,6 @@ public final class CommonPlayerUtils {
      */
     public static String getSubtitlePath(String videoPath){
         if (videoPath == null || "".equals(videoPath)){
-            ToastUtils.showShort("解析视频路径失败");
             return "";
         }
         File videoFile = new File(videoPath);
@@ -92,5 +92,19 @@ public final class CommonPlayerUtils {
         }
 
         return "";
+    }
+
+    /**
+     * 根据进度获取具体对应的大小
+     */
+    public static float progress2real(int progress){
+        return progress2real(progress, 18);
+    }
+
+    /**
+     * 根据进度获取具体对应的大小
+     */
+    public static float progress2real(int progress, int dpValue){
+        return  (float) progress / 100 * ConvertUtils.dp2px(dpValue);
     }
 }

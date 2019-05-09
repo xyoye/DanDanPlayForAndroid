@@ -1,7 +1,7 @@
 package com.player.subtitle.util;
 
 /**
- * Created by aser on 2018/9/20.
+ * Created by xyoye on 2018/9/20.
  */
 
 public class SubtitleFormat {

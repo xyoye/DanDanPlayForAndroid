@@ -464,11 +464,9 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         }
     }
 
-    public static void launchAnimeDetail(Activity activity, String animaId, ImageView imageView){
+    public static void launchAnimeDetail(Activity activity, String animaId){
         Intent intent = new Intent(activity, AnimeDetailActivity.class);
         intent.putExtra("animaId", animaId);
-        ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(activity, imageView, "share_image");
-        activity.startActivity(intent,optionsCompat.toBundle());
+        activity.startActivity(intent);
     }
 }

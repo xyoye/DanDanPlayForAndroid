@@ -56,11 +56,17 @@
     <com.player.ijkplayer.widgets.TopBarView
         android:id="@+id/top_bar_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
     </com.player.ijkplayer.widgets.TopBarView>
 
-    <include
-        layout="@layout/layout_bottom_bar"/>
+    <com.player.ijkplayer.widgets.BottomBarView
+        android:id="@+id/bottom_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:translationY="60dp"
+        android:layout_gravity="bottom"
+        android:visibility="gone">
+    </com.player.ijkplayer.widgets.BottomBarView>
 
     <ImageView
         android:id="@+id/iv_player_lock"
@@ -71,6 +77,7 @@
         android:background="@drawable/shape_player_lock_bg"
         android:padding="12dp"
         android:src="@drawable/sel_player_lock"
+        android:translationX="-60dp"
         android:visibility="gone"/>
 
     <ImageView
@@ -82,20 +89,28 @@
         android:background="@drawable/shape_player_lock_bg"
         android:padding="12dp"
         android:src="@mipmap/ic_video_screenshot"
+        android:translationX="60dp"
         android:visibility="gone"/>
 
-    <include layout="@layout/layout_skip_tip"/>
+    <com.player.ijkplayer.widgets.SkipTipView
+        android:id="@+id/skip_tip_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone">
+    </com.player.ijkplayer.widgets.SkipTipView>
 
-    <ImageView
-        android:id="@+id/iv_play_circle"
-        android:src="@mipmap/ic_play_circle"
-        android:layout_gravity="center"
-        android:layout_width="56dp"
-        android:layout_height="56dp"/>
+    <com.player.ijkplayer.widgets.DanmuPostView
+        android:id="@+id/danmu_post_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+    </com.player.ijkplayer.widgets.DanmuPostView>
 
-    <include layout="@layout/layout_media_quality"/>
-
-    <include layout="@layout/layout_send_danmaku"/>
-
-    <include layout="@layout/layout_block_view"/>
+    <com.player.ijkplayer.widgets.DanmuBlockView
+        android:id="@+id/danmu_block_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+    </com.player.ijkplayer.widgets.DanmuBlockView>
 </FrameLayout>

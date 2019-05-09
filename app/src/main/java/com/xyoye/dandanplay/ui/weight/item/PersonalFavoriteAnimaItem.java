@@ -64,8 +64,7 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(
                         (Activity)mView.getContext(),
-                        model.getAnimeId()+"",
-                        imageView)
+                        model.getAnimeId()+"")
         );
     }
 }

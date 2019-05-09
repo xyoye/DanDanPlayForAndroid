@@ -116,11 +116,12 @@ public class PlayerConfigShare {
         return size == 0 ? 50 : size;
     }
 
-    public String getSubtitleEncoding(){
-        return getShare().load(Constants.SUBTITLE_ENCODING, "UTF-16");
+    //旋屏
+    public boolean isAllowOrientationChange(){
+        return getShare().load(Constants.ORIENTATION_CHANGE, true);
     }
 
-    public void setSubtitleEncoding(String encoding){
-        getShare().save(Constants.SUBTITLE_ENCODING, encoding);
+    public void setAllowOrientationChange(boolean isAllow){
+        getShare().save(Constants.ORIENTATION_CHANGE, isAllow);
     }
 }

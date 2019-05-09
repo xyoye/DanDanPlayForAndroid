@@ -16,7 +16,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
                 <TextView
@@ -25,7 +24,7 @@
                     android:textColor="@android:color/white"
                     android:layout_centerVertical="true"
                     android:textSize="16sp"
-                    android:text="字幕"/>
+                    android:text="外挂字幕"/>
 
                 <TextView
                     android:id="@+id/subtitle_change_source_tv"
@@ -76,242 +75,196 @@
                     android:layout_alignParentEnd="true"/>
             </RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:text="语言设置"/>
-
             <LinearLayout
+                android:id="@+id/outer_size_LL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/only_chinese_tv"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="中文"/>
-                <TextView
-                    android:id="@+id/only_english_tv"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="英文"/>
-                <TextView
-                    android:id="@+id/both_language_tv"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="双语"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:text="时间调节"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:orientation="horizontal">
                     <TextView
-                        android:id="@+id/subtitle_extra_time_reduce"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:gravity="center"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="18sp"
-                        android:background="#33ffffff"
-                        android:text="—"/>
-                    <EditText
-                        android:id="@+id/subtitle_extra_time_et"
-                        android:layout_width="60dp"
+                        android:textSize="14sp"
+                        android:text="中文大小"/>
+
+                    <TextView
+                        android:id="@+id/subtitle_chinese_size_tv"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:theme="@style/BlockEditText"
-                        android:gravity="center"
-                        android:imeOptions="actionDone"
-                        android:maxLines="1"
-                        android:maxLength="50"
                         android:textColor="@android:color/white"
-                        android:inputType="number"
                         android:textSize="14sp"
-                        android:text="0.0"/>
-                    <TextView
-                        android:id="@+id/subtitle_extra_time_add"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:textColor="@android:color/white"
-                        android:gravity="center"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="18sp"
-                        android:background="#33ffffff"
-                        android:text="+"/>
-
+                        android:text="50%"/>
                 </LinearLayout>
 
-            </RelativeLayout>
+                <SeekBar
+                    android:id="@+id/subtitle_chinese_size_sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="英文大小"/>
+
+                    <TextView
+                        android:id="@+id/subtitle_english_size_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="50%"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/subtitle_english_size_sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/outer_time_LL"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="中文大小"/>
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/subtitle_chinese_size_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    android:text="50%"/>
-            </LinearLayout>
+                    android:text="时间调节"/>
 
-            <SeekBar
-                android:id="@+id/subtitle_chinese_size_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="5dp"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/subtitle_extra_time_reduce"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:background="#33ffffff"
+                            android:text="—"/>
+                        <EditText
+                            android:id="@+id/subtitle_extra_time_et"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:theme="@style/BlockEditText"
+                            android:gravity="center"
+                            android:imeOptions="actionDone"
+                            android:maxLines="1"
+                            android:maxLength="50"
+                            android:textColor="@android:color/white"
+                            android:inputType="number"
+                            android:textSize="14sp"
+                            android:text="0.0"/>
+                        <TextView
+                            android:id="@+id/subtitle_extra_time_add"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:textColor="@android:color/white"
+                            android:gravity="center"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="18sp"
+                            android:background="#33ffffff"
+                            android:text="+"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="英文大小"/>
-
-                <TextView
-                    android:id="@+id/subtitle_english_size_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    android:text="50%"/>
-            </LinearLayout>
+                    android:text="语言设置"/>
 
-            <SeekBar
-                android:id="@+id/subtitle_english_size_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:text="编码格式"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/encoding_utf_8"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="UTF-8"/>
-                <TextView
-                    android:id="@+id/encoding_utf_16"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="UTF_16"/>
-                <TextView
-                    android:id="@+id/encoding_gbk"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="GBK"/>
-                <TextView
-                    android:id="@+id/encoding_other"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="其它"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/only_chinese_tv"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="中文"/>
+                    <TextView
+                        android:id="@+id/only_english_tv"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="英文"/>
+                    <TextView
+                        android:id="@+id/both_language_tv"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="双语"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -353,6 +306,126 @@
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
                     android:text="确定" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/inter_size_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:text="内置字幕"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="字体大小"/>
+
+                    <TextView
+                        android:id="@+id/subtitle_other_size_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="50%"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/subtitle_other_size_sb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:text="背景色_字体色"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/inter_bg_black_white"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="黑_白"/>
+                    <TextView
+                        android:id="@+id/inter_bg_white_black"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="白_黑"/>
+                    <TextView
+                        android:id="@+id/inter_bg_tran_black"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="无_黑"/>
+                    <TextView
+                        android:id="@+id/inter_bg_tran_white"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="无_白"/>
+                    <TextView
+                        android:id="@+id/inter_bg_tran_tran"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:text="隐藏"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

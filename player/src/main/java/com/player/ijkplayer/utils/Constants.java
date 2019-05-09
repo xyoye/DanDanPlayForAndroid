@@ -24,5 +24,7 @@ public final class Constants {
     public static final String SUBTITLE_CHINESE_SIZE = "subtitle_chinese_size_v2";
     public static final String SUBTITLE_ENGLISH_SIZE = "subtitle_english_size_v2";
     public static final String SUBTITLE_LANGUAGE = "subtitle_language";
-    public static final String SUBTITLE_ENCODING = "subtitle_encoding";
+
+    //旋屏
+    public static final String ORIENTATION_CHANGE = "orientation_change";
 }

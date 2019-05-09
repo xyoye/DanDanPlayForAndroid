@@ -68,8 +68,7 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(
                         (Activity)mView.getContext(),
-                        model.getAnimeId()+"",
-                        imageView)
+                        model.getAnimeId()+"")
         );
     }
 }

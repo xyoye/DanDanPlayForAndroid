@@ -161,9 +161,7 @@
                     android:id="@+id/anima_image_iv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:transitionName="share_image"
-                    android:scaleType="centerCrop"
-                    tools:targetApi="lollipop" />
+                    android:scaleType="centerCrop"/>
             </com.xyoye.dandanplay.ui.weight.shadow.ShadowRelativeLayout>
         </RelativeLayout>
 

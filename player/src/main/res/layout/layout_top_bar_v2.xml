@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -9,8 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/control_bar_height"
         android:background="@color/bg_video_view"
+        android:translationY="-46dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_back"
@@ -78,7 +80,7 @@
     </LinearLayout>
 
     <!--视频设置-->
-    <com.player.ijkplayer.widgets.SettingVideoView
+    <com.player.ijkplayer.widgets.SettingPlayerView
         android:id="@+id/player_setting_view"
         android:layout_width="300dp"
         android:layout_height="match_parent"
@@ -86,7 +88,7 @@
         android:translationX="300dp"
         android:visibility="gone">
 
-    </com.player.ijkplayer.widgets.SettingVideoView>
+    </com.player.ijkplayer.widgets.SettingPlayerView>
 
     <!--弹幕设置-->
     <com.player.ijkplayer.widgets.SettingDanmuView

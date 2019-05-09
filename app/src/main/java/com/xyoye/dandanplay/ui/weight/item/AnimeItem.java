@@ -90,8 +90,7 @@ public class AnimeItem implements AdapterItem<AnimeBean> {
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(
                         (Activity)mView.getContext(),
-                        model.getAnimeId()+"",
-                        imageView)
+                        model.getAnimeId()+"")
         );
     }
 }

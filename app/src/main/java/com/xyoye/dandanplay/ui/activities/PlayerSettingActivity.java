@@ -66,7 +66,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType) {
             case com.player.ijkplayer.utils.Constants.IJK_EXO_PLAYER:
-                playerTypeTv.setText("IJK_EXO Player");
+                playerTypeTv.setText("EXO Player");
                 ijkSettingLL.setVisibility(View.GONE);
                 break;
             case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:

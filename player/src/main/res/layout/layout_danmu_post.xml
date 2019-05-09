@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_video_view"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/add_block_rl"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:orientation="horizontal"
+        android:background="#22000000">
+        <ImageView
+            android:id="@+id/danmu_post_close_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:src="@mipmap/ic_cancel_danmaku"/>
+
+        <EditText
+            android:id="@+id/danmu_post_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/danmu_post_close_iv"
+            android:layout_toStartOf="@+id/danmu_post_send_iv"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:theme="@style/BlockEditText"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:maxLength="50"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textColorHint="@android:color/darker_gray"
+            android:hint="输入弹幕内容"/>
+
+        <ImageView
+            android:id="@+id/danmu_post_send_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:padding="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/sel_item_background"
+            android:src="@mipmap/ic_send_danmaku"/>
+    </RelativeLayout>
+
+    <include layout="@layout/layout_danmaku_input_options"/>
+
+</LinearLayout>

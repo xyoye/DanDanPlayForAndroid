@@ -7,15 +7,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
@@ -28,7 +25,7 @@ import java.util.List;
  * Created by xyy on 2019/2/25.
  */
 
-public class SettingVideoView extends LinearLayout implements View.OnClickListener{
+public class SettingPlayerView extends LinearLayout implements View.OnClickListener{
     private LinearLayout speedCtrlLL;
     private TextView speed50Tv, speed75Tv,speed100Tv,speed125Tv, speed150Tv, speed200Tv;
 
@@ -40,18 +37,21 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
     private StreamAdapter audioStreamAdapter;
     private StreamAdapter subtitleStreamAdapter;
     private RadioGroup mAspectRatioOptions;
+
     private boolean isExoPlayer = false;
+    //是否允许屏幕翻转
+    private boolean isAllowScreenOrientation = true;
 
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
     private SettingVideoListener listener;
 
-    public SettingVideoView(Context context) {
+    public SettingPlayerView(Context context) {
         this(context, null);
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    public SettingVideoView(Context context, AttributeSet attrs) {
+    public SettingPlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         View.inflate(context, R.layout.view_setting_video, this);
 
@@ -69,18 +69,15 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         mAspectRatioOptions = this.findViewById(R.id.aspect_ratio_group);
         orientationChangeSw = this.findViewById(R.id.orientation_change_sw);
 
-        mAspectRatioOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.aspect_fit_parent) {
-                    listener.setAspectRatio(IRenderView.AR_ASPECT_FIT_PARENT);
-                } else if (checkedId == R.id.aspect_fit_screen) {
-                    listener.setAspectRatio(IRenderView.AR_ASPECT_FILL_PARENT);
-                } else if (checkedId == R.id.aspect_16_and_9) {
-                    listener.setAspectRatio(IRenderView.AR_16_9_FIT_PARENT);
-                } else if (checkedId == R.id.aspect_4_and_3) {
-                    listener.setAspectRatio(IRenderView.AR_4_3_FIT_PARENT);
-                }
+        mAspectRatioOptions.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.aspect_fit_parent) {
+                listener.setAspectRatio(IRenderView.AR_ASPECT_FIT_PARENT);
+            } else if (checkedId == R.id.aspect_fit_screen) {
+                listener.setAspectRatio(IRenderView.AR_ASPECT_FILL_PARENT);
+            } else if (checkedId == R.id.aspect_16_and_9) {
+                listener.setAspectRatio(IRenderView.AR_16_9_FIT_PARENT);
+            } else if (checkedId == R.id.aspect_4_and_3) {
+                listener.setAspectRatio(IRenderView.AR_4_3_FIT_PARENT);
             }
         });
 
@@ -110,67 +107,54 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         subtitleRv.setItemViewCacheSize(10);
         subtitleRv.setAdapter(subtitleStreamAdapter);
 
-        audioStreamAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (isExoPlayer){
-                    for (int i = 0; i < audioTrackList.size(); i++) {
-                        if (i == position)
-                            audioTrackList.get(i).setSelect(true);
-                        else
-                            audioTrackList.get(i).setSelect(false);
-                    }
-                    listener.selectTrack(-1, audioTrackList.get(position).getLanguage(), true);
-                }else {
-                    //deselectAll except position
-                    for (int i = 0; i < audioTrackList.size(); i++) {
-                        if (i == position)continue;
-                        listener.deselectTrack(audioTrackList.get(i).getStream(), audioTrackList.get(i).getLanguage(), true);
+        audioStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (isExoPlayer){
+                for (int i = 0; i < audioTrackList.size(); i++) {
+                    if (i == position)
+                        audioTrackList.get(i).setSelect(true);
+                    else
                         audioTrackList.get(i).setSelect(false);
-                    }
-                    //select or deselect position
-                    if (audioTrackList.get(position).isSelect()){
-                        listener.deselectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
-                        audioTrackList.get(position).setSelect(false);
-                    }else {
-                        listener.selectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
-                        audioTrackList.get(position).setSelect(true);
-                    }
                 }
-                audioStreamAdapter.notifyDataSetChanged();
-            }
-        });
-
-        subtitleStreamAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                //ijk播放器暂不提供字幕流管理
-                if (isExoPlayer){
-                    for (int i = 0; i < subtitleTrackList.size(); i++) {
-                        if (i == position)
-                            subtitleTrackList.get(i).setSelect(true);
-                        else
-                            subtitleTrackList.get(i).setSelect(false);
-                    }
-                    listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
-                    subtitleStreamAdapter.notifyDataSetChanged();
+                listener.selectTrack(-1, audioTrackList.get(position).getLanguage(), true);
+            }else {
+                //deselectAll except position
+                for (int i = 0; i < audioTrackList.size(); i++) {
+                    if (i == position)continue;
+                    listener.deselectTrack(audioTrackList.get(i).getStream(), audioTrackList.get(i).getLanguage(), true);
+                    audioTrackList.get(i).setSelect(false);
+                }
+                //select or deselect position
+                if (audioTrackList.get(position).isSelect()){
+                    listener.deselectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                    audioTrackList.get(position).setSelect(false);
+                }else {
+                    listener.selectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                    audioTrackList.get(position).setSelect(true);
                 }
             }
+            audioStreamAdapter.notifyDataSetChanged();
         });
 
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
+        subtitleStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            //ijk播放器暂不提供字幕流管理
+            if (isExoPlayer){
+                for (int i = 0; i < subtitleTrackList.size(); i++) {
+                    if (i == position)
+                        subtitleTrackList.get(i).setSelect(true);
+                    else
+                        subtitleTrackList.get(i).setSelect(false);
+                }
+                listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
+                subtitleStreamAdapter.notifyDataSetChanged();
             }
         });
 
-        orientationChangeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                listener.setOrientationStatus(isChecked);
-            }
-        });
+        this.setOnTouchListener((v, event) -> true);
+
+        orientationChangeSw.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            isAllowScreenOrientation = isChecked;
+            listener.setOrientationStatus(isChecked);
+         });
 
         setPlayerSpeedView(3);
     }
@@ -199,14 +183,18 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
         }
     }
 
-    public SettingVideoView setSettingListener(SettingVideoListener listener){
-        this.listener = listener;
+    public SettingPlayerView setExoPlayerType(){
+        this.isExoPlayer = true;
         return this;
     }
 
-    public SettingVideoView setExoPlayerType(){
-        this.isExoPlayer = true;
+    public SettingPlayerView setOrientationAllow(boolean isAllow){
+        isAllowScreenOrientation = isAllow;
         return this;
+    }
+
+    public void setSettingListener(SettingVideoListener listener){
+        this.listener = listener;
     }
 
     public void setVideoTrackList(List<VideoInfoTrack> audioTrackList){
@@ -282,6 +270,11 @@ public class SettingVideoView extends LinearLayout implements View.OnClickListen
                 speed200Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
                 break;
         }
+    }
+
+    //是否允许屏幕翻转
+    public boolean isAllowScreenOrientation(){
+        return isAllowScreenOrientation;
     }
 
     public interface SettingVideoListener{

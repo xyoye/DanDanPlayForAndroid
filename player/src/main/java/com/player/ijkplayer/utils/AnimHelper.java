@@ -119,19 +119,47 @@ public final class AnimHelper {
     }
 
     /**
-     * 位移动画
+     * 横向位移动画
      */
     public static void viewTranslationX(View view){
         viewTranslationX(view, view.getWidth());
     }
 
     /**
-     * 位移动画
+     * 横向位移动画
      * @param transX 位移距离
      */
     public static void viewTranslationX(View view, int transX){
         if (view.getVisibility() == View.GONE)
             view.setVisibility(View.VISIBLE);
         ViewCompat.animate(view).translationX(transX).setDuration(500);
+    }
+
+    /**
+     * 横向位移动画
+     * @param transX 位移距离
+     * @param duration 位移时间
+     */
+    public static void viewTranslationX(View view, int transX, long duration){
+        if (view.getVisibility() == View.GONE)
+            view.setVisibility(View.VISIBLE);
+        ViewCompat.animate(view).translationX(transX).setDuration(duration);
+    }
+
+    /**
+     * 纵向位移动画
+     */
+    public static void viewTranslationY(View view){
+        viewTranslationY(view, view.getHeight());
+    }
+
+    /**
+     * 纵向位移动画
+     * @param transY 位移距离
+     */
+    public static void viewTranslationY(View view, int transY){
+        if (view.getVisibility() == View.GONE)
+            view.setVisibility(View.VISIBLE);
+        ViewCompat.animate(view).translationY(transY).setDuration(300);
     }
 }

@@ -80,8 +80,7 @@ public class AnimeMoreItem implements AdapterItem<AnimeBean> {
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(
                 (Activity)mView.getContext(),
-                model.getAnimeId()+"",
-                imageIv)
+                model.getAnimeId()+"")
         );
     }
 }

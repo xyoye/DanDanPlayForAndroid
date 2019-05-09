@@ -56,6 +56,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     public void process(Bundle savedInstanceState) {
         initAnimeType();
         initSubGroup();
+        initNormalFilter();
         long lastUpdateTime = AppConfig.getInstance().getUpdateFilterTime();
         long nowTime = System.currentTimeMillis();
         //七天更新一次云过滤列表
@@ -167,6 +168,24 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
+    }
+
+    //弹幕本地过滤
+    private void initNormalFilter(){
+        new Thread(() -> {
+            List<String> blockList = new ArrayList<>();
+            Cursor cursor = DataBaseManager.getInstance()
+                    .selectTable(13)
+                    .query()
+                    .setColumns(1)
+                    .execute();
+            if (cursor != null){
+                while (cursor.moveToNext()){
+                    blockList.add(cursor.getString(0));
+                }
+            }
+            IApplication.normalFilterList.addAll(blockList);
+        }).start();
     }
 
     //弹幕云过滤

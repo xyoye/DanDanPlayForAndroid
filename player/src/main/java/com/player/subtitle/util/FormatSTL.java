@@ -1,5 +1,7 @@
 package com.player.subtitle.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -36,14 +38,15 @@ import java.util.Iterator;
  */
 public class FormatSTL implements TimedTextFileFormat {
 
-	public TimedTextObject parseFile(String fileName, InputStream is) throws IOException, FatalParsingException {
-		return parseFile(fileName, is, Charset.defaultCharset());
+	public TimedTextObject parseFile(File file) throws IOException, FatalParsingException {
+		return parseFile(file, null);
 	}
 
-	public TimedTextObject parseFile(String fileName, InputStream is, Charset isCharset) throws IOException, FatalParsingException {
+	public TimedTextObject parseFile(File file, Charset isCharset) throws IOException, FatalParsingException {
 
+		InputStream is = new FileInputStream(file);
 		TimedTextObject tto = new TimedTextObject();
-		tto.fileName = fileName;
+		tto.fileName = file.getName();
 
 		byte [] gsiBlock = new byte [1024];
 		byte [] ttiBlock = new byte [128];

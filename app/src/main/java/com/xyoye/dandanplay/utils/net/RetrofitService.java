@@ -14,9 +14,11 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
 import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
+import com.xyoye.dandanplay.bean.SubtitleBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -28,7 +30,11 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
@@ -119,4 +125,13 @@ public interface RetrofitService {
 
     @GET("/api/v2/bangumi/season/anime/{year}/{month}")
     Observable<BangumiBean> getSeasonAnime(@Path("year") String year, @Path("month") String month);
+
+    @FormUrlEncoded
+    @Headers({"query:shooter"})
+    @POST("/api/subapi.php")
+    Observable<List<SubtitleBean.Shooter>> queryShooter(@FieldMap Map<String, String> map);
+
+    @Headers({"query:thunder"})
+    @GET("/subxl/{videoHash}.json")
+    Observable<SubtitleBean.Thunder> queryThunder(@Path("videoHash") String videoHash);
 }

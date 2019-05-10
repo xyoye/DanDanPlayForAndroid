@@ -135,17 +135,6 @@ public class AppConfig {
     }
 
     /**
-     * 自动匹配弹幕
-     */
-    public boolean isAutoLoadDanmu(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_DANMU);
-    }
-
-    public void setAutoLoadDanmu(boolean auto){
-        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_DANMU, auto);
-    }
-
-    /**
      * 开启硬解码
      */
     public boolean isOpenMediaCodeC(){
@@ -193,7 +182,7 @@ public class AppConfig {
      * PlayerType
      */
     public int getPlayerType(){
-        return SPUtils.getInstance().getInt(Constants.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.IJK_PLAYER);
+        return SPUtils.getInstance().getInt(Constants.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.EXO_PLAYER);
     }
 
     public void setPlayerType(int type){
@@ -209,6 +198,39 @@ public class AppConfig {
 
     public void setPixelFormat(String pixelFormat){
         SPUtils.getInstance().put(Constants.SHARE_PIXEL_FORMAT, pixelFormat);
+    }
+
+    /**
+     * 自动匹配弹幕
+     */
+    public boolean isAutoLoadDanmu(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_DANMU);
+    }
+
+    public void setAutoLoadDanmu(boolean auto){
+        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_DANMU, auto);
+    }
+
+    /**
+     * 是否使用网络字幕
+     */
+    public boolean isUseNetWorkSubtitle(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.USE_NETWORK_SUBTITLE, true);
+    }
+
+    public void setUseNetWorkSubtitle(boolean isUse){
+        SPUtils.getInstance().put(Constants.Config.USE_NETWORK_SUBTITLE, isUse);
+    }
+
+    /**
+     * 自动匹配网络字幕
+     */
+    public boolean isAutoLoadNetworkSubtitle(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_NETWORK_SUBTITLE);
+    }
+
+    public void setAutoLoadNetworkSubtitle(boolean auto){
+        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_NETWORK_SUBTITLE, auto);
     }
 
     /**

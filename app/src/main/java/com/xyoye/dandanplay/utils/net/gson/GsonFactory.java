@@ -31,6 +31,7 @@ public class GsonFactory {
                 .registerTypeAdapter(long.class, new LongDefaultAdapter())
                 .registerTypeAdapter(Boolean.class, new BooleanDefaultAdapter())
                 .registerTypeAdapter(boolean.class, new BooleanDefaultAdapter())
+                .disableHtmlEscaping()
                 .create();
     }
 

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
@@ -51,6 +52,14 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     Toolbar toolbar;
     @BindView(R.id.outer_china_danmu_cb)
     CheckBox outerChinaDanmuCb;
+    @BindView(R.id.auto_load_danmu_cb)
+    CheckBox autoLoadDanmuCb;
+    @BindView(R.id.network_subtitle_cb)
+    CheckBox networkSubtitleCb;
+    @BindView(R.id.auto_load_subtitle_cb)
+    CheckBox autoLoadSubtitleCb;
+    @BindView(R.id.auto_load_subtitle_rl)
+    RelativeLayout autoLoadSubtitleRl;
 
     @Override
     protected int initPageLayoutID() {
@@ -106,11 +115,22 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         boolean openSLES = AppConfig.getInstance().isOpenSLES();
         boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
         boolean outerChinaDialog = AppConfig.getInstance().isShowOuterChainDanmuDialog();
+        boolean autoLoadDanmu = AppConfig.getInstance().isAutoLoadDanmu();
+        boolean useNetworkSubtitle = AppConfig.getInstance().isUseNetWorkSubtitle();
+        boolean autoLoadNetworkSubtitle = AppConfig.getInstance().isAutoLoadNetworkSubtitle();
         mediaCodeCCb.setChecked(mediaCodeC);
         mediaCodeCH265Cb.setChecked(mediaCodeCH265);
         openSlesCb.setChecked(openSLES);
         surfaceRendersCb.setChecked(surfaceRenders);
         outerChinaDanmuCb.setChecked(outerChinaDialog);
+        autoLoadDanmuCb.setChecked(autoLoadDanmu);
+        networkSubtitleCb.setChecked(useNetworkSubtitle);
+        autoLoadSubtitleCb.setChecked(autoLoadNetworkSubtitle);
+        if (useNetworkSubtitle){
+            autoLoadSubtitleRl.setVisibility(View.VISIBLE);
+        }else {
+            autoLoadSubtitleRl.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -125,6 +145,18 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                 AppConfig.getInstance().setSurfaceRenders(isChecked));
         outerChinaDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setShowOuterChainDanmuDialog(isChecked));
+        autoLoadDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setAutoLoadDanmu(isChecked));
+        networkSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->{
+            AppConfig.getInstance().setUseNetWorkSubtitle(isChecked);
+            autoLoadSubtitleRl.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            if (!isChecked){
+                autoLoadSubtitleCb.setChecked(false);
+                AppConfig.getInstance().setAutoLoadNetworkSubtitle(false);
+            }
+        });
+        autoLoadSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setAutoLoadNetworkSubtitle(isChecked));
     }
 
     @OnClick({R.id.select_player_type_ll, R.id.select_pixel_format_ll})

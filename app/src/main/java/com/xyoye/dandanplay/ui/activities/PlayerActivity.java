@@ -26,6 +26,7 @@ import com.player.commom.receiver.PlayerReceiverListener;
 import com.player.commom.receiver.ScreenBroadcastReceiver;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
+import com.xyoye.dandanplay.bean.SubtitleBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
@@ -34,6 +35,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,6 +45,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -117,6 +120,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
         //初始化播放器
         initPlayer();
+
+        querySubtitle(videoPath);
     }
 
     //初始化播放器
@@ -365,5 +370,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     @Override
     public void onScreenLocked() {
         mPlayer.onScreenLocked();
+    }
+
+    private void querySubtitle(String videoPath){
+        SubtitleBean.querySubtitle(videoPath, new CommOtherDataObserver<List<SubtitleBean>>() {
+            @Override
+            public void onSuccess(List<SubtitleBean> subtitleList) {
+                ToastUtils.showShort("获取字幕成功，共"+subtitleList.size()+"条");
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort("获取字幕失败，"+message);
+            }
+        }, new NetworkConsumer());
     }
 }

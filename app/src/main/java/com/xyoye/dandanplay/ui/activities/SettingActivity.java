@@ -39,8 +39,6 @@ import butterknife.BindView;
 public class SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
-    @BindView(R.id.auto_load_danmu_sw)
-    Switch autoLoadDanmuSw;
     @BindView(R.id.cloud_filter_sw)
     Switch cloudFilterSw;
     @BindView(R.id.bilibili_download_rl)
@@ -72,9 +70,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         pathTv.setText(downloadPath);
         version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
-        if (AppConfig.getInstance().isAutoLoadDanmu()){
-            autoLoadDanmuSw.setChecked(true);
-        }
         if (AppConfig.getInstance().isCloudDanmuFilter()){
             cloudFilterSw.setChecked(true);
         }
@@ -94,10 +89,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         patchRl.setOnLongClickListener(v -> {
             new PatchHisDialog(SettingActivity.this, R.style.Dialog).show();
             return true;
-        });
-
-        autoLoadDanmuSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setAutoLoadDanmu(isChecked);
         });
         cloudFilterSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setCloudDanmuFilter(isChecked);

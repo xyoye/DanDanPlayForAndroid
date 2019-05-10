@@ -4,8 +4,10 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -21,11 +23,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetroFactory {
     private static String url = "https://api.acplay.net/";
     private static String resUrl = "http://res.acplay.net/";
-    private static String downloadUrl = " https://m2t.chinacloudsites.cn/";
+    private static String downloadUrl = "https://m2t.chinacloudsites.cn/";
+    private static String subtitleUrl = "https://dandanplay.com/";
 
     private static RetrofitService retrofitService;
     private static RetrofitService resRetrofitService;
     private static RetrofitService downloadRetrofitService;
+    private static RetrofitService subtitleRetrofitService;
 
     private RetroFactory() {
 
@@ -70,12 +74,25 @@ public class RetroFactory {
         return downloadRetrofitService;
     }
 
+    public static RetrofitService getSubtitleInstance(){
+        if (subtitleRetrofitService == null){
+            subtitleRetrofitService = new Retrofit.Builder()
+                    .baseUrl(subtitleUrl)
+                    .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .client(initSubtitleOkHttp())
+                    .build()
+                    .create(RetrofitService.class);
+        }
+        return subtitleRetrofitService;
+    }
+
     private static OkHttpClient initOkHttp() {
         return OkHttpEngine.getInstance()
                 .getOkHttpClient()
                 .newBuilder()
-                .connectTimeout(5000, TimeUnit.SECONDS)
-                .readTimeout(5000, TimeUnit.SECONDS)
+                .connectTimeout(5000, TimeUnit.MILLISECONDS)
+                .readTimeout(5000, TimeUnit.MILLISECONDS)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder builder = original.newBuilder()
@@ -91,8 +108,44 @@ public class RetroFactory {
         return OkHttpEngine.getInstance()
                 .getOkHttpClient()
                 .newBuilder()
-                .connectTimeout(5000, TimeUnit.SECONDS)
-                .readTimeout(5000, TimeUnit.SECONDS)
+                .connectTimeout(5000, TimeUnit.MILLISECONDS)
+                .readTimeout(5000, TimeUnit.MILLISECONDS)
+                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                .build();
+
+    }
+
+    private static OkHttpClient initSubtitleOkHttp() {
+        return OkHttpEngine.getInstance()
+                .getOkHttpClient()
+                .newBuilder()
+                .connectTimeout(10000, TimeUnit.MILLISECONDS)
+                .readTimeout(10000, TimeUnit.MILLISECONDS)
+                .addInterceptor(chain -> {
+                    Request oldRequest = chain.request();
+                    Request.Builder newRequest = oldRequest.newBuilder();
+                    List<String> headerValues = oldRequest.headers("query");
+                    HttpUrl newBaseUrl;
+
+                    if (headerValues.size() > 0 && "shooter".equals(headerValues.get(0))){
+                        newRequest.removeHeader("query");
+                        newBaseUrl = HttpUrl.parse("https://www.shooter.cn/");
+                    }else {
+                        newRequest.removeHeader("query");
+                        newBaseUrl = HttpUrl.parse("http://sub.xmp.sandai.net:8000/");
+                    }
+
+                    if (newBaseUrl != null) {
+                        HttpUrl newUrl = oldRequest.url()
+                                .newBuilder()
+                                .scheme(newBaseUrl.scheme())
+                                .host(newBaseUrl.host())
+                                .port(newBaseUrl.port())
+                                .build();
+                        return chain.proceed(newRequest.url(newUrl).build());
+                    }
+                    return chain.proceed(oldRequest);
+                })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
 

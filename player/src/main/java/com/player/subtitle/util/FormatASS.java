@@ -526,7 +526,7 @@ public class FormatASS implements TimedTextFileFormat {
 				String captionText = line[i];
 				newCaption.rawContent = captionText;
 				//text is cleaned before being inserted into the caption
-				newCaption.content = captionText.replaceAll("\\{.*?}", "").replace("\n", "<br />").replace("\\N", "<br />");
+				newCaption.content = captionText.replaceAll("\\{.*?\\}", "").replace("\n", "<br />").replace("\\N", "<br />");
 			}
 		}
 

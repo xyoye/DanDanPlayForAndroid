@@ -36,7 +36,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
 
-import com.player.ijkplayer.utils.Constants;
+import com.player.commom.utils.Constants;
 
 import java.io.File;
 import java.io.IOException;

@@ -70,13 +70,13 @@ public class PlayerSettingDialog extends Dialog {
 
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType){
-            case com.player.ijkplayer.utils.Constants.EXO_PLAYER:
+            case com.player.commom.utils.Constants.EXO_PLAYER:
                 playerIjkExoRb.setChecked(true);
                 break;
-            case com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER:
+            case com.player.commom.utils.Constants.IJK_ANDROID_PLAYER:
                 playerAndroidRb.setChecked(true);
                 break;
-            case com.player.ijkplayer.utils.Constants.IJK_PLAYER:
+            case com.player.commom.utils.Constants.IJK_PLAYER:
             default:
                 playerIjkRb.setChecked(true);
                 break;
@@ -116,15 +116,15 @@ public class PlayerSettingDialog extends Dialog {
                 switch (checkedId){
                     case R.id.player_ijk_rb:
                         player_name = "IJK Player";
-                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_PLAYER);
                         break;
                     case R.id.player_exo_rb:
                         player_name = "EXO Player";
-                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.EXO_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.EXO_PLAYER);
                         break;
                     case R.id.player_android_rb:
                         player_name = "AndroidMedia Player";
-                        AppConfig.getInstance().setPlayerType(com.player.ijkplayer.utils.Constants.IJK_ANDROID_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
                         break;
                 }
                 EventBus.getDefault().post(new PlayerSettingEvent(true, player_name));

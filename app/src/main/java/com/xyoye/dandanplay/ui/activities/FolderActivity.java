@@ -304,7 +304,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public void openIntentVideo(VideoBean videoBean){
-        boolean isExoPlayer = AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.EXO_PLAYER;
+        boolean isExoPlayer = AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER;
         if (!isExoPlayer && FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals(".MKV") && AppConfig.getInstance().isShowMkvTips()){
             new CommonDialog.Builder(this)
                     .setAutoDismiss()

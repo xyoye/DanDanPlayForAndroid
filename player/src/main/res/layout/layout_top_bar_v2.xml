@@ -22,7 +22,7 @@
             android:padding="10dp"
             android:src="@mipmap/ic_return_back"/>
 
-        <com.player.ijkplayer.widgets.MarqueeTextView
+        <com.player.commom.widgets.MarqueeTextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
     </LinearLayout>
 
     <!--视频设置-->
-    <com.player.ijkplayer.widgets.SettingPlayerView
+    <com.player.commom.widgets.SettingPlayerView
         android:id="@+id/player_setting_view"
         android:layout_width="300dp"
         android:layout_height="match_parent"
@@ -88,25 +88,25 @@
         android:translationX="300dp"
         android:visibility="gone">
 
-    </com.player.ijkplayer.widgets.SettingPlayerView>
+    </com.player.commom.widgets.SettingPlayerView>
 
     <!--弹幕设置-->
-    <com.player.ijkplayer.widgets.SettingDanmuView
+    <com.player.commom.widgets.SettingDanmuView
         android:id="@+id/danmu_setting_view"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:translationX="300dp"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.SettingDanmuView>
+    </com.player.commom.widgets.SettingDanmuView>
 
     <!--字幕设置-->
-    <com.player.ijkplayer.widgets.SettingSubtitleView
+    <com.player.commom.widgets.SettingSubtitleView
         android:id="@+id/subtitle_setting_view"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:translationX="300dp"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.SettingSubtitleView>
+    </com.player.commom.widgets.SettingSubtitleView>
 </FrameLayout>

@@ -15,15 +15,15 @@ import android.view.WindowManager;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.player.commom.utils.Constants;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.exoplayer.ExoPlayerView;
-import com.player.exoplayer.PlayerViewListener;
-import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.media.IjkPlayerView;
-import com.player.ijkplayer.media.IjkPlayerView_V2;
-import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
-import com.player.ijkplayer.receiver.PlayerReceiverListener;
-import com.player.ijkplayer.receiver.ScreenBroadcastReceiver;
+import com.player.commom.listener.PlayerViewListener;
+import com.player.commom.listener.OnDanmakuListener;
+import com.player.ijkplayer.IjkPlayerView_V2;
+import com.player.commom.receiver.BatteryBroadcastReceiver;
+import com.player.commom.receiver.PlayerReceiverListener;
+import com.player.commom.receiver.ScreenBroadcastReceiver;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
@@ -70,7 +70,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         super.onCreate(savedInstanceState);
 
         //播放器类型
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.EXO_PLAYER){
+        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER){
             mPlayer = new ExoPlayerView(this);
             setContentView((ExoPlayerView)mPlayer);
         }else {
@@ -132,7 +132,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         }
 
         //初始化不同的播放器
-        if (AppConfig.getInstance().getPlayerType() == com.player.ijkplayer.utils.Constants.EXO_PLAYER) {
+        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER) {
             initExoPlayer(inputStream);
         }else {
             initIjkPlayer(inputStream);
@@ -168,7 +168,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
                     //选择字幕事件
-                    if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
+                    if (what ==  Constants.INTENT_OPEN_SUBTITLE){
                         new FileManagerDialog(PlayerActivity.this,
                                 videoPath,
                                 FileManagerDialog.SELECT_SUBTITLE,
@@ -204,7 +204,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener((mp, what, extra) -> {
                     //选择字幕事件
-                    if (what == IjkPlayerView.INTENT_OPEN_SUBTITLE){
+                    if (what == Constants.INTENT_OPEN_SUBTITLE){
                         new FileManagerDialog(PlayerActivity.this,
                                 videoPath,
                                 FileManagerDialog.SELECT_SUBTITLE,

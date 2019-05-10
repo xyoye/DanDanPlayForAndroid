@@ -41,20 +41,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <com.player.ijkplayer.widgets.TopBarView
+    <com.player.commom.widgets.TopBarView
         android:id="@+id/top_bar_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.player.ijkplayer.widgets.TopBarView>
+    </com.player.commom.widgets.TopBarView>
 
-    <com.player.ijkplayer.widgets.BottomBarView
+    <com.player.commom.widgets.BottomBarView
         android:id="@+id/bottom_bar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:translationY="60dp"
         android:layout_gravity="bottom"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.BottomBarView>
+    </com.player.commom.widgets.BottomBarView>
 
     <ImageView
         android:id="@+id/iv_player_lock"
@@ -80,25 +80,25 @@
         android:translationX="60dp"
         android:visibility="gone"/>
 
-    <com.player.ijkplayer.widgets.SkipTipView
+    <com.player.commom.widgets.SkipTipView
         android:id="@+id/skip_tip_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.SkipTipView>
+    </com.player.commom.widgets.SkipTipView>
 
-    <com.player.ijkplayer.widgets.DanmuPostView
+    <com.player.commom.widgets.DanmuPostView
         android:id="@+id/danmu_post_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.DanmuPostView>
+    </com.player.commom.widgets.DanmuPostView>
 
-    <com.player.ijkplayer.widgets.DanmuBlockView
+    <com.player.commom.widgets.DanmuBlockView
         android:id="@+id/danmu_block_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-    </com.player.ijkplayer.widgets.DanmuBlockView>
+    </com.player.commom.widgets.DanmuBlockView>
 </FrameLayout>

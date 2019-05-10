@@ -1,13 +1,11 @@
 package com.xyoye.dandanplay.utils;
 
-import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
 
 /**
  * Created by YE on 2018/7/2.
@@ -195,7 +193,7 @@ public class AppConfig {
      * PlayerType
      */
     public int getPlayerType(){
-        return SPUtils.getInstance().getInt(Constants.SHARE_PLAYER_TYPE, com.player.ijkplayer.utils.Constants.IJK_PLAYER);
+        return SPUtils.getInstance().getInt(Constants.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.IJK_PLAYER);
     }
 
     public void setPlayerType(int type){

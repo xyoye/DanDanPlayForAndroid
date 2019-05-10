@@ -63,25 +63,25 @@ import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.model.android.Danmakus;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
-import com.player.exoplayer.PlayerViewListener;
+import com.player.commom.listener.PlayerViewListener;
 import com.player.ijkplayer.R;
-import com.player.ijkplayer.adapter.BlockAdapter;
-import com.player.ijkplayer.danmaku.BiliDanmakuParser;
-import com.player.ijkplayer.danmaku.OnDanmakuListener;
-import com.player.ijkplayer.receiver.BatteryBroadcastReceiver;
-import com.player.ijkplayer.utils.AnimHelper;
-import com.player.ijkplayer.utils.CommonPlayerUtils;
-import com.player.ijkplayer.utils.Constants;
-import com.player.ijkplayer.utils.MotionEventUtils;
-import com.player.ijkplayer.utils.NavUtils;
-import com.player.ijkplayer.utils.PlayerConfigShare;
-import com.player.ijkplayer.utils.SoftInputUtils;
-import com.player.ijkplayer.utils.TimeFormatUtils;
-import com.player.ijkplayer.utils.WindowUtils;
-import com.player.ijkplayer.widgets.MarqueeTextView;
-import com.player.ijkplayer.widgets.SettingDanmuView;
-import com.player.ijkplayer.widgets.SettingSubtitleView;
-import com.player.ijkplayer.widgets.SettingPlayerView;
+import com.player.commom.adapter.BlockAdapter;
+import com.player.danmaku.danmaku.parser.BiliDanmakuParser;
+import com.player.commom.listener.OnDanmakuListener;
+import com.player.commom.receiver.BatteryBroadcastReceiver;
+import com.player.commom.utils.AnimHelper;
+import com.player.commom.utils.CommonPlayerUtils;
+import com.player.commom.utils.Constants;
+import com.player.commom.utils.MotionEventUtils;
+import com.player.commom.utils.NavUtils;
+import com.player.commom.utils.PlayerConfigShare;
+import com.player.commom.utils.SoftInputUtils;
+import com.player.commom.utils.TimeFormatUtils;
+import com.player.commom.utils.WindowUtils;
+import com.player.commom.widgets.MarqueeTextView;
+import com.player.commom.widgets.SettingDanmuView;
+import com.player.commom.widgets.SettingSubtitleView;
+import com.player.commom.widgets.SettingPlayerView;
 import com.player.subtitle.SubtitleParser;
 import com.player.subtitle.SubtitleView;
 import com.player.subtitle.util.TimedTextObject;
@@ -103,12 +103,13 @@ import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 import static android.view.GestureDetector.OnGestureListener;
 import static android.view.GestureDetector.SimpleOnGestureListener;
 import static android.widget.SeekBar.OnSeekBarChangeListener;
-import static com.player.ijkplayer.utils.TimeFormatUtils.generateTime;
+import static com.player.commom.utils.TimeFormatUtils.generateTime;
 import static tv.danmaku.ijk.media.player.IMediaPlayer.OnInfoListener;
 
 /**
  * Created by long on 2016/10/24.
  */
+@Deprecated
 public class IjkPlayerView extends FrameLayout implements View.OnClickListener, PlayerViewListener{
     //打开字幕选择
     public static final int INTENT_OPEN_SUBTITLE = 1001;

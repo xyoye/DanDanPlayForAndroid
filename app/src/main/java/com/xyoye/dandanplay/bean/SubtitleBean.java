@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 public class SubtitleBean {
 
@@ -223,54 +225,16 @@ public class SubtitleBean {
     }
 
     public static void querySubtitle(String videoPath, CommOtherDataObserver<List<SubtitleBean>> observer, NetworkConsumer consumer){
+        String thunderHash = HashUtils.getFileSHA1(videoPath);
         Map<String, String> shooterParams = new HashMap<>();
         shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
         shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
         shooterParams.put("format", "json");
         shooterParams.put("lang", "Chn");
-
-        String thunderHash = HashUtils.getFileSHA1(videoPath);
-
         RetrofitService service = RetroFactory.getSubtitleInstance();
         service.queryThunder(thunderHash)
                 .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
-                        SubtitleConverter.transform(shooters, thunder, videoPath))
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void querySubtitleThunder(String videoPath, CommOtherDataObserver<List<SubtitleBean>> observer, NetworkConsumer consumer){
-        Map<String, String> shooterParams = new HashMap<>();
-        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
-        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
-        shooterParams.put("format", "json");
-        shooterParams.put("lang", "Chn");
-
-        String thunderHash = HashUtils.getFileSHA1(videoPath);
-
-        RetrofitService service = RetroFactory.getSubtitleInstance();
-        service.queryThunder(thunderHash)
-                .map(thunder -> SubtitleConverter.transform(null, thunder, videoPath))
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
-    public static void querySubtitleShooter(String videoPath, CommOtherDataObserver<List<SubtitleBean>> observer, NetworkConsumer consumer){
-        Map<String, String> shooterParams = new HashMap<>();
-        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
-        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
-        shooterParams.put("format", "json");
-        shooterParams.put("lang", "Chn");
-
-        String thunderHash = HashUtils.getFileSHA1(videoPath);
-
-        RetrofitService service = RetroFactory.getSubtitleInstance();
-        service.queryShooter(shooterParams)
-                .map(shooters -> SubtitleConverter.transform(shooters, null, videoPath))
+                        SubtitleConverter.transform(thunder, shooters, videoPath))
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

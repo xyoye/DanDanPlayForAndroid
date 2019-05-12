@@ -129,9 +129,9 @@ public interface RetrofitService {
     @FormUrlEncoded
     @Headers({"query:shooter"})
     @POST("/api/subapi.php")
-    Observable<List<SubtitleBean.Shooter>> queryShooter(@FieldMap Map<String, String> map);
+    Observable<ResponseBody> queryShooter(@FieldMap Map<String, String> map);
 
     @Headers({"query:thunder"})
     @GET("/subxl/{videoHash}.json")
-    Observable<SubtitleBean.Thunder> queryThunder(@Path("videoHash") String videoHash);
+    Observable<ResponseBody> queryThunder(@Path("videoHash") String videoHash);
 }

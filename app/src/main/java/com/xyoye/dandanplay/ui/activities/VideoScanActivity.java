@@ -198,13 +198,16 @@ public class VideoScanActivity extends BaseMvcActivity {
     //递归查询内存中的视频文件
     private Observable<File> listFiles(final File f){
         if(f.isDirectory()){
+            File[] files = f.listFiles();
+            if (files == null)
+                files = new File[0];
             return Observable
-                    .fromArray(f.listFiles())
+                    .fromArray(files)
                     .flatMap(this::listFiles);
         } else {
             return Observable
                     .just(f)
-                    .filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+                    .filter(file -> file != null && f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
         }
     }
 

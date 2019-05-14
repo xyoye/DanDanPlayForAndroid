@@ -314,7 +314,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             ToastUtils.showShort("解析种子文件失败，请重试");
             return;
         }
-        new TorrentFileCheckDialog(SearchActivity.this, torrent, resultTorrent -> {
+        TorrentFileCheckDialog torrentFileCheckDialog = new TorrentFileCheckDialog(SearchActivity.this, torrent, resultTorrent -> {
             //设置是否选中文件
             Iterator iterator = resultTorrent.getTorrentFileList().iterator();
             while (iterator.hasNext()){
@@ -331,7 +331,9 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             Libtorrent.torrentFileDeleteUnselected(resultTorrent.getId());
             intent.putExtra("torrent", resultTorrent);
             startActivity(intent);
-        }).show();
+        });
+        if (!this.isFinishing())
+            torrentFileCheckDialog.show();
     }
 
     @Override

@@ -8,7 +8,7 @@ public class Time {
 	 * @param format supported formats: "hh:mm:ss,ms", "h:mm:ss.cs" and "h:m:s:f/fps"
 	 * @param value  string in the correct format
 	 */
-	protected Time(String format, String value) {
+	public Time(String format, String value){
 		if (format.equalsIgnoreCase("hh:mm:ss,ms")){
 			// this type of format:  01:02:22,501 (used in .SRT)
 			int h, m, s, ms;
@@ -26,7 +26,11 @@ public class Time {
 			h = Integer.parseInt(hms[0]);
 			m = Integer.parseInt(hms[1]);
 			s = Integer.parseInt(hms[2].substring(0, 2));
-			cs = Integer.parseInt(hms[2].substring(3, 5));
+			try {
+				cs = Integer.parseInt(hms[2].substring(3, 5));
+			}catch (NumberFormatException e){
+				cs = Integer.parseInt(value.split(".")[1]);
+			}
 
 			mseconds = cs*10 + s*1000 + m*60000 + h*3600000;
 		} else if (format.equalsIgnoreCase("h:m:s:f/fps")){

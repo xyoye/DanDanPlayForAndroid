@@ -9,6 +9,8 @@ import com.xyoye.dandanplay.bean.FileManagerBean;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
+import java.io.File;
+
 import butterknife.BindView;
 
 /**
@@ -63,7 +65,9 @@ public class FileManagerItem implements AdapterItem<FileManagerBean> {
 
         mView.setOnClickListener(v -> {
             if (model.hasParent()){
-                listener.onItemClick(model.getFile().getParentFile().getAbsolutePath(), true);
+                File parentFile = model.getFile().getParentFile();
+                if (parentFile != null)
+                    listener.onItemClick(parentFile.getAbsolutePath(), true);
             }else if(model.isFolder()){
                 listener.onItemClick(model.getFile().getAbsolutePath(), true);
             }else {

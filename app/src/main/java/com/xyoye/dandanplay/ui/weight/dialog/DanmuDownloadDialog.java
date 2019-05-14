@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -96,7 +97,7 @@ public class DanmuDownloadDialog extends Dialog{
                     EventBus.getDefault().post(
                             new OpenDanmuFolderEvent(danmuPath, bean.getEpisodeId(), false));
                 }
-                if (DanmuDownloadDialog.this.isShowing())
+                if (DanmuDownloadDialog.this.isShowing() && getOwnerActivity() != null && !getOwnerActivity().isFinishing())
                     DanmuDownloadDialog.this.cancel();
             }
 
@@ -104,7 +105,7 @@ public class DanmuDownloadDialog extends Dialog{
             public void onError(int errorCode, String message) {
                 System.out.println(message);
                 ToastUtils.showShort(message);
-                if (DanmuDownloadDialog.this.isShowing() && context!=null && getOwnerActivity() != null)
+                if (DanmuDownloadDialog.this.isShowing() && getOwnerActivity() != null && !getOwnerActivity().isFinishing())
                     DanmuDownloadDialog.this.cancel();
             }
         }, new NetworkConsumer());

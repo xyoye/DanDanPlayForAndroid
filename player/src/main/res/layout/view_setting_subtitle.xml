@@ -12,6 +12,40 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/subtitle_network_rl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp"
+                    android:text="网络字幕"/>
+
+                <TextView
+                    android:id="@+id/subtitle_network_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:text="选择"/>
+
+            </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,11 +64,14 @@
                     android:id="@+id/subtitle_change_source_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textColor="@android:color/white"
                     android:layout_alignParentEnd="true"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:textSize="14sp"
+                    android:textColor="@android:color/white"
                     android:text="换源"/>
 
             </RelativeLayout>

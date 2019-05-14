@@ -20,9 +20,10 @@
         android:background="@android:color/white"/>
 
     <TextView
+        android:id="@+id/skip_content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:text="@string/video_record"
         android:textColor="@android:color/white"
         android:textSize="16sp"/>

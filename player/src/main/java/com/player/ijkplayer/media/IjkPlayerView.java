@@ -469,9 +469,7 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
      * @return 返回播放进度
      */
     @Override
-    public long onDestroy() {
-        // 记录播放进度
-        long curPosition = mVideoView.getCurrentPosition();
+    public void onDestroy() {
         mVideoView.destroy();
         if (mDanmakuView != null) {
             // don't forget release!
@@ -480,7 +478,6 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
         }
         // 关闭屏幕常亮
         mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        return curPosition;
     }
 
     /**
@@ -2769,6 +2766,11 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                         PlayerConfigShare.getInstance().setSubtitleLanguageType(type);
                         mSubtitleView.setLanguage(type);
                     }
+
+                    @Override
+                    public void onShowNetworkSubtitle() {
+
+                    }
                 })
                 .init();
     }
@@ -2890,5 +2892,13 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
     @Override
     public void onScreenLocked(){
         mIsScreenLocked = true;
+    }
+
+    /**
+     * 设置网络字幕
+     */
+    @Override
+    public void onSubtitleQuery(int size){
+        //_showSkipSub(size);
     }
 }

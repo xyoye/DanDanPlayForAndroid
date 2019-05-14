@@ -3,7 +3,9 @@ package com.xyoye.dandanplay.ui.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -171,6 +173,12 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if(adapter != null){
@@ -179,12 +187,11 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         if (ServiceUtils.isServiceRunning(SmbService.class)){
             stopService(new Intent(this, SmbService.class));
         }
-        EventBus.getDefault().register(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
@@ -219,7 +226,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void saveCurrent(SaveCurrentEvent event){
-        presenter.updateCurrent(event);
         adapter.getData().get(openVideoPosition).setCurrentPosition(event.getCurrentPosition());
     }
 
@@ -324,8 +330,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
      */
     private void launchPlay(VideoBean videoBean){
         //记录此次播放
-        String videoInfo = JsonUtil.toJson(videoBean);
-        AppConfig.getInstance().setLastPlayVideo(videoInfo);
+        AppConfig.getInstance().setLastPlayVideo(videoBean.getVideoPath());
         EventBus.getDefault().post(new RefreshFolderEvent(false));
 
         PlayerManagerActivity.launchPlayer(

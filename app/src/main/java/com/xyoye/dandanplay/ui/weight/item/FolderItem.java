@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
@@ -54,7 +55,12 @@ public class FolderItem implements AdapterItem<FolderBean>{
         fileNumber.setText(String.valueOf(model.getFileNumber() + " 视频"));
 
         //是否为上次播放的文件夹
-        boolean isLastPlayFolder = AppConfig.getInstance().getLastPlayPath(true).equals(model.getFolderPath());
+        boolean isLastPlayFolder = false;
+        String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
+        if (!StringUtils.isEmpty(lastVideoPath)){
+            String folderPath = FileUtils.getDirName(lastVideoPath);
+            isLastPlayFolder = folderPath.equals(model.getFolderPath());
+        }
 
         folderTitle.setTextColor(isLastPlayFolder
                 ? mContext.getResources().getColor(R.color.theme_color)

@@ -93,9 +93,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         recyclerView.setAdapter(adapter);
 
         fastPlayBt.setOnClickListener(v -> {
-            String videoInfo = AppConfig.getInstance().getLastPlayVideo();
-            if (!StringUtils.isEmpty(videoInfo)){
-                VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
+            String videoPath = AppConfig.getInstance().getLastPlayVideo();
+            if (!StringUtils.isEmpty(videoPath)){
+                VideoBean videoBean = presenter.getLastPlayVideo(videoPath);
                 if (videoBean == null)
                     return;
                 //视频文件是否已被删除

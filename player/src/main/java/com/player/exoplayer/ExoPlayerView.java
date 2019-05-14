@@ -132,8 +132,24 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     // 无效变量
     private static final int INVALID_VALUE = -1;
 
-    // 原生的ExoPlayer
-    private SimpleExoPlayer exoPlayer;
+    //视频View
+    private PlayerView mVideoView;
+    //字幕View
+    private SubtitleView mSubtitleView;
+    //弹幕View
+    private IDanmakuView mDanmakuView;
+    //顶部布局
+    private TopBarView topBarView;
+    //底部布局
+    private BottomBarView bottomBarView;
+    //跳转提示
+    private SkipTipView skipTipView;
+    //字幕选取提示
+    private SkipTipView skipSubView;
+    //弹幕屏蔽View
+    private DanmuBlockView danmuBlockView;
+    //弹幕发送View
+    private DanmuPostView danmuPostView;
     // 加载
     private ProgressBar mLoadingView;
     // 音量
@@ -150,12 +166,34 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private ImageView mIvPlayerLock;
     // 截屏键
     private ImageView mIvScreenShot;
+
     // 关联的Activity
     private AppCompatActivity mAttachActivity;
+    // 原生的ExoPlayer
+    private SimpleExoPlayer exoPlayer;
     // 音量控制
     private AudioManager mAudioManager;
     // 手势控制
     private GestureDetector mGestureDetector;
+    // 弹幕控制相关
+    private DanmakuContext mDanmakuContext;
+    // 弹幕解析器
+    private BaseDanmakuParser mDanmakuParser;
+    // 弹幕加载器
+    private ILoader mDanmakuLoader;
+    // 弹幕监听器
+    private OnDanmakuListener mDanmakuListener;
+    // 弹幕要跳转的目标位置，等视频播放再跳转，不然老出现只有弹幕在动的情况
+    private long mDanmakuTargetPosition = INVALID_VALUE;
+    //player控制器
+    private DefaultControlDispatcher controlDispatcher = new DefaultControlDispatcher();
+    //流选择器
+    private DefaultTrackSelector trackSelector = new DefaultTrackSelector();
+    // 屏幕旋转角度监听
+    private OrientationEventListener mOrientationListener;
+    // 外部监听器
+    private IMediaPlayer.OnOutsideListener mOutsideListener;
+
     // 最大音量
     private int mMaxVolume;
     // 锁屏
@@ -176,54 +214,25 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private int mInitHeight;
     // 屏幕宽/高度
     private int mWidthPixels;
-    // 屏幕旋转角度监听
-    private OrientationEventListener mOrientationListener;
     // 进来还未播放
     private boolean mIsNeverPlay = true;
-    // 外部监听器
-    private IMediaPlayer.OnInfoListener mOutsideInfoListener;
     //上次播放跳转时间
     private long mSkipPosition = INVALID_VALUE;
     //是否展示字幕
     private boolean isShowSubtitle = false;
-
-    // 弹幕控制相关
-    private DanmakuContext mDanmakuContext;
-    // 弹幕解析器
-    private BaseDanmakuParser mDanmakuParser;
-    // 弹幕加载器
-    private ILoader mDanmakuLoader;
-    // 弹幕监听器
-    private OnDanmakuListener mDanmakuListener;
-    // 弹幕要跳转的目标位置，等视频播放再跳转，不然老出现只有弹幕在动的情况
-    private long mDanmakuTargetPosition = INVALID_VALUE;
-    //云屏蔽数据
-    private List<String> cloudFilterList = new ArrayList<>();
     // 播放器是否已准备好，这个用来控制弹幕启动和视频同步
     private boolean mIsExoPlayerReady = false;
+    //是否查询网络字幕
+    private boolean isQueryNetworkSubtitle = false;
+    //是否自动加载网络字幕，已加载同名字幕则不自动加载
+    private boolean isAutoLoadSubtitle = false;
 
-    private DefaultControlDispatcher controlDispatcher = new DefaultControlDispatcher();
-    private DefaultTrackSelector trackSelector = new DefaultTrackSelector();
-
+    //云屏蔽数据
+    private List<String> cloudFilterList = new ArrayList<>();
+    //音频流数据
     private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
+    //字幕流数据
     private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
-
-    //视频View
-    private PlayerView mVideoView;
-    //字幕View
-    private SubtitleView mSubtitleView;
-    //弹幕View
-    private IDanmakuView mDanmakuView;
-    //顶部布局
-    private TopBarView topBarView;
-    //底部布局
-    private BottomBarView bottomBarView;
-    //跳转提示
-    private SkipTipView skipTipView;
-    //弹幕屏蔽View
-    private DanmuBlockView danmuBlockView;
-    //弹幕发送View
-    private DanmuPostView danmuPostView;
 
     //隐藏控制栏视图Runnable
     private Runnable mHideBarRunnable = () -> hideView(HIDE_VIEW_AUTO);
@@ -231,6 +240,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private Runnable mHideTouchViewRunnable = () -> hideView(HIDE_VIEW_AUTO);
     //隐藏跳转上一次播放提示视图Runnable
     private Runnable mHideSkipTipRunnable = this::_hideSkipTip;
+    //隐藏选取字幕提示视图Runnable
+    private Runnable mHideSkipSubRunnable = this::_hideSkipSub;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -350,6 +361,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         bottomBarView = findViewById(R.id.bottom_bar_view);
         topBarView = findViewById(R.id.top_bar_view);
         skipTipView = findViewById(R.id.skip_tip_view);
+        skipSubView = findViewById(R.id.skip_subtitle_view);
         //loading、声音、亮度、跳转提示
         mLoadingView = findViewById(R.id.pb_loading);
         mTvVolume = findViewById(R.id.tv_volume);
@@ -632,6 +644,20 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 _setProgress();
             }
         };
+        //字幕选取事件回调
+        SkipTipView.SkipTipListener skipSubCallBack = new SkipTipView.SkipTipListener() {
+            @Override
+            public void onCancel() {
+                mHandler.removeCallbacks(mHideSkipSubRunnable);
+                _hideSkipSub();
+            }
+
+            @Override
+            public void onSkip() {
+                _hideSkipSub();
+                mOutsideListener.onAction(Constants.INTENT_SELECT_SUBTITLE, 0);
+            }
+        };
         //弹幕屏蔽事件回调
         DanmuBlockView.DanmuBlockListener danmuBlockCallBack = new DanmuBlockView.DanmuBlockListener() {
             @Override
@@ -682,6 +708,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         topBarView.setCallBack(topBarCallBack);
         bottomBarView.setCallBack(bottomBarCallBack);
         skipTipView.setCallBack(skipTipCallBack);
+        skipSubView.setCallBack(skipSubCallBack);
         danmuBlockView.setCallBack(danmuBlockCallBack);
         danmuPostView.setCallBack(danmuPostCallBack);
 
@@ -831,13 +858,20 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setOpenSubtitleSelector() {
-                        mOutsideInfoListener.onInfo(null, Constants.INTENT_OPEN_SUBTITLE, 0);
+                        mOutsideListener.onAction(Constants.INTENT_OPEN_SUBTITLE, 0);
                     }
 
                     @Override
                     public void setSubtitleLanguageType(int type) {
                         PlayerConfigShare.getInstance().setSubtitleLanguageType(type);
                         mSubtitleView.setLanguage(type);
+                    }
+
+                    @Override
+                    public void onShowNetworkSubtitle() {
+                        hideView(HIDE_VIEW_ALL);
+                        if (mOutsideListener != null)
+                            mOutsideListener.onAction(Constants.INTENT_SELECT_SUBTITLE, 0);
                     }
                 })
                 .init();
@@ -1023,9 +1057,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * Activity.onDestroy() 里调用，返回播放进度
      */
     @Override
-    public long onDestroy() {
+    public void onDestroy() {
         // 记录播放进度
-        long curPosition = exoPlayer.getCurrentPosition();
+        if (mOutsideListener != null)
+            mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, exoPlayer.getCurrentPosition());
         exoPlayer.release();
         if (mDanmakuView != null) {
             // don't forget release!
@@ -1034,7 +1069,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         }
         // 关闭屏幕常亮
         mAttachActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        return curPosition;
     }
 
     /**
@@ -1081,6 +1115,37 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (topBarView != null) {
             topBarView.setBatteryChanged(status, progress);
         }
+    }
+
+    /**
+     * 设置字幕源
+     */
+    @Override
+    public void setSubtitlePath(String subtitlePath) {
+        isShowSubtitle = false;
+        topBarView.getSubtitleSettingView().setLoadSubtitle(false);
+        topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
+        new Thread(() -> {
+            TimedTextObject subtitleObj = new SubtitleParser(subtitlePath).parser();
+            if (subtitleObj != null) {
+                Message message = new Message();
+                message.what = MSG_SET_SUBTITLE_SOURCE;
+                message.obj = subtitleObj;
+                mHandler.sendMessage(message);
+            }
+        }).start();
+    }
+
+    /**
+     * 查询到网络字幕
+     */
+    @Override
+    public void onSubtitleQuery(int size){
+        topBarView.getSubtitleSettingView().setNetwoekSubtitleVisible(true);
+        if(isAutoLoadSubtitle)
+            mOutsideListener.onAction(Constants.INTENT_AUTO_SUBTITLE, 0);
+        else
+            _showSkipSub(size);
     }
 
     /**
@@ -1161,8 +1226,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 外部接口回调
      */
-    public ExoPlayerView setOnInfoListener(IMediaPlayer.OnInfoListener l) {
-        mOutsideInfoListener = l;
+    public ExoPlayerView setOnInfoListener(IMediaPlayer.OnOutsideListener listener) {
+        mOutsideListener = listener;
         return this;
     }
 
@@ -1181,6 +1246,22 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (targetPositionMs > 0) {
             mSkipPosition = targetPositionMs;
         }
+        return this;
+    }
+
+    /**
+     * 是否查询网络字幕
+     */
+    public ExoPlayerView setNetworkSubtitle(boolean isOpen){
+        isQueryNetworkSubtitle = isOpen;
+        return this;
+    }
+
+    /**
+     * 是否自动加载网络字幕
+     */
+    public ExoPlayerView setAutoLoadSubtitle(boolean isAuto){
+        isAutoLoadSubtitle = isAuto;
         return this;
     }
 
@@ -1210,6 +1291,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             mIsShowBar = false;
             //装载弹幕
             mDanmakuView.prepare(mDanmakuParser, mDanmakuContext);
+            //查询网络字幕
+            if (isQueryNetworkSubtitle && mOutsideListener != null){
+                mOutsideListener.onAction(Constants.INTENT_QUERY_SUBTITLE, 0);
+            }
         }
         //切换播放按钮状态
         bottomBarView.setPlayIvStatus(true);
@@ -1603,6 +1688,34 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     /**
+     * 显示选取字幕提示
+     */
+    private void _showSkipSub(int size) {
+        if (skipSubView.getVisibility() == GONE) {
+            skipSubView.setVisibility(VISIBLE);
+            skipSubView.setSkipContent(size);
+            AnimHelper.doSlide(skipSubView, mWidthPixels, 0, 800);
+            mHandler.postDelayed(mHideSkipSubRunnable, DEFAULT_HIDE_TIMEOUT * 3);
+        }
+    }
+
+    /**
+     * 隐藏选取字幕提示
+     */
+    private void _hideSkipSub() {
+        if (skipSubView.getVisibility() == GONE) {
+            return;
+        }
+        ViewCompat.animate(skipSubView).translationX(-skipSubView.getWidth()).alpha(0).setDuration(500)
+                .setListener(new ViewPropertyAnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(View view) {
+                        skipSubView.setVisibility(GONE);
+                    }
+                }).start();
+    }
+
+    /**
      * 发射弹幕
      */
     public void sendDanmaku(String text, float size, int type, int color) {
@@ -1733,26 +1846,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     public void loadDefaultSubtitle(String videoPath) {
         String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
         if (!StringUtils.isEmpty(subtitlePath)) {
+            //找到本地同名字幕，不自动加载网络字幕
+            isAutoLoadSubtitle = false;
             setSubtitlePath(subtitlePath);
         }
-    }
-
-    /**
-     * 设置字幕源
-     */
-    public void setSubtitlePath(String subtitlePath) {
-        isShowSubtitle = false;
-        topBarView.getSubtitleSettingView().setLoadSubtitle(false);
-        topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
-        new Thread(() -> {
-            TimedTextObject subtitleObj = new SubtitleParser(subtitlePath).parser();
-            if (subtitleObj != null) {
-                Message message = new Message();
-                message.what = MSG_SET_SUBTITLE_SOURCE;
-                message.obj = subtitleObj;
-                mHandler.sendMessage(message);
-            }
-        }).start();
     }
 
     /**

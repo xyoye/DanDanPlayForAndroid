@@ -84,4 +84,10 @@ public abstract class CommOtherDataObserver<T> implements Observer<T>  {
     public abstract void onError(int errorCode, String message);
 
     public void onProgress(int progress, long total){ }
+
+    //断开回调
+    public void dispose() {
+        if (mDisposable != null)
+            mDisposable.dispose();
+    }
 }

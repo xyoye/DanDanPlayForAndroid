@@ -14,11 +14,9 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
 import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.bean.SubtitleBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
 
-import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -31,13 +29,9 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.Streaming;
 
 /**
  * Created by YE on 2018/7/9.
@@ -134,4 +128,7 @@ public interface RetrofitService {
     @Headers({"query:thunder"})
     @GET("/subxl/{videoHash}.json")
     Observable<ResponseBody> queryThunder(@Path("videoHash") String videoHash);
+
+    @GET("/{@link}")
+    Observable<ResponseBody> downloadSubtitle(@Path("link") String link);
 }

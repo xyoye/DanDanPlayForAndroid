@@ -211,6 +211,26 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .subscribe(videoList -> getView().refreshAdapter(videoList));
     }
 
+    @Override
+    public VideoBean getLastPlayVideo(String videoPath) {
+        VideoBean videoBean = null;
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(2)
+                .query()
+                .setColumns(3, 4, 6)
+                .where(2, videoPath)
+                .execute();
+        if (cursor.moveToNext()){
+            videoBean = new VideoBean();
+            videoBean.setVideoPath(videoPath);
+            videoBean.setDanmuPath(cursor.getString(0));
+            videoBean.setCurrentPosition(1);
+            videoBean.setEpisodeId(cursor.getInt(2));
+        }
+
+        return videoBean;
+    }
+
     //遍历视频文件
     private Observable<File> listFiles(final File f){
         if(f.isDirectory()){

@@ -1,9 +1,12 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,40 +15,61 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.player.commom.utils.Constants;
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.exoplayer.ExoPlayerView;
-import com.player.commom.listener.PlayerViewListener;
+import com.player.commom.bean.SubtitleBean;
 import com.player.commom.listener.OnDanmakuListener;
-import com.player.ijkplayer.IjkPlayerView_V2;
+import com.player.commom.listener.PlayerViewListener;
 import com.player.commom.receiver.BatteryBroadcastReceiver;
 import com.player.commom.receiver.PlayerReceiverListener;
 import com.player.commom.receiver.ScreenBroadcastReceiver;
+import com.player.commom.utils.Constants;
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.exoplayer.ExoPlayerView;
+import com.player.ijkplayer.IjkPlayerView_V2;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.bean.SubtitleBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.HashUtils;
+import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
+import com.xyoye.dandanplay.utils.net.RetrofitService;
+import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by YE on 2018/7/4 0004.
@@ -60,6 +84,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private String danmuPath;
     private long currentPosition;
     private int episodeId;
+    private List<SubtitleBean> subtitleList;
 
     //电源广播
     private BatteryBroadcastReceiver batteryReceiver;
@@ -67,6 +92,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private ScreenBroadcastReceiver screenReceiver;
     //弹幕回调
     private OnDanmakuListener onDanmakuListener;
+    //内部事件回调
+    private IMediaPlayer.OnOutsideListener onOutsideListener;
+    //字幕查询观察者
+    CommOtherDataObserver<List<SubtitleBean>> subtitleObserver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,6 +131,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         //开启屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        subtitleList = new ArrayList<>();
+
         //注册监听广播
         batteryReceiver = new BatteryBroadcastReceiver(this);
         screenReceiver = new ScreenBroadcastReceiver(this);
@@ -120,8 +151,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
         //初始化播放器
         initPlayer();
-
-        querySubtitle(videoPath);
     }
 
     //初始化播放器
@@ -147,78 +176,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         //添加播放历史
         if (episodeId > 0 && AppConfig.getInstance().isLogin())
             addPlayHistory(episodeId);
-    }
-
-    private void initIjkPlayer(InputStream inputStream){
-        IjkPlayerView_V2 ijkPlayerView = (IjkPlayerView_V2) mPlayer;
-
-        ijkPlayerView
-                //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
-                //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList,
-                        AppConfig.getInstance().isCloudDanmuFilter())
-                //设置视频路径
-                .setVideoPath(videoPath)
-                //设置标题
-                .setTitle(videoTitle)
-                //设置弹幕事件回调，要在初始化弹幕之前完成
-                .setDanmakuListener(onDanmakuListener)
-                //设置弹幕数据源
-                .setDanmakuSource(inputStream)
-                //默认展示弹幕
-                .showOrHideDanmaku(true)
-                //跳转至上一次播放进度
-                .setSkipTip(currentPosition)
-                //内部事件回调
-                .setOnInfoListener((mp, what, extra) -> {
-                    //选择字幕事件
-                    if (what ==  Constants.INTENT_OPEN_SUBTITLE){
-                        new FileManagerDialog(PlayerActivity.this,
-                                videoPath,
-                                FileManagerDialog.SELECT_SUBTITLE,
-                                ijkPlayerView::setSubtitlePath
-                        ).show();
-                    }
-                    return true;
-                })
-                .start();
-    }
-
-    private void initExoPlayer(InputStream inputStream){
-        ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
-
-        exoPlayerView
-                //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
-                //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList,
-                        AppConfig.getInstance().isCloudDanmuFilter())
-                //设置视频路径
-                .setVideoPath(videoPath)
-                //设置标题
-                .setTitle(videoTitle)
-                //设置弹幕事件回调，要在初始化弹幕之前完成
-                .setDanmakuListener(onDanmakuListener)
-                //设置弹幕数据源
-                .setDanmakuSource(inputStream)
-                //默认展示弹幕
-                .showOrHideDanmaku(true)
-                //跳转至上一次播放进度
-                .setSkipTip(currentPosition)
-                //内部事件回调
-                .setOnInfoListener((mp, what, extra) -> {
-                    //选择字幕事件
-                    if (what == Constants.INTENT_OPEN_SUBTITLE){
-                        new FileManagerDialog(PlayerActivity.this,
-                                videoPath,
-                                FileManagerDialog.SELECT_SUBTITLE,
-                                exoPlayerView::setSubtitlePath
-                        ).show();
-                    }
-                    return true;
-                })
-                .start();
     }
 
     private void initListener(){
@@ -266,6 +223,133 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                         .postExecute();
             }
         };
+
+        onOutsideListener = (what, extra) -> {
+            switch (what){
+                //选择本地字幕
+                case Constants.INTENT_OPEN_SUBTITLE:
+                    new FileManagerDialog(
+                            PlayerActivity.this,
+                            videoPath,
+                            FileManagerDialog.SELECT_SUBTITLE,
+                            path -> mPlayer.setSubtitlePath(path)
+                    ).show();
+                    break;
+                //查询网络字幕
+                case Constants.INTENT_QUERY_SUBTITLE:
+                    querySubtitle(videoPath);
+                    break;
+                //选择网络字幕
+                case Constants.INTENT_SELECT_SUBTITLE:
+                    new SelectSubtitleDialog(
+                            PlayerActivity.this,
+                            subtitleList,
+                            PlayerActivity.this::downloadSubtitle
+                    ).show();
+                    break;
+                //自动选择网络字幕
+                case Constants.INTENT_AUTO_SUBTITLE:
+                    ToastUtils.showShort("自动加载字幕中");
+                    SubtitleBean subtitleBean = subtitleList.get(0);
+                    downloadSubtitle(subtitleBean.getName(), subtitleBean.getUrl());
+                    break;
+                //保存进度
+                case Constants.INTENT_SAVE_CURRENT:
+                    //更新内存中进度
+                    SaveCurrentEvent event = new SaveCurrentEvent();
+                    event.setCurrentPosition(extra);
+                    event.setFolderPath(FileUtils.getDirName(videoPath));
+                    event.setVideoPath(videoPath);
+                    EventBus.getDefault().post(event);
+                    //更新数据库中进度
+                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("current_position", event.getCurrentPosition());
+                    String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
+                    sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
+                    break;
+            }
+        };
+
+        //网络字幕请求回调
+        subtitleObserver = new CommOtherDataObserver<List<SubtitleBean>>() {
+            @Override
+            public void onSuccess(List<SubtitleBean> subtitleList) {
+                if (subtitleList.size() > 0){
+                    //按评分排序
+                    Collections.sort(subtitleList, (o1, o2) -> o2.getRank()-o1.getRank());
+                    PlayerActivity.this.subtitleList.clear();
+                    PlayerActivity.this.subtitleList.addAll(subtitleList);
+                    mPlayer.onSubtitleQuery(subtitleList.size());
+                    LogUtils.e("获取字幕成功，共"+subtitleList.size()+"条");
+                }
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+
+            }
+        };
+    }
+
+    private void initIjkPlayer(InputStream inputStream){
+        IjkPlayerView_V2 ijkPlayerView = (IjkPlayerView_V2) mPlayer;
+
+        ijkPlayerView
+                //设置普通屏蔽弹幕
+                .setNormalFilterData(IApplication.normalFilterList)
+                //设置云屏蔽数据
+                .setCloudFilterData(IApplication.cloudFilterList,
+                        AppConfig.getInstance().isCloudDanmuFilter())
+                //设置视频路径
+                .setVideoPath(videoPath)
+                //设置标题
+                .setTitle(videoTitle)
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
+                //设置弹幕数据源
+                .setDanmakuSource(inputStream)
+                //默认展示弹幕
+                .showOrHideDanmaku(true)
+                //跳转至上一次播放进度
+                .setSkipTip(currentPosition)
+                //是否开启网络字幕
+                .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
+                //是否自动加载网络字幕
+                .setAutoLoadSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                //内部事件回调
+                .setOnInfoListener(onOutsideListener)
+                .start();
+    }
+
+    private void initExoPlayer(InputStream inputStream){
+        ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
+
+        exoPlayerView
+                //设置普通屏蔽弹幕
+                .setNormalFilterData(IApplication.normalFilterList)
+                //设置云屏蔽数据
+                .setCloudFilterData(IApplication.cloudFilterList,
+                        AppConfig.getInstance().isCloudDanmuFilter())
+                //设置视频路径
+                .setVideoPath(videoPath)
+                //设置标题
+                .setTitle(videoTitle)
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
+                //设置弹幕数据源
+                .setDanmakuSource(inputStream)
+                //默认展示弹幕
+                .showOrHideDanmaku(true)
+                //跳转至上一次播放进度
+                .setSkipTip(currentPosition)
+                //是否开启网络字幕
+                .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
+                //是否自动加载网络字幕
+                .setAutoLoadSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                //内部事件回调
+                .setOnInfoListener(onOutsideListener)
+                .start();
     }
 
     //上传一条弹幕
@@ -314,9 +398,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
     @Override
     protected void onDestroy() {
-        saveCurrent(mPlayer.onDestroy());
+        mPlayer.onDestroy();
         this.unregisterReceiver(batteryReceiver);
         this.unregisterReceiver(screenReceiver);
+        if (subtitleObserver != null)
+            subtitleObserver.dispose();
         super.onDestroy();
     }
 
@@ -353,15 +439,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         mPlayer.configurationChanged(newConfig);
     }
 
-    //保存进度
-    private void saveCurrent(long currentPosition) {
-        SaveCurrentEvent event = new SaveCurrentEvent();
-        event.setCurrentPosition(currentPosition);
-        event.setFolderPath(FileUtils.getDirName(videoPath));
-        event.setVideoPath(videoPath);
-        EventBus.getDefault().post(event);
-    }
-
     @Override
     public void onBatteryChanged(int status, int progress) {
         mPlayer.setBatteryChanged(status, progress);
@@ -372,17 +449,52 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         mPlayer.onScreenLocked();
     }
 
+    //查询字幕
     private void querySubtitle(String videoPath){
-        SubtitleBean.querySubtitle(videoPath, new CommOtherDataObserver<List<SubtitleBean>>() {
+        String thunderHash = HashUtils.getFileSHA1(videoPath);
+        Map<String, String> shooterParams = new HashMap<>();
+        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
+        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
+        shooterParams.put("format", "json");
+        shooterParams.put("lang", "Chn");
+        RetrofitService service = RetroFactory.getSubtitleInstance();
+        service.queryThunder(thunderHash)
+                .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
+                        SubtitleConverter.transform(thunder, shooters, videoPath))
+                .doOnSubscribe(new NetworkConsumer())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subtitleObserver);
+    }
+
+    //下载字幕
+    private void downloadSubtitle(String fileName, String link){
+        Request request = new Request.Builder().url(link).build();
+        Call call = OkHttpEngine.getInstance().getOkHttpClient().newCall(request);
+        call.enqueue(new Callback() {
             @Override
-            public void onSuccess(List<SubtitleBean> subtitleList) {
-                ToastUtils.showShort("获取字幕成功，共"+subtitleList.size()+"条");
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                ToastUtils.showShort("下载字幕文件失败");
             }
 
             @Override
-            public void onError(int errorCode, String message) {
-                ToastUtils.showShort("获取字幕失败，"+message);
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                if (response.body() != null){
+                    String folderPath = AppConfig.getInstance().getDownloadFolder() + com.xyoye.dandanplay.utils.Constants.DefaultConfig.subtitleFolder;
+                    File folder = new File(folderPath);
+                    if (!folder.exists()){
+                        folder.mkdirs();
+                    }
+                    String filePath = folderPath + "/" + fileName;
+                    boolean isSaveFile = FileIOUtils.writeFileFromIS(filePath, response.body().byteStream());
+                    if (isSaveFile){
+                        runOnUiThread(() -> mPlayer.setSubtitlePath(filePath));
+
+                    }else {
+                        ToastUtils.showShort("保存字幕文件失败");
+                    }
+                }
             }
-        }, new NetworkConsumer());
+        });
     }
 }

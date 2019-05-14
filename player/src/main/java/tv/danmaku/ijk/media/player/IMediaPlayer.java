@@ -179,6 +179,10 @@ public interface IMediaPlayer {
         void onTimedText(IMediaPlayer mp, IjkTimedText text);
     }
 
+    interface OnOutsideListener {
+        void onAction (int action, long extra);
+    }
+
     /*--------------------
      * Optional
      */

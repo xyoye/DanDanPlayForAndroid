@@ -7,6 +7,14 @@ package com.player.commom.utils;
 public final class Constants {
     //打开字幕选择
     public static final int INTENT_OPEN_SUBTITLE = 1001;
+    //请求网络字幕
+    public static final int INTENT_QUERY_SUBTITLE = 1002;
+    //选择网络字幕
+    public static final int INTENT_SELECT_SUBTITLE = 1003;
+    //自动加载网络字幕
+    public static final int INTENT_AUTO_SUBTITLE = 1004;
+    //保存进度
+    public static final int INTENT_SAVE_CURRENT = 1005;
 
     public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 

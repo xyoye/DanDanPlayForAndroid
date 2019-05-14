@@ -102,7 +102,11 @@ public class VideoItem implements AdapterItem<VideoBean> {
         }
 
         //是否为上次播放的视频
-        boolean isLastPlayVideo = AppConfig.getInstance().getLastPlayPath(false).equals(model.getVideoPath());
+        boolean isLastPlayVideo = false;
+        String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
+        if (!StringUtils.isEmpty(lastVideoPath)){
+            isLastPlayVideo = lastVideoPath.equals(model.getVideoPath());
+        }
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
         titleTv.setTextColor(isLastPlayVideo

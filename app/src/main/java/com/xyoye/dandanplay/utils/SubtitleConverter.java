@@ -2,7 +2,7 @@ package com.xyoye.dandanplay.utils;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.dandanplay.bean.SubtitleBean;
+import com.player.commom.bean.SubtitleBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class SubtitleConverter {
                     continue;
                 SubtitleBean subtitleBean = new SubtitleBean();
                 subtitleBean.setOrigin(SubtitleBean.Shooter.SHOOTER);
-                subtitleBean.setName(FileUtils.getFileNameNoExtension(filePath));
+                subtitleBean.setName(FileUtils.getFileNameNoExtension(filePath) + "." + shooterFile.getExt());
                 subtitleBean.setRank(-1);
                 subtitleBean.setUrl(shooterFile.getLink());
                 subtitleList.add(subtitleBean);

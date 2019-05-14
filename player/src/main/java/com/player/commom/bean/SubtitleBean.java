@@ -1,22 +1,6 @@
-package com.xyoye.dandanplay.bean;
+package com.player.commom.bean;
 
-import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.dandanplay.utils.HashUtils;
-import com.xyoye.dandanplay.utils.SubtitleConverter;
-import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.net.RetroFactory;
-import com.xyoye.dandanplay.utils.net.RetrofitService;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
 
 public class SubtitleBean {
 
@@ -222,22 +206,5 @@ public class SubtitleBean {
                 this.roffset = roffset;
             }
         }
-    }
-
-    public static void querySubtitle(String videoPath, CommOtherDataObserver<List<SubtitleBean>> observer, NetworkConsumer consumer){
-        String thunderHash = HashUtils.getFileSHA1(videoPath);
-        Map<String, String> shooterParams = new HashMap<>();
-        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
-        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
-        shooterParams.put("format", "json");
-        shooterParams.put("lang", "Chn");
-        RetrofitService service = RetroFactory.getSubtitleInstance();
-        service.queryThunder(thunderHash)
-                .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
-                        SubtitleConverter.transform(thunder, shooters, videoPath))
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
     }
 }

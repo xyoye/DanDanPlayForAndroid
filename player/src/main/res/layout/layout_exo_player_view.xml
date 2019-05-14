@@ -92,13 +92,29 @@
         android:translationX="60dp"
         android:visibility="gone"/>
 
-    <com.player.commom.widgets.SkipTipView
-        android:id="@+id/skip_tip_view"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:visibility="gone">
-    </com.player.commom.widgets.SkipTipView>
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <com.player.commom.widgets.SkipTipView
+            android:id="@+id/skip_tip_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+        </com.player.commom.widgets.SkipTipView>
+
+        <com.player.commom.widgets.SkipTipView
+            android:id="@+id/skip_subtitle_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:skip_subtitle="true"
+            android:visibility="gone">
+        </com.player.commom.widgets.SkipTipView>
+    </LinearLayout>
 
     <com.player.commom.widgets.DanmuPostView
         android:id="@+id/danmu_post_view"

@@ -12,6 +12,7 @@ import com.xyoye.dandanplay.bean.VideoBean;
  */
 
 public class AppConfig {
+    private String lastPlayPath = null;
 
     private static class ShareHolder{
         private static AppConfig appConfig = new AppConfig();
@@ -193,7 +194,7 @@ public class AppConfig {
      * PixelFormat
      */
     public String getPixelFormat(){
-        return SPUtils.getInstance().getString(Constants.SHARE_PIXEL_FORMAT, "");
+        return SPUtils.getInstance().getString(Constants.SHARE_PIXEL_FORMAT, Constants.PIXEL_OPENGL_ES2);
     }
 
     public void setPixelFormat(String pixelFormat){
@@ -314,25 +315,15 @@ public class AppConfig {
      * 上次播放的视频
      */
     public String getLastPlayVideo(){
-        return SPUtils.getInstance().getString(Constants.Config.LAST_PLAY_VIDEO, "");
+        if (lastPlayPath == null){
+            lastPlayPath =  SPUtils.getInstance().getString(Constants.Config.LAST_PLAY_VIDEO_PATH, "");
+        }
+        return lastPlayPath;
     }
 
-    /**
-     * 上次播放的路径信息
-     * @param isFolder
-     */
-    public @NonNull String getLastPlayPath(boolean isFolder){
-        String videoInfo = SPUtils.getInstance().getString(Constants.Config.LAST_PLAY_VIDEO, "");
-        if (StringUtils.isEmpty(videoInfo))
-            return "";
-        VideoBean videoBean = JsonUtil.fromJson(videoInfo, VideoBean.class);
-        return isFolder
-                ? FileUtils.getDirName(videoBean.getVideoPath())
-                : videoBean.getVideoPath();
-    }
-
-    public void setLastPlayVideo(String videoInfo){
-        SPUtils.getInstance().put(Constants.Config.LAST_PLAY_VIDEO, videoInfo);
+    public void setLastPlayVideo(String videoPath){
+        lastPlayPath = videoPath;
+        SPUtils.getInstance().put(Constants.Config.LAST_PLAY_VIDEO_PATH, videoPath);
     }
 
     /**

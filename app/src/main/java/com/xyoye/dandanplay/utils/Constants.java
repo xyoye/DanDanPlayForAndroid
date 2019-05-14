@@ -54,7 +54,7 @@ public class Constants {
         //更新弹幕云过滤的时间
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
         //上次播放的视频
-        public static final String LAST_PLAY_VIDEO = "last_play_video";
+        public static final String LAST_PLAY_VIDEO_PATH = "last_play_video_path";
         //是否已备份过屏蔽数据库
         public static final String IS_BACKUP_BLOCK = "is_backup_block";
     }
@@ -68,6 +68,8 @@ public class Constants {
         public static final String torrentFolder = "/_torrent";
         //默认弹幕下载文件夹名
         public static final String danmuFolder = "/_danmu";
+        //默认弹幕下载文件夹名
+        public static final String subtitleFolder = "/_zimu";
         //默认番剧封面缓存路径
         public static final String imageFolder =  downloadPath + "/_image";
         //备份文件路径

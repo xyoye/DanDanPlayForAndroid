@@ -91,17 +91,6 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     }
 
     @Override
-    public void updateCurrent(SaveCurrentEvent event) {
-        new Thread(()->{
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            ContentValues values = new ContentValues();
-            values.put("current_position", event.getCurrentPosition());
-            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
-        }).start();
-    }
-
-    @Override
     public void deleteFile(String filePath) {
         new Thread(() -> {
             SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();

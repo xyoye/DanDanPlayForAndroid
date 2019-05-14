@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
+import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
@@ -17,4 +18,6 @@ public interface PlayFragmentPresenter extends BaseMvpPresenter {
 
     //获取数据库数据
     void getVideoFormDatabase();
+
+    VideoBean getLastPlayVideo(String videoPath);
 }

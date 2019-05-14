@@ -690,7 +690,8 @@ public class CacheManagingDrawTask extends DrawTask {
                 try {
                     long begin = mTimer.currMillisecond;
                     long end = begin + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate()) * 2;
-                    danmakus = danmakuList.subnew(begin - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION, end);
+                    if (danmakuList != null)
+                        danmakus = danmakuList.subnew(begin - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION, end);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

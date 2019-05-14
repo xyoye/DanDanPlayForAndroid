@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NO
  */
 
 public class SettingSubtitleView extends LinearLayout implements View.OnClickListener{
+    //网络字幕
+    private RelativeLayout networkSubtitleRl;
     //开关
     private Switch subtitleSwitch;
     //加载状态
@@ -76,6 +79,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         onlyUsShowTv = findViewById(R.id.only_english_tv);
         bothLanguageTv = findViewById(R.id.both_language_tv);
         subExtraTimeEt = findViewById(R.id.subtitle_extra_time_et);
+        networkSubtitleRl = findViewById(R.id.subtitle_network_rl);
 
         bgBW = findViewById(R.id.inter_bg_black_white);
         bgWB = findViewById(R.id.inter_bg_white_black);
@@ -101,6 +105,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         findViewById(R.id.add_encoding_tv).setOnClickListener(this);
         findViewById(R.id.subtitle_extra_time_add).setOnClickListener(this);
         findViewById(R.id.subtitle_extra_time_reduce).setOnClickListener(this);
+        findViewById(R.id.subtitle_network_tv).setOnClickListener(this);
 
         subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
         subExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
@@ -347,6 +352,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         isLoadSubtitle = loadDanmu;
     }
 
+    public void setNetwoekSubtitleVisible(boolean isShow){
+        networkSubtitleRl.setVisibility(isShow ? VISIBLE : GONE);
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -377,6 +386,8 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
             setInterBg(3);
         }else if (id == R.id.inter_bg_tran_tran){
             setInterBg(4);
+        }else if (id == R.id.subtitle_network_tv){
+            settingListener.onShowNetworkSubtitle();
         }
     }
 
@@ -390,5 +401,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
         void setInterSubtitleSize(int progress);
         void setInterBackground(CaptionStyleCompat compat);
+
+        void onShowNetworkSubtitle();
     }
 }

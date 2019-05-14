@@ -21,23 +21,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class RetroFactory {
-    private static String url = "https://api.acplay.net/";
-    private static String resUrl = "http://res.acplay.net/";
-    private static String downloadUrl = "https://m2t.chinacloudsites.cn/";
-    private static String subtitleUrl = "https://dandanplay.com/";
+    private static final String url = "https://api.acplay.net/";
+    private static final String resUrl = "http://res.acplay.net/";
+    private static final String downloadUrl = "https://m2t.chinacloudsites.cn/";
+    private static final String subtitleUrl = "https://dandanplay.com/";
 
-    private static RetrofitService retrofitService;
+    private static RetrofitService apiRetrofitService;
     private static RetrofitService resRetrofitService;
-    private static RetrofitService downloadRetrofitService;
     private static RetrofitService subtitleRetrofitService;
+    private static RetrofitService downloadTorrentRetrofitService;
 
     private RetroFactory() {
 
     }
 
     public static RetrofitService getInstance(){
-        if (retrofitService == null){
-            retrofitService = new Retrofit.Builder()
+        if (apiRetrofitService == null){
+            apiRetrofitService = new Retrofit.Builder()
                     .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -45,7 +45,7 @@ public class RetroFactory {
                     .build()
                     .create(RetrofitService.class);
         }
-        return retrofitService;
+        return apiRetrofitService;
     }
 
     public static RetrofitService getResInstance(){
@@ -61,9 +61,9 @@ public class RetroFactory {
         return resRetrofitService;
     }
 
-    public static RetrofitService getTorrentInstance(){
-        if (downloadRetrofitService == null){
-            downloadRetrofitService = new Retrofit.Builder()
+    public static RetrofitService getDTInstance(){
+        if (downloadTorrentRetrofitService == null){
+            downloadTorrentRetrofitService = new Retrofit.Builder()
                     .baseUrl(downloadUrl)
                     .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -71,7 +71,7 @@ public class RetroFactory {
                     .build()
                     .create(RetrofitService.class);
         }
-        return downloadRetrofitService;
+        return downloadTorrentRetrofitService;
     }
 
     public static RetrofitService getSubtitleInstance(){

@@ -14,8 +14,6 @@ public interface FolderPresenter extends BaseMvpPresenter {
 
     void updateDanmu(String danmuPath, int episodeId, String[] whereArgs);
 
-    void updateCurrent(SaveCurrentEvent event);
-
     void deleteFile(String filePath);
 
     void getDanmu(String videoPath);

@@ -1,10 +1,6 @@
-package com.player.commom.listener;
+package com.player.commom.utils;
 
 import android.content.res.Configuration;
-
-import com.player.commom.bean.SubtitleBean;
-
-import java.util.List;
 
 /**
  * Created by xyoye on 2019/4/26.
@@ -16,7 +12,7 @@ public interface PlayerViewListener {
 
     void onPause();
 
-    void onDestroy();
+    long onDestroy();
 
     boolean handleVolumeKey(int keyCode);
 
@@ -25,10 +21,6 @@ public interface PlayerViewListener {
     void configurationChanged(Configuration configuration);
 
     void setBatteryChanged(int status, int progress);
-
-    void setSubtitlePath(String subtitlePath);
-
-    void onSubtitleQuery(int size);
 
     void onScreenLocked();
 }

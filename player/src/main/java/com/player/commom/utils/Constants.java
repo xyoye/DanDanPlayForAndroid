@@ -30,6 +30,7 @@ public final class Constants {
     public static final String DANMU_TOP = "danmu_top";
     public static final String DANMU_BOTTOM = "danmu_bottom";
     public static final String DANMU_MOBILE = "danmu_mobile";
+    public static final String DANMU_NUMBER_LIMIT = "danmu_number_limit";
 
     //字幕
     public static final String SUBTITLE_CHINESE_SIZE = "subtitle_chinese_size_v2";

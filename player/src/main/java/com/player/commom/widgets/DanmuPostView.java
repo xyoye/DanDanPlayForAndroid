@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,10 +15,10 @@ import android.widget.RadioGroup;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.ijkplayer.R;
 import com.player.commom.utils.AnimHelper;
 import com.player.commom.utils.SoftInputUtils;
+import com.player.danmaku.danmaku.model.BaseDanmaku;
+import com.player.ijkplayer.R;
 
 /**
  * Created by xyoye on 2019/5/6.
@@ -82,14 +81,11 @@ public class DanmuPostView extends LinearLayout implements View.OnClickListener{
         findViewById(R.id.danmu_post_close_iv).setOnClickListener(this);
         findViewById(R.id.danmu_post_send_iv).setOnClickListener(this);
 
-        mDanmakuTextSizeOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.input_options_small_textsize) {
-                    mDanmakuTextSize = 25f * (parserDensity - 0.6f) * 0.7f;
-                } else if (checkedId == R.id.input_options_medium_textsize) {
-                    mDanmakuTextSize = 25f * (parserDensity - 0.6f);
-                }
+        mDanmakuTextSizeOptions.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.input_options_small_textsize) {
+                mDanmakuTextSize = 25f * (parserDensity - 0.6f) * 0.7f;
+            } else if (checkedId == R.id.input_options_medium_textsize) {
+                mDanmakuTextSize = 25f * (parserDensity - 0.6f);
             }
         });
         mDanmakuTypeOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -104,39 +100,14 @@ public class DanmuPostView extends LinearLayout implements View.OnClickListener{
                 }
             }
         });
-        mDanmakuColorOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                // 取的是 tag 字符串值，需转换为颜色
-                String color = (String) findViewById(checkedId).getTag();
-                mDanmakuTextColor = Color.parseColor(color);
-                mDanmakuCurColor.setBackgroundColor(mDanmakuTextColor);
-            }
+        mDanmakuColorOptions.setOnCheckedChangeListener((group, checkedId) -> {
+            // 取的是 tag 字符串值，需转换为颜色
+            String color = (String) findViewById(checkedId).getTag();
+            mDanmakuTextColor = Color.parseColor(color);
+            mDanmakuCurColor.setBackgroundColor(mDanmakuTextColor);
         });
 
-
-
-        this.setOnSystemUiVisibilityChangeListener(new OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                if (visibility == View.VISIBLE){
-                    danmuPostEt.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            SoftInputUtils.setEditFocusable(getContext(), danmuPostEt);
-                        }
-                    }, 200);
-                }
-            }
-        });
-
-
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        this.setOnTouchListener((v, event) -> true);
     }
 
     @Override

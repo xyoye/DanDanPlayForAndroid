@@ -2234,6 +2234,10 @@ public class IjkPlayerView extends FrameLayout implements View.OnClickListener, 
                             mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
                         }
                     }
+
+                    @Override
+                    public void setNumberLimit(int num) {
+                    }
                 })
                 .init();
 

@@ -2,12 +2,12 @@ package com.player.commom.widgets;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,8 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.player.ijkplayer.R;
 
 /**
@@ -36,6 +36,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
     private EditText danmuExtraTimeEt;
     private Switch mDanmuCloudFilter;
+    private TextView numberNoLimitTv, numberAutoLimitTv;
+    private EditText numberInputLimitEt;
     //是否开启云屏蔽
     private boolean isOpenCloudFilter = false;
     //弹幕文字大小
@@ -44,6 +46,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private float mDanmuTextAlpha;
     //弹幕速度大小
     private float mDanmuSpeed;
+    //弹幕同屏数量
+    private int mDanmuNumberLimit;
     //弹幕屏蔽获取
     private boolean isShowTop = true;
     private boolean isShowMobile = true;
@@ -78,7 +82,9 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         reduceDanmuExtraTimeTv = findViewById(R.id.danmu_extra_time_reduce);
         danmuExtraTimeEt = findViewById(R.id.danmu_extra_time_et);
         mDanmuCloudFilter = findViewById(R.id.cloud_filter_sw);
-        mDanmuCloudFilter.setChecked(isOpenCloudFilter);
+        numberNoLimitTv = findViewById(R.id.number_no_limit_tv);
+        numberAutoLimitTv = findViewById(R.id.number_auto_limit_tv);
+        numberInputLimitEt = findViewById(R.id.number_input_limit_et);
 
         mDanmuMobileIv.setOnClickListener(this);
         mDanmuTopIv.setOnClickListener(this);
@@ -86,10 +92,15 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         mMoreBlockRl.setOnClickListener(this);
         addDanmuExtraTimeTv.setOnClickListener(this);
         reduceDanmuExtraTimeTv.setOnClickListener(this);
+        numberNoLimitTv.setOnClickListener(this);
+        numberAutoLimitTv.setOnClickListener(this);
 
         danmuExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        danmuExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        danmuExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         danmuExtraTimeEt.setSingleLine(true);
+        numberInputLimitEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        numberInputLimitEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        numberInputLimitEt.setSingleLine(true);
     }
 
     public SettingDanmuView setListener(SettingDanmuListener settingListener){
@@ -98,6 +109,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     }
 
     //初始弹幕文字大小
+    @SuppressLint("SetTextI18n")
     public SettingDanmuView setDanmuSize(int progressSize){
         mDanmuSizeSb.setMax(100);
         float calcProgressSize = (float) progressSize;
@@ -108,6 +120,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     }
 
     //初始弹幕速度
+    @SuppressLint("SetTextI18n")
     public SettingDanmuView setDanmuSpeed(int progressSpeed){
         mDanmuSpeedSb.setMax(100);
         float calcProgressSpeed = (float) progressSpeed;
@@ -120,12 +133,19 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     }
 
     //初始弹幕文字透明度
+    @SuppressLint("SetTextI18n")
     public SettingDanmuView setDanmuAlpha(int progressAlpha){
         mDanmuAlphaSb.setMax(100);
         float calcProgressAlpha = (float) progressAlpha;
         mDanmuTextAlpha = calcProgressAlpha/100;
         mDanmuAlphaTv.setText(progressAlpha + "%");
         mDanmuAlphaSb.setProgress(progressAlpha);
+        return this;
+    }
+
+    //初始同屏数量
+    public SettingDanmuView setDanmuNumberLimit(int num){
+        setLimitSize(num);
         return this;
     }
 
@@ -144,6 +164,12 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     public SettingDanmuView setOffsetTime(float offsetTime){
         this.offsetTime = offsetTime;
         return this;
+    }
+
+    //初始云屏蔽状态
+    public void setCloudFilterStatus(boolean isOpenCloudFilter){
+        this.isOpenCloudFilter = isOpenCloudFilter;
+        mDanmuCloudFilter.setChecked(isOpenCloudFilter);
     }
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
@@ -210,39 +236,75 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             }
         });
 
-        danmuExtraTimeEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE){
-                    try {
-                        String extraTime = danmuExtraTimeEt.getText().toString().trim();
-                        int extraTimeLong = Integer.valueOf(extraTime);
-                        settingListener.setExtraTime((int)((danmuExtraTime- extraTimeLong) * 1000));
-                        danmuExtraTime = extraTimeLong;
-                    }catch (Exception e){
-                        Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
-                    }
+        danmuExtraTimeEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                try {
+                    String extraTime = danmuExtraTimeEt.getText().toString().trim();
+                    float extraTimeLong = Float.valueOf(extraTime);
+                    settingListener.setExtraTime((int)(extraTimeLong * 1000));
+                    danmuExtraTime = extraTimeLong;
+                }catch (Exception e){
+                    ToastUtils.showShort("请输入正确的时间");
                     return true;
                 }
+                danmuExtraTimeEt.clearFocus();
                 return false;
             }
+            return false;
         });
 
-        mDanmuCloudFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingListener.setCloudFilter(isChecked);
+        numberInputLimitEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                try {
+                    String numText = numberInputLimitEt.getText().toString().trim();
+                    int num = Integer.valueOf(numText);
+                    if (num < 1){
+                        ToastUtils.showShort("同屏数量不能小于1");
+                        return true;
+                    }
+                    setLimitSize(num);
+                    settingListener.setNumberLimit(num);
+                }catch (Exception e){
+                    ToastUtils.showShort("请输入正确的数量");
+                    return true;
+                }
+                numberInputLimitEt.clearFocus();
+                return false;
             }
+            return false;
         });
 
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        mDanmuCloudFilter.setOnCheckedChangeListener((buttonView, isChecked) ->
+                settingListener.setCloudFilter(isChecked));
+
+        this.setOnTouchListener((v, event) -> true);
 
         return this;
+    }
+
+    /**
+     * 设置语言类型
+     */
+    @SuppressLint("SetTextI18n")
+    private void setLimitSize(int num){
+        mDanmuNumberLimit = num;
+        switch (num){
+            case 0:
+                numberNoLimitTv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                numberAutoLimitTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                numberInputLimitEt.setText("");
+                break;
+            case -1:
+                numberNoLimitTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                numberAutoLimitTv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                numberInputLimitEt.setText("");
+                break;
+            default:
+                numberNoLimitTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                numberAutoLimitTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+                numberInputLimitEt.setText(num+"");
+                break;
+        }
     }
 
     @Override
@@ -276,6 +338,12 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             settingListener.setExtraTimeReduce((int)(offsetTime * 1000));
             danmuExtraTime -= offsetTime;
             danmuExtraTimeEt.setText(String.valueOf(danmuExtraTime));
+        }else if (id == R.id.number_auto_limit_tv){
+            setLimitSize(-1);
+            settingListener.setNumberLimit(-1);
+        }else if (id == R.id.number_no_limit_tv){
+            setLimitSize(0);
+            settingListener.setNumberLimit(0);
         }
     }
 
@@ -315,11 +383,16 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         return offsetTime;
     }
 
+    public int getDanmuNumberLimit() {
+        return mDanmuNumberLimit;
+    }
+
+
     public interface SettingDanmuListener{
         void setDanmuSize(int progress);
         void setDanmuSpeed(int progress);
         void setDanmuAlpha(int progress);
-        void setExtraTime(int time);
+        void setExtraTime(int timeMs);
         void setCloudFilter(boolean isChecked);
         void setDanmuMobEnable(boolean enable);
         void setDanmuTopEnable(boolean enable);
@@ -327,5 +400,6 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         void setBlockViewShow();
         void setExtraTimeAdd(int time);
         void setExtraTimeReduce(int time);
+        void setNumberLimit(int num);
     }
 }

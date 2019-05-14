@@ -775,6 +775,8 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
         mDanmakuContext.setFTDanmakuVisibility(mSettingDanmuView.isShowTop());
         //是否显示底部弹幕
         mDanmakuContext.setFBDanmakuVisibility(mSettingDanmuView.isShowBottom());
+        //同屏数量限制
+        mDanmakuContext.setMaximumVisibleSizeInScreen(mSettingDanmuView.getDanmuNumberLimit());
         //初始化BiliBili弹幕解析器
         mDanmakuParser = new BiliDanmakuParser();
         //初始化弹幕加载器
@@ -864,6 +866,7 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
         int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
         int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
+        int numberLimit = PlayerConfigShare.getInstance().getDanmuNumberLimit();
         boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
         boolean isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
         boolean isShowBottom = PlayerConfigShare.getInstance().isShowBottomDanmu();
@@ -872,6 +875,7 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
                 .setDanmuSize(progressSize)
                 .setDanmuSpeed(progressSpeed)
                 .setDanmuAlpha(progressAlpha)
+                .setDanmuNumberLimit(numberLimit)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
                 .setListener(new SettingDanmuView.SettingDanmuListener() {
                     @Override
@@ -952,6 +956,12 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
                         if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isShown()){
                             mDanmakuView.seekTo(mDanmakuView.getCurrentTime() + time);
                         }
+                    }
+
+                    @Override
+                        public void setNumberLimit(int num) {
+                        PlayerConfigShare.getInstance().setDanmuNumberLimit(num);
+                        mDanmakuContext.setMaximumVisibleSizeInScreen(num);
                     }
                 })
                 .init();
@@ -1177,9 +1187,7 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
      */
     public IjkPlayerView_V2 setCloudFilterData(List<String> data, boolean isOpen) {
         cloudFilterList = data;
-        if (isOpen){
-            mDanmakuContext.addBlockKeyWord(cloudFilterList);
-        }
+        topBarView.getDanmuSettingView().setCloudFilterStatus(isOpen);
         return this;
     }
 

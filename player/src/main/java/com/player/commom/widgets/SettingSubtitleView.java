@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -108,7 +109,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         findViewById(R.id.subtitle_network_tv).setOnClickListener(this);
 
         subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        subExtraTimeEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        subExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         subExtraTimeEt.setSingleLine(true);
 
         //默认内置字幕背景色为黑+白
@@ -144,8 +145,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
                     timeOffset = Float.valueOf(offset);
                 }catch (Exception e){
                     Toast.makeText(getContext(), "请输入正确的时间", Toast.LENGTH_LONG).show();
+                    return true;
                 }
-                return true;
+                subExtraTimeEt.clearFocus();
+                return false;
             }
             return false;
         });

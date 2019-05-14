@@ -69,6 +69,14 @@ public class PlayerConfigShare {
         getShare().save(Constants.DANMU_MOBILE, isShow);
     }
 
+    public int getDanmuNumberLimit(){
+        return getShare().loadIntSharedPreference(Constants.DANMU_NUMBER_LIMIT);
+    }
+
+    public void setDanmuNumberLimit(int num){
+        getShare().saveSharedPreferences(Constants.DANMU_NUMBER_LIMIT, num);
+    }
+
     public boolean isShowTopDanmu(){
         return getShare().load(Constants.DANMU_TOP, true);
     }

@@ -133,6 +133,7 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
             }
         });
         magicIndicator.setNavigator(commonNavigator);
+        magicIndicator.onPageSelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
     }
 
     @Override
@@ -145,30 +146,28 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
             scrollableLayout.getHelper().setCurrentScrollableContainer(fragmentList.get(0));
         }
 
+        fragmentAdapter = new AnimaFragmentAdapter(getChildFragmentManager(), fragmentList);
+        viewPager.setAdapter(fragmentAdapter);
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
                 scrollableLayout.getHelper().setCurrentScrollableContainer(fragmentList.get(position));
+                magicIndicator.onPageSelected(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                magicIndicator.onPageScrollStateChanged(state);
             }
         });
-
-        fragmentAdapter = new AnimaFragmentAdapter(getChildFragmentManager(), fragmentList);
-        viewPager.setAdapter(fragmentAdapter);
-        viewPager.setOffscreenPageLimit(2);
-        magicIndicator.onPageSelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
-        viewPager.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
-        bindViewPager(magicIndicator, viewPager);
     }
 
     @OnClick({R.id.search_ll, R.id.list_ll, R.id.follow_ll, R.id.history_ll})
@@ -226,27 +225,6 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
 
         if (refresh != null)
             refresh.setRefreshing(false);
-    }
-
-    public static void bindViewPager(final MagicIndicator magicIndicator, ViewPager viewPager) {
-        if (viewPager == null) return;
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                magicIndicator.onPageSelected(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                magicIndicator.onPageScrollStateChanged(state);
-            }
-        });
     }
 
     @Override

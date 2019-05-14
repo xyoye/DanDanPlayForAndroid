@@ -1,131 +1,189 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.provider.MediaStore;
+import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseMvcActivity;
-import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.ScanFolderBean;
+import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
-import com.xyoye.dandanplay.database.DataBaseInfo;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.mvp.impl.VideoScanPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
+import com.xyoye.dandanplay.mvp.view.VideoScanView;
+import com.xyoye.dandanplay.ui.fragment.VideoScanFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
-import com.xyoye.dandanplay.ui.weight.item.VideoScanItem;
-import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
+import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
+import com.xyoye.dandanplay.ui.weight.indicator.abs.CommonNavigatorAdapter;
+import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerIndicator;
+import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
+import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
+import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
+import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
-public class VideoScanActivity extends BaseMvcActivity {
+public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
 
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
-    @BindView(R.id.folder_rv)
-    RecyclerView folderRv;
+    @BindView(R.id.indicator)
+    MagicIndicator magicIndicator;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
     @BindView(R.id.delete_tv)
     TextView deleteTv;
 
-    private BaseRvAdapter<ScanFolderBean> adapter;
-    private List<ScanFolderBean> folderList;
+    private List<VideoScanFragment> fragmentList;
+    private int selectedPosition = 0;
 
-    private VideoScanItem.OnFolderCheckListener onItemCheckListener;
+    @Override
+    public void initView() {
+        setTitle("扫描管理");
+        fragmentList = new ArrayList<>();
+        VideoScanFragment scanFragment = VideoScanFragment.newInstance(true);
+        VideoScanFragment blockFragment = VideoScanFragment.newInstance(false);
+        fragmentList.add(scanFragment);
+        fragmentList.add(blockFragment);
+
+        VideoScanActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
+            if (hasChecked){
+                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
+                deleteTv.setClickable(true);
+            }else{
+                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.text_gray));
+                deleteTv.setClickable(false);
+            }
+        };
+
+        scanFragment.setOnItemCheckListener(itemCheckListener);
+        blockFragment.setOnItemCheckListener(itemCheckListener);
+
+        initIndicator();
+
+        initViewPager();
+    }
+
+    @Override
+    public void initListener() {
+
+    }
 
     @Override
     protected int initPageLayoutID() {
         return R.layout.activity_video_scan;
     }
 
+    @NonNull
     @Override
-    public void initPageView() {
-        setTitle("扫描管理");
-        onItemCheckListener = (isCheck, position) -> {
-            folderList.get(position).setCheck(isCheck);
-            if (isCheck){
-                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
-                deleteTv.setClickable(true);
-            }else {
-                for (ScanFolderBean bean : folderList){
-                    if (bean.isCheck()){
-                        deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
-                        deleteTv.setClickable(true);
-                        return;
-                    }
-                }
-                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.text_gray));
-                deleteTv.setClickable(false);
-            }
-        };
-
-        folderList = new ArrayList<>();
-        adapter = new BaseRvAdapter<ScanFolderBean>(folderList) {
-            @NonNull
-            @Override
-            public AdapterItem<ScanFolderBean> onCreateItem(int viewType) {
-                return new VideoScanItem(onItemCheckListener);
-            }
-        };
-        folderRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        folderRv.setNestedScrollingEnabled(false);
-        folderRv.setItemViewCacheSize(10);
-        folderRv.setAdapter(adapter);
-
-        queryScanFolder();
+    protected VideoScanPresenter initPresenter() {
+        return new VideoScanPresenterImpl(this, this);
     }
 
-    @Override
-    public void initPageViewListener() {
+    private void initIndicator() {
+        List<String> titleList = new ArrayList<>();
+        titleList.add("扫描目录");
+        titleList.add("屏蔽目录");
+        CommonNavigator commonNavigator = new CommonNavigator(this);
+        commonNavigator.setAdjustMode(true);
+        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+            @Override
+            public int getCount() {
+                return titleList.size();
+            }
 
+            @Override
+            public IPagerTitleView getTitleView(Context context, int index) {
+                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
+                simplePagerTitleView.setText(titleList.get(index));
+                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.text_black));
+                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.theme_color));
+                simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
+                return simplePagerTitleView;
+            }
+
+            @SuppressLint("ResourceType")
+            @Override
+            public IPagerIndicator getIndicator(Context context) {
+                LinePagerIndicator indicator = new LinePagerIndicator(context);
+                indicator.setColors(ContextCompat.getColor(context, R.color.theme_color));
+                return indicator;
+            }
+        });
+        magicIndicator.setNavigator(commonNavigator);
+        magicIndicator.onPageSelected(selectedPosition);
+    }
+
+    private void initViewPager() {
+        VideoScanFragmentAdapter fragmentAdapter = new VideoScanFragmentAdapter(getSupportFragmentManager(), fragmentList);
+        viewPager.setAdapter(fragmentAdapter);
+        viewPager.setCurrentItem(selectedPosition);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                magicIndicator.onPageSelected(position);
+                selectedPosition = position;
+                resetButtonStatus();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                magicIndicator.onPageScrollStateChanged(state);
+            }
+        });
     }
 
     @OnClick({R.id.scan_folder_tv, R.id.scan_file_tv, R.id.delete_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.scan_folder_tv:
-                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, this::listFolder).show();
+                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
                 break;
             case R.id.scan_file_tv:
                 new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
                     VideoBean videoBean = new VideoBean();
-                    queryFormSystem(videoBean, path);
-                    boolean added = saveData(videoBean);
+                    presenter.queryFormSystem(videoBean, path);
+                    boolean added = presenter.saveNewVideo(videoBean);
                     if (added)
                         EventBus.getDefault().post(new RefreshFolderEvent(true));
                     ToastUtils.showShort(added ? "扫描成功" : "文件已存在");
                 }).show();
                 break;
             case R.id.delete_tv:
-                for (ScanFolderBean bean : folderList) {
-                    if (bean.isCheck()) {
-                        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[11], DataBaseInfo.getFieldNames()[11][1] + " = ?", new String[]{bean.getFolder()});
-                    }
-                }
-                queryScanFolder();
+                fragmentList.get(selectedPosition).deleteChecked();
                 break;
+        }
+    }
+
+    private void resetButtonStatus(){
+        VideoScanFragment videoScanFragment = fragmentList.get(selectedPosition);
+        if (videoScanFragment.hasChecked()){
+            deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
+            deleteTv.setClickable(true);
+        }else {
+            deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.text_gray));
+            deleteTv.setClickable(false);
         }
     }
 
@@ -136,19 +194,8 @@ public class VideoScanActivity extends BaseMvcActivity {
                 finish();
                 break;
             case R.id.add_scan:
-                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path -> {
-                    for (ScanFolderBean bean : folderList){
-                        if (path.contains(bean.getFolder())){
-                            ToastUtils.showShort("已在扫描范围内");
-                            return;
-                        }
-                    }
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[11][1], path);
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[11], null, values);
-                    queryScanFolder();
-                }).show();
+                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
+                        fragmentList.get(selectedPosition).addPath(path)).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -161,97 +208,30 @@ public class VideoScanActivity extends BaseMvcActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
+    public Context getContext() {
+        return this;
     }
 
-    private void queryScanFolder() {
-        folderList.clear();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[11], null, null, null, null, null, null);
-        while (cursor.moveToNext()) {
-            folderList.add(new ScanFolderBean(cursor.getString(1), false));
+    public interface OnFragmentItemCheckListener{
+        void onChecked( boolean hasChecked);
+    }
+
+    private class VideoScanFragmentAdapter extends FragmentPagerAdapter {
+        private List<VideoScanFragment> list;
+
+        private VideoScanFragmentAdapter(FragmentManager supportFragmentManager, List<VideoScanFragment> list) {
+            super(supportFragmentManager);
+            this.list = list;
         }
-        cursor.close();
-        adapter.notifyDataSetChanged();
-    }
 
-    @SuppressLint("CheckResult")
-    public void listFolder(String path) {
-        File rootFile = new File(path);
-        Observable.just(rootFile)
-                .flatMap(this::listFiles)
-                .map(file -> {
-                    VideoBean videoBean = new VideoBean();
-                    queryFormSystem(videoBean, file.getAbsolutePath());
-                    return saveData(videoBean);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    EventBus.getDefault().post(new RefreshFolderEvent(true));
-                    ToastUtils.showShort("扫描完成");
-                });
-    }
-
-    //递归查询内存中的视频文件
-    private Observable<File> listFiles(final File f){
-        if(f.isDirectory()){
-            File[] files = f.listFiles();
-            if (files == null)
-                files = new File[0];
-            return Observable
-                    .fromArray(files)
-                    .flatMap(this::listFiles);
-        } else {
-            return Observable
-                    .just(f)
-                    .filter(file -> file != null && f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+        @Override
+        public Fragment getItem(int position) {
+            return list.get(position);
         }
-    }
 
-    //保存数据库中不存在的文件到数据库
-    private boolean saveData(VideoBean videoBean){
-        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
-        ContentValues values=new ContentValues();
-        values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
-        values.put(DataBaseInfo.getFieldNames()[2][2], videoBean.getVideoPath());
-        values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(videoBean.getVideoDuration()));
-        values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(videoBean.getVideoSize()));
-        values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
-                " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
-                "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoBean.getVideoPath()});
-        if (!cursor.moveToNext()) {
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
-            cursor.close();
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
-
-    //查询系统中是否保存对应视频数据
-    public void queryFormSystem(VideoBean videoBean, String path){
-        Cursor cursor = VideoScanActivity.this.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Video.Media._ID, MediaStore.Video.Media.DURATION},
-                MediaStore.Video.Media.DATA+" = ?",
-                new String[]{path}, null);
-        File file = new File(path);
-        videoBean.setVideoPath(path);
-        videoBean.setVideoSize(file.length());
-        if (cursor != null && cursor.moveToNext()){
-            videoBean.setVideoDuration(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)));
-            videoBean.set_id(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)));
-            cursor.close();
-        }else {
-            if (cursor != null)
-                cursor.close();
-            videoBean.setVideoDuration(0);
-            videoBean.set_id(0);
+        @Override
+        public int getCount() {
+            return list.size();
         }
     }
 }

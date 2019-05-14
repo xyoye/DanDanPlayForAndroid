@@ -3,19 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.VideoScanActivity">
 
     <include
         layout="@layout/layout_toolbar"
         android:id="@+id/toolbar_layout"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/folder_rv"
+    <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/toolbar_layout"
+        android:gravity="center"
+        app:tabMode="scrollable" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_layout"
+        android:layout_below="@+id/indicator"
         android:layout_above="@+id/bottom_rl">
-    </android.support.v7.widget.RecyclerView>
+    </android.support.v4.view.ViewPager>
 
     <RelativeLayout
         android:id="@+id/bottom_rl"

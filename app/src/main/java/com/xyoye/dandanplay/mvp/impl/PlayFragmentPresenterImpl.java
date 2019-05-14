@@ -267,15 +267,34 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     //从数据库查询文件夹数据
     private List<FolderBean> getFolderList(){
         List<FolderBean> folderBeanList = new ArrayList<>();
+        List<String> blockList = new ArrayList<>();
         Map<String, Integer> beanMap = new HashMap<>();
         Map<String, String> deleteMap = new HashMap<>();
+        //查询屏蔽目录
         SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
+        Cursor blockCursor = sqLiteDatabase.rawQuery("SELECT folder_path FROM scan_folder WHERE folder_type = ?",new String[]{"0"});
+        while (blockCursor.moveToNext()){
+            blockList.add(blockCursor.getString(0));
+        }
+        blockCursor.close();
 
+        //查询所有video
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path, file_path FROM file",new String[]{});
         while (cursor.moveToNext()){
             String folderPath = cursor.getString(0);
             String filePath = cursor.getString(1);
 
+            //过滤屏蔽目录
+            boolean isBlock = false;
+            for (String blockPath : blockList){
+                if (filePath.startsWith(blockPath)){
+                    isBlock = true;
+                    break;
+                }
+            }
+            if (isBlock) continue;
+
+            //获取文件夹信息
             File file = new File(filePath);
             if (file.exists()){
                 if (beanMap.containsKey(folderPath)){
@@ -290,6 +309,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         }
         cursor.close();
 
+        //更新文件夹数据
         for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
             folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
             ContentValues values = new ContentValues();

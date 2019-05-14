@@ -6,7 +6,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 20;
+    public static final int DATABASE_VERSION = 21;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -44,7 +44,7 @@ public class DataBaseInfo {
                 {"_id", "tracker"},
                 {"_id", "text", "time"},
                 {"_id", "filter"},
-                {"_id", "folder_path"},
+                {"_id", "folder_path", "folder_type"},
                 {"_id", "torrent_path", "torrent_file_path", "danmu_path", "danmu_episode_id"},
                 {"_id", "text"}
         };
@@ -61,7 +61,7 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT","VARCHAR(255) NOT NULL"}
         };

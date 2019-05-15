@@ -347,7 +347,7 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
         //使用播放器的类型
         usePlayerType = SPUtils.getInstance().getInt("player_type");
         //使用播放器的格式
-        usePixelFormat = SPUtils.getInstance().getString("pixel_format");
+        usePixelFormat = SPUtils.getInstance().getString("pixel_format", "fcc-_es2");
     }
 
     private void initView() {

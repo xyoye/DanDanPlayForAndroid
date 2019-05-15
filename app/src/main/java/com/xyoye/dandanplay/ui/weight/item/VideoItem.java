@@ -17,14 +17,9 @@ import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.OpenDanmuSettingEvent;
-import com.xyoye.dandanplay.bean.event.OpenVideoEvent;
-import com.xyoye.dandanplay.bean.event.VideoActionEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import io.reactivex.ObservableOnSubscribe;
@@ -51,14 +46,22 @@ public class VideoItem implements AdapterItem<VideoBean> {
     ImageView bindDanmuIv;
     @BindView(R.id.bind_danmu_tv)
     TextView bindDanmuTv;
+    @BindView(R.id.delete_action_ll)
+    LinearLayout deleteActionLl;
     @BindView(R.id.unbind_danmu_action_ll)
     LinearLayout unbindDanmuActionLl;
     @BindView(R.id.video_action_ll)
     LinearLayout videoActionLl;
     @BindView(R.id.close_action_ll)
     LinearLayout closeActionLl;
+
     private View mView;
     private Context mContext;
+    private VideoItemEventListener listener;
+
+    public VideoItem(VideoItemEventListener listener){
+        this.listener = listener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -122,15 +125,10 @@ public class VideoItem implements AdapterItem<VideoBean> {
             danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
         }
 
-        danmuTipsIv.setOnClickListener(v -> {
-            OpenDanmuSettingEvent event = new OpenDanmuSettingEvent(model.getVideoPath(), position);
-            EventBus.getDefault().post(event);
-        });
-
-        videoInfoRl.setOnClickListener(view -> {
-            OpenVideoEvent event = new OpenVideoEvent(model, position);
-            EventBus.getDefault().post(event);
-        });
+        danmuTipsIv.setOnClickListener(v -> listener.openDanmuSetting(position));
+        videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
+        unbindDanmuActionLl.setOnClickListener(v -> listener.unBindDanmu(position));
+        deleteActionLl.setOnClickListener(v -> listener.onDelete(position));
 
         videoInfoRl.setOnLongClickListener(v -> {
             videoActionLl.setVisibility(View.VISIBLE);
@@ -139,10 +137,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         closeActionLl.setOnClickListener(v -> videoActionLl.setVisibility(View.GONE));
 
-        unbindDanmuActionLl.setOnClickListener(v -> {
-            EventBus.getDefault().post(new VideoActionEvent(VideoActionEvent.UN_BIND, position));
-            videoActionLl.setVisibility(View.GONE);
-        });
     }
 
     private Bitmap getBitmap(int _id){
@@ -161,5 +155,12 @@ public class VideoItem implements AdapterItem<VideoBean> {
             bitmap.eraseColor(Color.parseColor("#000000"));
         }
         return bitmap;
+    }
+
+    public interface VideoItemEventListener{
+        void openDanmuSetting(int position);
+        void openVideo(int position);
+        void unBindDanmu(int position);
+        void onDelete(int position);
     }
 }

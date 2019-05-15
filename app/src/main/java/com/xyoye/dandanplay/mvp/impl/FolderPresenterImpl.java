@@ -117,6 +117,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void getDanmu(String videoPath){
+        getView().showLoading();
         String title = FileUtils.getFileName(videoPath);
         DanmuMatchParam param = new DanmuMatchParam();
         String hash = MD5Util.getVideoFileHash(videoPath);
@@ -140,7 +141,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             @Override
             public void onError(int errorCode, String message) {
                 getView().hideLoading();
-                ToastUtils.showShort(message);
+                getView().noMatchDanmu(videoPath);
             }
         }, new NetworkConsumer());
     }

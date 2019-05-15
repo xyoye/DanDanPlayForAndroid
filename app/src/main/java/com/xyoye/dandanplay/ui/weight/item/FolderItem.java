@@ -29,6 +29,13 @@ public class FolderItem implements AdapterItem<FolderBean>{
 
     private View mView;
     private Context mContext;
+    private PlayFolderListener listener;
+
+    public FolderItem(PlayFolderListener listener){
+        if (listener == null)
+            throw new NullPointerException("call back not null");
+        this.listener = listener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -70,6 +77,14 @@ public class FolderItem implements AdapterItem<FolderBean>{
                 ? mContext.getResources().getColor(R.color.theme_color)
                 : mContext.getResources().getColor(R.color.text_gray));
 
-        mView.setOnClickListener(v -> EventBus.getDefault().post(new OpenFolderEvent(model.getFolderPath())));
+        mView.setOnClickListener(v -> listener.onClick(model.getFolderPath()));
+
+        mView.setOnLongClickListener(v -> listener.onLongClick(model.getFolderPath(), title));
+    }
+
+    public interface PlayFolderListener{
+        void onClick(String folderPath);
+
+        boolean onLongClick(String folderPath, String folderName);
     }
 }

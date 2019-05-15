@@ -23,11 +23,13 @@ import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -78,11 +80,48 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void initView() {
         refresh.setColorSchemeResources(R.color.theme_color);
 
+        FolderItem.PlayFolderListener itemListener = new FolderItem.PlayFolderListener() {
+            @Override
+            public void onClick(String folderPath) {
+                Intent intent = new Intent(getContext(), FolderActivity.class);
+                intent.putExtra(OpenFolderEvent.FOLDERPATH, folderPath);
+                startActivity(intent);
+            }
+
+            @Override
+            public boolean onLongClick(String folderPath, String folderName) {
+                new CommonDialog.Builder(getContext())
+                        .setOkListener(dialog -> {
+                            if (FileUtils.deleteDir(folderPath)){
+                                refresh.setRefreshing(true);
+                                refreshVideo(false);
+                            }else {
+                                ToastUtils.showShort("删除文件夹失败");
+                            }
+                        })
+                        .setExtraListener(dialog -> {
+                            DataBaseManager.getInstance()
+                                    .selectTable(11)
+                                    .insert()
+                                    .param(1, folderPath)
+                                    .param(2, "0")
+                                    .execute();
+                            refresh.setRefreshing(true);
+                            refreshVideo(false);
+                        })
+                        .setAutoDismiss()
+                        .showExtra()
+                        .build()
+                        .show("确认删除文件夹["+folderName+"]？", "屏蔽目录");
+                return true;
+            }
+        };
+
         adapter = new BaseRvAdapter<FolderBean>(new ArrayList<>()) {
             @NonNull
             @Override
             public AdapterItem<FolderBean> onCreateItem(int viewType) {
-                return new FolderItem();
+                return new FolderItem(itemListener);
             }
         };
 
@@ -152,13 +191,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Override
     public void showError(String message) {
         ToastUtils.showShort(message);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openFolder(OpenFolderEvent event) {
-        Intent intent = new Intent(getContext(), FolderActivity.class);
-        intent.putExtra(OpenFolderEvent.FOLDERPATH, event.getFolderPath());
-        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

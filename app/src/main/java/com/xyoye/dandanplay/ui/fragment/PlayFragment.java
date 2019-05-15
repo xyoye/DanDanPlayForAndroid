@@ -100,12 +100,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                             }
                         })
                         .setExtraListener(dialog -> {
-                            DataBaseManager.getInstance()
-                                    .selectTable(11)
-                                    .insert()
-                                    .param(1, folderPath)
-                                    .param(2, "0")
-                                    .execute();
+                            presenter.deleteFolder(folderPath);
                             refresh.setRefreshing(true);
                             refreshVideo(false);
                         })

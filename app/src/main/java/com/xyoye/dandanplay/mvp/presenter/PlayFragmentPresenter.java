@@ -19,5 +19,8 @@ public interface PlayFragmentPresenter extends BaseMvpPresenter {
     //获取数据库数据
     void getVideoFormDatabase();
 
+    //删除目录
+    void deleteFolder(String folderPath);
+
     VideoBean getLastPlayVideo(String videoPath);
 }

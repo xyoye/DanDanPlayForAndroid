@@ -323,4 +323,14 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         }
         return folderBeanList;
     }
+
+    @Override
+    public void deleteFolder(String folderPath) {
+        DataBaseManager.getInstance()
+                .selectTable(11)
+                .insert()
+                .param(1, folderPath)
+                .param(2, "0")
+                .execute();
+    }
 }

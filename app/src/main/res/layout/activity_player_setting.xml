@@ -137,7 +137,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OpenSLES"
+                    android:text="OpenSL ES"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
                 <TextView
@@ -150,7 +150,7 @@
             </LinearLayout>
 
             <CheckBox
-                android:id="@+id/open_sles_cb"
+                android:id="@+id/open_sl_es_cb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -299,7 +299,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/auto_load_subtitle_rl"
+        android:id="@+id/auto_load_network_subtitle_rl"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="5dp"
@@ -328,7 +328,42 @@
         </LinearLayout>
 
         <CheckBox
-            android:id="@+id/auto_load_subtitle_cb"
+            android:id="@+id/auto_load_network_subtitle_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自动加载同名字幕"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="加载视频同名字幕，优先级高"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/auto_load_local_subtitle_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

@@ -301,10 +301,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
-                //设置视频路径
-                .setVideoPath(videoPath)
-                //设置标题
-                .setTitle(videoTitle)
                 //设置弹幕事件回调，要在初始化弹幕之前完成
                 .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
@@ -315,10 +311,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setSkipTip(currentPosition)
                 //是否开启网络字幕
                 .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
+                //是否自动加载同名字幕
+                .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
                 //是否自动加载网络字幕
-                .setAutoLoadSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
+                //设置标题
+                .setTitle(videoTitle)
+                //设置视频路径
+                .setVideoPath(videoPath)
                 .start();
     }
 
@@ -331,10 +333,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
-                //设置视频路径
-                .setVideoPath(videoPath)
-                //设置标题
-                .setTitle(videoTitle)
                 //设置弹幕事件回调，要在初始化弹幕之前完成
                 .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
@@ -345,10 +343,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setSkipTip(currentPosition)
                 //是否开启网络字幕
                 .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
+                //是否自动加载同名字幕
+                .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
                 //是否自动加载网络字幕
-                .setAutoLoadSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
+                //设置标题
+                .setTitle(videoTitle)
+                //设置视频路径
+                .setVideoPath(videoPath)
                 .start();
     }
 

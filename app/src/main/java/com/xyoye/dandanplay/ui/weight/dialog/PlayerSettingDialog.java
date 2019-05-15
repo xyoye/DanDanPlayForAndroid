@@ -11,11 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.event.PlayerSettingEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,10 +53,12 @@ public class PlayerSettingDialog extends Dialog {
     TextView dialogDismiss;
 
     private boolean isSelectPlayer;
+    private PlayerSettingSelectListener listener;
 
-    public PlayerSettingDialog(@NonNull Context context, int themeResId, boolean isSelectPlayer) {
-        super(context, themeResId);
+    public PlayerSettingDialog(@NonNull Context context, boolean isSelectPlayer, PlayerSettingSelectListener listener) {
+        super(context,  R.style.Dialog);
         this.isSelectPlayer = isSelectPlayer;
+        this.listener = listener;
     }
 
     @Override
@@ -127,7 +126,7 @@ public class PlayerSettingDialog extends Dialog {
                         AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
                         break;
                 }
-                EventBus.getDefault().post(new PlayerSettingEvent(true, player_name));
+                listener.onSelected(player_name);
                 PlayerSettingDialog.this.dismiss();
             });
         }else {
@@ -161,11 +160,15 @@ public class PlayerSettingDialog extends Dialog {
                         AppConfig.getInstance().setPixelFormat(Constants.PIXEL_OPENGL_ES2);
                         break;
                 }
-                EventBus.getDefault().post(new PlayerSettingEvent(false, pixelType));
+                listener.onSelected(pixelType);
                 PlayerSettingDialog.this.dismiss();
             });
         }
 
         dialogDismiss.setOnClickListener(v -> PlayerSettingDialog.this.dismiss());
+    }
+
+    public interface PlayerSettingSelectListener{
+        void onSelected(String result);
     }
 }

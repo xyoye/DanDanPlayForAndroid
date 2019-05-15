@@ -224,6 +224,17 @@ public class AppConfig {
     }
 
     /**
+     * 自动匹配同名字幕
+     */
+    public boolean isAutoLoadLocalSubtitle(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_LOCAL_SUBTITLE);
+    }
+
+    public void setAutoLoadLocalSubtitle(boolean auto){
+        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_LOCAL_SUBTITLE, auto);
+    }
+
+    /**
      * 自动匹配网络字幕
      */
     public boolean isAutoLoadNetworkSubtitle(){

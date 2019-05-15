@@ -71,22 +71,14 @@ public final class CommonPlayerUtils {
             return "";
 
         //可加载的字幕格式
-        String[] extArray = new String[]{"ASS", "SCC", "SRT", "STL", "TTML"};
-        String videoFolder = FileUtils.getDirName(videoPath);
-        String videoName = FileUtils.getFileNameNoExtension(videoPath);
+        String[] extArray = new String[]{".ass", ".scc", ".srt", ".stl", ".ttml"};
+        int lastPoi = videoPath.lastIndexOf(".");
+        String videoPathNotExt = videoPath.substring(0, lastPoi);
 
-        //遍历父文件夹
-        File folderFile = new File(videoFolder);
-        for (File file : folderFile.listFiles()){
-            String path = file.getAbsolutePath();
-            //以视频名称开头
-            if (path.startsWith(videoName)){
-                for (String ext : extArray){
-                    //已可用字幕格式结尾，文件大小大于0
-                    if (path.endsWith(ext) && file.length() > 0){
-                        return path;
-                    }
-                }
+        for (String ext : extArray){
+            File tempFile = new File(videoPathNotExt + ext);
+            if (tempFile.exists() && tempFile.length() > 0){
+                return tempFile.getAbsolutePath();
             }
         }
 

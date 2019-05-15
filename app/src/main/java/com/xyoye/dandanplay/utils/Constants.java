@@ -21,6 +21,8 @@ public class Constants {
         public static final String AUTO_LOAD_DANMU = "auto_load_danmu";
         //是否使用网络字幕
         public static final String USE_NETWORK_SUBTITLE = "use_network_subtitle";
+        //自动加载同名字幕
+        public static final String AUTO_LOAD_LOCAL_SUBTITLE = "auto_load_local_subtitle";
         //自动加载网络字幕
         public static final String AUTO_LOAD_NETWORK_SUBTITLE = "auto_load_network_subtitle";
         //token

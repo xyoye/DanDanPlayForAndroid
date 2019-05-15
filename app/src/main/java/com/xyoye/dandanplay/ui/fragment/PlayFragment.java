@@ -30,7 +30,6 @@ import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;

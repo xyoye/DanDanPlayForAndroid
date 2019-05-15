@@ -224,8 +224,10 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private boolean mIsExoPlayerReady = false;
     //是否查询网络字幕
     private boolean isQueryNetworkSubtitle = false;
+    //是否自动加载同名字幕
+    private boolean isAutoLoadLocalSubtitle = false;
     //是否自动加载网络字幕，已加载同名字幕则不自动加载
-    private boolean isAutoLoadSubtitle = false;
+    private boolean isAutoLoadNetworkSubtitle = false;
 
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
@@ -1152,7 +1154,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     @Override
     public void onSubtitleQuery(int size){
         topBarView.getSubtitleSettingView().setNetwoekSubtitleVisible(true);
-        if(isAutoLoadSubtitle)
+        if(isAutoLoadNetworkSubtitle)
             mOutsideListener.onAction(Constants.INTENT_AUTO_SUBTITLE, 0);
         else
             _showSkipSub(size);
@@ -1266,10 +1268,18 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     /**
+     * 是否自动加载同名字幕
+     */
+    public ExoPlayerView setAutoLoadLocalSubtitle(boolean isAuto){
+        isAutoLoadLocalSubtitle = isAuto;
+        return this;
+    }
+
+    /**
      * 是否自动加载网络字幕
      */
-    public ExoPlayerView setAutoLoadSubtitle(boolean isAuto){
-        isAutoLoadSubtitle = isAuto;
+    public ExoPlayerView setAutoLoadNetworkSubtitle(boolean isAuto){
+        isAutoLoadNetworkSubtitle = isAuto;
         return this;
     }
 
@@ -1852,10 +1862,11 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 默认加载视频同名字幕
      */
     public void loadDefaultSubtitle(String videoPath) {
+        if (!isAutoLoadLocalSubtitle) return;
         String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
         if (!StringUtils.isEmpty(subtitlePath)) {
             //找到本地同名字幕，不自动加载网络字幕
-            isAutoLoadSubtitle = false;
+            isAutoLoadNetworkSubtitle = false;
             setSubtitlePath(subtitlePath);
         }
     }

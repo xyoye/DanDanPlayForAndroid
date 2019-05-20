@@ -32,14 +32,16 @@
 8、同步PC端追番、播放历史功能
 
 ## 截图
-
-<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" alt="Sample"  width="250">
-<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png" alt="Sample"  width="250">
-<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" alt="Sample"  width="250">
-<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" alt="Sample"  width="250">
-
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png)
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png)
+<div>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" width="250px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png" width="250px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" width="250px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" width="250px">
+</div>
+<div>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png" height="240px"/>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png" height="240px"/>
+</div>
 
 ## 致谢
 ### 相关参与建设者：

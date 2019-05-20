@@ -31,9 +31,9 @@
 
 8、同步PC端追番、播放历史功能
 
-##截图
+## 截图
 
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png)
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/300)
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png)
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png)
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png)

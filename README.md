@@ -21,7 +21,7 @@
 
 3、支持网络串流播放
 
-4、支持弹幕匹配与下载
+4、支持弹幕、字幕匹配与下载
 
 5、支持番剧搜索与下载
 
@@ -30,6 +30,16 @@
 7、提供多种弹幕调整方式，如大小、速度、屏蔽、透明度等
 
 8、同步PC端追番、播放历史功能
+
+##截图
+
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png)
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png)
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png)
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png)
+
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png)
+![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png)
 
 ## 致谢
 ### 相关参与建设者：

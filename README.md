@@ -33,14 +33,10 @@
 
 ## 截图
 
-<p align="center">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" alt="Sample"  width="250" height="140">
-</p>
-
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png){:height="100" width="100"}
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png)
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png)
-![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png)
+<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" alt="Sample"  width="250">
+<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png" alt="Sample"  width="250">
+<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" alt="Sample"  width="250">
+<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" alt="Sample"  width="250">
 
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png)
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png)

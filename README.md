@@ -33,10 +33,12 @@
 
 ## 截图
 <div>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" width="240px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" width="240px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" width="240px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" width="220px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" width="220px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" width="220px">
 </div>
+
+
 <div>
 	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png" height="240px"/>
 	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png" height="240px"/>

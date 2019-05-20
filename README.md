@@ -32,16 +32,18 @@
 8、同步PC端追番、播放历史功能
 
 ## 截图
+* ### 1、界面
 <div>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" width="220px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" width="220px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" width="220px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/search.png" width="200px">
 </div>
 
-
+* ### 2、视频
 <div>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png" height="240px"/>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png" height="240px"/>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_1.png" height="230px"/>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/video_2.png" height="230px"/>
 </div>
 
 ## 致谢

@@ -296,13 +296,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         IjkPlayerView_V2 ijkPlayerView = (IjkPlayerView_V2) mPlayer;
 
         ijkPlayerView
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
+                //内部事件回调
+                .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
                 .setNormalFilterData(IApplication.normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
-                //设置弹幕事件回调，要在初始化弹幕之前完成
-                .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
                 .setDanmakuSource(inputStream)
                 //默认展示弹幕
@@ -315,8 +317,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
                 //是否自动加载网络字幕
                 .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
-                //内部事件回调
-                .setOnInfoListener(onOutsideListener)
                 //设置标题
                 .setTitle(videoTitle)
                 //设置视频路径
@@ -328,13 +328,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
 
         exoPlayerView
+                //设置弹幕事件回调，要在初始化弹幕之前完成
+                .setDanmakuListener(onDanmakuListener)
+                //内部事件回调
+                .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
                 .setNormalFilterData(IApplication.normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
-                //设置弹幕事件回调，要在初始化弹幕之前完成
-                .setDanmakuListener(onDanmakuListener)
                 //设置弹幕数据源
                 .setDanmakuSource(inputStream)
                 //默认展示弹幕
@@ -347,8 +349,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
                 //是否自动加载网络字幕
                 .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
-                //内部事件回调
-                .setOnInfoListener(onOutsideListener)
                 //设置标题
                 .setTitle(videoTitle)
                 //设置视频路径

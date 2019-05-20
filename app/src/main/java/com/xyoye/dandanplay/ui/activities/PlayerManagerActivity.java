@@ -67,21 +67,25 @@ public class PlayerManagerActivity extends AppCompatActivity {
             Uri data = getIntent().getData();
             if (data != null) {
                 videoPath = CommonUtils.getRealFilePath(PlayerManagerActivity.this, data);
-                videoTitle = FileUtils.getFileName(videoPath);
-
-                //是否展示前往选择弹幕弹窗
-                if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
-                    new DanmuSelectDialog(this, isSelectDanmu -> {
-                        if (isSelectDanmu) {
+                if (videoPath != null){
+                    videoTitle = FileUtils.getFileName(videoPath);
+                    //是否展示前往选择弹幕弹窗
+                    if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
+                        new DanmuSelectDialog(this, isSelectDanmu -> {
+                            if (isSelectDanmu) {
+                                launchDanmuSelect(videoPath);
+                            }
+                        }).show();
+                    } else {
+                        if (AppConfig.getInstance().isOuterChainDanmuSelect()) {
                             launchDanmuSelect(videoPath);
+                        }else {
+                            launchPlayerActivity();
                         }
-                    }).show();
-                } else {
-                    if (AppConfig.getInstance().isOuterChainDanmuSelect()) {
-                        launchDanmuSelect(videoPath);
-                    }else {
-                        launchPlayerActivity();
                     }
+                } else {
+                    ToastUtils.showShort("解析视频地址失败");
+                    errorTv.setVisibility(View.VISIBLE);
                 }
             } else {
                 ToastUtils.showShort("解析视频地址失败");

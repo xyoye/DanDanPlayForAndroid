@@ -1,11 +1,8 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +25,6 @@ import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
-import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.torrent.Torrent;
 import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
@@ -54,35 +50,8 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     RecyclerView downloadRv;
 
     private BaseRvAdapter<Torrent> adapter;
-
-    Handler mHandler = new Handler(Looper.getMainLooper()){
-        @SuppressLint("SetTextI18n")
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 0) {
-                for (int i=0; i<IApplication.torrentList.size(); i++){
-                    Torrent torrent = IApplication.torrentList.get(i);
-                    if (torrent.isDone()){
-                        if (torrent.isUpdate()){
-                            adapter.notifyItemChanged(i);
-                            torrent.setUpdate(false);
-                        }else {
-                            continue;
-                        }
-                    }
-                    if (torrent.isUpdate()){
-                        adapter.notifyItemChanged(i);
-                        if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
-                            torrent.setUpdate(false);
-                        }
-                    }
-
-                }
-                mHandler.sendMessageDelayed(mHandler.obtainMessage(0),1000);
-            }
-        }
-    };
+    private Runnable refresh;
+    private Handler mHandler = IApplication.getMainHandler();
 
     @Override
     public void initView() {
@@ -101,12 +70,38 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         };
         downloadRv.setAdapter(adapter);
 
+        initRefresh();
+
         if(ServiceUtils.isServiceRunning(TorrentService.class)){
             startNewTask();
         }else {
             startTorrentService();
             presenter.observeService();
         }
+    }
+
+    private void initRefresh(){
+        refresh = () -> {
+            for (int i=0; i<IApplication.torrentList.size(); i++){
+                Torrent torrent = IApplication.torrentList.get(i);
+                if (torrent.isDone()){
+                    if (torrent.isUpdate()){
+                        adapter.notifyItemChanged(i);
+                        torrent.setUpdate(false);
+                    }else {
+                        continue;
+                    }
+                }
+                if (torrent.isUpdate()){
+                    adapter.notifyItemChanged(i);
+                    if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
+                        torrent.setUpdate(false);
+                    }
+                }
+            }
+            mHandler.postDelayed(refresh,1000);
+        };
+        refresh.run();
     }
 
     @Override
@@ -135,7 +130,6 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         Torrent torrent = (Torrent)getIntent().getSerializableExtra("torrent");
         if (torrent != null){
             EventBus.getDefault().post(new TorrentStartEvent(torrent));
-            mHandler.sendEmptyMessageDelayed(0, 1000);
         }
     }
 
@@ -166,7 +160,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mHandler.removeMessages(0);
+        mHandler.removeCallbacks(refresh);
 
         boolean downloading = false;
         for (Torrent torrent : IApplication.torrentList) {

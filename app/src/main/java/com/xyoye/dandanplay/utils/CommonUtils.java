@@ -2,13 +2,19 @@ package com.xyoye.dandanplay.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
@@ -45,6 +51,10 @@ import static com.blankj.utilcode.util.FileUtils.createOrExistsFile;
  */
 
 public class CommonUtils {
+    private static final String EXTERNAL_STORAGE = "com.android.externalstorage.documents";
+    private static final String DOWNLOAD_DOCUMENT = "com.android.providers.downloads.documents";
+    private static final String MEDIA_DOCUMENT = "com.android.providers.media.documents";
+    private static final String DOWNLOAD_URI = "content://downloads/public_downloads";
 
     /**
      * 获取本地软件版本号
@@ -249,7 +259,7 @@ public class CommonUtils {
     }
 
     /**
-     * 判断视频
+     * 判断视频格式
      */
     public static boolean isMediaFile(String fileName){
         switch (com.blankj.utilcode.util.FileUtils.getFileExtension(fileName).toLowerCase()){
@@ -277,27 +287,59 @@ public class CommonUtils {
     }
 
     //获取Uri真实地址
-    public static String getRealFilePath(final Context context, final Uri uri) {
-        if (null == uri) return null;
-        final String scheme = uri.getScheme();
-        String data = null;
-        if (scheme == null)
-            data = uri.getPath();
-        else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
-            data = uri.getPath();
-        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
-            if (null != cursor) {
-                if (cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-                    if (index > -1) {
-                        data = cursor.getString(index);
+    public static @Nullable String getRealFilePath(Context context, Uri uri) {
+        boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            switch (uri.getAuthority()){
+                case EXTERNAL_STORAGE:
+                    String docId = DocumentsContract.getDocumentId(uri);
+                    String[] exSplit = docId.split(":");
+                    String type = exSplit[0];
+                    if ("primary".equalsIgnoreCase(type)) {
+                        return Environment.getExternalStorageDirectory() + "/" + exSplit[1];
                     }
-                }
-                cursor.close();
+                    break;
+                case DOWNLOAD_DOCUMENT:
+                    String id = DocumentsContract.getDocumentId(uri);
+                    Uri documentUri = ContentUris.withAppendedId(Uri.parse(DOWNLOAD_URI), Long.valueOf(id));
+                    return getDataColumn(context, documentUri, null, null);
+                case MEDIA_DOCUMENT:
+                    String[] split = DocumentsContract.getDocumentId(uri).split(":");
+                    Uri contentUri = null;
+                    switch (split[0]){
+                        case "image":
+                            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        case "video":
+                            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        case "audio":
+                            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                    }
+                    return getDataColumn(context, contentUri, "_id=?", new String[]{split[1]});
             }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return getDataColumn(context, uri, null, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
         }
-        return data;
+        return null;
+    }
+
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri, new String[]{"_data"}, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndexOrThrow("_data"));
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
     }
 
     /**

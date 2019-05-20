@@ -126,7 +126,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                         ContentValues values = new ContentValues();
                         values.put(DataBaseInfo.getFieldNames()[4][1],typesBean.getId());
                         values.put(DataBaseInfo.getFieldNames()[4][2],typesBean.getName());
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, values);
+                        if (sqLiteDatabase.isOpen())
+                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, values);
                     }
                 }
             }
@@ -158,7 +159,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                         ContentValues values = new ContentValues();
                         values.put(DataBaseInfo.getFieldNames()[5][1],subgroupsBean.getId());
                         values.put(DataBaseInfo.getFieldNames()[5][2],subgroupsBean.getName());
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, values);
+                        if (sqLiteDatabase.isOpen())
+                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, values);
                     }
                 }
             }
@@ -201,7 +203,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             for (int i=0; i<filters.size(); i++){
                 values.put("filter", filters.get(i));
                 //写入数据库
-                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[10], null, values);
+                if (sqLiteDatabase.isOpen())
+                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[10], null, values);
             }
         }).start();
     }

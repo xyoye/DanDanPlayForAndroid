@@ -29,7 +29,15 @@ public class Time {
 			try {
 				cs = Integer.parseInt(hms[2].substring(3, 5));
 			}catch (NumberFormatException e){
-				cs = Integer.parseInt(value.split(".")[1]);
+				try {
+					String[] values = value.split(".");
+					if (values.length > 0)
+						cs = Integer.parseInt(value.split(".")[1]);
+					else
+						cs = Integer.parseInt(value);
+				}catch (Exception ex){
+					cs = 0;
+				}
 			}
 
 			mseconds = cs*10 + s*1000 + m*60000 + h*3600000;

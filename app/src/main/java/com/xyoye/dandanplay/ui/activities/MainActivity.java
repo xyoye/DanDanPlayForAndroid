@@ -181,6 +181,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             } else {
                 if (ServiceUtils.isServiceRunning(TorrentService.class))
                     ServiceUtils.stopService(TorrentService.class);
+                Libtorrent.closeMetaInfo();
                 Libtorrent.close();
                 DataBaseManager.getInstance().closeDatabase();
                 finish();

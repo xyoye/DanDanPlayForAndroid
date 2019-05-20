@@ -299,12 +299,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     }
 
     public boolean activityIsAlive() {
-        if (getBaseContext() == null) return false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return !(this.isDestroyed() || this.isFinishing());
-        } else {
-            return !this.isFinishing();
-        }
+        return getBaseContext() != null && !(this.isDestroyed() || this.isFinishing());
     }
 
     @Override

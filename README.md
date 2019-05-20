@@ -33,6 +33,10 @@
 
 ## 截图
 
+<p align="center">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png" alt="Sample"  width="250" height="140">
+</p>
+
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/home.png){:height="100" width="100"}
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/season.png)
 ![iamge1](https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/detail.png)

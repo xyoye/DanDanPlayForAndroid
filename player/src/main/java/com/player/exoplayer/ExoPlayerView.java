@@ -239,7 +239,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     //隐藏控制栏视图Runnable
     private Runnable mHideBarRunnable = () -> hideView(HIDE_VIEW_AUTO);
     //隐藏亮度、声音、跳转视图Runnable
-    private Runnable mHideTouchViewRunnable = () -> hideView(HIDE_VIEW_AUTO);
+    private Runnable mHideTouchViewRunnable = () -> hideView(HIDE_VIEW_END_GESTURE);
     //隐藏跳转上一次播放提示视图Runnable
     private Runnable mHideSkipTipRunnable = this::_hideSkipTip;
     //隐藏选取字幕提示视图Runnable

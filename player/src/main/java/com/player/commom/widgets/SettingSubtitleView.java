@@ -109,7 +109,7 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         findViewById(R.id.subtitle_network_tv).setOnClickListener(this);
 
         subExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        subExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        subExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
         subExtraTimeEt.setSingleLine(true);
 
         //默认内置字幕背景色为黑+白

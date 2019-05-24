@@ -96,7 +96,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         numberAutoLimitTv.setOnClickListener(this);
 
         danmuExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        danmuExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        danmuExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
         danmuExtraTimeEt.setSingleLine(true);
         numberInputLimitEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
         numberInputLimitEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);

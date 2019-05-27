@@ -55,7 +55,6 @@
 2.x版本开发者：shiwentao666
 
 ### 第三方库
-此处仅列举主要功能实现库
 - [DanmakuFlameMaster](https://github.com/bilibili/DanmakuFlameMaster)
 - [ijkplayer](https://github.com/bilibili/ijkplayer)
 - [ExoPlayer](https://github.com/google/ExoPlayer)

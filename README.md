@@ -54,7 +54,7 @@
 
 2.x版本开发者：shiwentao666
 
-### 开源库
+### 第三方库
 此处仅列举主要功能实现库
 - [DanmakuFlameMaster](https://github.com/bilibili/DanmakuFlameMaster)
 - [ijkplayer](https://github.com/bilibili/ijkplayer)
@@ -62,4 +62,4 @@
 - [lbitorrent](https://gitlab.com/axet/libtorrent)
 - [jcifs-ng](https://github.com/AgNO3/jcifs-ng)
 - [jsoup](https://github.com/jhy/jsoup)
-- ...
+- [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/THIRD_PARTY_LIBRARIES.md)

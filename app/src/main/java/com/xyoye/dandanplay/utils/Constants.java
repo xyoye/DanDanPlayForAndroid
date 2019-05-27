@@ -3,19 +3,15 @@ package com.xyoye.dandanplay.utils;
 import android.os.Environment;
 
 /**
- * Created by xyoye on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
 
 public class Constants {
-    public static String BilibiliUrl = "http://comment.bilibili.com/";
-
     public static class Config {
         //首次进入app
         public static final String FIRST_OPEN_APP = "first_open_app";
         //本地下载目录
         public static final String LOCAL_DOWNLOAD_FOLDER = "local_download_folder";
-        //sd卡目录
-        public static final String LOCAL_SDCARD_FOLDER = "local_sdcard_folder";
         //自动加载网络弹幕
         public static final String AUTO_LOAD_DANMU = "auto_load_danmu";
         //是否使用网络字幕
@@ -36,8 +32,6 @@ public class Constants {
         public static final String IS_LOGIN = "is_login";
         //文件夹排序方式
         public static final String FOLDER_COLLECTIONS = "folder_collection";
-        //smb地址
-        public static final String SMB_DEVICE = "smb_device";
         //补丁版本号
         public static final String PATCH_VERSION = "patch_version";
         //自动查询补丁模式
@@ -77,6 +71,24 @@ public class Constants {
         public static final String backupFolder =  downloadPath + "/_backup";
     }
 
+    public static class PlayerConfig{
+        //播放器设置
+        public static final String SHARE_MEDIA_CODE_C = "media_code_c";
+        public static final String SHARE_MEDIA_CODE_C_H265 = "media_code_c_h265";
+        public static final String SHARE_OPEN_SLES = "open_sles";
+        public static final String SHARE_SURFACE_RENDERS = "surface_renders";
+        public static final String SHARE_PLAYER_TYPE = "player_type";
+        public static final String SHARE_PIXEL_FORMAT = "pixel_format";
+
+        //像素格式(Auto Select=,RGB 565=fcc-rv16,RGB 888X=fcc-rv32,YV12=fcc-yv12,默认为RGB 888X)
+        public static final String PIXEL_AUTO = "";
+        public static final String PIXEL_RGB565 = "fcc-rv16";
+        public static final String PIXEL_RGB888 = "fcc-rv24";
+        public static final String PIXEL_RGBX8888 = "fcc-rv32";
+        public static final String PIXEL_YV12 = "fcc-yv12";
+        public static final String PIXEL_OPENGL_ES2 = "fcc-_es2";
+    }
+
     public static class SmbType{
         public static final int SQL_DEVICE = 1;
         public static final int LAN_DEVICE = 2;
@@ -85,26 +97,10 @@ public class Constants {
     }
 
     //文件排序方式
-    public static class Collection {
+    public static class FolderSort {
         public static final int NAME_ASC = 1;
         public static final int NAME_DESC = 2;
         public static final int DURATION_ASC = 3;
         public static final int DURATION_DESC = 4;
     }
-
-    //播放器设置
-    public static final String SHARE_MEDIA_CODE_C = "media_code_c";
-    public static final String SHARE_MEDIA_CODE_C_H265 = "media_code_c_h265";
-    public static final String SHARE_OPEN_SLES = "open_sles";
-    public static final String SHARE_SURFACE_RENDERS = "surface_renders";
-    public static final String SHARE_PLAYER_TYPE = "player_type";
-    public static final String SHARE_PIXEL_FORMAT = "pixel_format";
-
-    //像素格式(Auto Select=,RGB 565=fcc-rv16,RGB 888X=fcc-rv32,YV12=fcc-yv12,默认为RGB 888X)
-    public static final String PIXEL_AUTO = "";
-    public static final String PIXEL_RGB565 = "fcc-rv16";
-    public static final String PIXEL_RGB888 = "fcc-rv24";
-    public static final String PIXEL_RGBX8888 = "fcc-rv32";
-    public static final String PIXEL_YV12 = "fcc-yv12";
-    public static final String PIXEL_OPENGL_ES2 = "fcc-_es2";
 }

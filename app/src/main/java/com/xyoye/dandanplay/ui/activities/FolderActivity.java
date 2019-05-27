@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -54,9 +53,6 @@ import butterknife.BindView;
 
 
 public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements FolderView{
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.rv)
     RecyclerView recyclerView;
 
@@ -189,22 +185,22 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         switch (item.getItemId()){
             case R.id.sort_by_name:
                 int nameType = AppConfig.getInstance().getFolderSortType();
-                if (nameType == Constants.Collection.NAME_ASC)
-                    sort(Constants.Collection.NAME_DESC);
-                else if (nameType == Constants.Collection.NAME_DESC)
-                    sort(Constants.Collection.NAME_ASC);
+                if (nameType == Constants.FolderSort.NAME_ASC)
+                    sort(Constants.FolderSort.NAME_DESC);
+                else if (nameType == Constants.FolderSort.NAME_DESC)
+                    sort(Constants.FolderSort.NAME_ASC);
                 else
-                    sort(Constants.Collection.NAME_ASC);
+                    sort(Constants.FolderSort.NAME_ASC);
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.sort_by_duration:
                 int durationType = AppConfig.getInstance().getFolderSortType();
-                if (durationType == Constants.Collection.DURATION_ASC)
-                    sort(Constants.Collection.DURATION_DESC);
-                else if (durationType == Constants.Collection.DURATION_DESC)
-                    sort(Constants.Collection.DURATION_ASC);
+                if (durationType == Constants.FolderSort.DURATION_ASC)
+                    sort(Constants.FolderSort.DURATION_DESC);
+                else if (durationType == Constants.FolderSort.DURATION_DESC)
+                    sort(Constants.FolderSort.DURATION_ASC);
                 else
-                    sort(Constants.Collection.DURATION_ASC);
+                    sort(Constants.FolderSort.DURATION_ASC);
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.player_setting:
@@ -342,16 +338,16 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     }
 
     public void sort(int type){
-        if (type == Constants.Collection.NAME_ASC){
+        if (type == Constants.FolderSort.NAME_ASC){
             Collections.sort(videoList,
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o1.getVideoPath()), FileUtils.getFileNameNoExtension(o2.getVideoPath())));
-        }else if (type == Constants.Collection.NAME_DESC){
+        }else if (type == Constants.FolderSort.NAME_DESC){
             Collections.sort(videoList,
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o2.getVideoPath()), FileUtils.getFileNameNoExtension(o1.getVideoPath())));
-        }else if (type == Constants.Collection.DURATION_ASC){
+        }else if (type == Constants.FolderSort.DURATION_ASC){
             Collections.sort(videoList,
                     (o1, o2) -> Long.compare(o1.getVideoDuration(), o2.getVideoDuration()));
-        }else if (type == Constants.Collection.DURATION_DESC){
+        }else if (type == Constants.FolderSort.DURATION_DESC){
             Collections.sort(videoList,
                     (o1, o2) -> Long.compare(o2.getVideoDuration(), o1.getVideoDuration()));
         }

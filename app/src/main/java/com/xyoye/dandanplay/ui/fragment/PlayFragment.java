@@ -49,8 +49,6 @@ import butterknife.BindView;
  */
 
 public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView {
-    private static final int DIRECTORY_CHOOSE_REQ_CODE = 106;
-
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
@@ -213,26 +211,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                             presenter.getVideoFormSystem();
                     }
                 });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK){
-            if (requestCode == DIRECTORY_CHOOSE_REQ_CODE){
-                Uri SDCardUri = data.getData();
-                if (SDCardUri != null){
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.getContentResolver().takePersistableUriPermission(SDCardUri,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        AppConfig.getInstance().setSDFolderUri(SDCardUri.toString());
-                    }
-                }else {
-                    ToastUtils.showShort("未获取外置存储卡权限，无法操作外置存储卡");
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void registerEventBus(){

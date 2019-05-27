@@ -82,22 +82,22 @@ public class PlayerSettingDialog extends Dialog {
         }
         String pixelType = AppConfig.getInstance().getPixelFormat();
         switch (pixelType){
-            case Constants.PIXEL_RGB565:
+            case Constants.PlayerConfig.PIXEL_RGB565:
                 pixelRgb565.setChecked(true);
                 break;
-            case Constants.PIXEL_RGB888:
+            case Constants.PlayerConfig.PIXEL_RGB888:
                 pixelRgb888.setChecked(true);
                 break;
-            case Constants.PIXEL_RGBX8888:
+            case Constants.PlayerConfig.PIXEL_RGBX8888:
                 pixelRgbx8888.setChecked(true);
                 break;
-            case Constants.PIXEL_YV12:
+            case Constants.PlayerConfig.PIXEL_YV12:
                 pixelYv12.setChecked(true);
                 break;
-            case Constants.PIXEL_OPENGL_ES2:
+            case Constants.PlayerConfig.PIXEL_OPENGL_ES2:
                 pixelOpenglEs2.setChecked(true);
                 break;
-            case Constants.PIXEL_AUTO:
+            case Constants.PlayerConfig.PIXEL_AUTO:
             default:
                 pixelAuto.setChecked(true);
                 break;
@@ -137,27 +137,27 @@ public class PlayerSettingDialog extends Dialog {
                 switch (checkedId){
                     case R.id.pixel_auto:
                         pixelType = "默认";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_AUTO);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_AUTO);
                         break;
                     case R.id.pixel_rgb565:
                         pixelType = "RGB 565";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGB565);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGB565);
                         break;
                     case R.id.pixel_rgb888:
                         pixelType = "RGB 888";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGB888);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGB888);
                         break;
                     case R.id.pixel_rgbx8888:
                         pixelType = "RGBX 8888";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_RGBX8888);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGBX8888);
                         break;
                     case R.id.pixel_yv12:
                         pixelType = "YV12";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_YV12);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_YV12);
                         break;
                     case R.id.pixel_opengl_es2:
                         pixelType = "OpenGL ES2";
-                        AppConfig.getInstance().setPixelFormat(Constants.PIXEL_OPENGL_ES2);
+                        AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_OPENGL_ES2);
                         break;
                 }
                 listener.onSelected(pixelType);

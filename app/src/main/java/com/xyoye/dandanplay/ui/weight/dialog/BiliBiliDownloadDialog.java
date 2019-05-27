@@ -347,7 +347,7 @@ public class BiliBiliDownloadDialog extends Dialog {
         InputStream flin = null;
         Scanner sc = null;
         try {
-            String xmlUrl = Constants.BilibiliUrl + cid + ".xml";
+            String xmlUrl = "http://comment.bilibili.com/" + cid + ".xml";
             URL url = new URL(xmlUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate");

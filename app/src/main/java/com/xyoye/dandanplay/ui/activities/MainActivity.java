@@ -40,13 +40,8 @@ import libtorrent.Libtorrent;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView {
-
-    @BindView(R.id.fragment_container)
-    FrameLayout fragmentContainer;
     @BindView(R.id.navigationView)
     BottomNavigationView navigationView;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
 
     private HomeFragment homeFragment;
     private PlayFragment playFragment;
@@ -166,6 +161,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
+            //暂停任务时保存任务进度
             for (Torrent torrent : IApplication.torrentList) {
                 if (torrent.isDone()) continue;
                 if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||

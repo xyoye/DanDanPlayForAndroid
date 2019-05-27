@@ -127,13 +127,6 @@ public class TorrentUtil {
 
                 String folderPath = AppConfig.getInstance().getDownloadFolder() + "/" +torrent.getTitle();
                 FileUtils.deleteDir(folderPath);
-
-                //下载目录为空则删除
-//                String folderPath = AppConfig.getInstance().getDownloadFolder() + "/" +torrent.getTitle();
-//                File folderFile = new File(folderPath);
-//                if (folderFile.listFiles().length == 0)
-//                    folderFile.deleteOnExit();
-
             }else {
                 //将种子文件移动到缓存目录下torrent文件夹
                 File torrentFile = new File(torrent.getPath());
@@ -160,19 +153,6 @@ public class TorrentUtil {
 
                 String folderPath = AppConfig.getInstance().getDownloadFolder() + "/" +torrent.getAnimeTitle();
                 FileUtils.deleteDir(folderPath);
-
-                //下载目录为空则删除
-//                String folderPath = AppConfig.getInstance().getDownloadFolder() + "/" +torrent.getTitle();
-//                File detailFolder = new File(folderPath);
-//                if (detailFolder.exists() && detailFolder.isDirectory() && detailFolder.listFiles().length == 0){
-//                    if (detailFolder.exists()) detailFolder.delete();
-//                }
-//
-//                folderPath = AppConfig.getInstance().getDownloadFolder() + "/" +torrent.getAnimeTitle();
-//                File folderFile = new File(folderPath);
-//                if (folderFile.listFiles().length == 0){
-//                    if (folderFile.exists()) folderFile.delete();
-//                }
             }
         }
     }

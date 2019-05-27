@@ -55,13 +55,17 @@ public class TorrentService extends Service {
         Torrent torrent = event.getTorrent();
         if (torrent == null)
             return;
-        if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
 
+        //根据hash判断任务是否已经存在
+        if (!TorrentStorage.hashs.containsKey(torrent.getHash())){
+            //添加到下载列表
             IApplication.torrentList.add(torrent);
             IApplication.torrentStorage.addHash(torrent.getHash(), torrent);
 
+            //添加到数据库
             TorrentUtil.saveTorrent(torrent);
 
+            //启动下载
             if (!torrentTask.start(torrent))
                 torrent.setError(true);
             showNotification();
@@ -74,15 +78,19 @@ public class TorrentService extends Service {
             LogUtils.e("even position error");
             return;
         }
+        //获取对应任务判断状态
         Torrent torrent = IApplication.torrentList.get(event.getPosition());
         switch (event.getAction()){
+            //唤醒任务
             case TorrentEvent.EVENT_RESUME:
                 if (!torrentTask.start(torrent))
                     torrent.setError(true);
                 break;
+            //暂停任务
             case TorrentEvent.EVENT_PAUSE:
                 torrentTask.pause(event.getPosition());
                 break;
+            //删除一个任务
             case TorrentEvent.EVENT_DELETE_TASK:
                 torrentTask.pause(event.getPosition());
                 TorrentUtil.deleteTorrent(torrent, false);
@@ -96,6 +104,7 @@ public class TorrentService extends Service {
                     }
                 }
                 break;
+            //删除一个任务并且删除文件
             case TorrentEvent.EVENT_DELETE_FILE:
                 torrentTask.pause(event.getPosition());
                 TorrentUtil.deleteTorrent(torrent, true);
@@ -109,11 +118,13 @@ public class TorrentService extends Service {
                     }
                 }
                 break;
+            //暂停全部任务
             case TorrentEvent.EVENT_ALL_PAUSE:
                 for (Torrent t : IApplication.torrentList){
                     torrentTask.pause(t);
                 }
                 break;
+            //开始所有任务
             case TorrentEvent.EVENT_ALL_START:
                 for (int i=IApplication.torrentList.size()-1; i>=0; i--){
                     Torrent t = IApplication.torrentList.get(i);
@@ -123,6 +134,7 @@ public class TorrentService extends Service {
                     }
                 }
                 break;
+            //删除所有任务
             case TorrentEvent.EVENT_ALL_DELETE_TASK:
                 Iterator<Torrent> iterator = IApplication.torrentList.iterator();
                 while (iterator.hasNext()){
@@ -134,6 +146,7 @@ public class TorrentService extends Service {
                 }
                 EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                 break;
+            //删除所有任务并且删除文件
             case TorrentEvent.EVENT_ALL_DELETE_FILE:
                 Iterator<Torrent> iterator2 = IApplication.torrentList.iterator();
                 while (iterator2.hasNext()){
@@ -174,17 +187,12 @@ public class TorrentService extends Service {
         downloaded.start(0);
         uploaded.start(0);
 
+        //刷新通知栏下载速度
         refresh = () -> {
             if (IApplication.torrentList.size() > 0){
                 BytesInfo bytesInfo = Libtorrent.stats();
                 downloaded.step(bytesInfo.getDownloaded());
                 uploaded.step(bytesInfo.getUploaded());
-                for (Torrent torrent : IApplication.torrentList){
-                    if (Libtorrent.torrentActive(torrent.getId())) {
-                        // TODO: 2019/4/12 这里每秒都会更新一次数据库，而且还是在主线程，得优化
-                        TorrentUtil.updateTorrent(torrent);
-                    }
-                }
                 notificationManager.notify(NOTIFICATION_ID, showNotification());
             }
             mHandler.postDelayed(refresh,1000);
@@ -273,14 +281,12 @@ public class TorrentService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtils.i("TorrentService onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LogUtils.i("TorrentService onDestroy");
         mHandler.removeCallbacks(refresh);
         notificationManager.cancel(NOTIFICATION_ID);
         EventBus.getDefault().unregister(TorrentService.this);
@@ -289,13 +295,11 @@ public class TorrentService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        LogUtils.i("TorrentService onBind");
         return null;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        LogUtils.i("TorrentService onUnbind");
         return super.onUnbind(intent);
     }
 }

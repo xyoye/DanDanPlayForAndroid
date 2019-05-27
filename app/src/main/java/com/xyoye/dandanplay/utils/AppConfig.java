@@ -83,7 +83,7 @@ public class AppConfig {
      * 文件夹排序
      */
     public int getFolderSortType(){
-        String type = SPUtils.getInstance().getString(Constants.Config.FOLDER_COLLECTIONS, Constants.Collection.NAME_ASC+"");
+        String type = SPUtils.getInstance().getString(Constants.Config.FOLDER_COLLECTIONS, Constants.FolderSort.NAME_ASC+"");
         return Integer.valueOf(type);
     }
 
@@ -125,80 +125,69 @@ public class AppConfig {
     }
 
     /**
-     * SD卡路径
-     */
-    public String getSDFolderUri(){
-        return SPUtils.getInstance().getString(Constants.Config.LOCAL_SDCARD_FOLDER, "");
-    }
-
-    public void setSDFolderUri(String uri){
-        SPUtils.getInstance().put(Constants.Config.LOCAL_SDCARD_FOLDER, uri);
-    }
-
-    /**
      * 开启硬解码
      */
     public boolean isOpenMediaCodeC(){
-        return SPUtils.getInstance().getBoolean(Constants.SHARE_MEDIA_CODE_C);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_MEDIA_CODE_C);
     }
 
     public void setOpenMediaCodeC(boolean isUse){
-        SPUtils.getInstance().put(Constants.SHARE_MEDIA_CODE_C, isUse);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_MEDIA_CODE_C, isUse);
     }
 
     /**
      * 开启H265硬解码
      */
     public boolean isOpenMediaCodeCH265(){
-        return SPUtils.getInstance().getBoolean(Constants.SHARE_MEDIA_CODE_C_H265);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_MEDIA_CODE_C_H265);
     }
 
     public void setOpenMediaCodeCH265(boolean isUse){
-        SPUtils.getInstance().put(Constants.SHARE_MEDIA_CODE_C_H265, isUse);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_MEDIA_CODE_C_H265, isUse);
     }
 
     /**
      * OpenSLES
      */
     public boolean isOpenSLES(){
-        return SPUtils.getInstance().getBoolean(Constants.SHARE_OPEN_SLES);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_OPEN_SLES);
     }
 
     public void setOpenSLES(boolean isUse){
-        SPUtils.getInstance().put(Constants.SHARE_OPEN_SLES, isUse);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_OPEN_SLES, isUse);
     }
 
     /**
      * SurfaceRenders
      */
     public boolean isSurfaceRenders(){
-        return SPUtils.getInstance().getBoolean(Constants.SHARE_SURFACE_RENDERS);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_SURFACE_RENDERS);
     }
 
     public void setSurfaceRenders(boolean isUse){
-        SPUtils.getInstance().put(Constants.SHARE_SURFACE_RENDERS, isUse);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_SURFACE_RENDERS, isUse);
     }
 
     /**
      * PlayerType
      */
     public int getPlayerType(){
-        return SPUtils.getInstance().getInt(Constants.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.EXO_PLAYER);
+        return SPUtils.getInstance().getInt(Constants.PlayerConfig.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.EXO_PLAYER);
     }
 
     public void setPlayerType(int type){
-        SPUtils.getInstance().put(Constants.SHARE_PLAYER_TYPE, type);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_PLAYER_TYPE, type);
     }
 
     /**
      * PixelFormat
      */
     public String getPixelFormat(){
-        return SPUtils.getInstance().getString(Constants.SHARE_PIXEL_FORMAT, Constants.PIXEL_OPENGL_ES2);
+        return SPUtils.getInstance().getString(Constants.PlayerConfig.SHARE_PIXEL_FORMAT, Constants.PlayerConfig.PIXEL_OPENGL_ES2);
     }
 
     public void setPixelFormat(String pixelFormat){
-        SPUtils.getInstance().put(Constants.SHARE_PIXEL_FORMAT, pixelFormat);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHARE_PIXEL_FORMAT, pixelFormat);
     }
 
     /**

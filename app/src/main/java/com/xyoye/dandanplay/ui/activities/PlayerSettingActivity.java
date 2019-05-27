@@ -80,22 +80,22 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         }
         String pixelType = AppConfig.getInstance().getPixelFormat();
         switch (pixelType) {
-            case Constants.PIXEL_RGB565:
+            case Constants.PlayerConfig.PIXEL_RGB565:
                 pixelFormatTv.setText("RGB 565");
                 break;
-            case Constants.PIXEL_RGB888:
+            case Constants.PlayerConfig.PIXEL_RGB888:
                 pixelFormatTv.setText("RGB 888");
                 break;
-            case Constants.PIXEL_RGBX8888:
+            case Constants.PlayerConfig.PIXEL_RGBX8888:
                 pixelFormatTv.setText("RGBX 8888");
                 break;
-            case Constants.PIXEL_YV12:
+            case Constants.PlayerConfig.PIXEL_YV12:
                 pixelFormatTv.setText("YV12");
                 break;
-            case Constants.PIXEL_OPENGL_ES2:
+            case Constants.PlayerConfig.PIXEL_OPENGL_ES2:
                 pixelFormatTv.setText("OpenGL ES2");
                 break;
-            case Constants.PIXEL_AUTO:
+            case Constants.PlayerConfig.PIXEL_AUTO:
             default:
                 pixelFormatTv.setText("默认");
                 break;

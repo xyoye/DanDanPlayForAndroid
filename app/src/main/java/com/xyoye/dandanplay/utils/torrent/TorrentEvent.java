@@ -17,9 +17,6 @@ public class TorrentEvent {
     private int action;
     private int position;
 
-    public TorrentEvent() {
-    }
-
     public TorrentEvent(int action, int position) {
         this.action = action;
         this.position = position;

@@ -41,6 +41,7 @@ public class TorrentTask{
     public void pause(int position){
         pauseTorrent(position);
     }
+
     public void pause(Torrent torrent){
         pauseTorrent(torrent);
     }

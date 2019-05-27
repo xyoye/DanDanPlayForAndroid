@@ -53,6 +53,7 @@ fragment管理（manage Fragment）
 识别字幕文件编码格式（Identify subtitle file encoding）
 
 9）[RxJava](https://github.com/ReactiveX/RxJava)
+异步（asynchronous）
 
 10）[RxPermissions](https://github.com/tbruyelle/RxPermissions)
 权限检查（permission checker）

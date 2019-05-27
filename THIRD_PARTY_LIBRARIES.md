@@ -65,8 +65,8 @@ fragment管理（manage Fragment）
 消息传递工具（message passing）
 
 ## 4、其它（Other） ##
-1）[bugly](https://bugly.qq.com/docs/user-guide/instruction-manual-android)
+1）[bugly](https://bugly.qq.com)
 崩溃信息收集（collect crash logs）
 
-2）[Sophix](https://help.aliyun.com/document_detail/53240.html)
+2）[Sophix](https://help.aliyun.com/product/51340.html)
 热修复（hot fix）

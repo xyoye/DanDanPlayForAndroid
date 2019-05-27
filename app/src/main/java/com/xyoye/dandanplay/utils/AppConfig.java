@@ -8,7 +8,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.bean.VideoBean;
 
 /**
- * Created by YE on 2018/7/2.
+ * Created by xyoye on 2018/7/2.
  */
 
 public class AppConfig {

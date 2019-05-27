@@ -5,7 +5,7 @@ import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import java.io.File;
 
 /**
- * Created by xyy on 2018/12/20.
+ * Created by xyoye on 2018/12/20.
  */
 
 public class FileDownloadBean extends CommJsonEntity{

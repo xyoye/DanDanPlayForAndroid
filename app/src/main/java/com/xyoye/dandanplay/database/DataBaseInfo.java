@@ -2,7 +2,8 @@ package com.xyoye.dandanplay.database;
 
 /**
  *数据库表名，字段名，字段类型
- * Created by Administrator on 2015/12/29.
+ *
+ * Modified by xyoye on 2015/12/29.
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";

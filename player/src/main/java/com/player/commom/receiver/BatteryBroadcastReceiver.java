@@ -7,7 +7,10 @@ import android.os.BatteryManager;
 
 /**
  * 电量改变广播
+ *
+ * Created by xyoye on 2019/5/7.
  */
+
 public class BatteryBroadcastReceiver extends BroadcastReceiver {
     // 电量改变中
     public static final int BATTERY_STATUS_SPA = 101;

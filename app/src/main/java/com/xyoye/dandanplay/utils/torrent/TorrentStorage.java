@@ -9,7 +9,7 @@ import libtorrent.Buffer;
 import libtorrent.FileStorageTorrent;
 
 /**
- * Created by xyy on 2018/10/23.
+ * Created by xyoye on 2018/10/23.
  */
 
 public class TorrentStorage implements FileStorageTorrent {

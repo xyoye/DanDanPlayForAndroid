@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by xyy on 2018/9/29.
+ * Created by xyoye on 2018/9/29.
  */
 
 public class PlayerSettingDialog extends Dialog {

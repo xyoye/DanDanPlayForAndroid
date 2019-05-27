@@ -38,9 +38,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 /**
- * Created by YE on 2018/6/28 0028.
+ * Created by xyoye on 2018/6/28 0028.
  */
-
 
 public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements MainPresenter {
 

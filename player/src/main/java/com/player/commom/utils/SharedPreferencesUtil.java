@@ -8,6 +8,8 @@ import java.util.Map;
 
 /**
  * sharedpreferences工具，可加密
+ *
+ * Created by xyoye on 2018/7/1.
  */
 public final class SharedPreferencesUtil {
 

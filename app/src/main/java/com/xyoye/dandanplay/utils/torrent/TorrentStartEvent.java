@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.utils.torrent;
 
 /**
- * Created by xyy on 2019/3/21.
+ * Created by xyoye on 2019/3/21.
  */
 
 public class TorrentStartEvent {

@@ -34,7 +34,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 
 /**
- * Created by xyy on 2019/1/8.
+ * Created by xyoye on 2019/1/8.
  */
 
 public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implements SearchPresenter {

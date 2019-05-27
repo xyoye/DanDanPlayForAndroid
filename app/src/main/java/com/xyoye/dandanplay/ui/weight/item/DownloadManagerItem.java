@@ -21,7 +21,7 @@ import butterknife.BindView;
 import libtorrent.Libtorrent;
 
 /**
- * Created by YE on 2018/10/27.
+ * Created by xyoye on 2018/10/27.
  */
 
 public class DownloadManagerItem implements AdapterItem<Torrent> {

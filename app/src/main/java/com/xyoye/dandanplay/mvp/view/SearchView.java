@@ -8,7 +8,7 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 import java.util.List;
 
 /**
- * Created by xyy on 2019/1/8.
+ * Created by xyoye on 2019/1/8.
  */
 
 public interface SearchView extends BaseMvpView, LoadDataView {

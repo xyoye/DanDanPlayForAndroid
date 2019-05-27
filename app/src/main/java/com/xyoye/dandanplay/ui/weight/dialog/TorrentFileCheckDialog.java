@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by xyy on 2019/3/6.
+ * Created by xyoye on 2019/3/6.
  */
 
 public class TorrentFileCheckDialog extends Dialog {

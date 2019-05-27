@@ -8,9 +8,8 @@ import com.xyoye.dandanplay.mvp.view.AnimaView;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
-
 
 public class AnimePresenterImpl extends BaseMvpPresenterImpl<AnimaView> implements AnimePresenter {
 

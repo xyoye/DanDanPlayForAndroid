@@ -9,7 +9,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 
 /**
- * Created by Administrator on 2015/6/26.
+ * Modified by xyoye on 2015/6/26.
  *
  */
 public class BaseLoadingDialog extends Dialog {

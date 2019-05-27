@@ -72,7 +72,7 @@ import okhttp3.Response;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
- * Created by YE on 2018/7/4 0004.
+ * Created by xyoye on 2018/7/4 0004.
  */
 
 public class PlayerActivity extends AppCompatActivity implements PlayerReceiverListener {

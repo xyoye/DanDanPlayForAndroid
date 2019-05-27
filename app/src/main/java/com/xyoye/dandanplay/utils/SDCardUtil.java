@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by xyy on 2018/11/1.
+ * Created by xyoye on 2018/11/1.
  */
 
 public class SDCardUtil {

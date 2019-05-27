@@ -12,7 +12,7 @@ import com.xyoye.dandanplay.utils.torrent.Torrent;
 import butterknife.BindView;
 
 /**
- * Created by xyy on 2019/3/6.
+ * Created by xyoye on 2019/3/6.
  */
 
 public class TorrentFileCheckItem implements AdapterItem<Torrent.TorrentFile> {

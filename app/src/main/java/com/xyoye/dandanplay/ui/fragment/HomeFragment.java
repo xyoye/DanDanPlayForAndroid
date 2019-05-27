@@ -47,9 +47,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
-
 
 public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements HomeFragmentView {
     @BindView(R.id.scroll_layout)

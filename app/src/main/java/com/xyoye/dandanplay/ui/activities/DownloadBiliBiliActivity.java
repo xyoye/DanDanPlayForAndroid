@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.utils.CommonUtils;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/28.
+ * Created by xyoye on 2018/7/28.
  */
 
 public class DownloadBiliBiliActivity extends BaseMvcActivity implements View.OnClickListener{

@@ -9,9 +9,8 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 import java.util.List;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
-
 
 public interface PlayFragmentView extends BaseMvpView, LoadDataView {
     void refreshAdapter(List<FolderBean> beans);

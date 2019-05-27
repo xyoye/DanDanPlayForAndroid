@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
 
 public class FolderItem implements AdapterItem<FolderBean>{

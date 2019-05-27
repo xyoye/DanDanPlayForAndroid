@@ -15,11 +15,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -44,13 +44,12 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * onPause()
  * onStop()
  * onDestroy()
- * Created by xyy on 2017/5/18.
+ *
+ * Modified by xyoye on 2019/5/27.
  */
 public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful, ISupportActivity {
 
     public static final String TAG = BaseAppCompatActivity.class.getSimpleName();
-
-    public static final String EXTRA_TITLE = "actionbar_title";
 
     private Toolbar mActionBarToolbar;
 
@@ -62,7 +61,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtils.d("Activity", "onCreate");
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         onBeforeSetContentLayout();
         setContentView(initPageLayoutID());
@@ -140,7 +139,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        LogUtils.d("Activity", "onDestroy");
+        Log.d(TAG, "onDestroy");
         isDestroyed = true;
         mDelegate.onDestroy();
         super.onDestroy();
@@ -149,8 +148,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 设置actionbar返回键
-     *
-     * @return
      */
     protected boolean hasBackActionbar() {
         return true;
@@ -158,8 +155,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 设置返回键图标
-     *
-     * @return
      */
     @DrawableRes
     protected int setBackIcon() {
@@ -168,7 +163,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 设置toolbar背景颜色
-     * @return
      */
     @ColorInt
     protected int getToolbarColor() {
@@ -205,8 +199,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 启动activity
-     *
-     * @param cls
      */
     public void launchActivity(Class<? extends Activity> cls) {
         launchActivity(cls, null);
@@ -214,8 +206,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 带参数启动activity
-     * @param cls
-     * @param bundle
      */
     public void launchActivity(Class<? extends Activity> cls, @Nullable Bundle bundle) {
         Intent intent = new Intent(this, cls);
@@ -227,8 +217,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 带参数并设置flag启动activity
-     * @param cls
-     * @param bundle
      */
     public void launchActivity(Class<? extends Activity> cls, @Nullable Bundle bundle, int flags) {
         Intent intent = new Intent(this, cls);
@@ -239,9 +227,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 带有回调结果启动activity
-     * @param cls
-     * @param requestCode
-     * @param bundle
      */
     public void launchActivityForResult(Class<? extends Activity> cls, int requestCode, @Nullable Bundle bundle) {
         Intent intent = new Intent(this, cls);
@@ -266,8 +251,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 判断当前activity是否被销毁
-     *
-     * @return
      */
     public boolean isDestroyed() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && super.isDestroyed()) || isDestroyed;
@@ -284,7 +267,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     /**
      * 设置遮罩层灰度
-     * @param bgAlpha
      */
     public void backgroundAlpha(Float bgAlpha) {
         WindowManager.LayoutParams lp = this.getWindow().getAttributes();
@@ -305,13 +287,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.d("Activity", "onResume");
+        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.d("Activity", "onPause");
+        Log.d(TAG, "onPause");
     }
 
 

@@ -55,7 +55,7 @@ import butterknife.OnClick;
 import libtorrent.Libtorrent;
 
 /**
- * Created by xyy on 2019/1/8.
+ * Created by xyoye on 2019/1/8.
  */
 
 public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements SearchView {

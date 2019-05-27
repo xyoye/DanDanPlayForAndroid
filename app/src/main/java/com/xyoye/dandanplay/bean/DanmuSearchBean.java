@@ -11,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by xyy on 2018/10/24.
+ * Created by xyoye on 2018/10/24.
  */
 
 public class DanmuSearchBean extends CommJsonEntity{

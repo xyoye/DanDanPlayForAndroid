@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.bean;
 import android.support.annotation.NonNull;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public class SmbBean implements Comparable<SmbBean>{

@@ -21,7 +21,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by YE on 2018/7/22.
+ * Created by xyoye on 2018/7/22.
  */
 
 public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements LoginView {

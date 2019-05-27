@@ -20,7 +20,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.player.ijkplayer.R;
 
 /**
- * Created by xyy on 2019/2/21.
+ * Created by xyoye on 2019/2/21.
  */
 
 public class SettingDanmuView extends LinearLayout implements View.OnClickListener{

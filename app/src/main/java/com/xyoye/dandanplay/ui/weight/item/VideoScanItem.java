@@ -11,7 +11,7 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import butterknife.BindView;
 
 /**
- * Created by xyy on 2019/2/15.
+ * Created by xyoye on 2019/2/15.
  */
 
 public class VideoScanItem implements AdapterItem<ScanFolderBean> {

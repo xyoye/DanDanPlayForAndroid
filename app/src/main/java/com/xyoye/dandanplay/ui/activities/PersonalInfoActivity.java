@@ -26,9 +26,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/23.
+ * Created by xyoye on 2018/7/23.
  */
-
 
 public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
     @BindView(R.id.login_out_bt)

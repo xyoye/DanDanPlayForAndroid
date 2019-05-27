@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by long on 2016/10/18.
+ * Created by xyoye on 2018/7/1.
  */
 
 public final class TimeFormatUtils {

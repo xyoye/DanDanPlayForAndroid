@@ -9,6 +9,8 @@ import android.view.View;
 
 /**
  * 显示字幕的字体样式
+ *
+ * Created by xyoye on 2019/5/6.
  */
 
 public class SubtitleTextView extends AppCompatTextView implements View.OnTouchListener {

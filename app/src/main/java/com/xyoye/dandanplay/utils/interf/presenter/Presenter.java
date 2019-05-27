@@ -2,7 +2,8 @@ package com.xyoye.dandanplay.utils.interf.presenter;
 
 /**
  * 主持人接口
- * Created by xyy on 2017/6/23.
+ *
+ * Modified by xyoye on 2017/6/23.
  */
 public interface Presenter {
     /**

@@ -21,9 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by YE on 2018/7/4 0004.
+ * Created by xyoye on 2018/7/4 0004.
  */
-
 
 public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetworkView> implements DanmuNetworkPresenter {
 

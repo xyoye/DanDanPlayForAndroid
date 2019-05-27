@@ -16,9 +16,8 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/24.
+ * Created by xyoye on 2018/7/24.
  */
-
 
 public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.FavoritesBean> {
     @BindView(R.id.image_iv)

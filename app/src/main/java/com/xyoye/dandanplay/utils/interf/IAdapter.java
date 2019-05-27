@@ -5,8 +5,9 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 /**
- * Created by admin on 2016/6/21.
  * Adapter方法接口
+ *
+ * Modified by xyoye on 2016/6/21.
  */
 public interface IAdapter<T> {
 

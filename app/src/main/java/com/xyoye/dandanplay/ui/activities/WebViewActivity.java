@@ -22,6 +22,10 @@ import com.xyoye.dandanplay.ui.weight.ProgressView;
 
 import butterknife.BindView;
 
+/**
+ * Created by xyoye on 2019/3/30.
+ */
+
 public class WebViewActivity extends BaseMvcActivity {
 
     @BindView(R.id.web_view)

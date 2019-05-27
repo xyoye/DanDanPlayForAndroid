@@ -1,8 +1,7 @@
 package com.player.commom.utils;
 
 /**
- *
- * Created by xyy on 2018/7/1.
+ * Created by xyoye on 2018/7/1.
  */
 public final class Constants {
     //打开字幕选择

@@ -14,7 +14,7 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public class SmbItem implements AdapterItem<SmbBean> {

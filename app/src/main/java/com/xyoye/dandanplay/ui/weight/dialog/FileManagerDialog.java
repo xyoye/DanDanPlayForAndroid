@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2019/2/15.
+ * Created by xyoye on 2019/2/15.
  */
 
 public class FileManagerDialog extends Dialog{

@@ -14,7 +14,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by xyy on 2018/10/8.
+ * Created by xyoye on 2018/10/8.
  */
 
 public class PlayerSettingTipsActivity extends AppCompatActivity {

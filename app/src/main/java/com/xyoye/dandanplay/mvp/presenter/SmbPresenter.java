@@ -4,7 +4,7 @@ import com.xyoye.dandanplay.bean.SmbBean;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public interface SmbPresenter extends BaseMvpPresenter {

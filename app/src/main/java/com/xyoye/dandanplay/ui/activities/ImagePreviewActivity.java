@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2019/4/11.
+ * Created by xyoye on 2019/4/11.
  */
 
 public class ImagePreviewActivity extends BaseMvcActivity {

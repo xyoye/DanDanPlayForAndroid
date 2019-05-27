@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean.event;
 
 /**
- * Created by xyy on 2018/11/22.
+ * Created by xyoye on 2018/11/22.
  */
 
 public class MessageEvent {

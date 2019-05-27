@@ -33,7 +33,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2019/1/9.
+ * Created by xyoye on 2019/1/9.
  */
 
 public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> implements AnimaSeasonView {

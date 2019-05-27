@@ -7,8 +7,7 @@ import android.content.res.Resources;
 import java.lang.reflect.Method;
 
 /**
- * Created by long on 2016/10/10.
- * 导航栏工具类
+ * Created by xyoye on 2018/7/1.
  */
 public final class NavUtils {
 

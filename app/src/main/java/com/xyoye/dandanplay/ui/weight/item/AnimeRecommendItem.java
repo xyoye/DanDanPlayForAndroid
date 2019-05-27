@@ -17,9 +17,8 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2019/1/12.
+ * Created by xyoye on 2019/1/12.
  */
-
 
 public class AnimeRecommendItem implements AdapterItem<AnimeBean> {
     @BindView(R.id.image_iv)

@@ -8,8 +8,9 @@ import com.xyoye.dandanplay.ui.weight.RoundImageView;
 import com.youth.banner.loader.ImageLoader;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
+
 public class GlideImageLoader extends ImageLoader {
 
     @Override

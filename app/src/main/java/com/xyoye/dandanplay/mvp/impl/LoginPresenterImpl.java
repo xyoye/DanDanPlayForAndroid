@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/7/22.
+ * Created by xyoye on 2018/7/22.
  */
 
 public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implements LoginPresenter {

@@ -39,7 +39,7 @@ import io.reactivex.internal.fuseable.ScalarCallable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
 
 public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {

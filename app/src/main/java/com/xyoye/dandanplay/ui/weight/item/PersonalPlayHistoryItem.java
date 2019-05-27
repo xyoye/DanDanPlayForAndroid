@@ -17,9 +17,8 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/24.
+ * Created by xyoye on 2018/7/24.
  */
-
 
 public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.PlayHistoryAnimesBean> {
     @BindView(R.id.image_iv)

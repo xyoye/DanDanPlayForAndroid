@@ -24,7 +24,7 @@ import static com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity.SORT_FOLLOW
 import static com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity.SORT_NAME;
 
 /**
- * Created by xyy on 2019/1/9.
+ * Created by xyoye on 2019/1/9.
  */
 
 public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonView> implements AnimaSeasonPresenter {

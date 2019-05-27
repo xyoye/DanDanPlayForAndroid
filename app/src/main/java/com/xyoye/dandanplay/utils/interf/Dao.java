@@ -4,7 +4,8 @@ import java.util.List;
 
 /**
  * 本地数据库事务操作接口
- * Created by xyy on 2017/6/23.
+ * 
+ * Modified by xyoye on 2017/6/23.
  */
 public interface Dao<T, Integer> {
 

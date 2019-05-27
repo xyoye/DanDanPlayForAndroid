@@ -6,6 +6,8 @@ import android.content.Intent;
 
 /**
  * 屏幕锁定广播
+ *
+ * Created by xyoye on 2019/5/7.
  */
 public class ScreenBroadcastReceiver extends BroadcastReceiver {
     private PlayerReceiverListener listener;

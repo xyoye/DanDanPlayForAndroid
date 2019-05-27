@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/9/29.
+ * Created by xyoye on 2018/9/29.
  */
 
 public class PlayerSettingActivity extends BaseMvcActivity {

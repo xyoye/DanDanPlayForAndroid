@@ -42,7 +42,7 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements SmbPresenter {

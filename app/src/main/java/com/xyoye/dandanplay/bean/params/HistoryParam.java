@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.bean.params;
 import java.util.List;
 
 /**
- * Created by xyy on 2019/1/3.
+ * Created by xyoye on 2019/1/3.
  */
 
 public class HistoryParam {

@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/10/24.
+ * Created by xyoye on 2018/10/24.
  */
 
 public class SearchDanmuDialog extends Dialog {

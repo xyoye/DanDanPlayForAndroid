@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/11/20.
+ * Created by xyoye on 2018/11/20.
  */
 
 public class SmbDialog extends Dialog {

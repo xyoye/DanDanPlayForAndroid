@@ -12,9 +12,8 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/7/24.
+ * Created by xyoye on 2018/7/24.
  */
-
 
 public class PersonalHistoryPresenterImpl extends BaseMvpPresenterImpl<PersonalHistoryView> implements PersonalHistoryPresenter{
 

@@ -13,8 +13,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import java.security.MessageDigest;
 
 /**
- * Created by YE on 2018/7/18.
  * Glide圆角
+ *
+ * Created by xyoye on 2018/7/18.
  */
 
 public  class CornersCenterCrop extends CenterCrop {

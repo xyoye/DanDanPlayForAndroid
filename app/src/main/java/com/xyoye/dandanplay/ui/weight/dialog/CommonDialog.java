@@ -12,7 +12,7 @@ import android.view.View;
 import com.xyoye.dandanplay.R;
 
 /**
- * Created by xyy on 2018/11/30.
+ * Created by xyoye on 2018/11/30.
  */
 
 public class CommonDialog extends Dialog {

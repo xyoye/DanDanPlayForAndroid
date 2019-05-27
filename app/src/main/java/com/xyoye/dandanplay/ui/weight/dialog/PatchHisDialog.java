@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/12/12.
+ * Created by xyoye on 2018/12/12.
  */
 
 public class PatchHisDialog extends Dialog {

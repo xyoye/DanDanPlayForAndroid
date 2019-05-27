@@ -17,9 +17,8 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/8/5.
+ * Created by xyoye on 2018/8/5.
  */
-
 
 public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> implements RegisterPresenter {
 

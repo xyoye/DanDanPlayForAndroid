@@ -20,9 +20,8 @@ import java.text.DecimalFormat;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
-
 
 public class AnimeItem implements AdapterItem<AnimeBean> {
     @BindView(R.id.image_iv)

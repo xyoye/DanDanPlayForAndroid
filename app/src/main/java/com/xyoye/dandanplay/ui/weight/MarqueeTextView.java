@@ -19,6 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * 单行文本跑马灯控件
+ *
+ * Created by xyoye on 2018/5/22.
  */
 @SuppressLint("AppCompatCustomView")
 public class MarqueeTextView extends TextView implements OnClickListener {

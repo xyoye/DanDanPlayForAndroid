@@ -14,9 +14,8 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/7/20.
+ * Created by xyoye on 2018/7/20.
  */
-
 
 public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailView> implements AnimeDetailPresenter {
 

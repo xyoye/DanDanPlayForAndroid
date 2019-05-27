@@ -32,9 +32,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/24.
+ * Created by xyoye on 2018/7/24.
  */
-
 
 public class SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     @BindView(R.id.path_rl)

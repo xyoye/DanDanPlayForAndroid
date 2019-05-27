@@ -24,7 +24,7 @@ import com.player.subtitle.SubtitleView;
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 
 /**
- * Created by xyy on 2019/2/22.
+ * Created by xyoye on 2019/2/22.
  */
 
 public class SettingSubtitleView extends LinearLayout implements View.OnClickListener{

@@ -9,7 +9,7 @@ import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
 /**
  * mvp中presenter的抽象类
- * Created by xyy on 2017/6/23.
+ * Modified by xyoye on 2019/5/27.
  */
 public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements BaseMvpPresenter {
 

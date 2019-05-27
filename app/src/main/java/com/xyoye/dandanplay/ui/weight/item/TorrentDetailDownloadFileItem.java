@@ -21,7 +21,7 @@ import java.io.File;
 import butterknife.BindView;
 
 /**
- * Created by xyy on 2019/3/5.
+ * Created by xyoye on 2019/3/5.
  */
 
 public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.TorrentFile> {

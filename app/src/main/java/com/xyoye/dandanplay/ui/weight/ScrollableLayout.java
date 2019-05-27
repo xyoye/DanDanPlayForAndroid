@@ -38,8 +38,6 @@ import android.widget.Scroller;
 
 
 /**
- * Created by YE on 2019/1/15.
- *
  * 关于滑动悬停机制理解
  *
  * 设置头部布局，计算头部布局高度
@@ -47,6 +45,8 @@ import android.widget.Scroller;
  * 上滑时，判断设置的view（recyclerView等）是否已到到最高的，确认后将事件传递回ScrollableLayout
  *
  * 增加：动态改变头部布局数量，修改后需要重新计算头部布局view数量
+ *
+ * Modified by xyoye on 2019/1/15.
  */
 public class ScrollableLayout extends LinearLayout {
 

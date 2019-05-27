@@ -5,8 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * Created by Administrator on 2015/12/29.
  * 空白的分割线
+ *
+ * Created by xyoye on 2019/3/26.
  */
 public class ItemDecorationSpaces extends RecyclerView.ItemDecoration {
 

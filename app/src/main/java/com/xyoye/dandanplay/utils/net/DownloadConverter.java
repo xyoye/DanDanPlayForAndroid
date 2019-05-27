@@ -11,7 +11,7 @@ import io.reactivex.functions.Function;
 import okhttp3.ResponseBody;
 
 /**
- * Created by xyy on 2018/12/20.
+ * Created by Modified by xyoye on 2018/12/20.
  */
 
 public class DownloadConverter implements Function<ResponseBody, FileDownloadBean> {

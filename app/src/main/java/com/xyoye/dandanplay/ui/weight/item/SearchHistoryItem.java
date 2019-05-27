@@ -17,7 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 /**
- * Created by xyy on 2019/1/8.
+ * Created by xyoye on 2019/1/8.
  */
 
 public class SearchHistoryItem implements AdapterItem<SearchHistoryBean> {

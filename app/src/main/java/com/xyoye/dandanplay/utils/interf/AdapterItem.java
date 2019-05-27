@@ -5,8 +5,9 @@ import android.view.View;
 
 
 /**
- * Created by admin on 2016/6/21.
  * AdapterItem方法接口
+ *
+ * Modified by xyoye on 2016/6/21.
  */
 public interface AdapterItem<T> {
 

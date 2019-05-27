@@ -12,7 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by xyy on 2018/10/9.
+ * Created by xyoye on 2018/10/9.
  */
 
 public class UploadDanmuBean  extends CommJsonEntity implements Serializable {

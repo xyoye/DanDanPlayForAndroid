@@ -45,7 +45,7 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
 
 public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView {

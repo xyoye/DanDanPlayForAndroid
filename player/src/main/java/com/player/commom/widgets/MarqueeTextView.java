@@ -4,8 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 /**
- * Created by xyoye on 2019/5/9
  * 跑马灯TextView
+ *
+ * Created by xyoye on 2019/5/9
  */
 public class MarqueeTextView extends android.support.v7.widget.AppCompatTextView {
 

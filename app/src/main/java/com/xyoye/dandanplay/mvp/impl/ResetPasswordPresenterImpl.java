@@ -18,9 +18,8 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/8/11.
+ * Created by xyoye on 2018/8/11.
  */
-
 
 public class ResetPasswordPresenterImpl extends BaseMvpPresenterImpl<ResetPasswordView> implements ResetPasswordPresenter {
 

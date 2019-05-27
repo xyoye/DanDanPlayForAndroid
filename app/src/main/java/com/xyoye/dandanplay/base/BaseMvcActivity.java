@@ -7,8 +7,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;
 
 /**
- *
- * Created by xyy on 2017/6/23.
+ * Modified by xyoye on 2019/5/27.
  */
 public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 

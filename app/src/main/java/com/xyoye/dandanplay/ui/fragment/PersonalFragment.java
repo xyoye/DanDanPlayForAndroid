@@ -35,9 +35,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
-
 
 public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView,View.OnClickListener {
     @BindView(R.id.user_info_rl)

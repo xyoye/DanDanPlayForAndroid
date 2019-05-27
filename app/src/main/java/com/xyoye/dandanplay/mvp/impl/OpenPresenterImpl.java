@@ -13,7 +13,7 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
 
 public class OpenPresenterImpl extends BaseMvpPresenterImpl<OpenView> implements OpenPresenter {

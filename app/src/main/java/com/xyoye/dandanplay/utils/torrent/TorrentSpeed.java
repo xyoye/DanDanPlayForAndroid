@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by xyy on 2019/3/21.
+ * Created by xyoye on 2019/3/21.
  */
 
 public class TorrentSpeed {

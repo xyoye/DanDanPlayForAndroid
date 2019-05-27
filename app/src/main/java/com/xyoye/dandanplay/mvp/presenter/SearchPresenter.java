@@ -7,7 +7,7 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import java.util.List;
 
 /**
- * Created by xyy on 2019/1/8.
+ * Created by xyoye on 2019/1/8.
  */
 
 public interface SearchPresenter extends BaseMvpPresenter {

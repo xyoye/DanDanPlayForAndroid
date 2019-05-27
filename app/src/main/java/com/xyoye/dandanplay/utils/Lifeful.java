@@ -1,9 +1,9 @@
 package com.xyoye.dandanplay.utils;
 
 /**
- * Created by yzd on 2017/4/8 0008.
- *
  * 判断生命周期是否已经结束的一个接口。
+ *
+ * Modified xyoye on 2017/4/8.
  */
 
 public interface Lifeful {

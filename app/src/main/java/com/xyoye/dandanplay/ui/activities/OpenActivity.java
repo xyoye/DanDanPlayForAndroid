@@ -21,9 +21,8 @@ import java.io.InputStream;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
-
 
 public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements OpenView {
     @BindView(R.id.image_iv)

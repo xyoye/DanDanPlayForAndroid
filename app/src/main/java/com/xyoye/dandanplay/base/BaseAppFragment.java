@@ -8,12 +8,12 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.IBaseView;
 
@@ -52,7 +52,8 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  * onDestroy()              | Destroyed
  * onDetach()               |
  * ----------------------------------
- * Created by xyy on 2017/6/23.
+ *
+ * Modified by xyoye on 2019/5/27.
  */
 public abstract class BaseAppFragment extends Fragment implements IBaseView, Lifeful, ISupportFragment  {
 
@@ -85,7 +86,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
         mDelegate.setUserVisibleHint(isVisibleToUser);
-        LogUtils.d(TAG,"setUserVisibleHint====>"+isVisibleToUser+"====>"+position);
+        Log.d(TAG,"setUserVisibleHint====>"+isVisibleToUser+"====>"+position);
         if (isActivityCreated) {
             if (isVisibleToUser) {
                 if (isFirstVisible) {
@@ -101,7 +102,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        LogUtils.d(TAG,"onCreate====>"+position);
+        Log.d(TAG,"onCreate====>"+position);
         super.onCreate(savedInstanceState);
         mDelegate.onCreate(savedInstanceState);
         init();
@@ -114,13 +115,13 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LogUtils.d(TAG,"onCreateView====>"+position+"====>"+isActivityCreated+"====>"+isFirstVisible);
+        Log.d(TAG,"onCreateView====>"+position+"====>"+isActivityCreated+"====>"+isFirstVisible);
         return inflater.inflate(initPageLayoutId(), container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        LogUtils.d(TAG,"onViewCreated====>"+position);
+        Log.d(TAG,"onViewCreated====>"+position);
         mFragmentView = view;
         unbind = ButterKnife.bind(this, mFragmentView);
         mDelegate.onActivityCreated(savedInstanceState);
@@ -130,7 +131,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        LogUtils.d(TAG,"onActivityCreated====>"+position+"_"+getUserVisibleHint());
+        Log.d(TAG,"onActivityCreated====>"+position+"_"+getUserVisibleHint());
         super.onActivityCreated(savedInstanceState);
         isActivityCreated = true;
         if (getUserVisibleHint() || mIsVisibleToUser) {
@@ -145,7 +146,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onDestroyView() {
-        LogUtils.d(TAG,"onDestroyView====>"+position);
+        Log.d(TAG,"onDestroyView====>"+position);
         super.onDestroyView();
         unbind.unbind();
         mDelegate.onDestroyView();
@@ -154,7 +155,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public void onDetach() {
-        LogUtils.d(TAG,"onDetach====>"+position);
+        Log.d(TAG,"onDetach====>"+position);
         super.onDetach();
         //noinspection TryWithIdenticalCatches
         try {
@@ -173,7 +174,7 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     @Override
     public boolean getUserVisibleHint() {
-        LogUtils.d(TAG,"getUserVisibleHint====>"+super.getUserVisibleHint()+"====>"+position);
+        Log.d(TAG,"getUserVisibleHint====>"+super.getUserVisibleHint()+"====>"+position);
         return super.getUserVisibleHint();
     }
 
@@ -182,23 +183,23 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
      * 用于ViewPager下的页面懒加载，在一个生命周期内只会调用一次
      */
     protected void onPageFirstVisible() {
-        LogUtils.d(TAG,"onPageFirstVisible====>"+position);
+        Log.d(TAG,"onPageFirstVisible====>"+position);
     }
 
     /**
      * 逻辑处理
      */
     protected void process(Bundle savedInstanceState) {
-        LogUtils.d(TAG,"process====>"+position);
+        Log.d(TAG,"process====>"+position);
     }
 
     protected void onPageStart() {
-        LogUtils.d(TAG,"onPageStart====>"+super.getUserVisibleHint()+"====>"+position);
+        Log.d(TAG,"onPageStart====>"+super.getUserVisibleHint()+"====>"+position);
         lazyLoad();
     }
 
     protected void onPageEnd() {
-        LogUtils.d(TAG,"onPageEnd====>"+super.getUserVisibleHint()+"====>"+position);
+        Log.d(TAG,"onPageEnd====>"+super.getUserVisibleHint()+"====>"+position);
     }
 
     /**

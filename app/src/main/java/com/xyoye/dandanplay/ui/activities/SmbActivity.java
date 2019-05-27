@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbView {

@@ -7,9 +7,8 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29.
  */
-
 
 public interface PersonalFragmentView extends BaseMvpView {
 

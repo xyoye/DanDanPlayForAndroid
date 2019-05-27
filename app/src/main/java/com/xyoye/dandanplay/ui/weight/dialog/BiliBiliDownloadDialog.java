@@ -39,7 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by xyy on 2018/5/17.
+ * Created by xyoye on 2018/5/17.
  */
 
 public class BiliBiliDownloadDialog extends Dialog {

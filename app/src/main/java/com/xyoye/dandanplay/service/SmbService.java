@@ -19,7 +19,7 @@ import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
 /**
- * Created by xyy on 2018/11/22.
+ * Created by xyoye on 2018/11/22.
  */
 
 public class SmbService extends Service {

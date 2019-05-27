@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean;
 
 /**
- * Created by xyy on 2019/2/18.
+ * Created by xyoye on 2019/2/18.
  */
 
 public class ScanFolderBean {

@@ -8,9 +8,8 @@ import com.xyoye.dandanplay.mvp.view.SettingView;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 /**
- * Created by YE on 2018/7/24.
+ * Created by xyoye on 2018/7/24.
  */
-
 
 public class SettingPresenterImpl extends BaseMvpPresenterImpl<SettingView> implements SettingPresenter {
 

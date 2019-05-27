@@ -14,8 +14,9 @@ import android.util.AttributeSet;
 import com.xyoye.dandanplay.R;
 
 /**
- * Created by xyy on 2019/4/4.
  * 弧形图片
+ *
+ * Created by xyoye on 2019/4/4.
  */
 
 public class SemicircleView extends android.support.v7.widget.AppCompatImageView {

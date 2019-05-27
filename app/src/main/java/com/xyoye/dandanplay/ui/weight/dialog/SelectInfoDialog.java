@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/10/15.
+ * Created by xyoye on 2018/10/15.
  */
 
 public class SelectInfoDialog<T> extends Dialog {

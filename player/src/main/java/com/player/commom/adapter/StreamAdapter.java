@@ -11,7 +11,7 @@ import com.player.ijkplayer.media.VideoInfoTrack;
 import java.util.List;
 
 /**
- * Created by xyy on 2018/12/19.
+ * Created by xyoye on 2018/12/19.
  */
 
 public class StreamAdapter extends BaseQuickAdapter<VideoInfoTrack, BaseViewHolder> {

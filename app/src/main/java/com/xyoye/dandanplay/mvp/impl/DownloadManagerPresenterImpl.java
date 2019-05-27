@@ -15,9 +15,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by YE on 2018/10/27.
+ * Created by xyoye on 2018/10/27.
  */
-
 
 public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadManagerView> implements DownloadManagerPresenter {
 

@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.bean.event;
 import java.io.Serializable;
 
 /**
- * Created by YE on 2018/8/11.
+ * Created by xyoye on 2019/5/27.
  */
 
 

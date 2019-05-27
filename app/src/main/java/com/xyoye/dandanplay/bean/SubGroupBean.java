@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by xyy on 2018/10/15.
+ * Created by xyoye on 2018/10/15.
  */
 
 public class SubGroupBean {

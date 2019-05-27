@@ -5,8 +5,9 @@ import com.player.danmaku.danmaku.model.BaseDanmaku;
 import java.util.List;
 
 /**
- * Created by long on 2016/12/22.
  * 弹幕监听器
+ *
+ * Created by xyoye on 2019/5/7.
  */
 public interface OnDanmakuListener {
 

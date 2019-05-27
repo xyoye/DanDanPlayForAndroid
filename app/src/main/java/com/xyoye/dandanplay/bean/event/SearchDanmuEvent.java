@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean.event;
 
 /**
- * Created by xyy on 2018/10/24.
+ * Created by xyoye on 2018/10/24.
  */
 
 public class SearchDanmuEvent {

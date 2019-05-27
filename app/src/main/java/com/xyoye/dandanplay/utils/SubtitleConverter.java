@@ -11,13 +11,14 @@ import java.util.List;
 import okhttp3.ResponseBody;
 
 /**
- * Created by xyoye on 2019/5/10.
  * 以body转bean的原因是，okhttp采用的是gson来解析结果，
  * 而射手网在找不到字幕时，返回一个gson不能解析的字符串
  * 会导致zip直接转至OnError，因此在此处用JsonUtil来手动转换
  *
  * 但是目前仍有问题的是，假如某天射手或迅雷某一个api不可用时，会导致
  * 另一个虽然能获取到结果，但也不能用
+ *
+ * Created by xyoye on 2019/5/10.
  */
 
 public class SubtitleConverter {

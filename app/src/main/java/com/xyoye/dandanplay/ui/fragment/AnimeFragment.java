@@ -25,9 +25,8 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/15.
+ * Created by xyoye on 2018/7/15.
  */
-
 
 public class AnimeFragment extends BaseFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
     @BindView(R.id.bangumi_list_recycler_view)

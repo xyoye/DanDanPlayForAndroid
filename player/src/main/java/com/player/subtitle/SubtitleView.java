@@ -20,6 +20,8 @@ import java.util.TreeMap;
 
 /**
  * 显示字幕的图层
+ *
+ * Created by xyoye on 2019/5/6.
  */
 public class SubtitleView extends LinearLayout implements ISubtitleControl, SubtitleClickListener {
     /**

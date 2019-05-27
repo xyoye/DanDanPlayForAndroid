@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean;
 
 /**
- * Created by xyy on 2018/11/21.
+ * Created by xyoye on 2018/11/21.
  */
 
 public class SmbBean2 {

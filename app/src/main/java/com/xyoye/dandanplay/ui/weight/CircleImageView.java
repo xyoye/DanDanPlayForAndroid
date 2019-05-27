@@ -19,8 +19,9 @@ import android.util.AttributeSet;
 import com.xyoye.dandanplay.R;
 
 /**
- * Created by YE on 2018/7/1.
  * 圆形ImageView
+ *
+ * Created by xyoye on 2018/7/1.
  */
 
 public class CircleImageView extends android.support.v7.widget.AppCompatImageView {

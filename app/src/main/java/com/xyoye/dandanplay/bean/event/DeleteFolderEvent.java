@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean.event;
 
 /**
- * Created by xyy on 2018/10/25.
+ * Created by xyoye on 2018/10/25.
  */
 
 public class DeleteFolderEvent {

@@ -11,7 +11,7 @@ import libtorrent.Libtorrent;
 import libtorrent.StatsTorrent;
 
 /**
- * Created by xyy on 2018/10/23.
+ * Created by xyoye on 2018/10/23.
  */
 public class Torrent implements Serializable{
 

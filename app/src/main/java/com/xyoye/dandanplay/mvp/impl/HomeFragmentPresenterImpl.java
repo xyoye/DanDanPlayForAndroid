@@ -32,9 +32,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by YE on 2018/6/29 0029.
+ * Created by xyoye on 2018/6/29 0029.
  */
-
 
 public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragmentView> implements HomeFragmentPresenter {
 

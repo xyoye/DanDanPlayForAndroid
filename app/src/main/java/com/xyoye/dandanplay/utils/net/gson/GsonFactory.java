@@ -14,7 +14,7 @@ import com.google.gson.JsonSyntaxException;
 import java.lang.reflect.Type;
 
 /**
- * Created by xyy on 2017/6/23.
+ * Modified by xyoye on 2017/6/23.
  */
 
 public class GsonFactory {

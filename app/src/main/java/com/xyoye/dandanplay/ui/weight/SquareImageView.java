@@ -4,8 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 /**
- * Created by xyy on 2019/1/8.
  * 正方形图片
+ *
+ * Created by xyoye on 2019/1/8.
  */
 
 public class SquareImageView extends android.support.v7.widget.AppCompatImageView {

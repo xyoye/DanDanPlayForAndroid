@@ -15,9 +15,8 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2019/1/13.
+ * Created by xyoye on 2019/1/13.
  */
-
 
 public class AnimeGridEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> {
     @BindView(R.id.episode_number)

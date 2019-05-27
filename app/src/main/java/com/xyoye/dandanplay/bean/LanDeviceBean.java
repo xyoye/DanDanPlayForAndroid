@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 
 /**
- * Created by xyy on 2018/11/19.
+ * Created by xyoye on 2018/11/19.
  */
 
 public class LanDeviceBean implements Comparable<LanDeviceBean>,Serializable{

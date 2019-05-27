@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.excetion;
 
 /**
- * Created by xyy on 2017/9/15
+ * Modified by xyy on 2017/9/15
  */
 
 public class ResponseException extends Exception {

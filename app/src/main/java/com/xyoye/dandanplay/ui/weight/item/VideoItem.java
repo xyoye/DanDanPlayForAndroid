@@ -27,9 +27,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by YE on 2018/6/30 0030.
+ * Created by xyoye on 2018/6/30 0030.
  */
-
 
 public class VideoItem implements AdapterItem<VideoBean> {
     @BindView(R.id.cover_iv)

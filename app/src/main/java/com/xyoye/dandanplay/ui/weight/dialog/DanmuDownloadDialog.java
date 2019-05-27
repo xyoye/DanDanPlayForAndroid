@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -27,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by YE on 2018/7/14.
+ * Created by xyoye on 2018/7/14.
  */
 
 

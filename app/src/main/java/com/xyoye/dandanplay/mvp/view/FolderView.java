@@ -8,7 +8,7 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 import java.util.List;
 
 /**
- * Created by YE on 2018/6/30 0030.
+ * Created by xyoye on 2018/6/30.
  */
 
 

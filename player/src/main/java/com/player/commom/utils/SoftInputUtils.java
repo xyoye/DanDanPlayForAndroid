@@ -7,8 +7,6 @@ import android.view.inputmethod.InputMethodManager;
 
 /**
  * SoftInputUtils
- *
- * @author <a href="http://www.trinea.cn" target="_blank">Trinea</a> 2014-5-07
  */
 public class SoftInputUtils {
 

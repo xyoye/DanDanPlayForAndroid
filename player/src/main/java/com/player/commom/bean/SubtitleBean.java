@@ -2,6 +2,10 @@ package com.player.commom.bean;
 
 import java.util.List;
 
+/**
+ * Created by xyoye on 2018/12/19.
+ */
+
 public class SubtitleBean {
 
     private String name;

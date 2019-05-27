@@ -5,7 +5,7 @@ import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import java.io.Serializable;
 
 /**
- * Created by YE on 2018/7/14.
+ * Created by xyoye on 2018/7/14.
  */
 
 

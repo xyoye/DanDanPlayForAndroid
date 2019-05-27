@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by xyy on 2018/12/6.
+ * Created by xyoye on 2018/12/6.
  */
 
 public class AddTrackerDialog extends Dialog {

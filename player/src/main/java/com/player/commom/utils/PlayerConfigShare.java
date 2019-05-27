@@ -5,7 +5,7 @@ import android.content.Context;
 import com.player.subtitle.SubtitleView;
 
 /**
- * Created by YE on 2018/7/2.
+ * Created by xyoye on 2018/7/2.
  */
 
 public class PlayerConfigShare {

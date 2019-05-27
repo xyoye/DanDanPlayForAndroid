@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xyy on 2019/4/17.
+ * Created by xyoye on 2019/4/17.
  */
 public class DeleteBuilder{
     private SQLiteDatabase sqLiteDatabase;

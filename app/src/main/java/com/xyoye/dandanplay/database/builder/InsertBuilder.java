@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 
 /**
- * Created by xyy on 2019/4/17.
+ * Created by xyoye on 2019/4/17.
  */
 public class InsertBuilder{
     private SQLiteDatabase sqLiteDatabase;

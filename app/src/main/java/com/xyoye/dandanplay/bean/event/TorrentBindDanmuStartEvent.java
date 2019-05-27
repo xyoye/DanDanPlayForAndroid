@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.bean.event;
 
 /**
- * Created by xyy on 2019/3/7.
+ * Created by xyoye on 2019/3/7.
  */
 
 public class TorrentBindDanmuStartEvent {

@@ -22,9 +22,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Created by YE on 2018/8/5.
+ * Created by xyoye on 2018/8/5.
  */
-
 
 public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> implements RegisterView {
 

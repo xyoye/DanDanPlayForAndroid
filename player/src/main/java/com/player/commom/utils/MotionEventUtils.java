@@ -4,7 +4,7 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 
 /**
- * Created by Rukey7 on 2016/11/21.
+ * Modified by xyoye on 2018/7/1.
  */
 
 public final class MotionEventUtils {

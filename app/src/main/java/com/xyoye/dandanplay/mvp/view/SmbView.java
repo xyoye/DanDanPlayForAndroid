@@ -9,7 +9,7 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 import java.util.List;
 
 /**
- * Created by YE on 2019/3/30.
+ * Created by xyoye on 2019/3/30.
  */
 
 public interface SmbView extends BaseMvpView, LoadDataView {

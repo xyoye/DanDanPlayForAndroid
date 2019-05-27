@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 /**
- * Created by YE on 2018/7/14.
+ * Created by xyoye on 2018/7/14.
  */
 
 public class DanmuNetworkItem  implements AdapterItem<DanmuMatchBean.MatchesBean> {

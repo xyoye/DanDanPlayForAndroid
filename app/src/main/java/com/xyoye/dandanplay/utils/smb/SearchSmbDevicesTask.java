@@ -21,7 +21,7 @@ import jcifs.Address;
 import jcifs.context.SingletonContext;
 
 /**
- * Created by xyy on 2018/11/19.
+ * Created by xyoye on 2018/11/19.
  */
 
 public class SearchSmbDevicesTask implements Runnable {

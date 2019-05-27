@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.utils.net;
 import java.io.Serializable;
 
 /**
- * Created by xyy on 2017/5/15
+ * Modified by xyoye on 2017/5/15
  */
 
 public class CommJsonEntity implements Serializable {

@@ -57,7 +57,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 /**
- * Created by YE on 2018/7/20.
+ * Created by xyoye on 2018/7/20.
  */
 
 public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView{

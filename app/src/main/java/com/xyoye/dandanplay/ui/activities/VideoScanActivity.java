@@ -40,6 +40,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+/**
+ * Created by xyoye on 2019/3/30.
+ */
+
 public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
 
     @BindView(R.id.indicator)

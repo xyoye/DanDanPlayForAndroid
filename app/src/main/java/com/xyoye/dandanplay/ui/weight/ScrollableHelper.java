@@ -37,6 +37,10 @@ import android.widget.ScrollView;
 
 import com.blankj.utilcode.util.LogUtils;
 
+/**
+ * Modified by xyoye on 2018/5/22.
+ */
+
 public class ScrollableHelper {
 
     private ScrollableContainer mCurrentScrollableCainer;

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 
 /**
- * Created by long on 2016/11/4.
+ * Created by xyoye on 2018/7/1.
  */
 
 public final class AnimHelper {

@@ -2,7 +2,8 @@ package com.xyoye.dandanplay.utils.interf;
 
 /**
  *  Activity, Fragment基类接口
- * Created by Administrator on 2015/12/2.
+ *
+ * Modified by xyoye on 2015/12/2.
  */
 public interface IBaseView {
 

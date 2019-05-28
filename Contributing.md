@@ -1,4 +1,4 @@
-#English
+# English
 
 # Contributor's Guidelines for DanDanPlayForAndroid.
 
@@ -143,9 +143,9 @@ Thank you for your interest in contributing to DanDanPlayForAndroid. I appreciat
 
 ---
 
-#中文版
+# 中文版
 
-#DanDanPlayForAndroid的贡献者指南
+# DanDanPlayForAndroid的贡献者指南
 
 这是一份DanDanPlayForAndroid的贡献者指南。如果您有意打开此文档，则意味着您愿意为DanDanPlayForAndroid增加价值，这真是太棒了！
 
@@ -159,7 +159,7 @@ DanDanPlayForAndroid是一个完全开源的项目。这意味着任何人都可
 
 ---
 
-###提交功能请求
+### 提交功能请求
 
 如果您想提出建议或功能请求，请检查issue，以确定该需求是否已被其他用户提交。如果已经请求了该需求，但这是一个尚未标记为“wontfix”的已关闭问题，请随时重新打开该问题或创建您的问题。
 要申请新功能，您应该[创建一个issue](https://github.com/xyoye/DanDanPlayForAndroid/issues/new?template=feature_request.md)。
@@ -227,7 +227,7 @@ DanDanPlayForAndroid是一个完全开源的项目。这意味着任何人都可
 完成上述操作后，您就可以最终发送请求了。在这个阶段，我们的合作者以及其他志同道合的贡献者将看到您的Pull Request。在这个阶段，有许多事情需要期待，例如来自其他贡献者和合作者的评论，可能还需要更改请求（如果需要的话）。请记住，此过程可能需要一段时间，因为在合并之前，将对Pull Request进行彻底测试，以确保一切都是完美的
 
 
-###重构
+### 重构
 
 重构是任何软件项目发展的必要组成部分。以下指导原则涵盖了重构项目的Pull Request。
 
@@ -247,24 +247,24 @@ DanDanPlayForAndroid是一个完全开源的项目。这意味着任何人都可
 
 ---
 
-###代码质量
+### 代码质量
 
 提交代码时，最好确保代码质量高于现有代码（或更高），并且单元测试不会失败。
 
-###测试
+### 测试
 在可能的情况下，请包括测试，特别是当您的更改实现或影响库例程时。即使是最微小的变化也会产生混乱的涟漪效应。
 
 对于将导致巨大操作更改的代码贡献，请首先通过问题、电子邮件或任何其他方法讨论您希望进行的更改，然后再进行更改。
 
 ---
 
-##文档
+## 文档
 
 这是创建项目所必需的重要文档。文档还处理标准化文档或博客中的书面内容创建。如果您希望创建标准化文档或对现有文档进行更正和添加，请随时这样做并发送请求。
 
 为了更好地实现，请确保使用markdown文本样式创建文档。根据内容重命名文件，并在末尾添加.md，这样标记就有效了。创建文档后发送Pull Request。
 
-##创建拉取请求
+## 创建拉取请求
 
 以下是有关如何创建[Pull Request](https://help.github.com/articles/creating-a-pull-request)的详细内容
 
@@ -276,7 +276,7 @@ DanDanPlayForAndroid是一个完全开源的项目。这意味着任何人都可
 
 ---
 
-##联系。
+## 联系。
 
 如需进一步咨询，您可以通过在存储库上打开[issue](https://github.com/xyoye/DanDanPlayForAndroid/issues/new/choose)来联系开发人员。您还可以查看[开发人员的个人资料](https://github.com/xyoye)。
 

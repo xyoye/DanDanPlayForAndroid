@@ -143,7 +143,7 @@ DanDanPlayForAndroid 能正常稳定的运行，但你仍有可能遇到一些�
 
 DanDanPlayForAndroid 依赖于一些第三方库提供的服务，以此来增强功能或分析使用软件。仅但代表开发人员执行一些任务时，这些第三库可能访问您的个人数据。
 
-查看完整的第三方库列表请点击 [这里](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/THIRD_PARTY_LIBRARIES.md)。
+查看完整的第三方库列表请点击 [这里](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/Third_Party_Libraries.md)。
 
 
 ## 数据传输

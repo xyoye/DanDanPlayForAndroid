@@ -1,4 +1,4 @@
-# English #
+# English
 
 # DanDanPlayForAndroid Privacy Policy.
 
@@ -88,7 +88,9 @@ DanDanPlayForAndroid is developed in good faith and for general use. The develop
 Contributions to this project are welcomed. Contributions, suggestions or bug reports and fixes can be made by opening an issue or creating pull requests. Read our contributor's guidelines [here]() to get started.
 If you have any questions about this Privacy Policy, or any other issue relating to DanDanPlayForAndroid, please contact the developer [here](https://github.com/xyoye/DanDanPlayForAndroid) by opening an [issue](https://github.com/xyoye/DanDanPlayForAndroid/issues/new/choose).
 
-#中文版#
+---
+
+#中文版
 
 # DanDanPlayForAndroid 隐私政策
 本隐私政策文件旨在提供有关在使用时软件所收集、使用及披露的个人信息的内容、来源以及使用方式，使用时机，本文件的目的是通过公开开发人员收集或不收集的信息，在开发者和用户之间提供开放透明的环境。 通过使用该软件，这意味着您接受开发人员仅使用DanDanPlayForAndroid软件所特有的所有条款和条件。 本政策仅适用于本软件，开发人员不对任何第三方应用程序的内容或隐私惯例负责，因此建议您阅读可能与此软件相关联的第三方服务的隐私政策。

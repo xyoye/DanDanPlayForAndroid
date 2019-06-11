@@ -34,6 +34,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp"
-        android:text="上次观看：2019-11-11 20:12:21"
+        android:text=""
         android:visibility="gone"/>
 </LinearLayout>

@@ -88,6 +88,8 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
         //恢复任务
         new Thread(() -> {
+            if (IApplication.taskList.size() > 0)
+                return;
             Cursor cursor = DataBaseManager.getInstance()
                                 .selectTable(6)
                                 .query()
@@ -99,7 +101,12 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                 torrent.setMagnet(cursor.getString(3));
                 torrent.setFinished(cursor.getInt(4) == 1);
                 String prioritiesSaveData = cursor.getString(5);
-                String[] priorities = prioritiesSaveData.split(";");
+                String[] priorities;
+                if (prioritiesSaveData.contains(";")){
+                    priorities = prioritiesSaveData.split(";");
+                }else {
+                    priorities = new String[]{prioritiesSaveData};
+                }
 
                 TorrentInfo torrentInfo = TorrentUtil.getTorrentInfoForFile(torrent.getTorrentPath());
                 if (torrentInfo == null)
@@ -126,8 +133,9 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                     torrentFileList.add(torrentFile);
                 }
                 torrent.setTorrentFileList(torrentFileList);
+                BtTask btTask = new BtTask(torrent, true);
+                btTask.startTask();
             }
-
         }).start();
     }
 

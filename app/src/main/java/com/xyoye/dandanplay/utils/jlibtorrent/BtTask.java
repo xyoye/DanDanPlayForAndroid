@@ -40,6 +40,8 @@ public class BtTask extends SessionManager implements AlertListener{
     private TaskStatus taskStatus;
     //任务已完成且已刷新
     private boolean isRefreshAfterFinish;
+    //是否为恢复任务
+    private boolean isRecoveryTask = false;
 
     public BtTask(Torrent torrent) {
         super(false);
@@ -56,6 +58,11 @@ public class BtTask extends SessionManager implements AlertListener{
                         .anonymousMode(false)//是否为匿名模式
          );
         start(sessionParams);
+    }
+
+    public BtTask(Torrent torrent, boolean isRecoveryTask) {
+        this(torrent);
+        this.isRecoveryTask = isRecoveryTask;
     }
 
     /**
@@ -83,16 +90,18 @@ public class BtTask extends SessionManager implements AlertListener{
                                 : ("0;"));
         }
 
-        String prioritiesSaveData =  priorityBuilder.substring(0, priorityBuilder.length()-1);
-        DataBaseManager.getInstance()
-                .selectTable(6)
-                .insert()
-                .param(1, torrent.getTorrentPath())
-                .param(2, torrent.getAnimeTitle())
-                .param(3, torrent.getMagnet())
-                .param(4, 0)
-                .param(5, prioritiesSaveData)
-                .postExecute();
+        if (!isRecoveryTask){
+            String prioritiesSaveData =  priorityBuilder.substring(0, priorityBuilder.length()-1);
+            DataBaseManager.getInstance()
+                    .selectTable(6)
+                    .insert()
+                    .param(1, torrent.getTorrentPath())
+                    .param(2, torrent.getAnimeTitle())
+                    .param(3, torrent.getMagnet())
+                    .param(4, 0)
+                    .param(5, prioritiesSaveData)
+                    .postExecute();
+        }
 
         //开始下载，根据alert状态判断是否开始下载，获取下载进度
         download(torrentInfo, saveDirFile, null, priorities, null);
@@ -184,6 +193,10 @@ public class BtTask extends SessionManager implements AlertListener{
             int endIndex = torrentHandle.torrentFile().mapFile(fileCount, endFileSize, 1).piece();
             btFilePrices = new BtFilePrices(startIndex, endIndex);
             torrentHandle.resume();
+            if (isRecoveryTask){
+                isRecoveryTask = false;
+                pause();
+            }
         }else {
             if (!(alert instanceof TorrentAlert<?>)) {
                 return;

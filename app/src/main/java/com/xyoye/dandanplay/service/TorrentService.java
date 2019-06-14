@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
@@ -92,6 +93,11 @@ public class TorrentService extends Service {
                 //TorrentUtil.deleteTorrent(torrent, false);
                 IApplication.taskList.remove(event.getPosition());
                 IApplication.taskMap.remove(btTask.getTorrent().getHash());
+                DataBaseManager.getInstance()
+                        .selectTable(6)
+                        .delete()
+                        .where(1, btTask.getTorrent().getTorrentPath())
+                        .execute();
                 EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                 break;
             //删除一个任务并且删除文件
@@ -100,6 +106,11 @@ public class TorrentService extends Service {
                 //TorrentUtil.deleteTorrent(torrent, false);
                 IApplication.taskList.remove(event.getPosition());
                 IApplication.taskMap.remove(btTask.getTorrent().getHash());
+                DataBaseManager.getInstance()
+                        .selectTable(6)
+                        .delete()
+                        .where(1, btTask.getTorrent().getTorrentPath())
+                        .execute();
                 EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
                 break;
             //暂停全部任务

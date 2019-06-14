@@ -1,7 +1,9 @@
-package com.xyoye.dandanplay.utils.torrent;
+package com.xyoye.dandanplay.bean.event;
+
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 /**
- * Created by xyoye on 2019/3/21.
+ * Created by xyoye on 2019/6/12.
  */
 
 public class TorrentStartEvent {

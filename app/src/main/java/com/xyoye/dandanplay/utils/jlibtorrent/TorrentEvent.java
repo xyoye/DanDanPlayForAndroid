@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.utils.torrent;
+package com.xyoye.dandanplay.utils.jlibtorrent;
 
 /**
  * Created by xyoye on 2018/10/23.
@@ -13,6 +13,7 @@ public class TorrentEvent {
     public final static int EVENT_ALL_START = 107;          //开始所有
     public final static int EVENT_ALL_DELETE_FILE = 108;    //删除所有任务和文件
     public final static int EVENT_ALL_DELETE_TASK = 109;    //删除所以任务
+    public final static int EVENT_CLOSE_PLAY = 110;         //播放任务结束
 
     private int action;
     private int position;

@@ -18,9 +18,8 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
 import com.xyoye.dandanplay.ui.weight.item.TorrentDetailDownloadFileItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
-import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -56,7 +55,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
         super(context, R.style.Dialog);
         this.context = context;
         this.torrentPosition = torrentPosition;
-        this.mTorrent = IApplication.torrentList.get(torrentPosition);
+        this.mTorrent = IApplication.taskList.get(torrentPosition).getTorrent();
         this.statusStr = statusStr;
     }
 
@@ -67,7 +66,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
         ButterKnife.bind(this, this);
 
         nameTv.setText(mTorrent.getTitle());
-        pathTv.setText(mTorrent.getPath());
+        pathTv.setText(mTorrent.getSaveDirPath());
         magnetTv.setText(mTorrent.getMagnet());
         statusTv.setText(statusStr);
 
@@ -91,7 +90,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
                 TorrentDownloadDetailDialog.this.dismiss();
                 break;
             case R.id.path_tv:
-                String path = mTorrent.getPath();
+                String path = mTorrent.getSaveDirPath();
                 ClipboardManager clipboardManagerPath = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipDataPath = ClipData.newPlainText("Label", path);
                 if (clipboardManagerPath != null) {
@@ -134,7 +133,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
             Torrent.TorrentFile torrentFile = mTorrent.getTorrentFileList().get(position);
             torrentFile.setDanmuPath(event.getDanmuPath());
             torrentFile.setEpisodeId(event.getEpisodeId());
-            TorrentUtil.updateTorrentDanmu(mTorrent.getPath(), torrentFile.getPath(), event.getDanmuPath(), event.getEpisodeId());
+            //TorrentUtil.updateTorrentDanmu(mTorrent.getTorrentPath(), torrentFile.getPath(), event.getDanmuPath(), event.getEpisodeId());
             fileAdapter.notifyItemChanged(position);
             ToastUtils.showShort("绑定弹幕成功");
         }

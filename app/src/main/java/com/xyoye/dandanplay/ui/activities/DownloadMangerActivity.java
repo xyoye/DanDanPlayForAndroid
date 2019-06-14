@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -11,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.frostwire.jlibtorrent.TorrentInfo;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -19,25 +22,29 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
+import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
+import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
-import com.xyoye.dandanplay.utils.torrent.TorrentStartEvent;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import libtorrent.Libtorrent;
 
 /**
  * Created by xyoye on 2018/10/27.
@@ -49,7 +56,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @BindView(R.id.download_rv)
     RecyclerView downloadRv;
 
-    private BaseRvAdapter<Torrent> adapter;
+    private BaseRvAdapter<BtTask> adapter;
     private Runnable refresh;
     private Handler mHandler = IApplication.getMainHandler();
 
@@ -61,10 +68,10 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         downloadRv.setItemViewCacheSize(10);
         ((SimpleItemAnimator)downloadRv.getItemAnimator()).setSupportsChangeAnimations(false);
         presenter.getTorrentList();
-        adapter = new BaseRvAdapter<Torrent>(IApplication.torrentList) {
+        adapter = new BaseRvAdapter<BtTask>(IApplication.taskList) {
             @NonNull
             @Override
-            public AdapterItem<Torrent> onCreateItem(int viewType) {
+            public AdapterItem<BtTask> onCreateItem(int viewType) {
                 return new DownloadManagerItem();
             }
         };
@@ -78,25 +85,62 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
             startTorrentService();
             presenter.observeService();
         }
+
+        //恢复任务
+        new Thread(() -> {
+            Cursor cursor = DataBaseManager.getInstance()
+                                .selectTable(6)
+                                .query()
+                                .execute();
+            while (cursor.moveToNext()){
+                Torrent torrent = new Torrent();
+                torrent.setTorrentPath(cursor.getString(1));
+                torrent.setAnimeTitle(cursor.getString(2));
+                torrent.setMagnet(cursor.getString(3));
+                torrent.setFinished(cursor.getInt(4) == 1);
+                String prioritiesSaveData = cursor.getString(5);
+                String[] priorities = prioritiesSaveData.split(";");
+
+                TorrentInfo torrentInfo = TorrentUtil.getTorrentInfoForFile(torrent.getTorrentPath());
+                if (torrentInfo == null)
+                    continue;
+                if (priorities.length != torrentInfo.numFiles())
+                    continue;
+
+                String saveDirPath = AppConfig.getInstance().getDownloadFolder() +
+                        ((StringUtils.isEmpty(torrent.getAnimeTitle()))
+                                ? ("/"+torrentInfo.name())
+                                : ("/"+torrent.getAnimeTitle()));
+                torrent.setSaveDirPath(saveDirPath);
+                torrent.setHash(torrentInfo.infoHash().toString());
+                torrent.setTitle(torrentInfo.name());
+                torrent.setLength(torrentInfo.totalSize());
+                List<Torrent.TorrentFile> torrentFileList = new ArrayList<>();
+
+                for (int i=0; i<priorities.length; i++){
+                    Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
+                    torrentFile.setName(torrentInfo.files().fileName(i));
+                    torrentFile.setPath(saveDirPath + "/" +torrentInfo.files().filePath(i));
+                    torrentFile.setLength(torrentInfo.files().fileSize(i));
+                    torrentFile.setChecked("1".equals(priorities[i]));
+                    torrentFileList.add(torrentFile);
+                }
+                torrent.setTorrentFileList(torrentFileList);
+            }
+
+        }).start();
     }
 
     private void initRefresh(){
         refresh = () -> {
-            for (int i=0; i<IApplication.torrentList.size(); i++){
-                Torrent torrent = IApplication.torrentList.get(i);
-                if (torrent.isDone()){
-                    if (torrent.isUpdate()){
-                        adapter.notifyItemChanged(i);
-                        torrent.setUpdate(false);
-                    }else {
-                        continue;
-                    }
-                }
-                if (torrent.isUpdate()){
+            for (int i=0; i<IApplication.taskList.size(); i++){
+                BtTask task = IApplication.taskList.get(i);
+                if (!task.isFinished()){
                     adapter.notifyItemChanged(i);
-                    if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
-                        torrent.setUpdate(false);
-                    }
+                }else if (!task.isRefreshAfterFinish()){
+                    //任务完成后仍需刷新一次
+                    task.setRefreshAfterFinish(true);
+                    adapter.notifyItemChanged(i);
                 }
             }
             mHandler.postDelayed(refresh,1000);
@@ -127,7 +171,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
     @Override
     public void startNewTask(){
-        Torrent torrent = (Torrent)getIntent().getSerializableExtra("torrent");
+        Torrent torrent = getIntent().getParcelableExtra("new_task");
         if (torrent != null){
             EventBus.getDefault().post(new TorrentStartEvent(torrent));
         }
@@ -162,18 +206,15 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         super.onDestroy();
         mHandler.removeCallbacks(refresh);
 
-        boolean downloading = false;
-        for (Torrent torrent : IApplication.torrentList) {
-            if (torrent.isDone()) continue;
-            if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
-                    Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
-                downloading = true;
+        for (BtTask task : IApplication.taskList) {
+            if (task.isFinished()) continue;
+            //没有下载任务在执行，关闭服务
+            if (!task.isPaused()){
+                if (ServiceUtils.isServiceRunning(TorrentService.class)){
+                    ServiceUtils.stopService(TorrentService.class);
+                }
                 break;
             }
-        }
-        if (!downloading){
-            if (ServiceUtils.isServiceRunning(TorrentService.class))
-                ServiceUtils.stopService(TorrentService.class);
         }
     }
     @Override

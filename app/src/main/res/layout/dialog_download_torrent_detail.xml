@@ -39,8 +39,9 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/info_ll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/title_rl"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
@@ -167,13 +168,14 @@
             android:textSize="14sp"
             android:textColor="@color/text_black"
             android:text="文件列表："/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/file_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
-        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/file_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/info_ll"
+        android:layout_marginTop="5dp">
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

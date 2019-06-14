@@ -23,14 +23,15 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.KeyUtil;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentStorage;
-import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.yokeyword.fragmentation.BuildConfig;
 import me.yokeyword.fragmentation.Fragmentation;
@@ -40,8 +41,8 @@ import me.yokeyword.fragmentation.Fragmentation;
  */
 
 public class IApplication extends BaseApplication {
-    public static List<Torrent> torrentList = new ArrayList<>();
-    public static TorrentStorage torrentStorage = new TorrentStorage();
+    public static List<BtTask> taskList = new ArrayList<>();
+    public static Map<String, Integer> taskMap = new HashMap<>();
     public static List<String> trackers = new ArrayList<>();
     public static List<String> cloudFilterList = new ArrayList<>();
     public static List<String> normalFilterList = new ArrayList<>();
@@ -67,10 +68,6 @@ public class IApplication extends BaseApplication {
         PlayerConfigShare.initPlayerConfigShare(this);
 
         new Thread(() -> {
-            //LibTorrent
-            TorrentUtil.initLibTorrent();
-            TorrentUtil.loadTorrent();
-
             //首次打开App
             if (AppConfig.getInstance().isFirstStart()) {
                 //扫描文件夹
@@ -84,7 +81,6 @@ public class IApplication extends BaseApplication {
         //Fragmentation
         Fragmentation.builder()
                 .stackViewMode(Fragmentation.NONE)
-                .debug(BuildConfig.DEBUG)
                 .install();
 
         //检查补丁

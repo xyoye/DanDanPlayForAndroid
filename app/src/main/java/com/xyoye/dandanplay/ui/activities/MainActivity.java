@@ -9,11 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ServiceUtils;
@@ -33,10 +31,8 @@ import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import butterknife.BindView;
-import libtorrent.Libtorrent;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView {
@@ -162,14 +158,14 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             //暂停任务时保存任务进度
-            for (Torrent torrent : IApplication.torrentList) {
-                if (torrent.isDone()) continue;
-                if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
-                        Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
-                    ToastUtils.showShort("请先暂停下载任务再退出，否则无法保存下载进度");
-                    return false;
-                }
-            }
+//            for (Torrent torrent : IApplication.torrentList) {
+//                if (torrent.isDone()) continue;
+//                if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
+//                        Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
+//                    ToastUtils.showShort("请先暂停下载任务再退出，否则无法保存下载进度");
+//                    return false;
+//                }
+//            }
 
             if (System.currentTimeMillis() - touchTime > 1500) {
                 ToastUtils.showShort("再按一次退出应用");
@@ -177,8 +173,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             } else {
                 if (ServiceUtils.isServiceRunning(TorrentService.class))
                     ServiceUtils.stopService(TorrentService.class);
-                Libtorrent.closeMetaInfo();
-                Libtorrent.close();
+//                Libtorrent.closeMetaInfo();
+//                Libtorrent.close();
                 DataBaseManager.getInstance().closeDatabase();
                 finish();
             }

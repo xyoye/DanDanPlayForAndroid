@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.frostwire.jlibtorrent.TorrentInfo;
 import com.player.commom.utils.AnimHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
@@ -39,20 +40,18 @@ import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import libtorrent.Libtorrent;
 
 /**
  * Created by xyoye on 2019/1/8.
@@ -298,40 +297,53 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
     @Override
     public void downloadTorrentOver(String torrentPath, String magnet) {
-        Intent intent = new Intent(this, DownloadMangerActivity.class);
-        for (Torrent torrent : IApplication.torrentList){
-            if (torrentPath.equals(torrent.getPath())){
-                startActivity(intent);
-                return;
-            }
-        }
-        Torrent torrent = new Torrent();
-        torrent.setPath(torrentPath);
-        torrent.setMagnet(magnet);
-        torrent.setAnimeTitle(animeTitle);
-        torrent = new TorrentTask(SearchActivity.this).prepare(torrent);
-        if (torrent == null){
+        //解析种子
+        TorrentInfo torrentInfo = TorrentUtil.getTorrentInfoForFile(torrentPath);
+        if (torrentInfo == null){
             ToastUtils.showShort("解析种子文件失败，请重试");
             return;
         }
-        TorrentFileCheckDialog torrentFileCheckDialog = new TorrentFileCheckDialog(SearchActivity.this, torrent, resultTorrent -> {
-            //设置是否选中文件
-            Iterator iterator = resultTorrent.getTorrentFileList().iterator();
-            while (iterator.hasNext()){
-                Torrent.TorrentFile torrentFile = (Torrent.TorrentFile)iterator.next();
-                //setCheck
-                Libtorrent.torrentFilesCheck(resultTorrent.getId(), torrentFile.getId(), torrentFile.isCheck());
-                libtorrent.File libFile = Libtorrent.torrentFiles(resultTorrent.getId(), torrentFile.getId());
-                libFile.setCheck(torrentFile.isCheck());
-                //remove form list
-                if (!torrentFile.isCheck())
-                    iterator.remove();
+        //根据hash判断任务是否已存在
+        String torrentHash = torrentInfo.infoHash().toString();
+        if (IApplication.taskMap.containsKey(torrentHash)){
+            startActivity(new Intent(this, DownloadMangerActivity.class));
+            return;
+        }
+
+        //保存路径
+        String saveDirPath = AppConfig.getInstance().getDownloadFolder() +
+                ((StringUtils.isEmpty(animeTitle))
+                ? ("/"+torrentInfo.name())
+                : ("/"+animeTitle));
+
+
+        TorrentFileCheckDialog torrentFileCheckDialog = new TorrentFileCheckDialog(SearchActivity.this, torrentInfo, checkedIndexes -> {
+            //创建新种子信息
+            Torrent torrent = new Torrent();
+            torrent.setTorrentPath(torrentPath);
+            torrent.setSaveDirPath(saveDirPath);
+            torrent.setMagnet(magnet);
+            torrent.setAnimeTitle(animeTitle);
+            torrent.setHash(torrentHash);
+            torrent.setTitle(torrentInfo.name());
+            torrent.setLength(torrentInfo.totalSize());
+            List<Torrent.TorrentFile> torrentFileList = new ArrayList<>();
+            for (int i=0; i<checkedIndexes.length; i++){
+                Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
+                torrentFile.setName(torrentInfo.files().fileName(i));
+                torrentFile.setPath(saveDirPath + "/" +torrentInfo.files().filePath(i));
+                torrentFile.setLength(torrentInfo.files().fileSize(i));
+                torrentFile.setChecked(checkedIndexes[i]);
+                torrentFileList.add(torrentFile);
             }
-            //delete unSelect
-            Libtorrent.torrentFileDeleteUnselected(resultTorrent.getId());
-            intent.putExtra("torrent", resultTorrent);
-            startActivity(intent);
+            torrent.setTorrentFileList(torrentFileList);
+
+            //进入创建下载任务界面
+            Intent taskIntent = new Intent(SearchActivity.this, DownloadMangerActivity.class);
+            taskIntent.putExtra("new_task", torrent);
+            startActivity(taskIntent);
         });
+
         if (!this.isFinishing())
             torrentFileCheckDialog.show();
     }

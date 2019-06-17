@@ -81,6 +81,8 @@ public class TorrentDownloadDetailDialog extends Dialog {
             }
         };
         fileRv.setAdapter(fileAdapter);
+
+        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_PREPARE_PLAY, torrentPosition));
     }
 
     @OnClick({R.id.dialog_cancel_iv, R.id.path_tv, R.id.magnet_tv, R.id.delete_tv})
@@ -108,16 +110,21 @@ public class TorrentDownloadDetailDialog extends Dialog {
                 }
                 break;
             case R.id.delete_tv:
+                TorrentEvent torrentEvent = new TorrentEvent();
+                torrentEvent.setAction(TorrentEvent.EVENT_DELETE_TASK);
+                torrentEvent.setPosition(torrentPosition);
                 new CommonDialog.Builder(context)
                         .setAutoDismiss()
                         .showExtra()
                         .setOkListener(dialog -> {
                             TorrentDownloadDetailDialog.this.dismiss();
-                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_TASK, torrentPosition));
+                            torrentEvent.setDeleteFile(false);
+                            EventBus.getDefault().post(torrentEvent);
                         })
                         .setExtraListener(dialog -> {
                             TorrentDownloadDetailDialog.this.dismiss();
-                            EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_DELETE_FILE, torrentPosition));
+                            torrentEvent.setDeleteFile(true);
+                            EventBus.getDefault().post(torrentEvent);
                         })
                         .build()
                         .show( "确认删除任务？","删除任务和文件");

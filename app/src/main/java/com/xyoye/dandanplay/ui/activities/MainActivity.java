@@ -31,6 +31,7 @@ import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
@@ -157,24 +158,12 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-            //暂停任务时保存任务进度
-//            for (Torrent torrent : IApplication.torrentList) {
-//                if (torrent.isDone()) continue;
-//                if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
-//                        Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
-//                    ToastUtils.showShort("请先暂停下载任务再退出，否则无法保存下载进度");
-//                    return false;
-//                }
-//            }
-
             if (System.currentTimeMillis() - touchTime > 1500) {
                 ToastUtils.showShort("再按一次退出应用");
                 touchTime = System.currentTimeMillis();
             } else {
                 if (ServiceUtils.isServiceRunning(TorrentService.class))
                     ServiceUtils.stopService(TorrentService.class);
-//                Libtorrent.closeMetaInfo();
-//                Libtorrent.close();
                 DataBaseManager.getInstance().closeDatabase();
                 finish();
             }

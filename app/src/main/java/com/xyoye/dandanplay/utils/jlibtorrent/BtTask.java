@@ -43,6 +43,14 @@ public class BtTask extends SessionManager implements AlertListener{
     //是否为恢复任务
     private boolean isRecoveryTask = false;
 
+    //控制块下载
+    //子文件位置
+    private int filePosition;
+    //文件开始位置，需要下载的大小
+    private long offset, size;
+    //请求的下载块已经下载完成
+    private boolean queryPriceResult = false;
+
     public BtTask(Torrent torrent) {
         super(false);
         this.torrent = torrent;
@@ -92,15 +100,7 @@ public class BtTask extends SessionManager implements AlertListener{
 
         if (!isRecoveryTask){
             String prioritiesSaveData =  priorityBuilder.substring(0, priorityBuilder.length()-1);
-            DataBaseManager.getInstance()
-                    .selectTable(6)
-                    .insert()
-                    .param(1, torrent.getTorrentPath())
-                    .param(2, torrent.getAnimeTitle())
-                    .param(3, torrent.getMagnet())
-                    .param(4, 0)
-                    .param(5, prioritiesSaveData)
-                    .postExecute();
+            TorrentUtil.insertDBTorrent(torrent.getTorrentPath(), torrent.getAnimeTitle(), torrent.getMagnet(), prioritiesSaveData);
         }
 
         //开始下载，根据alert状态判断是否开始下载，获取下载进度
@@ -142,18 +142,10 @@ public class BtTask extends SessionManager implements AlertListener{
     }
 
     public void setRefreshAfterFinish(boolean refreshAfterFinish) {
-        DataBaseManager.getInstance()
-                .selectTable(6)
-                .update()
-                .param(4, 1)
-                .where(1, torrent.getTorrentPath())
-                .postExecute();
+        TorrentUtil.updateDBTorrentFinish(torrent.getTorrentPath());
         isRefreshAfterFinish = refreshAfterFinish;
     }
 
-    private int filePosition;
-    private long offset, size;
-    private boolean queryPriceResult = false;
     public void setQueryPrice(int filePosition, long offset, long size){
         this.filePosition = filePosition;
         this.offset = offset;
@@ -193,10 +185,6 @@ public class BtTask extends SessionManager implements AlertListener{
             int endIndex = torrentHandle.torrentFile().mapFile(fileCount, endFileSize, 1).piece();
             btFilePrices = new BtFilePrices(startIndex, endIndex);
             torrentHandle.resume();
-            if (isRecoveryTask){
-                isRecoveryTask = false;
-                pause();
-            }
         }else {
             if (!(alert instanceof TorrentAlert<?>)) {
                 return;
@@ -208,6 +196,12 @@ public class BtTask extends SessionManager implements AlertListener{
 
             //根据alert类型更新下载进度及下载状态
             switch (alert.type()) {
+                case TORRENT_CHECKED:
+                    if (isRecoveryTask){
+                        isRecoveryTask = false;
+                        pause();
+                    }
+                    break;
                 case TORRENT_FINISHED :
                     pause();
                     torrent.setFinished(true);

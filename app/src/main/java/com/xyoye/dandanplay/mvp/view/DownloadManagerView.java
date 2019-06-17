@@ -15,4 +15,6 @@ public interface DownloadManagerView extends BaseMvpView, LoadDataView {
     void refreshAdapter(List<Torrent> torrentList);
 
     void startNewTask();
+
+    void showLoading(String msg);
 }

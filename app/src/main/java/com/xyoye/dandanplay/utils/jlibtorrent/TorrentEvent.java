@@ -7,16 +7,19 @@ package com.xyoye.dandanplay.utils.jlibtorrent;
 public class TorrentEvent {
     public final static int EVENT_RESUME = 101;             //继续
     public final static int EVENT_PAUSE = 102;              //暂停
-    public final static int EVENT_DELETE_FILE = 104;        //删除一个任务
-    public final static int EVENT_DELETE_TASK = 105;        //删除一个任务和文件
-    public final static int EVENT_ALL_PAUSE = 106;          //暂停所有
-    public final static int EVENT_ALL_START = 107;          //开始所有
-    public final static int EVENT_ALL_DELETE_FILE = 108;    //删除所有任务和文件
-    public final static int EVENT_ALL_DELETE_TASK = 109;    //删除所以任务
-    public final static int EVENT_CLOSE_PLAY = 110;         //播放任务结束
+    public final static int EVENT_DELETE_TASK = 103;        //删除一个任务
+    public final static int EVENT_ALL_PAUSE = 104;          //暂停所有
+    public final static int EVENT_ALL_START = 105;          //开始所有
+    public final static int EVENT_DELETE_ALL_TASK = 106;    //删除所有任务
+    public final static int EVENT_PREPARE_PLAY = 107;       //准备播放
 
     private int action;
     private int position;
+    //是否删除文件
+    private boolean isDeleteFile;
+
+    public TorrentEvent() {
+    }
 
     public TorrentEvent(int action, int position) {
         this.action = action;
@@ -37,5 +40,13 @@ public class TorrentEvent {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public boolean isDeleteFile() {
+        return isDeleteFile;
+    }
+
+    public void setDeleteFile(boolean deleteFile) {
+        isDeleteFile = deleteFile;
     }
 }

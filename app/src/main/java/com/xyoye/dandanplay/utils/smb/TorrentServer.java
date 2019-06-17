@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 
 public class TorrentServer extends Thread implements HTTPRequestListener {
@@ -30,6 +28,10 @@ public class TorrentServer extends Thread implements HTTPRequestListener {
     private BtTask btTask;
 
     public TorrentServer(BtTask btTask){
+        this.btTask = btTask;
+    }
+
+    public void updateTask(BtTask btTask){
         this.btTask = btTask;
     }
 
@@ -58,6 +60,9 @@ public class TorrentServer extends Thread implements HTTPRequestListener {
 
     @Override
     public void httpRequestRecieved(HTTPRequest httpRequest) {
+        if (btTask == null)
+            return;
+
         long[] ranges = httpRequest.getContentRange();
         if (ranges[1] == 0)
             ranges[1] = 10 * 1024;

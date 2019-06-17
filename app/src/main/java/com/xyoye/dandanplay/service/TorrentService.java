@@ -18,12 +18,12 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
-import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 import com.xyoye.dandanplay.utils.smb.TorrentServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
@@ -54,17 +54,6 @@ public class TorrentService extends Service {
             BtTask btTask = new BtTask(torrent);
             btTask.startTask();
             showNotification();
-
-            if (torrentServer != null){
-                HTTPServerList httpServerList = torrentServer.getHttpServerList();
-                httpServerList.stop();
-                httpServerList.close();
-                httpServerList.clear();
-                torrentServer.interrupt();
-            }else {
-                torrentServer = new TorrentServer(btTask);
-                torrentServer.start();
-            }
         }
     }
 
@@ -79,86 +68,49 @@ public class TorrentService extends Service {
         switch (event.getAction()){
             //唤醒任务
             case TorrentEvent.EVENT_RESUME:
-                if (btTask.isPaused())
+                if (btTask.isPaused()){
                     btTask.resume();
+                }
                 break;
             //暂停任务
             case TorrentEvent.EVENT_PAUSE:
-                if (btTask.isRunning() && !btTask.isPaused())
+                if (btTask.isRunning() && !btTask.isPaused()){
                     btTask.pause();
+                }
                 break;
             //删除一个任务
             case TorrentEvent.EVENT_DELETE_TASK:
-                btTask.pause();
-                //TorrentUtil.deleteTorrent(torrent, false);
-                IApplication.taskList.remove(event.getPosition());
-                IApplication.taskMap.remove(btTask.getTorrent().getHash());
-                DataBaseManager.getInstance()
-                        .selectTable(6)
-                        .delete()
-                        .where(1, btTask.getTorrent().getTorrentPath())
-                        .execute();
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
-                break;
-            //删除一个任务并且删除文件
-            case TorrentEvent.EVENT_DELETE_FILE:
-                btTask.pause();
-                //TorrentUtil.deleteTorrent(torrent, false);
-                IApplication.taskList.remove(event.getPosition());
-                IApplication.taskMap.remove(btTask.getTorrent().getHash());
-                DataBaseManager.getInstance()
-                        .selectTable(6)
-                        .delete()
-                        .where(1, btTask.getTorrent().getTorrentPath())
-                        .execute();
-                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
+                deleteTask(event.getPosition(), event.isDeleteFile());
                 break;
             //暂停全部任务
             case TorrentEvent.EVENT_ALL_PAUSE:
                 for (BtTask task : IApplication.taskList){
-                    if (task.isRunning() && !task.isPaused())
+                    if (task.isRunning() && !task.isPaused()){
                         task.pause();
+                    }
                 }
                 break;
             //开始所有任务
             case TorrentEvent.EVENT_ALL_START:
                 for (BtTask task : IApplication.taskList){
-                    if (task.isPaused())
+                    if (task.isPaused()) {
                         task.resume();
+                    }
                 }
                 break;
             //删除所有任务
-            case TorrentEvent.EVENT_ALL_DELETE_TASK:
-//                Iterator<Torrent> iterator = IApplication.torrentList.iterator();
-//                while (iterator.hasNext()){
-//                    Torrent t = iterator.next();
-//                    torrentTask.pause(t);
-//                    TorrentUtil.deleteTorrent(t, false);
-//                    IApplication.torrentStorage.removeHash(t.getHash());
-//                    iterator.remove();
-//                }
-//                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
+            case TorrentEvent.EVENT_DELETE_ALL_TASK:
+                for (int i=0; i<IApplication.taskList.size(); i++){
+                    deleteTask(i, event.isDeleteFile());
+                }
                 break;
-            //删除所有任务并且删除文件
-            case TorrentEvent.EVENT_ALL_DELETE_FILE:
-//                Iterator<Torrent> iterator2 = IApplication.torrentList.iterator();
-//                while (iterator2.hasNext()){
-//                    Torrent t = iterator2.next();
-//                    torrentTask.pause(t);
-//                    TorrentUtil.deleteTorrent(t, true);
-//                    IApplication.torrentStorage.removeHash(t.getHash());
-//                    iterator2.remove();
-//                }
-//                EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
-                break;
-            case TorrentEvent.EVENT_CLOSE_PLAY:
-                if (torrentServer == null)
-                    return;
-                HTTPServerList httpServerList = torrentServer.getHttpServerList();
-                httpServerList.stop();
-                httpServerList.close();
-                httpServerList.clear();
-                torrentServer.interrupt();
+            case TorrentEvent.EVENT_PREPARE_PLAY:
+                if (torrentServer != null){
+                    torrentServer.updateTask(btTask);
+                }else {
+                    torrentServer = new TorrentServer(btTask);
+                    torrentServer.start();
+                }
                 break;
         }
     }
@@ -185,20 +137,21 @@ public class TorrentService extends Service {
 
         //刷新通知栏下载速度
         refresh = () -> {
-//            if (IApplication.torrentList.size() > 0){
-//                BytesInfo bytesInfo = Libtorrent.stats();
-//                downloaded.step(bytesInfo.getDownloaded());
-//                uploaded.step(bytesInfo.getUploaded());
-//                notificationManager.notify(NOTIFICATION_ID, showNotification());
-//            }
-            mHandler.postDelayed(refresh,1000);
+            if (IApplication.taskList.size() > 0){
+                notificationManager.notify(NOTIFICATION_ID, showNotification());
+            }
+            mHandler.postDelayed(refresh,3000);
         };
         refresh.run();
+
+        if (torrentServer == null){
+            torrentServer = new TorrentServer(null);
+            torrentServer.start();
+        }
     }
 
     private Notification showNotification(){
         int doneTask = 0;
-        int queueTask = 0;
         int pauseTask = 0;
         int doingTask = 0;
         for (BtTask task : IApplication.taskList){
@@ -206,9 +159,6 @@ public class TorrentService extends Service {
             switch (taskStatus){
                 case FINISHED:
                     doneTask++;
-                    break;
-                case ALLOCATING:
-                    queueTask++;
                     break;
                 case PAUSED:
                     pauseTask++;
@@ -228,23 +178,19 @@ public class TorrentService extends Service {
             downloadStatus = "已完成";
         }else if (doingTask > 0){
             downloadStatus = "下载中";
-        }else if (queueTask > 0){
-            downloadStatus = "连接中";
         }else if (pauseTask == IApplication.taskList.size()){
             downloadStatus = "全部暂停";
         }else {
             downloadStatus = "未知";
         }
 
-        return buildNotification(downloadStatus, doneTask, "0B", "0B");
+        return buildNotification(downloadStatus, doneTask);
     }
 
-    private Notification buildNotification(String downloadStatus, int doneTask, String downLoadSpeed, String uploadSpeed) {
+    private Notification buildNotification(String downloadStatus, int doneTask) {
 
         String msg = downloadStatus;
         msg += " 进度："+doneTask+"/"+IApplication.taskList.size();
-        msg += " · ↓"+downLoadSpeed+"/s";
-        msg += " · ↑"+uploadSpeed+"/s";
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
@@ -279,6 +225,12 @@ public class TorrentService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        HTTPServerList httpServerList = torrentServer.getHttpServerList();
+        httpServerList.stop();
+        httpServerList.close();
+        httpServerList.clear();
+        torrentServer.interrupt();
+
         mHandler.removeCallbacks(refresh);
         notificationManager.cancel(NOTIFICATION_ID);
         EventBus.getDefault().unregister(TorrentService.this);
@@ -293,5 +245,27 @@ public class TorrentService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
+    }
+
+    private void deleteTask(int position, boolean isDeleteFile){
+        BtTask btTask = IApplication.taskList.get(position);
+        //暂停任务
+        if (btTask.isRunning() && !btTask.isPaused()){
+            btTask.pause();
+        }
+        //从内存中移除数据
+        IApplication.taskList.remove(position);
+        IApplication.taskMap.remove(btTask.getTorrent().getHash());
+        //新建线程操作数据库及文件
+        new Thread(() -> {
+            //从数据库中移除任务
+            TorrentUtil.deleteDBTorrent(btTask.getTorrent().getTorrentPath());
+            //删除文件
+            if (isDeleteFile){
+                TorrentUtil.deleteTaskFile(btTask.getTorrent());
+            }
+        }).start();
+        //通知activity刷新界面
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
     }
 }

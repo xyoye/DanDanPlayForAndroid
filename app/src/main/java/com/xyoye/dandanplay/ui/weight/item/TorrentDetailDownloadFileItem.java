@@ -39,7 +39,6 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
     private View mView;
 
     public TorrentDetailDownloadFileItem() {
-
     }
 
     @Override
@@ -94,21 +93,9 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
                         0,
                         0
                 );
-//                if (model.getDownloaded() >= model.getLength()) {
-//                    PlayerManagerActivity.launchPlayer(
-//                            mView.getContext(),
-//                            model.getName(),
-//                            model.getPath(),
-//                            model.getDanmuPath(),
-//                            0,
-//                            model.getEpisodeId());
-//                }else {
-//                    ToastUtils.showShort("文件尚未下载完成");
-//                }
             }else {
                 ToastUtils.showShort("不支持播放的文件格式");
             }
-
         });
 
         danmuBindIv.setOnClickListener(v -> {

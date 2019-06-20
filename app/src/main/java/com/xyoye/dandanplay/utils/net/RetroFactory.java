@@ -93,6 +93,7 @@ public class RetroFactory {
                 .newBuilder()
                 .connectTimeout(5000, TimeUnit.MILLISECONDS)
                 .readTimeout(5000, TimeUnit.MILLISECONDS)
+                .addInterceptor(new GzipInterceptor())
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder builder = original.newBuilder()

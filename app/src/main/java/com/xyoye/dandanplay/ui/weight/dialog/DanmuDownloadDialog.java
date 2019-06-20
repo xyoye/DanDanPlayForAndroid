@@ -11,14 +11,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
-import com.xyoye.dandanplay.bean.event.OpenDanmuFolderEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -39,14 +36,14 @@ public class DanmuDownloadDialog extends Dialog{
     TextView statusTv;
 
     private DanmuMatchBean.MatchesBean bean;
-    private Context context;
     private String videoPath;
+    private OnDanmuDownloadListener listener;
 
-    public DanmuDownloadDialog(@NonNull Context context, int themeResId, String videoPath, DanmuMatchBean.MatchesBean bean) {
-        super(context, themeResId);
+    public DanmuDownloadDialog(@NonNull Context context, String videoPath, DanmuMatchBean.MatchesBean bean, OnDanmuDownloadListener listener) {
+        super(context, R.style.Dialog);
         this.bean = bean;
-        this.context = context;
         this.videoPath = videoPath;
+        this.listener = listener;
     }
 
     @Override
@@ -93,8 +90,7 @@ public class DanmuDownloadDialog extends Dialog{
                     statusTv.setText("保存完成！");
                     ToastUtils.showShort("下载完成："+danmuPath);
 
-                    EventBus.getDefault().post(
-                            new OpenDanmuFolderEvent(danmuPath, bean.getEpisodeId(), false));
+                    listener.onDownloaded(danmuPath, bean.getEpisodeId());
                 }
                 if (DanmuDownloadDialog.this.isShowing() && getOwnerActivity() != null && !getOwnerActivity().isFinishing())
                     DanmuDownloadDialog.this.cancel();
@@ -108,5 +104,9 @@ public class DanmuDownloadDialog extends Dialog{
                     DanmuDownloadDialog.this.cancel();
             }
         }, new NetworkConsumer());
+    }
+
+    public interface OnDanmuDownloadListener{
+        void onDownloaded(String danmuPath, int episodeId);
     }
 }

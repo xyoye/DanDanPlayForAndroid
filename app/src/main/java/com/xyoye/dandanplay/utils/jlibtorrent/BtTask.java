@@ -16,7 +16,6 @@ import com.frostwire.jlibtorrent.alerts.PieceFinishedAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentAlert;
 import com.frostwire.jlibtorrent.swig.settings_pack;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.database.DataBaseManager;
 
 import java.io.File;
 

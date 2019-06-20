@@ -24,7 +24,12 @@ public class DanmuNetworkItem  implements AdapterItem<DanmuMatchBean.MatchesBean
     @BindView(R.id.video_type_tv)
     TextView videoTypeTv;
 
+    private OnNetworkItemClickListener listener;
     private View mView;
+
+    public DanmuNetworkItem(OnNetworkItemClickListener listener){
+        this.listener = listener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -75,6 +80,10 @@ public class DanmuNetworkItem  implements AdapterItem<DanmuMatchBean.MatchesBean
                 break;
         }
 
-        mView.setOnClickListener(v -> EventBus.getDefault().post(new DownloadDanmuEvent(model)));
+        mView.setOnClickListener(v -> listener.onClick(model));
+    }
+
+    public interface OnNetworkItemClickListener{
+        void onClick(DanmuMatchBean.MatchesBean model);
     }
 }

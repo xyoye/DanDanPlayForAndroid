@@ -1,10 +1,13 @@
 package com.xyoye.dandanplay.ui.fragment;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +28,9 @@ import com.xyoye.dandanplay.ui.activities.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
+import com.xyoye.dandanplay.ui.activities.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.activities.SettingActivity;
+import com.xyoye.dandanplay.ui.activities.VideoScanActivity;
 import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimaItem;
 import com.xyoye.dandanplay.ui.weight.item.PersonalPlayHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -33,12 +39,15 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by xyoye on 2018/6/29.
  */
 
-public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView,View.OnClickListener {
+public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView{
     @BindView(R.id.user_info_rl)
     RelativeLayout userInfoRl;
     @BindView(R.id.user_image_iv)
@@ -47,8 +56,6 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     TextView userNameTv;
     @BindView(R.id.button_login)
     TextView loginButton;
-    @BindView(R.id.download_manager_rl)
-    RelativeLayout downloadManagerRl;
     @BindView(R.id.favorite_rl)
     RelativeLayout favoriteRl;
     @BindView(R.id.history_rl)
@@ -63,7 +70,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     private BaseRvAdapter<AnimeFavoriteBean.FavoritesBean> favoriteAdapter;
     private BaseRvAdapter<PlayHistoryBean.PlayHistoryAnimesBean> historyAdapter;
 
-    public static PersonalFragment newInstance(){
+    public static PersonalFragment newInstance() {
         return new PersonalFragment();
     }
 
@@ -104,15 +111,15 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         historyRecyclerView.setAdapter(historyAdapter);
     }
 
-    public void changeView(){
-        if (AppConfig.getInstance().isLogin()){
+    public void changeView() {
+        if (AppConfig.getInstance().isLogin()) {
             userInfoRl.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
             Glide.with(this)
                     .load(AppConfig.getInstance().getUserImage())
                     .into(userImageIv);
             userNameTv.setText(AppConfig.getInstance().getUserScreenName());
-        }else {
+        } else {
             loginButton.setVisibility(View.VISIBLE);
             userInfoRl.setVisibility(View.GONE);
         }
@@ -120,52 +127,13 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
 
     @Override
     public void initListener() {
-        userInfoRl.setOnClickListener(this);
-        loginButton.setOnClickListener(this);
-        userImageIv.setOnClickListener(this);
-        downloadManagerRl.setOnClickListener(this);
-        favoriteRl.setOnClickListener(this);
-        historyRl.setOnClickListener(this);
-
-        refresh.setOnRefreshListener(() ->{
-            if (AppConfig.getInstance().isLogin()){
+        refresh.setOnRefreshListener(() -> {
+            if (AppConfig.getInstance().isLogin()) {
                 presenter.getFragmentData();
-            }else {
+            } else {
                 refresh.setRefreshing(false);
             }
         });
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.user_info_rl:
-                launchActivity(PersonalInfoActivity.class);
-                break;
-            case R.id.button_login:
-                launchActivity(LoginActivity.class);
-                break;
-            case R.id.user_image_iv:
-                ToastUtils.showShort("头像功能暂未开放");
-                break;
-            case R.id.download_manager_rl:
-                launchActivity(DownloadMangerActivity.class);
-                break;
-            case R.id.favorite_rl:
-                if (AppConfig.getInstance().isLogin()){
-                    launchActivity(PersonalFavoriteActivity.class);
-                }else {
-                    launchActivity(LoginActivity.class);
-                }
-                break;
-            case R.id.history_rl:
-                if (AppConfig.getInstance().isLogin()){
-                    launchActivity(PersonalHistoryActivity.class);
-                }else {
-                    launchActivity(LoginActivity.class);
-                }
-                break;
-        }
     }
 
     @Override
@@ -200,16 +168,57 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
     }
 
     @Override
-    public void onSupportVisible(){
-        if (IApplication.isUpdateUserInfo){
+    public void onSupportVisible() {
+        if (IApplication.isUpdateUserInfo) {
             IApplication.isUpdateUserInfo = false;
-            if (AppConfig.getInstance().isLogin()){
+            if (AppConfig.getInstance().isLogin()) {
                 refresh.setRefreshing(true);
                 presenter.getFragmentData();
-            }else {
+            } else {
                 refreshUI(null, null);
             }
             changeView();
+        }
+    }
+
+    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_rl, R.id.history_rl})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.player_setting_ll:
+                launchActivity(PlayerSettingActivity.class);
+                break;
+            case R.id.app_setting_ll:
+                launchActivity(SettingActivity.class);
+                break;
+            case R.id.scan_setting_ll:
+                launchActivity(VideoScanActivity.class);
+                break;
+            case R.id.download_setting_ll:
+                launchActivity(DownloadMangerActivity.class);
+                break;
+            case R.id.user_info_rl:
+                launchActivity(PersonalInfoActivity.class);
+                break;
+            case R.id.button_login:
+                launchActivity(LoginActivity.class);
+                break;
+            case R.id.user_image_iv:
+                ToastUtils.showShort("头像功能暂未开放");
+                break;
+            case R.id.favorite_rl:
+                if (AppConfig.getInstance().isLogin()) {
+                    launchActivity(PersonalFavoriteActivity.class);
+                } else {
+                    launchActivity(LoginActivity.class);
+                }
+                break;
+            case R.id.history_rl:
+                if (AppConfig.getInstance().isLogin()) {
+                    launchActivity(PersonalHistoryActivity.class);
+                } else {
+                    launchActivity(LoginActivity.class);
+                }
+                break;
         }
     }
 }

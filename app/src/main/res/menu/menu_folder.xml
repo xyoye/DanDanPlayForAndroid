@@ -4,12 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.FolderActivity">
 
-    <item android:id="@+id/player_setting"
-        android:title="播放器设置"
-        android:icon="@drawable/ic_settings_white"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
-
     <item
         android:id="@+id/sort_by_name"
         android:orderInCategory="100"

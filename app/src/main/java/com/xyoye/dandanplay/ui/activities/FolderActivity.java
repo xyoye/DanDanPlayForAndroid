@@ -202,9 +202,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                     sort(Constants.FolderSort.DURATION_ASC);
                 adapter.notifyDataSetChanged();
                 break;
-            case R.id.player_setting:
-                launchActivity(PlayerSettingActivity.class);
-                break;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -18,7 +18,6 @@ import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseAppFragment;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.database.DataBaseManager;
@@ -31,7 +30,6 @@ import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
@@ -45,7 +43,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private PersonalFragment personalFragment;
     private BaseAppFragment previousFragment;
 
-    private MenuItem menuMainItem, menuLanItem, menuNetItem, menuSettingItem;
+    private MenuItem menuLanItem, menuNetItem;
 
     private long touchTime = 0;
 
@@ -115,10 +113,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         mDelegate.showHideFragment(homeFragment, previousFragment);
                     }
                     previousFragment = homeFragment;
-                    menuMainItem.setVisible(false);
                     menuLanItem.setVisible(false);
                     menuNetItem.setVisible(false);
-                    menuSettingItem.setVisible(false);
                     return true;
                 case R.id.navigation_play:
                     setTitle("媒体库");
@@ -130,10 +126,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     }
                     playFragment.registerEventBus();
                     previousFragment = playFragment;
-                    menuMainItem.setVisible(true);
                     menuLanItem.setVisible(true);
                     menuNetItem.setVisible(true);
-                    menuSettingItem.setVisible(false);
                     return true;
                 case R.id.navigation_personal:
                     setTitle("个人中心");
@@ -144,10 +138,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         mDelegate.showHideFragment(personalFragment, previousFragment);
                     }
                     previousFragment = personalFragment;
-                    menuMainItem.setVisible(false);
                     menuLanItem.setVisible(false);
                     menuNetItem.setVisible(false);
-                    menuSettingItem.setVisible(true);
                     return true;
             }
             return false;
@@ -174,14 +166,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menuMainItem = menu.findItem(R.id.menu_item_scan);
         menuLanItem = menu.findItem(R.id.menu_item_lan);
         menuNetItem = menu.findItem(R.id.menu_item_network);
-        menuSettingItem = menu.findItem(R.id.menu_item_setting);
-        menuMainItem.setVisible(true);
         menuLanItem.setVisible(true);
         menuNetItem.setVisible(true);
-        menuSettingItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -189,18 +177,11 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_scan:
-                launchActivity(VideoScanActivity.class);
-                break;
             case R.id.menu_item_lan:
                 launchActivity(SmbActivity.class);
-                //EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_LAN_FOLDER));
                 break;
             case R.id.menu_item_network:
                 new CommonEditTextDialog(this, R.style.Dialog, CommonEditTextDialog.NETWORK_LINK).show();
-                break;
-            case R.id.menu_item_setting:
-                launchActivity(SettingActivity.class);
                 break;
         }
         return super.onOptionsItemSelected(item);

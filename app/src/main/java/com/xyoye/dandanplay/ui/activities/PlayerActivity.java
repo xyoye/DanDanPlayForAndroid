@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.player.commom.bean.SubtitleBean;
 import com.player.commom.listener.OnDanmakuListener;
@@ -48,6 +49,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 import com.xyoye.dandanplay.utils.net.RetrofitService;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
+import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -456,19 +458,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     //查询字幕
     private void querySubtitle(String videoPath){
         String thunderHash = HashUtils.getFileSHA1(videoPath);
-        Map<String, String> shooterParams = new HashMap<>();
-        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
-        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
-        shooterParams.put("format", "json");
-        shooterParams.put("lang", "Chn");
-        RetrofitService service = RetroFactory.getSubtitleInstance();
-        service.queryThunder(thunderHash)
-                .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
-                        SubtitleConverter.transform(thunder, shooters, videoPath))
-                .doOnSubscribe(new NetworkConsumer())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subtitleObserver);
+        String shooterHash = HashUtils.getFileHash(videoPath);
+        if (!StringUtils.isEmpty(thunderHash) && !StringUtils.isEmpty(shooterHash)){
+            Map<String, String> shooterParams = new HashMap<>();
+            shooterParams.put("filehash", shooterHash);
+            shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
+            shooterParams.put("format", "json");
+            shooterParams.put("lang", "Chn");
+            RetrofitService service = RetroFactory.getSubtitleInstance();
+            service.queryThunder(thunderHash)
+                    .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
+                            SubtitleConverter.transform(thunder, shooters, videoPath))
+                    .doOnSubscribe(new NetworkConsumer())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(subtitleObserver);
+        }
     }
 
     //下载字幕

@@ -331,4 +331,15 @@ public class AppConfig {
     public void setBackupNotNull(){
         SPUtils.getInstance().put(Constants.Config.IS_BACKUP_BLOCK, false);
     }
+
+    /**
+     * smb文件排序是否为grid layout
+     */
+    public boolean smbIsGridLayout(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.SMB_IS_GRID_LAYOUT, true);
+    }
+
+    public void setSmbIsGridLayout(boolean isGridLayout){
+        SPUtils.getInstance().put(Constants.Config.SMB_IS_GRID_LAYOUT, isGridLayout);
+    }
 }

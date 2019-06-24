@@ -12,4 +12,11 @@
         android:orderInCategory="100"
         android:title="添加"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/sort_item"
+        android:orderInCategory="100"
+        android:icon="@mipmap/ic_sort_grid"
+        android:title="排序方式"
+        app:showAsAction="ifRoom" />
 </menu>

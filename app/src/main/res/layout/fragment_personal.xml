@@ -74,7 +74,7 @@
                 android:layout_height="46dp"
                 android:padding="8dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/ic_main_player_setting"/>
+                android:src="@mipmap/ic_personal_player_setting"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -96,9 +96,9 @@
             <ImageView
                 android:layout_width="46dp"
                 android:layout_height="46dp"
-                android:padding="9dp"
+                android:padding="8dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/ic_main_scan_setting"/>
+                android:src="@mipmap/ic_personal_scan_setting"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -122,7 +122,7 @@
                 android:layout_height="46dp"
                 android:padding="8dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/ic_main_setting"/>
+                android:src="@mipmap/ic_personal_app_setting"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -154,7 +154,7 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:padding="10dp"
+                android:padding="12dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@mipmap/ic_personal_follow"/>
 
@@ -210,7 +210,7 @@
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:padding="14dp"
+                android:padding="12dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@mipmap/ic_personal_download"/>
 

@@ -23,34 +23,5 @@
         app:itemIconTint="@drawable/selector_navigation"
         app:itemTextColor="@drawable/selector_navigation"
         app:menu="@menu/navigation" />
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="54dp"-->
-        <!--android:layout_gravity="bottom"-->
-        <!--android:background="@color/white"-->
-        <!--android:gravity="center_horizontal|center_vertical"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:paddingBottom="3dp"-->
-        <!--android:paddingTop="3dp">-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/main_home"-->
-            <!--style="@style/FooterStyle"-->
-            <!--android:drawableTop="@drawable/ic_home_light"-->
-            <!--android:text="公告与番组" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/main_play"-->
-            <!--style="@style/FooterStyle"-->
-            <!--android:drawableTop="@drawable/ic_folder_light"-->
-            <!--android:text="媒体库" />-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/main_personal"-->
-            <!--style="@style/FooterStyle"-->
-            <!--android:drawableTop="@drawable/ic_account_box_light"-->
-            <!--android:text="我的" />-->
-
-    <!--</LinearLayout>-->
 
 </LinearLayout>

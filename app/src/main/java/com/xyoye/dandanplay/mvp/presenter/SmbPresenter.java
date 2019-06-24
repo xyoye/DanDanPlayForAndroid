@@ -23,4 +23,6 @@ public interface SmbPresenter extends BaseMvpPresenter {
     void openSmbFile(SmbBean smbBean);
 
     void returnParentFolder();
+
+    void removeSqlDevice(String url);
 }

@@ -342,4 +342,13 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
             listSmbFolder(smbBean);
         }
     }
+
+    @Override
+    public void removeSqlDevice(String url) {
+        DataBaseManager.getInstance()
+                .selectTable(7)
+                .delete()
+                .where(3, url)
+                .postExecute();
+    }
 }

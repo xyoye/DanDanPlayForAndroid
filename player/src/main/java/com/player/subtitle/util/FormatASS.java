@@ -63,7 +63,8 @@ public class FormatASS implements TimedTextFileFormat {
 
 		//first lets load the file
 		//creating a reader with correct encoding
-		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file);
+		Charset defaultCharset = Charset.forName("utf-16");
+		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
 		BufferedReader br = new BufferedReader(in);
 		String line;
 		int lineCounter = 0;

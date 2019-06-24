@@ -1,5 +1,9 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
+import android.media.MediaScannerConnection;
+
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.frostwire.jlibtorrent.AlertListener;
 import com.frostwire.jlibtorrent.AnnounceEntry;
@@ -16,6 +20,7 @@ import com.frostwire.jlibtorrent.alerts.PieceFinishedAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentAlert;
 import com.frostwire.jlibtorrent.swig.settings_pack;
 import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import java.io.File;
 
@@ -155,6 +160,26 @@ public class BtTask extends SessionManager implements AlertListener{
         return queryPriceResult;
     }
 
+    /**
+     * 通知系统刷新已下载完成的文件
+     */
+    private void refreshFinishFile(){
+        String[] paths = new String[torrent.getTorrentFileList().size()];
+        String[] mimeTypes = new String[paths.length];
+        for (int i = 0; i < torrent.getTorrentFileList().size(); i++) {
+            paths[i] = torrent.getTorrentFileList().get(i).getPath();
+            if (CommonUtils.isMediaFile(paths[i])){
+                String ext = FileUtils.getFileExtension(paths[i]);
+                mimeTypes[i] = "video/"+ext;
+            }else {
+                mimeTypes[i] = "";
+            }
+        }
+
+        MediaScannerConnection.scanFile(IApplication.get_context(), paths, mimeTypes, (path, uri) ->
+                LogUtils.d("system scan file completed"));
+    }
+
     @Override
     public int[] types() {
         //不限制接收的alert
@@ -207,6 +232,7 @@ public class BtTask extends SessionManager implements AlertListener{
                     taskStatus = TaskStatus.FINISHED;
                     btFilePrices.setDownloadOver();
                     queryPriceResult = true;
+                    refreshFinishFile();
                     break;
                 case STATE_CHANGED:
                     taskStatus = getState(torrentHandle);

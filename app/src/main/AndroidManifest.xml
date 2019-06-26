@@ -123,6 +123,10 @@
         <activity
             android:name=".ui.activities.ImagePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!--弹幕屏蔽管理-->
+        <activity
+            android:name=".ui.activities.BlockManagerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--播放器-->
         <activity
             android:name=".ui.activities.PlayerActivity"

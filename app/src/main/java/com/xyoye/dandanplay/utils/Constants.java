@@ -50,8 +50,6 @@ public class Constants {
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
         //上次播放的视频
         public static final String LAST_PLAY_VIDEO_PATH = "last_play_video_path";
-        //是否已备份过屏蔽数据库
-        public static final String IS_BACKUP_BLOCK = "is_backup_block";
         //SMB文件是否为Grid排序
         public static final String SMB_IS_GRID_LAYOUT = "smb_is_grid_layout";
     }

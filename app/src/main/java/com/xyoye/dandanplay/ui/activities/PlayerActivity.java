@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -87,6 +88,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private long currentPosition;
     private int episodeId;
     private List<SubtitleBean> subtitleList;
+    private List<String> normalFilterList;
 
     //电源广播
     private BatteryBroadcastReceiver batteryReceiver;
@@ -150,6 +152,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
         //初始化接口
         initListener();
+
+        //初始化屏蔽信息
+        initNormalFilter();
 
         //初始化播放器
         initPlayer();
@@ -303,7 +308,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
+                .setNormalFilterData(normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
@@ -335,7 +340,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
+                .setNormalFilterData(normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
@@ -453,6 +458,21 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     @Override
     public void onScreenLocked() {
         mPlayer.onScreenLocked();
+    }
+
+    //获取本地屏蔽信息
+    private void initNormalFilter(){
+        normalFilterList = new ArrayList<>();
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(13)
+                .query()
+                .setColumns(1)
+                .execute();
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                normalFilterList.add(cursor.getString(0));
+            }
+        }
     }
 
     //查询字幕

@@ -52,6 +52,7 @@
                 android:id="@+id/edit_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="14sp"
                 android:layout_toEndOf="@+id/user_name_iv"
                 android:hint="" />
         </android.support.design.widget.TextInputLayout>

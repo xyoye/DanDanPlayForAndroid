@@ -12,16 +12,11 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -104,30 +99,17 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.screen_name_rl:
-                CommonEditTextDialog dialog = new CommonEditTextDialog(PersonalInfoActivity.this, R.style.Dialog, CommonEditTextDialog.SCREEN_NAME);
+                new CommonEditTextDialog(PersonalInfoActivity.this, CommonEditTextDialog.SCREEN_NAME, data -> {
+                    screenNameTv.setText(data[0]);
+                    AppConfig.getInstance().saveUserScreenName(data[0]);
+                    IApplication.isUpdateUserInfo = true;
+                    ToastUtils.showShort("修改昵称成功");
+                });
                 dialog.show();
                 break;
             case R.id.password_rl:
                 launchActivity(ChangePasswordActivity.class);
                 break;
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ChangeScreenNameEvent event){
-        screenNameTv.setText(event.getScreenName());
-        IApplication.isUpdateUserInfo = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 }

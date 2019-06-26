@@ -663,24 +663,27 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         //弹幕屏蔽事件回调
         DanmuBlockView.DanmuBlockListener danmuBlockCallBack = new DanmuBlockView.DanmuBlockListener() {
             @Override
-            public void removeBlock(String text) {
-                //从数据库移除
-                if (mDanmakuListener != null) {
-                    mDanmakuListener.deleteBlock(text);
+            public void removeBlock(List<String> data) {
+                for (String text : data){
+                    //从数据库移除
+                    if (mDanmakuListener != null){
+                        mDanmakuListener.deleteBlock(text);
+                    }
+                    //弹幕中移除
+                    mDanmakuContext.removeKeyWordBlackList(text);
                 }
-                //弹幕中移除
-                mDanmakuContext.removeKeyWordBlackList(text);
-                ToastUtils.showLong("已移除“ " + text + " ”");
             }
 
             @Override
-            public void addBlock(String blockText) {
-                //添加到数据库
-                if (mDanmakuListener != null) {
-                    mDanmakuListener.addBlock(blockText);
+            public void addBlock(List<String> data) {
+                for (String text : data){
+                    //添加到数据库
+                    if(mDanmakuListener != null){
+                        mDanmakuListener.addBlock(text);
+                    }
+                    //添加到弹幕屏蔽
+                    mDanmakuContext.addBlockKeyWord(text);
                 }
-                //添加到弹幕屏蔽
-                mDanmakuContext.addBlockKeyWord(blockText);
             }
 
             @Override

@@ -2,8 +2,6 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -29,7 +26,6 @@ import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
-import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
@@ -70,8 +66,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
         //延迟500ms，防止与playFragment请求权限回调冲突
         navigationView.postDelayed(this::initTracker, 500);
-
-        backupBlock();
     }
 
     @Override
@@ -181,7 +175,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                 launchActivity(SmbActivity.class);
                 break;
             case R.id.menu_item_network:
-                new CommonEditTextDialog(this, R.style.Dialog, CommonEditTextDialog.NETWORK_LINK).show();
+                new CommonEditTextDialog(this, CommonEditTextDialog.NETWORK_LINK).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -192,23 +186,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         super.onDestroy();
         if (playFragment != null){
             playFragment.unregisterEventBus();
-        }
-    }
-
-    //备份弹幕屏蔽的数据库，仅对旧版本（3.3.2及之前）的用户进行一次备份
-    private void backupBlock(){
-        //已获得权限，即视为不是第一次安装
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-                (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)  == PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)  == PackageManager.PERMISSION_GRANTED)) {
-            //如果从未备份备份
-            if (AppConfig.getInstance().isBackupNull()){
-                LogUtils.d("start backup block");
-                presenter.backupBlockData();
-                AppConfig.getInstance().setBackupNotNull();
-            }
-        }else {
-            AppConfig.getInstance().setBackupNotNull();
         }
     }
 

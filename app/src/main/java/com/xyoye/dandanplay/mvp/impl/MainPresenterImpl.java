@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,7 +25,6 @@ import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,7 +54,6 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     public void process(Bundle savedInstanceState) {
         initAnimeType();
         initSubGroup();
-        initNormalFilter();
         long lastUpdateTime = AppConfig.getInstance().getUpdateFilterTime();
         long nowTime = System.currentTimeMillis();
         //七天更新一次云过滤列表
@@ -172,24 +169,6 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
         }, new NetworkConsumer());
     }
 
-    //弹幕本地过滤
-    private void initNormalFilter(){
-        new Thread(() -> {
-            List<String> blockList = new ArrayList<>();
-            Cursor cursor = DataBaseManager.getInstance()
-                    .selectTable(13)
-                    .query()
-                    .setColumns(1)
-                    .execute();
-            if (cursor != null){
-                while (cursor.moveToNext()){
-                    blockList.add(cursor.getString(0));
-                }
-            }
-            IApplication.normalFilterList.addAll(blockList);
-        }).start();
-    }
-
     //弹幕云过滤
     private void initCloudFilter(){
         new Thread(() -> {
@@ -251,49 +230,5 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
         }
         return filter;
-    }
-
-    /**
-     * 备份屏蔽数据
-     */
-    @Override
-    @SuppressLint("SdCardPath")
-    public void backupBlockData(){
-        try {
-            //query
-            SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase("/data/data/com.xyoye.dandanplay/databases/db_block_data.db",null);
-            Cursor cursor = database.query("block", new String[]{"text"}, null, null, null, null, null);
-            List<String> blockList = new ArrayList<>();
-            while (cursor.moveToNext()){
-                blockList.add(cursor.getString(0));
-            }
-            cursor.close();
-            if (blockList.size() < 1) return;
-
-            //save
-            File blockFolder = new File(Constants.DefaultConfig.backupFolder);
-            if (!blockFolder.exists()){
-                blockFolder.mkdirs();
-            }
-
-            File backupFile = new File(blockFolder, "block.txt");
-            if (backupFile.exists())
-                backupFile.delete();
-            backupFile.createNewFile();
-
-            FileWriter fileWriter = new FileWriter(backupFile);
-            for (String blockText : blockList){
-                fileWriter.append(blockText).append("\n");
-            }
-            fileWriter.flush();
-            fileWriter.close();
-
-            //delete
-            database.delete("block", null, null);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
     }
 }

@@ -45,7 +45,6 @@ public class IApplication extends BaseApplication {
     public static Map<String, Integer> taskMap = new HashMap<>();
     public static List<String> trackers = new ArrayList<>();
     public static List<String> cloudFilterList = new ArrayList<>();
-    public static List<String> normalFilterList = new ArrayList<>();
     public static boolean isUpdateUserInfo = true;
     //是否第一次打开任务管理界面
     public static boolean isFirstOpenTaskPage = true;

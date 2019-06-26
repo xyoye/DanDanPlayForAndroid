@@ -10,4 +10,7 @@
         <item>超清</item>
         <item>1080P</item>
     </string-array>
+
+    <item name="tag_key_data" type="id"/>
+    <item name="tag_key_position" type="id"/>
 </resources>

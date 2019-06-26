@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
@@ -64,33 +65,41 @@ public class PlayerManagerActivity extends AppCompatActivity {
 
         //外部打开 或 smb播放
         if (Intent.ACTION_VIEW.equals(openIntent.getAction()) || isSmbPlay) {
-            Uri data = getIntent().getData();
-            if (data != null) {
-                videoPath = CommonUtils.getRealFilePath(PlayerManagerActivity.this, data);
-                if (videoPath != null){
-                    videoTitle = FileUtils.getFileName(videoPath);
-                    //是否展示前往选择弹幕弹窗
-                    if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
-                        new DanmuSelectDialog(this, isSelectDanmu -> {
-                            if (isSelectDanmu) {
-                                launchDanmuSelect(videoPath);
-                            }
-                        }).show();
-                    } else {
-                        if (AppConfig.getInstance().isOuterChainDanmuSelect()) {
+
+            if (!isSmbPlay){
+                Uri data = getIntent().getData();
+                if (data != null) {
+                    videoPath = CommonUtils.getRealFilePath(PlayerManagerActivity.this, data);
+                } else {
+                    ToastUtils.showShort("解析视频地址失败");
+                    errorTv.setVisibility(View.VISIBLE);
+                    return;
+                }
+            }
+
+            if (!StringUtils.isEmpty(videoPath)){
+                videoTitle = FileUtils.getFileName(videoPath);
+                //是否展示前往选择弹幕弹窗
+                if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
+                    new DanmuSelectDialog(this, isSelectDanmu -> {
+                        if (isSelectDanmu) {
                             launchDanmuSelect(videoPath);
                         }else {
                             launchPlayerActivity();
                         }
-                    }
+                    }).show();
                 } else {
-                    ToastUtils.showShort("解析视频地址失败");
-                    errorTv.setVisibility(View.VISIBLE);
+                    if (AppConfig.getInstance().isOuterChainDanmuSelect()) {
+                        launchDanmuSelect(videoPath);
+                    }else {
+                        launchPlayerActivity();
+                    }
                 }
             } else {
                 ToastUtils.showShort("解析视频地址失败");
                 errorTv.setVisibility(View.VISIBLE);
             }
+
         }else {
             launchPlayerActivity();
         }
@@ -99,7 +108,7 @@ public class PlayerManagerActivity extends AppCompatActivity {
     private void launchDanmuSelect(String videoPath) {
         Intent intent = new Intent(PlayerManagerActivity.this, DanmuNetworkActivity.class);
         intent.putExtra("video_path", videoPath);
-        intent.putExtra("is_lan", false);
+        intent.putExtra("is_smb", true);
         startActivityForResult(intent, SELECT_DANMU);
     }
 
@@ -128,12 +137,12 @@ public class PlayerManagerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_DANMU){
+        if (requestCode == SELECT_DANMU){
+            if (resultCode == RESULT_OK) {
                 danmuPath = data.getStringExtra("path");
                 episodeId = data.getIntExtra("episode_id", 0);
-                launchPlayerActivity();
             }
+            launchPlayerActivity();
         }
     }
 

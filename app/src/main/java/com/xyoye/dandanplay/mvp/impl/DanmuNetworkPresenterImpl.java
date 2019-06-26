@@ -37,21 +37,7 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
 
     @Override
     public void process(Bundle savedInstanceState) {
-        getView().showLoading();
-        String videoPath = getView().getVideoPath();
 
-        if (StringUtils.isEmpty(videoPath)) return;
-        String title = FileUtils.getFileName(videoPath);
-        String hash = MD5Util.getVideoFileHash(videoPath);
-        long length = new File(videoPath).length();
-        long duration = MD5Util.getVideoDuration(videoPath);
-        DanmuMatchParam param = new DanmuMatchParam();
-        param.setFileName(title);
-        param.setFileHash(hash);
-        param.setFileSize(length);
-        param.setVideoDuration(duration);
-        param.setMatchMode("hashAndFileName");
-        matchDanmu(param);
     }
 
     @Override
@@ -70,7 +56,25 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
     }
 
     @Override
-    public void matchDanmu(DanmuMatchParam param) {
+    public void matchDanmu(String videoPath) {
+
+        if (StringUtils.isEmpty(videoPath)){
+            ToastUtils.showShort("无匹配弹幕");
+            return;
+        }
+
+        String title = FileUtils.getFileName(videoPath);
+        String hash = MD5Util.getVideoFileHash(videoPath);
+        long length = new File(videoPath).length();
+        long duration = MD5Util.getVideoDuration(videoPath);
+        DanmuMatchParam param = new DanmuMatchParam();
+        param.setFileName(title);
+        param.setFileHash(hash);
+        param.setFileSize(length);
+        param.setVideoDuration(duration);
+        param.setMatchMode("hashAndFileName");
+
+        getView().showLoading();
         DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {

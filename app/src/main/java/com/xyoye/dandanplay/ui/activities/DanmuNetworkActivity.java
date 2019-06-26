@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
@@ -24,6 +26,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +69,19 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.setItemViewCacheSize(10);
         recyclerView.addItemDecoration(new ItemDecorationSpaces(0, 0, 0, 1));
         recyclerView.setAdapter(adapter);
+
         videoPath = getIntent().getStringExtra("video_path");
+        boolean isSmb = getIntent().getBooleanExtra("is_smb", false);
+        if (!isSmb){
+            presenter.matchDanmu(videoPath);
+        }else {
+            if (!StringUtils.isEmpty(videoPath)){
+                String title = FileUtils.getFileNameNoExtension(videoPath);
+                presenter.searchDanmu(title, "");
+            }else {
+                ToastUtils.showShort("无匹配弹幕");
+            }
+        }
     }
 
     @Override
@@ -109,11 +124,6 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     @Override
     protected int initPageLayoutID() {
         return R.layout.activity_danmu_network;
-    }
-
-    @Override
-    public String getVideoPath() {
-        return videoPath;
     }
 
     @Override

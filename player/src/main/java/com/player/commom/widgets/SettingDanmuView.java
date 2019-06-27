@@ -154,9 +154,15 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         isShowMobile = mob;
         isShowTop = top;
         isShowBottom = bot;
-        if (isShowMobile) mDanmuMobileIv.setImageResource(R.mipmap.ic_mobile_unselect);
-        if (isShowTop) mDanmuTopIv.setImageResource(R.mipmap.ic_top_unselect);
-        if (isShowBottom) mDanmuBottomIv.setImageResource(R.mipmap.ic_bottom_unselect);
+        mDanmuMobileIv.setImageResource(isShowMobile
+                ? R.mipmap.ic_mobile_unselect
+                : R.mipmap.ic_mobile_select);
+        mDanmuTopIv.setImageResource(isShowTop
+                ? R.mipmap.ic_top_unselect
+                : R.mipmap.ic_top_select);
+        mDanmuBottomIv.setImageResource(isShowBottom
+                ? R.mipmap.ic_bottom_unselect
+                : R.mipmap.ic_bottom_select);
         return this;
     }
 

@@ -64,18 +64,19 @@ public class TorrentService extends Service {
             return;
         }
         //获取对应任务判断状态
-        BtTask btTask = IApplication.taskList.get(event.getPosition());
         switch (event.getAction()){
             //唤醒任务
             case TorrentEvent.EVENT_RESUME:
-                if (btTask.isPaused()){
-                    btTask.resume();
+                BtTask resumeTask = IApplication.taskList.get(event.getPosition());
+                if (resumeTask.isPaused()){
+                    resumeTask.resume();
                 }
                 break;
             //暂停任务
             case TorrentEvent.EVENT_PAUSE:
-                if (btTask.isRunning() && !btTask.isPaused()){
-                    btTask.pause();
+                BtTask pauseTask = IApplication.taskList.get(event.getPosition());
+                if (pauseTask.isRunning() && !pauseTask.isPaused()){
+                    pauseTask.pause();
                 }
                 break;
             //删除一个任务
@@ -85,7 +86,7 @@ public class TorrentService extends Service {
             //暂停全部任务
             case TorrentEvent.EVENT_ALL_PAUSE:
                 for (BtTask task : IApplication.taskList){
-                    if (task.isRunning() && !task.isPaused()){
+                    if (!task.isPaused()){
                         task.pause();
                     }
                 }
@@ -105,10 +106,11 @@ public class TorrentService extends Service {
                 }
                 break;
             case TorrentEvent.EVENT_PREPARE_PLAY:
+                BtTask playTask = IApplication.taskList.get(event.getPosition());
                 if (torrentServer != null){
-                    torrentServer.updateTask(btTask);
+                    torrentServer.updateTask(playTask);
                 }else {
-                    torrentServer = new TorrentServer(btTask);
+                    torrentServer = new TorrentServer(playTask);
                     torrentServer.start();
                 }
                 break;

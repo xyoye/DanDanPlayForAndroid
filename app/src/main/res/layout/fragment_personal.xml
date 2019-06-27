@@ -260,6 +260,28 @@
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:orientation="vertical"
+            android:clickable="false">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="2dp"
+            android:orientation="vertical"
+            android:clickable="false">
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

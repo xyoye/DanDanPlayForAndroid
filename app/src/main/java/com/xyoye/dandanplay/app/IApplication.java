@@ -1,9 +1,7 @@
 package com.xyoye.dandanplay.app;
 
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,13 +16,11 @@ import com.taobao.sophix.SophixManager;
 import com.taobao.sophix.listener.PatchLoadStatusListener;
 import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -33,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.yokeyword.fragmentation.BuildConfig;
 import me.yokeyword.fragmentation.Fragmentation;
 
 /**
@@ -68,16 +63,15 @@ public class IApplication extends BaseApplication {
         //播放器配置
         PlayerConfigShare.initPlayerConfigShare(this);
 
-        new Thread(() -> {
-            //首次打开App
-            if (AppConfig.getInstance().isFirstStart()) {
-                //扫描文件夹
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                ContentValues values = new ContentValues();
-                values.put(DataBaseInfo.getFieldNames()[11][1], AppConfig.getInstance().getDownloadFolder());
-                sqLiteDatabase.insert(DataBaseInfo.getTableNames()[11], null, values);
-            }
-        }).start();
+        //首次打开App
+        if (AppConfig.getInstance().isFirstStart()) {
+            //扫描文件夹
+            DataBaseManager.getInstance()
+                    .selectTable(11)
+                    .insert()
+                    .param(1, AppConfig.getInstance().getDownloadFolder())
+                    .postExecute();
+        }
 
         //Fragmentation
         Fragmentation.builder()

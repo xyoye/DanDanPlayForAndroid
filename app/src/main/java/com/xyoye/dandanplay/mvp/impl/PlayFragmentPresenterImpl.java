@@ -1,10 +1,9 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -16,6 +15,7 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
@@ -27,7 +27,6 @@ import java.util.Map;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -38,7 +37,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {
-    private Disposable querySqlFileDis, queryDocFileDis;
+    private Disposable querySqlFileDis, refreshFileDis;
 
     public PlayFragmentPresenterImpl(PlayFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -68,148 +67,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     public void destroy() {
         if (querySqlFileDis != null)
             querySqlFileDis.dispose();
-        if (queryDocFileDis != null)
-            queryDocFileDis.dispose();
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    public void getVideoFormSystem() {
-        String[] projection = new String[]{ MediaStore.Video.Media.DATA, MediaStore.Video.Media._ID, MediaStore.Video.Media.SIZE, MediaStore.Video.Media.DURATION};
-        queryDocFileDis = Observable.just(getApplicationContext())
-                .map(context -> {
-                    try {
-                        Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                                projection, null, null, null);
-                        if (cursor == null) return getFolderList();
-                        while (cursor.moveToNext()) {
-
-                            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
-                            int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
-                            long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
-                            long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
-
-                            VideoBean videoBean = new VideoBean();
-                            videoBean.set_id(_id);
-                            videoBean.setVideoPath(path);
-                            videoBean.setVideoDuration(duration);
-                            videoBean.setVideoSize(size);
-                            saveData(videoBean);
-                        }
-                        cursor.close();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    return getFolderList();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoList ->
-                        getView().refreshAdapter(videoList));
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    public void getVideoFormSystemAndSave() {
-        Observable.just(getView().getContext())
-                //刷新媒体文件
-                .map(this::queryVideoFormMediaStore)
-                //获取保存的扫描文件夹
-                .map(over -> queryVideoFormPath())
-                //遍历文件夹
-                .flatMap(
-                        (Function<File[], ObservableSource<File>>) fileList -> Observable
-                        .fromArray(fileList)
-                        .flatMap(this::listFiles)
-                )
-                //保存视频文件信息
-                .map(file -> {
-                    String filePath = file.getAbsolutePath();
-                    VideoBean videoBean = new VideoBean();
-                    videoBean.setVideoPath(filePath);
-                    videoBean.setVideoDuration(0);
-                    videoBean.setVideoSize(file.length());
-                    videoBean.set_id(0);
-                    saveData(videoBean);
-                    return getFolderList();
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<FolderBean>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<FolderBean> folderBeans) {
-                       getView().refreshAdapter(folderBeans);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        getView().refreshOver();
-                    }
-                });
-    }
-
-    private boolean queryVideoFormMediaStore(Context context){
-        Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                null, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-
-                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
-                int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
-                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
-                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
-
-                VideoBean videoBean = new VideoBean();
-                videoBean.set_id(_id);
-                videoBean.setVideoPath(path);
-                videoBean.setVideoDuration(duration);
-                videoBean.setVideoSize(size);
-                saveData(videoBean);
-            }
-            cursor.close();
-        }
-        return true;
-    }
-
-    private File[] queryVideoFormPath(){
-        Cursor folderCursor = DataBaseManager.getInstance()
-                .selectTable(11)
-                .query()
-                .execute();
-        File[] files;
-        int count = 0;
-        if (folderCursor.getCount() == 0)
-            return new File[]{};
-        else
-            files = new File[folderCursor.getCount()];
-
-        while (folderCursor.moveToNext()) {
-            folderCursor.getCount();
-            files[count] = new File(folderCursor.getString(1));
-            count ++;
-        }
-        folderCursor.close();
-        return files;
-    }
-
-    @SuppressLint("CheckResult")
-    public void getVideoFormDatabase(){
-        querySqlFileDis = Observable
-                .create((ObservableOnSubscribe<List<FolderBean>>) emitter ->
-                        emitter.onNext(getFolderList()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoList -> getView().refreshAdapter(videoList));
+        if (refreshFileDis != null)
+            refreshFileDis.dispose();
     }
 
     @Override
@@ -232,21 +91,154 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         return videoBean;
     }
 
-    //遍历视频文件
-    private Observable<File> listFiles(final File f){
-        if(f.isDirectory()){
-            return Observable
-                    .fromArray(f.listFiles())
-                    .flatMap(this::listFiles);
-        } else {
-            return Observable
-                    .just(f)
-                    .filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+    @Override
+    public void refreshVideo(boolean reScan) {
+        if (reScan){
+            scanAndRefreshVideo();
+            return;
         }
+        refreshVideo();
     }
 
-    //保存数据库中不存在的视频信息
-    private void saveData(VideoBean videoBean){
+    @Override
+    public void deleteFolder(String folderPath) {
+        DataBaseManager.getInstance()
+                .selectTable(11)
+                .insert()
+                .param(1, folderPath)
+                .param(2, "0")
+                .execute();
+    }
+
+    /**
+     * 仅根据数据库数据刷新界面
+     */
+    private void refreshVideo(){
+        querySqlFileDis = Observable
+                .create((ObservableOnSubscribe<List<FolderBean>>) emitter ->
+                        emitter.onNext(getVideoFormDatabase()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(videoList -> getView().refreshAdapter(videoList));
+    }
+
+    /**
+     * 扫描所有文件，更新数据库，刷新界面数据
+     */
+    private void scanAndRefreshVideo(){
+        //获取需要扫描的目录
+        List<String> scanFolderList = getScanFolder(Constants.ScanType.SCAN);
+        boolean isScanMediaStore = scanFolderList.remove("系统视频");
+
+        refreshFileDis = Observable.just(isScanMediaStore)
+                //刷新系统文件
+                .map(result -> queryVideoFormMediaStore(isScanMediaStore))
+                //遍历需要扫描的目录
+                .zipWith(flatMapFile(scanFolderList),
+                        (aBoolean, aBoolean2) -> getVideoFormDatabase())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(videoList -> getView().refreshAdapter(videoList));
+    }
+
+    /**
+     * 从数据库中读取文件夹目录，过滤屏蔽目录
+     */
+    private List<FolderBean> getVideoFormDatabase(){
+        List<FolderBean> folderBeanList = new ArrayList<>();
+        Map<String, Integer> beanMap = new HashMap<>();
+        Map<String, String> deleteMap = new HashMap<>();
+
+        //查询所有屏蔽目录
+        List<String> blockList = getScanFolder(Constants.ScanType.BLOCK);
+
+        //查询所有视频
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(2)
+                .query()
+                .setColumns(1, 2)
+                .execute();
+        while (cursor.moveToNext()){
+            String folderPath = cursor.getString(0);
+            String filePath = cursor.getString(1);
+
+            //过滤屏蔽目录
+            boolean isBlock = false;
+            for (String blockPath : blockList){
+                //视频属于屏蔽目录下视频，过滤
+                if (filePath.startsWith(blockPath)){
+                    isBlock = true;
+                    break;
+                }
+            }
+            if (isBlock) continue;
+
+            //计算文件夹中文件数量
+            //文件不存在记录需要删除的文件
+            File file = new File(filePath);
+            if (file.exists()){
+                if (beanMap.containsKey(folderPath)){
+                    int number = beanMap.get(folderPath);
+                    beanMap.put(folderPath, ++number);
+                }else {
+                    beanMap.put(folderPath, 1);
+                }
+            }else {
+                deleteMap.put(folderPath, filePath);
+            }
+        }
+        cursor.close();
+
+        //更新文件夹文件数量
+        for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
+            folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
+            DataBaseManager.getInstance()
+                    .selectTable(1)
+                    .update()
+                    .param(2, entry.getValue())
+                    .where(1, entry.getKey())
+                    .execute();
+        }
+
+        //删除不存在的文件
+        for (Map.Entry<String, String> entry : deleteMap.entrySet()){
+            DataBaseManager.getInstance()
+                    .selectTable(2)
+                    .delete()
+                    .where(1, entry.getKey())
+                    .where(2, entry.getValue())
+                    .execute();
+        }
+        return folderBeanList;
+    }
+
+    /**
+     * 获取扫描或屏蔽目录
+     * @param scanType ScanType.BLOCK || ScanType.SCAN
+     */
+    private List<String> getScanFolder(String scanType){
+        List<String> folderList = new ArrayList<>();
+        //查询屏蔽目录
+        Cursor blockCursor = DataBaseManager.getInstance()
+                .selectTable(11)
+                .query()
+                .setColumns(1)
+                .where(2, scanType)
+                .execute();
+
+        //获取所有屏蔽目录
+        while (blockCursor.moveToNext()){
+            folderList.add(blockCursor.getString(0));
+        }
+        blockCursor.close();
+        return folderList;
+    }
+
+    /**
+     * 保存视频信息到数据库
+     * 跳过已存在的视频信息
+     */
+    private void saveVideoToDatabase(VideoBean videoBean){
         String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
         ContentValues values=new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
@@ -275,90 +267,81 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         cursor.close();
     }
 
-    //从数据库查询文件夹数据
-    private List<FolderBean> getFolderList(){
-        List<FolderBean> folderBeanList = new ArrayList<>();
-        List<String> blockList = new ArrayList<>();
-        Map<String, Integer> beanMap = new HashMap<>();
-        Map<String, String> deleteMap = new HashMap<>();
-        //查询屏蔽目录
-        Cursor blockCursor = DataBaseManager.getInstance()
-                .selectTable(11)
-                .query()
-                .setColumns(1)
-                .where(2, "0")
-                .execute();
+    /**
+     * 获取系统中视频信息
+     */
+    private boolean queryVideoFormMediaStore(boolean isScanMediaStore){
+        if (!isScanMediaStore)
+            return false;
+        Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
 
-        while (blockCursor.moveToNext()){
-            blockList.add(blockCursor.getString(0));
-        }
-        blockCursor.close();
+                String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
+                int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
+                long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小
+                long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));// 时长
 
-        //查询所有video
-        Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(2)
-                .query()
-                .setColumns(1, 2)
-                .execute();
-
-        while (cursor.moveToNext()){
-            String folderPath = cursor.getString(0);
-            String filePath = cursor.getString(1);
-
-            //过滤屏蔽目录
-            boolean isBlock = false;
-            for (String blockPath : blockList){
-                if (filePath.startsWith(blockPath)){
-                    isBlock = true;
-                    break;
-                }
+                VideoBean videoBean = new VideoBean();
+                videoBean.set_id(_id);
+                videoBean.setVideoPath(path);
+                videoBean.setVideoDuration(duration);
+                videoBean.setVideoSize(size);
+                saveVideoToDatabase(videoBean);
             }
-            if (isBlock) continue;
-
-            //获取文件夹信息
-            File file = new File(filePath);
-            if (file.exists()){
-                if (beanMap.containsKey(folderPath)){
-                    int number = beanMap.get(folderPath);
-                    beanMap.put(folderPath, ++number);
-                }else {
-                    beanMap.put(folderPath, 1);
-                }
-            }else {
-                deleteMap.put(folderPath, filePath);
-            }
+            cursor.close();
         }
-        cursor.close();
-
-        //更新文件夹数据
-        for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
-            folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
-            DataBaseManager.getInstance()
-                    .selectTable(1)
-                    .update()
-                    .param(2, entry.getValue())
-                    .where(1, entry.getKey())
-                    .execute();
-        }
-
-        for (Map.Entry<String, String> entry : deleteMap.entrySet()){
-            DataBaseManager.getInstance()
-                    .selectTable(2)
-                    .delete()
-                    .where(1, entry.getKey())
-                    .where(2, entry.getValue())
-                    .execute();
-        }
-        return folderBeanList;
+        return true;
     }
 
-    @Override
-    public void deleteFolder(String folderPath) {
-        DataBaseManager.getInstance()
-                .selectTable(11)
-                .insert()
-                .param(1, folderPath)
-                .param(2, "0")
-                .execute();
+    /**
+     * 将需要扫描的目录集合转换为文件数组
+     */
+    private File[] getScanFolderFiles(List<String> folderList){
+        File[] files = new File[folderList.size()];
+
+        for (int i = 0; i < folderList.size(); i++) {
+            files[i] = new File(folderList.get(i));
+        }
+        return files;
+    }
+
+    /**
+     * 遍历需要扫描的目录
+     */
+    private Observable<Boolean> flatMapFile(List<String> scanFolderList){
+        if (scanFolderList.size() == 0)
+            return Observable.just(true);
+        return Observable.just(getScanFolderFiles(scanFolderList))
+                .flatMap((Function<File[], ObservableSource<File>>)
+                        fileList -> Observable
+                                .fromArray(fileList)
+                                .flatMap(this::listFiles)
+                ).map(file -> {
+                    String filePath = file.getAbsolutePath();
+                    VideoBean videoBean = new VideoBean();
+                    videoBean.setVideoPath(filePath);
+                    videoBean.setVideoDuration(0);
+                    videoBean.setVideoSize(file.length());
+                    videoBean.set_id(0);
+                    saveVideoToDatabase(videoBean);
+                    return true;
+                });
+    }
+
+    /**
+     * 递归检查目录和文件
+     */
+    private Observable<File> listFiles(final File f){
+        if(f.isDirectory()){
+            return Observable
+                    .fromArray(f.listFiles())
+                    .flatMap(this::listFiles);
+        } else {
+            return Observable
+                    .just(f)
+                    .filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+        }
     }
 }

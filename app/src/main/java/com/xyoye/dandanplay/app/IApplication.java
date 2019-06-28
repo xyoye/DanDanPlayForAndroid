@@ -18,6 +18,7 @@ import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
@@ -65,11 +66,12 @@ public class IApplication extends BaseApplication {
 
         //首次打开App
         if (AppConfig.getInstance().isFirstStart()) {
-            //扫描文件夹
+            //增加默认扫描文件夹
             DataBaseManager.getInstance()
                     .selectTable(11)
                     .insert()
-                    .param(1, AppConfig.getInstance().getDownloadFolder())
+                    .param(1, "系统视频")
+                    .param(2, Constants.ScanType.SCAN)
                     .postExecute();
         }
 

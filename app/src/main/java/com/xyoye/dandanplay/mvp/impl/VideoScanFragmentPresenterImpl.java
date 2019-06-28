@@ -1,16 +1,15 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,11 +55,12 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void addScanFolder(String path, boolean isScan) {
+        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         DataBaseManager.getInstance()
                 .selectTable(11)
                 .insert()
                 .param(1, path)
-                .param(2, isScan ? "1" : "0")
+                .param(2, scanType)
                 .execute();
 
         EventBus.getDefault().post(new RefreshFolderEvent(true));
@@ -69,10 +69,11 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void queryScanFolderList(boolean isScan) {
-        Cursor cursor = DataBaseManager.getInstance()
+        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
+                Cursor cursor = DataBaseManager.getInstance()
                 .selectTable(11)
                 .query()
-                .where(2, isScan ? "1" : "0")
+                .where(2, scanType)
                 .execute();
 
         List<ScanFolderBean> folderList = new ArrayList<>();
@@ -85,11 +86,12 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void deleteScanFolder(String path, boolean isScan) {
+        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         DataBaseManager.getInstance()
                 .selectTable(11)
                 .delete()
                 .where(1, path)
-                .where(2, isScan ? "1" : "0")
+                .where(2, scanType)
                 .execute();
 
         EventBus.getDefault().post(new RefreshFolderEvent(true));

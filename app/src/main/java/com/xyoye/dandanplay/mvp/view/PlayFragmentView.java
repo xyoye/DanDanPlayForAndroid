@@ -15,7 +15,5 @@ import java.util.List;
 public interface PlayFragmentView extends BaseMvpView, LoadDataView {
     void refreshAdapter(List<FolderBean> beans);
 
-    void refreshOver();
-
     Context getContext();
 }

@@ -103,4 +103,12 @@ public class Constants {
         public static final int DURATION_ASC = 3;
         public static final int DURATION_DESC = 4;
     }
+
+    //扫描管理-目录类型
+    public static class ScanType {
+        //屏蔽目录
+        public static final String BLOCK = "0";
+        //扫描目录
+        public static final String SCAN = "1";
+    }
 }

@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -23,7 +22,6 @@ import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
-import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
@@ -43,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by xyoye on 2018/6/29.
@@ -57,6 +56,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     FloatingActionButton fastPlayBt;
 
     private BaseRvAdapter<FolderBean> adapter;
+    private Disposable permissionDis;
 
     public static PlayFragment newInstance() {
         return new PlayFragment();
@@ -150,7 +150,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         });
 
         refresh.setRefreshing(true);
-        refreshVideo(false);
+
+        refreshVideo(true);
     }
 
     @Override
@@ -161,12 +162,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
         adapter.setData(beans);
-        if (refresh != null)
-            refresh.setRefreshing(false);
-    }
-
-    @Override
-    public void refreshOver() {
         if (refresh != null)
             refresh.setRefreshing(false);
     }
@@ -186,29 +181,37 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
         ToastUtils.showShort(message);
     }
 
+    @Override
+    public void onDestroy() {
+        if (permissionDis != null)
+            permissionDis.dispose();
+        super.onDestroy();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshFolderEvent(RefreshFolderEvent event){
         if (event.isReGetData())
-            presenter.getVideoFormDatabase();
+            refreshVideo(false);
         else
             adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 刷新文件列表
+     * @param reScan 是否重新扫描文件目录
+     */
     @SuppressLint("CheckResult")
-    private void refreshVideo(boolean isAll){
-        new RxPermissions(this).
+    private void refreshVideo(boolean reScan){
+        permissionDis = new RxPermissions(this).
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     if (granted) {
-                        //通知系统刷新
+                        //通知系统刷新目录
                         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                         intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
                         if (getContext() != null)
                             getContext().sendBroadcast(intent);
-                        if (isAll)
-                            presenter.getVideoFormSystemAndSave();
-                        else
-                            presenter.getVideoFormSystem();
+                        presenter.refreshVideo(reScan);
                     }
                 });
     }

@@ -4,12 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -22,11 +20,9 @@ import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -35,7 +31,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-import io.reactivex.internal.fuseable.ScalarCallable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -43,6 +38,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {
+    private Disposable querySqlFileDis, queryDocFileDis;
 
     public PlayFragmentPresenterImpl(PlayFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -70,14 +66,17 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     @Override
     public void destroy() {
-
+        if (querySqlFileDis != null)
+            querySqlFileDis.dispose();
+        if (queryDocFileDis != null)
+            queryDocFileDis.dispose();
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getVideoFormSystem() {
         String[] projection = new String[]{ MediaStore.Video.Media.DATA, MediaStore.Video.Media._ID, MediaStore.Video.Media.SIZE, MediaStore.Video.Media.DURATION};
-        Observable.just(getApplicationContext())
+        queryDocFileDis = Observable.just(getApplicationContext())
                 .map(context -> {
                     try {
                         Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -183,8 +182,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     }
 
     private File[] queryVideoFormPath(){
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor folderCursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[11], null, null, null, null, null, null);
+        Cursor folderCursor = DataBaseManager.getInstance()
+                .selectTable(11)
+                .query()
+                .execute();
         File[] files;
         int count = 0;
         if (folderCursor.getCount() == 0)
@@ -203,7 +204,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     @SuppressLint("CheckResult")
     public void getVideoFormDatabase(){
-        io.reactivex.Observable
+        querySqlFileDis = Observable
                 .create((ObservableOnSubscribe<List<FolderBean>>) emitter ->
                         emitter.onNext(getFolderList()))
                 .subscribeOn(Schedulers.io())
@@ -253,13 +254,23 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(videoBean.getVideoDuration()));
         values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(videoBean.getVideoSize()));
         values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
-                " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
-                "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoBean.getVideoPath()});
+
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(2)
+                .query()
+                .where(1, folderPath)
+                .where(2, videoBean.getVideoPath())
+                .execute();
         if (!cursor.moveToNext()) {
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
+            DataBaseManager.getInstance()
+                    .selectTable(2)
+                    .insert()
+                    .param(1, folderPath)
+                    .param(2, videoBean.getVideoPath())
+                    .param(5, String.valueOf(videoBean.getVideoDuration()))
+                    .param(7, String.valueOf(videoBean.getVideoSize()))
+                    .param(8, videoBean.get_id())
+                    .postExecute();
         }
         cursor.close();
     }
@@ -271,15 +282,25 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         Map<String, Integer> beanMap = new HashMap<>();
         Map<String, String> deleteMap = new HashMap<>();
         //查询屏蔽目录
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor blockCursor = sqLiteDatabase.rawQuery("SELECT folder_path FROM scan_folder WHERE folder_type = ?",new String[]{"0"});
+        Cursor blockCursor = DataBaseManager.getInstance()
+                .selectTable(11)
+                .query()
+                .setColumns(1)
+                .where(2, "0")
+                .execute();
+
         while (blockCursor.moveToNext()){
             blockList.add(blockCursor.getString(0));
         }
         blockCursor.close();
 
         //查询所有video
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT folder_path, file_path FROM file",new String[]{});
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(2)
+                .query()
+                .setColumns(1, 2)
+                .execute();
+
         while (cursor.moveToNext()){
             String folderPath = cursor.getString(0);
             String filePath = cursor.getString(1);
@@ -312,14 +333,21 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         //更新文件夹数据
         for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
             folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[1][1], entry.getKey());
-            values.put(DataBaseInfo.getFieldNames()[1][2], entry.getValue());
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values,null,null);
+            DataBaseManager.getInstance()
+                    .selectTable(1)
+                    .update()
+                    .param(2, entry.getValue())
+                    .where(1, entry.getKey())
+                    .execute();
         }
 
         for (Map.Entry<String, String> entry : deleteMap.entrySet()){
-            sqLiteDatabase.delete("file", "folder_path=? AND file_path = ?" , new String[]{entry.getKey(), entry.getValue()});
+            DataBaseManager.getInstance()
+                    .selectTable(2)
+                    .delete()
+                    .where(1, entry.getKey())
+                    .where(2, entry.getValue())
+                    .execute();
         }
         return folderBeanList;
     }

@@ -46,6 +46,7 @@ import jcifs.smb.SmbFile;
  */
 
 public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements SmbPresenter {
+    private Disposable querySqlDeviceDis;
 
     private CIFSContext cifsContext;
     private String rootUrl;
@@ -77,15 +78,18 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
     @Override
     public void destroy() {
-
+        if (querySqlDeviceDis != null)
+            querySqlDeviceDis.dispose();
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void querySqlDevice() {
-        Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            Cursor deviceCursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[7], null, null, null, null, null, null);
+        querySqlDeviceDis = Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
+            Cursor deviceCursor = DataBaseManager.getInstance()
+                                    .selectTable(7)
+                                    .query()
+                                    .execute();
             List<SmbBean> deviceList = new ArrayList<>();
             while (deviceCursor.moveToNext()){
                 SmbBean deviceBean = new SmbBean();
@@ -147,37 +151,43 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
     @Override
     public void addSqlDevice(SmbBean smbBean) {
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[7], null, "device_ip = ?", new String[]{smbBean.getUrl()}, null, null, null);
+
+        Cursor cursor = DataBaseManager.getInstance()
+                        .selectTable(7)
+                        .query()
+                        .where(3, smbBean.getUrl())
+                        .execute();
         if (cursor.getCount() > 0){
             updateSqlDevice(smbBean);
         }
         cursor.close();
-        new Thread(() -> {
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[7][1], "UnKnow");
-            values.put(DataBaseInfo.getFieldNames()[7][3], smbBean.getUrl());
-            values.put(DataBaseInfo.getFieldNames()[7][4], smbBean.getAccount());
-            values.put(DataBaseInfo.getFieldNames()[7][5], smbBean.getPassword());
-            values.put(DataBaseInfo.getFieldNames()[7][6], smbBean.getDomain());
-            values.put(DataBaseInfo.getFieldNames()[7][7], smbBean.isAnonymous() ? 1 : 0);
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[7], null, values);
-        }).start();
+
+        String deviceName = StringUtils.isEmpty(smbBean.getName()) ? "UnKnow" : smbBean.getName();
+        DataBaseManager.getInstance()
+                .selectTable(7)
+                .insert()
+                .param(1, deviceName)
+                .param(3, smbBean.getUrl())
+                .param(4, smbBean.getAccount())
+                .param(5, smbBean.getPassword())
+                .param(6, smbBean.getDomain())
+                .param(7, smbBean.isAnonymous() ? 1 : 0)
+                .postExecute();
     }
 
     @Override
     public void updateSqlDevice(SmbBean smbBean) {
-        new Thread(() -> {
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[7][1], smbBean.getName());
-            values.put(DataBaseInfo.getFieldNames()[7][1], smbBean.getNickName());
-            values.put(DataBaseInfo.getFieldNames()[7][4], smbBean.getAccount());
-            values.put(DataBaseInfo.getFieldNames()[7][5], smbBean.getPassword());
-            values.put(DataBaseInfo.getFieldNames()[7][6], smbBean.getDomain());
-            values.put(DataBaseInfo.getFieldNames()[7][7], smbBean.isAnonymous() ? 1 : 0);
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[7], values, "device_ip = ?", new String[]{smbBean.getUrl()});
-        }).start();
+        DataBaseManager.getInstance()
+                .selectTable(7)
+                .update()
+                .param(1, smbBean.getName())
+                .param(1, smbBean.getNickName())
+                .param(4, smbBean.getAccount())
+                .param(5, smbBean.getPassword())
+                .param(6, smbBean.getDomain())
+                .param(7, smbBean.isAnonymous() ? 1 : 0)
+                .where(3, smbBean.getUrl())
+                .postExecute();
     }
 
     @SuppressLint("CheckResult")

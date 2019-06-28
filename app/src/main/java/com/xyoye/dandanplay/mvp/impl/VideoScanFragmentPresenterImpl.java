@@ -69,10 +69,13 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void queryScanFolderList(boolean isScan) {
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(11)
+                .query()
+                .where(2, isScan ? "1" : "0")
+                .execute();
+
         List<ScanFolderBean> folderList = new ArrayList<>();
-        String folderType = isScan ? "1" : "0";
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.query(DataBaseInfo.getTableNames()[11], null, "folder_type = ?", new String[]{folderType}, null, null, null);
         while (cursor.moveToNext()) {
             folderList.add(new ScanFolderBean(cursor.getString(1), false));
         }

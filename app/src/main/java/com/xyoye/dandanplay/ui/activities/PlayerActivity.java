@@ -269,11 +269,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     event.setVideoPath(videoPath);
                     EventBus.getDefault().post(event);
                     //更新数据库中进度
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("current_position", event.getCurrentPosition());
-                    String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-                    sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
+                    DataBaseManager.getInstance()
+                            .selectTable(2)
+                            .update()
+                            .param(4, event.getCurrentPosition())
+                            .where(1, event.getFolderPath())
+                            .where(2, event.getVideoPath())
+                            .postExecute();
                     break;
             }
         };

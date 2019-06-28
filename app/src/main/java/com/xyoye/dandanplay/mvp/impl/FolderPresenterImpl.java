@@ -1,20 +1,15 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ServiceUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
@@ -28,8 +23,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -37,6 +34,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
+    private Disposable folderScanDis, serviceDis;
 
     public FolderPresenterImpl(FolderView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -64,13 +62,16 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void destroy() {
-
+        if (folderScanDis != null)
+            folderScanDis.dispose();
+        if (serviceDis != null)
+            serviceDis.dispose();
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getVideoList(String folderPath) {
-        io.reactivex.Observable.create((ObservableOnSubscribe<List<VideoBean>>) emitter ->
+        folderScanDis = Observable.create((ObservableOnSubscribe<List<VideoBean>>) emitter ->
                     emitter.onNext(getDataBaseVideo(folderPath)))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -79,35 +80,52 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void updateDanmu(String danmuPath, int episodeId, String[] whereArgs) {
-        new Thread(()->{
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            ContentValues values = new ContentValues();
-            values.put("danmu_path", danmuPath);
-            values.put("danmu_episode_id", episodeId);
-            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[2],values, whereCase, whereArgs);
-        }).start();
+        DataBaseManager.getInstance()
+                .selectTable(2)
+                .update()
+                .param(3, danmuPath)
+                .param(6, episodeId)
+                .where(1, whereArgs[0])
+                .where(2, whereArgs[1])
+                .postExecute();
     }
 
     @Override
     public void deleteFile(String filePath) {
         new Thread(() -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
             String folderPath = FileUtils.getDirName(filePath);
             //delete file
-            String whereCase = DataBaseInfo.getFieldNames()[2][1]+" = ? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[2], whereCase, new String[]{folderPath, filePath});
+            DataBaseManager.getInstance()
+                    .selectTable(2)
+                    .delete()
+                    .where(1, folderPath)
+                    .where(2, filePath)
+                    .execute();
+
             //folder file number reduce, if number-1 == 0, delete folder
-            String sql = "SELECT * FROM folder WHERE folder_path = ?";
-            Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath});
+            Cursor cursor = DataBaseManager.getInstance()
+                    .selectTable(1)
+                    .query()
+                    .setColumns(2)
+                    .where(1, folderPath)
+                    .execute();
+
+            //if folder exist
             if (cursor.moveToNext()){
-                int number = cursor.getInt(2);
+                int number = cursor.getInt(0);
                 if (number > 2){
-                    ContentValues values = new ContentValues();
-                    values.put(DataBaseInfo.getFieldNames()[1][2], --number);
-                    sqLiteDatabase.update(DataBaseInfo.getTableNames()[1], values, "folder_path = ?", new String[]{folderPath});
+                    DataBaseManager.getInstance()
+                            .selectTable(1)
+                            .update()
+                            .param(2, --number)
+                            .where(1, folderPath)
+                            .execute();
                 }else {
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[1], "folder_path = ?", new String[]{folderPath});
+                    DataBaseManager.getInstance()
+                            .selectTable(1)
+                            .delete()
+                            .where(1, folderPath)
+                            .execute();
                 }
             }
             cursor.close();
@@ -150,7 +168,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     //waiting 10s to start smbService
     public void observeService(VideoBean videoBean) {
         getView().showLoading();
-        io.reactivex.Observable.create((ObservableOnSubscribe<Boolean>) e -> {
+        serviceDis = Observable.create((ObservableOnSubscribe<Boolean>) e -> {
             int waitTime = 0;
             while (true){
                 try {
@@ -180,15 +198,21 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     //get local file form database
     private List<VideoBean> getDataBaseVideo(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-
-        String sql = "SELECT * FROM file WHERE folder_path = ?";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql ,new String[]{folderPath});
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(2)
+                .query()
+                .where(1, folderPath)
+                .execute();
         while (cursor.moveToNext()){
             String filePath = cursor.getString(2);
             File file = new File(filePath);
             if (!file.exists()){
-                sqLiteDatabase.delete("file", "folder_path = ? AND file_path = ?", new String[]{folderPath, filePath});
+                DataBaseManager.getInstance()
+                        .selectTable(2)
+                        .delete()
+                        .where(1, folderPath)
+                        .where(2, filePath)
+                        .postExecute();
                 continue;
             }
 

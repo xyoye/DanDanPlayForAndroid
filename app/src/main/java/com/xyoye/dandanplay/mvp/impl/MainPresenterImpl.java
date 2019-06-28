@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -12,7 +10,6 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
@@ -110,20 +107,23 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             @Override
             public void onSuccess(AnimeTypeBean animeTypeBean) {
                 if (animeTypeBean != null && animeTypeBean.getTypes() != null && animeTypeBean.getTypes().size() > 0){
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[4], "", new String[]{});
-
-                    ContentValues firstValues = new ContentValues();
-                    firstValues.put(DataBaseInfo.getFieldNames()[4][1], -1);
-                    firstValues.put(DataBaseInfo.getFieldNames()[4][2], "全部");
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, firstValues);
-
+                    DataBaseManager.getInstance()
+                            .selectTable(4)
+                            .delete()
+                            .execute();
+                    DataBaseManager.getInstance()
+                            .selectTable(4)
+                            .insert()
+                            .param(1, -1)
+                            .param(2, "全部")
+                            .execute();
                     for (AnimeTypeBean.TypesBean typesBean : animeTypeBean.getTypes()){
-                        ContentValues values = new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[4][1],typesBean.getId());
-                        values.put(DataBaseInfo.getFieldNames()[4][2],typesBean.getName());
-                        if (sqLiteDatabase.isOpen())
-                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[4], null, values);
+                        DataBaseManager.getInstance()
+                                .selectTable(4)
+                                .insert()
+                                .param(1, typesBean.getId())
+                                .param(2, typesBean.getName())
+                                .execute();
                     }
                 }
             }
@@ -142,21 +142,26 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             @Override
             public void onSuccess(SubGroupBean subGroupBean) {
                 if (subGroupBean != null && subGroupBean.getSubgroups() != null && subGroupBean.getSubgroups().size() > 0){
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[5], "", new String[]{});
 
-                    //全部
-                    ContentValues firstValues = new ContentValues();
-                    firstValues.put(DataBaseInfo.getFieldNames()[5][1], -1);
-                    firstValues.put(DataBaseInfo.getFieldNames()[5][2], "全部");
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, firstValues);
+                    DataBaseManager.getInstance()
+                            .selectTable(5)
+                            .delete()
+                            .execute();
+
+                    DataBaseManager.getInstance()
+                            .selectTable(5)
+                            .insert()
+                            .param(1, -1)
+                            .param(2, "全部")
+                            .execute();
 
                     for (SubGroupBean.SubgroupsBean subgroupsBean : subGroupBean.getSubgroups()){
-                        ContentValues values = new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[5][1],subgroupsBean.getId());
-                        values.put(DataBaseInfo.getFieldNames()[5][2],subgroupsBean.getName());
-                        if (sqLiteDatabase.isOpen())
-                            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[5], null, values);
+                        DataBaseManager.getInstance()
+                                .selectTable(5)
+                                .insert()
+                                .param(1, subgroupsBean.getId())
+                                .param(2, subgroupsBean.getName())
+                                .execute();
                     }
                 }
             }
@@ -174,15 +179,17 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
         new Thread(() -> {
             List<String> filters = getFilterString();
             IApplication.cloudFilterList.addAll(filters);
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            //清空数据库
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[10], "", new String[]{});
-            ContentValues values = new ContentValues();
+
+            DataBaseManager.getInstance()
+                    .selectTable(10)
+                    .delete()
+                    .execute();
             for (int i=0; i<filters.size(); i++){
-                values.put("filter", filters.get(i));
-                //写入数据库
-                if (sqLiteDatabase.isOpen())
-                    sqLiteDatabase.insert(DataBaseInfo.getTableNames()[10], null, values);
+                DataBaseManager.getInstance()
+                        .selectTable(10)
+                        .insert()
+                        .param(1, filters.get(i))
+                        .execute();
             }
         }).start();
     }
@@ -191,8 +198,12 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     private void getCloudFilter(){
         //云屏蔽数据
         List<String> cloudFilter = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT filter FROM cloud_filter",new String[]{});
+        Cursor cursor = DataBaseManager.getInstance()
+                        .selectTable(10)
+                        .query()
+                        .setColumns(1)
+                        .execute();
+
         while (cursor.moveToNext()){
             String text = cursor.getString(0);
             cloudFilter.add(text);

@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileIOUtils;
@@ -14,7 +12,6 @@ import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SearchHistoryBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
@@ -26,9 +23,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -71,8 +66,12 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public void getSearchHistory(boolean doSearch) {
         List<SearchHistoryBean> historyBeanList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM search_history ORDER BY time DESC", new String[]{});
+
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(9)
+                .query()
+                .setOrderByColumnDesc(2)
+                .execute();
         while (cursor.moveToNext()){
             int _id = cursor.getInt(0);
             String text = cursor.getString(1);
@@ -94,8 +93,10 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public List<AnimeTypeBean.TypesBean> getTypeList() {
         List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM anime_type", new String[]{});
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(4)
+                .query()
+                .execute();
         while (cursor.moveToNext()){
             int typeId = cursor.getInt(1);
             String typeName = cursor.getString(2);
@@ -108,8 +109,10 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public List<SubGroupBean.SubgroupsBean> getSubGroupList() {
         List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM subgroup", new String[]{});
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(5)
+                .query()
+                .execute();
         while (cursor.moveToNext()){
             int subgroupId = cursor.getInt(1);
             String subgroupName = cursor.getString(2);
@@ -121,40 +124,39 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void addHistory(String text) {
-        new Thread(() -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[9][1], text);
-            values.put(DataBaseInfo.getFieldNames()[9][2], System.currentTimeMillis());
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[9], null, values);
-        }).start();
+        DataBaseManager.getInstance()
+                .selectTable(9)
+                .insert()
+                .param(1, text)
+                .param(2, System.currentTimeMillis())
+                .postExecute();
     }
 
     @Override
     public void updateHistory(int _id) {
-        new Thread(() -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            ContentValues values = new ContentValues();
-            values.put(DataBaseInfo.getFieldNames()[9][2], System.currentTimeMillis());
-            sqLiteDatabase.update(DataBaseInfo.getTableNames()[9], values, "_id = ?", new String[]{_id+""});
-        }).start();
-
+        DataBaseManager.getInstance()
+                .selectTable(9)
+                .update()
+                .param(2, System.currentTimeMillis())
+                .where(0, _id+"")
+                .postExecute();
     }
 
     @Override
     public void deleteHistory(int _id) {
-        new Thread(() -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[9], "_id = ?", new String[] {_id+""});
-        }).start();
+        DataBaseManager.getInstance()
+                .selectTable(9)
+                .delete()
+                .where(0, _id+"")
+                .postExecute();
     }
 
     @Override
     public void deleteAllHistory() {
-        new Thread(() -> {
-            SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[9], "", new String[] {});
-        }).start();
+        DataBaseManager.getInstance()
+                .selectTable(9)
+                .delete()
+                .postExecute();
     }
 
     @Override

@@ -35,7 +35,18 @@ public class DataBaseManager {
         return instance;
     }
 
-    public synchronized SQLiteDatabase getSQLiteDatabase() {
+    public synchronized void closeDatabase() {
+        if(mOpenCounter.decrementAndGet() == 0) {
+            mDatabase.close();
+        }
+    }
+
+    //选择操作表
+    public ActionBuilder selectTable(int tablePosition){
+        return new ActionBuilder(tablePosition, getSQLiteDatabase());
+    }
+
+    private synchronized SQLiteDatabase getSQLiteDatabase() {
         if (mDatabase == null || !mDatabase.isOpen()) {
             return openDatabase();
         }
@@ -44,28 +55,11 @@ public class DataBaseManager {
 
     private synchronized SQLiteDatabase openDatabase() {
         if(mOpenCounter.incrementAndGet() == 1) {
-            // Opening new database
             mDatabase = mDatabaseHelper.getWritableDatabase();
-            // mDatabase.beginTransaction();
         }
         return mDatabase;
     }
 
-    public synchronized void closeDatabase() {
-        if(mOpenCounter.decrementAndGet() == 0) {
-            // Closing database
-            // mDatabase.endTransaction();
-            mDatabase.close();
-        }
-    }
-
-    //select table
-    //选择操作表
-    public ActionBuilder selectTable(int tablePosition){
-        return new ActionBuilder(tablePosition, getSQLiteDatabase());
-    }
-
-    //build database class
     //创建数据库
     static class DataBaseHelper extends SQLiteOpenHelper {
         private static String[][] FieldNames;

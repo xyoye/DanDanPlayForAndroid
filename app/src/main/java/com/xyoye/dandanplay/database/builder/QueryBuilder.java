@@ -9,6 +9,8 @@ import com.xyoye.dandanplay.database.DataBaseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.annotations.CheckReturnValue;
+
 /**
  * Created by xyoye on 2019/4/17.
  */
@@ -31,11 +33,13 @@ public class QueryBuilder{
         whereArgs = new ArrayList<>();
     }
 
+    @CheckReturnValue
     public QueryBuilder setColumns(int... columns){
         this.columns = columns;
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder where(int column, String value) {
         String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
         whereClause.add(whereClauseText);
@@ -43,33 +47,39 @@ public class QueryBuilder{
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder setGroupByColumn(int column){
         this.groupColumn = column;
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder setHaving(String having){
         this.having = having;
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder setOrderByColumnAsc(int column){
         isAsc = true;
         this.orderByColumn = column;
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder setOrderByColumnDesc(int column){
         isAsc = false;
         this.orderByColumn = column;
         return this;
     }
 
+    @CheckReturnValue
     public QueryBuilder setLimit(String limit){
         this.limit = limit;
         return this;
     }
 
+    @CheckReturnValue
     public Cursor execute(){
 
         //select columns

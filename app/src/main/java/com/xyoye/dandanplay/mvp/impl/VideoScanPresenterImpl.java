@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.mvp.impl;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
@@ -25,6 +24,7 @@ import java.io.File;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -32,6 +32,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> implements VideoScanPresenter {
+    private Disposable videoScanDis;
 
     public VideoScanPresenterImpl(VideoScanView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -59,7 +60,8 @@ public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> 
 
     @Override
     public void destroy() {
-
+        if (videoScanDis != null)
+            videoScanDis.dispose();
     }
 
     //查询系统中是否保存对应视频数据
@@ -93,13 +95,24 @@ public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> 
         values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(videoBean.getVideoDuration()));
         values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(videoBean.getVideoSize()));
         values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
-        SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-        String sql = "SELECT * FROM "+DataBaseInfo.getTableNames()[2]+
-                " WHERE "+DataBaseInfo.getFieldNames()[2][1]+ "=? " +
-                "AND "+DataBaseInfo.getFieldNames()[2][2]+ "=? ";
-        Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{folderPath, videoBean.getVideoPath()});
+
+        Cursor cursor = DataBaseManager.getInstance()
+                        .selectTable(2)
+                        .query()
+                        .where(1, folderPath)
+                        .where(2, videoBean.getVideoPath())
+                        .execute();
+
         if (!cursor.moveToNext()) {
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[2], null, values);
+            DataBaseManager.getInstance()
+                    .selectTable(2)
+                    .insert()
+                    .param(1, folderPath)
+                    .param(2, videoBean.getVideoPath())
+                    .param(5, String.valueOf(videoBean.getVideoDuration()))
+                    .param(7, String.valueOf(videoBean.getVideoSize()))
+                    .param(8, videoBean.get_id())
+                    .execute();
             cursor.close();
             return true;
         }
@@ -111,7 +124,7 @@ public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> 
     @Override
     public void listFolder(String path) {
         File rootFile = new File(path);
-        Observable.just(rootFile)
+        videoScanDis = Observable.just(rootFile)
                 .flatMap(this::listFiles)
                 .map(file -> {
                     VideoBean videoBean = new VideoBean();

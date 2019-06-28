@@ -27,6 +27,7 @@ import java.util.Map;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -318,7 +319,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                         fileList -> Observable
                                 .fromArray(fileList)
                                 .flatMap(this::listFiles)
-                ).map(file -> {
+                )
+                .map(file -> {
                     String filePath = file.getAbsolutePath();
                     VideoBean videoBean = new VideoBean();
                     videoBean.setVideoPath(filePath);
@@ -327,7 +329,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                     videoBean.set_id(0);
                     saveVideoToDatabase(videoBean);
                     return true;
-                });
+                })
+                .switchIfEmpty(Observable.just(true));
     }
 
     /**

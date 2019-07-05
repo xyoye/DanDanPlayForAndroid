@@ -87,13 +87,24 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
     @Override
     public void deleteScanFolder(String path, boolean isScan) {
         String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
-        DataBaseManager.getInstance()
-                .selectTable(11)
-                .delete()
-                .where(1, path)
-                .where(2, scanType)
-                .execute();
-
+        if (Constants.DefaultConfig.SYSTEM_VIDEO_PATH.equals(path)){
+            //将不删除系统视频，只改变为屏蔽或扫描
+            String newScanType = isScan ? Constants.ScanType.BLOCK : Constants.ScanType.SCAN;
+            DataBaseManager.getInstance()
+                    .selectTable(11)
+                    .update()
+                    .where(1, path)
+                    .where(2, scanType)
+                    .param(2, newScanType)
+                    .execute();
+        }else {
+            DataBaseManager.getInstance()
+                    .selectTable(11)
+                    .delete()
+                    .where(1, path)
+                    .where(2, scanType)
+                    .execute();
+        }
         EventBus.getDefault().post(new RefreshFolderEvent(true));
     }
 }

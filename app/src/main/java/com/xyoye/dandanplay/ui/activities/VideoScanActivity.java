@@ -148,6 +148,7 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
             public void onPageSelected(int position) {
                 magicIndicator.onPageSelected(position);
                 selectedPosition = position;
+                fragmentList.get(position).updateFolderList();
                 resetButtonStatus();
             }
 
@@ -176,6 +177,7 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
                 break;
             case R.id.delete_tv:
                 fragmentList.get(selectedPosition).deleteChecked();
+                resetButtonStatus();
                 break;
         }
     }

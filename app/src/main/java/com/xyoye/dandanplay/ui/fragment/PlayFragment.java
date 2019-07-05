@@ -212,6 +212,9 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                         if (getContext() != null)
                             getContext().sendBroadcast(intent);
                         presenter.refreshVideo(reScan);
+                    }else {
+                        ToastUtils.showLong("未授予文件管理权限，无法扫描视频");
+                        refresh.setRefreshing(false);
                     }
                 });
     }

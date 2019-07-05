@@ -95,8 +95,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public void initListener() {
         navigationView.setOnNavigationItemSelectedListener(item -> {
-            if (playFragment != null)
-                playFragment.unregisterEventBus();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     setTitle("弹弹play");

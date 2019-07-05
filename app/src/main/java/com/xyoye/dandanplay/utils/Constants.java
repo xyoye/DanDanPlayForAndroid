@@ -55,6 +55,8 @@ public class Constants {
     }
 
     public static class DefaultConfig{
+        //系统视频路径
+        public static final String SYSTEM_VIDEO_PATH = "系统视频";
         //默认下载文件夹
         public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
         //配置路径
@@ -67,8 +69,6 @@ public class Constants {
         public static final String subtitleFolder = "/_zimu";
         //默认番剧封面缓存路径
         public static final String imageFolder =  downloadPath + "/_image";
-        //备份文件路径
-        public static final String backupFolder =  downloadPath + "/_backup";
     }
 
     public static class PlayerConfig{

@@ -70,7 +70,7 @@ public class IApplication extends BaseApplication {
             DataBaseManager.getInstance()
                     .selectTable(11)
                     .insert()
-                    .param(1, "系统视频")
+                    .param(1, Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
                     .param(2, Constants.ScanType.SCAN)
                     .postExecute();
         }

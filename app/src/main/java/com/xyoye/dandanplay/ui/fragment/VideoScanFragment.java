@@ -31,6 +31,7 @@ public class VideoScanFragment extends BaseFragment<VideoScanFragmentPresenter> 
     @BindView(R.id.folder_rv)
     RecyclerView folderRv;
 
+    //true：扫描页面，false：屏蔽页面
     private boolean isScanType;
 
     private BaseRvAdapter<ScanFolderBean> adapter;
@@ -88,6 +89,10 @@ public class VideoScanFragment extends BaseFragment<VideoScanFragmentPresenter> 
         folderRv.setItemViewCacheSize(10);
         folderRv.setAdapter(adapter);
 
+        presenter.queryScanFolderList(isScanType);
+    }
+
+    public void updateFolderList(){
         presenter.queryScanFolderList(isScanType);
     }
 

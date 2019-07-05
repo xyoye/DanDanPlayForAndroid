@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.mvp.impl;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -27,7 +26,6 @@ import java.util.Map;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
@@ -129,7 +127,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     private void scanAndRefreshVideo(){
         //获取需要扫描的目录
         List<String> scanFolderList = getScanFolder(Constants.ScanType.SCAN);
-        boolean isScanMediaStore = scanFolderList.remove("系统视频");
+        boolean isScanMediaStore = scanFolderList.remove(Constants.DefaultConfig.SYSTEM_VIDEO_PATH);
 
         refreshFileDis = Observable.just(isScanMediaStore)
                 //刷新系统文件
@@ -143,7 +141,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     }
 
     /**
-     * 从数据库中读取文件夹目录，过滤屏蔽目录
+     * 从数据库中读取文件夹目录，过滤屏蔽目录及不扫描目录
      */
     private List<FolderBean> getVideoFormDatabase(){
         List<FolderBean> folderBeanList = new ArrayList<>();
@@ -152,6 +150,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
         //查询所有屏蔽目录
         List<String> blockList = getScanFolder(Constants.ScanType.BLOCK);
+        //查询所有扫描目录
+        List<String> scanList = getScanFolder(Constants.ScanType.SCAN);
 
         //查询所有视频
         Cursor cursor = DataBaseManager.getInstance()
@@ -173,6 +173,18 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 }
             }
             if (isBlock) continue;
+
+            //过滤非扫描目录，扫描包括系统目录时不用过滤
+            if (!scanList.contains(Constants.DefaultConfig.SYSTEM_VIDEO_PATH)){
+                boolean isNotScan = true;
+                for (String scanPath : scanList){
+                    if (filePath.startsWith(scanPath)){
+                        isNotScan = false;
+                        break;
+                    }
+                }
+                if (isNotScan) continue;
+            }
 
             //计算文件夹中文件数量
             //文件不存在记录需要删除的文件

@@ -9,7 +9,7 @@ import android.os.Environment;
 public class Constants {
     public static class Config {
         //首次进入app
-        public static final String FIRST_OPEN_APP = "first_open_app";
+        public static final String FIRST_OPEN_APP = "first_open_app_1";
         //本地下载目录
         public static final String LOCAL_DOWNLOAD_FOLDER = "local_download_folder";
         //自动加载网络弹幕

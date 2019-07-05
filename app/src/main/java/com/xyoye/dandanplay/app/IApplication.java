@@ -72,7 +72,7 @@ public class IApplication extends BaseApplication {
                     .insert()
                     .param(1, Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
                     .param(2, Constants.ScanType.SCAN)
-                    .postExecute();
+                    .execute();
         }
 
         //Fragmentation

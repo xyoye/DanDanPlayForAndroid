@@ -57,6 +57,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     private BaseRvAdapter<FolderBean> adapter;
     private Disposable permissionDis;
+    private InitTrackerListener initTrackerListener;
 
     public static PlayFragment newInstance() {
         return new PlayFragment();
@@ -206,6 +207,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     if (granted) {
+                        //这是应用首次获取权限的地方，获取权限后需初始化tracker
+                        initTrackerListener.onFragmentPermissionGranted();
                         //通知系统刷新目录
                         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                         intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
@@ -227,5 +230,13 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void unregisterEventBus(){
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
+    }
+
+    public void setInitTrackerListener(InitTrackerListener listener){
+        this.initTrackerListener = listener;
+    }
+
+    public interface InitTrackerListener{
+        void onFragmentPermissionGranted();
     }
 }

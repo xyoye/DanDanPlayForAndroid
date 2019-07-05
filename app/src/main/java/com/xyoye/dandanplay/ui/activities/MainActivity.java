@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,7 +11,6 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseAppFragment;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -30,7 +27,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import butterknife.BindView;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
-public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView {
+public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView, PlayFragment.InitTrackerListener {
     @BindView(R.id.navigationView)
     BottomNavigationView navigationView;
 
@@ -63,9 +60,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             actionBar.setDisplayShowTitleEnabled(true);
         }
         navigationView.setSelectedItemId(R.id.navigation_play);
-
-        //延迟500ms，防止与playFragment请求权限回调冲突
-        navigationView.postDelayed(this::initTracker, 500);
     }
 
     @Override
@@ -77,6 +71,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             personalFragment = PersonalFragment.newInstance();
             mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
             previousFragment = playFragment;
+            playFragment.setInitTrackerListener(this);
         }
         if (navigationView != null){
             if (navigationView.getSelectedItemId() == R.id.navigation_play){
@@ -187,14 +182,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         }
     }
 
-    @SuppressLint("CheckResult")
-    private void initTracker(){
-        new RxPermissions(this).
-                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    if (granted) {
-                        presenter.initTracker();
-                    }
-                });
+    @Override
+    public void onFragmentPermissionGranted() {
+        presenter.initTracker();
     }
 }

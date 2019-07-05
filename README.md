@@ -58,7 +58,7 @@
 - [DanmakuFlameMaster](https://github.com/bilibili/DanmakuFlameMaster)
 - [ijkplayer](https://github.com/bilibili/ijkplayer)
 - [ExoPlayer](https://github.com/google/ExoPlayer)
-- [lbitorrent](https://gitlab.com/axet/libtorrent)
+- [jlbitorrent](https://github.com/frostwire/frostwire-jlibtorrent)
 - [jcifs-ng](https://github.com/AgNO3/jcifs-ng)
 - [jsoup](https://github.com/jhy/jsoup)
 - [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/Third_Party_Libraries.md)

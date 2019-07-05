@@ -18,7 +18,7 @@
 
 3）[retrofit](https://github.com/square/retrofit)
 
-4）[libtorrent](https://gitlab.com/axet/libtorrent)
+4）[jlibtorrent](https://github.com/frostwire/frostwire-jlibtorrent)
 种子下载（download torrent）
 
 5）[jsoup](https://github.com/jhy/jsoup)

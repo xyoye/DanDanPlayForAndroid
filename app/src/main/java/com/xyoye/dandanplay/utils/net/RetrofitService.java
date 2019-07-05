@@ -28,6 +28,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -52,6 +53,7 @@ public interface RetrofitService {
     Observable<UploadDanmuBean> uploadDanmu(@FieldMap Map<String, String> params, @Path("episodeId") String episodeId);
 
     @GET("api/v2/comment/{episodeId}?withRelated=true")
+    @Headers({"accept-encoding: gzip"})
     Observable<DanmuDownloadBean> downloadDanmu(@Path("episodeId") String episodeId);
 
     @GET("api/v2/homepage/banner")

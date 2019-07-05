@@ -2,7 +2,7 @@ package com.xyoye.dandanplay.mvp.view;
 
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import java.util.List;
 
@@ -15,4 +15,6 @@ public interface DownloadManagerView extends BaseMvpView, LoadDataView {
     void refreshAdapter(List<Torrent> torrentList);
 
     void startNewTask();
+
+    void showLoading(String msg);
 }

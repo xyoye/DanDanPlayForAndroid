@@ -18,7 +18,7 @@
     <string name="tip_downloading">下载中…</string>
     <string name="current_folder_tip">当前：</string>
     <string name="web_danmaku_button">网络弹幕</string>
-    <string name="login_button_tip">登录</string>
+    <string name="login_button_tip">登录 / 注册</string>
     <string name="register_button_tip">注册</string>
     <string name="username_tip">用户名</string>
     <string name="my_favorite_tip">我的关注</string>

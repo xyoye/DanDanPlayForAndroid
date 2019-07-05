@@ -7,6 +7,8 @@ import com.xyoye.dandanplay.database.DataBaseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.annotations.CheckReturnValue;
+
 /**
  * Created by xyoye on 2019/4/17.
  */
@@ -23,6 +25,7 @@ public class DeleteBuilder{
         whereArgs = new ArrayList<>();
     }
 
+    @CheckReturnValue
     public DeleteBuilder where(int column, String value) {
         String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
         whereClause.add(whereClauseText);

@@ -1,40 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?android:attr/selectableItemBackground">
 
-    <ImageView
-        android:id="@+id/smb_cover_iv"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="5dp"
-        android:src="@mipmap/ic_smb_lan_device"/>
-
-    <TextView
-        android:id="@+id/smb_url_tv"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/grid_ll"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:textSize="12sp"
-        android:singleLine="true"/>
+        android:gravity="center_horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/smb_name_tv"
-        android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/smb_cover_iv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="5dp"
+            android:src="@mipmap/ic_smb_lan_device"/>
+
+        <TextView
+            android:id="@+id/smb_url_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="12sp"
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/smb_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textColor="@color/black_color"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text=""/>
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/liner_cl"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginEnd="3dp"
-        android:gravity="center"
-        android:textSize="12sp"
-        android:textColor="@color/black_color"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:text=""/>
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:visibility="gone">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/liner_smb_cover_iv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="5dp"
+            android:layout_marginStart="7dp"
+            android:src="@mipmap/ic_smb_lan_device"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/liner_smb_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="12dp"
+            android:textSize="12sp"
+            android:textColor="@color/black_color"
+            android:text=""
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/liner_smb_cover_iv"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</RelativeLayout>

@@ -110,7 +110,7 @@
                     android:layout_height="46dp"
                     android:padding="9dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/ic_home_hostory"/>
+                    android:src="@mipmap/ic_home_history"/>
 
                 <TextView
                     android:layout_width="wrap_content"

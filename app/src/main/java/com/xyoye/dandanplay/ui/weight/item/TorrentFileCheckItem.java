@@ -5,9 +5,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.bean.TorrentCheckBean;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
 
 import butterknife.BindView;
 
@@ -15,7 +15,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/3/6.
  */
 
-public class TorrentFileCheckItem implements AdapterItem<Torrent.TorrentFile> {
+public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
 
     @BindView(R.id.check_cb)
     CheckBox checkCb;
@@ -46,8 +46,8 @@ public class TorrentFileCheckItem implements AdapterItem<Torrent.TorrentFile> {
     }
 
     @Override
-    public void onUpdateViews(Torrent.TorrentFile model, int position) {
-        checkCb.setChecked(model.isCheck());
+    public void onUpdateViews(TorrentCheckBean model, int position) {
+        checkCb.setChecked(model.isChecked());
         fileNameTv.setText(model.getName());
         fileSizeTv.setText(CommonUtils.convertFileSize(model.getLength()));
 

@@ -8,6 +8,8 @@ import com.xyoye.dandanplay.database.DataBaseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.annotations.CheckReturnValue;
+
 /**
  * Created by xyoye on 2019/4/17.
  */
@@ -26,6 +28,7 @@ public class UpdateBuilder{
         whereClause = new ArrayList<>();
     }
 
+    @CheckReturnValue
     public UpdateBuilder where(int column, String value) {
         String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
         whereClause.add(whereClauseText);
@@ -33,46 +36,55 @@ public class UpdateBuilder{
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, String value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Byte value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Short value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Integer value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Long value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Float value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Double value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, Boolean value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;
     }
 
+    @CheckReturnValue
     public UpdateBuilder param(int column, byte[] value) {
         mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
         return this;

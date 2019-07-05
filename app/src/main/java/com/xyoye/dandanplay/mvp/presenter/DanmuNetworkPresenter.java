@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
@@ -8,7 +7,7 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
  */
 
 public interface DanmuNetworkPresenter extends BaseMvpPresenter {
-    void matchDanmu(DanmuMatchParam param);
+    void matchDanmu(String videoPath);
 
     void searchDanmu(String anime, String episode);
 }

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,20 +12,17 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
-import com.xyoye.dandanplay.utils.torrent.TorrentUtil;
-
-import org.greenrobot.eventbus.EventBus;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import butterknife.BindView;
-import libtorrent.Libtorrent;
 
 /**
  * Created by xyoye on 2018/10/27.
  */
 
-public class DownloadManagerItem implements AdapterItem<Torrent> {
+public class DownloadManagerItem implements AdapterItem<BtTask> {
 
     @BindView(R.id.download_title_tv)
     TextView downloadTitleTv;
@@ -61,136 +59,115 @@ public class DownloadManagerItem implements AdapterItem<Torrent> {
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onUpdateViews(Torrent torrent, int position) {
-        if (torrent.getStatus() == -1) {
-            String speed = "∞ ↓ 0b/s · ↑ 0b/s";
-            String duration = "未知/未知（" + 0 + "%）";
-            downloadTitleTv.setText(torrent.getTitle());
-            downloadSpeedTv.setText(speed);
-            downloadDurationPb.setProgress(0);
-            downloadDurationTv.setText(duration);
-            downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
-            downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
-            downloadStatusTv.setText("等待中");
-        } else {
+    public void onUpdateViews(BtTask task, int position) {
+        Torrent torrent = task.getTorrent();
+
+        //checking和stopped不改变进度
+        if (task.getTaskStatus() != TaskStatus.CHECKING &&
+                task.getTaskStatus() != TaskStatus.STOPPED){
+
+            //读取当前下载速度
+            String speed = "↓ "+CommonUtils.convertFileSize(torrent.getDownloadRate()) + "/s";
+            //读取当前下载进度
             int progress = getProgress(torrent);
             String duration = getDuration(torrent) + "（" + progress + "%）";
 
-            downloadTitleTv.setText(torrent.getTitle());
+            downloadSpeedTv.setText(speed);
             downloadDurationPb.setProgress(progress);
-            downloadSpeedTv.setText(TorrentUtil.getSpeed(context, torrent));
             downloadDurationTv.setText(duration);
-            setStatus(torrent);
         }
+        downloadTitleTv.setText(torrent.getTitle());
 
-        downloadInfoRl.setOnLongClickListener(v -> {
-            new TorrentDownloadDetailDialog(context, position, statusStr).show();
-            return true;
-        });
+        //根据下载状态修改图标和文字
+        checkStatus(task.getTaskStatus());
 
+        //单击展示详情弹窗
         downloadInfoRl.setOnClickListener(v ->  new TorrentDownloadDetailDialog(context, position, statusStr).show());
 
-        downloadCtrlRl.setOnClickListener(v -> changeStatus(torrent, position));
+        //点击图标切换任务状态
+        downloadCtrlRl.setOnClickListener(v -> {
+            if (task.isPaused()){
+                task.resume();
+            }else {
+                task.pause();
+            }
+        });
     }
 
     private int getProgress(Torrent torrent) {
-        if (torrent.isDone()) return 100;
+        if (torrent.isFinished()) return 100;
         if (torrent.isError()) return 0;
-        if (Libtorrent.metaTorrent(torrent.getId())) {
-            long p = Libtorrent.torrentPendingBytesLength(torrent.getId());
-            if (p == 0)
-                return 0;
-            return (int) (Libtorrent.torrentPendingBytesCompleted(torrent.getId()) * 100 / p);
-        }
-        return 0;
+        if (torrent.getLength() == 0)
+            return 0;
+        return (int)((torrent.getDownloaded() * 100) / torrent.getLength());
     }
 
     private String getDuration(Torrent torrent) {
+        if (torrent.isFinished())
+            return CommonUtils.convertFileSize(torrent.getLength()) + "/" + CommonUtils.convertFileSize(torrent.getLength());
         if (torrent.isError())
             return "未知/未知";
-        if (torrent.isDone())
-            return CommonUtils.convertFileSize(torrent.getSize()) + "/" + CommonUtils.convertFileSize(torrent.getSize());
-        if (Libtorrent.metaTorrent(torrent.getId())) {
-            long size = Libtorrent.torrentPendingBytesLength(torrent.getId());
-            long completed = Libtorrent.torrentPendingBytesCompleted(torrent.getId());
-            return CommonUtils.convertFileSize(completed) + "/" + CommonUtils.convertFileSize(size);
-        }
-        return "未知/未知";
+        return CommonUtils.convertFileSize(torrent.getDownloaded()) + "/" + CommonUtils.convertFileSize(torrent.getLength());
     }
 
-    private void setStatus(Torrent torrent) {
-        if (torrent.getStatus() == -1) {
-            downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
-            downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
-            downloadStatusTv.setText("连接中");
-            statusStr = "connecting";
-            return;
-        }
-
-        if (torrent.isDone()) {
-            downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
-            downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
-            downloadStatusTv.setText("已完成");
-            statusStr = "done";
-            return;
-        }
-
-        if (torrent.isError()) {
-            downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
-            downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
-            downloadStatusTv.setText("错误");
-            statusStr = "error";
-            return;
-        }
-
-        switch (Libtorrent.torrentStatus(torrent.getId())) {
-            case Libtorrent.StatusQueued:
+    private void checkStatus(TaskStatus taskStatus) {
+        switch (taskStatus) {
+            case FINISHED:
+                downloadSpeedTv.setText("-- B/s");
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
+                downloadStatusTv.setText("已完成");
+                statusStr = "done";
+                break;
+            case UNKNOWN:
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
+                downloadStatusTv.setText("未知");
+                statusStr = "error";
+                break;
+            case ERROR:
+                downloadSpeedTv.setText("↓ 0 B/s");
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
+                downloadStatusTv.setText("错误");
+                statusStr = "error";
+                break;
+            case CHECKING:
+                downloadSpeedTv.setText("↓ 0 B/s");
+                downloadDurationPb.setProgress(0);
+                downloadDurationTv.setText("--");
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
+                downloadStatusTv.setText("连接中");
+                statusStr = "connecting";
+                break;
+            case ALLOCATING:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
                 downloadStatusTv.setText("等待中");
                 statusStr = "queued";
                 break;
-            case Libtorrent.StatusChecking:
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
-                downloadStatusTv.setText("连接中");
-                statusStr = "checking";
-                break;
-            case Libtorrent.StatusPaused:
+            case PAUSED:
+                downloadSpeedTv.setText("↓ 0 B/s");
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("已暂停");
                 statusStr = "paused";
                 break;
-            case Libtorrent.StatusSeeding:
+            case SEEDING:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("下载中");
                 statusStr = "seeding";
                 break;
-            case Libtorrent.StatusDownloading:
+            case DOWNLOADING:
+            case DOWNLOADING_METADATA:
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
                 downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
                 downloadStatusTv.setText("下载中");
                 statusStr = "downloading";
-                break;
-        }
-    }
-
-    private void changeStatus(Torrent torrent, int position) {
-        if (torrent.isDone()) return;
-        if (torrent.isError()) return;
-
-        switch (Libtorrent.torrentStatus(torrent.getId())) {
-            case Libtorrent.StatusChecking:
-            case Libtorrent.StatusSeeding:
-            case Libtorrent.StatusDownloading:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_PAUSE, position));
-                break;
-            case Libtorrent.StatusPaused:
-            case Libtorrent.StatusQueued:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_RESUME, position));
                 break;
         }
     }

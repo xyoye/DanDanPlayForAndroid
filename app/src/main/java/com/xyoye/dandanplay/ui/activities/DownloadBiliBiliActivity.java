@@ -71,7 +71,7 @@ public class DownloadBiliBiliActivity extends BaseMvcActivity implements View.On
                 String urlLink = urlEt.getText().toString();
                 if (urlLink.isEmpty()){
                     ToastUtils.showShort("视频链接不能为空");
-                }else if (!CommonUtils.isUrl(urlLink)){
+                }else if (!CommonUtils.isUrlLink(urlLink)){
                     ToastUtils.showShort("请输入正确视频链接");
                 }else {
                     BiliBiliDownloadDialog downloadByUrlDialog = new BiliBiliDownloadDialog(DownloadBiliBiliActivity.this, R.style.Dialog, urlLink, "url");
@@ -96,7 +96,7 @@ public class DownloadBiliBiliActivity extends BaseMvcActivity implements View.On
                 String selectUrl = data.getStringExtra("selectUrl");
                 if (selectUrl.isEmpty()){
                     ToastUtils.showShort( "视频链接不能为空");
-                }else if (!CommonUtils.isUrl(selectUrl)){
+                }else if (!CommonUtils.isUrlLink(selectUrl)){
                     ToastUtils.showShort("请输入正确视频链接");
                 }else {
                     BiliBiliDownloadDialog downloadByUrlDialog = new BiliBiliDownloadDialog(DownloadBiliBiliActivity.this, R.style.Dialog, selectUrl, "url");

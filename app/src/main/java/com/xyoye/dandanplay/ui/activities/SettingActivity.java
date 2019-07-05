@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -35,13 +34,9 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/24.
  */
 
-public class SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
+public class  SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
-    @BindView(R.id.cloud_filter_sw)
-    Switch cloudFilterSw;
-    @BindView(R.id.bilibili_download_rl)
-    RelativeLayout bilibiliDownloadRl;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
@@ -69,9 +64,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         pathTv.setText(downloadPath);
         version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
-        if (AppConfig.getInstance().isCloudDanmuFilter()){
-            cloudFilterSw.setChecked(true);
-        }
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
         dialog = new ProgressDialog(SettingActivity.this);
     }
@@ -79,7 +71,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     @Override
     public void initListener() {
         pathRl.setOnClickListener(this);
-        bilibiliDownloadRl.setOnClickListener(this);
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
@@ -88,9 +79,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         patchRl.setOnLongClickListener(v -> {
             new PatchHisDialog(SettingActivity.this, R.style.Dialog).show();
             return true;
-        });
-        cloudFilterSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setCloudDanmuFilter(isChecked);
         });
     }
 
@@ -113,9 +101,6 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
                     pathTv.setText(path);
                     AppConfig.getInstance().setDownloadFolder(path);
                 }).hideDefault().show();
-                break;
-            case R.id.bilibili_download_rl:
-                launchActivity(DownloadBiliBiliActivity.class);
                 break;
             case R.id.version_rl:
                 Beta.checkUpgrade(false,false);

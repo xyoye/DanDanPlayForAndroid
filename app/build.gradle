@@ -74,10 +74,10 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-    implementation 'com.github.axet:libtorrent:0.13.38'
-    implementation('com.github.axet:wget:1.4.2') {
-        exclude group: 'com.thoughtworks.xstream', module: 'xstream'
-    }
+
+    implementation "com.frostwire:jlibtorrent:1.2.0.16"
+    implementation "com.frostwire:jlibtorrent-android-arm:1.2.0.16"
+    implementation "com.frostwire:jlibtorrent-android-x86:1.2.0.16"
 
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

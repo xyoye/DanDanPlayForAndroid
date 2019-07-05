@@ -8,12 +8,6 @@
         android:id="@+id/menu_item_lan"
         android:orderInCategory="100"
         android:title="局域网"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/menu_item_scan"
-        android:orderInCategory="100"
-        android:title="扫描"
         app:showAsAction="never"/>
 
     <item
@@ -21,11 +15,4 @@
         android:orderInCategory="100"
         android:title="网络串流"
         app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_item_setting"
-        android:orderInCategory="100"
-        android:title="设置"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_settings_white"/>
 </menu>

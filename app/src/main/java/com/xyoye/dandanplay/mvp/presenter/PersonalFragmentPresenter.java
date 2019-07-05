@@ -7,5 +7,5 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
  */
 
 public interface PersonalFragmentPresenter extends BaseMvpPresenter {
-    void getFragmentData();
+
 }

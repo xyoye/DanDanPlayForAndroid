@@ -5,15 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.event.SearchDanmuEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,9 +31,11 @@ public class SearchDanmuDialog extends Dialog {
     EditText episodeEt;
     @BindView(R.id.anime_et)
     EditText animeEt;
+    private onSearchClickListener listener;
 
-    public SearchDanmuDialog(@NonNull Context context, int themeResId) {
-        super(context, themeResId);
+    public SearchDanmuDialog(@NonNull Context context, onSearchClickListener listener) {
+        super(context,  R.style.Dialog);
+        this.listener = listener;
     }
 
     @Override
@@ -61,18 +59,20 @@ public class SearchDanmuDialog extends Dialog {
 
     @OnClick({R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.confirm_tv:
-                String anime = animeEt.getText().toString().trim();
-                String episode;
-                if (episodeRb.isChecked()){
-                    episode = episodeEt.getText().toString().trim();
-                }else {
-                    episode = "movie";
-                }
-                EventBus.getDefault().post(new SearchDanmuEvent(anime, episode));
-                break;
+        if (view.getId() == R.id.confirm_tv) {
+            String anime = animeEt.getText().toString().trim();
+            String episode;
+            if (episodeRb.isChecked()) {
+                episode = episodeEt.getText().toString().trim();
+            } else {
+                episode = "movie";
+            }
+            listener.onSearch(anime, episode);
         }
         SearchDanmuDialog.this.dismiss();
+    }
+
+    public interface onSearchClickListener{
+        void onSearch(String anime, String episode);
     }
 }

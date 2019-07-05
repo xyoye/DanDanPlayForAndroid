@@ -9,14 +9,8 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 public interface PlayFragmentPresenter extends BaseMvpPresenter {
 
-    //获取系统视频数据
-    void getVideoFormSystem();
-
-    //获取系统视频数据 + 遍历保存路径
-    void getVideoFormSystemAndSave();
-
-    //获取数据库数据
-    void getVideoFormDatabase();
+    //刷新视频数据
+    void refreshVideo(boolean reScan);
 
     //删除目录
     void deleteFolder(String folderPath);

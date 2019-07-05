@@ -60,7 +60,8 @@ public class FormatTTML implements TimedTextFileFormat {
 		try {
 			dBuilder = dbFactory.newDocumentBuilder();
 			//creating a reader with correct encoding
-			InputStreamReader isr = (InputStreamReader) ReaderFactory.createReaderFromFile(file);
+			Charset defaultCharset = Charset.forName("utf-16");
+			InputStreamReader isr = (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
 			Document doc = dBuilder.parse(new InputSource(isr));
 			doc.getDocumentElement().normalize();
 			

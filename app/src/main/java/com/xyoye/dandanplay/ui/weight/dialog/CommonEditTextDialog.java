@@ -8,20 +8,20 @@ import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
-import com.xyoye.dandanplay.bean.event.ChangeScreenNameEvent;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +35,7 @@ import butterknife.OnClick;
 public class CommonEditTextDialog extends Dialog {
     public static final int NETWORK_LINK = 0;
     public static final int SCREEN_NAME = 1;
+    public static final int ADD_BLOCK = 2;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -44,10 +45,27 @@ public class CommonEditTextDialog extends Dialog {
     TextView titleTv;
 
     private int type;
+    private CommonEditTextListener listener;
+    private List<String> blockList;
 
-    public CommonEditTextDialog(@NonNull Context context, int themeResId, int type) {
-        super(context, themeResId);
+    public CommonEditTextDialog(@NonNull Context context, int type) {
+        super(context, R.style.Dialog);
         this.type = type;
+        blockList = new ArrayList<>();
+    }
+
+    public CommonEditTextDialog(@NonNull Context context, int type, CommonEditTextListener listener) {
+        super(context, R.style.Dialog);
+        this.type = type;
+        this.listener = listener;
+        blockList = new ArrayList<>();
+    }
+
+    public CommonEditTextDialog(@NonNull Context context, int type, List<String> blockList, CommonEditTextListener listener) {
+        super(context, R.style.Dialog);
+        this.type = type;
+        this.listener = listener;
+        this.blockList = blockList;
     }
 
     @Override
@@ -56,14 +74,22 @@ public class CommonEditTextDialog extends Dialog {
         setContentView(R.layout.dialog_common_edittext);
         ButterKnife.bind(this);
 
-        if (type == NETWORK_LINK) {
-            titleTv.setText("网络串流");
-            editText.setHint("https://");
-            editText.setMaxLines(5);
-        } else if (type == SCREEN_NAME){
-            titleTv.setText("修改昵称");
-            editText.setHint("昵称");
-            editText.setMaxLines(1);
+        switch (type){
+            case NETWORK_LINK:
+                titleTv.setText("网络串流");
+                editText.setHint("https://");
+                editText.setMaxLines(5);
+                break;
+            case SCREEN_NAME:
+                titleTv.setText("修改昵称");
+                editText.setHint("昵称");
+                editText.setMaxLines(1);
+                break;
+            case ADD_BLOCK:
+                titleTv.setText("添加屏蔽");
+                editText.setHint("屏蔽数据（可以分号为间隔，批量添加）");
+                editText.setMaxLines(5);
+                break;
         }
     }
 
@@ -71,9 +97,9 @@ public class CommonEditTextDialog extends Dialog {
         PersonalBean.changeScreenName(screenName, new CommJsonObserver<CommJsonEntity>() {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
-                ToastUtils.showShort("修改昵称成功");
-                AppConfig.getInstance().saveUserScreenName(screenName);
-                EventBus.getDefault().post(new ChangeScreenNameEvent(screenName));
+                if (listener != null){
+                    listener.onConfirm(screenName);
+                }
                 CommonEditTextDialog.this.cancel();
             }
 
@@ -92,42 +118,84 @@ public class CommonEditTextDialog extends Dialog {
                 CommonEditTextDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
-                if (type == NETWORK_LINK) {
-                    if (StringUtils.isEmpty(editText.getText().toString())) {
-                        inputLayout.setErrorEnabled(true);
-                        inputLayout.setError("链接不能为空");
-                    } else {
-                        String link = editText.getText().toString();
-                        int lastEx = link.lastIndexOf("/") + 1;
-                        String title = link;
-                        if (lastEx < link.length())
-                            title = link.substring(lastEx);
-//                        Intent intent = new Intent(getContext(), PlayerActivity.class);
-//                        intent.putExtra("title", title);
-//                        intent.putExtra("path", link);
-//                        intent.putExtra("danmu_path", "");
-//                        intent.putExtra("current", 0);
-//                        intent.putExtra("episode_id", "");
-//                        getContext().startActivity(intent);
-                        PlayerManagerActivity.launchPlayer(getContext(), title, link, "", 0, 0);
-                        CommonEditTextDialog.this.dismiss();
+                doConfirm();
+                break;
+        }
+    }
+
+    private void doConfirm(){
+        String inputData = editText.getText().toString();
+        switch (type){
+            case NETWORK_LINK:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("链接不能为空");
+                } else {
+                    int lastEx = inputData.lastIndexOf("/") + 1;
+                    String title = inputData;
+                    if (lastEx < inputData.length())
+                        title = inputData.substring(lastEx);
+                    PlayerManagerActivity.launchPlayer(getContext(), title, inputData, "", 0, 0);
+                    CommonEditTextDialog.this.dismiss();
+                }
+                break;
+            case SCREEN_NAME:
+                //昵称。长度不能超过50个字符，可以使用中文。
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("昵称不能为空");
+                    return;
+                }
+                if (inputData.length() > 50) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("昵称长度过长");
+                    return;
+                }
+                changeScreenName(inputData);
+                break;
+            case ADD_BLOCK:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("屏蔽数据不能为空");
+                }else if (blockList.contains(inputData)){
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("当前关键字已屏蔽");
+                }else if (traverseBlock(inputData)){
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("当前关键字已在屏蔽范围内");
+                }else {
+                    if (inputData.endsWith(";")){
+                        inputData = inputData.substring(0, inputData.length() - 1);
                     }
-                } else if (type == SCREEN_NAME){
-                    //昵称。长度不能超过50个字符，可以使用中文。
-                    String screenName = editText.getText().toString();
-                    if (StringUtils.isEmpty(screenName)) {
-                        inputLayout.setErrorEnabled(true);
-                        inputLayout.setError("昵称不能为空");
-                        return;
+                    if (inputData.startsWith(";")){
+                        inputData = inputData.substring(1);
                     }
-                    if (screenName.length() > 50) {
-                        inputLayout.setErrorEnabled(true);
-                        inputLayout.setError("昵称长度过长");
-                        return;
+                    if (listener != null){
+                        if (inputData.contains(";")){
+                            String[] blockData = inputData.split(";");
+                            listener.onConfirm(blockData);
+                        }else {
+                            listener.onConfirm(inputData);
+                        }
                     }
-                    changeScreenName(screenName);
+                    CommonEditTextDialog.this.dismiss();
                 }
                 break;
         }
+    }
+
+    private boolean traverseBlock(String blockText){
+        boolean isContains = false;
+        for (String text : blockList){
+            if (text.contains(blockText)){
+                isContains = true;
+                break;
+            }
+        }
+        return isContains;
+    }
+
+    public interface CommonEditTextListener{
+        void onConfirm(String... data);
     }
 }

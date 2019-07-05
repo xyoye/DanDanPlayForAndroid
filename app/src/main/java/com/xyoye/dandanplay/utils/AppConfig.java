@@ -1,11 +1,6 @@
 package com.xyoye.dandanplay.utils;
 
-import android.support.annotation.NonNull;
-
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.StringUtils;
-import com.xyoye.dandanplay.bean.VideoBean;
 
 /**
  * Created by xyoye on 2018/7/2.
@@ -172,7 +167,7 @@ public class AppConfig {
      * PlayerType
      */
     public int getPlayerType(){
-        return SPUtils.getInstance().getInt(Constants.PlayerConfig.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.EXO_PLAYER);
+        return SPUtils.getInstance().getInt(Constants.PlayerConfig.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.IJK_PLAYER);
     }
 
     public void setPlayerType(int type){
@@ -327,13 +322,13 @@ public class AppConfig {
     }
 
     /**
-     * 是否已备份过数据库
+     * smb文件排序是否为grid layout
      */
-    public boolean isBackupNull(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.IS_BACKUP_BLOCK, true);
+    public boolean smbIsGridLayout(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.SMB_IS_GRID_LAYOUT, true);
     }
 
-    public void setBackupNotNull(){
-        SPUtils.getInstance().put(Constants.Config.IS_BACKUP_BLOCK, false);
+    public void setSmbIsGridLayout(boolean isGridLayout){
+        SPUtils.getInstance().put(Constants.Config.SMB_IS_GRID_LAYOUT, isGridLayout);
     }
 }

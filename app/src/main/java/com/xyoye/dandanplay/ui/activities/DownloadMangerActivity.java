@@ -19,6 +19,7 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
+import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
@@ -26,9 +27,9 @@ import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
-import com.xyoye.dandanplay.utils.torrent.TorrentEvent;
-import com.xyoye.dandanplay.utils.torrent.TorrentStartEvent;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,7 +38,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
-import libtorrent.Libtorrent;
 
 /**
  * Created by xyoye on 2018/10/27.
@@ -49,7 +49,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
     @BindView(R.id.download_rv)
     RecyclerView downloadRv;
 
-    private BaseRvAdapter<Torrent> adapter;
+    private BaseRvAdapter<BtTask> adapter;
     private Runnable refresh;
     private Handler mHandler = IApplication.getMainHandler();
 
@@ -61,10 +61,10 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         downloadRv.setItemViewCacheSize(10);
         ((SimpleItemAnimator)downloadRv.getItemAnimator()).setSupportsChangeAnimations(false);
         presenter.getTorrentList();
-        adapter = new BaseRvAdapter<Torrent>(IApplication.torrentList) {
+        adapter = new BaseRvAdapter<BtTask>(IApplication.taskList) {
             @NonNull
             @Override
-            public AdapterItem<Torrent> onCreateItem(int viewType) {
+            public AdapterItem<BtTask> onCreateItem(int viewType) {
                 return new DownloadManagerItem();
             }
         };
@@ -78,25 +78,24 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
             startTorrentService();
             presenter.observeService();
         }
+
+        if (IApplication.isFirstOpenTaskPage){
+            IApplication.isFirstOpenTaskPage = false;
+            presenter.recoveryTask();
+        }
+
     }
 
     private void initRefresh(){
         refresh = () -> {
-            for (int i=0; i<IApplication.torrentList.size(); i++){
-                Torrent torrent = IApplication.torrentList.get(i);
-                if (torrent.isDone()){
-                    if (torrent.isUpdate()){
-                        adapter.notifyItemChanged(i);
-                        torrent.setUpdate(false);
-                    }else {
-                        continue;
-                    }
-                }
-                if (torrent.isUpdate()){
+            for (int i=0; i<IApplication.taskList.size(); i++){
+                BtTask task = IApplication.taskList.get(i);
+                if (!task.isFinished()){
                     adapter.notifyItemChanged(i);
-                    if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusPaused){
-                        torrent.setUpdate(false);
-                    }
+                }else if (!task.isRefreshAfterFinish()){
+                    //任务完成后仍需刷新一次
+                    task.setRefreshAfterFinish(true);
+                    adapter.notifyItemChanged(i);
                 }
             }
             mHandler.postDelayed(refresh,1000);
@@ -127,8 +126,8 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
     @Override
     public void startNewTask(){
-        Torrent torrent = (Torrent)getIntent().getSerializableExtra("torrent");
-        if (torrent != null){
+        Torrent torrent = getIntent().getParcelableExtra("new_task");
+        if (torrent != null && !IApplication.taskMap.containsKey(torrent.getHash())){
             EventBus.getDefault().post(new TorrentStartEvent(torrent));
         }
     }
@@ -144,7 +143,12 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
     @Override
     public void showLoading() {
-        showLoadingDialog("正在开启下载服务");
+        showLoadingDialog("请稍等");
+    }
+
+    @Override
+    public void showLoading(String msg) {
+        showLoadingDialog("msg");
     }
 
     @Override
@@ -162,18 +166,19 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         super.onDestroy();
         mHandler.removeCallbacks(refresh);
 
-        boolean downloading = false;
-        for (Torrent torrent : IApplication.torrentList) {
-            if (torrent.isDone()) continue;
-            if (Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusDownloading ||
-                    Libtorrent.torrentStatus(torrent.getId()) == Libtorrent.StatusSeeding) {
-                downloading = true;
+        boolean isTaskRunning = false;
+        for (BtTask task : IApplication.taskList) {
+            if (task.isFinished()) continue;
+            //没有下载任务在执行，关闭服务
+            if (!task.isPaused()){
+                isTaskRunning = true;
                 break;
             }
         }
-        if (!downloading){
-            if (ServiceUtils.isServiceRunning(TorrentService.class))
+        if (!isTaskRunning){
+            if (ServiceUtils.isServiceRunning(TorrentService.class)){
                 ServiceUtils.stopService(TorrentService.class);
+            }
         }
     }
     @Override
@@ -193,13 +198,19 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                 EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_PAUSE, -1));
                 break;
             case R.id.all_delete:
+                TorrentEvent torrentEvent = new TorrentEvent();
+                torrentEvent.setAction(TorrentEvent.EVENT_DELETE_ALL_TASK);
                 new CommonDialog.Builder(this)
                         .showExtra()
                         .setAutoDismiss()
-                        .setOkListener(dialog ->
-                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_TASK, -1)))
-                        .setExtraListener(dialog ->
-                                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_DELETE_FILE, -1)))
+                        .setOkListener(dialog -> {
+                            torrentEvent.setDeleteFile(false);
+                            EventBus.getDefault().post(torrentEvent);
+                         })
+                        .setExtraListener(dialog ->{
+                            torrentEvent.setDeleteFile(true);
+                            EventBus.getDefault().post(torrentEvent);
+                        })
                         .build()
                         .show("确认删除所有任务？","删除任务和文件");
                 break;

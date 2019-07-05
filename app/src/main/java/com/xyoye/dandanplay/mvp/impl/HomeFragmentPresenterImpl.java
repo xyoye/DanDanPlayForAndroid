@@ -76,15 +76,19 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
             public void onSuccess(BannerBeans bannerBean) {
                 List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
                 new Thread(() -> {
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    sqLiteDatabase.delete(DataBaseInfo.getTableNames()[3],"", new String[]{});
+                    DataBaseManager.getInstance()
+                            .selectTable(3)
+                            .delete()
+                            .execute();
                     for(BannerBeans.BannersBean bean : beans ){
-                        ContentValues values=new ContentValues();
-                        values.put(DataBaseInfo.getFieldNames()[3][1], bean.getTitle());
-                        values.put(DataBaseInfo.getFieldNames()[3][2], bean.getDescription());
-                        values.put(DataBaseInfo.getFieldNames()[3][3], bean.getUrl());
-                        values.put(DataBaseInfo.getFieldNames()[3][4], bean.getImageUrl());
-                        sqLiteDatabase.insert(DataBaseInfo.getTableNames()[3],null,values);
+                        DataBaseManager.getInstance()
+                                .selectTable(3)
+                                .insert()
+                                .param(1, bean.getTitle())
+                                .param(2, bean.getDescription())
+                                .param(3, bean.getUrl())
+                                .param(4, bean.getImageUrl())
+                                .execute();
                     }
                 }).start();
                 if (countDownLatch != null){
@@ -101,9 +105,10 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
                 ToastUtils.showShort(message);
 
                 List<BannerBeans.BannersBean> bannerBeans = new ArrayList<>();
-                SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                String sql = "SELECT * FROM banner";
-                Cursor cursor = sqLiteDatabase.rawQuery(sql, new String[]{});
+                Cursor cursor = DataBaseManager.getInstance()
+                                    .selectTable(3)
+                                    .query()
+                                    .execute();
                 while (cursor.moveToNext()){
                     String title = cursor.getString(1);
                     String description = cursor.getString(2);

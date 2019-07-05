@@ -43,6 +43,8 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     CheckBox outerChinaDanmuCb;
     @BindView(R.id.auto_load_danmu_cb)
     CheckBox autoLoadDanmuCb;
+    @BindView(R.id.danmu_cloud_block_cb)
+    CheckBox danmuCloudBlockCb;
     @BindView(R.id.network_subtitle_cb)
     CheckBox networkSubtitleCb;
     @BindView(R.id.auto_load_local_subtitle_cb)
@@ -106,6 +108,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         boolean surfaceRenders = AppConfig.getInstance().isSurfaceRenders();
         boolean outerChinaDialog = AppConfig.getInstance().isShowOuterChainDanmuDialog();
         boolean autoLoadDanmu = AppConfig.getInstance().isAutoLoadDanmu();
+        boolean danmuCloudBlock = AppConfig.getInstance().isCloudDanmuFilter();
         boolean useNetworkSubtitle = AppConfig.getInstance().isUseNetWorkSubtitle();
         boolean autoLoadLocalSubtitle = AppConfig.getInstance().isAutoLoadLocalSubtitle();
         boolean autoLoadNetworkSubtitle = AppConfig.getInstance().isAutoLoadNetworkSubtitle();
@@ -115,6 +118,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         surfaceRendersCb.setChecked(surfaceRenders);
         outerChinaDanmuCb.setChecked(outerChinaDialog);
         autoLoadDanmuCb.setChecked(autoLoadDanmu);
+        danmuCloudBlockCb.setChecked(danmuCloudBlock);
         networkSubtitleCb.setChecked(useNetworkSubtitle);
         autoLoadLocalSubtitleCb.setChecked(autoLoadLocalSubtitle);
         autoLoadNetworkSubtitleCb.setChecked(autoLoadNetworkSubtitle);
@@ -139,6 +143,8 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                 AppConfig.getInstance().setShowOuterChainDanmuDialog(isChecked));
         autoLoadDanmuCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setAutoLoadDanmu(isChecked));
+        danmuCloudBlockCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setCloudDanmuFilter(isChecked));
         autoLoadLocalSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setAutoLoadLocalSubtitle(isChecked));
         autoLoadNetworkSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->

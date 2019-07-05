@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.weight.item;
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
@@ -12,11 +13,11 @@ import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.torrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
+import com.xyoye.dandanplay.utils.smb.TorrentServer;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 import butterknife.BindView;
 
@@ -28,18 +29,21 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
     @BindView(R.id.file_name_tv)
     TextView fileNameTv;
+    @BindView(R.id.duration_tv)
+    TextView durationTv;
+    @BindView(R.id.download_duration_pb)
+    ProgressBar downloadDurationPb;
     @BindView(R.id.danmu_bind_iv)
     ImageView danmuBindIv;
 
     private View mView;
 
     public TorrentDetailDownloadFileItem() {
-
     }
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_torrent_detail_download_file;
+        return R.layout.item_torrent_detail_download_file_v2;
     }
 
     @Override
@@ -62,35 +66,46 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         fileNameTv.setText(model.getName());
 
-        File realFile = new File(model.getPath());
+        //文件是否忽略下载
+        if (model.isChecked()){
+            fileNameTv.setTextColor(mView.getResources().getColor(R.color.text_black));
+            int progress = (int)(model.getDownloaded() * 100 / model.getLength());
+            downloadDurationPb.setProgress(progress);
+
+            String duration = CommonUtils.convertFileSize(model.getDownloaded()) + "/" + CommonUtils.convertFileSize(model.getLength());
+            duration += "  ("+progress+"%)";
+            durationTv.setText(duration);
+        }else {
+            fileNameTv.setTextColor(mView.getResources().getColor(R.color.text_gray));
+            downloadDurationPb.setProgress(0);
+            durationTv.setText("已忽略");
+        }
 
         mView.setOnClickListener(v -> {
-            if (realFile.length() >= model.getLength() && CommonUtils.isMediaFile(model.getName())) {
-//                Intent intent = new Intent(mView.getContext(), PlayerActivity.class);
-//                intent.putExtra("path", model.getPath());
-//                intent.putExtra("title", model.getName());
-//                intent.putExtra("danmu_path", model.getDanmuPath());
-//                intent.putExtra("current", 0);
-//                intent.putExtra("episode_id", model.getEpisodeId());
-//                mView.getContext().startActivity(intent);
+            if (CommonUtils.isMediaFile(model.getName())){
+                String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";
+                TorrentServer.playFilePath = model.getPath();
                 PlayerManagerActivity.launchPlayer(
                         mView.getContext(),
-                        model.getPath(),
                         model.getName(),
-                        model.getDanmuPath(),
+                        httpUrl,
+                        "",
                         0,
-                        model.getEpisodeId());
+                        0
+                );
+            }else {
+                ToastUtils.showShort("不支持播放的文件格式");
             }
         });
 
         danmuBindIv.setOnClickListener(v -> {
-            if (CommonUtils.isMediaFile(model.getPath())){
-                if (realFile.length() > 16 * 1024 * 1024){
+            if (CommonUtils.isMediaFile(model.getPath())) {
+                if (model.getDownloaded() > 16 * 1024 * 1024) {
                     EventBus.getDefault().post(new TorrentBindDanmuStartEvent(model.getPath(), position));
-                }else {
+                } else {
                     ToastUtils.showShort("需下载16M后才能匹配弹幕");
                 }
-            }else {
+            } else {
                 ToastUtils.showShort("不支持绑定弹幕的文件格式");
             }
         });

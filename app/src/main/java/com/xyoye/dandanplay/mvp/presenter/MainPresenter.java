@@ -8,6 +8,4 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 public interface MainPresenter extends BaseMvpPresenter {
     void initTracker();
-
-    void backupBlockData();
 }

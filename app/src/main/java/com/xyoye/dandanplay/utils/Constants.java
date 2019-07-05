@@ -50,11 +50,13 @@ public class Constants {
         public static final String UPDATE_FILTER_TIME = "update_filter_time";
         //上次播放的视频
         public static final String LAST_PLAY_VIDEO_PATH = "last_play_video_path";
-        //是否已备份过屏蔽数据库
-        public static final String IS_BACKUP_BLOCK = "is_backup_block";
+        //SMB文件是否为Grid排序
+        public static final String SMB_IS_GRID_LAYOUT = "smb_is_grid_layout";
     }
 
     public static class DefaultConfig{
+        //系统视频路径
+        public static final String SYSTEM_VIDEO_PATH = "系统视频";
         //默认下载文件夹
         public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
         //配置路径
@@ -67,8 +69,6 @@ public class Constants {
         public static final String subtitleFolder = "/_zimu";
         //默认番剧封面缓存路径
         public static final String imageFolder =  downloadPath + "/_image";
-        //备份文件路径
-        public static final String backupFolder =  downloadPath + "/_backup";
     }
 
     public static class PlayerConfig{
@@ -102,5 +102,13 @@ public class Constants {
         public static final int NAME_DESC = 2;
         public static final int DURATION_ASC = 3;
         public static final int DURATION_DESC = 4;
+    }
+
+    //扫描管理-目录类型
+    public static class ScanType {
+        //屏蔽目录
+        public static final String BLOCK = "0";
+        //扫描目录
+        public static final String SCAN = "1";
     }
 }

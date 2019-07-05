@@ -10,4 +10,6 @@ public interface DownloadManagerPresenter extends BaseMvpPresenter {
     void getTorrentList();
 
     void observeService();
+
+    void recoveryTask();
 }

@@ -1,10 +1,9 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +17,7 @@ import android.view.WindowManager;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.player.commom.bean.SubtitleBean;
 import com.player.commom.listener.OnDanmakuListener;
@@ -34,11 +34,11 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.HashUtils;
 import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -85,6 +85,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private long currentPosition;
     private int episodeId;
     private List<SubtitleBean> subtitleList;
+    private List<String> normalFilterList;
 
     //电源广播
     private BatteryBroadcastReceiver batteryReceiver;
@@ -116,21 +117,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
             supportActionBar.hide();
         }
 
-        //沉浸式状态栏
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //开启屏幕常亮
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         subtitleList = new ArrayList<>();
 
         //注册监听广播
@@ -148,6 +134,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
         //初始化接口
         initListener();
+
+        //初始化屏蔽信息
+        initNormalFilter();
 
         //初始化播放器
         initPlayer();
@@ -187,16 +176,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     ToastUtils.showShort("当前未登陆，不能发送弹幕");
                     return false;
                 }
-                if (episodeId == 0){
-                    ToastUtils.showShort("当前弹幕不支持发送弹幕");
+                if (!new File(danmuPath).exists()){
+                    ToastUtils.showShort("未加载弹幕文件");
+                    return false;
                 }
                 return true;
             }
 
             @Override
             public void onDataObtain(BaseDanmaku data) {
-                //上传弹幕
-                uploadDanmu(data);
+                if (episodeId == 0){
+                    writeDanmu(data, danmuPath);
+                }else {
+                    uploadDanmu(data);
+                }
             }
 
             @Override
@@ -262,11 +255,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     event.setVideoPath(videoPath);
                     EventBus.getDefault().post(event);
                     //更新数据库中进度
-                    SQLiteDatabase sqLiteDatabase = DataBaseManager.getInstance().getSQLiteDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("current_position", event.getCurrentPosition());
-                    String whereCase = DataBaseInfo.getFieldNames()[2][1]+" =? AND "+ DataBaseInfo.getFieldNames()[2][2]+" =? ";
-                    sqLiteDatabase.update(DataBaseInfo.getTableNames()[2], values, whereCase, new String[]{event.getFolderPath(), event.getVideoPath()});
+                    DataBaseManager.getInstance()
+                            .selectTable(2)
+                            .update()
+                            .param(4, event.getCurrentPosition())
+                            .where(1, event.getFolderPath())
+                            .where(2, event.getVideoPath())
+                            .postExecute();
+                    break;
+                case Constants.INTENT_RESET_FULL_SCREEN:
+                    setFullScreen();
                     break;
             }
         };
@@ -301,7 +299,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
+                .setNormalFilterData(normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
@@ -333,7 +331,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(IApplication.normalFilterList)
+                .setNormalFilterData(normalFilterList)
                 //设置云屏蔽数据
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
@@ -354,50 +352,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 //设置视频路径
                 .setVideoPath(videoPath)
                 .start();
-    }
-
-    //上传一条弹幕
-    private void uploadDanmu(BaseDanmaku data) {
-        double dTime = new BigDecimal(data.getTime() / 1000)
-                .setScale(3, BigDecimal.ROUND_HALF_UP)
-                .doubleValue();
-        String time = dTime + "";
-        int type = data.getType();
-        if (type != 1 && type != 4 && type != 5) {
-            type = 1;
-        }
-        String mode = type + "";
-        String color = (data.textColor & 0x00FFFFFF) + "";
-        String comment = String.valueOf(data.text);
-        DanmuUploadParam uploadParam = new DanmuUploadParam(time, mode, color, comment);
-        UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>() {
-            @Override
-            public void onSuccess(UploadDanmuBean bean) {
-                LogUtils.d("upload danmu success: text：" + data.text + "  cid：" + bean.getCid());
-            }
-
-            @Override
-            public void onError(int errorCode, String message) {
-                ToastUtils.showShort(message);
-            }
-        }, new NetworkConsumer());
-    }
-
-    //增加播放历史
-    private void addPlayHistory(int episodeId){
-        if (episodeId > 0){
-            PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>() {
-                @Override
-                public void onSuccess(CommJsonEntity commJsonEntity) {
-                    LogUtils.d("add history success: episodeId：" + episodeId);
-                }
-
-                @Override
-                public void onError(int errorCode, String message) {
-                    LogUtils.e("add history fail: episodeId：" + episodeId+"  message："+message);
-                }
-            }, new NetworkConsumer());
-        }
     }
 
     @Override
@@ -453,22 +407,119 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         mPlayer.onScreenLocked();
     }
 
+    //设置全屏
+    private void setFullScreen(){
+        //沉浸式状态栏
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //开启屏幕常亮
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
+    //上传一条弹幕到弹弹
+    private void uploadDanmu(BaseDanmaku data) {
+        BigDecimal bigDecimal = new BigDecimal(data.getTime() / 1000.00)
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+        int type = data.getType();
+        if (type != 1 && type != 4 && type != 5) {
+            type = 1;
+        }
+        String time = bigDecimal.toString();
+        String mode = type + "";
+        String color = (data.textColor & 0x00FFFFFF) + "";
+        String comment = String.valueOf(data.text);
+        DanmuUploadParam uploadParam = new DanmuUploadParam(time, mode, color, comment);
+        UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>() {
+            @Override
+            public void onSuccess(UploadDanmuBean bean) {
+                LogUtils.d("upload danmu success: text：" + data.text + "  cid：" + bean.getCid());
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    //写入一条弹幕到本地
+    private void writeDanmu(BaseDanmaku data, String danmuPath){
+        BigDecimal bigDecimal = new BigDecimal(data.getTime() / 1000.00)
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+        int type = data.getType();
+        if (type != 1 && type != 4 && type != 5) {
+            type = 1;
+        }
+        String time = bigDecimal.toString();
+        String mode = String.valueOf(type);
+        String color = String.valueOf(data.textColor & 0x00FFFFFF);
+        color = "16777215".equals(color) ? "0" : color;
+        String comment = String.valueOf(data.text);
+        String unixTime = String.valueOf(System.currentTimeMillis() / 1000);
+        String danmuText = "<d p=\""+time+","+mode+",25"+","+color+","+unixTime+",0,0,0\">"+comment+"</d>";
+        DanmuUtils.insertOneDanmu(danmuText, danmuPath);
+    }
+
+    //增加播放历史
+    private void addPlayHistory(int episodeId){
+        if (episodeId > 0){
+            PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>() {
+                @Override
+                public void onSuccess(CommJsonEntity commJsonEntity) {
+                    LogUtils.d("add history success: episodeId：" + episodeId);
+                }
+
+                @Override
+                public void onError(int errorCode, String message) {
+                    LogUtils.e("add history fail: episodeId：" + episodeId+"  message："+message);
+                }
+            }, new NetworkConsumer());
+        }
+    }
+
+    //获取本地屏蔽信息
+    private void initNormalFilter(){
+        normalFilterList = new ArrayList<>();
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(13)
+                .query()
+                .setColumns(1)
+                .execute();
+        if (cursor != null){
+            while (cursor.moveToNext()){
+                normalFilterList.add(cursor.getString(0));
+            }
+        }
+    }
+
     //查询字幕
     private void querySubtitle(String videoPath){
         String thunderHash = HashUtils.getFileSHA1(videoPath);
-        Map<String, String> shooterParams = new HashMap<>();
-        shooterParams.put("filehash", HashUtils.getFileHash(videoPath));
-        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
-        shooterParams.put("format", "json");
-        shooterParams.put("lang", "Chn");
-        RetrofitService service = RetroFactory.getSubtitleInstance();
-        service.queryThunder(thunderHash)
-                .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
-                        SubtitleConverter.transform(thunder, shooters, videoPath))
-                .doOnSubscribe(new NetworkConsumer())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subtitleObserver);
+        String shooterHash = HashUtils.getFileHash(videoPath);
+        if (!StringUtils.isEmpty(thunderHash) && !StringUtils.isEmpty(shooterHash)){
+            Map<String, String> shooterParams = new HashMap<>();
+            shooterParams.put("filehash", shooterHash);
+            shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
+            shooterParams.put("format", "json");
+            shooterParams.put("lang", "Chn");
+            RetrofitService service = RetroFactory.getSubtitleInstance();
+            service.queryThunder(thunderHash)
+                    .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
+                            SubtitleConverter.transform(thunder, shooters, videoPath))
+                    .doOnSubscribe(new NetworkConsumer())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(subtitleObserver);
+        }
     }
 
     //下载字幕
@@ -487,7 +538,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     String folderPath = AppConfig.getInstance().getDownloadFolder() + com.xyoye.dandanplay.utils.Constants.DefaultConfig.subtitleFolder;
                     File folder = new File(folderPath);
                     if (!folder.exists()){
-                        folder.mkdirs();
+                        if (!folder.mkdirs()){
+                            ToastUtils.showShort("创建字幕文件夹失败");
+                            return;
+                        }
                     }
                     String filePath = folderPath + "/" + fileName;
                     boolean isSaveFile = FileIOUtils.writeFileFromIS(filePath, response.body().byteStream());

@@ -1769,6 +1769,8 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
         if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO){
             danmuPostView.setVisibility(GONE);
         }
+        if (mOutsideListener != null)
+            mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
     }
 
     /**
@@ -1793,6 +1795,8 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
             AnimHelper.viewTranslationY(bottomBarView, bottomBarView.getHeight());
             topBarView.setTopBarVisibility(false);
             mIsShowBar = false;
+            if (mOutsideListener != null)
+                mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
         }
         //截图键与控制栏的显示与隐藏是绑定的
         if (isShow){

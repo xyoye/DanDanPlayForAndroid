@@ -1,11 +1,9 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,7 +34,6 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
@@ -50,7 +47,6 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 import com.xyoye.dandanplay.utils.net.RetrofitService;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -120,21 +116,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
             supportActionBar.hide();
         }
 
-        //沉浸式状态栏
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //开启屏幕常亮
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         subtitleList = new ArrayList<>();
 
         //注册监听广播
@@ -196,6 +177,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 }
                 if (episodeId == 0){
                     ToastUtils.showShort("当前弹幕不支持发送弹幕");
+                    return false;
                 }
                 return true;
             }
@@ -276,6 +258,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                             .where(1, event.getFolderPath())
                             .where(2, event.getVideoPath())
                             .postExecute();
+                    break;
+                case Constants.INTENT_RESET_FULL_SCREEN:
+                    setFullScreen();
                     break;
             }
         };
@@ -460,6 +445,23 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     @Override
     public void onScreenLocked() {
         mPlayer.onScreenLocked();
+    }
+
+    private void setFullScreen(){
+        //沉浸式状态栏
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                        View.SYSTEM_UI_FLAG_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        //开启屏幕常亮
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     //获取本地屏蔽信息

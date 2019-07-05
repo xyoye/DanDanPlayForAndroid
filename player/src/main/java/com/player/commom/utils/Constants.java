@@ -14,6 +14,8 @@ public final class Constants {
     public static final int INTENT_AUTO_SUBTITLE = 1004;
     //保存进度
     public static final int INTENT_SAVE_CURRENT = 1005;
+    //重置全屏
+    public static final int INTENT_RESET_FULL_SCREEN = 1006;
 
     public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 

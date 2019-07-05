@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -16,6 +15,7 @@ import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.ui.activities.BlockManagerActivity;
+import com.xyoye.dandanplay.ui.activities.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
@@ -90,7 +90,7 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
         }
     }
 
-    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll})
+    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll, R.id.danmu_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.player_setting_ll:
@@ -130,6 +130,9 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 break;
             case R.id.block_ll:
                 launchActivity(BlockManagerActivity.class);
+                break;
+            case R.id.danmu_ll:
+                launchActivity(DownloadBiliBiliActivity.class);
                 break;
         }
     }

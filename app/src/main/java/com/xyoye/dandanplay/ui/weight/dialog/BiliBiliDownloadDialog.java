@@ -12,15 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.DanmuUtils;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -229,7 +228,7 @@ public class BiliBiliDownloadDialog extends Dialog {
 
         if (fileName.isEmpty())
             fileName = cid;
-        CommonUtils.writeXmlFile(xmlContent, fileName, path);
+        DanmuUtils.saveDanmuSourceFormBiliBili(xmlContent, fileName, path);
         sendLogMessage("写入文件成功\n文件路径：\n" + path + "/" + fileName + ".xml");
 
         handler.sendEmptyMessage(102);
@@ -257,7 +256,7 @@ public class BiliBiliDownloadDialog extends Dialog {
                 fileName = "0"+episode;
             else
                 fileName = episode+"";
-            CommonUtils.writeXmlFile(xmlContent, fileName, path);
+            DanmuUtils.saveDanmuSourceFormBiliBili(xmlContent, fileName, path);
         }
         sendLogMessage("弹幕下载完成\n文件路径：\n" + path);
         handler.sendEmptyMessage(102);

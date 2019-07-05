@@ -61,4 +61,4 @@
 - [lbitorrent](https://gitlab.com/axet/libtorrent)
 - [jcifs-ng](https://github.com/AgNO3/jcifs-ng)
 - [jsoup](https://github.com/jhy/jsoup)
-- [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/THIRD_PARTY_LIBRARIES.md)
+- [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/Third_Party_Libraries.md)

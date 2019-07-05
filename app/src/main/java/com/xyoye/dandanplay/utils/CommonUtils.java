@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.utils;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -214,6 +215,7 @@ public class CommonUtils {
     }
 
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        context.grantUriPermission(context.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, selection, selectionArgs, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 return cursor.getString(cursor.getColumnIndexOrThrow("_data"));

@@ -104,8 +104,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
                     AppConfig.getInstance().saveUserScreenName(data[0]);
                     IApplication.isUpdateUserInfo = true;
                     ToastUtils.showShort("修改昵称成功");
-                });
-                dialog.show();
+                }).show();
                 break;
             case R.id.password_rl:
                 launchActivity(ChangePasswordActivity.class);

@@ -26,6 +26,7 @@ import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
+import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -56,8 +58,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     FloatingActionButton fastPlayBt;
 
     private BaseRvAdapter<FolderBean> adapter;
-    private Disposable permissionDis;
-    private InitTrackerListener initTrackerListener;
 
     public static PlayFragment newInstance() {
         return new PlayFragment();
@@ -184,8 +184,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
 
     @Override
     public void onDestroy() {
-        if (permissionDis != null)
-            permissionDis.dispose();
         super.onDestroy();
     }
 
@@ -203,21 +201,41 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
      */
     @SuppressLint("CheckResult")
     private void refreshVideo(boolean reScan){
-        permissionDis = new RxPermissions(this).
+        new RxPermissions(this).
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    if (granted) {
-                        //这是应用首次获取权限的地方，获取权限后需初始化tracker
-                        initTrackerListener.onFragmentPermissionGranted();
-                        //通知系统刷新目录
-                        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                        intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
-                        if (getContext() != null)
-                            getContext().sendBroadcast(intent);
-                        presenter.refreshVideo(reScan);
-                    }else {
-                        ToastUtils.showLong("未授予文件管理权限，无法扫描视频");
-                        refresh.setRefreshing(false);
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean granted) {
+                        if (granted) {
+                            //这是应用首次获取权限的地方，获取权限后需初始化tracker
+                            InitTrackerListener initTrackerListener = (MainActivity)getActivity();
+                            if (initTrackerListener != null)
+                                initTrackerListener.onFragmentPermissionGranted();
+                            //通知系统刷新目录
+                            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                            intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+                            if (getContext() != null)
+                                getContext().sendBroadcast(intent);
+                            presenter.refreshVideo(reScan);
+                        }else {
+                            ToastUtils.showLong("未授予文件管理权限，无法扫描视频");
+                            refresh.setRefreshing(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -230,10 +248,6 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     public void unregisterEventBus(){
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
-    }
-
-    public void setInitTrackerListener(InitTrackerListener listener){
-        this.initTrackerListener = listener;
     }
 
     public interface InitTrackerListener{

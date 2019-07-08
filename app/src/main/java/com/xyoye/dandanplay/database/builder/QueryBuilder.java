@@ -41,6 +41,7 @@ public class QueryBuilder{
 
     @CheckReturnValue
     public QueryBuilder where(int column, String value) {
+        if ( value == null)  value = "";
         String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
         whereClause.add(whereClauseText);
         whereArgs.add(value);

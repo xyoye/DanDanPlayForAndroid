@@ -71,7 +71,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             personalFragment = PersonalFragment.newInstance();
             mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
             previousFragment = playFragment;
-            playFragment.setInitTrackerListener(this);
         }
         if (navigationView != null){
             if (navigationView.getSelectedItemId() == R.id.navigation_play){

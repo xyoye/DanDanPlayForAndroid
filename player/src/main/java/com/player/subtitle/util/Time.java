@@ -25,10 +25,11 @@ public class Time {
 			String[] hms = value.split(":");
 			h = Integer.parseInt(hms[0]);
 			m = Integer.parseInt(hms[1]);
-			s = Integer.parseInt(hms[2].substring(0, 2));
 			try {
+				s = Integer.parseInt(hms[2].substring(0, 2));
 				cs = Integer.parseInt(hms[2].substring(3, 5));
 			}catch (NumberFormatException e){
+				s = 0;
 				try {
 					String[] values = value.split(".");
 					if (values.length > 0)

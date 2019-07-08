@@ -147,14 +147,14 @@ public class TorrentDownloadDetailDialog extends Dialog {
     }
 
     @Override
-    public void show() {
-        super.show();
+    protected void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
+    protected void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
     }
 }

@@ -69,7 +69,9 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
         //文件是否忽略下载
         if (model.isChecked()){
             fileNameTv.setTextColor(mView.getResources().getColor(R.color.text_black));
-            int progress = (int)(model.getDownloaded() * 100 / model.getLength());
+            int progress = model.getLength() == 0
+                    ? 0
+                    :(int)(model.getDownloaded() * 100 / model.getLength());
             downloadDurationPb.setProgress(progress);
 
             String duration = CommonUtils.convertFileSize(model.getDownloaded()) + "/" + CommonUtils.convertFileSize(model.getLength());

@@ -45,8 +45,6 @@ import butterknife.OnClick;
  */
 
 public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbView {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.path_tv)
     TextView pathTv;
     @BindView(R.id.path_rl)
@@ -165,6 +163,8 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
 
     @Override
     public void refreshSqlDevice(List<SmbBean> deviceList) {
+        if (smbRv == null)
+            return;
         //设备列表必须为GridLayoutManager
         if (smbRv.getLayoutManager() instanceof LinearLayoutManager){
             smbRv.setLayoutManager(new GridLayoutManager(this, 4));

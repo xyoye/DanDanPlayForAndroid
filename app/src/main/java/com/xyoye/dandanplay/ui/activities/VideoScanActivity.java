@@ -201,7 +201,8 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
                 break;
             case R.id.add_scan:
                 new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
-                        fragmentList.get(selectedPosition).addPath(path)).show();
+                        fragmentList.get(selectedPosition).addPath(path)
+                ).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

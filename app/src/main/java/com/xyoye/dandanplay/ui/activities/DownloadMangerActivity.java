@@ -90,6 +90,8 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
         refresh = () -> {
             for (int i=0; i<IApplication.taskList.size(); i++){
                 BtTask task = IApplication.taskList.get(i);
+                if (task == null)
+                    break;
                 if (!task.isFinished()){
                     adapter.notifyItemChanged(i);
                 }else if (!task.isRefreshAfterFinish()){

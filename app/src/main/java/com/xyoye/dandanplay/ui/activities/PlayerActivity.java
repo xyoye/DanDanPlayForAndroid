@@ -176,7 +176,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     ToastUtils.showShort("当前未登陆，不能发送弹幕");
                     return false;
                 }
-                if (!new File(danmuPath).exists()){
+                if (!StringUtils.isEmpty(danmuPath)){
+                    File danmuFile = new File(danmuPath);
+                    if (!danmuFile.exists()){
+                        ToastUtils.showShort("未加载弹幕文件");
+                        return false;
+                    }
+                }else {
                     ToastUtils.showShort("未加载弹幕文件");
                     return false;
                 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -349,14 +350,15 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * 递归检查目录和文件
      */
     private Observable<File> listFiles(final File f){
-        if(f.isDirectory()){
+        if(f != null && f.isDirectory()){
             return Observable
                     .fromArray(f.listFiles())
                     .flatMap(this::listFiles);
         } else {
+            File fileTemp = f == null ? new File("") : f;
             return Observable
-                    .just(f)
-                    .filter(file -> f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+                    .just(fileTemp)
+                    .filter(file -> file != null && file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath()));
         }
     }
 }

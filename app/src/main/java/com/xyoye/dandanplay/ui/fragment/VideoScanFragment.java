@@ -46,6 +46,10 @@ public class VideoScanFragment extends BaseFragment<VideoScanFragmentPresenter> 
         return videoScanFragment;
     }
 
+    public VideoScanFragment(){
+        folderList = new ArrayList<>();
+    }
+
     @NonNull
     @Override
     protected VideoScanFragmentPresenter initPresenter() {
@@ -63,12 +67,13 @@ public class VideoScanFragment extends BaseFragment<VideoScanFragmentPresenter> 
         if (args == null) return;
         isScanType = getArguments().getBoolean("is_scan_type");
 
-        folderList = new ArrayList<>();
         adapter = new BaseRvAdapter<ScanFolderBean>(folderList) {
             @NonNull
             @Override
             public AdapterItem<ScanFolderBean> onCreateItem(int viewType) {
                 return new VideoScanItem((isCheck, position) -> {
+                    if (position < 0 || position > folderList.size())
+                        return;
                     folderList.get(position).setCheck(isCheck);
                     if (isCheck){
                         itemCheckListener.onChecked(true);

@@ -1,9 +1,7 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -12,7 +10,6 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbBean;
-import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SmbPresenter;
 import com.xyoye.dandanplay.mvp.view.SmbView;
@@ -46,7 +43,7 @@ import jcifs.smb.SmbFile;
  */
 
 public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements SmbPresenter {
-    private Disposable querySqlDeviceDis;
+    private Disposable querySqlDeviceDis, queryDeviceDis;
 
     private CIFSContext cifsContext;
     private String rootUrl;
@@ -80,6 +77,8 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     public void destroy() {
         if (querySqlDeviceDis != null)
             querySqlDeviceDis.dispose();
+        if (queryDeviceDis != null)
+            queryDeviceDis.dispose();
     }
 
     @SuppressLint("CheckResult")
@@ -114,7 +113,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     @Override
     public void queryLanDevice() {
         getView().showLoading();
-        io.reactivex.Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
+        queryDeviceDis = Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
             String localIp = new LocalIPUtil(getView().getContext()).getLocalIp();
             if (!StringUtils.isEmpty(localIp)){
                 new SearchSmbDevicesTask(localIp, deviceList -> {
@@ -126,27 +125,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
             }
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<SmbBean>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(List<SmbBean> smbBeans) {
-                        getView().refreshLanDevice(smbBeans);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        getView().hideLoading();
-                    }
-                });
+                .subscribe(smbBeans -> getView().refreshLanDevice(smbBeans));
     }
 
     @Override
@@ -239,7 +218,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
         .subscribe(new Observer<List<SmbBean>>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                disposables.add(d);
             }
 
             @Override
@@ -293,7 +272,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
         .subscribe(new Observer<List<SmbBean>>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                disposables.add(d);
             }
 
             @Override

@@ -7,6 +7,10 @@ import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
+import java.util.List;
+
+import io.reactivex.disposables.Disposable;
+
 /**
  * mvp中presenter的抽象类
  * Modified by xyoye on 2019/5/27.
@@ -16,6 +20,7 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
     private Context mContext;
     private T view;
     private Lifeful lifeful;
+    protected List<Disposable> disposables;
 
     public BaseMvpPresenterImpl(T view) {
         this.view = view;
@@ -43,6 +48,14 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
     public void initPage() {
         getView().initView();
         getView().initListener();
+    }
+
+    @Override
+    public void destroy() {
+        for (Disposable disposable : disposables){
+            if (disposable != null)
+                disposable.dispose();
+        }
     }
 
     @Deprecated

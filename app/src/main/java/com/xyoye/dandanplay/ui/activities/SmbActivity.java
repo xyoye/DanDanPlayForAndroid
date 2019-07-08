@@ -7,11 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -180,6 +178,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
 
     @Override
     public void refreshLanDevice(List<SmbBean> deviceList) {
+        hideLoading();
         //在所有设备移除扫描到的设备
         Iterator iterator = smbList.iterator();
         while (iterator.hasNext()) {

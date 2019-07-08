@@ -58,6 +58,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     FloatingActionButton fastPlayBt;
 
     private BaseRvAdapter<FolderBean> adapter;
+    private Disposable permissonDis;
 
     public static PlayFragment newInstance() {
         return new PlayFragment();
@@ -185,6 +186,8 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (permissonDis != null)
+            permissonDis.dispose();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -206,7 +209,7 @@ public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
+                        permissonDis = d;
                     }
 
                     @Override

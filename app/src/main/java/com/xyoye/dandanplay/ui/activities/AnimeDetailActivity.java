@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -256,18 +255,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.favorite:
-                if (AppConfig.getInstance().isLogin()) {
-                    if (isFavorite) {
-                        presenter.followCancel(animaId);
-                    } else {
-                        presenter.followConfirm(animaId);
-                    }
+        if (item.getItemId() == R.id.favorite) {
+            if (AppConfig.getInstance().isLogin()) {
+                if (isFavorite) {
+                    presenter.followCancel(animaId);
                 } else {
-                    ToastUtils.showShort(R.string.anime_detail_not_login_hint);
+                    presenter.followConfirm(animaId);
                 }
-                break;
+            } else {
+                ToastUtils.showShort(R.string.anime_detail_not_login_hint);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

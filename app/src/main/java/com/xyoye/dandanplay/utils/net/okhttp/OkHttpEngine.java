@@ -4,7 +4,7 @@ package com.xyoye.dandanplay.utils.net.okhttp;
 import android.support.annotation.NonNull;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.xyoye.dandanplay.app.BaseApplication;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.interf.Engine;
 
 import java.io.File;
@@ -43,8 +43,8 @@ public final class OkHttpEngine implements Engine {
     }
 
     public CookiesManager getCookieStore() {
-        if (mCookiesManager == null && BaseApplication.get_context() != null) {
-            mCookiesManager = new CookiesManager(BaseApplication.get_context());
+        if (mCookiesManager == null && IApplication.get_context() != null) {
+            mCookiesManager = new CookiesManager(IApplication.get_context());
         }
         return mCookiesManager;
     }
@@ -66,10 +66,10 @@ public final class OkHttpEngine implements Engine {
         builder.readTimeout(30, TimeUnit.SECONDS);
         builder.writeTimeout(30, TimeUnit.SECONDS);
         builder.retryOnConnectionFailure(true);
-        File cacheDir = new File(BaseApplication.get_context().getCacheDir(), "HttpResponseCache");
+        File cacheDir = new File(IApplication.get_context().getCacheDir(), "HttpResponseCache");
         builder.cache(new Cache(cacheDir, 10 * 1024 * 1024));
-        builder.cookieJar(BaseApplication.getCookiesManager());
-        if (BaseApplication.isDebug()) {
+        builder.cookieJar(IApplication.getCookiesManager());
+        if (IApplication.isDebug()) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             builder.addInterceptor(interceptor);

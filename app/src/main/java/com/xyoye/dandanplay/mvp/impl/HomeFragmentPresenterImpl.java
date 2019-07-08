@@ -1,8 +1,5 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -11,8 +8,6 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.BannerBeans;
-import com.xyoye.dandanplay.database.DataBaseInfo;
-import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -75,22 +70,6 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
             @Override
             public void onSuccess(BannerBeans bannerBean) {
                 List<BannerBeans.BannersBean> beans = bannerBean.getBanners();
-                new Thread(() -> {
-                    DataBaseManager.getInstance()
-                            .selectTable(3)
-                            .delete()
-                            .execute();
-                    for(BannerBeans.BannersBean bean : beans ){
-                        DataBaseManager.getInstance()
-                                .selectTable(3)
-                                .insert()
-                                .param(1, bean.getTitle())
-                                .param(2, bean.getDescription())
-                                .param(3, bean.getUrl())
-                                .param(4, bean.getImageUrl())
-                                .execute();
-                    }
-                }).start();
                 if (countDownLatch != null){
                     countDownLatch.countDown();
                     HomeFragmentPresenterImpl.this.bannerList = beans;
@@ -103,27 +82,6 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
             public void onError(int errorCode, String message) {
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
-
-                List<BannerBeans.BannersBean> bannerBeans = new ArrayList<>();
-                Cursor cursor = DataBaseManager.getInstance()
-                                    .selectTable(3)
-                                    .query()
-                                    .execute();
-                while (cursor.moveToNext()){
-                    String title = cursor.getString(1);
-                    String description = cursor.getString(2);
-                    String url = cursor.getString(3);
-                    String imageUrl = cursor.getString(4);
-                    bannerBeans.add(new BannerBeans.BannersBean(title,description,url,imageUrl));
-                }
-                cursor.close();
-
-                if (countDownLatch != null){
-                    countDownLatch.countDown();
-                    HomeFragmentPresenterImpl.this.bannerList = bannerBeans;
-                }else {
-                    setBanners(bannerBeans);
-                }
             }
         }, new NetworkConsumer());
     }

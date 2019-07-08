@@ -17,6 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuUtils;
@@ -134,7 +135,7 @@ public class BiliBiliDownloadDialog extends Dialog {
         fileNameEt.setEnabled(false);
         downloadStartBt.setText("正在准备…");
 
-        new Thread(() -> {
+        IApplication.getExecutor().execute(() -> {
             try {
                 if ("url".equals(type))
                     downloadByUrl(keyWord);
@@ -146,7 +147,7 @@ public class BiliBiliDownloadDialog extends Dialog {
                 handler.sendEmptyMessage(104);
                 e.printStackTrace();
             }
-        }).start();
+        });
 
         initListener();
     }
@@ -156,14 +157,14 @@ public class BiliBiliDownloadDialog extends Dialog {
      */
     private void initListener(){
         downloadStartBt.setOnClickListener(v ->
-            new Thread(() -> {
+           IApplication.getExecutor().execute(() -> {
                 handler.sendEmptyMessage(103);
                 if (downloadType == DOWNLOAD_ONE){
                     downloadDanmuOne();
                 }else if (downloadType == DOWNLOAD_LIST){
                     downloadDanmuList();
                 }
-            }).start()
+            })
         );
 
         downloadOverBt.setOnClickListener(v -> BiliBiliDownloadDialog.this.cancel());

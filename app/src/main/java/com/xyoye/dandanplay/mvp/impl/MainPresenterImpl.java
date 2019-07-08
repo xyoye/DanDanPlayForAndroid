@@ -80,7 +80,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     //Tracker
     @Override
     public void initTracker(){
-        new Thread(() -> {
+      IApplication.getExecutor().execute(() -> {
             //trackers数据
             File configFolder = new File(FileUtils.getDirName(Constants.DefaultConfig.configPath));
             if (configFolder.isFile())
@@ -98,7 +98,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             else {
                 TrackerManager.queryTracker();
             }
-        }).start();
+        });
     }
 
     //番剧分类
@@ -176,7 +176,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     //弹幕云过滤
     private void initCloudFilter(){
-        new Thread(() -> {
+        IApplication.getExecutor().execute(() -> {
             List<String> filters = getFilterString();
             IApplication.cloudFilterList.addAll(filters);
 
@@ -191,7 +191,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                         .param(1, filters.get(i))
                         .execute();
             }
-        }).start();
+        });
     }
 
     //获取保存的云过滤数据

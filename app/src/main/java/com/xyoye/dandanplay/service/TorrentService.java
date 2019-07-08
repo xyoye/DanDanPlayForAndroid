@@ -259,14 +259,14 @@ public class TorrentService extends Service {
         IApplication.taskList.remove(position);
         IApplication.taskMap.remove(btTask.getTorrent().getHash());
         //新建线程操作数据库及文件
-        new Thread(() -> {
+        IApplication.getExecutor().execute(() -> {
             //从数据库中移除任务
             TorrentUtil.deleteDBTorrent(btTask.getTorrent().getTorrentPath());
             //删除文件
             if (isDeleteFile){
                 TorrentUtil.deleteTaskFile(btTask.getTorrent());
             }
-        }).start();
+        });
         //通知activity刷新界面
         EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
     }

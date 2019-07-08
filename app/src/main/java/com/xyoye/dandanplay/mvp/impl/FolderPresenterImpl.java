@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ServiceUtils;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -92,7 +93,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void deleteFile(String filePath) {
-        new Thread(() -> {
+        IApplication.getExecutor().execute(() -> {
             String folderPath = FileUtils.getDirName(filePath);
             //delete file
             DataBaseManager.getInstance()
@@ -129,7 +130,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 }
             }
             cursor.close();
-        }).start();
+        });
     }
 
     @Override

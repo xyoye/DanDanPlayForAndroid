@@ -20,7 +20,7 @@ public class DataBaseInfo {
                 "traverse_folder",  //0
                 "folder",           //1
                 "file",             //2
-                "banner",           //3
+                "banner",           //3 废弃
                 "anime_type",       //4
                 "subgroup",         //5
                 "torrent",          //6

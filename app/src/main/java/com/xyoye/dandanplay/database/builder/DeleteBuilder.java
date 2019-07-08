@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.database.builder;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class DeleteBuilder{
     }
 
     public void postExecute(){
-        new Thread(this::execute).start();
+        IApplication.getExecutor().execute(this::execute);
     }
 
 }

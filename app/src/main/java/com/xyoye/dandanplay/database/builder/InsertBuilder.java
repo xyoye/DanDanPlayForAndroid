@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.database.builder;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 
 import io.reactivex.annotations.CheckReturnValue;
@@ -81,6 +82,6 @@ public class InsertBuilder{
     }
 
     public void postExecute(){
-        new Thread(this::execute).start();
+        IApplication.getExecutor().execute(this::execute);
     }
 }

@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.utils;
 
-import com.xyoye.dandanplay.app.BaseApplication;
 import com.xyoye.dandanplay.app.IApplication;
 
 import java.io.BufferedReader;
@@ -25,7 +24,7 @@ public class TrackerManager {
             }
             trackerFile.createNewFile();
             //读取asset中默认的trackers，并写入文件
-            List<String> trackers = CommonUtils.readTracker(BaseApplication.get_context());
+            List<String> trackers = CommonUtils.readTracker(IApplication.get_context());
             IApplication.trackers.clear();
             IApplication.trackers.addAll(trackers);
 

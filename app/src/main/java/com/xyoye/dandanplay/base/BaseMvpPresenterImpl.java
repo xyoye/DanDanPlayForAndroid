@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.base;
 
 import android.content.Context;
 
-import com.xyoye.dandanplay.app.BaseApplication;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
@@ -61,10 +60,6 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
     @Deprecated
     public Context getContext() {
         return mContext;
-    }
-
-    public Context getApplicationContext() {
-        return BaseApplication.get_context();
     }
 
     public T getView() {

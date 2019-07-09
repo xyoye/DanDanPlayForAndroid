@@ -231,6 +231,22 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
         super.onDestroyView();
     }
 
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+        if (refresh != null)
+            refresh.setRefreshing(false);
+    }
+
+    @Override
+    public void showError(String message) {
+
+    }
+
     private class AnimaFragmentAdapter extends FragmentPagerAdapter {
         private List<AnimeFragment> list;
 

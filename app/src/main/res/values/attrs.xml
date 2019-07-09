@@ -5,6 +5,10 @@
         <attr name="border_color" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="ExpandableTextView">
+        <attr name="expandableLines" format="integer" />
+    </declare-styleable>
+
     <declare-styleable name="SemicircleView">
         <attr name="curvature" format="float" />
         <attr name="distance_top" format="dimension" />

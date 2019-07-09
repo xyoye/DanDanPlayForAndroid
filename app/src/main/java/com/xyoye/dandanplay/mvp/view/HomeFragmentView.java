@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.mvp.view;
 
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
+import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 
 
-public interface HomeFragmentView extends BaseMvpView{
+public interface HomeFragmentView extends BaseMvpView, LoadDataView {
     void setBanners(List<String> images, List<String> titles, List<String> urls);
 
     void initViewPager(List<BangumiBean> beans);

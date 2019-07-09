@@ -1,7 +1,9 @@
 package com.xyoye.dandanplay.ui.weight;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.os.Build;
 import android.text.SpannableString;
@@ -23,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * 可折叠TextView
  *
@@ -32,17 +33,17 @@ import java.util.Map;
 
 public class ExpandableTextView extends LinearLayout implements View.OnClickListener {
 
-    private final int STATE_NOT_OVERFLOW = 1; //文本行数不超过限定行数
-    private final int STATE_COLLAPSED = 2; //文本行数超过限定行数,处于折叠状态
-    private final int STATE_EXPANDED = 3; //文本行数超过限定行数,被点击全文展开
+    private static final int STATE_NOT_OVERFLOW = 1; //文本行数不超过限定行数
+    private static final int STATE_COLLAPSED = 2; //文本行数超过限定行数,处于折叠状态
+    private static final int STATE_EXPANDED = 3; //文本行数超过限定行数,被点击全文展开
 
-    /* 默认最高行数 */
-    private static final int MAX_COLLAPSED_LINES = 1;
+    @SuppressLint("UseSparseArrays")
     private Map<Integer, Integer> mCollapsedStatus = new HashMap<>();
     private TextView contentTv, extraTv;
 
-    private boolean forceRefresh;//是否每次setText都重新获取文本行数
-    private float textViewWidthPx;
+    /* 默认最高行数 */
+    private int MAX_COLLAPSED_LINES;
+
     private int position;
     private ExpandStatusChangedListener expandStatusChangedListener;
 
@@ -51,14 +52,19 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     }
 
     public ExpandableTextView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs);
+        this(context, attrs, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public ExpandableTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs);
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandableTextView, defStyle, 0);
+        MAX_COLLAPSED_LINES = typedArray.getInteger(R.styleable.ExpandableTextView_expandableLines, 3);
+        typedArray.recycle();
+
+        setOrientation(LinearLayout.VERTICAL);
+        setVisibility(GONE);
     }
 
     @Override
@@ -69,32 +75,8 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
         super.setOrientation(orientation);
     }
 
-    public void setCollapsedStatus(HashMap<Integer, Integer> mCollapsedStatus) {
-        this.mCollapsedStatus = mCollapsedStatus;
-    }
-
-    public void setTextViewWidthPx(float textViewWidthPx) {
-        this.textViewWidthPx = textViewWidthPx;
-    }
-
-    public void setForceRefresh(boolean forceRefresh) {
-        this.forceRefresh = forceRefresh;
-    }
-
     public void setExpandStatusChangedListener(ExpandStatusChangedListener expandStatusChangedListener) {
         this.expandStatusChangedListener = expandStatusChangedListener;
-    }
-
-    /**
-     * 初始化属性
-     *
-     * @param attrs
-     */
-    private void init(AttributeSet attrs) {
-        // enforces vertical orientation
-        setOrientation(LinearLayout.VERTICAL);
-        // default visibility is gone
-        setVisibility(GONE);
     }
 
     /**
@@ -103,14 +85,9 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        findViews();
-    }
 
-    /**
-     * 初始化viwe
-     */
-    private void findViews() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (inflater == null) return;
         inflater.inflate(R.layout.view_expandable_textview, this);
         contentTv = findViewById(R.id.content_tv);
         extraTv = findViewById(R.id.extra_tv);
@@ -118,9 +95,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
     }
 
     public void setText(String text, int maxWith) {
-        if (forceRefresh) {
-            mCollapsedStatus.put(0, null);
-        }
+        mCollapsedStatus.put(0, null);
 
         SpannableString spanText;
 

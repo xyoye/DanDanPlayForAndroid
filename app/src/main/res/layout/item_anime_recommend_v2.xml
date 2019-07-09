@@ -5,7 +5,8 @@
     android:layout_width="180dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/background_episode">
+    android:background="@drawable/background_episode"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/image_iv"
@@ -19,7 +20,7 @@
 
     <TextView
         android:id="@+id/title_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:ellipsize="end"
@@ -28,6 +29,7 @@
         android:textColor="@color/black_color"
         tools:text="测试标题"
         app:layout_constraintStart_toEndOf="@id/image_iv"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/image_iv"/>
 
     <TextView

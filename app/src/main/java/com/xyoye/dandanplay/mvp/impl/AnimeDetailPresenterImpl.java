@@ -77,7 +77,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
             @Override
             public void onError(int errorCode, String message) {
-                ToastUtils.showShort(message);
+                ToastUtils.showShort("请登录后再进行关注");
                 LogUtils.e(message);
             }
         }, new NetworkConsumer());

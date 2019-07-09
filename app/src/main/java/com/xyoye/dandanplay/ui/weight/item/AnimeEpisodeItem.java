@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.weight.item;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.event.SearchMagnetEvent;
@@ -25,7 +26,7 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
     TextView lastWatchTv;
 
     private View mView;
-    private boolean isGrid = false;
+    private boolean isGrid;
 
     public AnimeEpisodeItem(boolean isGrid) {
         this.isGrid = isGrid;
@@ -33,6 +34,8 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
 
     @Override
     public int getLayoutResId() {
+        if (isGrid)
+            return R.layout.item_anime_episode_grid;
         return R.layout.item_anime_episode;
     }
 
@@ -60,7 +63,8 @@ public class AnimeEpisodeItem implements AdapterItem<AnimeDetailBean.BangumiBean
             episodeTitle.setText("未知剧集");
         }
 
-        lastWatchTv.setVisibility(isGrid ? View.VISIBLE : View.GONE);
+        boolean isVisible = isGrid && !StringUtils.isEmpty(model.getLastWatched());
+        lastWatchTv.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         lastWatchTv.setText(model.getLastWatched());
 
         mView.setOnClickListener(v ->

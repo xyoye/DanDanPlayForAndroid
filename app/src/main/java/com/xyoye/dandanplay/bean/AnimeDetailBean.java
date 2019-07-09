@@ -6,6 +6,7 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -243,6 +244,10 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
         }
 
         public List<TagsBean> getTags() {
+            if (tags == null || tags.size() == 0){
+                tags = new ArrayList<>();
+                tags.add(new TagsBean(-1, "暂无标签"));
+            }
             return tags;
         }
 
@@ -307,6 +312,11 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
 
             private int id;
             private String name;
+
+            public TagsBean(int id, String name) {
+                this.id = id;
+                this.name = name;
+            }
 
             public int getId() {
                 return id;

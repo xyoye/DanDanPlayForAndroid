@@ -11,6 +11,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.activities.AnimeDetailActivityV2;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -34,7 +35,7 @@ public class AnimeRecommendItem implements AdapterItem<AnimeBean> {
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_anime_recommend;
+        return R.layout.item_anime_recommend_v2;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class AnimeRecommendItem implements AdapterItem<AnimeBean> {
         ratingTv.setText(model.getRating()+"");
 
         mView.setOnClickListener(v ->
-                AnimeDetailActivity.launchAnimeDetail(
+                AnimeDetailActivityV2.launchAnimeDetail(
                         (Activity)mView.getContext(),
                         model.getAnimeId()+"")
         );

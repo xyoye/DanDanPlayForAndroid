@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBean;
-import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.activities.AnimeDetailActivityV2;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -87,7 +87,7 @@ public class AnimeItem implements AdapterItem<AnimeBean> {
                 .into(imageView);
 
         mView.setOnClickListener(v ->
-                AnimeDetailActivity.launchAnimeDetail(
+                AnimeDetailActivityV2.launchAnimeDetail(
                         (Activity)mView.getContext(),
                         model.getAnimeId()+"")
         );

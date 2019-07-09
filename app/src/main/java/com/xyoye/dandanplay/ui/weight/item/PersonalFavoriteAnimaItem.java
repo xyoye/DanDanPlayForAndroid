@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
-import com.xyoye.dandanplay.ui.activities.AnimeDetailActivity;
+import com.xyoye.dandanplay.ui.activities.AnimeDetailActivityV2;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -61,7 +61,7 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.
         statusTv.setText(status);
 
         mView.setOnClickListener(v ->
-                AnimeDetailActivity.launchAnimeDetail(
+                AnimeDetailActivityV2.launchAnimeDetail(
                         (Activity)mView.getContext(),
                         model.getAnimeId()+"")
         );

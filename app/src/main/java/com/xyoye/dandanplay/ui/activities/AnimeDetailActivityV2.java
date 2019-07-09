@@ -280,7 +280,7 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
         double rating = bean.getBangumi().getRating();
         String rateText = rating <= 0
                 ? "0"
-                : new DecimalFormat("#.0").format(rating);
+                : new DecimalFormat("0.0").format(rating);
         animeRateTv.setText(rateText);
 
         //关注状态

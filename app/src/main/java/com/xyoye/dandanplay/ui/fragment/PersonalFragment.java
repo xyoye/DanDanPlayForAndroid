@@ -18,8 +18,7 @@ import com.xyoye.dandanplay.ui.activities.BlockManagerActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.LoginActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
+import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.SettingActivity;
@@ -116,14 +115,14 @@ public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> im
                 break;
             case R.id.favorite_ll:
                 if (AppConfig.getInstance().isLogin()) {
-                    launchActivity(PersonalFavoriteActivity.class);
+                    AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_FAVORITE);
                 } else {
                     launchActivity(LoginActivity.class);
                 }
                 break;
             case R.id.history_ll:
                 if (AppConfig.getInstance().isLogin()) {
-                    launchActivity(PersonalHistoryActivity.class);
+                    AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_HISTORY);
                 } else {
                     launchActivity(LoginActivity.class);
                 }

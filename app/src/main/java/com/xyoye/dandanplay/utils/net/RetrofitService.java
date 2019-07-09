@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.utils.net;
 
+import com.xyoye.dandanplay.bean.AnimeTagBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.bean.AnimeFavoriteBean;
@@ -133,4 +134,7 @@ public interface RetrofitService {
 
     @GET("/{@link}")
     Observable<ResponseBody> downloadSubtitle(@Path("link") String link);
+
+    @GET("/api/v2/search/tag")
+    Observable<AnimeTagBean> getAnimeListByTag(@Query("tags") String tagId);
 }

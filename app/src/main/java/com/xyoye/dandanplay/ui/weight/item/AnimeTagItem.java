@@ -1,10 +1,12 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
+import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
@@ -18,6 +20,8 @@ public class AnimeTagItem implements AdapterItem<AnimeDetailBean.BangumiBean.Tag
     @BindView(R.id.tag_tv)
     TextView tagTv;
 
+    private Context context;
+
     @Override
     public int getLayoutResId() {
         return R.layout.item_anime_tag;
@@ -25,7 +29,7 @@ public class AnimeTagItem implements AdapterItem<AnimeDetailBean.BangumiBean.Tag
 
     @Override
     public void initItemViews(View itemView) {
-
+        context = itemView.getContext();
     }
 
     @Override
@@ -38,7 +42,7 @@ public class AnimeTagItem implements AdapterItem<AnimeDetailBean.BangumiBean.Tag
         tagTv.setText(model.getName());
         tagTv.setOnClickListener(v -> {
             if (model.getId() != -1){
-
+                AnimeListActivity.launchAnimeListTag(context, model);
             }
         });
     }

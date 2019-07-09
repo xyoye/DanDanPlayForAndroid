@@ -18,10 +18,9 @@ import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity;
 import com.xyoye.dandanplay.ui.activities.LoginActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalFavoriteActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.SearchActivity;
 import com.xyoye.dandanplay.ui.activities.WebViewActivity;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
@@ -180,14 +179,14 @@ public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements
                 break;
             case R.id.follow_ll:
                 if (AppConfig.getInstance().isLogin()){
-                    launchActivity(PersonalFavoriteActivity.class);
+                    AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_FAVORITE);
                 }else {
                     launchActivity(LoginActivity.class);
                 }
                 break;
             case R.id.history_ll:
                 if (AppConfig.getInstance().isLogin()){
-                    launchActivity(PersonalHistoryActivity.class);
+                    AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_HISTORY);
                 }else {
                     launchActivity(LoginActivity.class);
                 }

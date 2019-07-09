@@ -21,16 +21,6 @@
                 android:layout_height="120dp"/>
 
             <TextView
-                android:id="@+id/rating_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_above="@+id/anima_title"
-                android:padding="2dp"
-                android:textColor="@color/orange"
-                android:textSize="14sp"/>
-
-            <TextView
                 android:id="@+id/anima_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

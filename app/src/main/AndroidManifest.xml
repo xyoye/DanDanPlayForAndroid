@@ -71,13 +71,9 @@
         <activity
             android:name=".ui.activities.PersonalInfoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--我的关注-->
+        <!--列表番剧-->
         <activity
-            android:name=".ui.activities.PersonalFavoriteActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--播放历史-->
-        <activity
-            android:name=".ui.activities.PersonalHistoryActivity"
+            android:name=".ui.activities.AnimeListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--设置-->
         <activity

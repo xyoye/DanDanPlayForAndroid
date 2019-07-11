@@ -54,4 +54,18 @@
         <attr name="outlineInsetBottom" format="dimension" />
         <attr name="outlineExcludePadding" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="finder_view">
+        <attr name="show_frame" format="boolean"/>
+        <attr name="mask_color" format="color"/>
+        <attr name="line_color" format="color"/>
+        <attr name="rect_color" format="color"/>
+        <attr name="frame_color" format="color"/>
+        <attr name="preview_width" format="dimension"/>
+        <attr name="preview_height" format="dimension"/>
+        <attr name="preview_x" format="dimension"/>
+        <attr name="preview_y" format="dimension"/>
+        <attr name="preview_centerVertical" format="boolean" />
+        <attr name="preview_centerHorizontal" format="boolean" />
+    </declare-styleable>
 </resources>

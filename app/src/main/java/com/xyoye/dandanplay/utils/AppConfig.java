@@ -331,4 +331,15 @@ public class AppConfig {
     public void setSmbIsGridLayout(boolean isGridLayout){
         SPUtils.getInstance().put(Constants.Config.SMB_IS_GRID_LAYOUT, isGridLayout);
     }
+
+    /**
+     * 上一次远程登录数据
+     */
+    public String getRemoteLoginData(){
+        return SPUtils.getInstance().getString(Constants.Config.REMOTE_LOGIN_DATA);
+    }
+
+    public void setRemoteLoginData(String data){
+        SPUtils.getInstance().put(Constants.Config.REMOTE_LOGIN_DATA, data);
+    }
 }

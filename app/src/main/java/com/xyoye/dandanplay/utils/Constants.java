@@ -52,6 +52,8 @@ public class Constants {
         public static final String LAST_PLAY_VIDEO_PATH = "last_play_video_path";
         //SMB文件是否为Grid排序
         public static final String SMB_IS_GRID_LAYOUT = "smb_is_grid_layout";
+        //远程登录数据
+        public static final String REMOTE_LOGIN_DATA = "remote_login_data";
     }
 
     public static class DefaultConfig{

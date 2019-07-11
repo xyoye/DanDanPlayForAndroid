@@ -68,6 +68,7 @@
         android:layout_alignParentEnd="true"
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
+        android:foreground="?android:attr/selectableItemBackground"
         android:contentDescription="@string/load_danmaku"
         android:src="@mipmap/ic_danmu_exists"/>
 

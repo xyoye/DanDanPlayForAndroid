@@ -46,7 +46,14 @@
     <color name="gray_color5">#99f6f6f6</color>
     <color name="result_view">#b0000000</color>
     <!--  半透明 -->
-    <color name="viewfinder_mask">#60000000</color>
+    <color name="scan_window_mask">#60000000</color>
+    <color name="scan_window_frame">#7F1FB3E2</color>
+    <color name="scan_window_corner">#FF1FB3E2</color>
+    <color name="scan_window_laser">#FF1FB3E2</color>
+    <color name="scan_window_result_point_color">#C0FFBD21</color>
+    <color name="scan_window_text_color">#FFC0C0C0</color>
+    <color name="scan_window_border">#ffafed44</color>
+
     <!-- 黑色半透明30%-->
     <color name="alpha_black">#00000000</color>
     <!--  透明 -->

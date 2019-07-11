@@ -5,7 +5,7 @@
     tools:context=".ui.activities.MainActivity">
 
     <item
-        android:id="@+id/menu_item_lan"
+        android:id="@+id/menu_item_smb"
         android:orderInCategory="100"
         android:title="局域网"
         app:showAsAction="never"/>
@@ -14,5 +14,11 @@
         android:id="@+id/menu_item_network"
         android:orderInCategory="100"
         android:title="网络串流"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_item_remote"
+        android:orderInCategory="100"
+        android:title="远程访问"
         app:showAsAction="never"/>
 </menu>

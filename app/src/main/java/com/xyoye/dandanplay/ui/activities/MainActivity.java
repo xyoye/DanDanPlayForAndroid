@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseAppFragment;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -23,8 +25,12 @@ import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.RemoteDialog;
 
 import butterknife.BindView;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView, PlayFragment.InitTrackerListener {
@@ -36,7 +42,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private PersonalFragment personalFragment;
     private BaseAppFragment previousFragment;
 
-    private MenuItem menuLanItem, menuNetItem;
+    private MenuItem menuSmbItem, menuNetItem, menuRemoteItem;
 
     private long touchTime = 0;
 
@@ -99,8 +105,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         mDelegate.showHideFragment(homeFragment, previousFragment);
                     }
                     previousFragment = homeFragment;
-                    menuLanItem.setVisible(false);
+                    menuSmbItem.setVisible(false);
                     menuNetItem.setVisible(false);
+                    menuRemoteItem.setVisible(false);
                     return true;
                 case R.id.navigation_play:
                     setTitle("媒体库");
@@ -112,8 +119,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     }
                     playFragment.registerEventBus();
                     previousFragment = playFragment;
-                    menuLanItem.setVisible(true);
+                    menuSmbItem.setVisible(true);
                     menuNetItem.setVisible(true);
+                    menuRemoteItem.setVisible(true);
                     return true;
                 case R.id.navigation_personal:
                     setTitle("个人中心");
@@ -124,8 +132,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                         mDelegate.showHideFragment(personalFragment, previousFragment);
                     }
                     previousFragment = personalFragment;
-                    menuLanItem.setVisible(false);
+                    menuSmbItem.setVisible(false);
                     menuNetItem.setVisible(false);
+                    menuRemoteItem.setVisible(false);
                     return true;
             }
             return false;
@@ -152,10 +161,12 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menuLanItem = menu.findItem(R.id.menu_item_lan);
+        menuSmbItem = menu.findItem(R.id.menu_item_smb);
         menuNetItem = menu.findItem(R.id.menu_item_network);
-        menuLanItem.setVisible(true);
+        menuRemoteItem = menu.findItem(R.id.menu_item_remote);
+        menuSmbItem.setVisible(true);
         menuNetItem.setVisible(true);
+        menuRemoteItem.setVisible(true);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -163,11 +174,17 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_lan:
+            //局域网
+            case R.id.menu_item_smb:
                 launchActivity(SmbActivity.class);
                 break;
+            //串流弹窗
             case R.id.menu_item_network:
                 new CommonEditTextDialog(this, CommonEditTextDialog.NETWORK_LINK).show();
+                break;
+            //远程访问
+            case R.id.menu_item_remote:
+                new RemoteDialog(this).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -176,9 +193,8 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (playFragment != null){
+        if (playFragment != null)
             playFragment.unregisterEventBus();
-        }
     }
 
     @Override

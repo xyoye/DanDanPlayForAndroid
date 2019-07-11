@@ -36,6 +36,7 @@ public class CommonEditTextDialog extends Dialog {
     public static final int NETWORK_LINK = 0;
     public static final int SCREEN_NAME = 1;
     public static final int ADD_BLOCK = 2;
+    public static final int REMOTE_TOKEN = 3;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -46,6 +47,7 @@ public class CommonEditTextDialog extends Dialog {
 
     private int type;
     private CommonEditTextListener listener;
+    private CommonEditTextFullListener fullListener;
     private List<String> blockList;
 
     public CommonEditTextDialog(@NonNull Context context, int type) {
@@ -66,6 +68,12 @@ public class CommonEditTextDialog extends Dialog {
         this.type = type;
         this.listener = listener;
         this.blockList = blockList;
+    }
+
+    public CommonEditTextDialog(@NonNull Context context, int type, CommonEditTextFullListener listener) {
+        super(context, R.style.Dialog);
+        this.type = type;
+        this.fullListener = listener;
     }
 
     @Override
@@ -89,6 +97,11 @@ public class CommonEditTextDialog extends Dialog {
                 titleTv.setText("添加屏蔽");
                 editText.setHint("屏蔽数据（可以分号为间隔，批量添加）");
                 editText.setMaxLines(5);
+                break;
+            case REMOTE_TOKEN:
+                titleTv.setText("远程访问验证");
+                editText.setHint("请输入远程访问秘钥");
+                editText.setMaxLines(1);
                 break;
         }
     }
@@ -115,6 +128,9 @@ public class CommonEditTextDialog extends Dialog {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cancel_tv:
+                if (type == REMOTE_TOKEN && fullListener != null){
+                    fullListener.onCancel();
+                }
                 CommonEditTextDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
@@ -181,6 +197,15 @@ public class CommonEditTextDialog extends Dialog {
                     CommonEditTextDialog.this.dismiss();
                 }
                 break;
+            case REMOTE_TOKEN:
+                if (StringUtils.isEmpty(inputData)){
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("秘钥数据不能为空");
+                }
+                if (fullListener != null){
+                    fullListener.onConfirm(inputData);
+                }
+                break;
         }
     }
 
@@ -197,5 +222,11 @@ public class CommonEditTextDialog extends Dialog {
 
     public interface CommonEditTextListener{
         void onConfirm(String... data);
+    }
+
+    public interface CommonEditTextFullListener{
+        void onConfirm(String... data);
+
+        void onCancel();
     }
 }

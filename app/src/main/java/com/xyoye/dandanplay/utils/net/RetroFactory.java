@@ -113,7 +113,6 @@ public class RetroFactory {
                 .readTimeout(5000, TimeUnit.MILLISECONDS)
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
-
     }
 
     private static OkHttpClient initSubtitleOkHttp() {

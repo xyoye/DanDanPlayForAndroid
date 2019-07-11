@@ -13,11 +13,13 @@ import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.RegisterBean;
+import com.xyoye.dandanplay.bean.RemoteVideoBean;
 import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
 
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -132,9 +134,14 @@ public interface RetrofitService {
     @GET("/subxl/{videoHash}.json")
     Observable<ResponseBody> queryThunder(@Path("videoHash") String videoHash);
 
-    @GET("/{@link}")
-    Observable<ResponseBody> downloadSubtitle(@Path("link") String link);
-
     @GET("/api/v2/search/tag")
     Observable<AnimeTagBean> getAnimeListByTag(@Query("tags") String tagId);
+
+    //远程访问
+    @GET("/api/v1/library")
+    Observable<List<RemoteVideoBean>> getRemoteVideoList();
+
+    @GET("api/v1/comment/{hash}")
+    Observable<ResponseBody> downloadRemoteDanmu(@Path("hash") String hash);
+
 }

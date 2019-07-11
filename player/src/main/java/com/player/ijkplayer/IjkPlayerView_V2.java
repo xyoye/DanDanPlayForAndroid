@@ -535,7 +535,7 @@ public class IjkPlayerView_V2 extends FrameLayout implements PlayerViewListener 
         };
         //播放器错误事件回调
         IMediaPlayer.OnErrorListener ijkErrorCallback = (iMediaPlayer, i, i1) -> {
-            Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
+            mOutsideListener.onAction(Constants.INTENT_PLAY_FAILED, 0);
             mLoadingView.setVisibility(GONE);
             return false;
         };

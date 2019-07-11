@@ -564,7 +564,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
             @Override
             public void onPlayerError(ExoPlaybackException error) {
-                Toast.makeText(getContext(), "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
+                mOutsideListener.onAction(Constants.INTENT_PLAY_FAILED, 0);
                 mLoadingView.setVisibility(GONE);
             }
 

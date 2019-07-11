@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -35,6 +36,7 @@ import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -271,6 +273,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     break;
                 case Constants.INTENT_RESET_FULL_SCREEN:
                     setFullScreen();
+                    break;
+                case Constants.INTENT_PLAY_FAILED:
+                    new CommonDialog.Builder(this)
+                            .setDismissListener(dialog ->
+                                    PlayerActivity.this.finish()
+                            ).setOkListener(dialog ->
+                                    startActivity(new Intent(this, PlayerSettingActivity.class))
+                            ).setAutoDismiss()
+                            .build()
+                            .show("播放失败，请尝试切换其它播放内核，获取更改播放器设置", "播放器设置", "退出播放");
+                    //Toast.makeText(this, "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
                     break;
             }
         };

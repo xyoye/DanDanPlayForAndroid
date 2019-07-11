@@ -156,7 +156,7 @@ public class AppConfig {
      * SurfaceRenders
      */
     public boolean isSurfaceRenders(){
-        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_SURFACE_RENDERS);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHARE_SURFACE_RENDERS, true);
     }
 
     public void setSurfaceRenders(boolean isUse){

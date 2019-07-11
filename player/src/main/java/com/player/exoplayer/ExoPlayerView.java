@@ -82,6 +82,7 @@ import com.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.player.danmaku.danmaku.parser.IDataSource;
+import com.player.exoplayer.meida.ExoFFmpegPlayer;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
@@ -228,6 +229,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private boolean isAutoLoadLocalSubtitle = false;
     //是否自动加载网络字幕，已加载同名字幕则不自动加载
     private boolean isAutoLoadNetworkSubtitle = false;
+    //是否使用surface view
+    private boolean isUseSurfaceView;
 
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
@@ -314,12 +317,16 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (!(context instanceof AppCompatActivity)) {
             throw new IllegalArgumentException("Context must be AppCompatActivity");
         }
+        //是否使用surface view
+        isUseSurfaceView = SPUtils.getInstance().getBoolean("surface_renders", true);
         //获取绑定的Activity实例
         mAttachActivity = (AppCompatActivity) context;
         //加载布局
         View.inflate(context, R.layout.layout_exo_player_view, this);
-        //获取播放器实例
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
+        //获取播放器实例，ffmpeg扩展不支持TextureView
+        exoPlayer = isUseSurfaceView
+                        ? new ExoFFmpegPlayer(mAttachActivity, trackSelector)
+                        : ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
         //屏幕翻转控制
         mOrientationListener = new OrientationEventListener(mAttachActivity) {
             @Override
@@ -353,8 +360,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
     private void initView() {
         //主要的控件：视频、弹幕、字幕
-        //获取渲染器模式
-        boolean isUseSurfaceView = SPUtils.getInstance().getBoolean("surface_renders");
         //根据渲染模式获取不同的videoView
         mVideoView = findViewById(isUseSurfaceView ? R.id.exo_player_surface_view : R.id.exo_player_texture_view);
         mDanmakuView = findViewById(R.id.sv_danmaku);
@@ -1794,6 +1799,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO) {
             danmuPostView.setVisibility(GONE);
         }
+        if (mOutsideListener != null)
+            mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
     }
 
     /**
@@ -1818,6 +1825,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             AnimHelper.viewTranslationY(bottomBarView, bottomBarView.getHeight());
             topBarView.setTopBarVisibility(false);
             mIsShowBar = false;
+            if (mOutsideListener != null)
+                mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
         }
         //截图键与控制栏的显示与隐藏是绑定的
         if (isShow) {

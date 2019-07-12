@@ -98,7 +98,6 @@ public class DanmuDownloadDialog extends Dialog{
 
             @Override
             public void onError(int errorCode, String message) {
-                System.out.println(message);
                 ToastUtils.showShort(message);
                 if (DanmuDownloadDialog.this.isShowing() && getOwnerActivity() != null && !getOwnerActivity().isFinishing())
                     DanmuDownloadDialog.this.cancel();

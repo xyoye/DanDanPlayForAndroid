@@ -2,36 +2,27 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.RemoteVideoBean;
 import com.xyoye.dandanplay.mvp.presenter.RemotePresenter;
 import com.xyoye.dandanplay.mvp.view.RemoteView;
-import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.utils.net.GzipInterceptor;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetrofitService;
 import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -99,7 +90,7 @@ public class RemotePresenterImpl extends BaseMvpPresenterImpl<RemoteView> implem
 
                     @Override
                     public void onError(int errorCode, String message) {
-                        getView().showError("远程访问获取视频列表失败");
+                        getView().showError("远程访问获取视频列表失败 "+message);
                         getView().hideLoading();
                     }
                 });
@@ -173,7 +164,6 @@ public class RemotePresenterImpl extends BaseMvpPresenterImpl<RemoteView> implem
                 .newBuilder()
                 .connectTimeout(5000, TimeUnit.MILLISECONDS)
                 .readTimeout(5000, TimeUnit.MILLISECONDS)
-                .addInterceptor(new GzipInterceptor())
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         //添加token验证
         if (!StringUtils.isEmpty(authorization)){

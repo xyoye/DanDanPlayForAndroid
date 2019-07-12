@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
@@ -29,7 +27,7 @@ public class PersistentCookieStore {
     private static final String LOG_TAG = "PersistentCookieStore";
     private static final String COOKIE_PREFS = "Cookies_Prefs";
 
-    private final Map<String, ConcurrentHashMap<String, Cookie>> cookies;
+    private final Map<String, Map<String, Cookie>> cookies;
     private final SharedPreferences cookiePrefs;
 
 
@@ -48,7 +46,7 @@ public class PersistentCookieStore {
                     Cookie decodedCookie = decodeCookie(encodedCookie);
                     if (decodedCookie != null) {
                         if (!cookies.containsKey(entry.getKey())) {
-                            cookies.put(entry.getKey(), new ConcurrentHashMap<String, Cookie>());
+                            cookies.put(entry.getKey(), new HashMap<>());
                         }
                         cookies.get(entry.getKey()).put(name, decodedCookie);
                     }
@@ -67,7 +65,7 @@ public class PersistentCookieStore {
         //将cookies缓存到内存中 如果缓存过期 就重置此cookie
         if (!cookie.persistent()) {
             if (!cookies.containsKey(url.host())) {
-                cookies.put(url.host(), new ConcurrentHashMap<String, Cookie>());
+                cookies.put(url.host(), new HashMap<>());
             }
             cookies.get(url.host()).put(name, cookie);
         } else {
@@ -76,12 +74,18 @@ public class PersistentCookieStore {
             }
         }
 
-        LogUtils.i("cookies_save",url.host()+"_"+ TextUtils.join(",", cookies.get(url.host()).keySet()));
+        if (!cookies.containsKey(url.host()))
+            return;
+        Map<String, Cookie> cookieHashMap = cookies.get(url.host());
+        if (cookieHashMap == null)
+            return;
+
+        LogUtils.i("cookies_save",url.host()+"_"+ TextUtils.join(",", cookieHashMap.keySet()));
         LogUtils.i("cookies_save",name+"_"+encodeCookie(new SerializableOkHttpCookies(cookie)));
 
         //讲cookies持久化到本地
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
-        prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+        prefsWriter.putString(url.host(), TextUtils.join(",", cookieHashMap.keySet()));
         prefsWriter.putString(name, encodeCookie(new SerializableOkHttpCookies(cookie)));
         prefsWriter.apply();
     }
@@ -92,7 +96,7 @@ public class PersistentCookieStore {
             LogUtils.i(cookie.toString());
             LogUtils.i(cookie.persistent()+"");
             if (!cookies.containsKey(host)) {
-                cookies.put(host, new ConcurrentHashMap<String, Cookie>());
+                cookies.put(host, new HashMap<String, Cookie>());
             }
             cookies.get(host).put(token, cookie);
             //讲cookies持久化到本地
@@ -133,7 +137,13 @@ public class PersistentCookieStore {
             if (cookiePrefs.contains(name)) {
                 prefsWriter.remove(name);
             }
-            prefsWriter.putString(url.host(), TextUtils.join(",", cookies.get(url.host()).keySet()));
+
+            if (!cookies.containsKey(url.host()))
+                return true;
+            Map<String, Cookie> cookieHashMap = cookies.get(url.host());
+            if (cookieHashMap == null)
+                return true;
+            prefsWriter.putString(url.host(), TextUtils.join(",", cookieHashMap.keySet()));
             prefsWriter.apply();
 
             return true;

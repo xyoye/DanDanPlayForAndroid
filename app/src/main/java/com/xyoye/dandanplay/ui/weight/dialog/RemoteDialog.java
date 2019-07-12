@@ -84,7 +84,7 @@ public class RemoteDialog extends Dialog {
                 RemoteDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
-                String ipData = ipEditEt.getText().toString();
+                String ipData = ipEditEt.getText().toString().trim();
                 String portData = portEditEt.getText().toString();
                 String auth = authEditEt.getText().toString();
                 if (StringUtils.isEmpty(ipData)) {

@@ -6,6 +6,7 @@ import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -23,6 +24,7 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
 
     public BaseMvpPresenterImpl(T view) {
         this.view = view;
+        disposables = new ArrayList<>();
     }
 
     @Deprecated
@@ -34,6 +36,7 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
     public BaseMvpPresenterImpl(T view, Lifeful lifeful) {
         this.view = view;
         this.lifeful = lifeful;
+        disposables = new ArrayList<>();
     }
 
     @Deprecated

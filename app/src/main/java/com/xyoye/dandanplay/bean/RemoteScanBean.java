@@ -32,6 +32,7 @@ public class RemoteScanBean implements Parcelable {
         port = in.readInt();
         machineName = in.readString();
         tokenRequired = in.readByte() != 0;
+        authorization = in.readString();
         ip = in.createStringArrayList();
     }
 
@@ -85,6 +86,7 @@ public class RemoteScanBean implements Parcelable {
         dest.writeInt(port);
         dest.writeString(machineName);
         dest.writeByte((byte) (tokenRequired ? 1 : 0));
+        dest.writeString(authorization);
         dest.writeStringList(ip);
     }
 

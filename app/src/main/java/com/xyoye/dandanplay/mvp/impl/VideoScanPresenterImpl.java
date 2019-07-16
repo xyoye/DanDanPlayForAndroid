@@ -21,6 +21,8 @@ import com.xyoye.dandanplay.utils.Lifeful;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -33,6 +35,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> implements VideoScanPresenter {
     private Disposable videoScanDis;
+    private int newAddFileCount = 0;
 
     public VideoScanPresenterImpl(VideoScanView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -122,36 +125,48 @@ public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> 
 
     @SuppressLint("CheckResult")
     @Override
-    public void listFolder(String path) {
-        File rootFile = new File(path);
-        videoScanDis = Observable.just(rootFile)
-                .flatMap(this::listFiles)
-                .map(file -> {
-                    VideoBean videoBean = new VideoBean();
-                    queryFormSystem(videoBean, file.getAbsolutePath());
-                    return saveNewVideo(videoBean);
+    public void listFolder(String rootFilePath) {
+        newAddFileCount = 0;
+        videoScanDis = Observable.just(new File(rootFilePath))
+                .map(rootFile -> {
+                    for (File childFile : listFiles(rootFile)){
+                        VideoBean videoBean = new VideoBean();
+                        queryFormSystem(videoBean, childFile.getAbsolutePath());
+                        if (saveNewVideo(videoBean)){
+                            newAddFileCount++;
+                        }
+                    }
+                    return true;
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> {
                     EventBus.getDefault().post(new RefreshFolderEvent(true));
-                    ToastUtils.showShort("扫描完成");
+                    ToastUtils.showShort("扫描完成，共新增："+newAddFileCount+"个视频");
                 });
     }
 
-    //递归查询内存中的视频文件
-    private Observable<File> listFiles(File f){
-        if(f.isDirectory()){
-            File[] files = f.listFiles();
-            if (files == null)
-                files = new File[0];
-            return Observable
-                    .fromArray(files)
-                    .flatMap(this::listFiles);
-        } else {
-            return Observable
-                    .just(f)
-                    .filter(file -> file != null && f.exists() && f.canRead() && CommonUtils.isMediaFile(f.getAbsolutePath()));
+    /**
+     * 递归检查目录和文件
+     */
+    private List<File> listFiles(File file){
+        List<File> fileList = new ArrayList<>();
+        if(file.isDirectory()){
+            File[] fileArray = file.listFiles();
+            if (fileArray == null || fileArray.length == 0){
+                return new ArrayList<>();
+            }else {
+                for (File childFile : fileArray) {
+                    if (childFile.isDirectory()) {
+                        fileList.addAll(listFiles(childFile));
+                    } else if (childFile.exists() && childFile.canRead() && CommonUtils.isMediaFile(childFile.getAbsolutePath())) {
+                        fileList.add(childFile);
+                    }
+                }
+            }
+        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())){
+            fileList.add(file);
         }
+        return fileList;
     }
 }

@@ -25,10 +25,8 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -326,38 +324,43 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     private Observable<Boolean> flatMapFile(List<String> scanFolderList){
         if (scanFolderList.size() == 0)
             return Observable.just(true);
-        return Observable.just(getScanFolderFiles(scanFolderList))
-                .flatMap((Function<File[], ObservableSource<File>>)
-                        fileList -> Observable
-                                .fromArray(fileList)
-                                .flatMap(this::listFiles)
-                )
-                .map(file -> {
-                    String filePath = file.getAbsolutePath();
-                    VideoBean videoBean = new VideoBean();
-                    videoBean.setVideoPath(filePath);
-                    videoBean.setVideoDuration(0);
-                    videoBean.setVideoSize(file.length());
-                    videoBean.set_id(0);
-                    saveVideoToDatabase(videoBean);
+        return Observable.fromArray(getScanFolderFiles(scanFolderList))
+                .map(folderFile -> {
+                    for (File childFile : listFiles(folderFile)){
+                        System.out.println(childFile.getAbsoluteFile());
+                        String filePath = childFile.getAbsolutePath();
+                        VideoBean videoBean = new VideoBean();
+                        videoBean.setVideoPath(filePath);
+                        videoBean.setVideoDuration(0);
+                        videoBean.setVideoSize(childFile.length());
+                        videoBean.set_id(0);
+                        saveVideoToDatabase(videoBean);
+                    }
                     return true;
-                })
-                .switchIfEmpty(Observable.just(true));
+                });
     }
 
     /**
      * 递归检查目录和文件
      */
-    private Observable<File> listFiles(final File f){
-        if(f != null && f.isDirectory()){
-            return Observable
-                    .fromArray(f.listFiles())
-                    .flatMap(this::listFiles);
-        } else {
-            File fileTemp = f == null ? new File("") : f;
-            return Observable
-                    .just(fileTemp)
-                    .filter(file -> file != null && file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath()));
+    private List<File> listFiles(File file){
+        List<File> fileList = new ArrayList<>();
+        if(file.isDirectory()){
+            File[] fileArray = file.listFiles();
+            if (fileArray == null || fileArray.length == 0){
+                return new ArrayList<>();
+            }else {
+                for (File childFile : fileArray) {
+                    if (childFile.isDirectory()) {
+                        fileList.addAll(listFiles(childFile));
+                    } else if (childFile.exists() && childFile.canRead() && CommonUtils.isMediaFile(childFile.getAbsolutePath())) {
+                        fileList.add(childFile);
+                    }
+                }
+            }
+        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())){
+            fileList.add(file);
         }
+        return fileList;
     }
 }

@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -522,6 +523,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
     //查询字幕
     private void querySubtitle(String videoPath){
+        //只查找本地视频字幕
+        String localPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if (!videoPath.startsWith(localPath))
+            return;
         String thunderHash = HashUtils.getFileSHA1(videoPath);
         String shooterHash = HashUtils.getFileHash(videoPath);
         if (!StringUtils.isEmpty(thunderHash) && !StringUtils.isEmpty(shooterHash)){

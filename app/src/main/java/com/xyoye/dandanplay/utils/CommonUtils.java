@@ -187,7 +187,10 @@ public class CommonUtils {
         boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            switch (Objects.requireNonNull(uri.getAuthority())){
+            String authority = uri.getAuthority();
+            if (authority == null)
+                return "";
+            switch (authority){
                 case EXTERNAL_STORAGE:
                     String docId = DocumentsContract.getDocumentId(uri);
                     String[] exSplit = docId.split(":");
@@ -220,6 +223,10 @@ public class CommonUtils {
             return getDataColumn(context, uri, null, null);
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
+        } else if ("http".equalsIgnoreCase(uri.getScheme())){
+            return uri.toString();
+        } else if ("https".equalsIgnoreCase(uri.getScheme())){
+            return uri.toString();
         }
         return null;
     }

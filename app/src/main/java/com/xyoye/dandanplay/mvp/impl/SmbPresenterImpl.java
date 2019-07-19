@@ -20,7 +20,9 @@ import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
+import com.xyoye.dandanplay.utils.smbv2.SmbServer;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -302,16 +304,22 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
             ToastUtils.showShort("共享服务未启动，无法播放");
             return;
         }
+        try {
+            SmbFile smbFile = new SmbFile(smbBean.getUrl(), cifsContext);
+            SmbServer.setPlaySmbFile(smbFile);
 
-        String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";
-        String videoUrl = httpUrl + smbBean.getUrl().replace("smb://", "smb=");
+            String httpUrl = "http://" + SmbServer.SMB_IP + ":" + SmbServer.SMB_PORT+"/";
+            String videoUrl = httpUrl + smbBean.getUrl().replace("smb://", "smb=");
 
-        // TODO: 2019/3/31 IJK莫名的不能播放smb转http的视频，暂时只支持exo
-        PlayerManagerActivity.launchPlayerSmb(
-                getView().getContext(),
-                FileUtils.getFileNameNoExtension(videoUrl),
-                videoUrl
-        );
+            PlayerManagerActivity.launchPlayerSmb(
+                    getView().getContext(),
+                    FileUtils.getFileNameNoExtension(videoUrl),
+                    videoUrl
+            );
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            ToastUtils.showShort("无法创建可播放视频流");
+        }
     }
 
     @Override

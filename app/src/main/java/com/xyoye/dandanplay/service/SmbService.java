@@ -12,11 +12,9 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
-import com.xyoye.dandanplay.ui.activities.FolderActivity;
 import com.xyoye.dandanplay.ui.activities.SmbActivity;
-import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
+import com.xyoye.dandanplay.utils.smbv2.SmbServer;
 
 /**
  * Created by xyoye on 2018/11/22.
@@ -89,10 +87,8 @@ public class SmbService extends Service {
     {
         super.onDestroy();
         notificationManager.cancel(NOTIFICATION_ID);
-        HTTPServerList httpServerList = smbServer.getHttpServerList();
-        httpServerList.stop();
-        httpServerList.close();
-        httpServerList.clear();
-        smbServer.interrupt();
+        if (smbServer != null){
+            smbServer.stopSmbServer();
+        }
     }
 }

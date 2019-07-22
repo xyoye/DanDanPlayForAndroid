@@ -250,39 +250,21 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
         SmbBean smbBean = smbList.get(position);
         switch (smbBean.getSmbType()) {
             case Constants.SmbType.LAN_DEVICE:
-                //未输入账号名 && 不是匿名登录
-                if (StringUtils.isEmpty(smbBean.getAccount()) && !smbBean.isAnonymous()) {
-                    new SmbDialog(SmbActivity.this, smbBean, position, (resultBean, resultPosition) -> {
-                        //已存储设备更新信息，未存储设备存储
-                        smbBean.setAccount(resultBean.getAccount());
-                        smbBean.setPassword(resultBean.getPassword());
-                        smbBean.setDomain(resultBean.getDomain());
-                        smbBean.setAnonymous(resultBean.isAnonymous());
-                        smbBean.setSmbType(Constants.SmbType.SQL_DEVICE);
-                        presenter.addSqlDevice(smbBean);
-                        presenter.loginSmb(smbBean);
-                        adapter.notifyItemChanged(position);
-                    }).show();
-                    return;
-                }
-                presenter.loginSmb(smbBean);
-                break;
             case Constants.SmbType.SQL_DEVICE:
                 //未输入账号名 && 不是匿名登录
                 if (StringUtils.isEmpty(smbBean.getAccount()) && !smbBean.isAnonymous()) {
                     new SmbDialog(SmbActivity.this, smbBean, position, (resultBean, resultPosition) -> {
-                        //已存储设备更新信息，未存储设备存储
-                        smbBean.setAccount(resultBean.getAccount());
-                        smbBean.setPassword(resultBean.getPassword());
-                        smbBean.setDomain(resultBean.getDomain());
-                        smbBean.setAnonymous(resultBean.isAnonymous());
-                        presenter.updateSqlDevice(smbBean);
-                        presenter.loginSmb(smbBean);
-                        adapter.notifyItemChanged(position);
+                        SmbBean loginSmbBean = new SmbBean();
+                        loginSmbBean.setUrl(resultBean.getUrl());
+                        loginSmbBean.setAccount(resultBean.getAccount());
+                        loginSmbBean.setPassword(resultBean.getPassword());
+                        loginSmbBean.setDomain(resultBean.getDomain());
+                        loginSmbBean.setAnonymous(resultBean.isAnonymous());
+                        presenter.loginSmb(loginSmbBean, position);
                     }).show();
                     return;
                 }
-                presenter.loginSmb(smbBean);
+                presenter.loginSmb(smbBean, position);
                 break;
             case Constants.SmbType.FOLDER:
                 presenter.listSmbFolder(smbBean);
@@ -308,5 +290,18 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
                 .setAutoDismiss()
                 .build()
                 .show("确认移除该设备？");
+    }
+
+    @Override
+    public void LoginSuccess(int position, SmbBean loginSmbBean) {
+        SmbBean smbBean = smbList.get(position);
+        smbBean.setUrl(loginSmbBean.getUrl());
+        smbBean.setAccount(loginSmbBean.getAccount());
+        smbBean.setPassword(loginSmbBean.getPassword());
+        smbBean.setDomain(loginSmbBean.getDomain());
+        smbBean.setAnonymous(loginSmbBean.isAnonymous());
+        smbBean.setSmbType(Constants.SmbType.SQL_DEVICE);
+        presenter.addSqlDevice(smbBean);
+        adapter.notifyItemChanged(position);
     }
 }

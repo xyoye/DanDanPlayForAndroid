@@ -55,7 +55,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
 
     @Override
     public void getHomeFragmentData(){
-        HomeDataBean.getHomeData(new CommOtherDataObserver<HomeDataBean>() {
+        HomeDataBean.getHomeData(new CommOtherDataObserver<HomeDataBean>(getLifeful()) {
             @Override
             public void onSuccess(HomeDataBean homeDataBean) {
                 List<String> images = new ArrayList<>();

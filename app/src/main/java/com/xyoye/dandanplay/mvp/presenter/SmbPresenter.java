@@ -16,7 +16,7 @@ public interface SmbPresenter extends BaseMvpPresenter {
 
     void updateSqlDevice(SmbBean smbBean);
 
-    void loginSmb(SmbBean smbBean);
+    void loginSmb(SmbBean smbBean, int position);
 
     void listSmbFolder(SmbBean smbBean);
 

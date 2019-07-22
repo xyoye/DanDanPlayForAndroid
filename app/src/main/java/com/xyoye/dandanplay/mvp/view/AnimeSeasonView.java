@@ -11,7 +11,7 @@ import java.util.List;
  * Created by xyoye on 2019/1/9.
  */
 
-public interface AnimaSeasonView extends BaseMvpView, LoadDataView{
+public interface AnimeSeasonView extends BaseMvpView, LoadDataView{
 
-    void refreshAnimas(List<AnimeBean> animas);
+    void refreshAnime(List<AnimeBean> anime);
 }

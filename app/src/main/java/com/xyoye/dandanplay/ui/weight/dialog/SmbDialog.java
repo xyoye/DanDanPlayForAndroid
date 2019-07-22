@@ -98,7 +98,7 @@ public class SmbDialog extends Dialog {
                         authListener.onSubmit(smbBean, mPosition);
                     }
                 }else {
-                    smbBean.setUrl(ip);
+                    smbBean.setUrl(mSmbBean.getUrl());
                     if (authListener != null){
                         SmbDialog.this.dismiss();
                         authListener.onSubmit(smbBean, mPosition);

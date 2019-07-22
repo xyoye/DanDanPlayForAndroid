@@ -43,6 +43,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.HashUtils;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -78,7 +79,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
  * Created by xyoye on 2018/7/4 0004.
  */
 
-public class PlayerActivity extends AppCompatActivity implements PlayerReceiverListener {
+public class PlayerActivity extends AppCompatActivity implements Lifeful, PlayerReceiverListener {
     PlayerViewListener mPlayer;
 
     private boolean isInit = false;
@@ -458,7 +459,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         String color = (data.textColor & 0x00FFFFFF) + "";
         String comment = String.valueOf(data.text);
         DanmuUploadParam uploadParam = new DanmuUploadParam(time, mode, color, comment);
-        UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>() {
+        UploadDanmuBean.uploadDanmu(uploadParam, episodeId + "", new CommJsonObserver<UploadDanmuBean>(this) {
             @Override
             public void onSuccess(UploadDanmuBean bean) {
                 LogUtils.d("upload danmu success: text：" + data.text + "  cid：" + bean.getCid());
@@ -492,7 +493,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     //增加播放历史
     private void addPlayHistory(int episodeId){
         if (episodeId > 0){
-            PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>() {
+            PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>(this) {
                 @Override
                 public void onSuccess(CommJsonEntity commJsonEntity) {
                     LogUtils.d("add history success: episodeId：" + episodeId);
@@ -578,5 +579,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                 }
             }
         });
+    }
+
+    @Override
+    public boolean isAlive() {
+        return getBaseContext() != null && !(this.isDestroyed() || this.isFinishing());
     }
 }

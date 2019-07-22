@@ -17,10 +17,9 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeBean;
-import com.xyoye.dandanplay.bean.BangumiBean;
-import com.xyoye.dandanplay.mvp.impl.AnimaSeasonPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.AnimaSeasonPresenter;
-import com.xyoye.dandanplay.mvp.view.AnimaSeasonView;
+import com.xyoye.dandanplay.mvp.impl.AnimeSeasonPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.AnimeSeasonPresenter;
+import com.xyoye.dandanplay.mvp.view.AnimeSeasonView;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -36,7 +35,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/1/9.
  */
 
-public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> implements AnimaSeasonView {
+public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> implements AnimeSeasonView {
     public static final int SORT_FOLLOW = 0;
     public static final int SORT_NAME = 1;
     public static final int SORT_RETA = 2;
@@ -47,8 +46,8 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.anima_rv)
-    RecyclerView animaRv;
+    @BindView(R.id.anime_rv)
+    RecyclerView animeRv;
     @BindView(R.id.year_01_tv)
     TextView year01Tv;
     @BindView(R.id.year_02_tv)
@@ -66,34 +65,34 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
     @BindView(R.id.month_1_tv)
     TextView month1Tv;
 
-    private BaseRvAdapter<AnimeBean> animaAdapter;
-    private List<AnimeBean> animaList;
+    private BaseRvAdapter<AnimeBean> animeAdapter;
+    private List<AnimeBean> animeList;
 
     @NonNull
     @Override
-    protected AnimaSeasonPresenter initPresenter() {
-        return new AnimaSeasonPresenterImpl(this, this);
+    protected AnimeSeasonPresenter initPresenter() {
+        return new AnimeSeasonPresenterImpl(this, this);
     }
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_seaon_anima;
+        return R.layout.activity_seaon_anime;
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void initView() {
         setTitle("季度番剧");
-        animaRv.setLayoutManager(new GridLayoutManager(this, 3));
-        animaList = new ArrayList<>();
-        animaAdapter = new BaseRvAdapter<AnimeBean>(animaList) {
+        animeRv.setLayoutManager(new GridLayoutManager(this, 3));
+        animeList = new ArrayList<>();
+        animeAdapter = new BaseRvAdapter<AnimeBean>(animeList) {
             @NonNull
             @Override
             public AdapterItem<AnimeBean> onCreateItem(int viewType) {
                 return new AnimeItem();
             }
         };
-        animaRv.setAdapter(animaAdapter);
+        animeRv.setAdapter(animeAdapter);
 
         Calendar calendar = Calendar.getInstance();
         nowYear = calendar.get(Calendar.YEAR);
@@ -174,7 +173,7 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
                 month10Tv.setTextColor(getResources().getColor(R.color.theme_color));
                 break;
         }
-        presenter.getSeasonAnima(selectYear, selectMonth);
+        presenter.getSeasonAnime(selectYear, selectMonth);
     }
 
     //恢复年份按钮状态
@@ -239,25 +238,25 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
                 selectMonth = 10;
                 clearMonthSelect();
                 month10Tv.setTextColor(getResources().getColor(R.color.theme_color));
-                presenter.getSeasonAnima(selectYear, selectMonth);
+                presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_7_tv:
                 selectMonth = 7;
                 clearMonthSelect();
                 month7Tv.setTextColor(getResources().getColor(R.color.theme_color));
-                presenter.getSeasonAnima(selectYear, selectMonth);
+                presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_4_tv:
                 selectMonth = 4;
                 clearMonthSelect();
                 month4Tv.setTextColor(getResources().getColor(R.color.theme_color));
-                presenter.getSeasonAnima(selectYear, selectMonth);
+                presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_1_tv:
                 selectMonth = 1;
                 clearMonthSelect();
                 month1Tv.setTextColor(getResources().getColor(R.color.theme_color));
-                presenter.getSeasonAnima(selectYear, selectMonth);
+                presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
         }
     }
@@ -305,11 +304,11 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
     }
 
     @Override
-    public void refreshAnimas(List<AnimeBean> animas) {
-        if (animas != null){
-            animaList.clear();
-            animaList.addAll(animas);
-            animaAdapter.notifyDataSetChanged();
+    public void refreshAnime(List<AnimeBean> anime) {
+        if (anime != null){
+            animeList.clear();
+            animeList.addAll(anime);
+            animeAdapter.notifyDataSetChanged();
         }
     }
 
@@ -354,8 +353,8 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimaSeasonPresenter> i
                 AppConfig.getInstance().saveSeasonSortType(SORT_RETA);
                 break;
         }
-        presenter.sortAnima(animaList, sortType);
-        animaAdapter.notifyDataSetChanged();
+        presenter.sortAnime(animeList, sortType);
+        animeAdapter.notifyDataSetChanged();
         return super.onOptionsItemSelected(item);
     }
 }

@@ -19,5 +19,7 @@ public interface SmbView extends BaseMvpView, LoadDataView {
 
     void refreshSmbFile(List<SmbBean> deviceList, String parentPath);
 
+    void LoginSuccess(int position, SmbBean smbBean);
+
     Context getContext();
 }

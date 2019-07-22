@@ -54,11 +54,12 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
 
     @Override
     public void destroy() {
-        if (disposables != null){
-            for (Disposable disposable : disposables){
-                if (disposable != null)
-                    disposable.dispose();
-            }
+        if (disposables == null){
+            disposables = new ArrayList<>();
+        }
+        for (Disposable disposable : disposables){
+            if (disposable != null)
+                disposable.dispose();
         }
     }
 

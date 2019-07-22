@@ -35,7 +35,7 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
     public static AnimeFragment newInstance(BangumiBean bangumiBean){
         AnimeFragment animeFragment = new AnimeFragment();
         Bundle args = new Bundle();
-        args.putSerializable("anima", bangumiBean);
+        args.putSerializable("anime_data", bangumiBean);
         animeFragment.setArguments(args);
         return animeFragment;
     }
@@ -56,7 +56,7 @@ public class AnimeFragment extends BaseFragment<AnimePresenter> implements Scrol
         BangumiBean bangumiBean;
         Bundle args = getArguments();
         if (args == null) return;
-        bangumiBean = (BangumiBean)getArguments().getSerializable("anima");
+        bangumiBean = (BangumiBean)getArguments().getSerializable("anime_data");
         if (bangumiBean ==null) return;
 
         List<AnimeBean> bangumiList = bangumiBean.getBangumiList();

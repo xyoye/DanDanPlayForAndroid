@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
+import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -32,7 +33,7 @@ import butterknife.OnClick;
  */
 
 
-public class CommonEditTextDialog extends Dialog {
+public class CommonEditTextDialog extends Dialog implements Lifeful {
     public static final int NETWORK_LINK = 0;
     public static final int SCREEN_NAME = 1;
     public static final int ADD_BLOCK = 2;
@@ -107,7 +108,7 @@ public class CommonEditTextDialog extends Dialog {
     }
 
     private void changeScreenName(String screenName) {
-        PersonalBean.changeScreenName(screenName, new CommJsonObserver<CommJsonEntity>() {
+        PersonalBean.changeScreenName(screenName, new CommJsonObserver<CommJsonEntity>(this) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 if (listener != null){
@@ -218,6 +219,11 @@ public class CommonEditTextDialog extends Dialog {
             }
         }
         return isContains;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return isShowing();
     }
 
     public interface CommonEditTextListener{

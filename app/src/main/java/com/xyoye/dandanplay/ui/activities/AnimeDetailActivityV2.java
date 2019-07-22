@@ -103,7 +103,7 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
     private AnimeDetailBean animeDetailBean;
     private boolean isFavorite = false;
     private int toolbarHeight;
-    private String animaId = "";
+    private String animeId = "";
 
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeLinearAdapter;
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeGridAdapter;
@@ -201,8 +201,8 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
         tagRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         tagRv.setAdapter(tagAdapter);
 
-        animaId = getIntent().getStringExtra("animaId");
-        presenter.getAnimeDetail(animaId);
+        animeId = getIntent().getStringExtra("anime_id");
+        presenter.getAnimeDetail(animeId);
 
         scrollableLayout.setHeadCount(2);
     }
@@ -252,7 +252,7 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_anime_detail_v3;
+        return R.layout.activity_anime_detail_v2;
     }
 
     @SuppressLint("SetTextI18n")
@@ -430,9 +430,9 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
             case R.id.anime_follow_iv:
                 if (AppConfig.getInstance().isLogin()) {
                     if (isFavorite) {
-                        presenter.followCancel(animaId);
+                        presenter.followCancel(animeId);
                     } else {
-                        presenter.followConfirm(animaId);
+                        presenter.followConfirm(animeId);
                     }
                 } else {
                     ToastUtils.showShort(R.string.anime_detail_not_login_hint);
@@ -441,9 +441,9 @@ public class AnimeDetailActivityV2 extends BaseMvpActivity<AnimeDetailPresenter>
         }
     }
 
-    public static void launchAnimeDetail(Activity activity, String animaId) {
+    public static void launchAnimeDetail(Activity activity, String animeId) {
         Intent intent = new Intent(activity, AnimeDetailActivityV2.class);
-        intent.putExtra("animaId", animaId);
+        intent.putExtra("anime_id", animeId);
         activity.startActivity(intent);
     }
 }

@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -35,7 +36,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import jcifs.Address;
 import jcifs.CIFSContext;
-import jcifs.context.SingletonContext;
+import jcifs.config.PropertyConfiguration;
+import jcifs.context.BaseContext;
 import jcifs.smb.NtlmPasswordAuthenticator;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
@@ -140,6 +142,8 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
                         .execute();
         if (cursor.getCount() > 0){
             updateSqlDevice(smbBean);
+            cursor.close();
+            return;
         }
         cursor.close();
 
@@ -173,7 +177,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
     @SuppressLint("CheckResult")
     @Override
-    public void loginSmb(SmbBean smbBean) {
+    public void loginSmb(SmbBean smbBean, int position) {
         getView().showLoading();
         Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
             try {
@@ -184,9 +188,15 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
                 }else {
                     smbUrl = "smb://"+smbBean.getAccount()+":"+smbBean.getPassword()+"@"+smbBean.getUrl()+"/";
                 }
-                //获取登录信息
+
+                //登录验证信息
                 NtlmPasswordAuthenticator auth = new NtlmPasswordAuthenticator(smbBean.getDomain(), smbBean.getAccount(), smbBean.getPassword());
-                cifsContext = SingletonContext.getInstance().withCredentials(auth);
+                //登录配置信息
+                Properties properties = new Properties();
+                properties.setProperty("jcifs.smb.client.responseTimeout", "5000");
+                PropertyConfiguration configuration = new PropertyConfiguration(properties);
+
+                cifsContext = new BaseContext(configuration).withCredentials(auth);
                 Address address = cifsContext.getNameServiceClient().getByName(smbBean.getUrl());
                 cifsContext.getTransportPool().logon(cifsContext, address);
 
@@ -225,6 +235,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
             @Override
             public void onNext(List<SmbBean> fileBeans) {
+                getView().LoginSuccess(position, smbBean);
                 getView().refreshSmbFile(fileBeans, dirUrl);
             }
 

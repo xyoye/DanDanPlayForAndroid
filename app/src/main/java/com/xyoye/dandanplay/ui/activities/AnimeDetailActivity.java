@@ -250,7 +250,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_anime_detail_v2;
+        return R.layout.activity_anime_detail;
     }
 
     @Override

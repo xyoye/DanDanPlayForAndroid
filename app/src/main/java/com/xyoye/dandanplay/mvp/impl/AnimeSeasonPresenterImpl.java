@@ -7,8 +7,8 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.bean.SeasonAnimeBean;
-import com.xyoye.dandanplay.mvp.presenter.AnimaSeasonPresenter;
-import com.xyoye.dandanplay.mvp.view.AnimaSeasonView;
+import com.xyoye.dandanplay.mvp.presenter.AnimeSeasonPresenter;
+import com.xyoye.dandanplay.mvp.view.AnimeSeasonView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -27,9 +27,9 @@ import static com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity.SORT_NAME;
  * Created by xyoye on 2019/1/9.
  */
 
-public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonView> implements AnimaSeasonPresenter {
+public class AnimeSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimeSeasonView> implements AnimeSeasonPresenter {
 
-    public AnimaSeasonPresenterImpl(AnimaSeasonView view, Lifeful lifeful) {
+    public AnimeSeasonPresenterImpl(AnimeSeasonView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 
@@ -59,9 +59,9 @@ public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonVi
     }
 
     @Override
-    public void getSeasonAnima(int year, int month) {
+    public void getSeasonAnime(int year, int month) {
         getView().showLoading();
-        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<BangumiBean>() {
+        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<BangumiBean>(getLifeful()) {
             @Override
             public void onSuccess(BangumiBean bangumiBean) {
                 getView().hideLoading();
@@ -70,11 +70,11 @@ public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonVi
                     if (!AppConfig.getInstance().isLogin() && sortType == 0){
                         sortType = SORT_NAME;
                     }
-                    sortAnima(bangumiBean.getBangumiList(), sortType);
-                    getView().refreshAnimas(bangumiBean.getBangumiList());
+                    sortAnime(bangumiBean.getBangumiList(), sortType);
+                    getView().refreshAnime(bangumiBean.getBangumiList());
                 }
                 else
-                    getView().refreshAnimas(new ArrayList<>());
+                    getView().refreshAnime(new ArrayList<>());
             }
 
             @Override
@@ -87,7 +87,7 @@ public class AnimaSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimaSeasonVi
     }
 
     @Override
-    public void sortAnima(List<AnimeBean> animaList, int sortType){
+    public void sortAnime(List<AnimeBean> animaList, int sortType){
         if (sortType == SORT_FOLLOW){
             Collections.sort(animaList, (o1, o2) ->
                     Boolean.compare(o2.isIsFavorited(), o1.isIsFavorited()));

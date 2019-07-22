@@ -10,9 +10,9 @@ import java.util.List;
  * Created by xyoye on 2019/1/9.
  */
 
-public interface AnimaSeasonPresenter extends BaseMvpPresenter {
+public interface AnimeSeasonPresenter extends BaseMvpPresenter {
 
-    void getSeasonAnima(int year, int month);
+    void getSeasonAnime(int year, int month);
 
-    void sortAnima(List<AnimeBean> animaList, int sortType);
+    void sortAnime(List<AnimeBean> animeList, int sortType);
 }

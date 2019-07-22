@@ -14,11 +14,6 @@
         <!--<item name="searchViewStyle">@style/MySearchViewStyle</item>-->
     </style>
 
-    <style name="AppTheme" parent="AppBaseTheme">
-        <item name="cardViewStyle">@style/CardView</item>
-        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="elevation">0dp</item>
     </style>
@@ -45,7 +40,7 @@
         <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
     </style>
 
-    <style name="OpenTheme" parent="AppTheme">
+    <style name="OpenTheme" parent="AppBaseTheme">
         <item name="android:windowBackground">@raw/launch</item>
     </style>
 

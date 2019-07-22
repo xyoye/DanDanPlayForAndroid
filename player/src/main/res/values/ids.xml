@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item type="id" name="input_options_basic">false</item>
-    <item type="id" name="input_options_group_textsize">false</item>
-    <item type="id" name="input_options_medium_textsize">false</item>
-    <item type="id" name="input_options_small_textsize">false</item>
-    <item type="id" name="input_options_group_type">false</item>
-    <item type="id" name="input_options_rl_type">false</item>
-    <item type="id" name="input_options_top_type">false</item>
-    <item type="id" name="input_options_bottom_type">false</item>
-    <item type="id" name="input_options_more">false</item>
-    <item type="id" name="input_options_color_current">false</item>
-    <item type="id" name="input_options_color_more_icon">false</item>
-    <item type="id" name="input_options_color_group">false</item>
-    <item type="id" name="input_options_color_white">false</item>
-    <item type="id" name="input_options_color_red">false</item>
-    <item type="id" name="input_options_color_yellow">false</item>
-    <item type="id" name="input_options_color_green">false</item>
-    <item type="id" name="input_options_color_blue">false</item>
-    <item type="id" name="input_options_color_pink">false</item>
-    <item type="id" name="input_options_color_light_green">false</item>
-    <item type="id" name="input_options_color_drak_blue">false</item>
-    <item type="id" name="input_options_color_orange">false</item>
-    <item type="id" name="input_options_color_purple">false</item>
-    <item type="id" name="input_options_color_lite_blue">false</item>
-    <item type="id" name="input_options_color_brown">false</item>
+    <item type="id" name="input_options_basic"/>
+    <item type="id" name="input_options_group_textsize"/>
+    <item type="id" name="input_options_medium_textsize"/>
+    <item type="id" name="input_options_small_textsize"/>
+    <item type="id" name="input_options_group_type"/>
+    <item type="id" name="input_options_rl_type"/>
+    <item type="id" name="input_options_top_type"/>
+    <item type="id" name="input_options_bottom_type"/>
+    <item type="id" name="input_options_more"/>
+    <item type="id" name="input_options_color_current"/>
+    <item type="id" name="input_options_color_more_icon"/>
+    <item type="id" name="input_options_color_group"/>
+    <item type="id" name="input_options_color_white"/>
+    <item type="id" name="input_options_color_red"/>
+    <item type="id" name="input_options_color_yellow"/>
+    <item type="id" name="input_options_color_green"/>
+    <item type="id" name="input_options_color_blue"/>
+    <item type="id" name="input_options_color_pink"/>
+    <item type="id" name="input_options_color_light_green"/>
+    <item type="id" name="input_options_color_drak_blue"/>
+    <item type="id" name="input_options_color_orange"/>
+    <item type="id" name="input_options_color_purple"/>
+    <item type="id" name="input_options_color_lite_blue"/>
+    <item type="id" name="input_options_color_brown"/>
 
-    <item type="id" name="aspect_fit_parent">false</item>
+    <item type="id" name="aspect_fit_parent"/>
 </resources>

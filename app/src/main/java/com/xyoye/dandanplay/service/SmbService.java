@@ -21,7 +21,7 @@ import com.xyoye.dandanplay.utils.smbv2.SmbServer;
  */
 
 public class SmbService extends Service {
-    private int NOTIFICATION_ID = 2;
+    private int NOTIFICATION_ID = 1002;
 
     private SmbServer smbServer = null;
     private NotificationManager notificationManager;
@@ -46,7 +46,7 @@ public class SmbService extends Service {
                 notificationManager.createNotificationChannel(channel);
             }
         }
-        startForeground(NOTIFICATION_ID, buildNotification(intent));
+        startForeground(NOTIFICATION_ID, buildNotification());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -59,7 +59,7 @@ public class SmbService extends Service {
         smbServer.start();
     }
 
-    private Notification buildNotification(Intent oldIntent){
+    private Notification buildNotification(){
         Intent intent = new Intent(this, SmbActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent,0);
 
@@ -83,12 +83,13 @@ public class SmbService extends Service {
     }
 
     @Override
-    public void onDestroy()
-    {
-        super.onDestroy();
-        notificationManager.cancel(NOTIFICATION_ID);
+    public void onDestroy() {
+        if (notificationManager != null){
+            notificationManager.cancel(NOTIFICATION_ID);
+        }
         if (smbServer != null){
             smbServer.stopSmbServer();
         }
+        super.onDestroy();
     }
 }

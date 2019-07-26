@@ -36,7 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 
 public class TorrentService extends Service {
-    private int NOTIFICATION_ID = 1;
+    private int NOTIFICATION_ID = 1001;
 
     private NotificationManager notificationManager;
     private Handler mHandler = IApplication.getMainHandler();

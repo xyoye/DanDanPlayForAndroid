@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -113,6 +114,13 @@ public class PlayerManagerActivity extends AppCompatActivity {
     }
 
     private void launchPlayerActivity(){
+
+        if (TextUtils.isEmpty(videoPath)){
+            ToastUtils.showShort("解析视频地址失败");
+            errorTv.setVisibility(View.VISIBLE);
+            return;
+        }
+
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("video_title", videoTitle);
         intent.putExtra("video_path", videoPath);

@@ -231,12 +231,14 @@ public class CommonUtils {
         return null;
     }
 
-    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs){
         context.grantUriPermission(context.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, selection, selectionArgs, null)) {
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToNext()) {
                 return cursor.getString(0);
             }
+        } catch (IllegalStateException e){
+            return null;
         }
         return null;
     }

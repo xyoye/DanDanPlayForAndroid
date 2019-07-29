@@ -79,7 +79,9 @@ public class PlayerManagerActivity extends AppCompatActivity {
             }
 
             if (!StringUtils.isEmpty(videoPath)){
-                videoTitle = FileUtils.getFileName(videoPath);
+                videoTitle = TextUtils.isEmpty(videoTitle)
+                                ? FileUtils.getFileName(videoPath)
+                                : videoTitle;
                 //是否展示前往选择弹幕弹窗
                 if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
                     new DanmuSelectDialog(this, isSelectDanmu -> {

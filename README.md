@@ -61,4 +61,4 @@
 - [jlbitorrent](https://github.com/frostwire/frostwire-jlibtorrent)
 - [jcifs-ng](https://github.com/AgNO3/jcifs-ng)
 - [jsoup](https://github.com/jhy/jsoup)
-- [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/Third_Party_Libraries.md)
+- [...](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/document/Third_Party_Libraries.md)

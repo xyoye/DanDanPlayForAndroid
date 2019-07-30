@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def keyPropertiesFile = rootProject.file("keystore.properties")
+def keyProperties = new Properties()
+if (keyPropertiesFile.exists()) {
+    keyProperties.load(new FileInputStream(keyPropertiesFile))
+}
+
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -18,6 +24,20 @@ android {
         }
         ndk {
             abiFilters 'armeabi-v7a'
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile      file("../dandanplay.jks")
+            storePassword  keyProperties.containsKey("KEYSTORE_PASS")
+                                ? keyProperties['KEYSTORE_PASS']
+                                : System.getenv("KEYSTORE_PASS")
+            keyAlias       keyProperties.containsKey("ALIAS_NAME")
+                                ? keyProperties['ALIAS_NAME']
+                                : System.getenv("ALIAS_NAME")
+            keyPassword    keyProperties.containsKey("ALIAS_PASS")
+                                ? keyProperties['ALIAS_PASS']
+                                : System.getenv("ALIAS_PASS")
         }
     }
     sourceSets {

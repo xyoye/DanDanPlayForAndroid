@@ -18,5 +18,8 @@ deploy:
   api_key:
     secure: E4pNbfXKEPPvOp6UWXzkvinQtrYq+ebAkh/Sq5JzI/snLuN8hkoPrQGzh8y91wJGehN13DC+aJIP7GUQ4g6n9dh/I4OC80OOOT0iBA6puqVySdjmGdCWLLJhAY7juy0c6ihi+nJYFjyPuZOCW6Viqg278YTQOQxGgt2P8q10HuVj8AOyx4NLBlhJjaCOnSdm6mOEekHMhbxqxDoobjhjvlX2kBmEdpG++Wu5IjPQ/Qy5CnS5ySxMd5myTNWdXzXTBQQ1BGyHqY1J9AnPaa1YtniVYaIMVu+1HsdhfKL4JCr2LwWP2XgB8QiBJtuEAclBg9Grb/40saej13ZDkwmcNBU6GMa5haYY98QX0DqhyGxm9miLEP6o67PqrX4vRO5IPwfugk+mdLwfzb2xmZPbY2vls5xorrk/K3mG4aD1NXxR8jhX+dchiQQeyxmsoyGEurODKg8jIHxubXKev99nvUBqN/DuS/BCwxNcCvX8p5vjUVpKrn3oxrSZ5vpAWv7wmvIhoAJfPm4GBMdF5HR3yIt49KF7RnpjGhQ+Voz/uIJtQKuo4Fzjg12EKxmZoQLf0+lRzCfwIR7vApE0CCdNraF55QRPqPOYTf+8vi4CcG8N83FMD0EcV+0tRSHGDd5BCuWK8OQX6YswGtDY7LMwaQdeoD/pVoOlJg2yPKeJKtk=
   file: app/build/outputs/apk/release/app-release.apk
+  skip_cleanup: true
+  branches: master
   on:
     repo: xyoye/DanDanPlayForAndroid
+    tags: true

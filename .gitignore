@@ -1,4 +1,5 @@
 /local.properties
+/keystore.properties
 /build
 /.idea
 /.settings

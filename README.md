@@ -1,6 +1,6 @@
 # [DanDanPlayForAndroid](https://github.com/xyoye/DanDanPlayForAndroid)
 
-![MIT License](https://img.shields.io/badge/licence-MIT-green.svg)
+![MIT License](https://img.shields.io/badge/licence-MIT-green.svg) [![Build Status](https://www.travis-ci.org/xyoye/DanDanPlayForAndroid.svg?branch=master)](https://www.travis-ci.org/xyoye/DanDanPlayForAndroid)
 
 ## 简介
 

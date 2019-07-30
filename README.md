@@ -4,8 +4,8 @@
 
 ## 简介
 
-弹弹play 概念版，弹弹play系列应用中安卓平台上的本地视频弹幕播放器，目前主要提供视频播放（本地+局域网）和弹幕加载（在线+本地）功能。
-同时应用集成了弹弹提供的相关接口用于番剧下载、用户管理等。
+弹弹play 概念版，弹弹play系列应用中安卓平台上的本地视频弹幕播放器，主要提供视频播放（本地+局域网）和弹幕加载（在线+本地）功能。
+同时应用集成了弹弹提供的相关接口用于番剧浏览下载、用户账户管理等。
 
 ## 下载
 
@@ -21,15 +21,17 @@
 
 3、支持网络串流播放
 
-4、支持弹幕、字幕匹配与下载
+4、支持远程连接PC端媒体库
 
-5、支持番剧搜索与下载
+5、支持弹幕、字幕匹配与下载
 
-6、支持字幕加载
+6、支持番剧搜索与下载
 
-7、提供多种弹幕调整方式，如大小、速度、屏蔽、透明度等
+7、支持字幕加载
 
-8、同步PC端追番、播放历史功能
+8、提供多种弹幕调整方式，如大小、速度、屏蔽、透明度等
+
+9、同步PC端追番、播放历史功能
 
 ## 截图
 * ### 1、界面
@@ -47,12 +49,14 @@
 </div>
 
 ## 致谢
-### 相关参与建设者：
-概念版参与开发人员：xyoye、shine5402
+### 相关[参与建设](https://github.com/xyoye/DanDanPlayForAndroid/blob/master/document/Contributing.md)人员：
+开发人员：[xyoye](https://github.com/xyoye)
 
-弹弹接口提供者：kaedei
+协助者：[shine5402](https://github.com/shine5402)、[HarryHeights](https://github.com/HarryHeights)
 
-2.x版本开发者：shiwentao666
+接口提供者：[kaedei](https://github.com/kaedei)
+
+2.x版本开发者：[shiwentao666](https://github.com/hienao)
 
 ### 第三方库
 - [DanmakuFlameMaster](https://github.com/bilibili/DanmakuFlameMaster)

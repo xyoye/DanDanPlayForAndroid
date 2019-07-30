@@ -2,6 +2,7 @@
 /keystore.properties
 /build
 /.idea
+/.gradle
 /.settings
 .externalNativeBuild
 *.iws

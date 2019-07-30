@@ -28,7 +28,9 @@ android {
     }
     signingConfigs {
         release {
-            storeFile      file("../dandanplay.jks")
+            storeFile      keyProperties.containsKey("KEY_LOCATION")
+                                ? file(keyProperties['KEY_LOCATION'])
+                                : file("../dandanplay.jks")
             storePassword  keyProperties.containsKey("KEYSTORE_PASS")
                                 ? keyProperties['KEYSTORE_PASS']
                                 : System.getenv("KEYSTORE_PASS")

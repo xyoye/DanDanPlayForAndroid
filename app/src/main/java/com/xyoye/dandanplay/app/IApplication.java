@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.app;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
@@ -14,13 +13,10 @@ import com.blankj.utilcode.util.Utils;
 import com.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
-import com.xyoye.dandanplay.BuildConfig;
 import com.xyoye.dandanplay.database.DataBaseManager;
-import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.CrashHandleUtils;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
@@ -32,8 +28,6 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import me.yokeyword.fragmentation.Fragmentation;
 
 /**
  * Created by xyoye on 2019/5/27.
@@ -52,6 +46,8 @@ public class IApplication extends Application {
     public static boolean isUpdateUserInfo = true;
     //是否第一次打开任务管理界面
     public static boolean isFirstOpenTaskPage = true;
+    //应用是否正常的启动
+    public static boolean startCorrectlyFlag = false;
 
     public static Handler mainHandler;
     public static ThreadPoolExecutor executor;
@@ -104,15 +100,12 @@ public class IApplication extends Application {
                     .execute();
         }
 
-        //Fragmentation
-        Fragmentation.builder()
-                .stackViewMode(Fragmentation.NONE)
-                .install();
-
         //检查补丁
         if (AppConfig.getInstance().isAutoQueryPatch()){
             SophixManager.getInstance().queryAndLoadNewPatch();
         }
+
+        startCorrectlyFlag = true;
     }
 
     /**

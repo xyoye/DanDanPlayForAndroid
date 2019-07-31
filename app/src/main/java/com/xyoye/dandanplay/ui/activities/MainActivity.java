@@ -1,10 +1,11 @@
 package com.xyoye.dandanplay.ui.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,9 +13,11 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseAppFragment;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
@@ -27,16 +30,17 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.RemoteDialog;
 
 import butterknife.BindView;
-import me.yokeyword.fragmentation.anim.FragmentAnimator;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView, PlayFragment.InitTrackerListener {
+public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView{
     @BindView(R.id.navigationView)
     BottomNavigationView navigationView;
 
     private HomeFragment homeFragment;
     private PlayFragment playFragment;
     private PersonalFragment personalFragment;
-    private BaseAppFragment previousFragment;
+    private BaseMvpFragment previousFragment;
 
     private MenuItem menuSmbItem, menuNetItem, menuRemoteItem;
 
@@ -62,32 +66,68 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             actionBar.setDisplayShowTitleEnabled(true);
         }
         navigationView.setSelectedItemId(R.id.navigation_play);
+        switchFragment(PlayFragment.class);
+
+        initPermission();
     }
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (playFragment == null) {
-            playFragment = PlayFragment.newInstance();
-            homeFragment = HomeFragment.newInstance();
-            personalFragment = PersonalFragment.newInstance();
-            if (savedInstanceState == null){
-                mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
-                previousFragment = playFragment;
-            }
-        }
-        if (navigationView != null){
-            if (navigationView.getSelectedItemId() == R.id.navigation_play){
-                if (playFragment != null){
-                    playFragment.registerEventBus();
-                }
-            }
-        }
+    private void initPermission(){
+        new RxPermissions(this).
+                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean granted) {
+                        if (granted) {
+                            presenter.initTracker();
+                            if (playFragment != null){
+                                playFragment.initVideoData();
+                            }
+                        }else {
+                            ToastUtils.showLong("未授予文件管理权限，无法扫描视频");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
+//    @Override
+//    public void onAttachFragment(Fragment fragment) {
+//        if (playFragment == null && fragment instanceof PlayFragment)
+//            playFragment = (PlayFragment)fragment;
+//        else if (homeFragment == null && fragment instanceof HomeFragment)
+//            homeFragment = (HomeFragment)fragment;
+//        else if (personalFragment == null && fragment instanceof PersonalFragment)
+//            personalFragment = (PersonalFragment)fragment;
+//    }
+
     @Override
-    public FragmentAnimator onCreateFragmentAnimator() {
-        return super.onCreateFragmentAnimator();
+    protected void onSaveInstanceState(Bundle outState) {
+        if (!IApplication.startCorrectlyFlag){
+            IApplication.startCorrectlyFlag = true;
+            FragmentTransaction fragmentTransaction = getFragmentTransaction();
+            if(playFragment != null)
+                fragmentTransaction.remove(playFragment);
+            if(homeFragment != null)
+                fragmentTransaction.remove(homeFragment);
+            if(personalFragment != null)
+                fragmentTransaction.remove(personalFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -96,40 +136,21 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     setTitle("弹弹play");
-                    if (homeFragment == null) {
-                        homeFragment = HomeFragment.newInstance();
-                        mDelegate.showHideFragment(homeFragment);
-                    } else {
-                        mDelegate.showHideFragment(homeFragment, previousFragment);
-                    }
-                    previousFragment = homeFragment;
+                    switchFragment(HomeFragment.class);
                     menuSmbItem.setVisible(false);
                     menuNetItem.setVisible(false);
                     menuRemoteItem.setVisible(false);
                     return true;
                 case R.id.navigation_play:
                     setTitle("媒体库");
-                    if (playFragment == null) {
-                        playFragment = PlayFragment.newInstance();
-                        mDelegate.showHideFragment(playFragment);
-                    } else {
-                        mDelegate.showHideFragment(playFragment, previousFragment);
-                    }
-                    playFragment.registerEventBus();
-                    previousFragment = playFragment;
+                    switchFragment(PlayFragment.class);
                     menuSmbItem.setVisible(true);
                     menuNetItem.setVisible(true);
                     menuRemoteItem.setVisible(true);
                     return true;
                 case R.id.navigation_personal:
                     setTitle("个人中心");
-                    if (personalFragment == null) {
-                        personalFragment = PersonalFragment.newInstance();
-                        mDelegate.showHideFragment(personalFragment);
-                    } else {
-                        mDelegate.showHideFragment(personalFragment, previousFragment);
-                    }
-                    previousFragment = personalFragment;
+                    switchFragment(PersonalFragment.class);
                     menuSmbItem.setVisible(false);
                     menuNetItem.setVisible(false);
                     menuRemoteItem.setVisible(false);
@@ -168,7 +189,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -195,8 +215,49 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             playFragment.unregisterEventBus();
     }
 
-    @Override
-    public void onFragmentPermissionGranted() {
-        presenter.initTracker();
+    @SuppressLint("CommitTransaction")
+    private FragmentTransaction getFragmentTransaction() {
+        return getSupportFragmentManager().beginTransaction();
+    }
+
+    private void switchFragment(Class clazz) {
+        if (previousFragment != null) {
+            getFragmentTransaction().hide(previousFragment).commit();
+        }
+        if (playFragment != null && clazz != PlayFragment.class) {
+            playFragment.unregisterEventBus();
+        }
+        if (clazz == HomeFragment.class) {
+            if (homeFragment == null) {
+                homeFragment = HomeFragment.newInstance();
+                getFragmentTransaction().add(R.id.fragment_container, homeFragment).commit();
+                previousFragment = homeFragment;
+            } else {
+                getFragmentTransaction().show(homeFragment).commit();
+                previousFragment = homeFragment;
+            }
+        } else if (clazz == PersonalFragment.class) {
+            if (personalFragment == null) {
+                personalFragment = PersonalFragment.newInstance();
+                getFragmentTransaction().add(R.id.fragment_container, personalFragment).commit();
+                personalFragment.updateUserInfo();
+                previousFragment = personalFragment;
+            } else {
+                getFragmentTransaction().show(personalFragment).commit();
+                personalFragment.updateUserInfo();
+                previousFragment = personalFragment;
+            }
+        } else if (clazz == PlayFragment.class) {
+            if (playFragment == null) {
+                playFragment = PlayFragment.newInstance();
+                getFragmentTransaction().add(R.id.fragment_container, playFragment).commit();
+                previousFragment = playFragment;
+                playFragment.registerEventBus();
+            } else {
+                getFragmentTransaction().show(playFragment).commit();
+                previousFragment = playFragment;
+                playFragment.registerEventBus();
+            }
+        }
     }
 }

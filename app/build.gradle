@@ -89,7 +89,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     implementation 'org.jsoup:jsoup:1.11.2'
-    implementation 'me.yokeyword:fragmentation:1.3.6'
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.3'
     implementation 'com.youth.banner:banner:1.4.10'
     implementation 'com.jaeger.statusbarutil:library:1.4.0'

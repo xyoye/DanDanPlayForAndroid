@@ -26,7 +26,6 @@ import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.FolderActivity;
-import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
@@ -58,7 +57,8 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
     FloatingActionButton fastPlayBt;
 
     private BaseRvAdapter<FolderBean> adapter;
-    private Disposable permissonDis;
+    private Disposable permissionDis;
+    private boolean updateVideoFlag = false;
 
     public static PlayFragment newInstance() {
         return new PlayFragment();
@@ -151,9 +151,10 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             }
         });
 
-        refresh.setRefreshing(true);
-
-        refreshVideo(true);
+        if (updateVideoFlag){
+            refresh.setRefreshing(true);
+            initVideoData();
+        }
     }
 
     @Override
@@ -186,8 +187,8 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (permissonDis != null)
-            permissonDis.dispose();
+        if (permissionDis != null)
+            permissionDis.dispose();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -196,6 +197,20 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             refreshVideo(false);
         else
             adapter.notifyDataSetChanged();
+    }
+
+    public void initVideoData(){
+        if (presenter == null || refresh == null){
+            updateVideoFlag = true;
+        } else {
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+            if (getContext() != null)
+                getContext().sendBroadcast(intent);
+            refresh.setRefreshing(true);
+            presenter.refreshVideo(true);
+            updateVideoFlag = false;
+        }
     }
 
     /**
@@ -209,16 +224,12 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        permissonDis = d;
+                        permissionDis = d;
                     }
 
                     @Override
                     public void onNext(Boolean granted) {
                         if (granted) {
-                            //这是应用首次获取权限的地方，获取权限后需初始化tracker
-                            InitTrackerListener initTrackerListener = (MainActivity)getActivity();
-                            if (initTrackerListener != null)
-                                initTrackerListener.onFragmentPermissionGranted();
                             //通知系统刷新目录
                             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                             intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
@@ -251,9 +262,5 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
     public void unregisterEventBus(){
         if (EventBus.getDefault().isRegistered(this))
             EventBus.getDefault().unregister(this);
-    }
-
-    public interface InitTrackerListener{
-        void onFragmentPermissionGranted();
     }
 }

@@ -3,21 +3,18 @@ package com.xyoye.dandanplay.base;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.jaeger.library.StatusBarUtil;
@@ -27,13 +24,6 @@ import com.xyoye.dandanplay.utils.interf.IBaseView;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import me.yokeyword.fragmentation.ExtraTransaction;
-import me.yokeyword.fragmentation.ISupportActivity;
-import me.yokeyword.fragmentation.ISupportFragment;
-import me.yokeyword.fragmentation.SupportActivityDelegate;
-import me.yokeyword.fragmentation.SupportHelper;
-import me.yokeyword.fragmentation.anim.DefaultVerticalAnimator;
-import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 /**
  * AppCompatActivity基类
@@ -47,7 +37,7 @@ import me.yokeyword.fragmentation.anim.FragmentAnimator;
  *
  * Modified by xyoye on 2019/5/27.
  */
-public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful, ISupportActivity {
+public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful{
 
     public static final String TAG = BaseAppCompatActivity.class.getSimpleName();
 
@@ -72,7 +62,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         initPageView();
         initPageViewListener();
         process(savedInstanceState);
-        mDelegate.onCreate(savedInstanceState);
     }
 
     /**
@@ -95,18 +84,12 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
             setSupportActionBar(mActionBarToolbar);
-            mActionBarToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finishPage();
-                }
-            });
+            mActionBarToolbar.setNavigationOnClickListener(v -> finishPage());
         }
     }
 
     /**
      * 获取toolbar对象
-     * @return
      */
     protected Toolbar getActionBarToolbar() {
         if (mActionBarToolbar == null) {
@@ -141,7 +124,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         isDestroyed = true;
-        mDelegate.onDestroy();
         super.onDestroy();
         unbind.unbind();
     }
@@ -253,7 +235,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
      * 判断当前activity是否被销毁
      */
     public boolean isDestroyed() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && super.isDestroyed()) || isDestroyed;
+        return super.isDestroyed() || isDestroyed;
     }
 
     public Handler getHandler() {
@@ -294,57 +276,5 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
-    }
-
-
-    final public SupportActivityDelegate mDelegate = new SupportActivityDelegate(this);
-
-    @Override
-    public SupportActivityDelegate getSupportDelegate() {
-        return mDelegate;
-    }
-
-    @Override
-    public ExtraTransaction extraTransaction() {
-        return  mDelegate.extraTransaction();
-    }
-
-    @Override
-    public FragmentAnimator getFragmentAnimator() {
-        return new DefaultVerticalAnimator();
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDelegate.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void setFragmentAnimator(FragmentAnimator fragmentAnimator) {
-        mDelegate.setFragmentAnimator(fragmentAnimator);
-    }
-
-    @Override
-    public FragmentAnimator onCreateFragmentAnimator() {
-        return new DefaultVerticalAnimator();
-    }
-
-    @Override
-    public void post(Runnable runnable) {
-        mDelegate.post(runnable);
-    }
-
-    @Override
-    public void onBackPressedSupport() {
-
-    }
-
-    public void loadRootFragment(int containerId, @NonNull ISupportFragment toFragment) {
-        mDelegate.loadRootFragment(containerId, toFragment);
-    }
-
-    public <F extends ISupportFragment> F findFragment(Class<F> fragmentClass) {
-        return SupportHelper.findFragment(getSupportFragmentManager(), fragmentClass);
     }
 }

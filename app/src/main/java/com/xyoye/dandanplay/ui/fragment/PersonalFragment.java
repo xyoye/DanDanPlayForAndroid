@@ -40,6 +40,8 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     @BindView(R.id.button_login)
     TextView loginButton;
 
+    private boolean changeViewFlag = false;
+
     public static PersonalFragment newInstance() {
         return new PersonalFragment();
     }
@@ -57,7 +59,9 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     @Override
     public void initView() {
-
+        if (changeViewFlag){
+            changeView();
+        }
     }
 
     public void changeView() {
@@ -75,6 +79,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
         } else {
             loginButton.setVisibility(View.VISIBLE);
         }
+        changeViewFlag = false;
     }
 
     @Override
@@ -82,10 +87,11 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     }
 
-    @Override
-    public void onSupportVisible() {
+    public void updateUserInfo(){
         if (IApplication.isUpdateUserInfo) {
-            changeView();
+            changeViewFlag = true;
+            if (loginButton != null)
+                changeView();
         }
     }
 

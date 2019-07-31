@@ -43,7 +43,6 @@
             android:textSize="16sp"/>
 
         <SeekBar
-            android:id="@+id/player_seek"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

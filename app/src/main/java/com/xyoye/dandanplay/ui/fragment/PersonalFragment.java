@@ -10,15 +10,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
+import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.BlockManagerActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.LoginActivity;
-import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.SettingActivity;
@@ -32,7 +32,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/6/29.
  */
 
-public class PersonalFragment extends BaseFragment<PersonalFragmentPresenter> implements PersonalFragmentView{
+public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter> implements PersonalFragmentView{
     @BindView(R.id.user_image_iv)
     ImageView userImageIv;
     @BindView(R.id.user_name_tv)

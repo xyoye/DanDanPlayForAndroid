@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            android:src="@mipmap/ic_cancel_danmaku"/>
+            android:src="@mipmap/ic_close"/>
 
         <EditText
             android:id="@+id/block_input_et"

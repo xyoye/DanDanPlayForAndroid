@@ -100,7 +100,6 @@
                     android:text=""/>
 
                 <TextView
-                    android:id="@+id/find_version_tip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -151,7 +150,6 @@
                     android:text=""/>
 
                 <TextView
-                    android:id="@+id/find_patch_tip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -189,7 +187,6 @@
                     android:text="关于我们"/>
 
                 <ImageView
-                    android:id="@+id/about_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
@@ -217,7 +214,6 @@
                     android:text="意见反馈"/>
 
                 <ImageView
-                    android:id="@+id/feedback_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"

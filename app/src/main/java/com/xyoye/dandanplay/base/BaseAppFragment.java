@@ -322,7 +322,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
      * <p>
      * 前面的事务全部执行后 执行该Action
      *
-     * @deprecated Use {@link #post(Runnable)} instead.
      */
     @Deprecated
     @Override
@@ -441,10 +440,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
     }
 
     /**
-     * 类似  {@link Activity#onActivityResult(int, int, Intent)}
-     * <p>
-     * Similar to {@link Activity#onActivityResult(int, int, Intent)}
-     *
      * @see #startForResult(ISupportFragment, int)
      */
     @Override
@@ -454,10 +449,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
 
     /**
      * 在start(TargetFragment,LaunchMode)时,启动模式为SingleTask/SingleTop, 回调TargetFragment的该方法
-     * 类似 {@link Activity#onNewIntent(Intent)}
-     * <p>
-     * Similar to {@link Activity#onNewIntent(Intent)}
-     *
      * @param args putNewBundle(Bundle newBundle)
      * @see #start(ISupportFragment, int)
      */
@@ -534,7 +525,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView, Lif
     }
 
     /**
-     * @see #popTo(Class, boolean)
      * +
      * @see #start(ISupportFragment)
      */

@@ -64,7 +64,7 @@ public class CachingPolicy {
     public float forceRecyleThreshold = 0.01f;
 
     /**
-     * @see com.player.danmaku.controller.CacheManagingDrawTask.CacheManager#findReusableCache
+     * @see com.player.danmaku.controller.CacheManagingDrawTask.CacheManager
      */
     public int reusableOffsetPixel = 0;
 

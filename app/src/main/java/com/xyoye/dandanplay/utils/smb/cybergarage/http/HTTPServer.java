@@ -34,8 +34,6 @@ import java.net.Socket;
  * HTTPServer 实现 Runnable,是一个HTTP服务器 This class identifies an HTTP over TCP
  * server<br>
  * The server must be initialized iether by the
- * {@link HTTPServer#open(InetAddress, int)} or the
- * {@link HTTPServer#open(String, int)} method.<br>
  * Optionally a set of {@link HTTPRequestListener} may be set<br>
  * The server then can be started or stopped by the method
  * {@link HTTPServer#start()} and {@link HTTPServer#stop()}

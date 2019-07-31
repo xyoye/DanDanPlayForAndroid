@@ -95,67 +95,56 @@
             android:tag="#ffffff"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_red"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ffe70012"
             android:tag="#e70012"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_yellow"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#fffef102"
             android:tag="#fef102"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_green"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff009843"
             android:tag="#009843"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_blue"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff00a0ea"
             android:tag="#00a0ea"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_pink"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ffe2027f"
             android:tag="#e2027f"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_light_green"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff90c320"
             android:tag="#90c320"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_drak_blue"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff002e72"
             android:tag="#002e72"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_orange"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#fff0ab2a"
             android:tag="#f0ab2a"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_purple"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff683a7b"
             android:tag="#683a7b"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_lite_blue"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff84c0cb"
             android:tag="#84c0cb"/>
 
         <RadioButton
-            android:id="@+id/input_options_color_brown"
             style="@style/DanmakuInputOptionColorRadioButton"
             android:background="#ff927939"
             android:tag="#927939"/>

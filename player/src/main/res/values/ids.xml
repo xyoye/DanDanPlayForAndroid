@@ -14,17 +14,6 @@
     <item type="id" name="input_options_color_more_icon"/>
     <item type="id" name="input_options_color_group"/>
     <item type="id" name="input_options_color_white"/>
-    <item type="id" name="input_options_color_red"/>
-    <item type="id" name="input_options_color_yellow"/>
-    <item type="id" name="input_options_color_green"/>
-    <item type="id" name="input_options_color_blue"/>
-    <item type="id" name="input_options_color_pink"/>
-    <item type="id" name="input_options_color_light_green"/>
-    <item type="id" name="input_options_color_drak_blue"/>
-    <item type="id" name="input_options_color_orange"/>
-    <item type="id" name="input_options_color_purple"/>
-    <item type="id" name="input_options_color_lite_blue"/>
-    <item type="id" name="input_options_color_brown"/>
 
     <item type="id" name="aspect_fit_parent"/>
 </resources>

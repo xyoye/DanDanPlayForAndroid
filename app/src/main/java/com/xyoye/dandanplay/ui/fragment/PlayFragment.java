@@ -16,7 +16,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -49,7 +49,7 @@ import io.reactivex.disposables.Disposable;
  * Created by xyoye on 2018/6/29.
  */
 
-public class PlayFragment extends BaseFragment<PlayFragmentPresenter> implements PlayFragmentView {
+public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> implements PlayFragmentView {
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)

@@ -323,7 +323,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      *
      * @param context the Context to use when resolving the Uri
      * @param uri the Content URI of the data you want to play
-     * @throws IllegalStateException if it is called in an invalid state
      */
     @Override
     public void setDataSource(Context context, Uri uri)
@@ -341,7 +340,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      *                changed with key/value pairs through the headers parameter with
      *                "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
      *                to disallow or allow cross domain redirection.
-     * @throws IllegalStateException if it is called in an invalid state
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -396,7 +394,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      * @param path
      *            the path of the file, or the http/rtsp URL of the stream you
      *            want to play
-     * @throws IllegalStateException
      *             if it is called in an invalid state
      *
      *             <p>
@@ -419,7 +416,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      *
      * @param path the path of the file, or the http/rtsp URL of the stream you want to play
      * @param headers the headers associated with the http request for the stream you want to play
-     * @throws IllegalStateException if it is called in an invalid state
      */
     public void setDataSource(String path, Map<String, String> headers)
             throws IOException, IllegalArgumentException, SecurityException, IllegalStateException
@@ -445,7 +441,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      * to close the file descriptor. It is safe to do so as soon as this call returns.
      *
      * @param fd the FileDescriptor for the file you want to play
-     * @throws IllegalStateException if it is called in an invalid state
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     @Override
@@ -481,7 +476,6 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
      * @param fd the FileDescriptor for the file you want to play
      * @param offset the offset into the file where the data to be played starts, in bytes
      * @param length the length in bytes of the data to be played
-     * @throws IllegalStateException if it is called in an invalid state
      */
     private void setDataSource(FileDescriptor fd, long offset, long length)
             throws IOException, IllegalArgumentException, IllegalStateException {

@@ -365,7 +365,7 @@ public class DanmakuTextureView extends TextureView implements IDanmakuView, IDa
         if (!isEventConsumed) {
             return super.onTouchEvent(event);
         }
-        return isEventConsumed;
+        return true;
     }
 
     public void seekTo(Long ms) {

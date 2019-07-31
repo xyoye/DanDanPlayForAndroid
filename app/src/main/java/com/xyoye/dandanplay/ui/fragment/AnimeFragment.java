@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
@@ -28,7 +28,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/15.
  */
 
-public class AnimeFragment extends BaseFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
+public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
     @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
 

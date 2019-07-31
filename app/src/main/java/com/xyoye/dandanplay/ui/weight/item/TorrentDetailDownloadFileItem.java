@@ -14,8 +14,7 @@ import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
-import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
-import com.xyoye.dandanplay.utils.smb.TorrentServer;
+import com.xyoye.dandanplay.utils.smbv2.TorrentServer;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -85,15 +84,16 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         mView.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getName())){
-                String httpUrl = "http://" + LocalIPUtil.IP + ":" + LocalIPUtil.PORT + "/";
-                TorrentServer.playFilePath = model.getPath();
+                String httpUrl = "http://" + TorrentServer.TORRENT_IP + ":" + TorrentServer.TORRENT_PORT + model.getPath();
+                TorrentServer.setBtFilePath(model.getPath());
+
                 PlayerManagerActivity.launchPlayer(
                         mView.getContext(),
                         model.getName(),
                         httpUrl,
-                        "",
+                        model.getDanmuPath(),
                         0,
-                        0
+                        model.getEpisodeId()
                 );
             }else {
                 ToastUtils.showShort("不支持播放的文件格式");

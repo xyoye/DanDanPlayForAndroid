@@ -206,7 +206,7 @@ public class TorrentServerThread extends Thread {
             }
 
             int taskFilePosition = getTorrentFilePosition();
-            int bufferSize = 512 * 1024;
+            int bufferSize = 256  * 1024;
             byte[] readBuffer = new byte[bufferSize];
             long readTotalSize = 0;
             long readSize = (bufferSize > (contentLength - readTotalSize))

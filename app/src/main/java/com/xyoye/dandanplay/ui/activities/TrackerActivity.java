@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
@@ -81,7 +80,7 @@ public class TrackerActivity extends BaseMvcActivity {
                         menuCancelItem.setVisible(true);
                         menuDeleteItem.setVisible(true);
                         menuHelpItem.setVisible(false);
-                        addTrackerBt.setVisibility(View.GONE);
+                        addTrackerBt.hide();
                     }
                 });
             }
@@ -157,7 +156,7 @@ public class TrackerActivity extends BaseMvcActivity {
                 menuCancelItem.setVisible(false);
                 menuDeleteItem.setVisible(false);
                 menuHelpItem.setVisible(true);
-                addTrackerBt.setVisibility(View.VISIBLE);
+                addTrackerBt.show();
                 break;
             case R.id.tracker_cancel:
                 for (TrackerBean trackerBean : trackerList){
@@ -170,7 +169,7 @@ public class TrackerActivity extends BaseMvcActivity {
                 menuCancelItem.setVisible(false);
                 menuDeleteItem.setVisible(false);
                 menuHelpItem.setVisible(true);
-                addTrackerBt.setVisibility(View.VISIBLE);
+                addTrackerBt.show();
                 break;
         }
         return super.onOptionsItemSelected(item);

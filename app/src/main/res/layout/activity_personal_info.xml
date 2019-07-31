@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout8"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_gray"
@@ -10,7 +9,6 @@
     <include layout="@layout/layout_toolbar"/>
 
     <RelativeLayout
-        android:id="@+id/user_name_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/white">

@@ -162,7 +162,6 @@
             android:background="@color/diver_color"/>
 
         <TextView
-            android:id="@+id/file_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"

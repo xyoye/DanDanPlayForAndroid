@@ -13,7 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
@@ -49,7 +49,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/6/29.
  */
 
-public class HomeFragment extends BaseFragment<HomeFragmentPresenter> implements HomeFragmentView {
+public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> implements HomeFragmentView {
     @BindView(R.id.scroll_layout)
     ScrollableLayout scrollableLayout;
     @BindView(R.id.banner)

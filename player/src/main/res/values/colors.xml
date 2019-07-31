@@ -9,19 +9,14 @@
     <color name="seek_secondary_progress">#882095f4</color>
     <color name="seek_ball">#ffffffff</color>
 
-    <color name="media_quality_selected">#ccec407a</color>
     <color name="video_skip">#e91e63</color>
 
     <color name="text_hint">#55ffffff</color>
-    <color name="text_content">#ffffff</color>
     <color name="text_black">#353535</color>
     <color name="text_gray">#9B9B9B</color>
     
     <color name="background_gray">#a5a5a5</color>
     <color name="background_gray_light">#bababa</color>
-    <color name="background_gray_select">#ffffff</color>
-
-    <color name="recover_screen_text">#f06292</color>
 
     <color name="theme_color">#2095f4</color>
     <color name="bilibili_pink">#fb7299</color>

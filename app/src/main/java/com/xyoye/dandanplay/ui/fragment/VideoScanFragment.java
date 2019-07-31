@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseFragment;
+import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.mvp.impl.VideoScanFragmentPresenterImpl;
@@ -26,7 +26,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/5/14.
  */
 
-public class VideoScanFragment extends BaseFragment<VideoScanFragmentPresenter> implements VideoScanFragmentView {
+public class VideoScanFragment extends BaseMvpFragment<VideoScanFragmentPresenter> implements VideoScanFragmentView {
 
     @BindView(R.id.folder_rv)
     RecyclerView folderRv;

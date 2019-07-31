@@ -24,7 +24,7 @@ import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
-import com.xyoye.dandanplay.utils.smb.TorrentServer;
+import com.xyoye.dandanplay.utils.smbv2.TorrentServer;
 import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,9 +108,9 @@ public class TorrentService extends Service {
             case TorrentEvent.EVENT_PREPARE_PLAY:
                 BtTask playTask = IApplication.taskList.get(event.getPosition());
                 if (torrentServer != null){
-                    torrentServer.updateTask(playTask);
+                    torrentServer.setTorrentTask(playTask);
                 }else {
-                    torrentServer = new TorrentServer(playTask);
+                    torrentServer = new TorrentServer();
                     torrentServer.start();
                 }
                 break;
@@ -147,7 +147,7 @@ public class TorrentService extends Service {
         refresh.run();
 
         if (torrentServer == null){
-            torrentServer = new TorrentServer(null);
+            torrentServer = new TorrentServer();
             torrentServer.start();
         }
     }
@@ -227,11 +227,9 @@ public class TorrentService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        HTTPServerList httpServerList = torrentServer.getHttpServerList();
-        httpServerList.stop();
-        httpServerList.close();
-        httpServerList.clear();
-        torrentServer.interrupt();
+        if (torrentServer != null){
+            torrentServer.stopTorrentServer();
+        }
 
         mHandler.removeCallbacks(refresh);
         notificationManager.cancel(NOTIFICATION_ID);

@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.ui.activities;
 
-import android.Manifest;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -12,7 +12,6 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseAppFragment;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -28,9 +27,6 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.RemoteDialog;
 
 import butterknife.BindView;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import me.yokeyword.fragmentation.anim.FragmentAnimator;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView, PlayFragment.InitTrackerListener {
@@ -75,8 +71,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             playFragment = PlayFragment.newInstance();
             homeFragment = HomeFragment.newInstance();
             personalFragment = PersonalFragment.newInstance();
-            mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
-            previousFragment = playFragment;
+            if (savedInstanceState == null){
+                mDelegate.loadMultipleRootFragment(R.id.fragment_container, 1, homeFragment, playFragment, personalFragment);
+                previousFragment = playFragment;
+            }
         }
         if (navigationView != null){
             if (navigationView.getSelectedItemId() == R.id.navigation_play){

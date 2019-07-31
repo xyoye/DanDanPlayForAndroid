@@ -1,47 +1,18 @@
 <resources>
     <string name="app_name">弹弹play 概念版</string>
 
-    <string name="add_video_folder">添加文件夹</string>
-    <string name="select_video_folder">选择文件夹</string>
-
-    <string name="home_title">公告与番组</string>
-    <string name="anime_detail_title">番组详情</string>
     <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
     <string name="anima_episode_tips_string">剧集列表</string>
     <string name="menu_favorite_string">关注</string>
-    <string name="play_title">媒体库</string>
     <string name="folder_icon_resouces">Folder Icon</string>
-    <string name="item_danmaku_tip">弹幕：</string>
-    <string name="danmaku_inexists">弹幕不存在</string>
-    <string name="danmaku_exists">弹幕存在</string>
     <string name="load_danmaku">加载弹幕</string>
     <string name="tip_downloading">下载中…</string>
-    <string name="current_folder_tip">当前：</string>
-    <string name="web_danmaku_button">网络弹幕</string>
     <string name="login_button_tip">登录 / 注册</string>
-    <string name="register_button_tip">注册</string>
-    <string name="username_tip">用户名</string>
-    <string name="my_favorite_tip">我的关注</string>
-    <string name="more_tip">更多</string>
-    <string name="play_history_tip">播放历史</string>
-    <string name="menu_item_settings">设置</string>
     <string name="logout_tip">退出登录</string>
     <string name="page_info_username_tip">账号：</string>
     <string name="modify_tip">修改</string>
     <string name="nickname_tip">昵称：</string>
     <string name="password_tip">密码</string>
-    <string name="about_us_tip">关于我们</string>
-    <string name="feedback_tip">意见反馈</string>
-    <string name="current_version_tip">当前版本：</string>
-    <string name="check_update_tip">检查</string>
-    <string name="other_feature_tip">其它功能：</string>
-    <string name="bilibili_danmaku_download_tip">Bilibili弹幕下载</string>
-    <string name="download_tip">下载</string>
-    <string name="cache_path_tip">缓存路径：</string>
-    <string name="ok_button_tip">确定</string>
-    <string name="download_by_av_tip">输入av号以下载</string>
-    <string name="choose_link_form_bilibili_button_tip">在Bilibili网站上选择一个链接</string>
-    <string name="download_by_link_tip">输入链接以下载</string>
 
     <string name="what_is_tracker">
         BitTorrent tracker（中文可称：BT服务器、tracker服务器等）是帮助BitTorrent协议在节点与节点之间做连接的服务器，对BT下载起到客户端协调和调控的重要作用。\n\n
@@ -82,5 +53,4 @@
         补丁大小：20~80k左右\n\n
     </string>
 
-    <string name="per_second">/s</string>
 </resources>

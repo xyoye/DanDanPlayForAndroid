@@ -317,7 +317,6 @@ public class QRCodeReaderView extends SurfaceView
     /**
      * Fix for the camera Sensor on some devices (ex.: Nexus 5x)
      */
-    @SuppressWarnings("deprecation")
     private int getCameraDisplayOrientation() {
 
         Camera.CameraInfo info = new Camera.CameraInfo();

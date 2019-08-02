@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 public class IApplication extends Application {
     //任务列表
     public static List<BtTask> taskList = new ArrayList<>();
+    //任务列表
+    public static List<String> taskFinishHashList = new ArrayList<>();
     //任务集合，key为hash，value为任务列表中序号
     public static Map<String, Integer> taskMap = new HashMap<>();
     //tracker列表

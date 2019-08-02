@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -10,6 +12,9 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
+import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
+import com.xyoye.dandanplay.ui.activities.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
 import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -24,7 +29,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/3/5.
  */
 
-public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.TorrentFile> {
+public class TaskDownloadingFileItem implements AdapterItem<Torrent.TorrentFile> {
 
     @BindView(R.id.file_name_tv)
     TextView fileNameTv;
@@ -35,14 +40,18 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
     @BindView(R.id.danmu_bind_iv)
     ImageView danmuBindIv;
 
+    private String taskHash;
+    private Activity mActivity;
     private View mView;
 
-    public TorrentDetailDownloadFileItem() {
+    public TaskDownloadingFileItem(String hash, Activity activity) {
+        this.taskHash = hash;
+        mActivity = activity;
     }
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_torrent_detail_download_file_v2;
+        return R.layout.item_task_downloading_file;
     }
 
     @Override
@@ -67,7 +76,7 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
 
         //文件是否忽略下载
         if (model.isChecked()){
-            fileNameTv.setTextColor(mView.getResources().getColor(R.color.text_black));
+            fileNameTv.setTextColor(mActivity.getResources().getColor(R.color.text_black));
             int progress = model.getLength() == 0
                     ? 0
                     :(int)(model.getDownloaded() * 100 / model.getLength());
@@ -77,7 +86,7 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
             duration += "  ("+progress+"%)";
             durationTv.setText(duration);
         }else {
-            fileNameTv.setTextColor(mView.getResources().getColor(R.color.text_gray));
+            fileNameTv.setTextColor(mActivity.getResources().getColor(R.color.text_gray));
             downloadDurationPb.setProgress(0);
             durationTv.setText("已忽略");
         }
@@ -103,7 +112,11 @@ public class TorrentDetailDownloadFileItem implements AdapterItem<Torrent.Torren
         danmuBindIv.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getPath())) {
                 if (model.getDownloaded() > 16 * 1024 * 1024) {
-                    EventBus.getDefault().post(new TorrentBindDanmuStartEvent(model.getPath(), position));
+                    Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
+                    intent.putExtra("video_path", model.getPath());
+                    intent.putExtra("task_hash", taskHash);
+                    intent.putExtra("task_file_position", position);
+                    mActivity.startActivityForResult(intent, DownloadManagerActivityV2.TASK_DOWNLOADING_DANMU_BIND);
                 } else {
                     ToastUtils.showShort("需下载16M后才能匹配弹幕");
                 }

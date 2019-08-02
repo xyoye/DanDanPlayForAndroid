@@ -55,6 +55,11 @@
             android:name=".ui.activities.DownloadMangerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTop" />
+        <!--下载管理-->
+        <activity
+            android:name=".ui.activities.DownloadManagerActivityV2"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTop" />
         <!--webView-->
         <activity
             android:name=".ui.activities.WebViewActivity"

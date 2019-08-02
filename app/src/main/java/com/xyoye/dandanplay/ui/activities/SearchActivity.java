@@ -303,10 +303,16 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             ToastUtils.showShort("解析种子文件失败，请重试");
             return;
         }
-        //根据hash判断任务是否已存在
+        //任务已存在直接到下载管理界面
+        Intent intent = new Intent(this, DownloadManagerActivityV2.class);
         String torrentHash = torrentInfo.infoHash().toString();
         if (IApplication.taskMap.containsKey(torrentHash)){
-            startActivity(new Intent(this, DownloadMangerActivity.class));
+            intent.putExtra("fragment_position", 1);
+            startActivity(intent);
+            return;
+        } else if (IApplication.taskFinishHashList.contains(torrentHash)){
+            intent.putExtra("fragment_position", 2);
+            startActivity(intent);
             return;
         }
 
@@ -339,9 +345,8 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             torrent.setTorrentFileList(torrentFileList);
 
             //进入创建下载任务界面
-            Intent taskIntent = new Intent(SearchActivity.this, DownloadMangerActivity.class);
-            taskIntent.putExtra("new_task", torrent);
-            startActivity(taskIntent);
+            intent.putExtra("new_task", torrent);
+            startActivity(intent);
         });
 
         if (!this.isFinishing())

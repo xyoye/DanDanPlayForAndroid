@@ -5,7 +5,7 @@ package com.xyoye.dandanplay.bean.event;
  */
 
 public class MessageEvent {
-    public final static int UPDATE_DOWNLOAD_MANAGER = 1001;
+    public final static int UPDATE_DOWNLOADING_TASK = 1001;
     public final static int UPDATE_LAN_FOLDER = 1002;
     public final static int UPDATE_TRACKER = 1003;
     public final static int EVENT_BIND_DANMU = 1004;

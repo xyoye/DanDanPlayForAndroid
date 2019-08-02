@@ -58,31 +58,19 @@ public class BtTask extends SessionManager implements AlertListener{
     public BtTask(Torrent torrent) {
         super(false);
         this.torrent = torrent;
-        //信息回调接口
         this.addListener(this);
-        SessionParams sessionParams = new SessionParams(
-                new SettingsPack()
-                        .setString(settings_pack.string_types.dht_bootstrap_nodes.swigValue(), TorrentUtil.getDhtBootstrapNodeString())//路由表
-                        .downloadRateLimit(0)//下载速度限制
-                        .uploadRateLimit(0)//上传速度限制
-                        .connectionsLimit(200)//连接数量限制
-                        .activeDhtLimit(88)//dht限制
-                        .anonymousMode(false)//是否为匿名模式
-         );
-        start(sessionParams);
-    }
-
-    public BtTask(Torrent torrent, boolean isRecoveryTask) {
-        this(torrent);
-        this.isRecoveryTask = isRecoveryTask;
     }
 
     /**
      * 启动任务
      */
-    public void startTask(){
+    public void startTask(boolean isRecoveryTask){
+        initSession();
+        this.isRecoveryTask = isRecoveryTask;
+
         if (torrent.getTorrentFileList().size() < 1){
             ToastUtils.showShort("创建任务失败，子任务为0");
+            stop();
             return;
         }
 
@@ -111,30 +99,24 @@ public class BtTask extends SessionManager implements AlertListener{
         download(torrentInfo, saveDirFile, null, priorities, null);
     }
 
-    public @Nullable Torrent getTorrent() {
-        return torrent;
+    /**
+     * 初始化session
+     */
+    private void initSession(){
+        SessionParams sessionParams = new SessionParams(
+                new SettingsPack()
+                        .setString(settings_pack.string_types.dht_bootstrap_nodes.swigValue(), TorrentUtil.getDhtBootstrapNodeString())//路由表
+                        .downloadRateLimit(0)//下载速度限制
+                        .uploadRateLimit(0)//上传速度限制
+                        .connectionsLimit(200)//连接数量限制
+                        .activeDhtLimit(88)//dht限制
+                        .anonymousMode(false)//是否为匿名模式
+        );
+        start(sessionParams);
     }
 
-    public TaskStatus getTaskStatus() {
-        if (taskStatus == null) {
-            return TaskStatus.CHECKING;
-        }
-
-        //结束标志的判断要除初始标志之前
-        if (torrent.isFinished() || taskStatus == TaskStatus.FINISHED){
-            return TaskStatus.FINISHED;
-        }
-
-        //session断开视为任务停止
-        if (!this.isRunning()) {
-            return TaskStatus.STOPPED;
-        }
-
-        //session暂停视为任务暂停
-        if (this.isPaused()) {
-            return TaskStatus.PAUSED;
-        }
-        return taskStatus;
+    public @Nullable Torrent getTorrent() {
+        return torrent;
     }
 
     public boolean isFinished(){
@@ -198,10 +180,6 @@ public class BtTask extends SessionManager implements AlertListener{
             for (String trackerStr : IApplication.trackers){
                 torrentHandle.addTracker(new AnnounceEntry(trackerStr));
             }
-            //加入任务集合
-            IApplication.taskList.add(this);
-            //把hash和在任务集合中的位置加入map
-            IApplication.taskMap.put(torrent.getHash(), IApplication.taskList.size()-1);
             //初始所有块的状态
             int fileCount = torrent.getTorrentFileList().size() - 1;
             long endFileSize = torrentHandle.torrentFile().files().fileSize(fileCount) - 1;
@@ -279,6 +257,28 @@ public class BtTask extends SessionManager implements AlertListener{
                     break;
             }
         }
+    }
+
+    public TaskStatus getTaskStatus() {
+        if (taskStatus == null) {
+            return TaskStatus.CHECKING;
+        }
+
+        //结束标志的判断要除初始标志之前
+        if (torrent.isFinished() || taskStatus == TaskStatus.FINISHED){
+            return TaskStatus.FINISHED;
+        }
+
+        //session断开视为任务停止
+        if (!this.isRunning()) {
+            return TaskStatus.STOPPED;
+        }
+
+        //session暂停视为任务暂停
+        if (this.isPaused()) {
+            return TaskStatus.PAUSED;
+        }
+        return taskStatus;
     }
 
     private TaskStatus getState(TorrentHandle torrentHandle) {

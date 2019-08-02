@@ -18,14 +18,13 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
-import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
+import com.xyoye.dandanplay.ui.activities.DownloadManagerActivityV2;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 import com.xyoye.dandanplay.utils.smbv2.TorrentServer;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,15 +45,11 @@ public class TorrentService extends Service {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStartEvent(TorrentStartEvent event){
         Torrent torrent = event.getTorrent();
-        if (torrent == null)
-            return;
-
-        //根据hash判断任务是否已经存在
-        if (!IApplication.taskMap.containsKey(torrent.getHash())){
-            BtTask btTask = new BtTask(torrent);
-            btTask.startTask();
-            showNotification();
-        }
+        BtTask btTask = new BtTask(torrent);
+        IApplication.taskList.add(btTask);
+        IApplication.taskMap.put(torrent.getHash(), IApplication.taskList.size()-1);
+        btTask.startTask(false);
+        showNotification();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -197,7 +192,7 @@ public class TorrentService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
                 0,
-                new Intent(this, DownloadMangerActivity.class),
+                new Intent(this, DownloadManagerActivityV2.class),
                 0);
 
         Notification.Builder builder = new Notification.Builder(this)
@@ -266,6 +261,6 @@ public class TorrentService extends Service {
             }
         });
         //通知activity刷新界面
-        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOAD_MANAGER));
+        EventBus.getDefault().post(new MessageEvent(MessageEvent.UPDATE_DOWNLOADING_TASK));
     }
 }

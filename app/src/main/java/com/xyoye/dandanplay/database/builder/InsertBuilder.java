@@ -76,9 +76,10 @@ public class InsertBuilder{
         return this;
     }
 
-    public void execute(){
+    public long execute(){
         if (mValues != null)
-            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[tablePosition], null, mValues);
+            return sqLiteDatabase.insert(DataBaseInfo.getTableNames()[tablePosition], null, mValues);
+        return -1;
     }
 
     public void postExecute(){

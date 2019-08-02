@@ -26,7 +26,6 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.smb.cybergarage.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,13 +92,8 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.local_danmu:
-                new FileManagerDialog(this, FileManagerDialog.SELECT_DANMU, path ->{
-                    Intent intent = getIntent();
-                    intent.putExtra("path", path);
-                    intent.putExtra("position", getIntent().getIntExtra("position", -1));
-                    setResult(RESULT_OK, intent);
-                    DanmuNetworkActivity.this.finish();
-                }).show();
+                new FileManagerDialog(this, FileManagerDialog.SELECT_DANMU, path ->
+                        finishActivity(0, path)).show();
                 break;
             case R.id.search_danmu:
                 new SearchDanmuDialog(DanmuNetworkActivity.this, (anime, episode) ->
@@ -163,13 +157,19 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     }
 
     private void showDownloadDialog(DanmuMatchBean.MatchesBean model){
-        new DanmuDownloadDialog(DanmuNetworkActivity.this, videoPath, model, (danmuPath, episodeId) -> {
-            Intent intent = getIntent();
-            intent.putExtra("episode_id", episodeId);
-            intent.putExtra("path", danmuPath);
-            intent.putExtra("position", getIntent().getIntExtra("position", -1));
-            setResult(RESULT_OK, intent);
-            finish();
-        }).show();
+        new DanmuDownloadDialog(DanmuNetworkActivity.this, videoPath, model, (danmuPath, episodeId) ->
+                finishActivity(episodeId, danmuPath)).show();
+    }
+
+    public void finishActivity(int episodeId, String danmuPath){
+        Intent intent = getIntent();
+        intent.putExtra("episode_id", episodeId);
+        intent.putExtra("path", danmuPath);
+        intent.putExtra("position", getIntent().getIntExtra("position", -1));
+        //下载任务绑定弹幕
+        intent.putExtra("task_hash", getIntent().getStringExtra("task_hash"));
+        intent.putExtra("task_file_position", getIntent().getIntExtra("task_file_position", -1));
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

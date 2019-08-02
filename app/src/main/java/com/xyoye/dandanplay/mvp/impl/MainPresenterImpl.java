@@ -5,7 +5,9 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.frostwire.jlibtorrent.TorrentInfo;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -18,6 +20,9 @@ import com.xyoye.dandanplay.utils.CloudFilterHandler;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.TrackerManager;
+import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -49,6 +54,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     @Override
     public void process(Bundle savedInstanceState) {
+        initDownloadingTask();
+        initDownloadedTask();
         initAnimeType();
         initSubGroup();
         long lastUpdateTime = AppConfig.getInstance().getUpdateFilterTime();
@@ -97,6 +104,81 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             //文件存在，直接读取
             else {
                 TrackerManager.queryTracker();
+            }
+        });
+    }
+
+    /**
+     * 恢复下载中任务
+     */
+    private void initDownloadingTask(){
+        if (IApplication.taskList.size() > 0)
+            return;
+        IApplication.getExecutor().execute(() -> {
+            Cursor cursor = TorrentUtil.queryDBTorrent();
+            while (cursor.moveToNext()) {
+                Torrent torrent = new Torrent();
+                torrent.setTorrentPath(cursor.getString(1));
+                torrent.setAnimeTitle(cursor.getString(2));
+                torrent.setMagnet(cursor.getString(3));
+                torrent.setFinished(cursor.getInt(4) == 1);
+                String prioritiesSaveData = cursor.getString(5);
+                String[] priorities;
+                if (prioritiesSaveData.contains(";")) {
+                    priorities = prioritiesSaveData.split(";");
+                } else {
+                    priorities = new String[]{prioritiesSaveData};
+                }
+
+                //根据路径读取torrent信息
+                TorrentInfo torrentInfo = TorrentUtil.getTorrentInfoForFile(torrent.getTorrentPath());
+                if (torrentInfo == null)
+                    continue;
+                if (priorities.length != torrentInfo.numFiles())
+                    continue;
+
+                String saveDirPath = AppConfig.getInstance().getDownloadFolder() +
+                        ((StringUtils.isEmpty(torrent.getAnimeTitle()))
+                                ? ("/" + torrentInfo.name())
+                                : ("/" + torrent.getAnimeTitle()));
+                torrent.setSaveDirPath(saveDirPath);
+                torrent.setHash(torrentInfo.infoHash().toString());
+                torrent.setTitle(torrentInfo.name());
+                torrent.setLength(torrentInfo.totalSize());
+                List<Torrent.TorrentFile> torrentFileList = new ArrayList<>();
+
+                for (int i = 0; i < priorities.length; i++) {
+                    Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
+                    torrentFile.setName(torrentInfo.files().fileName(i));
+                    torrentFile.setPath(saveDirPath + "/" + torrentInfo.files().filePath(i));
+                    torrentFile.setLength(torrentInfo.files().fileSize(i));
+                    torrentFile.setChecked("1".equals(priorities[i]));
+                    torrentFileList.add(torrentFile);
+                }
+                torrent.setTorrentFileList(torrentFileList);
+
+                BtTask btTask = new BtTask(torrent);
+                IApplication.taskList.add(btTask);
+                IApplication.taskMap.put(torrent.getHash(), IApplication.taskList.size()-1);
+            }
+        });
+    }
+
+    /**
+     * 恢复已完成任务
+     */
+    private void initDownloadedTask(){
+        if (IApplication.taskFinishHashList.size() > 0)
+            return;
+        IApplication.getExecutor().execute(() -> {
+            Cursor taskCursor = DataBaseManager
+                    .getInstance()
+                    .selectTable(14)
+                    .query()
+                    .execute();
+            while (taskCursor.moveToNext()) {
+                String taskHash = taskCursor.getString(5);
+                IApplication.taskFinishHashList.add(taskHash);
             }
         });
     }

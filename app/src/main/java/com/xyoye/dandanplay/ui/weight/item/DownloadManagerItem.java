@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.weight.dialog.TorrentDownloadDetailDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadingDetailDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
@@ -84,7 +84,7 @@ public class DownloadManagerItem implements AdapterItem<BtTask> {
         checkStatus(task.getTaskStatus());
 
         //单击展示详情弹窗
-        downloadInfoRl.setOnClickListener(v ->  new TorrentDownloadDetailDialog(context, position, statusStr).show());
+        downloadInfoRl.setOnClickListener(v ->  new TaskDownloadingDetailDialog(context, position, statusStr).show());
 
         //点击图标切换任务状态
         downloadCtrlRl.setOnClickListener(v -> {

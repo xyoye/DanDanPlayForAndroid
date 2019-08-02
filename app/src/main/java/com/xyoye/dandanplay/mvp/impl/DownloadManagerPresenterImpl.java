@@ -154,8 +154,8 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadM
                 torrent.setTorrentFileList(torrentFileList);
 
                 //启动任务
-                BtTask btTask = new BtTask(torrent, true);
-                btTask.startTask();
+                BtTask btTask = new BtTask(torrent);
+                btTask.startTask(true);
             }
             getView().hideLoading();
         })

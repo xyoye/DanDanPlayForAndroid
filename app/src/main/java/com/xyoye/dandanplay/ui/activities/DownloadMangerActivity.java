@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
-import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
+import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
 import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
@@ -237,10 +237,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
                 String danmuPath = data.getStringExtra("path");
                 int position = data.getIntExtra("position", -1);
                 if (position != -1){
-                    TorrentBindDanmuEndEvent bindDanmuEndEvent = new TorrentBindDanmuEndEvent();
-                    bindDanmuEndEvent.setDanmuPath(danmuPath);
-                    bindDanmuEndEvent.setEpisodeId(episodeId);
-                    bindDanmuEndEvent.setPosition(position);
+                    TaskBindDanmuEndEvent bindDanmuEndEvent = new TaskBindDanmuEndEvent();
                     EventBus.getDefault().post(bindDanmuEndEvent);
                 }
             }
@@ -262,7 +259,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MessageEvent event){
-        if (event.getMsg() == MessageEvent.UPDATE_DOWNLOAD_MANAGER)
+        if (event.getMsg() == MessageEvent.UPDATE_DOWNLOADING_TASK)
             adapter.notifyDataSetChanged();
     }
 

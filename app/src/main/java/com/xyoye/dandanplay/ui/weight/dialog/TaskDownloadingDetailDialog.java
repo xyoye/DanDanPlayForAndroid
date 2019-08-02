@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -15,8 +16,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.event.TorrentBindDanmuEndEvent;
-import com.xyoye.dandanplay.ui.weight.item.TorrentDetailDownloadFileItem;
+import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
+import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingFileItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
@@ -33,7 +34,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/3/5.
  */
 
-public class TorrentDownloadDetailDialog extends Dialog {
+public class TaskDownloadingDetailDialog extends Dialog {
     @BindView(R.id.name_tv)
     TextView nameTv;
     @BindView(R.id.path_tv)
@@ -50,10 +51,12 @@ public class TorrentDownloadDetailDialog extends Dialog {
     private int torrentPosition;
     private BaseRvAdapter<Torrent.TorrentFile> fileAdapter;
     private String statusStr;
+    private Activity mActivity;
 
-    public TorrentDownloadDetailDialog(@NonNull Context context, int torrentPosition, String statusStr) {
+    public TaskDownloadingDetailDialog(@NonNull Context context, int torrentPosition, String statusStr) {
         super(context, R.style.Dialog);
         this.context = context;
+        this.mActivity = (Activity)context;
         this.torrentPosition = torrentPosition;
         this.mTorrent = IApplication.taskList.get(torrentPosition).getTorrent();
         this.statusStr = statusStr;
@@ -62,7 +65,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_download_torrent_detail);
+        setContentView(R.layout.dialog_download_task_detail);
         ButterKnife.bind(this, this);
 
         nameTv.setText(mTorrent.getTitle());
@@ -77,7 +80,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
             @NonNull
             @Override
             public AdapterItem<Torrent.TorrentFile> onCreateItem(int viewType) {
-                return new TorrentDetailDownloadFileItem();
+                return new TaskDownloadingFileItem(mTorrent.getHash(), mActivity);
             }
         };
         fileRv.setAdapter(fileAdapter);
@@ -89,7 +92,7 @@ public class TorrentDownloadDetailDialog extends Dialog {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.dialog_cancel_iv:
-                TorrentDownloadDetailDialog.this.dismiss();
+                TaskDownloadingDetailDialog.this.dismiss();
                 break;
             case R.id.path_tv:
                 String path = mTorrent.getSaveDirPath();
@@ -117,12 +120,12 @@ public class TorrentDownloadDetailDialog extends Dialog {
                         .setAutoDismiss()
                         .showExtra()
                         .setOkListener(dialog -> {
-                            TorrentDownloadDetailDialog.this.dismiss();
+                            TaskDownloadingDetailDialog.this.dismiss();
                             torrentEvent.setDeleteFile(false);
                             EventBus.getDefault().post(torrentEvent);
                         })
                         .setExtraListener(dialog -> {
-                            TorrentDownloadDetailDialog.this.dismiss();
+                            TaskDownloadingDetailDialog.this.dismiss();
                             torrentEvent.setDeleteFile(true);
                             EventBus.getDefault().post(torrentEvent);
                         })
@@ -134,16 +137,9 @@ public class TorrentDownloadDetailDialog extends Dialog {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDanmuBind(TorrentBindDanmuEndEvent event) {
-        int position = event.getPosition();
-        if (position < mTorrent.getTorrentFileList().size()) {
-            Torrent.TorrentFile torrentFile = mTorrent.getTorrentFileList().get(position);
-            torrentFile.setDanmuPath(event.getDanmuPath());
-            torrentFile.setEpisodeId(event.getEpisodeId());
-            //TorrentUtil.updateTorrentDanmu(mTorrent.getTorrentPath(), torrentFile.getPath(), event.getDanmuPath(), event.getEpisodeId());
-            fileAdapter.notifyItemChanged(position);
-            ToastUtils.showShort("绑定弹幕成功");
-        }
+    public void onDanmuBind(TaskBindDanmuEndEvent event) {
+        if (TaskDownloadingDetailDialog.this.isShowing())
+            fileAdapter.notifyDataSetChanged();
     }
 
     @Override

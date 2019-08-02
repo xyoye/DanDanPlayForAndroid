@@ -59,12 +59,12 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     @Override
     public void initView() {
-        setTitle("媒体库");
         if (hasBackActionbar() && getSupportActionBar() != null) {
             ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+        setTitle("媒体库");
         navigationView.setSelectedItemId(R.id.navigation_play);
         switchFragment(PlayFragment.class);
 
@@ -103,16 +103,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     }
                 });
     }
-
-//    @Override
-//    public void onAttachFragment(Fragment fragment) {
-//        if (playFragment == null && fragment instanceof PlayFragment)
-//            playFragment = (PlayFragment)fragment;
-//        else if (homeFragment == null && fragment instanceof HomeFragment)
-//            homeFragment = (HomeFragment)fragment;
-//        else if (personalFragment == null && fragment instanceof PersonalFragment)
-//            personalFragment = (PersonalFragment)fragment;
-//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -222,6 +212,10 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
 
     private void switchFragment(Class clazz) {
         if (previousFragment != null) {
+            //要切换的就是当前Fragment
+            if (clazz.isInstance(previousFragment)){
+                return;
+            }
             getFragmentTransaction().hide(previousFragment).commit();
         }
         if (playFragment != null && clazz != PlayFragment.class) {

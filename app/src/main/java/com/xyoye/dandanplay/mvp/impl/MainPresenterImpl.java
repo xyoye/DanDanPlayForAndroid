@@ -84,6 +84,23 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     }
 
+    @Override
+    public void initScanFolder(){
+        Cursor cursor = DataBaseManager.getInstance()
+                .selectTable(11)
+                .query()
+                .execute();
+        if (!cursor.moveToNext()){
+            //增加默认扫描文件夹
+            DataBaseManager.getInstance()
+                    .selectTable(11)
+                    .insert()
+                    .param(1, Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
+                    .param(2, Constants.ScanType.SCAN)
+                    .execute();
+        }
+    }
+
     //Tracker
     @Override
     public void initTracker(){

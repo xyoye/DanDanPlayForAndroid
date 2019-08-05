@@ -83,6 +83,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
                     @Override
                     public void onNext(Boolean granted) {
                         if (granted) {
+                            presenter.initScanFolder();
                             presenter.initTracker();
                             if (playFragment != null){
                                 playFragment.initVideoData();

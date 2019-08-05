@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -90,17 +91,6 @@ public class IApplication extends Application {
 
         //播放器配置
         PlayerConfigShare.initPlayerConfigShare(this);
-
-        //首次打开App
-        if (AppConfig.getInstance().isFirstStart()) {
-            //增加默认扫描文件夹
-            DataBaseManager.getInstance()
-                    .selectTable(11)
-                    .insert()
-                    .param(1, Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
-                    .param(2, Constants.ScanType.SCAN)
-                    .execute();
-        }
 
         //检查补丁
         if (AppConfig.getInstance().isAutoQueryPatch()){

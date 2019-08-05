@@ -25,7 +25,7 @@ import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
+import com.xyoye.dandanplay.ui.weight.item.DownloadingTaskItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
@@ -65,7 +65,7 @@ public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPrese
             @NonNull
             @Override
             public AdapterItem<BtTask> onCreateItem(int viewType) {
-                return new DownloadManagerItem();
+                return new DownloadingTaskItem();
             }
         };
         downloadRv.setAdapter(adapter);

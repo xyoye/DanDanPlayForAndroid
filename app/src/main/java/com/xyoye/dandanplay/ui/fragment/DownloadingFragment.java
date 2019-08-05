@@ -8,6 +8,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
@@ -15,10 +16,11 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
-import com.xyoye.dandanplay.ui.weight.item.DownloadManagerItem;
+import com.xyoye.dandanplay.ui.weight.item.DownloadingTaskItem;
 import com.xyoye.dandanplay.utils.DownloadTaskUpdateListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -70,7 +72,7 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
             @NonNull
             @Override
             public AdapterItem<BtTask> onCreateItem(int viewType) {
-                return new DownloadManagerItem();
+                return new DownloadingTaskItem();
             }
         };
         taskRv.setAdapter(taskRvAdapter);
@@ -132,13 +134,17 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
             }
             //移除已完成任务
             if (completePosition != -1){
-                String taskHash = IApplication.taskList.get(completePosition).getTorrent().getHash();
+                Torrent torrent = IApplication.taskList.get(completePosition).getTorrent();
+                String taskHash = torrent.getHash();
+                String taskName = torrent.getTitle();
                 IApplication.taskMap.remove(taskHash);
                 IApplication.taskFinishHashList.add(taskHash);
                 taskRvAdapter.removeItem(completePosition);
                 if (taskUpdateListener != null){
                     taskUpdateListener.onTaskUpdate();
                 }
+
+                ToastUtils.showShort(taskName+"，下载完成");
             }
             //刷新任务数量
             int taskNum = IApplication.taskList.size();

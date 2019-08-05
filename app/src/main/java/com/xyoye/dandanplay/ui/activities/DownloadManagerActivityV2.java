@@ -54,7 +54,6 @@ import butterknife.BindView;
 public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPresenterV2> implements DownloadManagerViewV2, DownloadTaskUpdateListener {
     public static final int TASK_DOWNLOADING_DANMU_BIND = 1001;
     public static final int TASK_DOWNLOADED_DANMU_BIND = 1002;
-    // TODO: 2019/8/1 已完成任务详情，及弹幕绑定未完成
 
     @BindView(R.id.indicator)
     MagicIndicator magicIndicator;
@@ -89,7 +88,7 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
 
     @Override
     public void initView() {
-        setTitle("扫描管理");
+        setTitle("下载管理");
         fragmentList = new ArrayList<>();
         DownloadedFragment downloadedFragment = DownloadedFragment.newInstance();
         DownloadingFragment downloadingFragment = DownloadingFragment.newInstance();
@@ -221,6 +220,20 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
                             }
                         }
                     }
+                }
+            }else if (requestCode == TASK_DOWNLOADED_DANMU_BIND){
+                String danmuPath = data.getStringExtra("path");
+                int episodeId = data.getIntExtra("episode_id", -1);
+                int taskPosition = data.getIntExtra("position", -1);
+                int taskFilePosition = data.getIntExtra("task_file_position", -1);
+                if (taskPosition > -1 && taskFilePosition > -1){
+                    TaskBindDanmuEndEvent bindDanmuEndEvent = new TaskBindDanmuEndEvent();
+                    bindDanmuEndEvent.setDanmuPath(danmuPath);
+                    bindDanmuEndEvent.setEpisodeId(episodeId);
+                    bindDanmuEndEvent.setTaskFilePosition(taskFilePosition);
+                    bindDanmuEndEvent.setTaskPosition(taskPosition);
+                    EventBus.getDefault().post(bindDanmuEndEvent);
+                    ToastUtils.showShort("绑定弹幕成功");
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
+import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedDetailDialog;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
@@ -18,6 +19,15 @@ public class DownloadedTaskItem implements AdapterItem<DownloadedTaskBean> {
     TextView taskTitleTv;
     @BindView(R.id.task_size_tv)
     TextView taskSizeTv;
+    @BindView(R.id.task_complete_time_tv)
+    TextView taskCompleteTimeTv;
+
+    private View mView;
+    private TaskDownloadedDetailDialog.TaskDeleteListener taskDeleteListener;
+
+    public DownloadedTaskItem(TaskDownloadedDetailDialog.TaskDeleteListener taskDeleteListener){
+        this.taskDeleteListener = taskDeleteListener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -26,7 +36,7 @@ public class DownloadedTaskItem implements AdapterItem<DownloadedTaskBean> {
 
     @Override
     public void initItemViews(View itemView) {
-
+        mView = itemView;
     }
 
     @Override
@@ -38,5 +48,8 @@ public class DownloadedTaskItem implements AdapterItem<DownloadedTaskBean> {
     public void onUpdateViews(DownloadedTaskBean model, int position) {
         taskTitleTv.setText(model.getTitle());
         taskSizeTv.setText(model.getTotalSize());
+        taskCompleteTimeTv.setText(model.getCompleteTime());
+
+        mView.setOnClickListener(v -> new TaskDownloadedDetailDialog(mView.getContext(), position, model, taskDeleteListener).show());
     }
 }

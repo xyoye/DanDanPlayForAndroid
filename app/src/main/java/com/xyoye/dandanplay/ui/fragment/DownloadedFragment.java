@@ -11,6 +11,7 @@ import com.xyoye.dandanplay.bean.DownloadedTaskBean;
 import com.xyoye.dandanplay.mvp.impl.DownloadedFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
+import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedDetailDialog;
 import com.xyoye.dandanplay.ui.weight.item.DownloadedTaskItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -23,7 +24,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/8/1.
  */
 
-public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresenter> implements DownloadedFragmentView {
+public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresenter> implements DownloadedFragmentView ,TaskDownloadedDetailDialog.TaskDeleteListener {
 
     @BindView(R.id.task_rv)
     RecyclerView taskRv;
@@ -54,7 +55,7 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
             @NonNull
             @Override
             public AdapterItem<DownloadedTaskBean> onCreateItem(int viewType) {
-                return new DownloadedTaskItem();
+                return new DownloadedTaskItem(DownloadedFragment.this);
             }
         };
         taskRv.setAdapter(taskRvAdapter);
@@ -91,5 +92,11 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
 
     public void updateTask(){
         presenter.queryDownloadedTask();
+    }
+
+    @Override
+    public void onTaskDelete(int position) {
+        if (position > -1 && position < taskList.size())
+            taskRvAdapter.removeItem(position);
     }
 }

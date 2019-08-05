@@ -76,7 +76,8 @@ public class DanmuDownloadDialog extends Dialog{
                     //如果视频文件在下载路径中，下载弹幕至视频所在文件夹
                     //否则下载弹幕至默认下载文件夹
                     if (FileUtils.getDirName(videoPath).startsWith(AppConfig.getInstance().getDownloadFolder())){
-                        danmuPath = FileUtils.getDirName(videoPath)
+                        String folderPath = FileUtils.getDirName(videoPath);
+                        danmuPath = folderPath.substring(0, folderPath.length() - 1)
                                 + Constants.DefaultConfig.danmuFolder
                                 + "/" + danmuName;
                     }else {

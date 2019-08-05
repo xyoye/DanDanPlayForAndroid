@@ -74,6 +74,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                 taskBean.setMagnet(taskCursor.getString(3));
                 taskBean.setTotalSize(taskCursor.getString(4));
                 taskBean.setTorrentHash(taskCursor.getString(5));
+                taskBean.setCompleteTime(taskCursor.getString(6));
                 taskBean.setFileList(getTaskFileList(taskId));
                 taskList.add(taskBean);
             }
@@ -110,15 +111,16 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
         List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
         Cursor fileCursor = DataBaseManager
                 .getInstance()
-                .selectTable(14)
+                .selectTable(15)
                 .query()
                 .where(1, String.valueOf(taskId))
                 .execute();
         while (fileCursor.moveToNext()) {
             DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();
             fileBean.setFilePath(fileCursor.getString(2));
-            fileBean.setDanmuPath(fileCursor.getString(3));
-            fileBean.setEpisode_id(fileCursor.getInt(4));
+            fileBean.setFileLength(fileCursor.getLong(3));
+            fileBean.setDanmuPath(fileCursor.getString(4));
+            fileBean.setEpisode_id(fileCursor.getInt(5));
             fileList.add(fileBean);
         }
 

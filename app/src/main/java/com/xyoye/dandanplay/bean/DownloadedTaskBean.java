@@ -13,6 +13,7 @@ public class DownloadedTaskBean {
     private String magnet;
     private String totalSize;
     private String torrentHash;
+    private String completeTime;
     private List<DownloadedTaskFileBean> fileList;
 
     public int get_id() {
@@ -63,6 +64,14 @@ public class DownloadedTaskBean {
         this.torrentHash = torrentHash;
     }
 
+    public String getCompleteTime() {
+        return completeTime;
+    }
+
+    public void setCompleteTime(String completeTime) {
+        this.completeTime = completeTime;
+    }
+
     public List<DownloadedTaskFileBean> getFileList() {
         return fileList;
     }
@@ -73,6 +82,7 @@ public class DownloadedTaskBean {
 
     public static class DownloadedTaskFileBean {
         private String filePath;
+        private long fileLength;
         private String danmuPath;
         private int episode_id;
 
@@ -82,6 +92,14 @@ public class DownloadedTaskBean {
 
         public void setFilePath(String filePath) {
             this.filePath = filePath;
+        }
+
+        public long getFileLength() {
+            return fileLength;
+        }
+
+        public void setFileLength(long fileLength) {
+            this.fileLength = fileLength;
         }
 
         public String getDanmuPath() {

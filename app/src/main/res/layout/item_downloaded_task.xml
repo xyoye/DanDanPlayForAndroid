@@ -2,43 +2,60 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="56dp">
 
     <TextView
         android:id="@+id/task_title_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:text=""
         android:textColor="@color/text_black"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/task_info_ll"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/task_info_ll"
+    <TextView
+        android:id="@+id/task_size_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="3dp"
+        android:gravity="center_horizontal"
+        android:text=""
+        android:textColor="@color/text_gray"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/task_title_tv"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/task_complete_time_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="3dp"
         android:gravity="center_horizontal"
-        android:minWidth="60dp"
-        android:orientation="vertical"
+        android:text=""
+        android:textColor="@color/text_gray"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/task_title_tv"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/task_size_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/orange"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/diver_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

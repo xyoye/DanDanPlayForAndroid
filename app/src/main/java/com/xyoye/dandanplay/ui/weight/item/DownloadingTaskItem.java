@@ -22,7 +22,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/10/27.
  */
 
-public class DownloadManagerItem implements AdapterItem<BtTask> {
+public class DownloadingTaskItem implements AdapterItem<BtTask> {
 
     @BindView(R.id.download_title_tv)
     TextView downloadTitleTv;
@@ -46,7 +46,7 @@ public class DownloadManagerItem implements AdapterItem<BtTask> {
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_download_torrent;
+        return R.layout.item_downloading_task;
     }
 
     @Override

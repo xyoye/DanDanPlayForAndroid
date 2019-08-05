@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by xyoye on 2018/7/4.
@@ -56,9 +58,27 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
                 return new DanmuNetworkItem(model ->
                     new RxPermissions(DanmuNetworkActivity.this).
                         request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .subscribe(granted -> {
-                            if (granted) {
-                                showDownloadDialog(model);
+                        .subscribe(new Observer<Boolean>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(Boolean aBoolean) {
+                                if (aBoolean){
+                                    showDownloadDialog(model);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onComplete() {
+
                             }
                         }));
             }

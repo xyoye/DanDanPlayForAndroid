@@ -7,7 +7,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 23;
+    public static final int DATABASE_VERSION = 24;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -50,8 +50,8 @@ public class DataBaseInfo {
                 {"_id", "folder_path", "folder_type"},
                 {"_id", "torrent_path", "torrent_file_path", "danmu_path", "danmu_episode_id"},
                 {"_id", "text"},
-                {"_id", "title", "folder_path", "magnet", "total_size", "torrent_hash"},
-                {"_id", "task_id", "file_path", "danmu_path", "danmu_episode_id"}
+                {"_id", "title", "folder_path", "magnet", "total_size", "torrent_hash", "complete_time"},
+                {"_id", "task_id", "file_path", "file_length", "danmu_path", "danmu_episode_id"}
         };
 
         FieldTypes = new String[][] {
@@ -69,8 +69,8 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"}
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER NOT NULL", "INTEGER NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"}
         };
     }
 

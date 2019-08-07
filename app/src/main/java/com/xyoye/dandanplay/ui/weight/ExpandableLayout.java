@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
  */
 
 public class ExpandableLayout extends LinearLayout {
-    private ViewGroup contentLayout;
+    private View contentLayout;
     private int contentHeight;
     private int rootHeight;
 
@@ -47,12 +47,7 @@ public class ExpandableLayout extends LinearLayout {
         //默认高度为头布局高度
         rootHeight = getChildAt(0).getMeasuredHeight();
 
-        //内容布局必须继承与ViewGroup
-        View contentView = getChildAt(1);
-        if (!(contentView instanceof ViewGroup))
-            throw new IllegalArgumentException("content view must be ViewGroup");
-
-        contentLayout = (ViewGroup)contentView;
+        contentLayout = getChildAt(1);
 
         if (!isInit){
             isInit = true;

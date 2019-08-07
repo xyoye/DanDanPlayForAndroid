@@ -15,6 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+## sophix
+
 #基线包使用，生成mapping.txt
 -printmapping mapping.txt
 #生成的mapping.txt在app/build/outputs/mapping/release路径下，移动到/app路径下
@@ -25,3 +28,8 @@
 -keep class com.ta.utdid2.device.**{*;}
 #防止inline
 -dontoptimize
+
+##bugly
+
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}

@@ -13,7 +13,7 @@ import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
-import com.xyoye.dandanplay.mvp.view.AnimaView;
+import com.xyoye.dandanplay.mvp.view.AnimeView;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -28,7 +28,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/15.
  */
 
-public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimaView {
+public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimeView {
     @BindView(R.id.bangumi_list_recycler_view)
     RecyclerView recyclerView;
 

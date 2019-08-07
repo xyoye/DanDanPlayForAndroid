@@ -9,6 +9,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 
 /**
+ * 可折叠的Layout
+ *
  * Created by xyoye on 2019/8/7.
  */
 
@@ -53,7 +55,7 @@ public class ExpandableLayout extends LinearLayout {
             isInit = true;
             //计算初始内容布局高度
             contentHeight = contentLayout.getMeasuredHeight();
-            //改变root布局高度
+            //初始root布局高度，仅显示头布局
             ViewGroup.LayoutParams rootParams = this.getLayoutParams();
             rootParams.height = rootHeight;
             setLayoutParams(rootParams);

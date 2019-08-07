@@ -7,5 +7,5 @@ import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
  */
 
 
-public interface AnimaView extends BaseMvpView {
+public interface AnimeView extends BaseMvpView {
 }

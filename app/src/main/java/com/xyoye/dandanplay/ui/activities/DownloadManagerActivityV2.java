@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -26,6 +28,7 @@ import com.xyoye.dandanplay.mvp.view.DownloadManagerViewV2;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
 import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
 import com.xyoye.dandanplay.ui.weight.indicator.abs.CommonNavigatorAdapter;
@@ -118,6 +121,28 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     @Override
     public void initListener() {
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.about_download:
+                new CommonDialog.Builder(DownloadManagerActivityV2.this)
+                        .hideCancel()
+                        .setAutoDismiss()
+                        .build()
+                        .show(getResources().getString(R.string.about_download), "关于下载", "确定", "");
+                break;
+            case R.id.tracker_manager:
+                startActivity(new Intent(DownloadManagerActivityV2.this, TrackerActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_download_manager_v2, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

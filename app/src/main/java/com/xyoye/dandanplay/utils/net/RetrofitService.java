@@ -83,10 +83,10 @@ public interface RetrofitService {
 
     @FormUrlEncoded
     @POST("/api/v2/favorite")
-    Observable<CommJsonEntity> addFavorite(@FieldMap Map<String, String> params);
+    Observable<CommJsonEntity> follow(@FieldMap Map<String, String> params);
 
     @DELETE("/api/v2/favorite/{animeId}")
-    Observable<CommJsonEntity> reduceFavorite(@Path("animeId") String animaId);
+    Observable<CommJsonEntity> unFollow(@Path("animeId") String animaId);
 
     @FormUrlEncoded
     @POST("/api/v2/register")

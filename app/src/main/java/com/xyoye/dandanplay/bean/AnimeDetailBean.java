@@ -344,20 +344,20 @@ public class AnimeDetailBean extends CommJsonEntity implements Serializable {
                 .subscribe(observer);
     }
 
-    public static void addFavorite(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+    public static void follow(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
         Map<String, String> map = new HashMap<>();
         map.put("animeId", animaId);
         map.put("favoriteStatus", "favorited");
         map.put("rating", "0");
-        RetroFactory.getInstance().addFavorite(map)
+        RetroFactory.getInstance().follow(map)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 
-    public static void reduceFavorite(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().reduceFavorite(animaId)
+    public static void unFollow(String animaId, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+        RetroFactory.getInstance().unFollow(animaId)
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

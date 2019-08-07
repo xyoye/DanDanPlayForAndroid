@@ -142,6 +142,10 @@
             android:name=".ui.activities.PlayerActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"/>
+        <!--反馈-->
+        <activity
+            android:name=".ui.activities.FeedbackActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"

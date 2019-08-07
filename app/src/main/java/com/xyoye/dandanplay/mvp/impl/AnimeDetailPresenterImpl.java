@@ -69,7 +69,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     @Override
     public void followConfirm(String animeId) {
-        AnimeDetailBean.addFavorite(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+        AnimeDetailBean.follow(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().afterFollow(true);
@@ -85,7 +85,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     @Override
     public void followCancel(String animeId) {
-        AnimeDetailBean.reduceFavorite(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+        AnimeDetailBean.unFollow(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().afterFollow(false);

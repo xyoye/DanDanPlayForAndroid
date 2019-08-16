@@ -84,14 +84,11 @@ public final class AnimHelper {
      */
     public static void doClipViewWidth(final View view, int srcWidth, int endWidth, int duration) {
         ValueAnimator valueAnimator = ValueAnimator.ofInt(srcWidth, endWidth).setDuration(duration);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int width = (int) valueAnimator.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-                layoutParams.width = width;
-                view.setLayoutParams(layoutParams);
-            }
+        valueAnimator.addUpdateListener(valueAnimator1 -> {
+            int width = (int) valueAnimator1.getAnimatedValue();
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = width;
+            view.setLayoutParams(layoutParams);
         });
         valueAnimator.setInterpolator(new AccelerateInterpolator());
         valueAnimator.start();
@@ -106,13 +103,10 @@ public final class AnimHelper {
      */
     public static void doClipViewHeight(final View view, int srcHeight, int endHeight, int duration) {
         ValueAnimator valueAnimator = ValueAnimator.ofInt(srcHeight, endHeight).setDuration(duration);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-                layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                view.setLayoutParams(layoutParams);
-            }
+        valueAnimator.addUpdateListener(valueAnimator1 -> {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            view.setLayoutParams(layoutParams);
         });
         valueAnimator.setInterpolator(new AccelerateInterpolator());
         valueAnimator.start();

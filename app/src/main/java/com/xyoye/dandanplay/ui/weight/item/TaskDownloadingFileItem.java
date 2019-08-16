@@ -11,17 +11,13 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.event.TorrentBindDanmuStartEvent;
-import com.xyoye.dandanplay.ui.activities.DanmuNetworkActivity;
-import com.xyoye.dandanplay.ui.activities.DownloadManagerActivityV2;
-import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
-import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
+import com.xyoye.dandanplay.ui.activities.play.DanmuNetworkActivity;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.smbv2.TorrentServer;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 

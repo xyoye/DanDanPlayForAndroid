@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.activities.FolderActivity">
+    tools:context=".ui.activities.play.FolderActivity">
 
     <item
         android:id="@+id/sort_by_follow"

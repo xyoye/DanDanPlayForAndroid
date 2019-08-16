@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.play;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.service.SmbService;
+import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;

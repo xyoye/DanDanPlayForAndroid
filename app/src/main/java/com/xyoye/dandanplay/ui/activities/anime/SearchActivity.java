@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.anime;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,6 +33,7 @@ import com.xyoye.dandanplay.bean.event.SelectInfoEvent;
 import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;

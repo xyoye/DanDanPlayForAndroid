@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
+import com.xyoye.dandanplay.ui.activities.personal.PlayerSettingTipsActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;

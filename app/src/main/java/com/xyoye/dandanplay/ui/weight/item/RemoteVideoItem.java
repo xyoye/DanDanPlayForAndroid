@@ -9,7 +9,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.RemoteVideoBean;
-import com.xyoye.dandanplay.ui.activities.PlayerManagerActivity;
+import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 

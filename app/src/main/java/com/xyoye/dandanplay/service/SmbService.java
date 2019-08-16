@@ -12,8 +12,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.activities.SmbActivity;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
+import com.xyoye.dandanplay.ui.activities.play.SmbActivity;
 import com.xyoye.dandanplay.utils.smbv2.SmbServer;
 
 /**

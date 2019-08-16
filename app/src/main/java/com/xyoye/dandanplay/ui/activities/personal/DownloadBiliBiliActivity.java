@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
+import com.xyoye.dandanplay.ui.activities.WebViewActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.BiliBiliDownloadDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 

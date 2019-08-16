@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

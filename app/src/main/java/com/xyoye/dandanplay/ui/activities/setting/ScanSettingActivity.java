@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -44,7 +44,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/3/30.
  */
 
-public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
+public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
 
     @BindView(R.id.indicator)
     MagicIndicator magicIndicator;
@@ -65,12 +65,12 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
         fragmentList.add(scanFragment);
         fragmentList.add(blockFragment);
 
-        VideoScanActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
+        ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
             if (hasChecked){
-                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
+                deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.theme_color));
                 deleteTv.setClickable(true);
             }else{
-                deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.text_gray));
+                deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.text_gray));
                 deleteTv.setClickable(false);
             }
         };
@@ -163,10 +163,10 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.scan_folder_tv:
-                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
+                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
                 break;
             case R.id.scan_file_tv:
-                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
+                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
                     VideoBean videoBean = new VideoBean();
                     presenter.queryFormSystem(videoBean, path);
                     boolean added = presenter.saveNewVideo(videoBean);
@@ -185,10 +185,10 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
     private void resetButtonStatus(){
         VideoScanFragment videoScanFragment = fragmentList.get(selectedPosition);
         if (videoScanFragment.hasChecked()){
-            deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.theme_color));
+            deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.theme_color));
             deleteTv.setClickable(true);
         }else {
-            deleteTv.setTextColor(VideoScanActivity.this.getResources().getColor(R.color.text_gray));
+            deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.text_gray));
             deleteTv.setClickable(false);
         }
     }
@@ -200,7 +200,7 @@ public class VideoScanActivity extends BaseMvpActivity<VideoScanPresenter> imple
                 finish();
                 break;
             case R.id.add_scan:
-                new FileManagerDialog(VideoScanActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
+                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
                         fragmentList.get(selectedPosition).addPath(path)
                 ).show();
                 break;

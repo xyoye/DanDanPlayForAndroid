@@ -18,7 +18,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
-import com.xyoye.dandanplay.ui.activities.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;

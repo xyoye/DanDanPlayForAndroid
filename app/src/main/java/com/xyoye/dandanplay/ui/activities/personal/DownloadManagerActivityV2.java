@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,6 +26,7 @@ import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImplV2;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenterV2;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerViewV2;
 import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.ui.activities.anime.TrackerActivity;
 import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;

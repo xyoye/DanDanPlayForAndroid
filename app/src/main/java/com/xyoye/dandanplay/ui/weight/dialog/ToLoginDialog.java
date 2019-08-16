@@ -8,10 +8,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.activities.LoginActivity;
-import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

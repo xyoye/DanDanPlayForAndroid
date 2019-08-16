@@ -15,8 +15,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.RemoteScanBean;
-import com.xyoye.dandanplay.ui.activities.RemoteActivity;
-import com.xyoye.dandanplay.ui.activities.RemoteScanActivity;
+import com.xyoye.dandanplay.ui.activities.play.RemoteActivity;
+import com.xyoye.dandanplay.ui.activities.play.RemoteScanActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import java.util.ArrayList;

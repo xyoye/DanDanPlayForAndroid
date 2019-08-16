@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.setting;
 
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -23,7 +23,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/6/26.
  */
 
-public class BlockManagerActivity extends BaseMvpActivity<BlockManagerPresenter> implements BlockManagerView {
+public class BlockSettingActivity extends BaseMvpActivity<BlockManagerPresenter> implements BlockManagerView {
 
     @BindView(R.id.labels_view)
     LabelsView labelsView;

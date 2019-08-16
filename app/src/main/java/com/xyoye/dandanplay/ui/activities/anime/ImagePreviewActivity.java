@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.anime;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -18,7 +18,6 @@ import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.preview.ImageViewTouch;
 import com.xyoye.dandanplay.ui.weight.preview.ImageViewTouchBase;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 

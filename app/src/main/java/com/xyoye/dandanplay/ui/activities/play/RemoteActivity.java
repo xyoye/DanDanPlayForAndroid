@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.play;
 
 import android.app.AlertDialog;
 import android.support.annotation.NonNull;

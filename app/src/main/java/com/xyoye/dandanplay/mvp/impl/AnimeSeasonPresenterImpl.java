@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import static com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity.SORT_FOLLOW;
-import static com.xyoye.dandanplay.ui.activities.AnimeSeasonActivity.SORT_NAME;
+import static com.xyoye.dandanplay.ui.activities.anime.AnimeSeasonActivity.SORT_FOLLOW;
+import static com.xyoye.dandanplay.ui.activities.anime.AnimeSeasonActivity.SORT_NAME;
 
 /**
  * Created by xyoye on 2019/1/9.

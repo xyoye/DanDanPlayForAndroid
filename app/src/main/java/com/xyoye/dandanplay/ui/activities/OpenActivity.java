@@ -15,6 +15,7 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.OpenPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
+import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 
 import java.io.InputStream;
 

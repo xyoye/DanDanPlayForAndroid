@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
-import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
+import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;

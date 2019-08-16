@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.ui.activities;
+package com.xyoye.dandanplay.ui.activities.play;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

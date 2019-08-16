@@ -14,16 +14,15 @@ import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
-import com.xyoye.dandanplay.ui.activities.AnimeListActivity;
-import com.xyoye.dandanplay.ui.activities.BlockManagerActivity;
-import com.xyoye.dandanplay.ui.activities.DownloadBiliBiliActivity;
-import com.xyoye.dandanplay.ui.activities.DownloadManagerActivityV2;
-import com.xyoye.dandanplay.ui.activities.DownloadMangerActivity;
-import com.xyoye.dandanplay.ui.activities.LoginActivity;
-import com.xyoye.dandanplay.ui.activities.PersonalInfoActivity;
-import com.xyoye.dandanplay.ui.activities.PlayerSettingActivity;
-import com.xyoye.dandanplay.ui.activities.SettingActivity;
-import com.xyoye.dandanplay.ui.activities.VideoScanActivity;
+import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
+import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
+import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
+import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.SettingActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
@@ -106,7 +105,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 launchActivity(SettingActivity.class);
                 break;
             case R.id.scan_setting_ll:
-                launchActivity(VideoScanActivity.class);
+                launchActivity(ScanSettingActivity.class);
                 break;
             case R.id.download_setting_ll:
                 launchActivity(DownloadManagerActivityV2.class);
@@ -135,7 +134,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 }
                 break;
             case R.id.block_ll:
-                launchActivity(BlockManagerActivity.class);
+                launchActivity(BlockSettingActivity.class);
                 break;
             case R.id.danmu_ll:
                 launchActivity(DownloadBiliBiliActivity.class);

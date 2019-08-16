@@ -72,9 +72,9 @@ dependencies {
     implementation rootProject.ext.dependencies["design"]
     implementation rootProject.ext.dependencies["cardview"]
     implementation rootProject.ext.dependencies["junit"]
+    implementation rootProject.ext.dependencies["constraint-layout"]
     androidTestImplementation rootProject.ext.dependencies["runner"]
     androidTestImplementation rootProject.ext.dependencies["espresso-core"]
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
     implementation 'com.tencent.bugly:crashreport_upgrade:1.3.5'
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'

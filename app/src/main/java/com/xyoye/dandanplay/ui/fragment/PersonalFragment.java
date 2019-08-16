@@ -22,7 +22,7 @@ import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.SettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
@@ -102,7 +102,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 launchActivity(PlayerSettingActivity.class);
                 break;
             case R.id.app_setting_ll:
-                launchActivity(SettingActivity.class);
+                launchActivity(AppSettingActivity.class);
                 break;
             case R.id.scan_setting_ll:
                 launchActivity(ScanSettingActivity.class);

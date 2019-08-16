@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/diver_color"
     android:orientation="vertical">
+
     <include layout="@layout/layout_toolbar" />
 
     <ScrollView
@@ -31,8 +32,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -64,8 +65,8 @@
                     android:layout_height="48dp"
                     android:gravity="center_vertical"
                     android:orientation="vertical"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp">
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -88,8 +89,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="38dp"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp">
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -110,8 +111,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="38dp"
-                    android:paddingEnd="15dp"
-                    android:paddingStart="15dp">
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -133,21 +134,23 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:paddingEnd="15dp"
                     android:layout_marginTop="5dp"
-                    android:paddingStart="15dp">
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:orientation="vertical">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="OpenSL ES"
                             android:textColor="@color/text_black"
                             android:textSize="14sp" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -170,21 +173,23 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:paddingEnd="15dp"
                 android:layout_marginTop="5dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="SurfaceView"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -205,9 +210,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:background="@color/gray_color4" />
 
             <TextView
@@ -223,20 +228,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="自动加载弹幕"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -258,20 +265,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="弹幕云屏蔽"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -292,9 +301,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:background="@color/gray_color4" />
 
             <TextView
@@ -310,20 +319,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="开启网络字幕"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -346,8 +357,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
                 android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 android:visibility="gone">
 
                 <LinearLayout
@@ -355,12 +366,14 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="自动加载网络字幕"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -382,20 +395,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="自动加载同名字幕"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -416,9 +431,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:background="@color/gray_color4" />
 
             <TextView
@@ -434,20 +449,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingStart="15dp">
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:orientation="vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="外链弹窗"
                         android:textColor="@color/text_black"
                         android:textSize="14sp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

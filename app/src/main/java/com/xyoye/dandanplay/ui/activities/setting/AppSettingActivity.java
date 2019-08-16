@@ -34,7 +34,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/24.
  */
 
-public class  SettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
+public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
     @BindView(R.id.version_rl)
@@ -63,7 +63,7 @@ public class  SettingActivity extends BaseMvpActivity<SettingPresenter> implemen
         String version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
-        dialog = new ProgressDialog(SettingActivity.this);
+        dialog = new ProgressDialog(AppSettingActivity.this);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class  SettingActivity extends BaseMvpActivity<SettingPresenter> implemen
         patchRl.setOnClickListener(this);
 
         patchRl.setOnLongClickListener(v -> {
-            new PatchHisDialog(SettingActivity.this, R.style.Dialog).show();
+            new PatchHisDialog(AppSettingActivity.this, R.style.Dialog).show();
             return true;
         });
     }
@@ -107,7 +107,7 @@ public class  SettingActivity extends BaseMvpActivity<SettingPresenter> implemen
                 SophixManager.getInstance().queryAndLoadNewPatch();
                 break;
             case R.id.about_rl:
-                Intent intent_about = new Intent(SettingActivity.this, WebViewActivity.class);
+                Intent intent_about = new Intent(AppSettingActivity.this, WebViewActivity.class);
                 intent_about.putExtra("title","关于");
                 intent_about.putExtra("link", "file:///android_asset/About_in_application.html");
                 startActivity(intent_about);

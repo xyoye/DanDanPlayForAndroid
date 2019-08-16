@@ -45,6 +45,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/10/27.
  */
 
+@Deprecated
 public class DownloadMangerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView {
     private static final int DIALOG_BIND_DANMU = 1001;
 

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/diver_color">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/layout_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
+
+        <RelativeLayout
+            android:id="@+id/download_engine_rl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/download_engine_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="下载引擎："
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/download_engine_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/download_engine_tip"
+                android:text=""
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@+id/change_engine_iv"
+                android:text="切换"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/change_engine_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/ic_arrow_right_dark" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@color/diver_color"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="移动网络下载"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/mobile_network_download_cb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/diver_color"/>
+
+        <RelativeLayout
+            android:id="@+id/max_download_rate_rl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/download_rate_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="最大下载速度："
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/download_rate_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/download_rate_tip"
+                android:text=""
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@+id/change_download_rate_iv"
+                android:text="修改"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/change_download_rate_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/ic_arrow_right_dark" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/diver_color"/>
+
+        <RelativeLayout
+            android:id="@+id/max_task_count_rl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/task_count_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="最大任务数量："
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/task_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/task_count_tip"
+                android:text=""
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toStartOf="@+id/change_count_iv"
+                android:text="修改"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/change_count_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/ic_arrow_right_dark" />
+        </RelativeLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

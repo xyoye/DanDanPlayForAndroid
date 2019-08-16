@@ -52,11 +52,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--下载管理-->
         <activity
-            android:name=".ui.activities.personal.DownloadMangerActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:launchMode="singleTop" />
-        <!--下载管理-->
-        <activity
             android:name=".ui.activities.personal.DownloadManagerActivityV2"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTop" />
@@ -83,7 +78,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--设置-->
         <activity
-            android:name=".ui.activities.setting.SettingActivity"
+            android:name=".ui.activities.setting.AppSettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--播放器设置提示-->
         <activity
@@ -146,7 +141,10 @@
         <activity
             android:name=".ui.activities.personal.FeedbackActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-
+        <!--播放器设置-->
+        <activity
+            android:name=".ui.activities.setting.DownloadSettingActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

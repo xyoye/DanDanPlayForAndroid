@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -37,6 +38,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
     public static final int SCREEN_NAME = 1;
     public static final int ADD_BLOCK = 2;
     public static final int REMOTE_TOKEN = 3;
+    public static final int MAX_DOWNLOAD_RATE = 4;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -82,7 +84,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         setContentView(R.layout.dialog_common_edittext);
         ButterKnife.bind(this);
 
-        switch (type){
+        switch (type) {
             case NETWORK_LINK:
                 titleTv.setText("网络串流");
                 editText.setHint("https://");
@@ -103,6 +105,11 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 editText.setHint("请输入远程访问秘钥");
                 editText.setMaxLines(1);
                 break;
+            case MAX_DOWNLOAD_RATE:
+                titleTv.setText("最大下载速度");
+                editText.setHint("请输入最大下载速度(MS)");
+                editText.setMaxLines(1);
+                break;
         }
     }
 
@@ -110,7 +117,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         PersonalBean.changeScreenName(screenName, new CommJsonObserver<CommJsonEntity>(this) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
-                if (listener != null){
+                if (listener != null) {
                     listener.onConfirm(screenName);
                 }
                 CommonEditTextDialog.this.cancel();
@@ -128,7 +135,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cancel_tv:
-                if (type == REMOTE_TOKEN && fullListener != null){
+                if (type == REMOTE_TOKEN && fullListener != null) {
                     fullListener.onCancel();
                 }
                 CommonEditTextDialog.this.dismiss();
@@ -139,9 +146,9 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         }
     }
 
-    private void doConfirm(){
+    private void doConfirm() {
         String inputData = editText.getText().toString();
-        switch (type){
+        switch (type) {
             case NETWORK_LINK:
                 if (StringUtils.isEmpty(inputData)) {
                     inputLayout.setErrorEnabled(true);
@@ -173,24 +180,24 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 if (StringUtils.isEmpty(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("屏蔽数据不能为空");
-                }else if (blockList.contains(inputData)){
+                } else if (blockList.contains(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("当前关键字已屏蔽");
-                }else if (traverseBlock(inputData)){
+                } else if (traverseBlock(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("当前关键字已在屏蔽范围内");
-                }else {
-                    if (inputData.endsWith(";")){
+                } else {
+                    if (inputData.endsWith(";")) {
                         inputData = inputData.substring(0, inputData.length() - 1);
                     }
-                    if (inputData.startsWith(";")){
+                    if (inputData.startsWith(";")) {
                         inputData = inputData.substring(1);
                     }
-                    if (listener != null){
-                        if (inputData.contains(";")){
+                    if (listener != null) {
+                        if (inputData.contains(";")) {
                             String[] blockData = inputData.split(";");
                             listener.onConfirm(blockData);
-                        }else {
+                        } else {
                             listener.onConfirm(inputData);
                         }
                     }
@@ -198,21 +205,31 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 }
                 break;
             case REMOTE_TOKEN:
-                if (StringUtils.isEmpty(inputData)){
+                if (StringUtils.isEmpty(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("秘钥数据不能为空");
-                }
-                if (fullListener != null){
+                } else if (fullListener != null) {
                     fullListener.onConfirm(inputData);
+                }
+                break;
+            case MAX_DOWNLOAD_RATE:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("请输入下载速度");
+                } else if (CommonUtils.isNum(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("请输入正确的速度");
+                } else if (listener != null) {
+                    listener.onConfirm(inputData);
                 }
                 break;
         }
     }
 
-    private boolean traverseBlock(String blockText){
+    private boolean traverseBlock(String blockText) {
         boolean isContains = false;
-        for (String text : blockList){
-            if (text.contains(blockText)){
+        for (String text : blockList) {
+            if (text.contains(blockText)) {
                 isContains = true;
                 break;
             }
@@ -225,11 +242,11 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         return isShowing();
     }
 
-    public interface CommonEditTextListener{
+    public interface CommonEditTextListener {
         void onConfirm(String... data);
     }
 
-    public interface CommonEditTextFullListener{
+    public interface CommonEditTextFullListener {
         void onConfirm(String... data);
 
         void onCancel();

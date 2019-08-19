@@ -34,44 +34,44 @@ public class AppConfig {
      * 昵称
      */
     public String getUserScreenName(){
-        return SPUtils.getInstance().getString(Constants.Config.USER_SCREEN_NAME, "");
+        return SPUtils.getInstance().getString(Constants.UserConfig.USER_SCREEN_NAME, "");
     }
 
     public void saveUserScreenName(String userScreenName){
-        SPUtils.getInstance().put(Constants.Config.USER_SCREEN_NAME, userScreenName);
+        SPUtils.getInstance().put(Constants.UserConfig.USER_SCREEN_NAME, userScreenName);
     }
 
     /**
      * 用户名
      */
     public String getUserName(){
-        return SPUtils.getInstance().getString(Constants.Config.USER_NAME, "");
+        return SPUtils.getInstance().getString(Constants.UserConfig.USER_NAME, "");
     }
 
     public void saveUserName(String username){
-        SPUtils.getInstance().put(Constants.Config.USER_NAME, username);
+        SPUtils.getInstance().put(Constants.UserConfig.USER_NAME, username);
     }
 
     /**
      * 用户头像
      */
     public String getUserImage(){
-        return SPUtils.getInstance().getString(Constants.Config.USER_IMAGE, "");
+        return SPUtils.getInstance().getString(Constants.UserConfig.USER_IMAGE, "");
     }
 
     public void saveUserImage(String userImage){
-        SPUtils.getInstance().put(Constants.Config.USER_IMAGE, userImage);
+        SPUtils.getInstance().put(Constants.UserConfig.USER_IMAGE, userImage);
     }
     
     /**
      * 是否已登陆
      */
     public boolean isLogin(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.IS_LOGIN);
+        return SPUtils.getInstance().getBoolean(Constants.UserConfig.IS_LOGIN);
     }
 
     public void setLogin(boolean isLogin){
-        SPUtils.getInstance().put(Constants.Config.IS_LOGIN, isLogin);
+        SPUtils.getInstance().put(Constants.UserConfig.IS_LOGIN, isLogin);
     }
 
     /**
@@ -101,11 +101,11 @@ public class AppConfig {
      * Token
      */
     public String getToken(){
-        return SPUtils.getInstance().getString(Constants.Config.TOKEN, "");
+        return SPUtils.getInstance().getString(Constants.UserConfig.TOKEN, "");
     }
 
     public void saveToken(String token){
-        SPUtils.getInstance().put(Constants.Config.TOKEN, token);
+        SPUtils.getInstance().put(Constants.UserConfig.TOKEN, token);
     }
 
     /**
@@ -189,44 +189,44 @@ public class AppConfig {
      * 自动匹配弹幕
      */
     public boolean isAutoLoadDanmu(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_DANMU);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.AUTO_LOAD_DANMU);
     }
 
     public void setAutoLoadDanmu(boolean auto){
-        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_DANMU, auto);
+        SPUtils.getInstance().put(Constants.PlayerConfig.AUTO_LOAD_DANMU, auto);
     }
 
     /**
      * 是否使用网络字幕
      */
     public boolean isUseNetWorkSubtitle(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.USE_NETWORK_SUBTITLE, true);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.USE_NETWORK_SUBTITLE, true);
     }
 
     public void setUseNetWorkSubtitle(boolean isUse){
-        SPUtils.getInstance().put(Constants.Config.USE_NETWORK_SUBTITLE, isUse);
+        SPUtils.getInstance().put(Constants.PlayerConfig.USE_NETWORK_SUBTITLE, isUse);
     }
 
     /**
      * 自动匹配同名字幕
      */
     public boolean isAutoLoadLocalSubtitle(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_LOCAL_SUBTITLE);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.AUTO_LOAD_LOCAL_SUBTITLE);
     }
 
     public void setAutoLoadLocalSubtitle(boolean auto){
-        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_LOCAL_SUBTITLE, auto);
+        SPUtils.getInstance().put(Constants.PlayerConfig.AUTO_LOAD_LOCAL_SUBTITLE, auto);
     }
 
     /**
      * 自动匹配网络字幕
      */
     public boolean isAutoLoadNetworkSubtitle(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_LOAD_NETWORK_SUBTITLE);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.AUTO_LOAD_NETWORK_SUBTITLE);
     }
 
     public void setAutoLoadNetworkSubtitle(boolean auto){
-        SPUtils.getInstance().put(Constants.Config.AUTO_LOAD_NETWORK_SUBTITLE, auto);
+        SPUtils.getInstance().put(Constants.PlayerConfig.AUTO_LOAD_NETWORK_SUBTITLE, auto);
     }
 
     /**
@@ -266,22 +266,22 @@ public class AppConfig {
      * 外链展示选择弹幕提示框
      */
     public boolean isShowOuterChainDanmuDialog(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.SHOW_OUTER_CHAIN_DANMU_DIALOG, true);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.SHOW_OUTER_CHAIN_DANMU_DIALOG, true);
     }
 
     public void setShowOuterChainDanmuDialog(boolean isShow){
-        SPUtils.getInstance().put(Constants.Config.SHOW_OUTER_CHAIN_DANMU_DIALOG, isShow);
+        SPUtils.getInstance().put(Constants.PlayerConfig.SHOW_OUTER_CHAIN_DANMU_DIALOG, isShow);
     }
 
     /**
      * 外链打开是否进入选择弹幕页面
      */
     public boolean isOuterChainDanmuSelect(){
-        return SPUtils.getInstance().getBoolean(Constants.Config.OUTER_CHAIN_DANMU_SELECT, true);
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.OUTER_CHAIN_DANMU_SELECT, true);
     }
 
     public void setOuterChainDanmuSelect(boolean isOpen){
-        SPUtils.getInstance().put(Constants.Config.OUTER_CHAIN_DANMU_SELECT, isOpen);
+        SPUtils.getInstance().put(Constants.PlayerConfig.OUTER_CHAIN_DANMU_SELECT, isOpen);
     }
 
     /**
@@ -341,5 +341,49 @@ public class AppConfig {
 
     public void setRemoteLoginData(String data){
         SPUtils.getInstance().put(Constants.Config.REMOTE_LOGIN_DATA, data);
+    }
+
+    /**
+     * 下载引擎
+     */
+    public String getDownloadEngine(){
+        return SPUtils.getInstance().getString(Constants.DownloadSetting.DOWNLOAD_ENGINE, "libtorrent");
+    }
+
+    public void setDownloadEngine(String engine){
+        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_ENGINE, engine);
+    }
+
+    /**
+     * 最大同时下载任务数量
+     */
+    public int getMaxTaskCount(){
+        return SPUtils.getInstance().getInt(Constants.DownloadSetting.DOWNLOAD_MAX_TASK, 3);
+    }
+
+    public void setMaxTaskCount(int taskCount){
+        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_MAX_TASK, taskCount);
+    }
+
+    /**
+     * 最大下载速度
+     */
+    public long getMaxDownloadRate(){
+        return SPUtils.getInstance().getLong(Constants.DownloadSetting.DOWNLOAD_MAX_RATE, -1L);
+    }
+
+    public void setMaxDownloadRate(long rate){
+        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_MAX_RATE, rate);
+    }
+
+    /**
+     * 移动网络下载
+     */
+    public boolean isDownloadByNetwork(){
+        return SPUtils.getInstance().getBoolean(Constants.DownloadSetting.DOWNLOAD_BY_NETWORK, false);
+    }
+
+    public void setDownloadByNetwork(boolean isOpen){
+        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_BY_NETWORK, isOpen);
     }
 }

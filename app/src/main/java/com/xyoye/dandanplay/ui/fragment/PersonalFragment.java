@@ -20,6 +20,7 @@ import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
+import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;

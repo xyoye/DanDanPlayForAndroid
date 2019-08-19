@@ -107,7 +107,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 break;
             case MAX_DOWNLOAD_RATE:
                 titleTv.setText("最大下载速度");
-                editText.setHint("请输入最大下载速度(MS)");
+                editText.setHint("请输入最大下载速度(k/s)，-1为无限制");
                 editText.setMaxLines(1);
                 break;
         }
@@ -210,17 +210,19 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                     inputLayout.setError("秘钥数据不能为空");
                 } else if (fullListener != null) {
                     fullListener.onConfirm(inputData);
+                    CommonEditTextDialog.this.dismiss();
                 }
                 break;
             case MAX_DOWNLOAD_RATE:
                 if (StringUtils.isEmpty(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("请输入下载速度");
-                } else if (CommonUtils.isNum(inputData)) {
+                } else if (!CommonUtils.isNum(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("请输入正确的速度");
                 } else if (listener != null) {
                     listener.onConfirm(inputData);
+                    CommonEditTextDialog.this.dismiss();
                 }
                 break;
         }

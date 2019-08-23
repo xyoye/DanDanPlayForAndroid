@@ -16,7 +16,7 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
-import com.xyoye.dandanplay.ui.weight.item.DownloadingTaskItem;
+import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
 import com.xyoye.dandanplay.utils.DownloadTaskUpdateListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
@@ -72,7 +72,7 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
             @NonNull
             @Override
             public AdapterItem<BtTask> onCreateItem(int viewType) {
-                return new DownloadingTaskItem();
+                return new TaskDownloadingItem();
             }
         };
         taskRv.setAdapter(taskRvAdapter);

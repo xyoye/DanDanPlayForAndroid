@@ -12,7 +12,7 @@ import com.xyoye.dandanplay.mvp.impl.DownloadedFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
 import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedDetailDialog;
-import com.xyoye.dandanplay.ui.weight.item.DownloadedTaskItem;
+import com.xyoye.dandanplay.ui.weight.item.TaskDownloadedItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
             @NonNull
             @Override
             public AdapterItem<DownloadedTaskBean> onCreateItem(int viewType) {
-                return new DownloadedTaskItem(DownloadedFragment.this);
+                return new TaskDownloadedItem(DownloadedFragment.this);
             }
         };
         taskRv.setAdapter(taskRvAdapter);

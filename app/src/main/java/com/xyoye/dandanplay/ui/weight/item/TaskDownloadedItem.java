@@ -14,7 +14,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/8/1.
  */
 
-public class DownloadedTaskItem implements AdapterItem<DownloadedTaskBean> {
+public class TaskDownloadedItem implements AdapterItem<DownloadedTaskBean> {
     @BindView(R.id.task_title_tv)
     TextView taskTitleTv;
     @BindView(R.id.task_size_tv)
@@ -25,7 +25,7 @@ public class DownloadedTaskItem implements AdapterItem<DownloadedTaskBean> {
     private View mView;
     private TaskDownloadedDetailDialog.TaskDeleteListener taskDeleteListener;
 
-    public DownloadedTaskItem(TaskDownloadedDetailDialog.TaskDeleteListener taskDeleteListener){
+    public TaskDownloadedItem(TaskDownloadedDetailDialog.TaskDeleteListener taskDeleteListener){
         this.taskDeleteListener = taskDeleteListener;
     }
 

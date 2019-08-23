@@ -63,19 +63,6 @@ public class Constants {
     }
 
     /**
-     * 下载设置
-     */
-    public static class DownloadSetting{
-        public static final String ENGINE_LIBTORRENT = "libtorrent";
-        public static final String ENGINE_THUNDER = "thunder";
-
-        static final String DOWNLOAD_ENGINE = "download_engine";
-        static final String DOWNLOAD_MAX_TASK = "download_max_task";
-        static final String DOWNLOAD_MAX_RATE = "download_max_rate";
-        static final String DOWNLOAD_BY_NETWORK = "download_by_network";
-    }
-
-    /**
      * 系统配置
      */
     public static class Config {

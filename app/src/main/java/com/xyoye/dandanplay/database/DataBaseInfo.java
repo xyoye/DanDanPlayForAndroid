@@ -7,7 +7,7 @@ package com.xyoye.dandanplay.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 24;
+    public static final int DATABASE_VERSION = 25;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -23,7 +23,7 @@ public class DataBaseInfo {
                 "banner",           //3 废弃
                 "anime_type",       //4 番剧分类
                 "subgroup",         //5 字幕组
-                "torrent",          //6 下载中的任务
+                "torrent",          //6 废弃
                 "smb_device",       //7 已连接的局域网设备
                 "tracker",          //8 废弃
                 "search_history",   //9 搜索历史
@@ -31,8 +31,10 @@ public class DataBaseInfo {
                 "scan_folder",      //11 扫描文件夹
                 "torrent_file",     //12 废弃
                 "danmu_block",      //13 本地弹幕屏蔽数据
-                "downloaded_task",  //14 已完成的任务
-                "downloaded_file",  //15 已完成的任务中文件
+                "downloaded_task",  //14 已完成任务
+                "downloaded_file",  //15 已完成任务文件
+                "downloading_task", //16 下载中任务
+                "downloading_file", //17 下载中任务文件
         };
 
         FieldNames = new String[][] {
@@ -50,8 +52,10 @@ public class DataBaseInfo {
                 {"_id", "folder_path", "folder_type"},
                 {"_id", "torrent_path", "torrent_file_path", "danmu_path", "danmu_episode_id"},
                 {"_id", "text"},
-                {"_id", "title", "folder_path", "magnet", "total_size", "torrent_hash", "complete_time"},
-                {"_id", "task_id", "file_path", "file_length", "danmu_path", "danmu_episode_id"}
+                {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "anime_title", "total_length", "complete_time"},
+                {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
+                {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "anime_title", "priorities"},
+                {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"}
         };
 
         FieldTypes = new String[][] {
@@ -69,8 +73,10 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER NOT NULL", "INTEGER NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER"}
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255)"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER"}
         };
     }
 

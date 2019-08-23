@@ -342,48 +342,4 @@ public class AppConfig {
     public void setRemoteLoginData(String data){
         SPUtils.getInstance().put(Constants.Config.REMOTE_LOGIN_DATA, data);
     }
-
-    /**
-     * 下载引擎
-     */
-    public String getDownloadEngine(){
-        return SPUtils.getInstance().getString(Constants.DownloadSetting.DOWNLOAD_ENGINE, "libtorrent");
-    }
-
-    public void setDownloadEngine(String engine){
-        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_ENGINE, engine);
-    }
-
-    /**
-     * 最大同时下载任务数量
-     */
-    public int getMaxTaskCount(){
-        return SPUtils.getInstance().getInt(Constants.DownloadSetting.DOWNLOAD_MAX_TASK, 3);
-    }
-
-    public void setMaxTaskCount(int taskCount){
-        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_MAX_TASK, taskCount);
-    }
-
-    /**
-     * 最大下载速度
-     */
-    public long getMaxDownloadRate(){
-        return SPUtils.getInstance().getLong(Constants.DownloadSetting.DOWNLOAD_MAX_RATE, -1L);
-    }
-
-    public void setMaxDownloadRate(long rate){
-        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_MAX_RATE, rate);
-    }
-
-    /**
-     * 移动网络下载
-     */
-    public boolean isDownloadByNetwork(){
-        return SPUtils.getInstance().getBoolean(Constants.DownloadSetting.DOWNLOAD_BY_NETWORK, false);
-    }
-
-    public void setDownloadByNetwork(boolean isOpen){
-        SPUtils.getInstance().put(Constants.DownloadSetting.DOWNLOAD_BY_NETWORK, isOpen);
-    }
 }

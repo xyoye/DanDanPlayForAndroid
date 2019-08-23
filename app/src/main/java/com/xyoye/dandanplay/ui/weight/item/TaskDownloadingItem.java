@@ -22,7 +22,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/10/27.
  */
 
-public class DownloadingTaskItem implements AdapterItem<BtTask> {
+public class TaskDownloadingItem implements AdapterItem<BtTask> {
 
     @BindView(R.id.download_title_tv)
     TextView downloadTitleTv;

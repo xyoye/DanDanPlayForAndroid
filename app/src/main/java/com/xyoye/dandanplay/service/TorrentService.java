@@ -18,7 +18,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.MessageEvent;
 import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
@@ -192,7 +192,7 @@ public class TorrentService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
                 0,
-                new Intent(this, DownloadManagerActivityV2.class),
+                new Intent(this, DownloadManagerActivity.class),
                 0);
 
         Notification.Builder builder = new Notification.Builder(this)

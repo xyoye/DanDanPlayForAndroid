@@ -42,7 +42,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TorrentService extends Service {
     private static final String TAG = TorrentService.class.getSimpleName();
 
+    //通知ID
     private static final int NOTIFICATION_ID = 1001;
+    //任务刷新间隔时间
     private static final int NOTIFY_SYNC_TIME = 1000; //ms
 
     private WifiReceiver wifiReceiver;
@@ -80,11 +82,11 @@ public class TorrentService extends Service {
         pauseTask.set(isTaskPause);
 
         wifiReceiver = new WifiReceiver(isConnected -> {
-            if (TorrentConfig.getInstance().isDownloadOnlyWifi()){
-                if (isConnected){
+            if (TorrentConfig.getInstance().isDownloadOnlyWifi()) {
+                if (isConnected) {
                     pauseTask.set(false);
                     TorrentEngine.getInstance().resumeAll();
-                }else {
+                } else {
                     pauseTask.set(true);
                     TorrentEngine.getInstance().pauseAll();
                 }
@@ -110,8 +112,8 @@ public class TorrentService extends Service {
             initTorrentEngine();
         }
 
-        if (intent != null && intent.getAction() != null){
-            switch (intent.getAction()){
+        if (intent != null && intent.getAction() != null) {
+            switch (intent.getAction()) {
                 case Action.ACTION_SHUTDOWN:
                     if (shutdownThread != null && !shutdownThread.isAlive())
                         shutdownThread.start();
@@ -248,7 +250,7 @@ public class TorrentService extends Service {
 
                 TaskStateBean taskState = TorrentHelper.buildTaskState(torrentTask);
                 //没有状态一样的状态
-                if (!taskStateCache.contains(taskState)){
+                if (!taskStateCache.contains(taskState)) {
                     taskStateCache.put(taskState);
                     // TODO: 2019/8/23 传递taskState，通知UI更新
                 }
@@ -265,7 +267,7 @@ public class TorrentService extends Service {
 
                 TaskStateBean taskState = TorrentHelper.buildTaskState(torrentTask);
                 //没有状态一样的状态
-                if (!taskStateCache.contains(taskState)){
+                if (!taskStateCache.contains(taskState)) {
                     taskStateCache.put(taskState);
                     // TODO: 2019/8/23 传递taskState，通知UI更新
                 }
@@ -306,7 +308,7 @@ public class TorrentService extends Service {
 
             @Override
             public void onSessionError(String errorMsg) {
-                Log.e(TAG, "onSessionError: "+errorMsg);
+                Log.e(TAG, "onSessionError: " + errorMsg);
             }
 
             @Override
@@ -341,8 +343,8 @@ public class TorrentService extends Service {
                                 startForeground(NOTIFICATION_ID, foregroundNotify.build());
                             }
 
-                        } catch (Exception e) {
-                            /* Ignore */
+                        } catch (Exception ignore) {
+
                         }
                     }
                 }
@@ -355,12 +357,13 @@ public class TorrentService extends Service {
     /**
      * 关闭服务
      */
-    private void stopService(){
+    private void stopService() {
         try {
             unregisterReceiver(wifiReceiver);
-        } catch (IllegalArgumentException ignore) { }
+        } catch (IllegalArgumentException ignore) {
+        }
 
-        if (syncNotifyHandler != null){
+        if (syncNotifyHandler != null) {
             syncNotifyHandler.removeCallbacks(syncNotifyRunnable);
         }
 
@@ -402,7 +405,7 @@ public class TorrentService extends Service {
         proxy.setIP(TorrentConfig.getInstance().getProxyIp());
         proxy.setPort(TorrentConfig.getInstance().getProxyPort());
         proxy.setPeerEnable(TorrentConfig.getInstance().isProxyPeerEnable());
-        if (TorrentConfig.getInstance().isProxyAuthEnable()){
+        if (TorrentConfig.getInstance().isProxyAuthEnable()) {
             proxy.setAccount(TorrentConfig.getInstance().getProxyAccount());
             proxy.setPassword(TorrentConfig.getInstance().getProxyPassword());
         }
@@ -437,14 +440,14 @@ public class TorrentService extends Service {
         return null;
     }
 
-    public static class Action{
+    public static class Action {
         public static final String ACTION_SHUTDOWN = "TorrentService.Action.ACTION_SHUTDOWN";
         public static final String ACTION_WIFI_ENABLED = "TorrentService.Action.ACTION_WIFI_ENABLED";
         public static final String ACTION_WIFI_DISABLED = "TorrentService.Action.ACTION_WIFI_DISABLED";
         public static final String ACTION_ADD_TORRENT = "TorrentService.Action.ACTION_ADD_TORRENT";
     }
 
-    public static class IntentTag{
+    public static class IntentTag {
         public static final String ADD_TASK_TORRENT = "TorrentService.IntentTag.ADD_TASK_TORRENT";
     }
 }

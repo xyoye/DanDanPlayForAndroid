@@ -79,7 +79,6 @@ public class TorrentEngine extends SessionManager {
     private Map<String, Torrent> addTorrentsQueue;
     private ArrayList<String> hashList;
     private Queue<LoadTorrentTask> loadTaskQueue;
-    private ReentrantLock syncMagnet = new ReentrantLock();
 
     private TorrentEngine() {
         engineListener = new EngineListener();

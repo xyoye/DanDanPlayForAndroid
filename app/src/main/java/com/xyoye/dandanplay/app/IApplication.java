@@ -17,13 +17,10 @@ import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.KeyUtil;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,12 +30,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class IApplication extends Application {
-    //任务列表
-    public static List<BtTask> taskList = new ArrayList<>();
-    //任务列表
-    public static List<String> taskFinishHashList = new ArrayList<>();
-    //任务集合，key为hash，value为任务列表中序号
-    public static Map<String, Integer> taskMap = new HashMap<>();
     //tracker列表
     public static List<String> trackers = new ArrayList<>();
     //云屏蔽弹幕列表

@@ -3,6 +3,8 @@ package com.xyoye.dandanplay.torrent.info;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
+
 import org.libtorrent4j.Priority;
 
 import java.util.ArrayList;
@@ -145,7 +147,7 @@ public class Torrent implements Parcelable {
     }
 
     public String getMagnetLink(){
-        return "magnet:?xt=urn:btih:" + torrentHash;
+        return TorrentUtils.MAGNET_HEADER + torrentHash;
     }
 
     public static final Creator<Torrent> CREATOR = new Creator<Torrent>() {

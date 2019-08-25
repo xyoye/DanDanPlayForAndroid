@@ -9,12 +9,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.torrent.utils.TorrentStateCode;
 import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadingDetailDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
-import com.xyoye.dandanplay.utils.jlibtorrent.TaskStatus;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import butterknife.BindView;
 
@@ -22,7 +22,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/10/27.
  */
 
-public class TaskDownloadingItem implements AdapterItem<BtTask> {
+public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
 
     @BindView(R.id.download_title_tv)
     TextView downloadTitleTv;
@@ -32,17 +32,21 @@ public class TaskDownloadingItem implements AdapterItem<BtTask> {
     TextView downloadSpeedTv;
     @BindView(R.id.download_duration_tv)
     TextView downloadDurationTv;
-    @BindView(R.id.download_info_rl)
-    RelativeLayout downloadInfoRl;
     @BindView(R.id.download_status_iv)
     ImageView downloadStatusIv;
     @BindView(R.id.download_status_tv)
     TextView downloadStatusTv;
+    @BindView(R.id.download_info_rl)
+    RelativeLayout downloadInfoRl;
     @BindView(R.id.download_ctrl_rl)
     RelativeLayout downloadCtrlRl;
 
     private Context context;
-    private String statusStr;
+    private TaskManageListener taskManageListener;
+
+    public TaskDownloadingItem(TaskManageListener taskManageListener){
+        this.taskManageListener = taskManageListener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -61,114 +65,113 @@ public class TaskDownloadingItem implements AdapterItem<BtTask> {
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onUpdateViews(BtTask task, int position) {
-        Torrent torrent = task.getTorrent();
+    public void onUpdateViews(TaskStateBean taskState, int position) {
+        downloadTitleTv.setText(taskState.name);
 
-        //checking和stopped不改变进度
-        if (task.getTaskStatus() != TaskStatus.CHECKING &&
-                task.getTaskStatus() != TaskStatus.STOPPED){
+        switch (taskState.stateCode){
+            case DOWNLOADING:
+                String downloadSpeed = CommonUtils.convertFileSize(taskState.downloadSpeed);
+                downloadSpeedTv.setText("↓ "+downloadSpeed+"/s");
+                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationTv.setText(getDuration(taskState));
 
-            //读取当前下载速度
-            String speed = "↓ "+CommonUtils.convertFileSize(torrent.getDownloadRate()) + "/s";
-            //读取当前下载进度
-            int progress = getProgress(torrent);
-            String duration = getDuration(torrent) + "（" + progress + "%）";
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
+                downloadStatusTv.setText("下载中");
+                break;
+            case PAUSED:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationTv.setText(getDuration(taskState));
 
-            downloadSpeedTv.setText(speed);
-            downloadDurationPb.setProgress(progress);
-            downloadDurationTv.setText(duration);
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
+                downloadStatusTv.setText("已暂停");
+                break;
+            case STOPPED:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationTv.setText(getDuration(taskState));
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
+                downloadStatusTv.setText("已停止");
+                break;
+            case SEEDING:
+                String uploadSpeed = CommonUtils.convertFileSize(taskState.uploadSpeed);
+                downloadSpeedTv.setText("↑ "+uploadSpeed+"/s");
+                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationTv.setText(getDuration(taskState));
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
+                downloadStatusTv.setText("上传中");
+                break;
+            case UNKNOWN:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(0);
+                downloadDurationTv.setText("");
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
+                downloadStatusTv.setText("未知");
+                break;
+            case FINISHED:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(100);
+                downloadDurationTv.setText(getDuration(taskState));
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
+                downloadStatusTv.setText("已完成");
+                break;
+            case ERROR:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(0);
+                downloadDurationTv.setText("");
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
+                downloadStatusTv.setText("错误");
+                break;
+            case CHECKING:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(0);
+                downloadDurationTv.setText("");
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
+                downloadStatusTv.setText("连接中");
+                break;
+            case ALLOCATING:
+                downloadSpeedTv.setText("↓ --");
+                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationTv.setText(getDuration(taskState));
+
+                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
+                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
+                downloadStatusTv.setText("等待中");
+                break;
         }
-        downloadTitleTv.setText(torrent.getTitle());
 
-        //根据下载状态修改图标和文字
-        checkStatus(task.getTaskStatus());
 
         //单击展示详情弹窗
-        downloadInfoRl.setOnClickListener(v ->  new TaskDownloadingDetailDialog(context, position, statusStr).show());
+        downloadInfoRl.setOnClickListener(v ->  {
+            String statusStr = downloadStatusTv.getText().toString();
+            new TaskDownloadingDetailDialog(context, taskState, statusStr, taskManageListener).show();
+        });
 
         //点击图标切换任务状态
         downloadCtrlRl.setOnClickListener(v -> {
-            if (task.isPaused()){
-                task.resume();
+            if (taskState.stateCode == TorrentStateCode.PAUSED){
+                taskManageListener.resumeTask(taskState.torrentId);
             }else {
-                task.pause();
+                taskManageListener.resumeTask(taskState.torrentId);
             }
         });
     }
 
-    private int getProgress(Torrent torrent) {
-        if (torrent.isFinished()) return 100;
-        if (torrent.isError()) return 0;
-        if (torrent.getLength() == 0)
-            return 0;
-        return (int)((torrent.getDownloaded() * 100) / torrent.getLength());
-    }
-
-    private String getDuration(Torrent torrent) {
-        if (torrent.isFinished())
-            return CommonUtils.convertFileSize(torrent.getLength()) + "/" + CommonUtils.convertFileSize(torrent.getLength());
-        if (torrent.isError())
-            return "未知/未知";
-        return CommonUtils.convertFileSize(torrent.getDownloaded()) + "/" + CommonUtils.convertFileSize(torrent.getLength());
-    }
-
-    private void checkStatus(TaskStatus taskStatus) {
-        switch (taskStatus) {
-            case FINISHED:
-                downloadSpeedTv.setText("-- B/s");
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.bilibili_pink));
-                downloadStatusTv.setText("已完成");
-                statusStr = "done";
-                break;
-            case UNKNOWN:
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
-                downloadStatusTv.setText("未知");
-                statusStr = "error";
-                break;
-            case ERROR:
-                downloadSpeedTv.setText("↓ 0 B/s");
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.ared));
-                downloadStatusTv.setText("错误");
-                statusStr = "error";
-                break;
-            case CHECKING:
-                downloadSpeedTv.setText("↓ 0 B/s");
-                downloadDurationPb.setProgress(0);
-                downloadDurationTv.setText("--");
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
-                downloadStatusTv.setText("连接中");
-                statusStr = "connecting";
-                break;
-            case ALLOCATING:
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.text_gray));
-                downloadStatusTv.setText("等待中");
-                statusStr = "queued";
-                break;
-            case PAUSED:
-                downloadSpeedTv.setText("↓ 0 B/s");
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
-                downloadStatusTv.setText("已暂停");
-                statusStr = "paused";
-                break;
-            case SEEDING:
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
-                downloadStatusTv.setText("下载中");
-                statusStr = "seeding";
-                break;
-            case DOWNLOADING:
-            case DOWNLOADING_METADATA:
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
-                downloadStatusTv.setTextColor(context.getResources().getColor(R.color.theme_color));
-                downloadStatusTv.setText("下载中");
-                statusStr = "downloading";
-                break;
-        }
+    private String getDuration(TaskStateBean taskState) {
+        return CommonUtils.convertFileSize(taskState.receivedBytes) +"/" +CommonUtils.convertFileSize(taskState.totalBytes);
     }
 }

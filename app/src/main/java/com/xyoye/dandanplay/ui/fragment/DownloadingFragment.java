@@ -8,7 +8,6 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
@@ -16,11 +15,11 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
+import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
-import com.xyoye.dandanplay.utils.DownloadTaskUpdateListener;
+import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,10 +38,10 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
     @BindView(R.id.task_rv)
     RecyclerView taskRv;
 
-    private BaseRvAdapter<BtTask> taskRvAdapter;
-    private Runnable refresh;
+    private BaseRvAdapter<TaskStateBean> taskRvAdapter;
     private Handler mHandler = IApplication.getMainHandler();
-    private DownloadTaskUpdateListener taskUpdateListener;
+    private TaskManageListener taskManageListener;
+    private DownloadManagerActivity managerActivity;
 
     public static DownloadingFragment newInstance() {
         return new DownloadingFragment();
@@ -61,6 +60,8 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
 
     @Override
     public void initView() {
+        managerActivity = (DownloadManagerActivity)mContext;
+
         taskRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         taskRv.setNestedScrollingEnabled(false);
         taskRv.setItemViewCacheSize(10);
@@ -68,16 +69,15 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         if (simpleItemAnimator != null)
             simpleItemAnimator.setSupportsChangeAnimations(false);
 
-        taskRvAdapter = new BaseRvAdapter<BtTask>(IApplication.taskList) {
+        taskRvAdapter = new BaseRvAdapter<TaskStateBean>(managerActivity.getTaskList()) {
             @NonNull
             @Override
-            public AdapterItem<BtTask> onCreateItem(int viewType) {
-                return new TaskDownloadingItem();
+            public AdapterItem<TaskStateBean> onCreateItem(int viewType) {
+                return new TaskDownloadingItem(taskManageListener);
             }
         };
         taskRv.setAdapter(taskRvAdapter);
 
-        initRefresh();
     }
 
     @Override
@@ -112,55 +112,8 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         }
     }
 
-    private void initRefresh(){
-        refresh = () -> {
-            int completePosition = -1;
-            //刷新任务
-            for (int i=0; i<IApplication.taskList.size(); i++){
-                BtTask task = IApplication.taskList.get(i);
-                if (task == null)
-                    break;
-                //刷新未完成任务
-                if (!task.isFinished()){
-                    taskRvAdapter.notifyItemChanged(i);
-                }
-                //保存已完成任务信息
-                else if (!task.isRefreshAfterFinish()){
-                    task.setRefreshAfterFinish(true);
-                    presenter.setTaskFinish(task);
-                    completePosition = i;
-                    break;
-                }
-            }
-            //移除已完成任务
-            if (completePosition != -1){
-                Torrent torrent = IApplication.taskList.get(completePosition).getTorrent();
-                String taskHash = torrent.getHash();
-                String taskName = torrent.getTitle();
-                IApplication.taskMap.remove(taskHash);
-                IApplication.taskFinishHashList.add(taskHash);
-                taskRvAdapter.removeItem(completePosition);
-                if (taskUpdateListener != null){
-                    taskUpdateListener.onTaskUpdate();
-                }
-
-                ToastUtils.showShort(taskName+"，下载完成");
-            }
-            //刷新任务数量
-            int taskNum = IApplication.taskList.size();
-            mContext.runOnUiThread(() -> downloadingTaskNumberTv.setText(String.valueOf(taskNum)));
-            //每隔1s刷新一次
-            mHandler.postDelayed(refresh,1000);
-        };
-        refresh.run();
-    }
-
-    public void setUpdateListener(DownloadTaskUpdateListener updateListener){
-        this.taskUpdateListener = updateListener;
-    }
-
-    public void stopRefresh(){
-        mHandler.removeCallbacks(refresh);
+    public void setTaskManageListener(TaskManageListener taskManageListener){
+        this.taskManageListener = taskManageListener;
     }
 
     public void updateAdapter(){

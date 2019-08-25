@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.frostwire.jlibtorrent.TorrentInfo;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
@@ -14,9 +13,7 @@ import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 
 import java.util.ArrayList;
 import java.util.List;

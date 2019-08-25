@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.StatFs;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.xyoye.dandanplay.app.IApplication;
@@ -17,10 +18,14 @@ import com.xyoye.dandanplay.torrent.info.Torrent;
 import org.apache.commons.io.FileUtils;
 import org.libtorrent4j.ErrorCode;
 import org.libtorrent4j.Priority;
+import org.libtorrent4j.TorrentInfo;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +39,8 @@ import static android.content.Context.WIFI_SERVICE;
 public class TorrentUtils {
     //PeerId
     public static final String PEER_FINGERPRINT = "DD";
+    //Magnet Header
+    public static final String MAGNET_HEADER = "magnet:?xt=urn:btih:";
 
 
     /**
@@ -205,4 +212,41 @@ public class TorrentUtils {
         return true;
     }
 
+    /**
+     * 通过种子文件获取种子信息
+     */
+    @Nullable
+    public static TorrentInfo getTorrentInfoForFile(String torrentFilePath){
+        InputStream inputStream = null;
+        ByteArrayOutputStream outputStream = null;
+        try {
+            File torrentFile = new File(torrentFilePath);
+            if (torrentFile.exists()){
+                inputStream = new FileInputStream(torrentFile);
+                outputStream = new ByteArrayOutputStream();
+                byte[] buffer = new byte[4096];
+                while (true) {
+                    int byteCount = inputStream.read(buffer);
+                    if (byteCount <= 0) {
+                        break;
+                    }
+                    outputStream.write(buffer, 0, byteCount);
+                }
+                return TorrentInfo.bdecode(outputStream.toByteArray());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (inputStream != null)
+                    inputStream.close();
+                if (outputStream != null)
+                    outputStream.close();
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
+    }
 }

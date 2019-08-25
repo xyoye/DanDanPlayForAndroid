@@ -8,7 +8,6 @@ import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import java.text.DateFormat;

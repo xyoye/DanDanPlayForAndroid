@@ -52,7 +52,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--下载管理-->
         <activity
-            android:name=".ui.activities.personal.DownloadManagerActivityV2"
+            android:name=".ui.activities.personal.DownloadManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTop" />
         <!--webView-->

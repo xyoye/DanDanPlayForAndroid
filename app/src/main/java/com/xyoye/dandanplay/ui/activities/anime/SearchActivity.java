@@ -16,11 +16,9 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.frostwire.jlibtorrent.TorrentInfo;
 import com.player.commom.utils.AnimHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -33,16 +31,13 @@ import com.xyoye.dandanplay.bean.event.SelectInfoEvent;
 import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -298,60 +293,10 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
     @Override
     public void downloadTorrentOver(String torrentPath, String magnet) {
-        //解析种子
-        TorrentInfo torrentInfo = TorrentUtil.getTorrentInfoForFile(torrentPath);
-        if (torrentInfo == null){
-            ToastUtils.showShort("解析种子文件失败，请重试");
-            return;
-        }
-        //任务已存在直接到下载管理界面
-        Intent intent = new Intent(this, DownloadManagerActivityV2.class);
-        String torrentHash = torrentInfo.infoHash().toString();
-        if (IApplication.taskMap.containsKey(torrentHash)){
-            intent.putExtra("fragment_position", 1);
-            startActivity(intent);
-            return;
-        } else if (IApplication.taskFinishHashList.contains(torrentHash)){
-            intent.putExtra("fragment_position", 2);
-            startActivity(intent);
-            return;
-        }
-
-        //保存路径
-        String saveDirPath = AppConfig.getInstance().getDownloadFolder() +
-                ((StringUtils.isEmpty(animeTitle))
-                ? ("/"+torrentInfo.name())
-                : ("/"+animeTitle));
-
-
-        TorrentFileCheckDialog torrentFileCheckDialog = new TorrentFileCheckDialog(SearchActivity.this, torrentInfo, checkedIndexes -> {
-            //创建新种子信息
-            Torrent torrent = new Torrent();
-            torrent.setTorrentPath(torrentPath);
-            torrent.setSaveDirPath(saveDirPath);
-            torrent.setMagnet(magnet);
-            torrent.setAnimeTitle(animeTitle);
-            torrent.setHash(torrentHash);
-            torrent.setTitle(torrentInfo.name());
-            torrent.setLength(torrentInfo.totalSize());
-            List<Torrent.TorrentFile> torrentFileList = new ArrayList<>();
-            for (int i=0; i<checkedIndexes.length; i++){
-                Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
-                torrentFile.setName(torrentInfo.files().fileName(i));
-                torrentFile.setPath(saveDirPath + "/" +torrentInfo.files().filePath(i));
-                torrentFile.setLength(torrentInfo.files().fileSize(i));
-                torrentFile.setChecked(checkedIndexes[i]);
-                torrentFileList.add(torrentFile);
-            }
-            torrent.setTorrentFileList(torrentFileList);
-
-            //进入创建下载任务界面
-            intent.putExtra("new_task", torrent);
-            startActivity(intent);
-        });
-
-        if (!this.isFinishing())
-            torrentFileCheckDialog.show();
+        Intent intent = new Intent(this, DownloadManagerActivity.class);
+        intent.putExtra("anime_title", animeTitle);
+        intent.putExtra("torrent_file_path", torrentPath);
+        startActivity(intent);
     }
 
     @Override

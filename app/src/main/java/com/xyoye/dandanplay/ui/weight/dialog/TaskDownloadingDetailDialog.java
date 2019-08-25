@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
@@ -17,7 +18,12 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
+import com.xyoye.dandanplay.torrent.TorrentEngine;
+import com.xyoye.dandanplay.torrent.TorrentTask;
+import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingFileItem;
+import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
@@ -25,6 +31,9 @@ import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.libtorrent4j.TorrentInfo;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,32 +55,38 @@ public class TaskDownloadingDetailDialog extends Dialog {
     @BindView(R.id.status_tv)
     TextView statusTv;
 
-    private Context context;
-    private Torrent mTorrent;
-    private int torrentPosition;
     private BaseRvAdapter<Torrent.TorrentFile> fileAdapter;
-    private String statusStr;
-    private Activity mActivity;
 
-    public TaskDownloadingDetailDialog(@NonNull Context context, int torrentPosition, String statusStr) {
+    private Context context;
+
+    private String statusStr;
+    private TaskStateBean taskStateBean;
+    private TaskManageListener taskManageListener;
+
+    public TaskDownloadingDetailDialog(@NonNull Context context, TaskStateBean taskStateBean, String statusStr, TaskManageListener taskManageListener) {
         super(context, R.style.Dialog);
         this.context = context;
-        this.mActivity = (Activity)context;
-        this.torrentPosition = torrentPosition;
-        this.mTorrent = IApplication.taskList.get(torrentPosition).getTorrent();
         this.statusStr = statusStr;
+        this.taskStateBean = taskStateBean;
+        this.taskManageListener = taskManageListener;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_download_task_detail);
         ButterKnife.bind(this, this);
 
-        nameTv.setText(mTorrent.getTitle());
-        pathTv.setText(mTorrent.getSaveDirPath());
-        magnetTv.setText(mTorrent.getMagnet());
+        nameTv.setText(taskStateBean.name);
+        pathTv.setText("");
+        magnetTv.setText(TorrentUtils.MAGNET_HEADER + taskStateBean.torrentId);
         statusTv.setText(statusStr);
+
+        TorrentTask task = TorrentEngine.getInstance().getTask(taskStateBean.torrentId);
+        TorrentInfo torrentInfo =  task.getTorrentInfo();
+        int fileCount = torrentInfo.files().numFiles();
+
 
         fileRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
@@ -84,8 +99,6 @@ public class TaskDownloadingDetailDialog extends Dialog {
             }
         };
         fileRv.setAdapter(fileAdapter);
-
-        EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_PREPARE_PLAY, torrentPosition));
     }
 
     @OnClick({R.id.dialog_cancel_iv, R.id.path_tv, R.id.magnet_tv, R.id.delete_tv})
@@ -95,7 +108,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
                 TaskDownloadingDetailDialog.this.dismiss();
                 break;
             case R.id.path_tv:
-                String path = mTorrent.getSaveDirPath();
+                String path = pathTv.getText().toString();
                 ClipboardManager clipboardManagerPath = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipDataPath = ClipData.newPlainText("Label", path);
                 if (clipboardManagerPath != null) {
@@ -104,7 +117,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
                 }
                 break;
             case R.id.magnet_tv:
-                String magnet = mTorrent.getMagnet();
+                String magnet = magnetTv.getText().toString();
                 ClipboardManager clipboardManagerMagnet = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipDataMagnet = ClipData.newPlainText("Label", magnet);
                 if (clipboardManagerMagnet != null) {
@@ -113,22 +126,13 @@ public class TaskDownloadingDetailDialog extends Dialog {
                 }
                 break;
             case R.id.delete_tv:
-                TorrentEvent torrentEvent = new TorrentEvent();
-                torrentEvent.setAction(TorrentEvent.EVENT_DELETE_TASK);
-                torrentEvent.setPosition(torrentPosition);
                 new CommonDialog.Builder(context)
                         .setAutoDismiss()
                         .showExtra()
-                        .setOkListener(dialog -> {
-                            TaskDownloadingDetailDialog.this.dismiss();
-                            torrentEvent.setDeleteFile(false);
-                            EventBus.getDefault().post(torrentEvent);
-                        })
-                        .setExtraListener(dialog -> {
-                            TaskDownloadingDetailDialog.this.dismiss();
-                            torrentEvent.setDeleteFile(true);
-                            EventBus.getDefault().post(torrentEvent);
-                        })
+                        .setOkListener(dialog ->
+                                taskManageListener.deleteTask(taskStateBean.torrentId, false))
+                        .setExtraListener(dialog ->
+                                taskManageListener.deleteTask(taskStateBean.torrentId, true))
                         .build()
                         .show( "确认删除任务？","删除任务和文件");
                 break;

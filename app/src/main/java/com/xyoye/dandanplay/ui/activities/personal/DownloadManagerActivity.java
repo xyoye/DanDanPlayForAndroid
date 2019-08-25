@@ -10,22 +10,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.event.MessageEvent;
-import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
-import com.xyoye.dandanplay.bean.event.TorrentStartEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImplV2;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenterV2;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerViewV2;
 import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.torrent.TorrentEngine;
+import com.xyoye.dandanplay.torrent.info.TaskStateBean;
 import com.xyoye.dandanplay.ui.activities.anime.TrackerActivity;
 import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
@@ -38,13 +35,10 @@ import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
-import com.xyoye.dandanplay.utils.DownloadTaskUpdateListener;
-import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
+import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +49,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/8/1.
  */
 
-public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPresenterV2> implements DownloadManagerViewV2, DownloadTaskUpdateListener {
+public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPresenterV2> implements DownloadManagerViewV2, TaskManageListener {
     public static final int TASK_DOWNLOADING_DANMU_BIND = 1001;
     public static final int TASK_DOWNLOADED_DANMU_BIND = 1002;
 
@@ -65,6 +59,7 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     ViewPager viewPager;
 
     private List<Fragment> fragmentList;
+    private List<TaskStateBean> mTaskStateList;
     private int selectedPosition = 0;
 
     @NonNull
@@ -94,9 +89,10 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     public void initView() {
         setTitle("下载管理");
         fragmentList = new ArrayList<>();
+        mTaskStateList = new ArrayList<>();
         DownloadedFragment downloadedFragment = DownloadedFragment.newInstance();
         DownloadingFragment downloadingFragment = DownloadingFragment.newInstance();
-        downloadingFragment.setUpdateListener(this);
+        downloadingFragment.setTaskManageListener(this);
         fragmentList.add(downloadingFragment);
         fragmentList.add(downloadedFragment);
 
@@ -127,14 +123,14 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.about_download:
-                new CommonDialog.Builder(DownloadManagerActivityV2.this)
+                new CommonDialog.Builder(DownloadManagerActivity.this)
                         .hideCancel()
                         .setAutoDismiss()
                         .build()
                         .show(getResources().getString(R.string.about_download), "关于下载", "确定", "");
                 break;
             case R.id.tracker_manager:
-                startActivity(new Intent(DownloadManagerActivityV2.this, TrackerActivity.class));
+                startActivity(new Intent(DownloadManagerActivity.this, TrackerActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -228,39 +224,13 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
                 String danmuPath = data.getStringExtra("path");
                 String taskHash = data.getStringExtra("task_hash");
                 int taskFilePosition = data.getIntExtra("task_file_position", -1);
-                //数据正确
-                if (!TextUtils.isEmpty(taskHash) && taskFilePosition != -1){
-                    //存在该任务
-                    if (IApplication.taskMap.containsKey(taskHash)){
-                        Integer taskPosition = IApplication.taskMap.get(taskHash);
-                        //该任务可正常取出
-                        if (taskPosition != null && taskPosition < IApplication.taskList.size()){
-                            BtTask btTask = IApplication.taskList.get(taskPosition);
-                            //存在该任务子任务
-                            if (taskFilePosition < btTask.getTorrent().getTorrentFileList().size()){
-                                Torrent.TorrentFile torrentFile = btTask.getTorrent().getTorrentFileList().get(taskFilePosition);
-                                torrentFile.setDanmuPath(danmuPath);
-                                torrentFile.setEpisodeId(episodeId);
-                                EventBus.getDefault().post(new TaskBindDanmuEndEvent());
-                                ToastUtils.showShort("绑定弹幕成功");
-                            }
-                        }
-                    }
-                }
+
             }else if (requestCode == TASK_DOWNLOADED_DANMU_BIND){
                 String danmuPath = data.getStringExtra("path");
                 int episodeId = data.getIntExtra("episode_id", -1);
                 int taskPosition = data.getIntExtra("position", -1);
                 int taskFilePosition = data.getIntExtra("task_file_position", -1);
-                if (taskPosition > -1 && taskFilePosition > -1){
-                    TaskBindDanmuEndEvent bindDanmuEndEvent = new TaskBindDanmuEndEvent();
-                    bindDanmuEndEvent.setDanmuPath(danmuPath);
-                    bindDanmuEndEvent.setEpisodeId(episodeId);
-                    bindDanmuEndEvent.setTaskFilePosition(taskFilePosition);
-                    bindDanmuEndEvent.setTaskPosition(taskPosition);
-                    EventBus.getDefault().post(bindDanmuEndEvent);
-                    ToastUtils.showShort("绑定弹幕成功");
-                }
+
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -269,23 +239,8 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //结束下载中页面的刷新
-        Fragment fragment = fragmentList.get(0);
-        if (fragment instanceof DownloadingFragment) {
-            DownloadingFragment downloadingFragment = (DownloadingFragment) fragment;
-            downloadingFragment.stopRefresh();
-        }
-
         //没有下载任务在执行，关闭服务
-        boolean isTaskRunning = false;
-        for (BtTask task : IApplication.taskList) {
-            if (task.isFinished()) continue;
-            if (!task.isPaused()) {
-                isTaskRunning = true;
-                break;
-            }
-        }
-        if (!isTaskRunning) {
+        if (!TorrentEngine.getInstance().hasTasks()) {
             if (ServiceUtils.isServiceRunning(TorrentService.class)) {
                 ServiceUtils.stopService(TorrentService.class);
             }
@@ -298,11 +253,11 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     @Override
     public void startNewTask() {
         Torrent torrent = getIntent().getParcelableExtra("new_task");
-        if (torrent != null &&
-                !IApplication.taskMap.containsKey(torrent.getHash()) &&
-                !IApplication.taskFinishHashList.contains(torrent.getHash())) {
-            EventBus.getDefault().post(new TorrentStartEvent(torrent));
-        }
+//        if (torrent != null &&
+//                !IApplication.taskMap.containsKey(torrent.getHash()) &&
+//                !IApplication.taskFinishHashList.contains(torrent.getHash())) {
+//            EventBus.getDefault().post(new TorrentStartEvent(torrent));
+//        }
     }
 
     /**
@@ -318,23 +273,18 @@ public class DownloadManagerActivityV2 extends BaseMvpActivity<DownloadManagerPr
     }
 
     @Override
-    public void onTaskUpdate() {
-        Fragment fragment = fragmentList.get(1);
-        if (fragment instanceof DownloadedFragment){
-            DownloadedFragment downloadedFragment = (DownloadedFragment) fragment;
-            downloadedFragment.updateTask();
-        }
+    public void pauseTask(String taskHash) {
+        TorrentEngine.getInstance().getTask(taskHash).pause();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(MessageEvent event){
-        if (event.getMsg() == MessageEvent.UPDATE_DOWNLOADING_TASK){
-            Fragment fragment = fragmentList.get(0);
-            if (fragment instanceof DownloadingFragment){
-                DownloadingFragment downloadingFragment = (DownloadingFragment) fragment;
-                downloadingFragment.updateAdapter();
-            }
-        }
+    @Override
+    public void resumeTask(String taskHash) {
+        TorrentEngine.getInstance().getTask(taskHash).resume();
+    }
+
+    @Override
+    public List<TaskStateBean> getTaskList() {
+        return mTaskStateList;
     }
 
     private class DownloadFragmentAdapter extends FragmentPagerAdapter {

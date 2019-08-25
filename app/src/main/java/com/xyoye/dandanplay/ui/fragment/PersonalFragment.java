@@ -15,12 +15,11 @@ import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivityV2;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
-import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
@@ -109,7 +108,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 launchActivity(ScanSettingActivity.class);
                 break;
             case R.id.download_setting_ll:
-                launchActivity(DownloadManagerActivityV2.class);
+                launchActivity(DownloadManagerActivity.class);
                 break;
             case R.id.user_info_rl:
                 launchActivity(PersonalInfoActivity.class);

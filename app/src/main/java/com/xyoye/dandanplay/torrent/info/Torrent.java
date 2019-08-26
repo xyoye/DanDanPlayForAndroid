@@ -28,6 +28,7 @@ public class Torrent implements Parcelable {
     private boolean sequentialDownload;
 
     private List priorities;
+    private List<TorrentFile> childFileList;
 
     protected Torrent(Parcel in) {
         taskName = in.readString();
@@ -41,6 +42,7 @@ public class Torrent implements Parcelable {
         paused = in.readByte() != 0;
         sequentialDownload = in.readByte() != 0;
         priorities = in.readArrayList(Priority.class.getClassLoader());
+        childFileList = in.createTypedArrayList(TorrentFile.CREATOR);
     }
 
     public String getTaskName() {
@@ -150,6 +152,14 @@ public class Torrent implements Parcelable {
         return TorrentUtils.MAGNET_HEADER + torrentHash;
     }
 
+    public List<TorrentFile> getChildFileList() {
+        return childFileList;
+    }
+
+    public void setChildFileList(List<TorrentFile> childFileList) {
+        this.childFileList = childFileList;
+    }
+
     public static final Creator<Torrent> CREATOR = new Creator<Torrent>() {
         @Override
         public Torrent createFromParcel(Parcel in) {
@@ -180,5 +190,106 @@ public class Torrent implements Parcelable {
         dest.writeByte((byte) (paused ? 1 : 0));
         dest.writeByte((byte) (sequentialDownload ? 1 : 0));
         dest.writeList(priorities);
+        dest.writeTypedList(childFileList);
+    }
+
+    public static class TorrentFile implements Parcelable{
+        private String filePath;
+        private long fileLength;
+        private long fileDoneLength;
+        private String danmuFilePath;
+        private int danmuEpisodeId;
+        private boolean isChecked;
+
+        public TorrentFile() {
+        }
+
+        protected TorrentFile(Parcel in) {
+            filePath = in.readString();
+            fileLength = in.readLong();
+            fileDoneLength = in.readLong();
+            danmuFilePath = in.readString();
+            danmuEpisodeId = in.readInt();
+            isChecked = in.readByte() != 0;
+        }
+
+        public String getFilePath() {
+            return filePath;
+        }
+
+        public void setFilePath(String filePath) {
+            this.filePath = filePath;
+        }
+
+        public long getFileLength() {
+            return fileLength;
+        }
+
+        public void setFileLength(long fileLength) {
+            this.fileLength = fileLength;
+        }
+
+        public long getFileDoneLength() {
+            return fileDoneLength;
+        }
+
+        public void setFileDoneLength(long fileDoneLength) {
+            this.fileDoneLength = fileDoneLength;
+        }
+
+        public String getDanmuFilePath() {
+            return danmuFilePath;
+        }
+
+        public void setDanmuFilePath(String danmuFilePath) {
+            this.danmuFilePath = danmuFilePath;
+        }
+
+        public int getDanmuEpisodeId() {
+            return danmuEpisodeId;
+        }
+
+        public void setDanmuEpisodeId(int danmuEpisodeId) {
+            this.danmuEpisodeId = danmuEpisodeId;
+        }
+
+        public boolean isChecked() {
+            return isChecked;
+        }
+
+        public void setChecked(boolean checked) {
+            isChecked = checked;
+        }
+
+        public static Creator<TorrentFile> getCREATOR() {
+            return CREATOR;
+        }
+
+        public static final Creator<TorrentFile> CREATOR = new Creator<TorrentFile>() {
+            @Override
+            public TorrentFile createFromParcel(Parcel in) {
+                return new TorrentFile(in);
+            }
+
+            @Override
+            public TorrentFile[] newArray(int size) {
+                return new TorrentFile[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(filePath);
+            dest.writeLong(fileLength);
+            dest.writeLong(fileDoneLength);
+            dest.writeString(danmuFilePath);
+            dest.writeInt(danmuEpisodeId);
+            dest.writeByte((byte) (isChecked ? 1 : 0));
+        }
     }
 }

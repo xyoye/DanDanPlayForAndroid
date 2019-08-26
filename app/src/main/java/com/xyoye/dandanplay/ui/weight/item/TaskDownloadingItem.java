@@ -166,7 +166,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
             if (taskState.stateCode == TorrentStateCode.PAUSED){
                 taskManageListener.resumeTask(taskState.torrentId);
             }else {
-                taskManageListener.resumeTask(taskState.torrentId);
+                taskManageListener.pauseTask(taskState.torrentId);
             }
         });
     }

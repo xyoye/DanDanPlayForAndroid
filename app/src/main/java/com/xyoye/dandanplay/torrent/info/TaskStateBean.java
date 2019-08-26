@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import com.xyoye.dandanplay.torrent.utils.AbstractStateParcel;
 import com.xyoye.dandanplay.torrent.utils.TorrentStateCode;
 
+import java.util.List;
+
 public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 {
     public String torrentId = "";
@@ -22,6 +24,8 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
     public int totalPeers = 0;
     public int peers = 0;
     public String error;
+
+    public List<Torrent.TorrentFile> childStateList;
 
     public TaskStateBean()
     {
@@ -42,7 +46,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
                          long receivedBytes, long uploadedBytes,
                          long totalBytes, long downloadSpeed,
                          long uploadSpeed, long ETA,
-                         int totalPeers, int peers, String error)
+                         int totalPeers, int peers, String error, List<Torrent.TorrentFile> childStateList)
     {
         super(torrentId);
 
@@ -59,6 +63,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
         this.totalPeers = totalPeers;
         this.peers = peers;
         this.error = error;
+        this.childStateList = childStateList;
     }
 
     public TaskStateBean(Parcel source)
@@ -78,6 +83,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
         totalPeers = source.readInt();
         peers = source.readInt();
         error = source.readString();
+        childStateList = source.createTypedArrayList(Torrent.TorrentFile.CREATOR);
     }
 
     @Override
@@ -104,6 +110,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
         dest.writeInt(totalPeers);
         dest.writeInt(peers);
         dest.writeString(error);
+        dest.writeTypedList(childStateList);
     }
 
     public static final Parcelable.Creator<TaskStateBean> CREATOR =

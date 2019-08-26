@@ -17,12 +17,13 @@ import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImplV2;
-import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenterV2;
-import com.xyoye.dandanplay.mvp.view.DownloadManagerViewV2;
-import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
+import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.torrent.TorrentEngine;
+import com.xyoye.dandanplay.torrent.TorrentService;
 import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.torrent.info.Torrent;
 import com.xyoye.dandanplay.ui.activities.anime.TrackerActivity;
 import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
@@ -36,7 +37,6 @@ import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.TaskManageListener;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -49,7 +49,7 @@ import butterknife.BindView;
  * Created by xyoye on 2019/8/1.
  */
 
-public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPresenterV2> implements DownloadManagerViewV2, TaskManageListener {
+public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView, TaskManageListener {
     public static final int TASK_DOWNLOADING_DANMU_BIND = 1001;
     public static final int TASK_DOWNLOADED_DANMU_BIND = 1002;
 
@@ -64,8 +64,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @NonNull
     @Override
-    protected DownloadManagerPresenterV2 initPresenter() {
-        return new DownloadManagerPresenterImplV2(this, this);
+    protected DownloadManagerPresenter initPresenter() {
+        return new DownloadManagerPresenterImpl(this, this);
     }
 
     @Override
@@ -224,7 +224,10 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                 String danmuPath = data.getStringExtra("path");
                 String taskHash = data.getStringExtra("task_hash");
                 int taskFilePosition = data.getIntExtra("task_file_position", -1);
-
+                Torrent torrent = TorrentEngine.getInstance().getTask(taskHash).getTorrent();
+                Torrent.TorrentFile torrentFile = torrent.getChildFileList().get(taskFilePosition);
+                torrentFile.setDanmuEpisodeId(episodeId);
+                torrentFile.setDanmuFilePath(danmuPath);
             }else if (requestCode == TASK_DOWNLOADED_DANMU_BIND){
                 String danmuPath = data.getStringExtra("path");
                 int episodeId = data.getIntExtra("episode_id", -1);
@@ -280,6 +283,11 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     @Override
     public void resumeTask(String taskHash) {
         TorrentEngine.getInstance().getTask(taskHash).resume();
+    }
+
+    @Override
+    public void deleteTask(String taskHash, boolean withFile) {
+        TorrentEngine.getInstance().getTask(taskHash).remove(withFile);
     }
 
     @Override

@@ -78,12 +78,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="移动网络下载"
+                android:text="仅wifi下载"
                 android:textColor="@color/text_black"
                 android:textSize="14sp" />
 
             <CheckBox
-                android:id="@+id/mobile_network_download_cb"
+                android:id="@+id/only_wifi_download_cb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

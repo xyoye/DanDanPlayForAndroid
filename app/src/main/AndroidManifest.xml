@@ -150,8 +150,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@android:style/Theme.Translucent" />
 
-        <service android:name=".service.TorrentService" />
-
         <service android:name=".service.SmbService" />
 
         <provider

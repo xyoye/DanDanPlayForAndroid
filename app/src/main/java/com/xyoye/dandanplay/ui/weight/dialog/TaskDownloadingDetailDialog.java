@@ -15,25 +15,18 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
-import com.xyoye.dandanplay.torrent.TorrentEngine;
-import com.xyoye.dandanplay.torrent.TorrentTask;
 import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.torrent.info.Torrent;
 import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingFileItem;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.libtorrent4j.TorrentInfo;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,19 +76,14 @@ public class TaskDownloadingDetailDialog extends Dialog {
         magnetTv.setText(TorrentUtils.MAGNET_HEADER + taskStateBean.torrentId);
         statusTv.setText(statusStr);
 
-        TorrentTask task = TorrentEngine.getInstance().getTask(taskStateBean.torrentId);
-        TorrentInfo torrentInfo =  task.getTorrentInfo();
-        int fileCount = torrentInfo.files().numFiles();
-
-
         fileRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
-        fileAdapter = new BaseRvAdapter<Torrent.TorrentFile>(mTorrent.getTorrentFileList()) {
+        fileAdapter = new BaseRvAdapter<Torrent.TorrentFile>(taskStateBean.childStateList) {
             @NonNull
             @Override
             public AdapterItem<Torrent.TorrentFile> onCreateItem(int viewType) {
-                return new TaskDownloadingFileItem(mTorrent.getHash(), mActivity);
+                return new TaskDownloadingFileItem(taskStateBean.torrentId, (Activity) context);
             }
         };
         fileRv.setAdapter(fileAdapter);
@@ -134,7 +122,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
                         .setExtraListener(dialog ->
                                 taskManageListener.deleteTask(taskStateBean.torrentId, true))
                         .build()
-                        .show( "确认删除任务？","删除任务和文件");
+                        .show("确认删除任务？", "删除任务和文件");
                 break;
         }
 
@@ -145,6 +133,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
         if (TaskDownloadingDetailDialog.this.isShowing())
             fileAdapter.notifyDataSetChanged();
     }
+
 
     @Override
     protected void onStart() {

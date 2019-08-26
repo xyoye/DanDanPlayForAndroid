@@ -12,7 +12,9 @@ import org.libtorrent4j.Priority;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by xyoye on 2019/8/22.
@@ -30,11 +32,22 @@ public class TorrentHelper {
             throw new FileNotFoundException("找不到种子文件");
         }
 
+        TorrentMetaInfo torrentMetaInfo = new TorrentMetaInfo(torrent.getTorrentFilePath());
+
         Priority[] priorities = TorrentUtils.getPriorities(torrent);
         if (priorities.length == 0) {
-            TorrentMetaInfo torrentMetaInfo = new TorrentMetaInfo(torrent.getTorrentFilePath());
             torrent.setPriorities(Collections.nCopies(torrentMetaInfo.fileCount, Priority.DEFAULT));
         }
+
+        List<Torrent.TorrentFile> childFileList = new ArrayList<>();
+        for (TorrentMetaInfo.TorrentMetaFileInfo fileInfo : torrentMetaInfo.fileList){
+            Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
+            torrentFile.setFilePath(fileInfo.getPath());
+            torrentFile.setFileLength(fileInfo.getSize());
+            torrentFile.setChecked(true);
+            childFileList.add(fileInfo.getIndex(), torrentFile);
+        }
+        torrent.setChildFileList(childFileList);
 
         TorrentEngine.getInstance().download(torrent);
     }
@@ -48,6 +61,13 @@ public class TorrentHelper {
             return null;
 
         Torrent torrent = task.getTorrent();
+        long[] progress = task.getChildFileProgress();
+        if (torrent.getChildFileList().size() == progress.length){
+            for (int i = 0; i < torrent.getChildFileList().size(); i++) {
+                Torrent.TorrentFile torrentFile = torrent.getChildFileList().get(i);
+                torrentFile.setFileDoneLength(progress[i]);
+            }
+        }
 
         return new TaskStateBean(
                 torrent.getTorrentHash(),
@@ -62,6 +82,7 @@ public class TorrentHelper {
                 task.getETA(),
                 task.getTotalPeers(),
                 task.getConnectedPeers(),
-                torrent.getErrorMsg());
+                torrent.getErrorMsg(),
+                torrent.getChildFileList());
     }
 }

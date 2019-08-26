@@ -430,6 +430,13 @@ public class TorrentTask {
     }
 
     /**
+     * 获取子文件的下载进度
+     */
+    public long[] getChildFileProgress(){
+        return torrentHandle.fileProgress();
+    }
+
+    /**
      * 获取需要下载的总大小
      */
     public long getSize() {

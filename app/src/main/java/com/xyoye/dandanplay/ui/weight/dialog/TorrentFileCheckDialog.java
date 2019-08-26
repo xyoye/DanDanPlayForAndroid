@@ -15,6 +15,7 @@ import com.xyoye.dandanplay.bean.TorrentCheckBean;
 import com.xyoye.dandanplay.ui.weight.item.TorrentFileCheckItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
+import org.libtorrent4j.Priority;
 import org.libtorrent4j.TorrentInfo;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class TorrentFileCheckDialog extends Dialog {
     @BindView(R.id.confirm_tv)
     TextView confirmTv;
 
-    private List<TorrentCheckBean> torrentFileList;
+    private List<TorrentCheckBean> checkBeanList;
     private TorrentInfo torrentInfo;
     private OnTorrentSelectedListener listener;
 
@@ -52,25 +53,25 @@ public class TorrentFileCheckDialog extends Dialog {
         setContentView(R.layout.dialog_torrent_file_check);
         ButterKnife.bind(this, this);
 
-        torrentFileList = new ArrayList<>();
+        checkBeanList = new ArrayList<>();
 
         for (int i = 0; i < torrentInfo.numFiles(); i++) {
             TorrentCheckBean torrentCheckBean = new TorrentCheckBean();
             torrentCheckBean.setChecked(true);
             torrentCheckBean.setName(torrentInfo.files().fileName(i));
             torrentCheckBean.setLength(torrentInfo.files().fileSize(i));
-            torrentFileList.add(torrentCheckBean);
+            checkBeanList.add(torrentCheckBean);
         }
 
         fileRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
-        BaseRvAdapter<TorrentCheckBean> checkAdapter = new BaseRvAdapter<TorrentCheckBean>(torrentFileList) {
+        BaseRvAdapter<TorrentCheckBean> checkAdapter = new BaseRvAdapter<TorrentCheckBean>(checkBeanList) {
             @NonNull
             @Override
             public AdapterItem<TorrentCheckBean> onCreateItem(int viewType) {
                 return new TorrentFileCheckItem((position, isChecked) ->
-                        torrentFileList.get(position).setChecked(isChecked));
+                        checkBeanList.get(position).setChecked(isChecked));
             }
         };
         fileRv.setAdapter(checkAdapter);
@@ -78,26 +79,31 @@ public class TorrentFileCheckDialog extends Dialog {
         cancelTv.setOnClickListener(v -> TorrentFileCheckDialog.this.dismiss());
 
         confirmTv.setOnClickListener(v -> {
-            if (listener != null){
+            if (listener != null) {
                 boolean containsChecked = false;
-                Boolean[] checkedIndexes = new Boolean[torrentFileList.size()];
-                for (int i = 0; i < torrentFileList.size(); i++) {
-                    if (!containsChecked){
-                        containsChecked = torrentFileList.get(i).isChecked();
+                List<Priority> priorityList = new ArrayList<>();
+
+                for (TorrentCheckBean checkBean : checkBeanList) {
+                    if (!containsChecked) {
+                        containsChecked = checkBean.isChecked();
                     }
-                    checkedIndexes[i] = torrentFileList.get(i).isChecked();
+                    priorityList.add(checkBean.isChecked()
+                            ? Priority.DEFAULT
+                            : Priority.IGNORE
+                    );
                 }
-                if (containsChecked){
-                    listener.onSelected(checkedIndexes);
+                
+                if (containsChecked) {
+                    listener.onSelected(priorityList);
                     TorrentFileCheckDialog.this.dismiss();
-                }else {
+                } else {
                     ToastUtils.showShort("请至少选择一个下载文件");
                 }
             }
         });
     }
 
-    public interface OnTorrentSelectedListener{
-        void onSelected(Boolean[] checkedIndexes);
+    public interface OnTorrentSelectedListener {
+        void onSelected(List<Priority> priorityList);
     }
 }

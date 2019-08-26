@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.ui.fragment;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,12 +16,14 @@ import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
+import com.xyoye.dandanplay.torrent.TorrentEngine;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
+import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
@@ -95,7 +99,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
         }
     }
 
-    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll, R.id.danmu_ll})
+    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll, R.id.danmu_ll, R.id.download_manager_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.player_setting_ll:
@@ -108,7 +112,10 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 launchActivity(ScanSettingActivity.class);
                 break;
             case R.id.download_setting_ll:
-                launchActivity(DownloadManagerActivity.class);
+                int fragmentPosition = TorrentEngine.getInstance().hasTasks() ? 0 : 1;
+                Bundle bundle = new Bundle();
+                bundle.putInt("fragment_position", fragmentPosition);
+                launchActivity(DownloadManagerActivity.class, bundle);
                 break;
             case R.id.user_info_rl:
                 launchActivity(PersonalInfoActivity.class);
@@ -138,6 +145,9 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 break;
             case R.id.danmu_ll:
                 launchActivity(DownloadBiliBiliActivity.class);
+                break;
+            case R.id.download_manager_ll:
+                launchActivity(DownloadSettingActivity.class);
                 break;
         }
     }

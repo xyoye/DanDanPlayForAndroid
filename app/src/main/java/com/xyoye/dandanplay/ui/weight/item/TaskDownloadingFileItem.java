@@ -111,8 +111,8 @@ public class TaskDownloadingFileItem implements AdapterItem<Torrent.TorrentFile>
             if (CommonUtils.isMediaFile(model.getFilePath())) {
                 if (model.getFileDoneLength() > 16 * 1024 * 1024) {
                     Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
-                    intent.putExtra("video_path", model.getFilePath());
                     intent.putExtra("task_hash", taskHash);
+                    intent.putExtra("video_path", model.getFilePath());
                     intent.putExtra("task_file_position", position);
                     mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADING_DANMU_BIND);
                 } else {

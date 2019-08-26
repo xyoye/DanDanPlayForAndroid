@@ -39,16 +39,29 @@ public class TorrentHelper {
             torrent.setPriorities(Collections.nCopies(torrentMetaInfo.fileCount, Priority.DEFAULT));
         }
 
-        List<Torrent.TorrentFile> childFileList = new ArrayList<>();
-        for (TorrentMetaInfo.TorrentMetaFileInfo fileInfo : torrentMetaInfo.fileList){
-            Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
-            torrentFile.setFilePath(fileInfo.getPath());
-            torrentFile.setFileLength(fileInfo.getSize());
-            torrentFile.setChecked(true);
-            childFileList.add(fileInfo.getIndex(), torrentFile);
+        List<Torrent.TorrentFile> childFileList = torrent.getChildFileList();
+        if (childFileList.size() != torrentMetaInfo.fileList.size()){
+            for (int i = 0; i < torrentMetaInfo.fileList.size(); i++) {
+                Torrent.TorrentFile torrentFile = new Torrent.TorrentFile();
+                TorrentMetaInfo.TorrentMetaFileInfo fileInfo = torrentMetaInfo.fileList.get(i);
+                torrentFile.setFilePath(fileInfo.getPath());
+                torrentFile.setFileLength(fileInfo.getSize());
+                torrentFile.setChecked(priorities[i].swig() > 0);
+                childFileList.add(fileInfo.getIndex(), torrentFile);
+            }
+        } else {
+            for (int i = 0; i < torrentMetaInfo.fileList.size(); i++) {
+                Torrent.TorrentFile torrentFile = childFileList.get(i);
+                TorrentMetaInfo.TorrentMetaFileInfo fileInfo = torrentMetaInfo.fileList.get(i);
+                torrentFile.setFilePath(fileInfo.getPath());
+                torrentFile.setFileLength(fileInfo.getSize());
+                torrentFile.setChecked(priorities[i].swig() > 0);
+            }
         }
-        torrent.setChildFileList(childFileList);
 
+        torrent.setChildFileList(childFileList);
+        torrent.setTorrentHash(torrentMetaInfo.sha1Hash);
+        torrent.setTaskName(torrentMetaInfo.torrentName);
         TorrentEngine.getInstance().download(torrent);
     }
 
@@ -72,6 +85,7 @@ public class TorrentHelper {
         return new TaskStateBean(
                 torrent.getTorrentHash(),
                 torrent.getTaskName(),
+                torrent.getSaveDirPath(),
                 task.getStateCode(),
                 task.getProgress(),
                 task.getTotalReceivedBytes(),

@@ -70,11 +70,12 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                 int taskId = taskCursor.getInt(0);
                 taskBean.set_id(taskId);
                 taskBean.setTitle(taskCursor.getString(1));
-                taskBean.setFolderPath(taskCursor.getString(2));
-                taskBean.setMagnet(taskCursor.getString(3));
-                taskBean.setTotalSize(taskCursor.getString(4));
-                taskBean.setTorrentHash(taskCursor.getString(5));
-                taskBean.setCompleteTime(taskCursor.getString(6));
+                taskBean.setSaveDirPath(taskCursor.getString(2));
+                taskBean.setTorrentFilePath(taskCursor.getString(3));
+                taskBean.setTorrentHash(taskCursor.getString(4));
+                taskBean.setAnimeTitle(taskCursor.getString(5));
+                taskBean.setTotalSize(taskCursor.getLong(6));
+                taskBean.setCompleteTime(taskCursor.getString(7));
                 taskBean.setFileList(getTaskFileList(taskId));
                 taskList.add(taskBean);
             }

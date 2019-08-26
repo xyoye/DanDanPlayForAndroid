@@ -12,19 +12,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.bean.event.TaskBindDanmuEndEvent;
-import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadedFileItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,10 +47,11 @@ public class TaskDownloadedDetailDialog extends Dialog {
     private BaseRvAdapter<DownloadedTaskBean.DownloadedTaskFileBean> fileAdapter;
     private Activity mActivity;
     private TaskDeleteListener taskDeleteListener;
+    private List<DownloadedTaskBean.DownloadedTaskFileBean> fileBeanList;
 
     public TaskDownloadedDetailDialog(@NonNull Context context, int taskPosition, DownloadedTaskBean taskBean, TaskDeleteListener taskDeleteListener) {
         super(context, R.style.Dialog);
-        this.mActivity = (Activity)context;
+        this.mActivity = (Activity) context;
         this.taskPosition = taskPosition;
         this.context = context;
         this.taskBean = taskBean;
@@ -69,14 +65,16 @@ public class TaskDownloadedDetailDialog extends Dialog {
         ButterKnife.bind(this, this);
 
         nameTv.setText(taskBean.getTitle());
-        pathTv.setText(taskBean.getFolderPath());
+        pathTv.setText(taskBean.getSaveDirPath());
         magnetTv.setText(taskBean.getMagnet());
         statusTv.setText("已完成");
+
+        fileBeanList = taskBean.getFileList();
 
         fileRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
-        fileAdapter = new BaseRvAdapter<DownloadedTaskBean.DownloadedTaskFileBean>(taskBean.getFileList()) {
+        fileAdapter = new BaseRvAdapter<DownloadedTaskBean.DownloadedTaskFileBean>(fileBeanList) {
             @NonNull
             @Override
             public AdapterItem<DownloadedTaskBean.DownloadedTaskFileBean> onCreateItem(int viewType) {
@@ -93,7 +91,7 @@ public class TaskDownloadedDetailDialog extends Dialog {
                 TaskDownloadedDetailDialog.this.dismiss();
                 break;
             case R.id.path_tv:
-                String path = taskBean.getFolderPath();
+                String path = taskBean.getSaveDirPath();
                 ClipboardManager clipboardManagerPath = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipDataPath = ClipData.newPlainText("Label", path);
                 if (clipboardManagerPath != null) {
@@ -114,76 +112,24 @@ public class TaskDownloadedDetailDialog extends Dialog {
                 new CommonDialog.Builder(context)
                         .setAutoDismiss()
                         .showExtra()
-                        .setOkListener(dialog ->{
-                            deleteTaskFormDataBase(taskBean.get_id());
-                            TaskDownloadedDetailDialog.this.dismiss();
-                            taskDeleteListener.onTaskDelete(taskPosition);
-                         })
-                        .setExtraListener(dialog -> {
-                            for (DownloadedTaskBean.DownloadedTaskFileBean fileBean : taskBean.getFileList()){
-                                FileUtils.delete(fileBean.getFilePath());
-                            }
-                            deleteTaskFormDataBase(taskBean.get_id());
-                            TaskDownloadedDetailDialog.this.dismiss();
-                            taskDeleteListener.onTaskDelete(taskPosition);
-                        })
+                        .setOkListener(dialog ->
+                                taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), false))
+                        .setExtraListener(dialog ->
+                                taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), true))
                         .build()
-                        .show( "确认删除任务？","删除任务和文件");
+                        .show("确认删除任务？", "删除任务和文件");
                 break;
         }
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDanmuBind(TaskBindDanmuEndEvent event) {
-        if (TaskDownloadedDetailDialog.this.isShowing() && event.getTaskPosition() == taskPosition){
-            int filePosition = event.getTaskFilePosition();
-            if (filePosition > -1 && filePosition < taskBean.getFileList().size()){
-                DownloadedTaskBean.DownloadedTaskFileBean fileBean = taskBean.getFileList().get(filePosition);
-                fileBean.setDanmuPath(event.getDanmuPath());
-                fileBean.setEpisode_id(event.getEpisodeId());
-
-                DataBaseManager.getInstance()
-                        .selectTable(15)
-                        .update()
-                        .where(2, fileBean.getFilePath())
-                        .param(1, taskBean.get_id())
-                        .param(4, event.getDanmuPath())
-                        .param(5, event.getEpisodeId())
-                        .postExecute();
-
-                fileAdapter.notifyDataSetChanged();
-            }
-        }
+    public void updateFileList(DownloadedTaskBean taskBean) {
+        fileBeanList.clear();
+        fileBeanList.addAll(taskBean.getFileList());
+        fileAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    private void deleteTaskFormDataBase(int taskId){
-        DataBaseManager.getInstance()
-                .selectTable(14)
-                .delete()
-                .where(0, String.valueOf(taskId))
-                .execute();
-        DataBaseManager.getInstance()
-                .selectTable(15)
-                .delete()
-                .where(1, String.valueOf(taskId))
-                .execute();
-
-    }
-
-    public interface TaskDeleteListener{
-        void onTaskDelete(int position);
+    public interface TaskDeleteListener {
+        void onTaskDelete(int position, String taskHash, boolean withFile);
     }
 }

@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.app;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
@@ -14,8 +15,11 @@ import com.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.ui.activities.MainActivity;
+import com.xyoye.dandanplay.ui.activities.OpenActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.CrashHandleUtils;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
 
@@ -59,15 +63,15 @@ public class IApplication extends Application {
         //AndroidUtilsCode
         Utils.init(this);
 
-//        CrashHandleUtils.getInstance().init(() -> {
-//            //重启到WelcomeActivity
-//            Intent restartIntent = new Intent(_context, MainActivity.class);
-//            restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);//必须添加FLAG_ACTIVITY_CLEAR_TASK否则会无线重启
-//            startActivity(restartIntent);
-//
-//            //杀死当前进程
-//            android.os.Process.killProcess(android.os.Process.myPid());
-//        });
+        CrashHandleUtils.getInstance().init(() -> {
+            //OpenActivity
+            Intent restartIntent = new Intent(_context, OpenActivity.class);
+            restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);//必须添加FLAG_ACTIVITY_CLEAR_TASK否则会无线重启
+            startActivity(restartIntent);
+
+            //杀死当前进程
+            android.os.Process.killProcess(android.os.Process.myPid());
+        });
 
         //Bugly
         Bugly.init(getApplicationContext(), KeyUtil.getBuglyAppId(getApplicationContext()), false);

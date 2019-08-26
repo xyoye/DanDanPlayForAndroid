@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.bean;
 
+import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
+
 import java.util.List;
 
 /**
@@ -9,10 +11,11 @@ import java.util.List;
 public class DownloadedTaskBean {
     private int _id;
     private String title;
-    private String folderPath;
-    private String magnet;
-    private String totalSize;
+    private String saveDirPath;
+    private String torrentFilePath;
     private String torrentHash;
+    private String animeTitle;
+    private long totalSize;
     private String completeTime;
     private List<DownloadedTaskFileBean> fileList;
 
@@ -32,27 +35,31 @@ public class DownloadedTaskBean {
         this.title = title;
     }
 
-    public String getFolderPath() {
-        return folderPath;
+    public String getSaveDirPath() {
+        return saveDirPath;
     }
 
-    public void setFolderPath(String folderPath) {
-        this.folderPath = folderPath;
+    public void setSaveDirPath(String saveDirPath) {
+        this.saveDirPath = saveDirPath;
+    }
+
+    public String getTorrentFilePath() {
+        return torrentFilePath;
+    }
+
+    public void setTorrentFilePath(String torrentFilePath) {
+        this.torrentFilePath = torrentFilePath;
     }
 
     public String getMagnet() {
-        return magnet;
+        return TorrentUtils.MAGNET_HEADER + torrentHash;
     }
 
-    public void setMagnet(String magnet) {
-        this.magnet = magnet;
-    }
-
-    public String getTotalSize() {
+    public long getTotalSize() {
         return totalSize;
     }
 
-    public void setTotalSize(String totalSize) {
+    public void setTotalSize(long totalSize) {
         this.totalSize = totalSize;
     }
 
@@ -62,6 +69,14 @@ public class DownloadedTaskBean {
 
     public void setTorrentHash(String torrentHash) {
         this.torrentHash = torrentHash;
+    }
+
+    public String getAnimeTitle() {
+        return animeTitle;
+    }
+
+    public void setAnimeTitle(String animeTitle) {
+        this.animeTitle = animeTitle;
     }
 
     public String getCompleteTime() {

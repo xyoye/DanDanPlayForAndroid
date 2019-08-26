@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,20 +8,21 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
 import com.xyoye.dandanplay.torrent.info.TaskStateBean;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,9 +39,8 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
     RecyclerView taskRv;
 
     private BaseRvAdapter<TaskStateBean> taskRvAdapter;
-    private Handler mHandler = IApplication.getMainHandler();
     private TaskManageListener taskManageListener;
-    private DownloadManagerActivity managerActivity;
+    private List<TaskStateBean> taskStateBeanList;
 
     public static DownloadingFragment newInstance() {
         return new DownloadingFragment();
@@ -60,7 +59,7 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
 
     @Override
     public void initView() {
-        managerActivity = (DownloadManagerActivity)mContext;
+        taskStateBeanList = new ArrayList<>();
 
         taskRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         taskRv.setNestedScrollingEnabled(false);
@@ -69,7 +68,7 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         if (simpleItemAnimator != null)
             simpleItemAnimator.setSupportsChangeAnimations(false);
 
-        taskRvAdapter = new BaseRvAdapter<TaskStateBean>(managerActivity.getTaskList()) {
+        taskRvAdapter = new BaseRvAdapter<TaskStateBean>(taskStateBeanList) {
             @NonNull
             @Override
             public AdapterItem<TaskStateBean> onCreateItem(int viewType) {
@@ -116,7 +115,11 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         this.taskManageListener = taskManageListener;
     }
 
-    public void updateAdapter(){
+    public void updateAdapter(List<TaskStateBean> stateBeanList){
+        taskStateBeanList.clear();
+        taskStateBeanList.addAll(stateBeanList);
         taskRvAdapter.notifyDataSetChanged();
+        downloadingTaskNumberTv.setText(
+                String.valueOf(taskRvAdapter.getItemCount()));
     }
 }

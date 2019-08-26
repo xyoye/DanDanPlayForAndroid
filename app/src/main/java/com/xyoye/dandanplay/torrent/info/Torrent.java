@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.torrent.info;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
 
@@ -29,6 +30,25 @@ public class Torrent implements Parcelable {
 
     private List priorities;
     private List<TorrentFile> childFileList;
+
+    /**
+     * 新增下载任务时使用
+     */
+    public Torrent(String animeTitle, String torrentFilePath, String saveDirPath, List<Priority> priorityList) {
+        this.animeTitle = animeTitle;
+        this.torrentFilePath = torrentFilePath;
+        this.saveDirPath = saveDirPath;
+        this.priorities = priorityList;
+    }
+
+    /**
+     * 恢复任务时用
+     */
+    public Torrent(String animeTitle, String torrentFilePath, String saveDirPath) {
+        this.animeTitle = animeTitle;
+        this.torrentFilePath = torrentFilePath;
+        this.saveDirPath = saveDirPath;
+    }
 
     protected Torrent(Parcel in) {
         taskName = in.readString();
@@ -127,33 +147,66 @@ public class Torrent implements Parcelable {
 
     public List<Priority> getPriorities() {
         List<Priority> priorityArrayList = new ArrayList<>();
-        for (Object priority : priorities){
-            priorityArrayList.add((Priority)priority);
+        for (Object priority : priorities) {
+            priorityArrayList.add((Priority) priority);
         }
         return priorityArrayList;
     }
 
-    public String getPrioritiesStr(){
+    public String getPriorityStr() {
         if (priorities.size() == 0)
             return "";
         StringBuilder prioritiesStr = new StringBuilder();
-        for (Object priorityObj : priorities){
-            Priority priority = (Priority)priorityObj;
+        for (Object priorityObj : priorities) {
+            Priority priority = (Priority) priorityObj;
             prioritiesStr.append(priority.swig()).append(";");
         }
-        return prioritiesStr.substring(0, prioritiesStr.length()-1);
+        return prioritiesStr.substring(0, prioritiesStr.length() - 1);
+    }
+
+    public void setPriorityStr(String priorityStr) {
+        if (TextUtils.isEmpty(priorityStr)) {
+            this.priorities = new ArrayList();
+        } else {
+            if (priorityStr.contains(";")) {
+                List<Priority> priorityList = new ArrayList<>();
+                for (String str : priorityStr.split(";")) {
+                    Priority priority;
+                    try {
+                        int value = Integer.valueOf(str);
+                        priority = Priority.fromSwig(value);
+                    } catch (Exception e) {
+                        priority = Priority.DEFAULT;
+                    }
+                    priorityList.add(priority);
+                }
+                this.priorities = priorityList;
+            } else {
+                Priority priority;
+                try {
+                    int value = Integer.valueOf(priorityStr);
+                    priority = Priority.fromSwig(value);
+                } catch (Exception e) {
+                    priority = Priority.DEFAULT;
+                }
+                List<Priority> priorityList = new ArrayList<>();
+
+                priorityList.add(priority);
+                this.priorities = priorityList;
+            }
+        }
     }
 
     public void setPriorities(List<Priority> priorities) {
         this.priorities = priorities;
     }
 
-    public String getMagnetLink(){
+    public String getMagnetLink() {
         return TorrentUtils.MAGNET_HEADER + torrentHash;
     }
 
     public List<TorrentFile> getChildFileList() {
-        return childFileList;
+        return childFileList == null ? new ArrayList<>() : childFileList;
     }
 
     public void setChildFileList(List<TorrentFile> childFileList) {
@@ -193,7 +246,7 @@ public class Torrent implements Parcelable {
         dest.writeTypedList(childFileList);
     }
 
-    public static class TorrentFile implements Parcelable{
+    public static class TorrentFile implements Parcelable {
         private String filePath;
         private long fileLength;
         private long fileDoneLength;

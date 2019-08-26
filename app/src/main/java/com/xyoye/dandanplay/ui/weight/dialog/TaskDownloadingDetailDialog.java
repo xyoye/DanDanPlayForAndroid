@@ -72,7 +72,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
         ButterKnife.bind(this, this);
 
         nameTv.setText(taskStateBean.name);
-        pathTv.setText("");
+        pathTv.setText(taskStateBean.saveDirPath);
         magnetTv.setText(TorrentUtils.MAGNET_HEADER + taskStateBean.torrentId);
         statusTv.setText(statusStr);
 
@@ -117,10 +117,14 @@ public class TaskDownloadingDetailDialog extends Dialog {
                 new CommonDialog.Builder(context)
                         .setAutoDismiss()
                         .showExtra()
-                        .setOkListener(dialog ->
-                                taskManageListener.deleteTask(taskStateBean.torrentId, false))
-                        .setExtraListener(dialog ->
-                                taskManageListener.deleteTask(taskStateBean.torrentId, true))
+                        .setOkListener(dialog -> {
+                            TaskDownloadingDetailDialog.this.dismiss();
+                            taskManageListener.deleteTask(taskStateBean.torrentId, false);
+                        })
+                        .setExtraListener(dialog -> {
+                            TaskDownloadingDetailDialog.this.dismiss();
+                            taskManageListener.deleteTask(taskStateBean.torrentId, true);
+                        })
                         .build()
                         .show("确认删除任务？", "删除任务和文件");
                 break;

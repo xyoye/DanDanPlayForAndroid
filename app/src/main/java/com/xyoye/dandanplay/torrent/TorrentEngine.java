@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.torrent;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.xyoye.dandanplay.torrent.info.ProxyInfo;
 import com.xyoye.dandanplay.torrent.info.Torrent;
@@ -47,6 +48,7 @@ import org.libtorrent4j.swig.torrent_info;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -55,7 +57,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by xyoye on 2019/8/20.
@@ -232,6 +233,7 @@ public class TorrentEngine extends SessionManager {
         applySettings(settingsPack);
         saveSessionSettings();
     }
+
     /**
      * 应用设置
      */
@@ -283,7 +285,7 @@ public class TorrentEngine extends SessionManager {
      * 当前是否有任务
      */
     public boolean hasTasks() {
-        return torrentTasks.isEmpty();
+        return !torrentTasks.isEmpty();
     }
 
     /**
@@ -307,16 +309,10 @@ public class TorrentEngine extends SessionManager {
      * 加载队列中任务
      */
     private void runQueueTorrentTask() {
-        LoadTorrentTask loadTorrentTask = null;
-        try {
-            if (!loadTaskQueue.isEmpty())
-                loadTorrentTask = loadTaskQueue.poll();
-        } catch (Exception e) {
-            return;
-        }
-
-        if (loadTorrentTask != null)
+        while (!loadTaskQueue.isEmpty()) {
+            LoadTorrentTask loadTorrentTask = loadTaskQueue.poll();
             loadTaskExecutor.execute(loadTorrentTask);
+        }
     }
 
     /**
@@ -394,7 +390,7 @@ public class TorrentEngine extends SessionManager {
                 continue;
 
             LoadTorrentTask loadTask = new LoadTorrentTask(torrent.getTorrentHash());
-            TorrentInfo torrentInfo = new TorrentInfo(new File(torrent.getSaveDirPath()));
+            TorrentInfo torrentInfo = new TorrentInfo(new File(torrent.getTorrentFilePath()));
             Priority[] priorities = TorrentUtils.getPriorities(torrent);
             if (priorities == null || priorities.length != torrentInfo.numFiles()) {
                 if (engineCallback != null)
@@ -739,11 +735,17 @@ public class TorrentEngine extends SessionManager {
         @Override
         public void run() {
             try {
-                if (isMagnet)
+                if (isMagnet) {
                     download(uri, saveDir);
-                else
+                } else {
+                    Log.e("TorrentEngine", "before download"
+                            + " filePath: " + torrentFile.getAbsolutePath()
+                            + " saveDir: " + saveDir.getAbsolutePath()
+                            + " resume: " + resume.getAbsolutePath()
+                            + " priorities: " + Arrays.toString(priorities));
                     download(new TorrentInfo(torrentFile), saveDir, resume, priorities, null);
-
+                    Log.e("TorrentEngine", "after download");
+                }
             } catch (Exception e) {
                 if (engineCallback != null)
                     engineCallback.onRestoreSessionError(torrentId);

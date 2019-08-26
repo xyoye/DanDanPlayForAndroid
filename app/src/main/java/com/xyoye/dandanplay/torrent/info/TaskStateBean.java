@@ -13,6 +13,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 {
     public String torrentId = "";
     public String name = "";
+    public String saveDirPath = "";
     public TorrentStateCode stateCode = TorrentStateCode.UNKNOWN;
     public int progress = 0;
     public long receivedBytes = 0L;
@@ -42,6 +43,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
     }
 
     public TaskStateBean(String torrentId, String name,
+                         String saveDirPath,
                          TorrentStateCode stateCode, int progress,
                          long receivedBytes, long uploadedBytes,
                          long totalBytes, long downloadSpeed,
@@ -52,6 +54,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 
         this.torrentId = torrentId;
         this.name = name;
+        this.saveDirPath = saveDirPath;
         this.stateCode = stateCode;
         this.progress = progress;
         this.receivedBytes = receivedBytes;
@@ -72,6 +75,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 
         torrentId = source.readString();
         name = source.readString();
+        saveDirPath = source.readString();
         stateCode = (TorrentStateCode)source.readSerializable();
         progress = source.readInt();
         receivedBytes = source.readLong();
@@ -99,6 +103,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 
         dest.writeString(torrentId);
         dest.writeString(name);
+        dest.writeString(saveDirPath);
         dest.writeSerializable(stateCode);
         dest.writeInt(progress);
         dest.writeLong(receivedBytes);
@@ -142,6 +147,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 
         result = prime * result + ((torrentId == null) ? 0 : torrentId.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((saveDirPath == null) ? 0 : saveDirPath.hashCode());
         result = prime * result + ((stateCode == null) ? 0 : stateCode.hashCode());
         result = prime * result + progress;
         result = prime * result + (int) (receivedBytes ^ (receivedBytes >>> 32));
@@ -170,6 +176,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
 
         return (torrentId == null || torrentId.equals(state.torrentId)) &&
                 (name == null || name.equals(state.name)) &&
+                (saveDirPath == null || saveDirPath.equals(state.saveDirPath)) &&
                 (stateCode == null || stateCode.equals(state.stateCode)) &&
                 progress == state.progress &&
                 receivedBytes == state.receivedBytes &&
@@ -189,6 +196,7 @@ public class TaskStateBean extends AbstractStateParcel<TaskStateBean>
         return "TaskStateBean{" +
                 "torrentId='" + torrentId + '\'' +
                 ", name='" + name + '\'' +
+                ", saveDirPath='" + saveDirPath + '\'' +
                 ", stateCode=" + stateCode +
                 ", progress=" + progress +
                 ", receivedBytes=" + receivedBytes +

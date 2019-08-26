@@ -83,8 +83,8 @@ public class TaskDownloadedFileItem implements AdapterItem<DownloadedTaskBean.Do
         danmuBindIv.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getFilePath())) {
                 Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
-                intent.putExtra("video_path", model.getFilePath());
                 intent.putExtra("position", taskPosition);
+                intent.putExtra("video_path", model.getFilePath());
                 intent.putExtra("task_file_position", position);
                 mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADED_DANMU_BIND);
             } else {

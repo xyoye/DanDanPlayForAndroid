@@ -288,6 +288,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/download_manager_ll"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -295,7 +296,24 @@
             android:layout_marginStart="1dp"
             android:layout_marginEnd="2dp"
             android:orientation="vertical"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@color/white"
             android:clickable="false">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="8dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@mipmap/ic_personal_download"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/text_black"
+                android:textSize="12sp"
+                android:text="下载设置"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
     </LinearLayout>

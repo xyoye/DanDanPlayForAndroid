@@ -1,8 +1,8 @@
 package com.xyoye.dandanplay.torrent.utils;
 
 public class EngineSettings {
-        private static final int MAX_PORT_NUMBER = 65535;
-        private static final int MIN_PORT_NUMBER = 49160;
+        public static final int MAX_PORT_NUMBER = 65535;
+        public static final int MIN_PORT_NUMBER = 49160;
 
         public int cacheSize = 256;
         public int activeDownloads = 3;

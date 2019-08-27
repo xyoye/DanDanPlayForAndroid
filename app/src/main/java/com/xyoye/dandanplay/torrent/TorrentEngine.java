@@ -309,10 +309,17 @@ public class TorrentEngine extends SessionManager {
      * 加载队列中任务
      */
     private void runQueueTorrentTask() {
-        while (!loadTaskQueue.isEmpty()) {
-            LoadTorrentTask loadTorrentTask = loadTaskQueue.poll();
-            loadTaskExecutor.execute(loadTorrentTask);
+        LoadTorrentTask loadTorrentTask = null;
+        try {
+            if (!loadTaskQueue.isEmpty())
+                loadTorrentTask = loadTaskQueue.poll();
+        } catch (Exception e) {
+
+            return;
         }
+
+        if (loadTorrentTask != null)
+            loadTaskExecutor.execute(loadTorrentTask);
     }
 
     /**
@@ -481,6 +488,15 @@ public class TorrentEngine extends SessionManager {
 
         engineSettings.port = port;
         applySettings(engineSettings);
+    }
+
+    /**
+     * 设置一个随机监听端口
+     */
+    public void setRandomPort() {
+        int randomPort = EngineSettings.MIN_PORT_NUMBER + (int) (Math.random()
+                * ((EngineSettings.MAX_PORT_NUMBER - EngineSettings.MIN_PORT_NUMBER) + 1));
+        setListenPort(randomPort);
     }
 
     /**
@@ -738,6 +754,7 @@ public class TorrentEngine extends SessionManager {
                 if (isMagnet) {
                     download(uri, saveDir);
                 } else {
+                    // TODO: 2019/8/26 恢复任务崩溃
                     Log.e("TorrentEngine", "before download"
                             + " filePath: " + torrentFile.getAbsolutePath()
                             + " saveDir: " + saveDir.getAbsolutePath()
@@ -777,6 +794,7 @@ public class TorrentEngine extends SessionManager {
                     //回调
                     if (engineCallback != null)
                         engineCallback.onTorrentAdded(torrent.getTorrentHash());
+                    runQueueTorrentTask();
                     break;
                 case TORRENT_REMOVED:
                     //下载中列表移除任务

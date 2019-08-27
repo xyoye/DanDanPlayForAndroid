@@ -83,7 +83,6 @@ public class TorrentService extends Service {
             isAlreadyRunning = true;
             TorrentEngine.getInstance().setEngineCallback(engineCallback);
             TorrentEngine.getInstance().setSettings(new EngineSettings());
-            TorrentEngine.getInstance().setProxy(getProxySettings());
             TorrentEngine.getInstance().start();
         }
 
@@ -161,6 +160,8 @@ public class TorrentService extends Service {
 
             @Override
             public void onEngineStarted() {
+                TorrentEngine.getInstance().setProxy(getProxySettings());
+                TorrentEngine.getInstance().setRandomPort();
                 TorrentEngine.getInstance().restoreTasks(loadHistoryTask());
                 // TODO: 2019/8/22 开启流媒体服务
             }

@@ -102,8 +102,8 @@ dependencies {
     //Don't use Commons IO >= 2.6, because they uses Java NIO, supported only from API 26
     //noinspection GradleDependency
     implementation 'commons-io:commons-io:2.5'
-    implementation 'org.libtorrent4j:libtorrent4j:1.2.0.22'
-    implementation 'org.libtorrent4j:libtorrent4j-android-arm:1.2.0.22'
+    implementation 'org.libtorrent4j:libtorrent4j:1.2.1.0'
+    implementation 'org.libtorrent4j:libtorrent4j-android-arm:1.2.1.0'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

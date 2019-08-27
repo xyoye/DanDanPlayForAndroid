@@ -41,7 +41,7 @@
     </style>
 
     <style name="OpenTheme" parent="AppBaseTheme">
-        <item name="android:windowBackground">@raw/launch</item>
+        <item name="android:windowBackground">@drawable/background_app_open</item>
     </style>
 
     <style name="Dialog">

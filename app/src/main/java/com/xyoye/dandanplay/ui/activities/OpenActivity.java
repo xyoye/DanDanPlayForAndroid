@@ -26,8 +26,6 @@ import butterknife.BindView;
  */
 
 public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements OpenView {
-    @BindView(R.id.image_iv)
-    ImageView imageView;
 
     @Override
     protected void process(Bundle savedInstanceState) {
@@ -46,19 +44,11 @@ public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements Open
         //设置当前窗体为全屏显示
         Window window = getWindow();
         window.setFlags(flag, flag);
-        setBgRes();
     }
 
     @Override
     public void initListener() {
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        imageView.setImageBitmap(null);
-        System.gc();
-        super.onDestroy();
     }
 
     @NonNull
@@ -67,19 +57,9 @@ public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements Open
         return new OpenPresenterImpl(this, this);
     }
 
-    private void setBgRes() {
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        opt.inPurgeable = true;
-        opt.inInputShareable = true;
-        InputStream is = getResources().openRawResource(R.raw.launch);
-        Bitmap bm = BitmapFactory.decodeStream(is, null, opt);
-        imageView.setImageBitmap(bm);
-    }
-
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setTranslucentForImageView(this,null);
+        StatusBarUtil.setTranslucentForImageView(this, null);
         StatusBarUtil.hideFakeStatusBarView(this);
     }
 
@@ -94,6 +74,5 @@ public class OpenActivity extends BaseMvpActivity<OpenPresenter> implements Open
         }
         this.finish();
     }
-
 
 }

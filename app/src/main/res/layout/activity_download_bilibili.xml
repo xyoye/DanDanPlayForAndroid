@@ -70,7 +70,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:background="@drawable/bg_text_bt_theme"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp"
             android:text="确定"/>
 
@@ -111,7 +111,7 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:background="@drawable/bg_text_bt_theme"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp"
             android:text="确定"/>
 

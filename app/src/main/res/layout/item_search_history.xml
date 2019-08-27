@@ -28,7 +28,7 @@
             android:layout_toEndOf="@+id/history_iv"
             android:layout_marginStart="5dp"
             android:textSize="14sp"
-            android:textColor="@color/black_color"
+            android:textColor="@color/text_black"
             android:text="测试"/>
 
         <ImageView
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textSize="12sp"
-            android:textColor="@color/black_color"
+            android:textColor="@color/text_black"
             android:text="删除所有搜索记录"/>
     </RelativeLayout>
 

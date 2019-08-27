@@ -90,7 +90,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/path_tips"
                 android:textSize="12sp"
-                android:textColor="@color/theme_color_light"
+                android:textColor="@color/text_theme"
                 android:text=""/>
         </RelativeLayout>
 
@@ -114,7 +114,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/magnet_tips"
                 android:textSize="12sp"
-                android:textColor="@color/theme_color_light"
+                android:textColor="@color/text_theme"
                 android:text=""/>
         </RelativeLayout>
 
@@ -139,7 +139,7 @@
                 android:layout_toEndOf="@+id/status_tips"
                 android:layout_centerVertical="true"
                 android:textSize="12sp"
-                android:textColor="@color/theme_color_light"
+                android:textColor="@color/text_theme"
                 android:text=""/>
 
             <TextView
@@ -149,7 +149,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:textSize="12sp"
-                android:textColor="@color/red_color"
+                android:textColor="@color/text_red"
                 android:text="删除任务"/>
         </RelativeLayout>
 

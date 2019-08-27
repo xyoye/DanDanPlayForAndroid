@@ -17,7 +17,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:layout_marginTop="5dp"
                 android:textSize="16sp"
                 android:text="音视频"/>
@@ -32,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
                     android:text="屏幕翻转"/>
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:textSize="14sp"
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="播放速度"/>
 
@@ -115,7 +115,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="0.5"/>
 
@@ -127,7 +127,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="0.75"/>
 
@@ -139,7 +139,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="1.0"/>
 
@@ -151,7 +151,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="1.25"/>
 
@@ -163,7 +163,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="1.5"/>
 
@@ -175,7 +175,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="2.0"/>
 
@@ -191,7 +191,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:textSize="14sp"
@@ -216,7 +216,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:textSize="14sp"

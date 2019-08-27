@@ -14,7 +14,7 @@
         android:id="@+id/track_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
+        android:textColor="@color/text_white"
         android:textSize="14sp"
         android:text="测试"/>
 

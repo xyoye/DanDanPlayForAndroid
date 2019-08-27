@@ -754,14 +754,7 @@ public class TorrentEngine extends SessionManager {
                 if (isMagnet) {
                     download(uri, saveDir);
                 } else {
-                    // TODO: 2019/8/26 恢复任务崩溃
-                    Log.e("TorrentEngine", "before download"
-                            + " filePath: " + torrentFile.getAbsolutePath()
-                            + " saveDir: " + saveDir.getAbsolutePath()
-                            + " resume: " + resume.getAbsolutePath()
-                            + " priorities: " + Arrays.toString(priorities));
                     download(new TorrentInfo(torrentFile), saveDir, resume, priorities, null);
-                    Log.e("TorrentEngine", "after download");
                 }
             } catch (Exception e) {
                 if (engineCallback != null)

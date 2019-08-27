@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_gray"
+    android:background="@color/diver_color"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar"/>
@@ -124,8 +124,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:background="@android:color/holo_red_light"
-            android:textColor="@color/white"
+            android:background="@color/text_red"
+            android:textColor="@color/text_white"
             android:textSize="16sp"
             android:text="@string/logout_tip" />
     </RelativeLayout>

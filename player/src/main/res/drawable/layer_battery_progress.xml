@@ -7,7 +7,7 @@
         android:gravity="center_vertical">
         <clip>
             <shape>
-                <solid android:color="@android:color/holo_red_light"/>
+                <solid android:color="@color/red"/>
             </shape>
         </clip>
     </item>

@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeTagBean;
-import com.xyoye.dandanplay.ui.activities.anime.AnimeDetailActivityV2;
+import com.xyoye.dandanplay.ui.activities.anime.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -58,7 +58,7 @@ public class TagAnimeItem implements AdapterItem<AnimeTagBean.AnimesBean> {
         animaTitle.setText(model.getAnimeTitle());
 
         mView.setOnClickListener(v ->
-                AnimeDetailActivityV2.launchAnimeDetail(
+                AnimeDetailActivity.launchAnimeDetail(
                         (Activity)mView.getContext(),
                         model.getAnimeId()+"")
         );

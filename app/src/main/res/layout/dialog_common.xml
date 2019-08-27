@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:textColor="#ff333333"
+            android:textColor="@color/text_black"
             android:textSize="19sp"
             android:text="提示"/>
 
@@ -28,9 +28,9 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="29dp"
-            android:textColor="#ff666666"
+            android:textColor="@color/text_black"
             android:textSize="16sp"
-            android:text="确定要退出当前用户吗？" />
+            android:text="" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/extra_tv"
@@ -41,7 +41,7 @@
             android:layout_marginStart="25dp"
             android:padding="5dp"
             android:gravity="center"
-            android:textColor="#ff5dabf3"
+            android:textColor="@color/text_theme"
             android:textSize="15sp"
             android:text="更多"
             android:visibility="gone"/>
@@ -62,7 +62,7 @@
                 android:layout_marginEnd="10dp"
                 android:padding="5dp"
                 android:gravity="center"
-                android:textColor="#ffea6557"
+                android:textColor="@color/text_red"
                 android:textSize="15sp"
                 android:text="取消"/>
             <android.support.v7.widget.AppCompatTextView
@@ -72,7 +72,7 @@
                 android:layout_marginEnd="10dp"
                 android:padding="5dp"
                 android:gravity="center"
-                android:textColor="#ff5dabf3"
+                android:textColor="@color/text_theme"
                 android:textSize="15sp"
                 android:text="确定" />
         </LinearLayout>

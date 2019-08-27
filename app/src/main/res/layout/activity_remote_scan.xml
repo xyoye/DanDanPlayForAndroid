@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="419dp"
-        android:textColor="#ffffffff"
+        android:textColor="@color/text_white"
         android:textSize="18sp"
         android:text="请将二维码放入框内" />
 
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="#ffffffff"
+            android:textColor="@color/text_white"
             android:textSize="18sp"
             android:text=""/>
     </RelativeLayout>

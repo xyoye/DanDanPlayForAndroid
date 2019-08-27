@@ -45,8 +45,8 @@
     
     <!-- 截图对话框 -->
     <style name="AnimateDialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="colorPrimary">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowIsFloating">true</item>

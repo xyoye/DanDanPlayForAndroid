@@ -5,6 +5,7 @@ import android.app.Dialog;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 /**
  * Modified by xyoye on 2019/5/27.
@@ -14,7 +15,7 @@ public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 
     @Override
     protected int getToolbarColor() {
-        return this.getResources().getColor(R.color.theme_color);
+        return CommonUtils.getResColor(R.color.theme_color);
     }
 
     @Override

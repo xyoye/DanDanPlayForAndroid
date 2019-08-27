@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/diver_color"
+    android:background="@color/layout_bg_color"
     android:orientation="vertical">
 
     <include layout="@layout/layout_toolbar" />
@@ -213,7 +213,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/gray_color4" />
+                android:background="@color/diver_color_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -304,7 +304,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/gray_color4" />
+                android:background="@color/diver_color_dark" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -434,7 +434,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/gray_color4" />
+                android:background="@color/diver_color_dark" />
 
             <TextView
                 android:layout_width="wrap_content"

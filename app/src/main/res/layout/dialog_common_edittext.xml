@@ -71,7 +71,7 @@
                 android:background="@drawable/bg_dialog_item_left"
                 android:gravity="center"
                 android:textSize="14sp"
-                android:textColor="@color/gray_color3"
+                android:textColor="@color/text_gray"
                 android:text="取消"/>
 
             <TextView
@@ -83,7 +83,7 @@
                 android:background="@drawable/bg_dialog_item_right"
                 android:gravity="center"
                 android:textSize="14sp"
-                android:textColor="@color/theme_color"
+                android:textColor="@color/text_theme"
                 android:text="确定"/>
         </LinearLayout>
     </LinearLayout>

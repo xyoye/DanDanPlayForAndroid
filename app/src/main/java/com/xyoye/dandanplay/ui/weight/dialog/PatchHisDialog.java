@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.JsonUtil;
 
 import java.util.ArrayList;
@@ -67,12 +68,12 @@ public class PatchHisDialog extends Dialog {
             }
         }
 
-        if (AppConfig.getInstance().isAutoQueryPatch()){
+        if (AppConfig.getInstance().isAutoQueryPatch()) {
             fixModeTv.setText("自动");
-            fixModeTv.setTextColor(getContext().getResources().getColor(R.color.theme_color));
-        }else {
+            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+        } else {
             fixModeTv.setText("手动");
-            fixModeTv.setTextColor(getContext().getResources().getColor(R.color.bilibili_pink));
+            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
         }
 
         hisTv.setText(his.toString());
@@ -83,14 +84,14 @@ public class PatchHisDialog extends Dialog {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fix_mode_tv:
-                if (AppConfig.getInstance().isAutoQueryPatch()){
+                if (AppConfig.getInstance().isAutoQueryPatch()) {
                     AppConfig.getInstance().setAutoQueryPatch(false);
                     fixModeTv.setText("手动");
-                    fixModeTv.setTextColor(mContext.getResources().getColor(R.color.bilibili_pink));
-                }else {
+                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
+                } else {
                     AppConfig.getInstance().setAutoQueryPatch(true);
                     fixModeTv.setText("自动");
-                    fixModeTv.setTextColor(mContext.getResources().getColor(R.color.theme_color));
+                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 }
                 break;
             case R.id.about_sophix_iv:

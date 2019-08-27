@@ -9,13 +9,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.player.commom.utils.CommonPlayerUtils;
 import com.player.ijkplayer.R;
 
 /**
  * Created by xyoye on 2019/5/6.
  */
 
-public class SkipTipView extends LinearLayout implements View.OnClickListener{
+public class SkipTipView extends LinearLayout implements View.OnClickListener {
     private TextView skipTimeTv;
     private TextView skipContentTv;
     private TextView skipConfirmTv;
@@ -46,40 +47,40 @@ public class SkipTipView extends LinearLayout implements View.OnClickListener{
         skipConfirmTv.setOnClickListener(this);
         findViewById(R.id.iv_cancel_skip).setOnClickListener(this);
 
-        if (skipSubtitle){
+        if (skipSubtitle) {
             skipConfirmTv.setText("前往加载");
-            skipConfirmTv.setTextColor(getResources().getColor(R.color.theme_color));
+            skipConfirmTv.setTextColor(CommonPlayerUtils.getResColor(getContext(), R.color.theme_color));
         }
     }
 
     @SuppressLint("SetTextI18n")
-    public void setSkipContent(int subtitleSize){
-        if (skipSubtitle){
-            skipContentTv.setText("匹配到"+subtitleSize+"条在线字幕");
+    public void setSkipContent(int subtitleSize) {
+        if (skipSubtitle) {
+            skipContentTv.setText("匹配到" + subtitleSize + "条在线字幕");
         }
     }
 
     @Override
     public void onClick(View v) {
-        if (listener != null){
+        if (listener != null) {
             int id = v.getId();
-            if (id == R.id.iv_cancel_skip){
+            if (id == R.id.iv_cancel_skip) {
                 listener.onCancel();
-            }else if (id == R.id.tv_do_skip){
+            } else if (id == R.id.tv_do_skip) {
                 listener.onSkip();
             }
         }
     }
 
-    public void setSkipTime(String time){
+    public void setSkipTime(String time) {
         skipTimeTv.setText(time);
     }
 
-    public void setCallBack(SkipTipListener listener){
+    public void setCallBack(SkipTipListener listener) {
         this.listener = listener;
     }
 
-    public interface SkipTipListener{
+    public interface SkipTipListener {
         void onCancel();
 
         void onSkip();

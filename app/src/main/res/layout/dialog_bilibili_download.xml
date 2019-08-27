@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/text_black"
             android:text="文件名："/>
 
         <EditText
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="@android:color/black"/>
+            android:textColor="@color/text_black"/>
     </LinearLayout>
 
     <Button
@@ -62,7 +62,7 @@
         android:layout_marginBottom="15dp"
         android:stateListAnimator="@null"
         android:background="@drawable/btn_corner_blue"
-        android:textColor="@android:color/white"
+        android:textColor="@color/text_white"
         android:textSize="14sp"
         android:enabled="false"
         android:text="开始下载"
@@ -79,7 +79,7 @@
         android:layout_marginBottom="15dp"
         android:stateListAnimator="@null"
         android:background="@drawable/btn_corner_blue"
-        android:textColor="@android:color/white"
+        android:textColor="@color/text_white"
         android:textSize="14sp"
         android:text="完成"
         android:visibility="gone"

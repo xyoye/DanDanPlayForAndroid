@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@android:color/black">
+    android:background="@color/black">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/exo_player_surface_view"

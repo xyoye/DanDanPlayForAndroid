@@ -52,7 +52,7 @@
             android:layout_marginStart="12dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/black_color"
+            android:textColor="@color/text_black"
             android:text="清空"/>
 
         <TextView
@@ -64,7 +64,7 @@
             android:layout_marginStart="7dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/bilibili_pink"
+            android:textColor="@color/text_pink"
             android:text="删除" />
 
         <TextView
@@ -76,7 +76,7 @@
             android:layout_marginEnd="12dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:clickable="false"
             android:text="添加" />
 

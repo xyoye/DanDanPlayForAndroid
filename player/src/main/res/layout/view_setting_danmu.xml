@@ -17,7 +17,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:layout_marginTop="5dp"
                 android:textSize="16sp"
                 android:text="弹幕"/>
@@ -32,7 +32,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="文字比例"/>
 
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="50%"/>
             </RelativeLayout>
@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="弹幕速度"/>
 
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="50%"/>
             </RelativeLayout>
@@ -96,7 +96,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="透明度"/>
 
@@ -105,7 +105,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="100%"/>
             </RelativeLayout>
@@ -123,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:textSize="14sp"
                 android:text="时间调节"/>
 
@@ -143,11 +143,11 @@
                         android:id="@+id/danmu_extra_time_reduce"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:gravity="center"
                         android:layout_gravity="center_vertical"
                         android:textSize="18sp"
-                        android:background="#33ffffff"
+                        android:background="@color/selected_view_bg"
                         android:text="—"/>
                     <EditText
                         android:id="@+id/danmu_extra_time_et"
@@ -160,7 +160,7 @@
                         android:imeOptions="actionDone"
                         android:maxLines="1"
                         android:maxLength="50"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:inputType="number"
                         android:textSize="14sp"
                         android:hint="请输入偏移时间"
@@ -169,11 +169,11 @@
                         android:id="@+id/danmu_extra_time_add"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:gravity="center"
                         android:layout_gravity="center_vertical"
                         android:textSize="18sp"
-                        android:background="#33ffffff"
+                        android:background="@color/selected_view_bg"
                         android:text="+"/>
 
                 </LinearLayout>
@@ -185,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:textSize="14sp"
                 android:text="弹幕屏蔽"/>
 
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textSize="14sp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:text="滚动"/>
                 </LinearLayout>
                 <LinearLayout
@@ -232,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textSize="14sp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:text="底部"/>
                 </LinearLayout>
                 <LinearLayout
@@ -251,7 +251,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textSize="14sp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:text="顶部"/>
                 </LinearLayout>
 
@@ -262,7 +262,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="10dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_white"
                 android:textSize="14sp"
                 android:text="弹幕同屏数量"/>
 
@@ -281,7 +281,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
                     android:gravity="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="无限制"/>
                 <TextView
@@ -292,7 +292,7 @@
                     android:paddingBottom="5dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="自动"/>
                 <EditText
@@ -307,7 +307,7 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:maxLength="50"
-                    android:textColor="@color/theme_color"
+                    android:textColor="@color/text_theme"
                     android:textColorHint="@color/text_hint"
                     android:inputType="number"
                     android:textSize="14sp"
@@ -330,7 +330,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:text="弹幕云屏蔽"/>
 
                 <Switch
@@ -355,7 +355,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:text="关键字屏蔽  >>"/>
             </RelativeLayout>
         </LinearLayout>

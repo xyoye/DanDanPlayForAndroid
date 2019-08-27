@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@android:color/black">
+    android:background="@color/black">
 
     <com.player.ijkplayer.media.IjkVideoView
         android:id="@+id/ijk_video_view"

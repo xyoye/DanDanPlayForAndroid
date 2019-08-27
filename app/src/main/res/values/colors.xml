@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#03a9f4</color>
-    <color name="colorPrimaryDark">#0288d1</color>
-    <color name="colorTextIcons">#FFFFFF</color>
-    <color name="colorPrimaryText">#212121</color>
-
-    <color name="black_color">#ff333333</color>
-    <color name="diver_color">#fff3f3f3</color>
+    <!-- Appbar背景色 -->
+    <color name="colorPrimary">#2095f4</color>
+    <!-- 状态栏颜色 -->
+    <color name="colorPrimaryDark">#2095f4</color>
+    <!-- 控件被选中时的颜色 -->
+    <color name="colorAccent">#2095f4</color>
 
     <!-- 常用 -->
+    <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
-    <color name="black_overlay">#66000000</color>
-    <color name="ared">#e3010f</color>
+    <color name="red">#e3010f</color>
     <color name="orange">#f89957</color>
-    <color name="bg_gray">#f5f5f5</color>
+    <color name="gray">#777777</color>
+    <color name="black">#000000</color>
+    <color name="pink">#fb7299</color>
+    <color name="black_light">#333333</color>
+
+    <!-- 布局组件颜色 -->
+    <color name="search_his_bg_color">#66000000</color>
+    <color name="search_his_text_hint_color">#99f6f6f6</color>
+    <color name="toolbar_text_icon_color">#ffffff</color>
+    <color name="layout_bg_color">#f3f3f3</color>
+    <color name="layout_anime_detail_mask_color">#2a000000</color>
+    <color name="item_anime_title_bg_color">#77000000</color>
+    <color name="item_video_duration_bg_color">#cc000000</color>
+    <color name="item_folder_ctrl_bg_color">#88000000</color>
+    <color name="diver_color">#f3f3f3</color>
+    <color name="diver_color_dark">#c8c8c8</color>
 
     <!-- 字体颜色 -->
     <color name="text_black">#353535</color>
+    <color name="text_white">#ffffff</color>
     <color name="text_gray">#9B9B9B</color>
     <color name="text_red">#FF5340</color>
+    <color name="text_theme">#2095f4</color>
+    <color name="text_pink">#fb7299</color>
 
-    <!-- 蓝色  -->
-    <!-- 紫色 -->
-    <!-- 红色 -->
-    <color name="red_color">#ff0000</color>
     <!-- 灰色 -->
-    <color name="gray_color2">#777777</color>
-    <color name="gray_color3">#9b9b9b</color>
-    <color name="gray_color4">#c8c8c8</color>
-    <color name="gray_color5">#99f6f6f6</color>
     <color name="result_view">#b0000000</color>
-    <!--  半透明 -->
+
+    <!-- 扫描框默认颜色 -->
     <color name="scan_window_mask">#60000000</color>
     <color name="scan_window_frame">#7F1FB3E2</color>
     <color name="scan_window_corner">#FF1FB3E2</color>
     <color name="scan_window_laser">#FF1FB3E2</color>
 
-    <!-- 黑色半透明30%-->
-    <!--  透明 -->
-    <color name="transparent_color">#00000000</color>
     <!-- 主题 -->
     <color name="theme_color">#2095f4</color>
     <color name="theme_color_light">#4ea9f4</color>

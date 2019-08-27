@@ -4,5 +4,5 @@
         android:radius="5dp"/>
 
     <solid
-        android:color="@color/bilibili_pink"/>
+        android:color="@color/pink"/>
 </shape>

@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/download_status_iv"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="12sp"
             android:text=""/>
     </RelativeLayout>

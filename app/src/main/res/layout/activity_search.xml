@@ -40,8 +40,8 @@
                 android:singleLine="true"
                 android:background="@null"
                 android:textSize="14sp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/gray_color5"
+                android:textColor="@color/text_white"
+                android:textColorHint="@color/search_his_text_hint_color"
                 android:hint="搜索：番剧+空格+集数"
                 android:imeOptions="actionDone"
                 android:text=""/>
@@ -58,7 +58,7 @@
                 android:singleLine="true"
                 android:padding="3dp"
                 android:textSize="13sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_white"
                 android:text="字幕组"/>
 
             <TextView
@@ -73,7 +73,7 @@
                 android:singleLine="true"
                 android:padding="3dp"
                 android:textSize="13sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_white"
                 android:text="选分类"/>
 
             <ImageView
@@ -105,7 +105,7 @@
             android:id="@+id/history_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black_overlay"
+            android:background="@color/search_his_bg_color"
             android:visibility="gone">
 
             <android.support.v7.widget.RecyclerView

@@ -61,7 +61,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--番剧详情-->
         <activity
-            android:name=".ui.activities.anime.AnimeDetailActivityV2"
+            android:name=".ui.activities.anime.AnimeDetailActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/ActivityTranslucentTheme"/>
         <!--登录-->

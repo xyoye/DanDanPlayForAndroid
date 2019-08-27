@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@android:color/black">
+    android:background="@color/black_light">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/control_bar_height"
-        android:background="@color/bg_video_view"
+        android:background="@color/black_light"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textSize="16sp"
-        android:textColor="@color/gray_color3"
+        android:textColor="@color/text_white"
         android:text="无法解析播放地址"/>
 
 </RelativeLayout>

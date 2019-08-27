@@ -30,7 +30,7 @@
             android:layout_toEndOf="@id/user_image_iv"
             android:layout_toStartOf="@+id/arrow_iv"
             android:layout_marginStart="18dp"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/text_black"
             android:textSize="18sp"
             android:text="测试"/>
 
@@ -50,7 +50,7 @@
             android:gravity="center"
             android:background="@color/theme_color"
             android:text="@string/login_button_tip"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:textSize="18sp"
             android:visibility="gone"/>
     </RelativeLayout>
@@ -78,7 +78,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray_color3"
+                android:textColor="@color/text_gray"
                 android:textSize="12sp"
                 android:text="播放器设置"
                 android:layout_gravity="center_horizontal" />
@@ -102,7 +102,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray_color3"
+                android:textColor="@color/text_gray"
                 android:textSize="12sp"
                 android:text="扫描设置"
                 android:layout_gravity="center_horizontal" />
@@ -126,7 +126,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray_color3"
+                android:textColor="@color/text_gray"
                 android:textSize="12sp"
                 android:text="应用设置"
                 android:layout_gravity="center_horizontal" />

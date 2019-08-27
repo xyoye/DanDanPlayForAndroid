@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f3f3f3"
+    android:background="@color/layout_bg_color"
     android:fitsSystemWindows="true">
 
     <include layout="@layout/layout_toolbar" />
@@ -56,7 +56,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_white"
         android:textSize="16sp"
         android:text="登录"/>
 
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp"
             android:text="新账号注册" />
 
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:padding="5dp"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp"
             android:text="忘记密码"/>
     </RelativeLayout>

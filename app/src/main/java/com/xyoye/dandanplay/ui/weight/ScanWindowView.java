@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.scan.camera.CameraManager;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
 
@@ -37,10 +38,10 @@ public final class ScanWindowView extends View {
     private static final long ANIMATION_DELAY = 20L;
     private static final int POINT_SIZE = 6;
 
-    private static final int    CORNER_RECT_WIDTH             =   8;  //扫描区边角的宽
-    private static final int    CORNER_RECT_HEIGHT            =   40; //扫描区边角的高
-    private static final int    SCANNER_LINE_MOVE_DISTANCE    =   6;  //扫描线移动距离
-    private static final int    SCANNER_LINE_HEIGHT           =   10;  //扫描线宽度
+    private static final int CORNER_RECT_WIDTH = 8;  //扫描区边角的宽
+    private static final int CORNER_RECT_HEIGHT = 40; //扫描区边角的高
+    private static final int SCANNER_LINE_MOVE_DISTANCE = 6;  //扫描线移动距离
+    private static final int SCANNER_LINE_HEIGHT = 10;  //扫描线宽度
 
     private final Paint paint;
 
@@ -70,10 +71,10 @@ public final class ScanWindowView extends View {
         super(context, attrs);
         //初始化自定义属性信息
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.finder_view);
-        frameColor = array.getColor(R.styleable.finder_view_frame_color, context.getResources().getColor(R.color.scan_window_frame));
-        rectColor = array.getColor(R.styleable.finder_view_rect_color,  context.getResources().getColor(R.color.scan_window_corner));
-        lineColor = array.getColor(R.styleable.finder_view_line_color,  context.getResources().getColor(R.color.scan_window_laser));
-        maskColor = array.getColor(R.styleable.finder_view_mask_color,  context.getResources().getColor( R.color.scan_window_mask));
+        frameColor = array.getColor(R.styleable.finder_view_frame_color, CommonUtils.getResColor(R.color.scan_window_frame));
+        rectColor = array.getColor(R.styleable.finder_view_rect_color, CommonUtils.getResColor(R.color.scan_window_corner));
+        lineColor = array.getColor(R.styleable.finder_view_line_color, CommonUtils.getResColor(R.color.scan_window_laser));
+        maskColor = array.getColor(R.styleable.finder_view_mask_color, CommonUtils.getResColor(R.color.scan_window_mask));
         previewX = array.getDimension(R.styleable.finder_view_preview_x, 0f);
         previewY = array.getDimension(R.styleable.finder_view_preview_y, 0f);
         centerX = array.getBoolean(R.styleable.finder_view_preview_centerHorizontal, false);
@@ -88,21 +89,21 @@ public final class ScanWindowView extends View {
     @SuppressLint("DrawAllocation")
     @Override
     public void onDraw(Canvas canvas) {
-        
-        if(scannerStart == 0 || scannerEnd == 0) {
+
+        if (scannerStart == 0 || scannerEnd == 0) {
             scannerStart = previewY;
             scannerEnd = previewY + previewHeight - SCANNER_LINE_HEIGHT;
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
 
-        if (centerX) previewX = (width - previewWidth)/2;
-        if (centerY) previewY = (height - previewHeight)/2;
+        if (centerX) previewX = (width - previewWidth) / 2;
+        if (centerY) previewY = (height - previewHeight) / 2;
 
         cameraManager.setFramingRectF(new RectF(previewX, previewY, previewX + previewWidth, previewY + previewHeight));
 
         // Draw the exterior (i.e. outside the framing rect) darkened
-        drawExterior(canvas,width,height);
+        drawExterior(canvas, width, height);
 
         // 绘制方框
         if (showFrame)
@@ -113,10 +114,10 @@ public final class ScanWindowView extends View {
         drawLaserScanner(canvas);
 
         postInvalidateDelayed(ANIMATION_DELAY,
-                (int)(previewX - POINT_SIZE),
-                (int)(previewY - POINT_SIZE),
-                (int)(previewX + previewWidth + POINT_SIZE),
-                (int)(previewY + previewHeight + POINT_SIZE));
+                (int) (previewX - POINT_SIZE),
+                (int) (previewY - POINT_SIZE),
+                (int) (previewX + previewWidth + POINT_SIZE),
+                (int) (previewY + previewHeight + POINT_SIZE));
     }
 
     //绘制边角
@@ -148,7 +149,7 @@ public final class ScanWindowView extends View {
                 Shader.TileMode.MIRROR);
 
         paint.setShader(linearGradient);
-        if(scannerStart <= scannerEnd) {
+        if (scannerStart <= scannerEnd) {
             //椭圆
             RectF rectF = new RectF(previewX + 2 * SCANNER_LINE_HEIGHT, scannerStart, previewX + previewWidth - 2 * SCANNER_LINE_HEIGHT, scannerStart + SCANNER_LINE_HEIGHT);
             canvas.drawOval(rectF, paint);
@@ -162,7 +163,7 @@ public final class ScanWindowView extends View {
     //处理颜色模糊
     public int shadeColor(int color) {
         String hax = Integer.toHexString(color);
-        String result = "20"+hax.substring(2);
+        String result = "20" + hax.substring(2);
         return Integer.valueOf(result, 16);
     }
 
@@ -188,7 +189,7 @@ public final class ScanWindowView extends View {
         invalidate();
     }
 
-    public void bindQRCodeView(QRCodeReaderView qrCodeReaderView){
+    public void bindQRCodeView(QRCodeReaderView qrCodeReaderView) {
         this.cameraManager = qrCodeReaderView.getCameraManager();
     }
 }

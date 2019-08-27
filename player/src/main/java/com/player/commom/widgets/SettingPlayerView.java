@@ -2,7 +2,6 @@ package com.player.commom.widgets;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,10 +12,11 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.player.commom.adapter.StreamAdapter;
+import com.player.commom.utils.CommonPlayerUtils;
 import com.player.ijkplayer.R;
 import com.player.ijkplayer.media.IRenderView;
 import com.player.ijkplayer.media.VideoInfoTrack;
-import com.player.commom.adapter.StreamAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ import java.util.List;
  * Created by xyy on 2019/2/25.
  */
 
-public class SettingPlayerView extends LinearLayout implements View.OnClickListener{
+public class SettingPlayerView extends LinearLayout implements View.OnClickListener {
     private LinearLayout speedCtrlLL;
-    private TextView speed50Tv, speed75Tv,speed100Tv,speed125Tv, speed150Tv, speed200Tv;
+    private TextView speed50Tv, speed75Tv, speed100Tv, speed125Tv, speed150Tv, speed200Tv;
 
     private RecyclerView audioRv;
     private RecyclerView subtitleRv;
@@ -88,11 +88,11 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         speed150Tv.setOnClickListener(this);
         speed200Tv.setOnClickListener(this);
 
-        if (audioTrackList == null || audioTrackList.size() <= 0){
+        if (audioTrackList == null || audioTrackList.size() <= 0) {
             audioTrackList = new ArrayList<>();
             audioRl.setVisibility(GONE);
         }
-        if (subtitleTrackList == null || subtitleTrackList.size() <= 0){
+        if (subtitleTrackList == null || subtitleTrackList.size() <= 0) {
             subtitleTrackList = new ArrayList<>();
             subtitleRl.setVisibility(GONE);
         }
@@ -108,7 +108,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         subtitleRv.setAdapter(subtitleStreamAdapter);
 
         audioStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (isExoPlayer){
+            if (isExoPlayer) {
                 for (int i = 0; i < audioTrackList.size(); i++) {
                     if (i == position)
                         audioTrackList.get(i).setSelect(true);
@@ -116,18 +116,18 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                         audioTrackList.get(i).setSelect(false);
                 }
                 listener.selectTrack(-1, audioTrackList.get(position).getLanguage(), true);
-            }else {
+            } else {
                 //deselectAll except position
                 for (int i = 0; i < audioTrackList.size(); i++) {
-                    if (i == position)continue;
+                    if (i == position) continue;
                     listener.deselectTrack(audioTrackList.get(i).getStream(), audioTrackList.get(i).getLanguage(), true);
                     audioTrackList.get(i).setSelect(false);
                 }
                 //select or deselect position
-                if (audioTrackList.get(position).isSelect()){
+                if (audioTrackList.get(position).isSelect()) {
                     listener.deselectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
                     audioTrackList.get(position).setSelect(false);
-                }else {
+                } else {
                     listener.selectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
                     audioTrackList.get(position).setSelect(true);
                 }
@@ -137,7 +137,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
 
         subtitleStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             //ijk播放器暂不提供字幕流管理
-            if (isExoPlayer){
+            if (isExoPlayer) {
                 for (int i = 0; i < subtitleTrackList.size(); i++) {
                     if (i == position)
                         subtitleTrackList.get(i).setSelect(true);
@@ -151,10 +151,10 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
 
         this.setOnTouchListener((v, event) -> true);
 
-        orientationChangeSw.setOnCheckedChangeListener((buttonView, isChecked) ->{
+        orientationChangeSw.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isAllowScreenOrientation = isChecked;
             listener.setOrientationStatus(isChecked);
-         });
+        });
 
         setPlayerSpeedView(3);
     }
@@ -162,67 +162,67 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.speed50_tv){
+        if (id == R.id.speed50_tv) {
             listener.setSpeed(0.5f);
             setPlayerSpeedView(1);
-        }else if (id == R.id.speed75_tv){
+        } else if (id == R.id.speed75_tv) {
             listener.setSpeed(0.75f);
             setPlayerSpeedView(2);
-        }else if (id == R.id.speed100_tv){
+        } else if (id == R.id.speed100_tv) {
             listener.setSpeed(1.0f);
             setPlayerSpeedView(3);
-        }else if (id == R.id.speed125_tv){
+        } else if (id == R.id.speed125_tv) {
             listener.setSpeed(1.25f);
             setPlayerSpeedView(4);
-        }else if (id == R.id.speed150_tv){
+        } else if (id == R.id.speed150_tv) {
             listener.setSpeed(1.5f);
             setPlayerSpeedView(5);
-        }else if (id == R.id.speed200_tv){
+        } else if (id == R.id.speed200_tv) {
             listener.setSpeed(2.0f);
             setPlayerSpeedView(6);
         }
     }
 
-    public SettingPlayerView setExoPlayerType(){
+    public SettingPlayerView setExoPlayerType() {
         this.isExoPlayer = true;
         return this;
     }
 
-    public SettingPlayerView setOrientationAllow(boolean isAllow){
+    public SettingPlayerView setOrientationAllow(boolean isAllow) {
         isAllowScreenOrientation = isAllow;
         return this;
     }
 
-    public void setSettingListener(SettingVideoListener listener){
+    public void setSettingListener(SettingVideoListener listener) {
         this.listener = listener;
     }
 
-    public void setVideoTrackList(List<VideoInfoTrack> audioTrackList){
+    public void setVideoTrackList(List<VideoInfoTrack> audioTrackList) {
         this.audioTrackList.clear();
         this.audioTrackList.addAll(audioTrackList);
         this.audioStreamAdapter.notifyDataSetChanged();
         this.audioRl.setVisibility(audioTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
-    public void setSubtitleTrackList(List<VideoInfoTrack> subtitleTrackList){
+    public void setSubtitleTrackList(List<VideoInfoTrack> subtitleTrackList) {
         this.subtitleTrackList.clear();
         this.subtitleTrackList.addAll(subtitleTrackList);
         this.subtitleStreamAdapter.notifyDataSetChanged();
         this.subtitleRl.setVisibility(subtitleTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
-    public void setSpeedCtrlLLVis(boolean visibility){
+    public void setSpeedCtrlLLVis(boolean visibility) {
         speedCtrlLL.setVisibility(visibility ? VISIBLE : GONE);
     }
 
-    public void setOrientationChangeEnable(boolean isEnable){
+    public void setOrientationChangeEnable(boolean isEnable) {
         orientationChangeSw.setChecked(isEnable);
     }
 
-    public void setPlayerSpeedView(int type){
-        switch (type){
+    public void setPlayerSpeedView(int type) {
+        switch (type) {
             case 1:
-                speed50Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed50Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -231,7 +231,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                 break;
             case 2:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed75Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed75Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -240,7 +240,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
             case 3:
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed100Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed100Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
@@ -249,7 +249,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                 speed50Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed125Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed125Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
@@ -258,7 +258,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                 speed75Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed150Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed150Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 speed200Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 break;
             case 6:
@@ -267,21 +267,25 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                 speed100Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed125Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 speed150Tv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
-                speed200Tv.setBackgroundColor(Color.parseColor("#33ffffff"));
+                speed200Tv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
                 break;
         }
     }
 
     //是否允许屏幕翻转
-    public boolean isAllowScreenOrientation(){
+    public boolean isAllowScreenOrientation() {
         return isAllowScreenOrientation;
     }
 
-    public interface SettingVideoListener{
+    public interface SettingVideoListener {
         void selectTrack(int streamId, String language, boolean isAudio);
+
         void deselectTrack(int streamId, String language, boolean isAudio);
+
         void setSpeed(float speed);
+
         void setAspectRatio(int type);
+
         void setOrientationStatus(boolean isEnable);
     }
 }

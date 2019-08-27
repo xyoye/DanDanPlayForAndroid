@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:textSize="14sp"
-        android:textColor="@color/theme_color"
+        android:textColor="@color/text_theme"
         android:text="[展开]"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

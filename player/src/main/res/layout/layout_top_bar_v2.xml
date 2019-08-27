@@ -35,7 +35,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
             android:text="标题"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:textSize="16sp"/>
 
         <ProgressBar
@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:textSize="16sp"/>
 
         <ImageView

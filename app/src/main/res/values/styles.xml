@@ -10,7 +10,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/theme_color</item>
         <!--<item name="android:windowIsTranslucent">true</item>-->
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@color/white</item>
         <!--<item name="searchViewStyle">@style/MySearchViewStyle</item>-->
     </style>
 
@@ -26,9 +26,9 @@
     </style>
 
     <style name="ToolBar" parent="AppBaseTheme">
-        <item name="colorButtonNormal">@color/colorTextIcons</item>
-        <item name="colorControlNormal">@color/colorTextIcons</item>
-        <item name="actionMenuTextColor">@color/colorTextIcons</item>
+        <item name="colorButtonNormal">@color/toolbar_text_icon_color</item>
+        <item name="colorControlNormal">@color/toolbar_text_icon_color</item>
+        <item name="actionMenuTextColor">@color/toolbar_text_icon_color</item>
         <item name="android:textColor">@color/text_black</item>
         <item name="elevation">0dp</item>
     </style>
@@ -45,8 +45,8 @@
     </style>
 
     <style name="Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="colorPrimary">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="colorPrimary">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowIsFloating">true</item>
@@ -59,7 +59,7 @@
     <style name="CommonDialog" parent="android:Theme.Light">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>

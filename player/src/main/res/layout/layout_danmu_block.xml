@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="66dp"
         android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:background="#22000000">
+        android:paddingBottom="10dp">
         <ImageView
             android:id="@+id/block_view_cancel_iv"
             android:layout_width="wrap_content"
@@ -33,9 +32,9 @@
             android:imeOptions="actionDone"
             android:maxLines="1"
             android:maxLength="50"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:textSize="14sp"
-            android:textColorHint="@android:color/darker_gray"
+            android:textColorHint="@color/text_hint"
             android:hint="请输入屏蔽关键字"/>
 
         <Button
@@ -46,7 +45,7 @@
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@+id/delete_block_bt"
             android:background="@drawable/btn_corner_blue"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:text="添加"/>
 
         <Button
@@ -57,7 +56,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="20dp"
             android:background="@drawable/btn_corner_pink"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:text="删除"/>
     </RelativeLayout>
 

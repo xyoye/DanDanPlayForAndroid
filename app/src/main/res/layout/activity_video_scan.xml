@@ -45,7 +45,7 @@
             android:layout_marginStart="12dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/black_color"
+            android:textColor="@color/text_black"
             android:text="扫描文件夹"/>
 
         <TextView
@@ -57,7 +57,7 @@
             android:layout_marginStart="7dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/black_color"
+            android:textColor="@color/text_black"
             android:text="扫描文件" />
 
         <TextView

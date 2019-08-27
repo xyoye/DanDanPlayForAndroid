@@ -22,6 +22,7 @@ import com.xyoye.dandanplay.mvp.presenter.AnimeSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeSeasonView;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
@@ -103,20 +104,20 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
         year01Tv.setText(selectYear+"年");
         year02Tv.setText(selectYear-1+"年");
         year03Tv.setText(selectYear-2+"年");
-        year01Tv.setTextColor(getResources().getColor(R.color.theme_color));
+        year01Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
 
         if (selectMonth >= 10){
             selectMonth = 10;
-            month10Tv.setTextColor(getResources().getColor(R.color.theme_color));
+            month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
         }else if (selectMonth >= 7){
             selectMonth = 7;
-            month7Tv.setTextColor(getResources().getColor(R.color.theme_color));
+            month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
         }else if (selectMonth >= 4){
             selectMonth = 4;
-            month4Tv.setTextColor(getResources().getColor(R.color.theme_color));
+            month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
         } else{
             selectMonth = 1;
-            month1Tv.setTextColor(getResources().getColor(R.color.theme_color));
+            month1Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
         }
 
         initNowDate(selectYear);
@@ -128,10 +129,10 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
         month7Tv.setEnabled(true);
         month4Tv.setEnabled(true);
         month1Tv.setEnabled(true);
-        month10Tv.setTextColor(getResources().getColor(R.color.black_color));
-        month7Tv.setTextColor(getResources().getColor(R.color.black_color));
-        month4Tv.setTextColor(getResources().getColor(R.color.black_color));
-        month1Tv.setTextColor(getResources().getColor(R.color.black_color));
+        month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        month1Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
 
 
         if (selectYear == nowYear){
@@ -139,38 +140,38 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
                 if ( selectMonth > 7)
                     selectMonth = 7;
                 month10Tv.setEnabled(false);
-                month10Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             }else if (nowMonth >= 4){
                 if ( selectMonth > 4)
                     selectMonth = 4;
                 month10Tv.setEnabled(false);
-                month10Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month7Tv.setEnabled(false);
-                month7Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             } else if (nowMonth >= 1){
                 if ( selectMonth > 1)
                     selectMonth = 1;
                 month10Tv.setEnabled(false);
-                month10Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month7Tv.setEnabled(false);
-                month7Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month4Tv.setEnabled(false);
-                month4Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+                month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month1Tv.setEnabled(true);
             }
         }
         switch (selectMonth){
             case 1:
-                month1Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month1Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 break;
             case 4:
-                month4Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 break;
             case 7:
-                month7Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 break;
             case 10:
-                month10Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 break;
         }
         presenter.getSeasonAnime(selectYear, selectMonth);
@@ -178,31 +179,31 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
 
     //恢复年份按钮状态
     private void clearYearSelect(){
-        year01Tv.setTextColor(getResources().getColor(R.color.black_color));
-        year02Tv.setTextColor(getResources().getColor(R.color.black_color));
-        year03Tv.setTextColor(getResources().getColor(R.color.black_color));
-        yearOtherTv.setTextColor(getResources().getColor(R.color.black_color));
+        year01Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        year02Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        year03Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        yearOtherTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
         yearOtherTv.setText("其它");
     }
 
     //恢复月份按钮状态
     private void clearMonthSelect(){
         if (month10Tv.isEnabled())
-            month10Tv.setTextColor(getResources().getColor(R.color.black_color));
+            month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
         else
-            month10Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+            month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
 
         if (month7Tv.isEnabled())
-            month7Tv.setTextColor(getResources().getColor(R.color.black_color));
+            month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
         else
-            month7Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+            month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
 
         if (month4Tv.isEnabled())
-            month4Tv.setTextColor(getResources().getColor(R.color.black_color));
+            month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
         else
-            month4Tv.setTextColor(getResources().getColor(R.color.gray_color3));
+            month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
 
-        month1Tv.setTextColor(getResources().getColor(R.color.black_color));
+        month1Tv.setTextColor(CommonUtils.getResColor(R.color.text_black));
     }
 
     @Override
@@ -216,19 +217,19 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
             case R.id.year_01_tv:
                 selectYear = nowYear;
                 clearYearSelect();
-                year01Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                year01Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 initNowDate(selectYear);
                 break;
             case R.id.year_02_tv:
                 selectYear = nowYear - 1;
                 clearYearSelect();
-                year02Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                year02Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 initNowDate(selectYear);
                 break;
             case R.id.year_03_tv:
                 selectYear = nowYear - 2;
                 clearYearSelect();
-                year03Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                year03Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 initNowDate(selectYear);
                 break;
             case R.id.year_other_tv:
@@ -237,25 +238,25 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
             case R.id.month_10_tv:
                 selectMonth = 10;
                 clearMonthSelect();
-                month10Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_7_tv:
                 selectMonth = 7;
                 clearMonthSelect();
-                month7Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_4_tv:
                 selectMonth = 4;
                 clearMonthSelect();
-                month4Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month4Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
             case R.id.month_1_tv:
                 selectMonth = 1;
                 clearMonthSelect();
-                month1Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                month1Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 presenter.getSeasonAnime(selectYear, selectMonth);
                 break;
         }
@@ -280,14 +281,14 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
             if (nowYear - selectYear < 3){
                 int n = nowYear - selectYear;
                 if (n == 0){
-                    year01Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                    year01Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 }else if (n == 1){
-                    year02Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                    year02Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 }else {
-                    year03Tv.setTextColor(getResources().getColor(R.color.theme_color));
+                    year03Tv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 }
             }else {
-                yearOtherTv.setTextColor(getResources().getColor(R.color.theme_color));
+                yearOtherTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 yearOtherTv.setText(selectYear+"年");
             }
             initNowDate(selectYear);
@@ -296,8 +297,8 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
         .setLabel("年", "月", "日", "时", "分", "秒")//默认设置为年月日时分秒
         .setRangDate(startDate, Calendar.getInstance())//起始终止年月日设定
         .setDate(showDate)//当前时间
-        .setSubmitColor(getResources().getColor(R.color.theme_color))//确定按钮文字颜色
-        .setCancelColor(getResources().getColor(R.color.bilibili_pink))//取消按钮文字颜色
+        .setSubmitColor(CommonUtils.getResColor(R.color.theme_color))//确定按钮文字颜色
+        .setCancelColor(CommonUtils.getResColor(R.color.pink))//取消按钮文字颜色
         .isCyclic(false)//是否循环滚动
         .build();
         pickerYearDialog.show();

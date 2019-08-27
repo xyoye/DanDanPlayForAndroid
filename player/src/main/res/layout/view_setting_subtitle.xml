@@ -25,7 +25,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
                     android:textSize="16sp"
                     android:text="网络字幕"/>
@@ -40,7 +40,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="选择"/>
 
@@ -55,7 +55,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
                     android:textSize="16sp"
                     android:text="外挂字幕"/>
@@ -71,7 +71,7 @@
                     android:paddingBottom="3dp"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:text="换源"/>
 
             </RelativeLayout>
@@ -88,7 +88,7 @@
                     android:id="@+id/subtitle_status_tips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
                     android:textSize="14sp"
                     android:text="字幕状态"/>
@@ -97,7 +97,7 @@
                     android:id="@+id/subtitle_load_status_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#ff0000"
+                    android:textColor="@color/text_red"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/subtitle_status_tips"
                     android:layout_marginStart="10dp"
@@ -129,7 +129,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="中文大小"/>
 
@@ -138,7 +138,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="50%"/>
                 </LinearLayout>
@@ -161,7 +161,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="英文大小"/>
 
@@ -170,7 +170,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="50%"/>
                 </LinearLayout>
@@ -196,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="时间调节"/>
 
@@ -216,11 +216,11 @@
                             android:id="@+id/subtitle_extra_time_reduce"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/text_white"
                             android:gravity="center"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
-                            android:background="#33ffffff"
+                            android:background="@color/selected_view_bg"
                             android:text="—"/>
                         <EditText
                             android:id="@+id/subtitle_extra_time_et"
@@ -233,7 +233,7 @@
                             android:imeOptions="actionDone"
                             android:maxLines="1"
                             android:maxLength="50"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/text_white"
                             android:inputType="number"
                             android:textSize="14sp"
                             android:text="0.0"/>
@@ -241,11 +241,11 @@
                             android:id="@+id/subtitle_extra_time_add"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/text_white"
                             android:gravity="center"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
-                            android:background="#33ffffff"
+                            android:background="@color/selected_view_bg"
                             android:text="+"/>
 
                     </LinearLayout>
@@ -257,7 +257,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="语言设置"/>
 
@@ -276,7 +276,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="中文"/>
                     <TextView
@@ -287,7 +287,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="英文"/>
                     <TextView
@@ -298,7 +298,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="双语"/>
                 </LinearLayout>
@@ -322,9 +322,9 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:maxLength="50"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
-                    android:textColorHint="@android:color/darker_gray"
+                    android:textColorHint="@color/text_hint"
                     android:hint="请输入编码格式"/>
 
                 <TextView
@@ -337,8 +337,8 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
                     android:gravity="center"
-                    android:background="#33ffffff"
-                    android:textColor="@android:color/white"
+                    android:background="@color/selected_view_bg"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="确定" />
             </LinearLayout>
@@ -354,7 +354,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="16sp"
                     android:text="内置字幕"/>
 
@@ -368,7 +368,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="字体大小"/>
 
@@ -377,7 +377,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="50%"/>
                 </LinearLayout>
@@ -395,7 +395,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/text_white"
                     android:textSize="14sp"
                     android:text="背景色_字体色"/>
 
@@ -414,7 +414,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="黑_白"/>
                     <TextView
@@ -425,7 +425,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="白_黑"/>
                     <TextView
@@ -436,7 +436,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="无_黑"/>
                     <TextView
@@ -447,7 +447,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="无_白"/>
                     <TextView
@@ -458,7 +458,7 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:gravity="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/text_white"
                         android:textSize="14sp"
                         android:text="隐藏"/>
                 </LinearLayout>

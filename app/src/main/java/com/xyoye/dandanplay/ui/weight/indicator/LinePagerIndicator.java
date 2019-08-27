@@ -58,9 +58,6 @@ public class LinePagerIndicator extends View implements IPagerIndicator {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setColor(getResources().getColor(R.color.white));
         canvas.drawRoundRect(mLineRect, mRoundRadius, mRoundRadius, mPaint);
     }
 

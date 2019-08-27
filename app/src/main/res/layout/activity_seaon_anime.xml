@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:gravity="center_vertical"
                 android:paddingStart="10dp"
                 android:text="年份："/>
@@ -37,7 +37,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text=""/>
 
             <TextView
@@ -50,7 +50,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text=""/>
 
             <TextView
@@ -63,7 +63,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text=""/>
 
             <TextView
@@ -76,7 +76,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text="其它"/>
         </LinearLayout>
 
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:gravity="center_vertical"
                 android:paddingStart="10dp"
                 android:text="季度："/>
@@ -106,7 +106,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text="10月"/>
 
             <TextView
@@ -119,7 +119,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text="7月"/>
 
             <TextView
@@ -132,7 +132,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text="4月"/>
 
             <TextView
@@ -145,7 +145,7 @@
                 android:paddingBottom="5dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textSize="14sp"
-                android:textColor="@color/black_color"
+                android:textColor="@color/text_black"
                 android:text="1月"/>
         </LinearLayout>
 

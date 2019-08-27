@@ -46,7 +46,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray_color3"
+                    android:textColor="@color/text_gray"
                     android:textSize="12sp"
                     android:text="搜索"
                     android:layout_gravity="center_horizontal" />
@@ -69,7 +69,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray_color3"
+                    android:textColor="@color/text_gray"
                     android:textSize="12sp"
                     android:text="番剧"
                     android:layout_gravity="center_horizontal" />
@@ -92,7 +92,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray_color3"
+                    android:textColor="@color/text_gray"
                     android:textSize="12sp"
                     android:text="关注"
                     android:layout_gravity="center_horizontal" />
@@ -115,7 +115,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray_color3"
+                    android:textColor="@color/text_gray"
                     android:textSize="12sp"
                     android:text="历史"
                     android:layout_gravity="center_horizontal" />

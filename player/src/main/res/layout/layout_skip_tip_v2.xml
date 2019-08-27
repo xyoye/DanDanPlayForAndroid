@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="1px"
         android:layout_height="match_parent"
-        android:background="@android:color/white"/>
+        android:background="@color/white"/>
 
     <TextView
         android:id="@+id/skip_content_tv"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:text="@string/video_record"
-        android:textColor="@android:color/white"
+        android:textColor="@color/text_white"
         android:textSize="16sp"/>
 
     <TextView
@@ -33,13 +33,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/text_white"
         android:textSize="16sp"/>
 
     <TextView
         android:layout_width="1px"
         android:layout_height="match_parent"
-        android:background="@android:color/white"/>
+        android:background="@color/white"/>
 
     <TextView
         android:id="@+id/tv_do_skip"
@@ -48,6 +48,6 @@
         android:padding="5dp"
         android:text="@string/video_skip"
         android:background="@drawable/sel_item_background"
-        android:textColor="@color/video_skip"
+        android:textColor="@color/text_red_dark"
         android:textSize="16sp"/>
 </LinearLayout>

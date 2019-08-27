@@ -8,12 +8,9 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FolderBean;
-import com.xyoye.dandanplay.bean.event.DeleteFolderEvent;
-import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -70,12 +67,12 @@ public class FolderItem implements AdapterItem<FolderBean>{
         }
 
         folderTitle.setTextColor(isLastPlayFolder
-                ? mContext.getResources().getColor(R.color.theme_color)
-                : mContext.getResources().getColor(R.color.text_black));
+                ? CommonUtils.getResColor(R.color.text_theme)
+                : CommonUtils.getResColor(R.color.text_black));
 
         fileNumber.setTextColor(isLastPlayFolder
-                ? mContext.getResources().getColor(R.color.theme_color)
-                : mContext.getResources().getColor(R.color.text_gray));
+                ? CommonUtils.getResColor(R.color.text_theme)
+                : CommonUtils.getResColor(R.color.text_gray));
 
         mView.setOnClickListener(v -> listener.onClick(model.getFolderPath()));
 

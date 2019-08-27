@@ -31,6 +31,7 @@ import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -67,10 +68,10 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
         ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
             if (hasChecked){
-                deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.theme_color));
+                deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
                 deleteTv.setClickable(true);
             }else{
-                deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.text_gray));
+                deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 deleteTv.setClickable(false);
             }
         };
@@ -185,10 +186,10 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
     private void resetButtonStatus(){
         VideoScanFragment videoScanFragment = fragmentList.get(selectedPosition);
         if (videoScanFragment.hasChecked()){
-            deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.theme_color));
+            deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
             deleteTv.setClickable(true);
         }else {
-            deleteTv.setTextColor(ScanSettingActivity.this.getResources().getColor(R.color.text_gray));
+            deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             deleteTv.setClickable(false);
         }
     }

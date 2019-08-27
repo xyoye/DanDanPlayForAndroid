@@ -9,7 +9,7 @@
     android:background="@color/theme_color"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     android:elevation="6dp"
-    app:titleTextColor="@color/white"
+    app:titleTextColor="@color/toolbar_text_icon_color"
     tools:targetApi="lollipop">
 
     <TextView
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/text_white"
         android:textSize="16sp"
         android:visibility="gone" />
 </android.support.v7.widget.Toolbar>

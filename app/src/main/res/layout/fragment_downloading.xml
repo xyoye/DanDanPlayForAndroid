@@ -25,7 +25,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/downloading_task_number_tips"
             android:text="0"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="暂停全部"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp" />
 
         <TextView
@@ -50,7 +50,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="开始全部"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/text_theme"
             android:textSize="14sp" />
 
     </RelativeLayout>

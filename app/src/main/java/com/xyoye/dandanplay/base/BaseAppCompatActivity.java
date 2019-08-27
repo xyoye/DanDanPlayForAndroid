@@ -19,6 +19,7 @@ import android.view.WindowManager;
 
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.IBaseView;
 
@@ -148,7 +149,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
      */
     @ColorInt
     protected int getToolbarColor() {
-        return this.getResources().getColor(R.color.colorPrimary);
+        return CommonUtils.getResColor(R.color.colorPrimary);
     }
 
     @Override

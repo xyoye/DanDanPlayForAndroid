@@ -7,12 +7,17 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -20,6 +25,8 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.taobao.sophix.PatchStatus;
 import com.taobao.sophix.listener.PatchLoadStatusListener;
+import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -323,6 +330,28 @@ public class CommonUtils {
             EventBus.getDefault().post(event);
             SPUtils.getInstance().put("patch_his", JsonUtil.toJson(eventList));
         };
+    }
+
+    /**
+     * 获取资源颜色
+     */
+    @ColorInt
+    public static int getResColor(@ColorRes int colorId){
+        return ContextCompat.getColor(IApplication.get_context(), colorId);
+    }
+
+    /**
+     * 获取加透明度的资源颜色
+     */
+    @ColorInt
+    public static int getResColor(@IntRange(from = 0, to = 255) int alpha, @ColorRes int colorId){
+        int color = getResColor(colorId);
+
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+
+        return Color.argb(alpha, red, green, blue);
     }
 
     /**

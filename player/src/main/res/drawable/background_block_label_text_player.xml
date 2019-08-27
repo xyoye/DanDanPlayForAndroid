@@ -3,5 +3,5 @@
     <!-- 标签选中时的文字颜色 -->
     <item android:color="@color/theme_color" android:state_selected="true" />
     <!-- 标签的正常文字颜色 -->
-    <item android:color="@android:color/white" />
+    <item android:color="@color/white" />
 </selector>

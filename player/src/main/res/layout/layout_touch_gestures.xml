@@ -21,7 +21,7 @@
             android:drawableTop="@mipmap/ic_volume_on"
             android:gravity="center"
             android:text="50%"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:visibility="gone"/>
 
         <!-- 亮度 -->
@@ -34,7 +34,7 @@
             android:drawableTop="@mipmap/ic_brightness"
             android:gravity="center"
             android:text="50%"
-            android:textColor="@android:color/white"
+            android:textColor="@color/text_white"
             android:visibility="gone"/>
 
         <!-- 跳转时间 -->
@@ -45,7 +45,7 @@
             android:layout_gravity="center"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:textColor="@android:color/white"/>
+            android:textColor="@color/text_white"/>
     </FrameLayout>
 
 </merge>

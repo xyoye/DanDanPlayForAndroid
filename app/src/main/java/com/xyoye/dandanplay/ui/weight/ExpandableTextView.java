@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,7 +111,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
                 //添加“收起”后缀
                 text += "[收起]";
                 spanText = new SpannableString(text);
-                ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.theme_color));
+                ForegroundColorSpan colorSpan = new ForegroundColorSpan(CommonUtils.getResColor(R.color.theme_color));
                 spanText.setSpan(colorSpan, text.length()-4, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 //设置最大行数现在
@@ -137,7 +138,7 @@ public class ExpandableTextView extends LinearLayout implements View.OnClickList
                 case STATE_COLLAPSED:
                     text += "[收起]";
                     spanText = new SpannableString(text);
-                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(getResources().getColor(R.color.theme_color));
+                    ForegroundColorSpan colorSpan = new ForegroundColorSpan(CommonUtils.getResColor(R.color.theme_color));
                     spanText.setSpan(colorSpan, text.length()-4, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     extraTv.setVisibility(VISIBLE);

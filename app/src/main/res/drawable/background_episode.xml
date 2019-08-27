@@ -8,5 +8,5 @@
 
     <stroke
         android:width="0.7dp"
-        android:color="#ffe3e3e3"/>
+        android:color="@color/diver_color_dark"/>
 </shape>

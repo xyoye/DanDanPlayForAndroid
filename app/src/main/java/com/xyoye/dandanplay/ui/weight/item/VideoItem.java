@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
@@ -58,7 +57,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
     private Context mContext;
     private VideoItemEventListener listener;
 
-    public VideoItem(VideoItemEventListener listener){
+    public VideoItem(VideoItemEventListener listener) {
         this.listener = listener;
     }
 
@@ -82,41 +81,41 @@ public class VideoItem implements AdapterItem<VideoBean> {
     @Override
     public void onUpdateViews(final VideoBean model, final int position) {
         coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
-        if (!model.isNotCover()){
+        if (!model.isNotCover()) {
             io.reactivex.Observable
                     .create((ObservableOnSubscribe<Bitmap>) emitter ->
                             emitter.onNext(getBitmap(model.get_id())))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(bitmap -> coverIv.setImageBitmap(bitmap));
-        }else {
+        } else {
             coverIv.setImageBitmap(BitmapFactory.decodeResource(mView.getResources(), R.mipmap.ic_smb_video));
         }
 
-        if (!StringUtils.isEmpty(model.getDanmuPath())){
+        if (!StringUtils.isEmpty(model.getDanmuPath())) {
             bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
-            bindDanmuTv.setTextColor(mView.getContext().getResources().getColor(R.color.white));
+            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.text_white));
             unbindDanmuActionLl.setEnabled(true);
-        }else{
+        } else {
             bindDanmuIv.setImageResource(R.mipmap.id_cant_unbind_danmu);
-            bindDanmuTv.setTextColor(mView.getContext().getResources().getColor(R.color.gray_color4));
+            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             unbindDanmuActionLl.setEnabled(false);
         }
 
         //是否为上次播放的视频
         boolean isLastPlayVideo = false;
         String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
-        if (!StringUtils.isEmpty(lastVideoPath)){
+        if (!StringUtils.isEmpty(lastVideoPath)) {
             isLastPlayVideo = lastVideoPath.equals(model.getVideoPath());
         }
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
         titleTv.setTextColor(isLastPlayVideo
-                ? mContext.getResources().getColor(R.color.theme_color)
-                : mContext.getResources().getColor(R.color.text_black));
+                ? CommonUtils.getResColor(R.color.text_theme)
+                : CommonUtils.getResColor(R.color.text_black));
 
         durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
-        if (model.getVideoDuration()  == 0) durationTv.setVisibility(View.GONE);
+        if (model.getVideoDuration() == 0) durationTv.setVisibility(View.GONE);
 
         if (StringUtils.isEmpty(model.getDanmuPath())) {
             danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
@@ -138,28 +137,31 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
     }
 
-    private Bitmap getBitmap(int _id){
+    private Bitmap getBitmap(int _id) {
         Bitmap bitmap;
-        if (_id == 0){
+        if (_id == 0) {
             bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
-            bitmap.eraseColor(Color.parseColor("#000000"));
-        }else {
+            bitmap.eraseColor(CommonUtils.getResColor(R.color.black_light));
+        } else {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inDither = false;
             options.inPreferredConfig = Bitmap.Config.RGB_565;
             bitmap = MediaStore.Video.Thumbnails.getThumbnail(IApplication.get_context().getContentResolver(), _id, MediaStore.Images.Thumbnails.MICRO_KIND, options);
         }
-        if (bitmap == null){
+        if (bitmap == null) {
             bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
-            bitmap.eraseColor(Color.parseColor("#000000"));
+            bitmap.eraseColor(CommonUtils.getResColor(R.color.black_light));
         }
         return bitmap;
     }
 
-    public interface VideoItemEventListener{
+    public interface VideoItemEventListener {
         void openDanmuSetting(int position);
+
         void openVideo(int position);
+
         void unBindDanmu(int position);
+
         void onDelete(int position);
     }
 }

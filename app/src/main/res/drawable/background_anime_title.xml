@@ -5,5 +5,5 @@
         android:bottomRightRadius="5dp"/>
 
     <solid
-        android:color="#77000000"/>
+        android:color="@color/item_anime_title_bg_color"/>
 </shape>

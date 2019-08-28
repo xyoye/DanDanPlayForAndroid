@@ -8,9 +8,10 @@
         <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/theme_color</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <!--<item name="android:windowIsTranslucent">true</item>-->
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/layout_bg_color</item>
+        <item name="actionOverflowMenuStyle">@style/MenuStyle</item>
         <!--<item name="searchViewStyle">@style/MySearchViewStyle</item>-->
     </style>
 
@@ -26,9 +27,9 @@
     </style>
 
     <style name="ToolBar" parent="AppBaseTheme">
-        <item name="colorButtonNormal">@color/toolbar_text_icon_color</item>
-        <item name="colorControlNormal">@color/toolbar_text_icon_color</item>
-        <item name="actionMenuTextColor">@color/toolbar_text_icon_color</item>
+        <item name="colorButtonNormal">@color/toolbar_text_color</item>
+        <item name="colorControlNormal">@color/toolbar_text_color</item>
+        <item name="actionMenuTextColor">@color/toolbar_text_color</item>
         <item name="android:textColor">@color/text_black</item>
         <item name="elevation">0dp</item>
     </style>
@@ -38,6 +39,11 @@
         <item name="android:activityOpenExitAnimation">@anim/keep_visitity</item>
         <item name="android:activityCloseEnterAnimation">@anim/keep_visitity</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
+    </style>
+
+    <style name="MenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:popupBackground">@color/menu_bg_color</item>
+        <item name="android:textColor">@color/menu_text_color</item>
     </style>
 
     <style name="OpenTheme" parent="AppBaseTheme">

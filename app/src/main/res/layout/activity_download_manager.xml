@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/layout_bg_color">
 
-    <include layout="@layout/layout_toolbar" />
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/layout_toolbar" />
 
-    <View
+    <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
+        android:id="@+id/indicator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/diver_color"/>
+        android:layout_height="40dp"
+        android:layout_below="@+id/toolbar_layout"
+        android:background="@color/indicator_bg_color"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+        app:tabMode="scrollable" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/download_rv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indicator"/>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

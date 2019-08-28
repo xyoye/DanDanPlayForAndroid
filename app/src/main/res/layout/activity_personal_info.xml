@@ -6,12 +6,12 @@
     android:background="@color/diver_color"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_toolbar"/>
+    <include layout="@layout/layout_toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/white">
+        android:background="@color/item_bg_color">
 
         <TextView
             android:id="@+id/user_name_tip"
@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
+            android:textColor="@color/text_gray"
             android:text="@string/page_info_username_tip"
             android:textSize="14sp" />
 
@@ -27,8 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="4dp"
             android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:layout_toEndOf="@id/user_name_tip"
             android:textColor="@color/text_black"
             android:textSize="14sp"
@@ -39,8 +40,8 @@
         android:id="@+id/screen_name_rl"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:background="@color/white"
-        android:layout_marginTop="1dp">
+        android:layout_marginTop="1dp"
+        android:background="@color/item_bg_color">
 
         <TextView
             android:id="@+id/screen_name_tip"
@@ -49,6 +50,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:text="@string/nickname_tip"
+            android:textColor="@color/text_gray"
             android:textSize="14sp" />
 
         <TextView
@@ -70,6 +72,7 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/change_screen_name_iv"
             android:text="@string/modify_tip"
+            android:textColor="@color/text_gray"
             android:textSize="12sp" />
 
         <ImageView
@@ -87,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="1dp"
-        android:background="@color/white">
+        android:background="@color/item_bg_color">
 
         <TextView
             android:layout_width="wrap_content"
@@ -95,6 +98,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:text="@string/password_tip"
+            android:textColor="@color/text_gray"
             android:textSize="14sp" />
 
         <TextView
@@ -104,6 +108,7 @@
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/change_password_iv"
             android:text="@string/modify_tip"
+            android:textColor="@color/text_gray"
             android:textSize="12sp" />
 
         <ImageView
@@ -119,14 +124,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <Button
             android:id="@+id/login_out_bt"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/text_red"
-            android:textColor="@color/text_white"
-            android:textSize="16sp"
-            android:text="@string/logout_tip" />
+            android:background="@color/login_out_button_bg_color"
+            android:text="@string/logout_tip"
+            android:textColor="@color/login_out_button_text_color"
+            android:textSize="16sp" />
     </RelativeLayout>
 </LinearLayout>

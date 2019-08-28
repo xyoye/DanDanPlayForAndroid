@@ -13,14 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
 
         <RelativeLayout
             android:id="@+id/download_engine_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/download_engine_tip"
@@ -29,7 +29,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
                 android:text="下载引擎："
-                android:textColor="@color/text_black"
+                android:textColor="@color/text_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -72,14 +72,15 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:paddingStart="15dp"
-            android:paddingEnd="15dp">
+            android:paddingEnd="15dp"
+            android:background="@color/item_bg_color">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="仅wifi下载"
-                android:textColor="@color/text_black"
+                android:textColor="@color/text_gray"
                 android:textSize="14sp" />
 
             <CheckBox
@@ -99,7 +100,8 @@
             android:id="@+id/max_download_rate_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/download_rate_tip"
@@ -108,7 +110,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
                 android:text="最大下载速度："
-                android:textColor="@color/text_black"
+                android:textColor="@color/text_gray"
                 android:textSize="14sp" />
 
             <TextView
@@ -151,7 +153,8 @@
             android:id="@+id/max_task_count_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/task_count_tip"
@@ -160,7 +163,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="15dp"
                 android:text="最大任务数量："
-                android:textColor="@color/text_black"
+                android:textColor="@color/text_gray"
                 android:textSize="14sp" />
 
             <TextView

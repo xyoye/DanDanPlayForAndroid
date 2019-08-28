@@ -2,45 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/diver_color">
+    android:background="@color/diver_color"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar_layout"
-        layout="@layout/layout_toolbar"/>
+        layout="@layout/layout_toolbar" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:textSize="14sp"
+        android:text="常见反馈问题："
         android:textColor="@color/text_gray"
-        android:text="常见反馈问题："/>
+        android:textSize="14sp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/common_feedback_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:textSize="14sp"
+        android:text="反馈联系方式："
         android:textColor="@color/text_gray"
-        android:text="反馈联系方式："/>
+        android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white">
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/feedback_by_qq_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/qq_tip"
@@ -48,49 +48,52 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:textSize="14sp"
-                android:text="Q Q："/>
+                android:text="Q Q："
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/qq_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/qq_tip"
-                android:layout_marginStart="5dp"
                 android:layout_centerVertical="true"
-                android:textSize="14sp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/qq_tip"
+                android:text="155452509"
                 android:textColor="@color/text_black"
-                android:text="155452509"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/qq_iv"
                 android:layout_marginEnd="5dp"
-                android:textSize="12sp"
-                android:text="复制"/>
+                android:layout_toStartOf="@+id/qq_iv"
+                android:text="复制"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/qq_iv"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_right_dark"/>
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_arrow_right_dark" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/diver_color" />
 
         <RelativeLayout
             android:id="@+id/feedback_by_qq_group_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:id="@+id/qq_group_tips_tv"
@@ -98,75 +101,79 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:textSize="14sp"
-                android:text="官方群："/>
+                android:text="官方群："
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/qq_group_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/qq_group_tips_tv"
-                android:layout_marginStart="5dp"
                 android:layout_centerVertical="true"
-                android:textSize="14sp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@+id/qq_group_tips_tv"
+                android:text="378340187"
                 android:textColor="@color/text_black"
-                android:text="378340187"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/qq_group_iv"
                 android:layout_marginEnd="5dp"
-                android:textSize="12sp"
-                android:text="复制"/>
+                android:layout_toStartOf="@+id/qq_group_iv"
+                android:text="复制"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/qq_group_iv"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_right_dark"/>
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_arrow_right_dark" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/diver_color" />
 
         <RelativeLayout
             android:id="@+id/feedback_more_rl"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground">
+            android:background="@color/item_bg_color"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
-                android:textSize="14sp"
-                android:text="更多反馈方式"/>
+                android:text="更多反馈方式"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/more_feedback_iv"
                 android:layout_marginEnd="5dp"
-                android:textSize="12sp"
-                android:text=""/>
+                android:layout_toStartOf="@+id/more_feedback_iv"
+                android:text=""
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/more_feedback_iv"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_arrow_right_dark"/>
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_arrow_right_dark" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

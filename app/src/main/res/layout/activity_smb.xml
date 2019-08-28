@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/layout_bg_color">
 
     <include layout="@layout/layout_toolbar"/>
 
@@ -42,7 +43,6 @@
         android:id="@+id/smb_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
         android:paddingTop="5dp"/>
 
 </LinearLayout>

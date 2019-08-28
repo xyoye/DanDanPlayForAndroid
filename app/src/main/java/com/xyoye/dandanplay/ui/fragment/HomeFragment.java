@@ -116,8 +116,8 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(dateList.get(index));
-                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.text_black));
-                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.theme_color));
+                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.indicator_uncheck_color));
+                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.indicator_checked_color));
                 simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
@@ -126,7 +126,7 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(ContextCompat.getColor(context, R.color.theme_color));
+                indicator.setColors(ContextCompat.getColor(context, R.color.indicator_checked_color));
                 return indicator;
             }
         });

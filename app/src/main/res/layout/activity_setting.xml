@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/diver_color"
+    android:background="@color/layout_bg_color"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_toolbar"/>
+    <include layout="@layout/layout_toolbar" />
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -15,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/item_bg_color"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -30,48 +29,50 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:text="缓存路径："/>
+                    android:text="缓存路径："
+                    android:textColor="@color/text_gray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/download_path_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/download_path_tip"
-                    android:layout_toStartOf="@+id/change_download_path_tip"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="10dp"
-                    android:singleLine="true"
+                    android:layout_toStartOf="@+id/change_download_path_tip"
+                    android:layout_toEndOf="@+id/download_path_tip"
                     android:ellipsize="start"
-                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:text=""
                     android:textColor="@color/text_black"
-                    android:text=""/>
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/change_download_path_tip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/change_download_path_iv"
                     android:layout_marginEnd="5dp"
-                    android:textSize="12sp"
-                    android:text="修改"/>
+                    android:layout_toStartOf="@+id/change_download_path_iv"
+                    android:text="修改"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:id="@+id/change_download_path_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_arrow_right_dark"/>
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_arrow_right_dark" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:background="@color/diver_color"/>
+                android:background="@color/diver_color" />
 
             <RelativeLayout
                 android:id="@+id/version_rl"
@@ -85,43 +86,45 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:text="当前版本："/>
+                    android:text="当前版本："
+                    android:textColor="@color/text_gray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/version_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/version_tip"
-                    android:layout_marginStart="5dp"
                     android:layout_centerVertical="true"
-                    android:textSize="14sp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@id/version_tip"
+                    android:text=""
                     android:textColor="@color/text_black"
-                    android:text=""/>
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/find_version_iv"
                     android:layout_marginEnd="5dp"
-                    android:textSize="12sp"
-                    android:text="检查"/>
+                    android:layout_toStartOf="@+id/find_version_iv"
+                    android:text="检查"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:id="@+id/find_version_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_arrow_right_dark"/>
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_arrow_right_dark" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color"/>
+                android:background="@color/diver_color" />
 
             <RelativeLayout
                 android:id="@+id/patch_rl"
@@ -135,43 +138,45 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:text="补丁版本："/>
+                    android:text="补丁版本："
+                    android:textColor="@color/text_gray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/patch_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/patch_tip"
-                    android:layout_marginStart="5dp"
                     android:layout_centerVertical="true"
-                    android:textSize="14sp"
+                    android:layout_marginStart="5dp"
+                    android:layout_toEndOf="@+id/patch_tip"
+                    android:text=""
                     android:textColor="@color/text_black"
-                    android:text=""/>
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/find_patch_iv"
                     android:layout_marginEnd="5dp"
-                    android:textSize="12sp"
-                    android:text="检查"/>
+                    android:layout_toStartOf="@+id/find_patch_iv"
+                    android:text="检查"
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
 
                 <ImageView
                     android:id="@+id/find_patch_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_arrow_right_dark"/>
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_arrow_right_dark" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color"/>
+                android:background="@color/diver_color" />
 
             <RelativeLayout
                 android:id="@+id/about_rl"
@@ -184,21 +189,22 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:text="关于我们"/>
+                    android:text="关于我们"
+                    android:textColor="@color/text_gray" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_arrow_right_dark"/>
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_arrow_right_dark" />
             </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color"/>
+                android:background="@color/diver_color" />
 
             <RelativeLayout
                 android:id="@+id/feedback_rl"
@@ -211,15 +217,16 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
-                    android:text="意见反馈"/>
+                    android:text="意见反馈"
+                    android:textColor="@color/text_gray" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_arrow_right_dark"/>
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_arrow_right_dark" />
             </RelativeLayout>
 
         </LinearLayout>

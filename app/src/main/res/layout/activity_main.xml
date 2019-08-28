@@ -18,7 +18,7 @@
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="?android:attr/windowBackground"
+        android:background="@drawable/background_navigation"
         app:itemBackground="@null"
         app:itemIconTint="@drawable/selector_navigation"
         app:itemTextColor="@drawable/selector_navigation"

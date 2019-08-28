@@ -53,6 +53,10 @@ public class RemoteDialog extends Dialog {
         setContentView(R.layout.dialog_remote);
         ButterKnife.bind(this);
 
+        ipEditEt.setHint("IP地址");
+        portEditEt.setHint("端口");
+        authEditEt.setHint("API密钥（可为空）");
+
         String remoteLoginData = AppConfig.getInstance().getRemoteLoginData();
         if (!StringUtils.isEmpty(remoteLoginData)){
 

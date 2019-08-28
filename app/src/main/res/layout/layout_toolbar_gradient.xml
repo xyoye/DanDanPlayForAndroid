@@ -6,10 +6,10 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@color/theme_color"
+    android:background="@color/colorPrimaryDark"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     android:elevation="6dp"
-    app:titleTextColor="@color/toolbar_text_icon_color"
+    app:titleTextColor="@color/toolbar_text_color"
     tools:targetApi="lollipop">
 
     <TextView

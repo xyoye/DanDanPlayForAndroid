@@ -3,144 +3,159 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_bg_color"
     android:clipToPadding="false"
     android:orientation="vertical">
+
     <com.xyoye.dandanplay.ui.weight.ScrollableLayout
         android:id="@+id/scroll_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:orientation="vertical">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="180dp"
+            android:background="@color/item_bg_color"
             android:padding="5dp">
+
             <com.youth.banner.Banner
                 android:id="@+id/banner"
                 android:layout_width="match_parent"
-                android:layout_height="170dp">
-            </com.youth.banner.Banner>
+                android:layout_height="170dp" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="68dp"
             android:gravity="center_horizontal">
+
             <LinearLayout
                 android:id="@+id/search_ll"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/item_bg_color"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="46dp"
                     android:layout_height="46dp"
-                    android:padding="9dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/ic_home_search"/>
+                    android:padding="9dp"
+                    android:src="@mipmap/ic_home_search" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
                     android:text="搜索"
-                    android:layout_gravity="center_horizontal" />
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/list_ll"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/item_bg_color"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="46dp"
                     android:layout_height="46dp"
-                    android:padding="9.5dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/ic_home_list"/>
+                    android:padding="9.5dp"
+                    android:src="@mipmap/ic_home_list" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
                     android:text="番剧"
-                    android:layout_gravity="center_horizontal" />
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/follow_ll"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/item_bg_color"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="46dp"
                     android:layout_height="46dp"
-                    android:padding="8dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/ic_home_follow"/>
+                    android:padding="8dp"
+                    android:src="@mipmap/ic_home_follow" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
                     android:text="关注"
-                    android:layout_gravity="center_horizontal" />
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/history_ll"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/item_bg_color"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:background="?android:attr/selectableItemBackground"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="46dp"
                     android:layout_height="46dp"
-                    android:padding="9dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@mipmap/ic_home_history"/>
+                    android:padding="9dp"
+                    android:src="@mipmap/ic_home_history" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal"
                     android:text="历史"
-                    android:layout_gravity="center_horizontal" />
+                    android:textColor="@color/text_gray"
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/diver_color" />
 
         <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
             android:id="@+id/magic_indicator"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
+            android:background="@color/indicator_bg_color"
             android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             app:tabMode="scrollable" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="2dp"/>
+            android:layout_height="match_parent" />
 
     </com.xyoye.dandanplay.ui.weight.ScrollableLayout>
 </LinearLayout>

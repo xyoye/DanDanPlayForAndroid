@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/layout_bg_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/layout_toolbar_gradient"/>
@@ -30,7 +30,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/layout_anime_detail_mask_color">
+                android:background="@color/anime_detail_mask_color">
             </RelativeLayout>
 
             <TextView
@@ -41,7 +41,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="3dp"
                 android:textSize="20sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/immutable_text_white"
                 android:textStyle="bold"
                 android:maxLines="3"
                 android:ellipsize="end"
@@ -259,7 +259,7 @@
             android:id="@+id/select_episode_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/layout_bg_color"
             android:orientation="vertical"
             android:visibility="gone">
 

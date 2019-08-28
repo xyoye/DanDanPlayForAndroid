@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="71dp"
-    android:background="@color/white">
+    android:background="@color/item_bg_color">
 
     <ProgressBar
         android:id="@+id/download_duration_pb"

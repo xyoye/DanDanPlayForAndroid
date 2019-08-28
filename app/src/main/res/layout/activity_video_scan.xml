@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/layout_bg_color"
     tools:context=".ui.activities.setting.ScanSettingActivity">
 
     <include
-        layout="@layout/layout_toolbar"
-        android:id="@+id/toolbar_layout"/>
+        android:id="@+id/toolbar_layout"
+        layout="@layout/layout_toolbar" />
 
     <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/toolbar_layout"
+        android:background="@color/indicator_bg_color"
         android:gravity="center"
         app:tabMode="scrollable" />
 
@@ -22,20 +24,20 @@
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/indicator"
-        android:layout_above="@+id/bottom_rl">
-    </android.support.v4.view.ViewPager>
+        android:layout_above="@+id/bottom_rl"
+        android:layout_below="@+id/indicator"/>
 
     <RelativeLayout
         android:id="@+id/bottom_rl"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/item_bg_color">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color" />
 
         <TextView
             android:id="@+id/scan_folder_tv"
@@ -44,34 +46,34 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:padding="10dp"
-            android:textSize="14sp"
+            android:text="扫描文件夹"
             android:textColor="@color/text_black"
-            android:text="扫描文件夹"/>
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/scan_file_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/scan_folder_tv"
             android:layout_marginStart="7dp"
+            android:layout_toEndOf="@+id/scan_folder_tv"
             android:padding="10dp"
-            android:textSize="14sp"
+            android:text="扫描文件"
             android:textColor="@color/text_black"
-            android:text="扫描文件" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/delete_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="12dp"
-            android:padding="10dp"
-            android:textSize="14sp"
-            android:textColor="@color/text_gray"
             android:clickable="false"
-            android:text="删除" />
+            android:padding="10dp"
+            android:text="删除"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 

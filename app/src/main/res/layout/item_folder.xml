@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="52dp"
-    android:background="@color/white">
+    android:background="@color/item_bg_color">
 
     <ImageView
         android:id="@+id/folder_iv"

@@ -12,7 +12,6 @@ import android.widget.CheckBox;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.LanDeviceBean;
 import com.xyoye.dandanplay.bean.SmbBean;
 
 import butterknife.BindView;
@@ -23,7 +22,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/11/20.
  */
 
-public class SmbDialog extends Dialog {
+public class AuthLanDialog extends Dialog {
 
     @BindView(R.id.lan_account_et)
     TextInputEditText lanAccountEt;
@@ -43,7 +42,7 @@ public class SmbDialog extends Dialog {
     private SmbBean mSmbBean;
     private OnSmbAuthListener authListener;
 
-    public SmbDialog(@NonNull Context context, SmbBean smbBean, int position, OnSmbAuthListener authListener) {
+    public AuthLanDialog(@NonNull Context context, SmbBean smbBean, int position, OnSmbAuthListener authListener) {
         super(context, R.style.Dialog);
         this.mPosition = position;
         this.mSmbBean = smbBean;
@@ -56,6 +55,11 @@ public class SmbDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_auth_lan);
         ButterKnife.bind(this);
+
+        lanIpEt.setHint("IP");
+        lanAccountEt.setHint("帐号");
+        lanPasswordEt.setHint("密码");
+        lanDomainEt.setHint("域");
 
         if (mSmbBean != null){
             lanAccountEt.setText(mSmbBean.getAccount());
@@ -70,7 +74,7 @@ public class SmbDialog extends Dialog {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cancel_tv:
-                SmbDialog.this.dismiss();
+                AuthLanDialog.this.dismiss();
                 break;
             case R.id.confirm_tv:
                 boolean anonymous = anonymousCb.isChecked();
@@ -94,13 +98,13 @@ public class SmbDialog extends Dialog {
                 if (isAddDevice){
                     smbBean.setUrl(ip);
                     if (authListener != null){
-                        SmbDialog.this.dismiss();
+                        AuthLanDialog.this.dismiss();
                         authListener.onSubmit(smbBean, mPosition);
                     }
                 }else {
                     smbBean.setUrl(mSmbBean.getUrl());
                     if (authListener != null){
-                        SmbDialog.this.dismiss();
+                        AuthLanDialog.this.dismiss();
                         authListener.onSubmit(smbBean, mPosition);
                     }
                 }

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/layout_bg_color">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -40,8 +41,8 @@
                 android:singleLine="true"
                 android:background="@null"
                 android:textSize="14sp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/search_his_text_hint_color"
+                android:textColor="@color/edit_text_text_color"
+                android:textColorHint="@color/edit_text_hint_color"
                 android:hint="搜索：番剧+空格+集数"
                 android:imeOptions="actionDone"
                 android:text=""/>
@@ -58,7 +59,7 @@
                 android:singleLine="true"
                 android:padding="3dp"
                 android:textSize="13sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/immutable_text_white"
                 android:text="字幕组"/>
 
             <TextView
@@ -73,7 +74,7 @@
                 android:singleLine="true"
                 android:padding="3dp"
                 android:textSize="13sp"
-                android:textColor="@color/text_white"
+                android:textColor="@color/immutable_text_white"
                 android:text="选分类"/>
 
             <ImageView
@@ -105,8 +106,7 @@
             android:id="@+id/history_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/search_his_bg_color"
-            android:visibility="gone">
+            android:background="@color/search_history_bg_color">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/history_rv"

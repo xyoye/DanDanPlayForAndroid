@@ -94,7 +94,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         if (!StringUtils.isEmpty(model.getDanmuPath())) {
             bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
-            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.text_white));
+            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
             unbindDanmuActionLl.setEnabled(true);
         } else {
             bindDanmuIv.setImageResource(R.mipmap.id_cant_unbind_danmu);

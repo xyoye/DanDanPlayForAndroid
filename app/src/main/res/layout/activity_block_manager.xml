@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/item_bg_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include
@@ -42,7 +43,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
 
         <TextView
             android:id="@+id/clear_tv"

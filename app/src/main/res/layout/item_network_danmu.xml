@@ -3,51 +3,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/white"
+    android:background="@color/item_bg_color"
     tools:layout_editor_absoluteY="25dp">
+
     <TextView
         android:id="@+id/episode_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@+id/video_type_tv"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:textColor="@color/text_black"
+        android:layout_toStartOf="@+id/video_type_tv"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="16sp"
-        android:text="测试用剧集标题" />
+        android:text="测试用剧集标题"
+        android:textColor="@color/text_black"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/video_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/episode_title_tv"
-        android:layout_toStartOf="@+id/video_type_tv"
-        android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/video_type_tv"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="14sp"
-        android:text="测试用番组标题"/>
+        android:text="测试用番组标题"
+        android:textColor="@color/text_gray"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/video_type_tv"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
-        android:layout_alignParentEnd="true"
         android:textColor="@color/orange"
         android:textSize="14sp"
-        android:text="放送类型" />
-
+        tools:text="放送类型" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/diver_color"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/diver_color" />
 </RelativeLayout>

@@ -9,8 +9,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/theme_color"
-        app:titleTextColor="@color/toolbar_text_icon_color"
+        android:background="@color/colorPrimaryDark"
+        app:titleTextColor="@color/toolbar_text_color"
         app:popupTheme="@style/ToolBar">
 
         <TextView

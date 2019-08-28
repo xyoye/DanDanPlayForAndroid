@@ -25,7 +25,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="4dp"
-            android:textColor="@color/text_white"
+            android:textColor="@color/immutable_text_white"
             android:textSize="12sp"
             tools:text="测试标题" />
 
@@ -34,11 +34,11 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:visibility="gone"
-            app:slantedBackgroundColor="@color/theme_color"
+            app:slantedBackgroundColor="@color/immutable_text_theme"
             app:slantedLength="24dp"
             app:slantedMode="left"
             app:slantedText="已关注"
-            app:slantedTextColor="@color/text_white"
+            app:slantedTextColor="@color/immutable_text_white"
             app:slantedTextSize="10sp" />
     </RelativeLayout>
 

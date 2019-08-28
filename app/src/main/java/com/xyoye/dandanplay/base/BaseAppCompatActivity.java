@@ -9,9 +9,12 @@ import android.os.Looper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.app.SkinAppCompatDelegateImpl;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,6 +66,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         initPageView();
         initPageViewListener();
         process(savedInstanceState);
+    }
+
+    @NonNull
+    @Override
+    public AppCompatDelegate getDelegate() {
+        //换肤支持
+        return SkinAppCompatDelegateImpl.get(this, this);
     }
 
     /**
@@ -149,7 +159,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
      */
     @ColorInt
     protected int getToolbarColor() {
-        return CommonUtils.getResColor(R.color.colorPrimary);
+        return CommonUtils.getResColor(R.color.colorPrimaryDark);
     }
 
     @Override

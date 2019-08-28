@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_marginTop="70dp"
     android:layout_marginBottom="70dp"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
 
     <TextView
         android:id="@+id/title_tv"

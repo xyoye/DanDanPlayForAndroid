@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@color/white">
+    android:background="@color/item_bg_color"
+    android:padding="10dp">
 
     <RelativeLayout
         android:id="@+id/select_layout"
@@ -16,18 +16,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
+            android:text=""
             android:textColor="@color/text_black"
-            android:textSize="16sp"
-            android:text=""/>
+            android:textSize="16sp" />
 
         <RadioGroup
             android:id="@+id/player_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/dialog_title"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
             android:visibility="gone">
 
             <RadioButton
@@ -35,20 +35,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="EXO Player"/>
+                android:text="EXO Player"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/player_ijk_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="IJK Player"/>
+                android:text="IJK Player"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/player_android_rb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="AndroidMedia Player（测试）"/>
+                android:text="AndroidMedia Player（测试）"
+                android:textColor="@color/text_black" />
 
         </RadioGroup>
 
@@ -57,51 +60,57 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/dialog_title"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginStart="10dp"
             android:visibility="gone">
 
             <RadioButton
                 android:id="@+id/pixel_auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="默认"/>
+                android:text="默认"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/pixel_rgb565"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="RGB 565"/>
+                android:text="RGB 565"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/pixel_rgb888"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="RGB 888"/>
+                android:text="RGB 888"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/pixel_rgbx8888"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="RGBX 8888"/>
+                android:text="RGBX 8888"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/pixel_yv12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="YV12"/>
+                android:text="YV12"
+                android:textColor="@color/text_black" />
 
             <RadioButton
                 android:id="@+id/pixel_opengl_es2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="OpenGL ES2"/>
+                android:text="OpenGL ES2"
+                android:textColor="@color/text_black" />
 
         </RadioGroup>
     </RelativeLayout>
@@ -114,8 +123,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        android:textSize="12sp"
+        android:text="取消"
         android:textColor="@color/text_gray"
-        android:text="取消"/>
+        android:textSize="12sp" />
 
 </RelativeLayout>

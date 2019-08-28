@@ -24,8 +24,8 @@ import com.xyoye.dandanplay.mvp.impl.SmbPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SmbPresenter;
 import com.xyoye.dandanplay.mvp.view.SmbView;
 import com.xyoye.dandanplay.service.SmbService;
+import com.xyoye.dandanplay.ui.weight.dialog.AuthLanDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.SmbDialog;
 import com.xyoye.dandanplay.ui.weight.item.SmbItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
@@ -127,7 +127,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
                 presenter.queryLanDevice();
                 break;
             case R.id.add_device:
-                new SmbDialog(this, null, -1, (smbBean, position) -> {
+                new AuthLanDialog(this, null, -1, (smbBean, position) -> {
                     smbList.add(0, smbBean);
                     presenter.addSqlDevice(smbBean);
                 }).show();
@@ -253,7 +253,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
             case Constants.SmbType.SQL_DEVICE:
                 //未输入账号名 && 不是匿名登录
                 if (StringUtils.isEmpty(smbBean.getAccount()) && !smbBean.isAnonymous()) {
-                    new SmbDialog(SmbActivity.this, smbBean, position, (resultBean, resultPosition) -> {
+                    new AuthLanDialog(SmbActivity.this, smbBean, position, (resultBean, resultPosition) -> {
                         SmbBean loginSmbBean = new SmbBean();
                         loginSmbBean.setUrl(resultBean.getUrl());
                         loginSmbBean.setAccount(resultBean.getAccount());

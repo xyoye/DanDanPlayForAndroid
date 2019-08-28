@@ -7,7 +7,7 @@
     android:layout_marginLeft="25dp"
     android:layout_marginRight="25dp"
     android:orientation="vertical"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
     
     <RelativeLayout
         android:layout_width="match_parent"

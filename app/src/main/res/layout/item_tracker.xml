@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/item_bg_color">
 
     <LinearLayout
         android:id="@+id/info_ll"
@@ -17,8 +17,7 @@
             android:id="@+id/check_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"/>
+            android:layout_gravity="center_vertical"/>
 
         <TextView
             android:id="@+id/tracker_tv"
@@ -32,7 +31,7 @@
             android:paddingBottom="10dp"
             android:textColor="@color/text_black"
             android:textSize="14sp"
-            android:text=""/>
+            tools:text="http://"/>
     </LinearLayout>
 
     <View

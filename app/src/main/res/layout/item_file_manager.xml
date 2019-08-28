@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="46dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    android:background="@color/white">
+    android:background="@color/item_bg_color">
 
     <ImageView
         android:id="@+id/iv"
@@ -21,6 +22,7 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/iv"
         android:textSize="14sp"
-        android:text="测试文件名" />
+        android:textColor="@color/text_black"
+        tools:text="测试文件名" />
 
 </RelativeLayout>

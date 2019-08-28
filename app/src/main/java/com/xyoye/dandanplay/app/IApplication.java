@@ -15,7 +15,6 @@ import com.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
 import com.xyoye.dandanplay.database.DataBaseManager;
-import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.ui.activities.OpenActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -28,6 +27,11 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import skin.support.SkinCompatManager;
+import skin.support.app.SkinCardViewInflater;
+import skin.support.constraint.app.SkinConstraintViewInflater;
+import skin.support.design.app.SkinMaterialViewInflater;
 
 /**
  * Created by xyoye on 2019/5/27.
@@ -63,6 +67,16 @@ public class IApplication extends Application {
         //AndroidUtilsCode
         Utils.init(this);
 
+        //skin
+        SkinCompatManager.withoutActivity(this)                         // 基础控件换肤初始化
+                .addInflater(new SkinMaterialViewInflater())            // material design 控件换肤初始化[可选]
+                .addInflater(new SkinConstraintViewInflater())          // ConstraintLayout 控件换肤初始化[可选]
+                .addInflater(new SkinCardViewInflater())                // CardView v7 控件换肤初始化[可选]
+                .setSkinStatusBarColorEnable(false)                     // 关闭状态栏换肤，默认打开[可选]
+                .setSkinWindowBackgroundEnable(false)                   // 关闭windowBackground换肤，默认打开[可选]
+                .loadSkin();
+
+        //crash
         CrashHandleUtils.getInstance().init(() -> {
             //OpenActivity
             Intent restartIntent = new Intent(_context, OpenActivity.class);

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,97 +13,103 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp">
+
             <TextView
                 android:id="@+id/dialog_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text="远程访问"
                 android:textColor="@color/text_black"
-                android:textSize="16sp"
-                android:text="远程访问" />
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/diver_color"/>
+                android:layout_marginTop="8dp"
+                android:background="@color/diver_color" />
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/remote_scan_ll"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
-            android:foreground="?android:attr/selectableItemBackground">
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="20dp"
                 android:padding="5dp"
-                android:src="@mipmap/ic_remote_scan"/>
+                android:src="@mipmap/ic_remote_scan" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:text="扫描二维码"
                 android:textColor="@color/text_black"
-                android:text="扫描二维码"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/diver_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/ip_edit_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_weight="7"
                 android:paddingStart="20dp"
-                android:paddingEnd="10dp"
-                android:layout_marginTop="10dp">
+                android:paddingEnd="10dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/ip_edit_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:hint="IP地址" />
+                    android:hint=""
+                    android:textColor="@color/edit_text_text_color"
+                    android:textColorHint="@color/edit_text_hint_color"
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="@color/text_black"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="5dp"
-                android:text=":"/>
+                android:text=":"
+                android:textColor="@color/text_black"
+                android:textSize="16sp" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/port_edit_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_weight="3"
                 android:paddingStart="10dp"
-                android:paddingEnd="20dp"
-                android:layout_marginTop="10dp">
+                android:paddingEnd="20dp">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/port_edit_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint=""
                     android:inputType="number"
-                    android:textSize="14sp"
-                    android:hint="端口" />
+                    android:textColor="@color/edit_text_text_color"
+                    android:textColorHint="@color/edit_text_hint_color"
+                    android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -116,8 +123,10 @@
                 android:id="@+id/auth_edit_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:hint="API密钥（可为空）" />
+                android:hint=""
+                android:textColor="@color/edit_text_text_color"
+                android:textColorHint="@color/edit_text_hint_color"
+                android:textSize="14sp" />
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
@@ -129,26 +138,26 @@
             <TextView
                 android:id="@+id/cancel_tv"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_weight="1"
                 android:background="@drawable/bg_dialog_item_left"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:textSize="14sp"
+                android:text="取消"
                 android:textColor="@color/text_gray"
-                android:text="取消"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/confirm_tv"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_weight="1"
                 android:background="@drawable/bg_dialog_item_right"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:textSize="14sp"
+                android:text="确定"
                 android:textColor="@color/text_theme"
-                android:text="确定"/>
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

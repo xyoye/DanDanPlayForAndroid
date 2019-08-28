@@ -4,5 +4,5 @@
         android:bottomLeftRadius="3dp"
         android:bottomRightRadius="3dp" />
 
-    <solid android:color="@color/item_anime_title_bg_color" />
+    <solid android:color="@color/anime_item_mask_color" />
 </shape>

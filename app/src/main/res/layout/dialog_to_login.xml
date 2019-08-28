@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
 
     <TextView
         android:id="@+id/tips_tv"

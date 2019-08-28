@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,14 +12,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp">
+
             <TextView
                 android:id="@+id/dialog_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text=""
                 android:textColor="@color/text_black"
-                android:textSize="16sp"
-                android:text="" />
+                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/dialog_cancel_iv"
@@ -27,33 +28,35 @@
                 android:layout_height="25dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
                 android:layout_marginEnd="10dp"
+                android:padding="5dp"
                 android:src="@mipmap/ic_dialog_cancel"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginTop="8dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/diver_color"/>
+                android:layout_marginTop="8dp"
+                android:background="@color/diver_color" />
         </RelativeLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/edit_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:layout_marginTop="10dp">
+            android:paddingEnd="20dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:hint="" />
+                android:hint=""
+                android:textColor="@color/edit_text_text_color"
+                android:textColorHint="@color/edit_text_hint_color"
+                android:textSize="14sp" />
         </android.support.design.widget.TextInputLayout>
 
         <LinearLayout
@@ -65,26 +68,26 @@
             <TextView
                 android:id="@+id/cancel_tv"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_weight="1"
                 android:background="@drawable/bg_dialog_item_left"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:textSize="14sp"
+                android:text="取消"
                 android:textColor="@color/text_gray"
-                android:text="取消"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/confirm_tv"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_weight="1"
                 android:background="@drawable/bg_dialog_item_right"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:textSize="14sp"
+                android:text="确定"
                 android:textColor="@color/text_theme"
-                android:text="确定"/>
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

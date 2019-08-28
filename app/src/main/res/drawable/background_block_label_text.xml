@@ -1,7 +1,7 @@
 <!-- 标签的文字颜色 label_text_color -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 标签选中时的文字颜色 -->
-    <item android:color="@color/theme_color" android:state_selected="true" />
+    <item android:color="@color/block_label_text_checked_color" android:state_selected="true" />
     <!-- 标签的正常文字颜色 -->
-    <item android:color="@color/text_black" />
+    <item android:color="@color/block_label_text_uncheck_color" />
 </selector>

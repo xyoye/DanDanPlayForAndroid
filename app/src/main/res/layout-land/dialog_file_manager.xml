@@ -7,7 +7,7 @@
     android:layout_marginBottom="10dp"
     android:layout_marginLeft="25dp"
     android:layout_marginRight="25dp"
-    android:background="@drawable/bg_corner_5">
+    android:background="@drawable/background_dialog">
 
     <TextView
         android:id="@+id/title_tv"

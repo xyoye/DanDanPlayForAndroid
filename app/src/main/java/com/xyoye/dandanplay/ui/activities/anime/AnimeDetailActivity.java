@@ -131,7 +131,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
         scrollableLayout.addHeadView(toolBar);
         toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
-        toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.text_white));
+        toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
 
         episodeLinearList = new ArrayList<>();
         episodeGridList = new ArrayList<>();
@@ -225,18 +225,18 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
             //未到达详情头部一律透明
             if (scrollY < 0) {
                 toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.text_white));
+                toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
             }
             //大于详情底部一律不透明
             else if (scrollY > maxScrollY) {
                 toolBar.setBackgroundColor(CommonUtils.getResColor(R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(R.color.text_white));
+                toolBar.setTitleTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
             }
             //按位移量计算计算透明度
             else {
                 int alpha = (scrollY * 255) / maxScrollY;
                 toolBar.setBackgroundColor(CommonUtils.getResColor(alpha, R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(alpha, R.color.text_white));
+                toolBar.setTitleTextColor(CommonUtils.getResColor(alpha, R.color.immutable_text_white));
             }
         });
     }

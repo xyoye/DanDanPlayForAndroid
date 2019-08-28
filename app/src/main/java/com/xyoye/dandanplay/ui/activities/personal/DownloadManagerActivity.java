@@ -93,7 +93,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_download_manager_v2;
+        return R.layout.activity_download_manager;
     }
 
     @Override
@@ -190,8 +190,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(titleList.get(index));
-                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.text_black));
-                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.theme_color));
+                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.indicator_uncheck_color));
+                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.indicator_checked_color));
                 simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
@@ -200,7 +200,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(ContextCompat.getColor(context, R.color.theme_color));
+                indicator.setColors(ContextCompat.getColor(context, R.color.indicator_checked_color));
                 return indicator;
             }
         });

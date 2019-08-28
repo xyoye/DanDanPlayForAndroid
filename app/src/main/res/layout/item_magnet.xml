@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/item_bg_color">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +23,7 @@
             android:textSize="14sp"
             android:textColor="@color/text_black"
             android:ellipsize="end"
-            android:text=""/>
+            tools:text="标题"/>
 
         <TextView
             android:id="@+id/magnet_size_tv"
@@ -32,7 +33,7 @@
             android:layout_centerVertical="true"
             android:textSize="18sp"
             android:textColor="@color/orange"
-            android:text=""/>
+            tools:text="1024M"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -52,7 +53,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text=""/>
+            tools:text="group"/>
 
         <TextView
             android:id="@+id/magnet_type_tv"
@@ -62,7 +63,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text=""/>
+            tools:text="type"/>
 
         <TextView
             android:id="@+id/magnet_time_tv"
@@ -72,7 +73,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_gray"
             android:singleLine="true"
-            android:text=""/>
+            tools:text="time"/>
     </LinearLayout>
 
     <View

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.view.TimePickerView;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
@@ -20,6 +21,7 @@ import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.mvp.impl.AnimeSeasonPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimeSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeSeasonView;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -84,6 +86,7 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
     @Override
     public void initView() {
         setTitle("季度番剧");
+        animeRv.addItemDecoration(new ItemDecorationSpaces(ConvertUtils.dp2px(5)));
         animeRv.setLayoutManager(new GridLayoutManager(this, 3));
         animeList = new ArrayList<>();
         animeAdapter = new BaseRvAdapter<AnimeBean>(animeList) {

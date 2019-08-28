@@ -68,4 +68,22 @@
         <attr name="preview_centerVertical" format="boolean" />
         <attr name="preview_centerHorizontal" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="SlantedTextView">
+        <attr name="slantedTextSize" format="dimension"/>
+        <attr name="slantedBackgroundColor" format="color"/>
+        <attr name="slantedText" format="string"/>
+        <attr name="slantedTextColor" format="color"/>
+        <attr name="slantedLength" format="dimension"/>
+        <attr name="slantedMode" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="left_bottom" value="2" />
+            <enum name="right_bottom" value="3" />
+            <enum name="left_triangle" value="4" />
+            <enum name="right_triangle" value="5" />
+            <enum name="left_bottom_triangle" value="6" />
+            <enum name="right_bottom_triangle" value="7" />
+        </attr>
+    </declare-styleable>
 </resources>

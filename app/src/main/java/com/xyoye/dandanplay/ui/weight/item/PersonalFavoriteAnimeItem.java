@@ -19,13 +19,11 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/24.
  */
 
-public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.FavoritesBean> {
+public class PersonalFavoriteAnimeItem implements AdapterItem<AnimeFavoriteBean.FavoritesBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
-    @BindView(R.id.anima_title)
-    TextView animaTitle;
-    @BindView(R.id.status_tv)
-    TextView statusTv;
+    @BindView(R.id.anime_title)
+    TextView animeTitle;
 
     private View mView;
 
@@ -48,17 +46,14 @@ public class PersonalFavoriteAnimaItem implements AdapterItem<AnimeFavoriteBean.
     public void onUpdateViews(AnimeFavoriteBean.FavoritesBean model, int position) {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .transform(new CornersCenterCrop(10));
+                .transform(new CornersCenterCrop(3));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
                 .into(imageView);
 
-        animaTitle.setText(model.getAnimeTitle());
-
-        String status = "进度:"+model.getEpisodeWatched()+"话(全"+model.getEpisodeTotal()+"话)";
-        statusTv.setText(status);
+        animeTitle.setText(model.getAnimeTitle());
 
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(

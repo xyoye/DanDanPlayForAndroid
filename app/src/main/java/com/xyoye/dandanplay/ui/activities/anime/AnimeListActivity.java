@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -18,7 +19,8 @@ import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.impl.AnimeListPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimeListPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeListView;
-import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimaItem;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
+import com.xyoye.dandanplay.ui.weight.item.PersonalFavoriteAnimeItem;
 import com.xyoye.dandanplay.ui.weight.item.PersonalPlayHistoryItem;
 import com.xyoye.dandanplay.ui.weight.item.TagAnimeItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -39,6 +41,8 @@ public class AnimeListActivity extends BaseMvpActivity<AnimeListPresenter> imple
 
     @Override
     public void initView() {
+
+        recyclerView.addItemDecoration(new ItemDecorationSpaces(ConvertUtils.dp2px(5)));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
         int openType = getIntent().getIntExtra("open_type", ANIME_TAG);
@@ -107,7 +111,7 @@ public class AnimeListActivity extends BaseMvpActivity<AnimeListPresenter> imple
                 @NonNull
                 @Override
                 public AdapterItem<AnimeFavoriteBean.FavoritesBean> onCreateItem(int viewType) {
-                    return new PersonalFavoriteAnimaItem();
+                    return new PersonalFavoriteAnimeItem();
                 }
             };
             recyclerView.setAdapter(adapter);

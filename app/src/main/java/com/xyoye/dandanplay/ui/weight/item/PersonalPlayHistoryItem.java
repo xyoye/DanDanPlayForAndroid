@@ -12,6 +12,8 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
+import com.xyoye.dandanplay.ui.weight.SlantedTextView;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
@@ -23,13 +25,10 @@ import butterknife.BindView;
 public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.PlayHistoryAnimesBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
-    @BindView(R.id.anima_title)
-    TextView animaTitle;
-    @BindView(R.id.status_tv)
-    TextView statusTv;
+    @BindView(R.id.anime_title)
+    TextView animeTitle;
 
     private View mView;
-    private Context context;
 
     @Override
     public int getLayoutResId() {
@@ -39,7 +38,6 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
     @Override
     public void initItemViews(View itemView) {
         mView = itemView;
-        context = mView.getContext();
     }
 
     @Override
@@ -51,18 +49,14 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
     public void onUpdateViews(PlayHistoryBean.PlayHistoryAnimesBean model, int position) {
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .transform(new CornersCenterCrop(10));
+                .transform(new CornersCenterCrop(3));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
                 .into(imageView);
 
-        animaTitle.setText(model.getAnimeTitle());
-
-        statusTv.setText(model.isIsOnAir()
-                ? "连载中"
-                : "已完结");
+        animeTitle.setText(model.getAnimeTitle());
 
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(

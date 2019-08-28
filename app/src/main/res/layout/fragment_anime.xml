@@ -7,6 +7,5 @@
         android:id="@+id/bangumi_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"/>
+        android:padding="5dp"/>
 </RelativeLayout>

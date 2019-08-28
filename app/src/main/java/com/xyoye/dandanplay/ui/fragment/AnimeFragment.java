@@ -6,6 +6,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -14,6 +15,7 @@ import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeView;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -78,6 +80,7 @@ public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements Sc
         };
 
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3){});
+        recyclerView.addItemDecoration(new ItemDecorationSpaces(ConvertUtils.dp2px(5)));
         recyclerView.setAdapter(adapter);
     }
 

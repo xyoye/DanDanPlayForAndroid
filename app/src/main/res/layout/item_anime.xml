@@ -1,66 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@color/white">
+    android:gravity="center">
 
     <RelativeLayout
+        android:id="@+id/image_rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/image_rl"
-            android:layout_width="100dp"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true">
-            <ImageView
-                android:id="@+id/image_iv"
-                android:layout_width="100dp"
-                android:layout_height="120dp"/>
-
-            <TextView
-                android:id="@+id/anima_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/background_anime_title"
-                android:padding="4dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/text_white"
-                android:textSize="12sp"
-                tools:text="测试标题" />
-        </RelativeLayout>
+        <ImageView
+            android:id="@+id/image_iv"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
 
         <TextView
-            android:id="@+id/status_tv"
-            android:layout_width="wrap_content"
+            android:id="@+id/anime_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/image_rl"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/background_anime_title"
             android:ellipsize="end"
             android:maxLines="1"
+            android:padding="4dp"
+            android:textColor="@color/text_white"
             android:textSize="12sp"
-            tools:text="测试状态" />
+            tools:text="测试标题" />
 
-        <TextView
-            android:id="@+id/favorite_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image_rl"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/text_theme"
-            android:textSize="12sp"
+        <com.xyoye.dandanplay.ui.weight.SlantedTextView
+            android:id="@+id/follow_tag_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:visibility="gone"
-            tools:text="已关注"
-            tools:visibility="visible" />
+            app:slantedBackgroundColor="@color/theme_color"
+            app:slantedLength="24dp"
+            app:slantedMode="left"
+            app:slantedText="已关注"
+            app:slantedTextColor="@color/text_white"
+            app:slantedTextSize="10sp" />
     </RelativeLayout>
 
 </RelativeLayout>
+

@@ -1,13 +1,10 @@
 package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
@@ -16,10 +13,6 @@ import com.xyoye.dandanplay.mvp.impl.OpenPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.OpenPresenter;
 import com.xyoye.dandanplay.mvp.view.OpenView;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
-
-import java.io.InputStream;
-
-import butterknife.BindView;
 
 /**
  * Created by xyoye on 2018/7/15.

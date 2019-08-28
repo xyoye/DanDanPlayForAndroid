@@ -64,6 +64,9 @@ public class PlayerManagerActivity extends AppCompatActivity {
 
         boolean isSmbPlay = openIntent.getBooleanExtra("smb_play", false);
 
+        // TODO: 2019/8/28 使用播放器的途径有：本地文件播放，串流播放，外部视频播放，smb播放
+        // TODO: 2019/8/28 除本地文件播放外，都应弹窗询问是否选择弹幕
+        
         //外部打开 或 smb播放
         if (Intent.ACTION_VIEW.equals(openIntent.getAction()) || isSmbPlay) {
 

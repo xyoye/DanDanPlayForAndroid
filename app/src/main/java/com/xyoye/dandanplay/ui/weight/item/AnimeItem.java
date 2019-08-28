@@ -12,6 +12,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeDetailActivity;
 import com.xyoye.dandanplay.ui.weight.CornersCenterCrop;
+import com.xyoye.dandanplay.ui.weight.SlantedTextView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -24,12 +25,10 @@ import butterknife.BindView;
 public class AnimeItem implements AdapterItem<AnimeBean> {
     @BindView(R.id.image_iv)
     ImageView imageView;
-    @BindView(R.id.anima_title)
-    TextView animaTitle;
-    @BindView(R.id.status_tv)
-    TextView statusTv;
-    @BindView(R.id.favorite_tv)
-    TextView favoriteTv;
+    @BindView(R.id.anime_title)
+    TextView animeTitle;
+    @BindView(R.id.follow_tag_view)
+    SlantedTextView followTagView;
 
     private View mView;
 
@@ -51,21 +50,17 @@ public class AnimeItem implements AdapterItem<AnimeBean> {
     @Override
     public void onUpdateViews(AnimeBean model, int position) {
 
-        if (AppConfig.getInstance().isLogin()){
-            favoriteTv.setVisibility(View.VISIBLE);
-            if (model.isIsFavorited())
-                favoriteTv.setText("已关注");
+        if (AppConfig.getInstance().isLogin()) {
+            followTagView.setVisibility(model.isIsFavorited()
+                    ? View.VISIBLE
+                    : View.GONE);
         }
 
-        statusTv.setText(model.isIsOnAir()
-                         ? "连载中"
-                         : "已完结");
-
-        animaTitle.setText(model.getAnimeTitle());
+        animeTitle.setText(model.getAnimeTitle());
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .transform(new CornersCenterCrop(ConvertUtils.dp2px(5)));
+                .transform(new CornersCenterCrop(ConvertUtils.dp2px(3)));
 
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
@@ -74,8 +69,8 @@ public class AnimeItem implements AdapterItem<AnimeBean> {
 
         mView.setOnClickListener(v ->
                 AnimeDetailActivity.launchAnimeDetail(
-                        (Activity)mView.getContext(),
-                        model.getAnimeId()+"")
+                        (Activity) mView.getContext(),
+                        model.getAnimeId() + "")
         );
     }
 }

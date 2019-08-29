@@ -67,11 +67,11 @@ public class FolderItem implements AdapterItem<FolderBean>{
         }
 
         folderTitle.setTextColor(isLastPlayFolder
-                ? CommonUtils.getResColor(R.color.text_theme)
+                ? CommonUtils.getResColor(R.color.immutable_text_theme)
                 : CommonUtils.getResColor(R.color.text_black));
 
         fileNumber.setTextColor(isLastPlayFolder
-                ? CommonUtils.getResColor(R.color.text_theme)
+                ? CommonUtils.getResColor(R.color.immutable_text_theme)
                 : CommonUtils.getResColor(R.color.text_gray));
 
         mView.setOnClickListener(v -> listener.onClick(model.getFolderPath()));

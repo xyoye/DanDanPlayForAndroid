@@ -42,7 +42,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/tip_downloading"
-            android:textColor="@color/text_theme" />
+            android:textColor="@color/immutable_text_theme" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -32,7 +32,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:textSize="18sp"
-            android:textColor="@color/orange"
+            android:textColor="@color/immutable_text_orange"
             tools:text="1024M"/>
     </RelativeLayout>
 
@@ -79,6 +79,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/diver_color"/>
+        android:background="@color/layout_bg_color"/>
 
 </LinearLayout>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/diver_color">
+    android:background="@color/layout_bg_color">
 
     <include
         android:id="@+id/toolbar_layout"
@@ -66,7 +66,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -94,7 +94,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
 
         <RelativeLayout
             android:id="@+id/max_download_rate_rl"
@@ -147,7 +147,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
 
         <RelativeLayout
             android:id="@+id/max_task_count_rl"

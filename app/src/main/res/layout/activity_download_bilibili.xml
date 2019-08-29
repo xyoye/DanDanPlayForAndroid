@@ -37,7 +37,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:background="@color/diver_color" />
+        android:background="@color/layout_bg_color" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -54,7 +54,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/av_code_tv"
-            android:background="@color/edit_text_bg_color"
             android:hint="输入av号下载"
             android:inputType="number"
             android:textColor="@color/edit_text_text_color"
@@ -74,7 +73,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
             android:text="确定"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
 
     </RelativeLayout>
@@ -82,7 +81,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/diver_color" />
+        android:background="@color/layout_bg_color" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -99,7 +98,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/url_tv"
-            android:background="@color/edit_text_bg_color"
             android:hint="输入链接下载"
             android:textColor="@color/edit_text_text_color"
             android:textColorHint="@color/edit_text_hint_color"
@@ -118,7 +116,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
             android:text="确定"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
 
     </RelativeLayout>
@@ -126,5 +124,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/diver_color" />
+        android:background="@color/layout_bg_color" />
 </LinearLayout>

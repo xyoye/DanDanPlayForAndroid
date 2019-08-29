@@ -5,6 +5,6 @@
         android:radius="10dp"/>
     
     <solid
-        android:color="@color/result_view"/>
+        android:color="@color/loading_dialog_bg_color"/>
 
 </shape>

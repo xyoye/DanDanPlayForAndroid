@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/download_status_iv"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:textSize="12sp"
             android:text=""/>
     </RelativeLayout>
@@ -102,5 +102,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/diver_color"/>
+        android:background="@color/layout_bg_color"/>
 </RelativeLayout>

@@ -111,7 +111,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
         titleTv.setTextColor(isLastPlayVideo
-                ? CommonUtils.getResColor(R.color.text_theme)
+                ? CommonUtils.getResColor(R.color.immutable_text_theme)
                 : CommonUtils.getResColor(R.color.text_black));
 
         durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
@@ -141,7 +141,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
         Bitmap bitmap;
         if (_id == 0) {
             bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
-            bitmap.eraseColor(CommonUtils.getResColor(R.color.black_light));
+            bitmap.eraseColor(CommonUtils.getResColor(R.color.video_item_image_default_color));
         } else {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inDither = false;
@@ -150,7 +150,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
         }
         if (bitmap == null) {
             bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565);
-            bitmap.eraseColor(CommonUtils.getResColor(R.color.black_light));
+            bitmap.eraseColor(CommonUtils.getResColor(R.color.video_item_image_default_color));
         }
         return bitmap;
     }

@@ -35,7 +35,7 @@
             android:layout_height="0.5dp"
             android:layout_marginTop="8dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -91,7 +91,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/path_tips"
                 android:textSize="12sp"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:text=""/>
         </RelativeLayout>
 
@@ -115,7 +115,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/magnet_tips"
                 android:textSize="12sp"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:text=""/>
         </RelativeLayout>
 
@@ -140,7 +140,7 @@
                 android:layout_toEndOf="@+id/status_tips"
                 android:layout_centerVertical="true"
                 android:textSize="12sp"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:text=""/>
 
             <TextView
@@ -150,7 +150,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:textSize="12sp"
-                android:textColor="@color/red"
+                android:textColor="@color/text_red"
                 android:text="删除任务"/>
         </RelativeLayout>
 
@@ -159,7 +159,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
 
         <TextView
             android:layout_width="wrap_content"

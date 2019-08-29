@@ -43,7 +43,7 @@
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
         android:textSize="18sp"
-        android:textColor="@color/orange"
+        android:textColor="@color/immutable_text_orange"
         tools:text="rank"/>
 
 </RelativeLayout>

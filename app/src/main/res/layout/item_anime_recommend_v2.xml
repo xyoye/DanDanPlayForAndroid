@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:textColor="@color/orange"
+        android:textColor="@color/immutable_text_orange"
         android:textSize="12sp"
         tools:text="5.6"
         app:layout_constraintBottom_toBottomOf="@id/image_iv"

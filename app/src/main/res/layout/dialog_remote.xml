@@ -28,7 +28,7 @@
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="8dp"
-                android:background="@color/diver_color" />
+                android:background="@color/layout_bg_color" />
         </RelativeLayout>
 
         <LinearLayout
@@ -57,7 +57,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/diver_color" />
+            android:background="@color/layout_bg_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -156,7 +156,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:text="确定"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>

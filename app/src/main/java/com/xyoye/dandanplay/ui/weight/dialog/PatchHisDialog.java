@@ -70,10 +70,10 @@ public class PatchHisDialog extends Dialog {
 
         if (AppConfig.getInstance().isAutoQueryPatch()) {
             fixModeTv.setText("自动");
-            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
         } else {
             fixModeTv.setText("手动");
-            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
+            fixModeTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_pink));
         }
 
         hisTv.setText(his.toString());
@@ -87,11 +87,11 @@ public class PatchHisDialog extends Dialog {
                 if (AppConfig.getInstance().isAutoQueryPatch()) {
                     AppConfig.getInstance().setAutoQueryPatch(false);
                     fixModeTv.setText("手动");
-                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
+                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_pink));
                 } else {
                     AppConfig.getInstance().setAutoQueryPatch(true);
                     fixModeTv.setText("自动");
-                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+                    fixModeTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 }
                 break;
             case R.id.about_sophix_iv:

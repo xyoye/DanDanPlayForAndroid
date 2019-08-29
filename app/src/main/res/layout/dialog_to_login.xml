@@ -30,7 +30,7 @@
             android:background="@drawable/bg_dialog_item_one"
             android:gravity="center"
             android:textSize="14sp"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:text="前往登录"/>
     </LinearLayout>
 

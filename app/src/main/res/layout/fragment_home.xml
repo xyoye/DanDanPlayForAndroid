@@ -140,7 +140,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="@color/diver_color" />
+            android:background="@color/layout_bg_color" />
 
         <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
             android:id="@+id/magic_indicator"

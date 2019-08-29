@@ -155,7 +155,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/diver_color"/>
+        android:background="@color/layout_bg_color"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/anime_rv"

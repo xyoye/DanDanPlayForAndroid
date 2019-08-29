@@ -10,7 +10,7 @@
         android:layout_toStartOf="@+id/extra_info_tv"
         android:gravity="start"
         android:textSize="14sp"
-        android:textColor="@color/text_theme"
+        android:textColor="@color/immutable_text_theme"
         android:layout_margin="5dp"
         android:text=""/>
 
@@ -22,7 +22,7 @@
         android:layout_centerVertical="true"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textColor="@color/orange"
+        android:textColor="@color/immutable_text_orange"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"

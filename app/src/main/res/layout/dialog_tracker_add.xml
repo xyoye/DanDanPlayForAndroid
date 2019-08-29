@@ -39,7 +39,7 @@
                 android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/diver_color"/>
+                android:background="@color/layout_bg_color"/>
         </RelativeLayout>
 
         <TextView
@@ -91,7 +91,7 @@
                 android:background="@drawable/bg_dialog_item_right"
                 android:gravity="center"
                 android:textSize="14sp"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:text="确定"/>
         </LinearLayout>
     </LinearLayout>

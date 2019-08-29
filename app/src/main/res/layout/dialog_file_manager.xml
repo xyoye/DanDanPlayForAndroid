@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:textColor="@color/text_pink"
+                android:textColor="@color/immutable_text_pink"
                 android:textSize="14sp"
                 android:text="取消"/>
 
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:padding="10dp"
-                android:textColor="@color/text_theme"
+                android:textColor="@color/immutable_text_theme"
                 android:textSize="14sp"
                 android:text="确定"/>
 

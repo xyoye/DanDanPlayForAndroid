@@ -72,7 +72,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
-                android:background="@color/diver_color" />
+                android:background="@color/layout_bg_color" />
 
             <RelativeLayout
                 android:id="@+id/version_rl"
@@ -124,7 +124,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color" />
+                android:background="@color/layout_bg_color" />
 
             <RelativeLayout
                 android:id="@+id/patch_rl"
@@ -176,7 +176,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color" />
+                android:background="@color/layout_bg_color" />
 
             <RelativeLayout
                 android:id="@+id/about_rl"
@@ -204,7 +204,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/diver_color" />
+                android:background="@color/layout_bg_color" />
 
             <RelativeLayout
                 android:id="@+id/feedback_rl"

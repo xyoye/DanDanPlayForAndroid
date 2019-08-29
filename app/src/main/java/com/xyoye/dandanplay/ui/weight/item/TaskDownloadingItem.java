@@ -76,7 +76,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 downloadStatusTv.setText("下载中");
                 break;
             case PAUSED:
@@ -85,7 +85,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 downloadStatusTv.setText("已暂停");
                 break;
             case STOPPED:
@@ -94,7 +94,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_pink));
                 downloadStatusTv.setText("已停止");
                 break;
             case SEEDING:
@@ -104,7 +104,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 downloadStatusTv.setText("上传中");
                 break;
             case UNKNOWN:
@@ -113,7 +113,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText("");
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_red));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_red));
                 downloadStatusTv.setText("未知");
                 break;
             case FINISHED:
@@ -122,7 +122,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_pink));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_pink));
                 downloadStatusTv.setText("已完成");
                 break;
             case ERROR:
@@ -131,7 +131,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 downloadDurationTv.setText("");
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_error);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.text_red));
+                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_red));
                 downloadStatusTv.setText("错误");
                 break;
             case CHECKING:

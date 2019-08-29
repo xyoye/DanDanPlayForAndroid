@@ -17,7 +17,8 @@
         <ImageView
             android:id="@+id/cover_iv"
             android:layout_width="84dp"
-            android:layout_height="56dp"/>
+            android:layout_height="56dp"
+            android:background="@color/item_bg_color"/>
 
         <TextView
             android:id="@+id/duration_tv"
@@ -77,7 +78,8 @@
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:background="@color/item_control_mask_color"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/delete_action_ll"

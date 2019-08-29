@@ -9,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -213,7 +214,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/diver_color_dark" />
+                android:background="@color/layout_bg_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -304,7 +305,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/diver_color_dark" />
+                android:background="@color/layout_bg_color" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -434,7 +435,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@color/diver_color_dark" />
+                android:background="@color/layout_bg_color" />
 
             <TextView
                 android:layout_width="wrap_content"

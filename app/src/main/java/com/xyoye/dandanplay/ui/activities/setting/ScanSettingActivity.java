@@ -68,7 +68,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
         ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
             if (hasChecked){
-                deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+                deleteTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 deleteTv.setClickable(true);
             }else{
                 deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
@@ -186,7 +186,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
     private void resetButtonStatus(){
         VideoScanFragment videoScanFragment = fragmentList.get(selectedPosition);
         if (videoScanFragment.hasChecked()){
-            deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_theme));
+            deleteTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
             deleteTv.setClickable(true);
         }else {
             deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));

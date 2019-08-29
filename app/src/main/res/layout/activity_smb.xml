@@ -36,13 +36,14 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/diver_color"/>
+            android:background="@color/layout_bg_color"/>
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/smb_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/item_bg_color"
         android:paddingTop="5dp"/>
 
 </LinearLayout>

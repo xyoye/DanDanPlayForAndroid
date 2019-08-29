@@ -65,7 +65,7 @@
             android:layout_marginStart="7dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/text_pink"
+            android:textColor="@color/immutable_text_pink"
             android:text="删除" />
 
         <TextView
@@ -77,7 +77,7 @@
             android:layout_marginEnd="12dp"
             android:padding="10dp"
             android:textSize="14sp"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:clickable="false"
             android:text="添加" />
 

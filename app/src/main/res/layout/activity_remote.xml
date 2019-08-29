@@ -13,6 +13,7 @@
         android:id="@+id/remote_video_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/item_bg_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

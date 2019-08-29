@@ -4,56 +4,23 @@
     <color name="colorPrimary">#212121</color>
     <!-- 状态栏颜色 -->
     <color name="colorPrimaryDark">#212121</color>
-    <!-- 控件被选中时的颜色 -->
+    <!-- 系统控件被选中时的颜色 -->
     <color name="colorAccent">#2095f4</color>
-
-    <!-- 常用 -->
-    <color name="transparent">#00000000</color>
-    <color name="white">#ffffff</color>
-    <color name="red">#e3010f</color>
-    <color name="orange">#f89957</color>
-    <color name="gray">#777777</color>
-    <color name="black">#000000</color>
-    <color name="pink">#fb7299</color>
-    <color name="black_light">#333333</color>
-
-    <color name="diver_color">#212121</color>
-    <color name="diver_color_dark">#c8c8c8</color>
-
-    <!-- 字体颜色 -->
-    <color name="text_black">#ffffff</color>
-    <color name="text_white">#353535</color>
-    <color name="text_gray">#9B9B9B</color>
-    <color name="text_red">#FF5340</color>
-    <color name="text_theme">#2095f4</color>
-    <color name="text_pink">#fb7299</color>
-
-    <!-- 灰色 -->
-    <color name="result_view">#b0000000</color>
-
-    <!-- 扫描框默认颜色 -->
-    <color name="scan_window_mask">#60000000</color>
-    <color name="scan_window_frame">#7F1FB3E2</color>
-    <color name="scan_window_corner">#FF1FB3E2</color>
-    <color name="scan_window_laser">#FF1FB3E2</color>
+    <!-- 系统控件未被选中的颜色 -->
+    <color name="colorControlNormal">#ffffff</color>
 
     <!-- 主题 -->
     <color name="theme_color">#212121</color>
-    <color name="theme_color_light">#4ea9f4</color>
-    <color name="download_light">#88c1e1fa</color>
-    <color name="download_dark">#664ea9f4</color>
-
-    <!-- 不可变的白色字体 -->
-    <color name="immutable_text_white">#ffffff</color>
-    <color name="immutable_text_black">#353535</color>
-    <color name="immutable_text_theme">#2095f4</color>
-
+    <!-- 字体颜色 -->
+    <color name="text_black">#ffffff</color>
+    <color name="text_white">#353535</color>
     <!-- toolbar字体图标颜色 -->
     <color name="toolbar_text_color">#ffffff</color>
     <!-- 普通layout背景色 -->
     <color name="layout_bg_color">#212121</color>
     <!-- 普通item背景色 -->
     <color name="item_bg_color">#303030</color>
+
     <!-- 输入框背景色 -->
     <color name="edit_text_bg_color">#353535</color>
     <color name="edit_text_text_color">#ffffff</color>
@@ -87,18 +54,43 @@
     <color name="block_label_stoke_checked_color">#2095f4</color>
     <color name="block_label_text_uncheck_color">#ffffff</color>
     <color name="block_label_text_checked_color">#2095f4</color>
-    <!-- 退出登录按钮颜色 -->
-    <color name="login_out_button_bg_color">#ff5340</color>
-    <color name="login_out_button_text_color">#ffffff</color>
     <!-- 搜索输入框颜色 -->
     <color name="search_edit_text_bg_color">#303030</color>
     <color name="search_history_bg_color">#66000000</color>
+    <!-- 视频图片背景颜色 -->
+    <color name="video_item_image_default_color">#333333</color>
+    <!-- 长按item遮罩颜色 -->
+    <color name="item_control_mask_color">#aa212121</color>
+    <!-- loading弹窗颜色 -->
+    <color name="loading_dialog_bg_color">#b0000000</color>
+
+
+    <!-- 不随主题切换的颜色 -->
+    <!-- 字体颜色 -->
+    <color name="immutable_text_white">#ffffff</color>
+    <color name="immutable_text_black">#353535</color>
+    <color name="immutable_text_theme">#2095f4</color>
+    <color name="immutable_text_red">#FF5340</color>
+    <color name="immutable_text_orange">#f89957</color>
+    <color name="immutable_text_pink">#fb7299</color>
+    <color name="text_gray">#9b9b9b</color>
+    <!-- 下载进度条颜色 -->
+    <color name="download_light">#88c1e1fa</color>
+    <color name="download_dark">#664ea9f4</color>
+    <!-- 扫描框颜色 -->
+    <color name="scan_window_mask">#60000000</color>
+    <color name="scan_window_frame">#7F1FB3E2</color>
+    <color name="scan_window_corner">#FF1FB3E2</color>
+    <color name="scan_window_laser">#FF1FB3E2</color>
+    <!-- 透明 -->
+    <color name="transparent">#00000000</color>
+    <!-- 退出登录按钮颜色 -->
+    <color name="login_out_button_bg_color">#ff5340</color>
+    <color name="login_out_button_text_color">#ffffff</color>
     <!-- 番剧详情遮罩颜色 -->
     <color name="anime_detail_mask_color">#2a000000</color>
     <!-- 番剧item遮罩颜色 -->
     <color name="anime_item_mask_color">#77000000</color>
     <!-- 视频item遮罩颜色 -->
     <color name="video_item_mask_color">#cc000000</color>
-    <!-- 长按item遮罩颜色 -->
-    <color name="item_control_mask_color">#aa212121</color>
 </resources>

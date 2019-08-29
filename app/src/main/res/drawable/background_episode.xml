@@ -4,9 +4,9 @@
         android:radius="3dp"/>
 
     <solid
-        android:color="@color/item_bg_color"/>
+        android:color="@color/layout_bg_color"/>
 
     <stroke
         android:width="0.7dp"
-        android:color="@color/diver_color_dark"/>
+        android:color="@color/item_bg_color"/>
 </shape>

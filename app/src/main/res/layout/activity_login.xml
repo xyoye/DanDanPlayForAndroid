@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:text="新账号注册"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
 
         <TextView
@@ -89,7 +89,7 @@
             android:layout_alignParentEnd="true"
             android:padding="5dp"
             android:text="忘记密码"
-            android:textColor="@color/text_theme"
+            android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
     </RelativeLayout>
 

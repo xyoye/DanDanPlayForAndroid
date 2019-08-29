@@ -35,7 +35,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends BaseMvpActivity<MainPresenter> implements MainView{
-    @BindView(R.id.navigationView)
+    @BindView(R.id.navigation_view)
     BottomNavigationView navigationView;
 
     private HomeFragment homeFragment;

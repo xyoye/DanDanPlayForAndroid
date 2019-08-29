@@ -15,10 +15,12 @@ import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeView;
+import com.xyoye.dandanplay.ui.weight.ItemDecorationDivider;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.Collections;
@@ -31,8 +33,8 @@ import butterknife.BindView;
  */
 
 public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimeView {
-    @BindView(R.id.bangumi_list_recycler_view)
-    RecyclerView recyclerView;
+    @BindView(R.id.anime_rv)
+    RecyclerView animeRv;
 
     public static AnimeFragment newInstance(BangumiBean bangumiBean){
         AnimeFragment animeFragment = new AnimeFragment();
@@ -79,9 +81,9 @@ public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements Sc
             }
         };
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3){});
-        recyclerView.addItemDecoration(new ItemDecorationSpaces(ConvertUtils.dp2px(5)));
-        recyclerView.setAdapter(adapter);
+        animeRv.setLayoutManager(new GridLayoutManager(getContext(), 3){});
+        animeRv.addItemDecoration(new ItemDecorationSpaces(ConvertUtils.dp2px(5)));
+        animeRv.setAdapter(adapter);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements Sc
 
     @Override
     public View getScrollableView() {
-        return recyclerView;
+        return animeRv;
     }
 
 }

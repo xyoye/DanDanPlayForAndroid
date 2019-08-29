@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import skin.support.content.res.SkinCompatResources;
+
 /**
  * Created by xyoye on 2018/12/4.
  */
@@ -337,7 +339,8 @@ public class CommonUtils {
      */
     @ColorInt
     public static int getResColor(@ColorRes int colorId){
-        return ContextCompat.getColor(IApplication.get_context(), colorId);
+        return SkinCompatResources.getColor(IApplication.get_context(), colorId);
+        //return ContextCompat.getColor(IApplication.get_context(), colorId);
     }
 
     /**

@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
@@ -18,11 +17,11 @@ import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.HomeFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
+import com.xyoye.dandanplay.ui.activities.WebViewActivity;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeSeasonActivity;
-import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.anime.SearchActivity;
-import com.xyoye.dandanplay.ui.activities.WebViewActivity;
+import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
 import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
 import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
@@ -33,6 +32,7 @@ import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -116,8 +116,8 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(dateList.get(index));
-                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
+                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor(R.color.indicator_checked_color));
                 simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
@@ -126,7 +126,7 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
                 return indicator;
             }
         });

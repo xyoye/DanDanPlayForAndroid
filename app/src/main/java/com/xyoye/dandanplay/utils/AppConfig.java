@@ -342,4 +342,15 @@ public class AppConfig {
     public void setRemoteLoginData(String data){
         SPUtils.getInstance().put(Constants.Config.REMOTE_LOGIN_DATA, data);
     }
+
+    /**
+     * 是否为夜间模式
+     */
+    public boolean isThemeNight(){
+        return SPUtils.getInstance().getBoolean(Constants.Config.THEME_NIGTH_TYPR, false);
+    }
+
+    public void setThemeNight(boolean isNight){
+        SPUtils.getInstance().put(Constants.Config.THEME_NIGTH_TYPR, isNight);
+    }
 }

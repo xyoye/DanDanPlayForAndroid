@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -42,6 +41,7 @@ import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
 import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
 import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 
 import org.greenrobot.eventbus.EventBus;
@@ -190,8 +190,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(titleList.get(index));
-                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
+                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor(R.color.indicator_checked_color));
                 simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
@@ -200,7 +200,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
                 return indicator;
             }
         });

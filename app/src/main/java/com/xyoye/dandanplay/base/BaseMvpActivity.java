@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 
@@ -70,7 +71,7 @@ public abstract class BaseMvpActivity<T extends BaseMvpPresenter> extends BaseAp
 
     @Override
     protected int getToolbarColor() {
-        return ContextCompat.getColor(this, R.color.theme_color);
+        return CommonUtils.getResColor(R.color.theme_color);
     }
 
     @Override

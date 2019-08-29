@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
+import skin.support.SkinCompatManager;
 
 /**
  * Created by xyoye on 2018/7/24.
@@ -51,6 +53,8 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
     TextView versionTv;
     @BindView(R.id.download_path_tv)
     TextView pathTv;
+    @BindView(R.id.theme_night_cb)
+    CheckBox themeNightCb;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -64,6 +68,9 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
         dialog = new ProgressDialog(AppSettingActivity.this);
+
+        boolean isNight = AppConfig.getInstance().isThemeNight();
+        themeNightCb.setChecked(isNight);
     }
 
     @Override
@@ -77,6 +84,17 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         patchRl.setOnLongClickListener(v -> {
             new PatchHisDialog(AppSettingActivity.this, R.style.Dialog).show();
             return true;
+        });
+
+        themeNightCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            AppConfig.getInstance().setThemeNight(isChecked);
+            if (isChecked){
+                SkinCompatManager.getInstance()
+                        .loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+            }else {
+                SkinCompatManager.getInstance()
+                        .restoreDefaultTheme();
+            }
         });
     }
 

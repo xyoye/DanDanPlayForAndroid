@@ -90,6 +90,9 @@ public class Constants {
         static final String SMB_IS_GRID_LAYOUT = "smb_is_grid_layout";
         //远程登录数据
         static final String REMOTE_LOGIN_DATA = "remote_login_data";
+
+        //是否为夜间模式
+        static final String THEME_NIGTH_TYPR = "theme_night_type";
     }
 
     /**

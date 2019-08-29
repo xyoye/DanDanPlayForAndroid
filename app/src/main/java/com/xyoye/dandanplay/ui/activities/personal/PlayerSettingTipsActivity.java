@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +34,7 @@ public class PlayerSettingTipsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.theme_color), 0);
+        StatusBarUtil.setColor(this, CommonUtils.getResColor(R.color.theme_color), 0);
 
         setTitle("设置说明");
     }

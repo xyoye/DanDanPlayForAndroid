@@ -116,8 +116,8 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
             public IPagerTitleView getTitleView(Context context, int index) {
                 SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
                 simplePagerTitleView.setText(titleList.get(index));
-                simplePagerTitleView.setNormalColor(ContextCompat.getColor(context, R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
+                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor( R.color.indicator_checked_color));
                 simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
                 return simplePagerTitleView;
             }
@@ -126,7 +126,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
             @Override
             public IPagerIndicator getIndicator(Context context) {
                 LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(ContextCompat.getColor(context, R.color.indicator_checked_color));
+                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
                 return indicator;
             }
         });

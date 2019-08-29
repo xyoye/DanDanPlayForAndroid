@@ -9,6 +9,7 @@ import android.view.Gravity;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.ui.weight.indicator.abs.IMeasurablePagerTitleView;
 
+import skin.support.widget.SkinCompatTextView;
 
 
 /**
@@ -16,7 +17,7 @@ import com.xyoye.dandanplay.ui.weight.indicator.abs.IMeasurablePagerTitleView;
  * 博客: http://hackware.lucode.net
  * Created by hackware on 2016/6/26.
  */
-public class SimplePagerTitleView extends android.support.v7.widget.AppCompatTextView implements IMeasurablePagerTitleView {
+public class SimplePagerTitleView extends SkinCompatTextView implements IMeasurablePagerTitleView {
     protected int mSelectedColor;
     protected int mNormalColor;
 

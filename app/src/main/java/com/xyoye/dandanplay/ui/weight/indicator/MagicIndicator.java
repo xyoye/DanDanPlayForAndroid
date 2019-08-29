@@ -7,13 +7,15 @@ import android.widget.FrameLayout;
 
 import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerNavigator;
 
+import skin.support.widget.SkinCompatFrameLayout;
+
 
 /**
  * 整个框架的入口，核心
  * 博客: http://hackware.lucode.net
  * Created by hackware on 2016/6/26.
  */
-public class MagicIndicator extends FrameLayout {
+public class MagicIndicator extends SkinCompatFrameLayout {
     private IPagerNavigator mNavigator;
 
     public MagicIndicator(Context context) {

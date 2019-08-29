@@ -81,7 +81,7 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
 
     @Override
     public void initView() {
-        refresh.setColorSchemeResources(R.color.theme_color);
+        refresh.setColorSchemeColors(CommonUtils.getResColor(R.color.theme_color));
 
         List<String> dateList = new ArrayList<>();
         dateList.add("周日");

@@ -34,11 +34,6 @@
     <!-- 登录按钮颜色 -->
     <color name="login_button_bg_color_night">#303030</color>
     <color name="login_button_text_color_night">#ffffff</color>
-    <!-- 底部导航栏颜色 -->
-    <color name="navigation_bg_color_night">#303030</color>
-    <color name="navigation_divider_color_night">#212121</color>
-    <color name="navigation_checked_color_night">#FF5340</color>
-    <color name="navigation_uncheck_color_night">#f89957</color>
     <!-- viewpager指示器颜色 -->
     <color name="indicator_bg_color_night">#303030</color>
     <color name="indicator_checked_color_night">#2095f4</color>

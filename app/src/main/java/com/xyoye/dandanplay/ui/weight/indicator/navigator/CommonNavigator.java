@@ -22,13 +22,15 @@ import com.xyoye.dandanplay.ui.weight.indicator.mode.PositionData;
 import java.util.ArrayList;
 import java.util.List;
 
+import skin.support.widget.SkinCompatFrameLayout;
+
 
 /**
  * 通用的ViewPager指示器，包含PagerTitle和PagerIndicator
  * 博客: http://hackware.lucode.net
  * Created by hackware on 2016/6/26.
  */
-public class CommonNavigator extends FrameLayout implements IPagerNavigator, NavigatorHelper.OnNavigatorScrollListener {
+public class CommonNavigator extends SkinCompatFrameLayout implements IPagerNavigator, NavigatorHelper.OnNavigatorScrollListener {
     private HorizontalScrollView mScrollView;
     private LinearLayout mTitleContainer;
     private LinearLayout mIndicatorContainer;

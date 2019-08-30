@@ -12,6 +12,7 @@ import com.xyoye.dandanplay.utils.CommonUtils;
  */
 public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 
+    protected Dialog dialog;
 
     @Override
     protected int getToolbarColor() {
@@ -22,9 +23,6 @@ public abstract class BaseMvcActivity extends BaseAppCompatActivity {
     protected void setStatusBar() {
         StatusBarUtil.setColor(this, getToolbarColor(), 0);
     }
-
-
-    protected Dialog dialog;
 
     public void showLoadingDialog() {
         if (dialog == null || !dialog.isShowing()) {

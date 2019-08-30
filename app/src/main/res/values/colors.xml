@@ -27,7 +27,6 @@
     <color name="login_button_bg_color">#2095f4</color>
     <color name="login_button_text_color">#ffffff</color>
     <!-- viewpager指示器颜色 -->
-    <color name="indicator_bg_color">#ffffff</color>
     <color name="indicator_checked_color">#2095f4</color>
     <color name="indicator_uncheck_color">#353535</color>
     <!-- viewpager背景色 -->

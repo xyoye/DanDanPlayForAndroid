@@ -18,7 +18,6 @@
             android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="@color/item_bg_color"
             android:padding="5dp">
 
             <com.youth.banner.Banner
@@ -142,20 +141,26 @@
             android:layout_height="5dp"
             android:background="@color/layout_bg_color" />
 
-        <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
-            android:id="@+id/magic_indicator"
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            app:tabMode="scrollable" />
+            android:background="@color/item_bg_color"
+            app:tl_indicator_color="@color/indicator_checked_color"
+            app:tl_underline_color="@color/indicator_checked_color"
+            app:tl_textSelectColor="@color/indicator_checked_color"
+            app:tl_textUnselectColor="@color/indicator_uncheck_color"/>
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/item_bg_color"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/item_bg_color">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
     </com.xyoye.dandanplay.ui.weight.ScrollableLayout>
 </LinearLayout>

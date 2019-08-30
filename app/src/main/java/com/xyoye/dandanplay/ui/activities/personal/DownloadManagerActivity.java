@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.ui.activities.personal;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -15,6 +13,9 @@ import android.view.MenuItem;
 
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
@@ -32,16 +33,8 @@ import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
-import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.CommonNavigatorAdapter;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
-import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.TabEntity;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 
 import org.greenrobot.eventbus.EventBus;
@@ -64,8 +57,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     public static final int TASK_DOWNLOADING_DANMU_BIND = 1001;
     public static final int TASK_DOWNLOADED_DANMU_BIND = 1002;
 
-    @BindView(R.id.indicator)
-    MagicIndicator magicIndicator;
+    @BindView(R.id.tab_layout)
+    CommonTabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
@@ -107,15 +100,15 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         fragmentList.add(downloadingFragment);
         fragmentList.add(downloadedFragment);
 
-        initIndicator();
+        initTabLayout();
 
         initViewPager();
 
         int position = getIntent().getIntExtra("fragment_position", 0);
         if (position == 0) {
-            magicIndicator.onPageSelected(0);
+            tabLayout.setCurrentTab(0);
         } else {
-            magicIndicator.onPageSelected(1);
+            tabLayout.setCurrentTab(1);
         }
 
         if (ServiceUtils.isServiceRunning(TorrentService.class)) {
@@ -174,38 +167,23 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     }
 
 
-    private void initIndicator() {
-        List<String> titleList = new ArrayList<>();
-        titleList.add("下载中");
-        titleList.add("已完成");
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdjustMode(true);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+    private void initTabLayout() {
+        ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+        mTabEntities.add(new TabEntity("下载中", 0, 0));
+        mTabEntities.add(new TabEntity("已完成", 0, 0));
+        tabLayout.setTabData(mTabEntities);
+
+        tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
-            public int getCount() {
-                return titleList.size();
+            public void onTabSelect(int position) {
+                viewPager.setCurrentItem(position);
             }
 
             @Override
-            public IPagerTitleView getTitleView(Context context, int index) {
-                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-                simplePagerTitleView.setText(titleList.get(index));
-                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor(R.color.indicator_checked_color));
-                simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-                return simplePagerTitleView;
-            }
+            public void onTabReselect(int position) {
 
-            @SuppressLint("ResourceType")
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
-                return indicator;
             }
         });
-        magicIndicator.setNavigator(commonNavigator);
-        magicIndicator.onPageSelected(selectedPosition);
     }
 
     private void initViewPager() {
@@ -216,18 +194,18 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
             }
 
             @Override
             public void onPageSelected(int position) {
-                magicIndicator.onPageSelected(position);
+                tabLayout.setCurrentTab(position);
                 selectedPosition = position;
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                magicIndicator.onPageScrollStateChanged(state);
+
             }
         });
     }

@@ -1,153 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/layout_bg_color">
+    android:background="@color/layout_bg_color"
+    android:orientation="vertical">
 
-    <include layout="@layout/layout_toolbar"/>
+    <include layout="@layout/layout_toolbar" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/item_bg_color">
+        android:background="@color/item_bg_color"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_black"
                 android:gravity="center_vertical"
                 android:paddingStart="10dp"
-                android:text="年份："/>
+                android:text="年份："
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/year_01_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text=""
                 android:textColor="@color/text_black"
-                android:text=""/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/year_02_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text=""
                 android:textColor="@color/text_black"
-                android:text=""/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/year_03_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text=""
                 android:textColor="@color/text_black"
-                android:text=""/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/year_other_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text="其它"
                 android:textColor="@color/text_black"
-                android:text="其它"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="@color/text_black"
                 android:gravity="center_vertical"
                 android:paddingStart="10dp"
-                android:text="季度："/>
+                android:text="季度："
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/month_10_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text="10月"
                 android:textColor="@color/text_black"
-                android:text="10月"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/month_7_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text="7月"
                 android:textColor="@color/text_black"
-                android:text="7月"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/month_4_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text="4月"
                 android:textColor="@color/text_black"
-                android:text="4月"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/month_1_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textSize="14sp"
+                android:text="1月"
                 android:textColor="@color/text_black"
-                android:text="1月"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
@@ -155,14 +155,18 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:background="@color/layout_bg_color"/>
+        android:background="@color/layout_bg_color" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/anime_rv"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/item_bg_color"
-        android:padding="5dp">
-    </android.support.v7.widget.RecyclerView>
+        android:background="@color/item_bg_color">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/anime_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"/>
+    </RelativeLayout>
 
 </LinearLayout>

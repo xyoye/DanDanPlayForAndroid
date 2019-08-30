@@ -17,7 +17,8 @@
             android:id="@+id/check_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:button="@drawable/background_check_box" />
 
         <TextView
             android:id="@+id/tracker_tv"

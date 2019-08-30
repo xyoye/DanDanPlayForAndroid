@@ -1,19 +1,24 @@
 package com.xyoye.dandanplay.ui.activities.anime;
 
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.TrackerBean;
-import com.xyoye.dandanplay.ui.weight.dialog.AddTrackerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.TrackerItem;
 import com.xyoye.dandanplay.utils.TrackerManager;
@@ -69,7 +74,7 @@ public class TrackerActivity extends BaseMvcActivity {
 
                     @Override
                     public void onLongClick(int position) {
-                        for (TrackerBean trackerBean : trackerList){
+                        for (TrackerBean trackerBean : trackerList) {
                             trackerBean.setSelectType(true);
                             trackerBean.setSelected(false);
                         }
@@ -110,8 +115,21 @@ public class TrackerActivity extends BaseMvcActivity {
 
     @OnClick(R.id.add_tracker_bt)
     public void onViewClicked() {
-        AddTrackerDialog dialog = new AddTrackerDialog(this, R.style.Dialog, this::updateTracker);
-        dialog.show();
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_tracker_add, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog addTrackerDialog = builder.setTitle("添加Tracker")
+                .setView(dialogView)
+                .setPositiveButton("确定", null)
+                .setNegativeButton("取消", null)
+                .create();
+        addTrackerDialog.show();
+        addTrackerDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    EditText trackerEt = dialogView.findViewById(R.id.tracker_et);
+                    String trackerText = trackerEt.getText().toString().trim();
+                    if (addTracker(trackerText))
+                        addTrackerDialog.dismiss();
+                });
     }
 
     @Override
@@ -126,7 +144,7 @@ public class TrackerActivity extends BaseMvcActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
@@ -139,12 +157,12 @@ public class TrackerActivity extends BaseMvcActivity {
                 break;
             case R.id.tracker_delete:
                 Iterator iterator = trackerList.iterator();
-                while (iterator.hasNext()){
-                    TrackerBean trackerBean = (TrackerBean)iterator.next();
-                    if (trackerBean.isSelected()){
+                while (iterator.hasNext()) {
+                    TrackerBean trackerBean = (TrackerBean) iterator.next();
+                    if (trackerBean.isSelected()) {
                         IApplication.trackers.remove(trackerBean.getTracker());
                         iterator.remove();
-                    }else {
+                    } else {
                         trackerBean.setSelectType(false);
                         trackerBean.setSelected(false);
                     }
@@ -159,7 +177,7 @@ public class TrackerActivity extends BaseMvcActivity {
                 addTrackerBt.show();
                 break;
             case R.id.tracker_cancel:
-                for (TrackerBean trackerBean : trackerList){
+                for (TrackerBean trackerBean : trackerList) {
                     trackerBean.setSelected(false);
                     trackerBean.setSelectType(false);
                 }
@@ -187,9 +205,47 @@ public class TrackerActivity extends BaseMvcActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void updateTracker(){
+    public boolean addTracker(String trackerText) {
+        //数据为空
+        if (StringUtils.isEmpty(trackerText)) {
+            ToastUtils.showShort("tracker不能为空");
+            return false;
+        }
+
+        //添加一条
+        if (!trackerText.contains("\n")) {
+            if (IApplication.trackers.contains(trackerText)) {
+                ToastUtils.showShort("该tracker已存在");
+                return false;
+            }
+            IApplication.trackers.add(trackerText);
+            TrackerManager.addTracker(trackerText);
+            updateTracker();
+            ToastUtils.showShort("已添加");
+            return true;
+        }
+
+        //添加多条
+        List<String> trackerList = new ArrayList<>();
+        String[] trackers = trackerText.split("\n");
+        for (String tracker : trackers) {
+            tracker = tracker.replace(" ", "");
+            if (IApplication.trackers.contains(tracker)) {
+                continue;
+            }
+            trackerList.add(tracker);
+            IApplication.trackers.add(tracker);
+        }
+
+        TrackerManager.addTracker(trackerList);
+        updateTracker();
+        ToastUtils.showShort("已添加");
+        return true;
+    }
+
+    private void updateTracker() {
         trackerList.clear();
-        for (String tracker : IApplication.trackers){
+        for (String tracker : IApplication.trackers) {
             TrackerBean trackerBean = new TrackerBean();
             trackerBean.setSelected(false);
             trackerBean.setSelectType(false);

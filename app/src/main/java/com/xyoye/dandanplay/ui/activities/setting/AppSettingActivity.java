@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.ui.activities.setting;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -18,8 +17,8 @@ import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
-import com.xyoye.dandanplay.ui.activities.personal.FeedbackActivity;
 import com.xyoye.dandanplay.ui.activities.WebViewActivity;
+import com.xyoye.dandanplay.ui.activities.personal.FeedbackActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -67,7 +66,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         String version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
-        dialog = new ProgressDialog(AppSettingActivity.this);
 
         boolean isNight = AppConfig.getInstance().isThemeNight();
         themeNightCb.setChecked(isNight);

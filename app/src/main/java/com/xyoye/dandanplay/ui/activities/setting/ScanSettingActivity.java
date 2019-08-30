@@ -1,12 +1,10 @@
 package com.xyoye.dandanplay.ui.activities.setting;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -23,15 +24,8 @@ import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanView;
 import com.xyoye.dandanplay.ui.fragment.VideoScanFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
-import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.CommonNavigatorAdapter;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
-import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.TabEntity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -47,8 +41,8 @@ import butterknife.OnClick;
 
 public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
 
-    @BindView(R.id.indicator)
-    MagicIndicator magicIndicator;
+    @BindView(R.id.tab_layout)
+    CommonTabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
     @BindView(R.id.delete_tv)
@@ -79,7 +73,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
         scanFragment.setOnItemCheckListener(itemCheckListener);
         blockFragment.setOnItemCheckListener(itemCheckListener);
 
-        initIndicator();
+        initTabLayout();
 
         initViewPager();
     }
@@ -100,38 +94,24 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
         return new VideoScanPresenterImpl(this, this);
     }
 
-    private void initIndicator() {
-        List<String> titleList = new ArrayList<>();
-        titleList.add("扫描目录");
-        titleList.add("屏蔽目录");
-        CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdjustMode(true);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+    private void initTabLayout() {
+        ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+        mTabEntities.add(new TabEntity("扫描目录", 0, 0));
+        mTabEntities.add(new TabEntity("屏蔽目录", 0, 0));
+        tabLayout.setTabData(mTabEntities);
+        tabLayout.setCurrentTab(selectedPosition);
+
+        tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
-            public int getCount() {
-                return titleList.size();
+            public void onTabSelect(int position) {
+                viewPager.setCurrentItem(position);
             }
 
             @Override
-            public IPagerTitleView getTitleView(Context context, int index) {
-                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-                simplePagerTitleView.setText(titleList.get(index));
-                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor( R.color.indicator_checked_color));
-                simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-                return simplePagerTitleView;
-            }
+            public void onTabReselect(int position) {
 
-            @SuppressLint("ResourceType")
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
-                return indicator;
             }
         });
-        magicIndicator.setNavigator(commonNavigator);
-        magicIndicator.onPageSelected(selectedPosition);
     }
 
     private void initViewPager() {
@@ -142,12 +122,11 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
 
             @Override
             public void onPageSelected(int position) {
-                magicIndicator.onPageSelected(position);
+                tabLayout.setCurrentTab(position);
                 selectedPosition = position;
                 fragmentList.get(position).updateFolderList();
                 resetButtonStatus();
@@ -155,7 +134,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                magicIndicator.onPageScrollStateChanged(state);
+
             }
         });
     }

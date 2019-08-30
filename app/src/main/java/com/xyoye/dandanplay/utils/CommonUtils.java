@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -15,9 +16,9 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -25,7 +26,6 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.taobao.sophix.PatchStatus;
 import com.taobao.sophix.listener.PatchLoadStatusListener;
-import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 
@@ -39,7 +39,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import skin.support.content.res.SkinCompatResources;
@@ -332,6 +331,14 @@ public class CommonUtils {
             EventBus.getDefault().post(event);
             SPUtils.getInstance().put("patch_his", JsonUtil.toJson(eventList));
         };
+    }
+
+    /**
+     * 获取Drawable资源
+     */
+    public static Drawable getResDrawable(@DrawableRes int drawableId){
+        return SkinCompatResources.getDrawable(IApplication.get_context(), drawableId);
+        //return ContextCompat.getColor(IApplication.get_context(), colorId);
     }
 
     /**

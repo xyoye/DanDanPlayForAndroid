@@ -33,9 +33,10 @@ public class BaseLoadingDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_base_loading);
+
         if (!StringUtils.isEmpty(msg)){
-            this.setCancelable(false);
             TextView textView = this.findViewById(R.id.msg_tv);
+            this.setCancelable(false);
             textView.setText(msg);
         }
     }

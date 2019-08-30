@@ -14,8 +14,6 @@
     <!-- 字体颜色 -->
     <color name="text_black_night">#ffffff</color>
     <color name="text_white_night">#353535</color>
-    <!-- toolbar字体图标颜色 -->
-    <color name="toolbar_text_color_night">#ffffff</color>
     <!-- 普通layout背景色 -->
     <color name="layout_bg_color_night">#212121</color>
     <!-- 普通item背景色 -->
@@ -35,14 +33,13 @@
     <color name="login_button_bg_color_night">#303030</color>
     <color name="login_button_text_color_night">#ffffff</color>
     <!-- viewpager指示器颜色 -->
-    <color name="indicator_bg_color_night">#303030</color>
     <color name="indicator_checked_color_night">#2095f4</color>
     <color name="indicator_uncheck_color_night">#ffffff</color>
     <!-- viewpager背景色 -->
     <color name="viewpager_bg_color_night">#303030</color>
     <!-- menu弹窗颜色 -->
-    <color name="menu_bg_color_night">#303030</color>
-    <color name="menu_text_color_night">#ffffff</color>
+    <color name="menu_bg_color_night">#ffffff</color>
+    <color name="menu_text_color_night">#353535</color>
     <!-- 屏蔽标签颜色 -->
     <color name="block_label_bg_color_night">#212121</color>
     <color name="block_label_stoke_uncheck_color_night">#ffffff</color>
@@ -51,11 +48,11 @@
     <color name="block_label_text_checked_color_night">#2095f4</color>
     <!-- 长按item遮罩颜色 -->
     <color name="item_control_mask_color_night">#aa212121</color>
-    <!-- loading弹窗颜色 -->
-    <color name="loading_dialog_bg_color_night">#b0000000</color>
     <!-- 搜索输入框颜色 -->
     <color name="search_history_bg_color_night">#66000000</color>
     <color name="search_edit_text_bg_color_night">#303030</color>
     <!-- 视频图片背景颜色 -->
     <color name="video_item_image_default_color_night">#333333</color>
+    <!-- loading弹窗颜色 -->
+    <color name="loading_dialog_bg_color_night">#44ffffff</color>
 </resources>

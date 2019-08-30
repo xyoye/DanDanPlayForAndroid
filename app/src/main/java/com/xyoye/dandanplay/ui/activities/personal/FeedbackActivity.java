@@ -1,12 +1,12 @@
 package com.xyoye.dandanplay.ui.activities.personal;
 
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -42,7 +42,7 @@ public class FeedbackActivity extends BaseMvcActivity {
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.acitivty_feedback;
+        return R.layout.activity_feedback;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class FeedbackActivity extends BaseMvcActivity {
         builder.setTitle("选择反馈方式");
         final String[] ways = {"邮件", "Github Issue"};
         builder.setItems(ways, (dialog, which) -> {
-            if (ways[which].equals("邮件")) {
+            if (which == 1) {
                 builder.show();
                 String android_version = "Android "+android.os.Build.VERSION.RELEASE;
                 String phone_version = android.os.Build.MODEL;
@@ -127,7 +127,7 @@ public class FeedbackActivity extends BaseMvcActivity {
                 mail_intent.setType("text/plain");
                 startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
             }
-            else if (ways[which].equals("Github Issue")){
+            else if (which == 2){
                 Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
                 Intent intent1 = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent1);

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
+        android:background="@color/item_bg_color"
         android:visibility="gone">
 
         <ImageView
@@ -42,8 +43,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/smb_rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/item_bg_color"
-        android:paddingTop="5dp"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,6 +9,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 
+import com.flyco.tablayout.CommonTabLayout;
+import com.flyco.tablayout.listener.CustomTabEntity;
+import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.bean.BangumiBean;
@@ -23,17 +24,10 @@ import com.xyoye.dandanplay.ui.activities.anime.AnimeSeasonActivity;
 import com.xyoye.dandanplay.ui.activities.anime.SearchActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
-import com.xyoye.dandanplay.ui.weight.indicator.LinePagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.CommonNavigatorAdapter;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerIndicator;
-import com.xyoye.dandanplay.ui.weight.indicator.abs.IPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.navigator.CommonNavigator;
-import com.xyoye.dandanplay.ui.weight.indicator.title.ColorTransitionPagerTitleView;
-import com.xyoye.dandanplay.ui.weight.indicator.title.SimplePagerTitleView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.GlideImageLoader;
+import com.xyoye.dandanplay.utils.TabEntity;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
@@ -54,8 +48,8 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
     ScrollableLayout scrollableLayout;
     @BindView(R.id.banner)
     Banner banner;
-    @BindView(R.id.magic_indicator)
-    MagicIndicator magicIndicator;
+    @BindView(R.id.tab_layout)
+    CommonTabLayout tabLayout;
     @BindView(R.id.viewpager)
     ViewPager viewPager;
     @BindView(R.id.refresh_layout)
@@ -82,16 +76,7 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
     @Override
     public void initView() {
         refresh.setColorSchemeColors(CommonUtils.getResColor(R.color.theme_color));
-
-        List<String> dateList = new ArrayList<>();
-        dateList.add("周日");
-        dateList.add("周一");
-        dateList.add("周二");
-        dateList.add("周三");
-        dateList.add("周四");
-        dateList.add("周五");
-        dateList.add("周六");
-        initIndicator(dateList);
+        initTabLayout();
     }
 
     @Override
@@ -103,35 +88,29 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
         presenter.getHomeFragmentData();
     }
 
-    private void initIndicator(List<String> dateList) {
-        CommonNavigator commonNavigator = new CommonNavigator(getBaseActivity());
-        commonNavigator.setAdjustMode(true);
-        commonNavigator.setAdapter(new CommonNavigatorAdapter() {
+    private void initTabLayout() {
+        ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+        mTabEntities.add(new TabEntity("周日", 0, 0));
+        mTabEntities.add(new TabEntity("周一", 0, 0));
+        mTabEntities.add(new TabEntity("周二", 0, 0));
+        mTabEntities.add(new TabEntity("周三", 0, 0));
+        mTabEntities.add(new TabEntity("周四", 0, 0));
+        mTabEntities.add(new TabEntity("周五", 0, 0));
+        mTabEntities.add(new TabEntity("周六", 0, 0));
+        tabLayout.setTabData(mTabEntities);
+        tabLayout.setCurrentTab(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+
+        tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
-            public int getCount() {
-                return dateList.size();
+            public void onTabSelect(int position) {
+                viewPager.setCurrentItem(position);
             }
 
             @Override
-            public IPagerTitleView getTitleView(Context context, int index) {
-                SimplePagerTitleView simplePagerTitleView = new ColorTransitionPagerTitleView(context);
-                simplePagerTitleView.setText(dateList.get(index));
-                simplePagerTitleView.setNormalColor(CommonUtils.getResColor(R.color.indicator_uncheck_color));
-                simplePagerTitleView.setSelectedColor(CommonUtils.getResColor(R.color.indicator_checked_color));
-                simplePagerTitleView.setOnClickListener(v -> viewPager.setCurrentItem(index));
-                return simplePagerTitleView;
-            }
+            public void onTabReselect(int position) {
 
-            @SuppressLint("ResourceType")
-            @Override
-            public IPagerIndicator getIndicator(Context context) {
-                LinePagerIndicator indicator = new LinePagerIndicator(context);
-                indicator.setColors(CommonUtils.getResColor(R.color.indicator_checked_color));
-                return indicator;
             }
         });
-        magicIndicator.setNavigator(commonNavigator);
-        magicIndicator.onPageSelected(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
     }
 
     @Override
@@ -152,18 +131,18 @@ public class HomeFragment extends BaseMvpFragment<HomeFragmentPresenter> impleme
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                magicIndicator.onPageScrolled(position, positionOffset, positionOffsetPixels);
+
             }
 
             @Override
             public void onPageSelected(int position) {
                 scrollableLayout.getHelper().setCurrentScrollableContainer(fragmentList.get(position));
-                magicIndicator.onPageSelected(position);
+                tabLayout.setCurrentTab(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                magicIndicator.onPageScrollStateChanged(state);
+
             }
         });
     }

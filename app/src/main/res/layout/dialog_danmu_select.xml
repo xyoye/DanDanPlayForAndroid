@@ -30,7 +30,8 @@
             android:layout_marginStart="10dp"
             android:textSize="14sp"
             android:textColor="@color/text_black"
-            android:text="不要再提示"/>
+            android:text="不要再提示"
+            android:button="@drawable/background_check_box" />
 
         <RadioGroup
             android:id="@+id/select_detail_rg"

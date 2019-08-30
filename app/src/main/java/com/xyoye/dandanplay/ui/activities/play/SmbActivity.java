@@ -1,15 +1,20 @@
 package com.xyoye.dandanplay.ui.activities.play;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,7 +29,6 @@ import com.xyoye.dandanplay.mvp.impl.SmbPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SmbPresenter;
 import com.xyoye.dandanplay.mvp.view.SmbView;
 import com.xyoye.dandanplay.service.SmbService;
-import com.xyoye.dandanplay.ui.weight.dialog.AuthLanDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.SmbItem;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -95,7 +99,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
         Intent intent = new Intent(this, SmbService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
-        }else {
+        } else {
             startService(intent);
         }
     }
@@ -127,10 +131,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
                 presenter.queryLanDevice();
                 break;
             case R.id.add_device:
-                new AuthLanDialog(this, null, -1, (smbBean, position) -> {
-                    smbList.add(0, smbBean);
-                    presenter.addSqlDevice(smbBean);
-                }).show();
+                showAuthDialog(null, -1);
                 break;
             case R.id.sort_item:
                 boolean isGrid = AppConfig.getInstance().smbIsGridLayout();
@@ -164,7 +165,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
         if (smbRv == null)
             return;
         //设备列表必须为GridLayoutManager
-        if (smbRv.getLayoutManager() instanceof LinearLayoutManager){
+        if (smbRv.getLayoutManager() instanceof LinearLayoutManager) {
             smbRv.setLayoutManager(new GridLayoutManager(this, 4));
         }
         pathRl.setVisibility(View.GONE);
@@ -199,7 +200,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
             }
         }
         //设备列表必须为GridLayoutManager
-        if (smbRv.getLayoutManager() instanceof LinearLayoutManager){
+        if (smbRv.getLayoutManager() instanceof LinearLayoutManager) {
             smbRv.setLayoutManager(new GridLayoutManager(this, 4));
         }
         smbList.addAll(deviceList);
@@ -209,12 +210,12 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
     @Override
     public void refreshSmbFile(List<SmbBean> deviceList, String parentPath) {
         //文件列表根据设置，设置布局方式
-        if (smbRv.getLayoutManager() instanceof GridLayoutManager){
-            if (!AppConfig.getInstance().smbIsGridLayout()){
+        if (smbRv.getLayoutManager() instanceof GridLayoutManager) {
+            if (!AppConfig.getInstance().smbIsGridLayout()) {
                 smbRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
             }
-        }else {
-            if (AppConfig.getInstance().smbIsGridLayout()){
+        } else {
+            if (AppConfig.getInstance().smbIsGridLayout()) {
                 smbRv.setLayoutManager(new GridLayoutManager(this, 4));
             }
         }
@@ -246,22 +247,14 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
             ServiceUtils.stopService(SmbService.class);
     }
 
-    private void onItemClick(int position){
+    private void onItemClick(int position) {
         SmbBean smbBean = smbList.get(position);
         switch (smbBean.getSmbType()) {
             case Constants.SmbType.LAN_DEVICE:
             case Constants.SmbType.SQL_DEVICE:
                 //未输入账号名 && 不是匿名登录
                 if (StringUtils.isEmpty(smbBean.getAccount()) && !smbBean.isAnonymous()) {
-                    new AuthLanDialog(SmbActivity.this, smbBean, position, (resultBean, resultPosition) -> {
-                        SmbBean loginSmbBean = new SmbBean();
-                        loginSmbBean.setUrl(resultBean.getUrl());
-                        loginSmbBean.setAccount(resultBean.getAccount());
-                        loginSmbBean.setPassword(resultBean.getPassword());
-                        loginSmbBean.setDomain(resultBean.getDomain());
-                        loginSmbBean.setAnonymous(resultBean.isAnonymous());
-                        presenter.loginSmb(loginSmbBean, position);
-                    }).show();
+                    showAuthDialog(smbBean, position);
                     return;
                 }
                 presenter.loginSmb(smbBean, position);
@@ -275,7 +268,7 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
         }
     }
 
-    private void onItemLongClick(int position){
+    private void onItemLongClick(int position) {
         String url = smbList.get(position).getUrl();
         new CommonDialog.Builder(this)
                 .setOkListener(dialog -> {
@@ -303,5 +296,77 @@ public class SmbActivity extends BaseMvpActivity<SmbPresenter> implements SmbVie
         smbBean.setSmbType(Constants.SmbType.SQL_DEVICE);
         presenter.addSqlDevice(smbBean);
         adapter.notifyItemChanged(position);
+    }
+
+    private void showAuthDialog(SmbBean smbBean, int position) {
+        boolean isAddDevice = position == -1;
+
+        //初始化view
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_auth_lan, null);
+        TextInputEditText lanAccountEt = dialogView.findViewById(R.id.lan_account_et);
+        TextInputEditText lanPasswordEt = dialogView.findViewById(R.id.lan_password_et);
+        TextInputEditText lanDomainEt = dialogView.findViewById(R.id.lan_domain_et);
+        CheckBox anonymousCb = dialogView.findViewById(R.id.anonymous_cb);
+        TextInputEditText lanIpEt = dialogView.findViewById(R.id.lan_ip_et);
+        TextInputLayout lanIpLayout = dialogView.findViewById(R.id.lan_ip_layout);
+
+        lanIpEt.setHint("IP");
+        lanAccountEt.setHint("帐号");
+        lanPasswordEt.setHint("密码");
+        lanDomainEt.setHint("域");
+        lanIpLayout.setVisibility(isAddDevice ? View.VISIBLE : View.GONE);
+
+        if (smbBean != null) {
+            lanAccountEt.setText(smbBean.getAccount());
+            lanPasswordEt.setText(smbBean.getPassword());
+            lanDomainEt.setText(smbBean.getDomain());
+            anonymousCb.setChecked(smbBean.isAnonymous());
+        } else if (!isAddDevice) {
+            ToastUtils.showShort("错误，登录数据为空");
+            return;
+        }
+
+        //创建dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog authLanDialog = builder.setTitle("登录设备")
+                .setView(dialogView)
+                .setPositiveButton("确定", null)
+                .setNegativeButton("取消", null)
+                .create();
+        authLanDialog.show();
+        authLanDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    boolean anonymous = anonymousCb.isChecked();
+                    String account = lanAccountEt.getEditableText().toString();
+                    String password = lanPasswordEt.getEditableText().toString();
+                    String domain = lanDomainEt.getEditableText().toString();
+                    String ip = lanIpEt.getEditableText().toString();
+                    if (isAddDevice && StringUtils.isEmpty(ip)) {
+                        ToastUtils.showShort("请输入ip地址");
+                        return;
+                    }
+                    if (!anonymous && StringUtils.isEmpty(account)) {
+                        ToastUtils.showShort("请输入账号密码或选择匿名登陆");
+                        return;
+                    }
+
+                    //组装数据
+                    SmbBean authBean = new SmbBean();
+                    authBean.setUrl(isAddDevice ? ip : smbBean.getUrl());
+                    authBean.setAccount(account);
+                    authBean.setPassword(password);
+                    authBean.setDomain(domain);
+                    authBean.setAnonymous(anonymous);
+                    authBean.setNickName("UnKnow");
+                    authBean.setSmbType(Constants.SmbType.SQL_DEVICE);
+                    if (isAddDevice) {
+                        presenter.addSqlDevice(authBean);
+                        smbList.add(0, authBean);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        presenter.loginSmb(authBean, position);
+                    }
+                    authLanDialog.dismiss();
+                });
     }
 }

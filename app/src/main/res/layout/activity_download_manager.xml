@@ -9,17 +9,18 @@
         android:id="@+id/toolbar_layout"
         layout="@layout/layout_toolbar" />
 
-    <com.xyoye.dandanplay.ui.weight.indicator.MagicIndicator
-        android:id="@+id/indicator"
+    <com.flyco.tablayout.CommonTabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/toolbar_layout"
-        android:background="@color/indicator_bg_color"
-        android:gravity="center"
+        android:background="@color/item_bg_color"
+        app:tl_indicator_color="@color/indicator_checked_color"
+        app:tl_underline_color="@color/indicator_checked_color"
+        app:tl_textSelectColor="@color/indicator_checked_color"
+        app:tl_textUnselectColor="@color/indicator_uncheck_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
-        app:tabMode="scrollable" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -28,6 +29,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/indicator"/>
+        app:layout_constraintTop_toBottomOf="@+id/tab_layout"/>
 
 </android.support.constraint.ConstraintLayout>

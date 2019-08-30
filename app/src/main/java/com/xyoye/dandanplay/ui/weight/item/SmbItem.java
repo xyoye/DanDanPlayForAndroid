@@ -65,18 +65,33 @@ public class SmbItem implements AdapterItem<SmbBean> {
                 gridLl.setVisibility(View.VISIBLE);
                 linerCl.setVisibility(View.GONE);
                 smbCoverIv.setImageResource(R.mipmap.ic_smb_sql_device);
-                String sqlDeviceName = StringUtils.isEmpty(model.getNickName()) ? model.getName() : model.getNickName();
-                smbUrlTv.setVisibility(View.VISIBLE);
+                String sqlDeviceName;
+                if (!StringUtils.isEmpty(model.getNickName())){
+                    sqlDeviceName = model.getNickName();
+                } else if (StringUtils.isEmpty(model.getName())){
+                    sqlDeviceName = model.getName();
+                } else {
+                    sqlDeviceName = "UnKnow";
+                }
                 smbNameTv.setText(sqlDeviceName);
+                smbUrlTv.setVisibility(View.VISIBLE);
                 smbUrlTv.setText(model.getUrl());
                 break;
             case Constants.SmbType.LAN_DEVICE:
                 gridLl.setVisibility(View.VISIBLE);
                 linerCl.setVisibility(View.GONE);
                 smbCoverIv.setImageResource(R.mipmap.ic_smb_lan_device);
-                String lanDeviceName = StringUtils.isEmpty(model.getNickName()) ? model.getName() : model.getNickName();
-                smbUrlTv.setVisibility(View.VISIBLE);
+
+                String lanDeviceName;
+                if (!StringUtils.isEmpty(model.getNickName())){
+                    lanDeviceName = model.getNickName();
+                } else if (StringUtils.isEmpty(model.getName())){
+                    lanDeviceName = model.getName();
+                } else {
+                    lanDeviceName = "UnKnow";
+                }
                 smbNameTv.setText(lanDeviceName);
+                smbUrlTv.setVisibility(View.VISIBLE);
                 smbUrlTv.setText(model.getUrl());
                 break;
             case Constants.SmbType.FOLDER:

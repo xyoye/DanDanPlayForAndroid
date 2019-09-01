@@ -278,7 +278,7 @@
                     android:id="@+id/exit_select_iv"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:padding="13dp"
+                    android:padding="12dp"
                     android:layout_alignParentEnd="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:src="@mipmap/ic_dialog_cancel"/>

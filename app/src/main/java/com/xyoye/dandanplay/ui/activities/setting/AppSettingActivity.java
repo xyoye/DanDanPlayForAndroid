@@ -23,6 +23,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.SwitchThemeAnimation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,7 +36,7 @@ import skin.support.SkinCompatManager;
  * Created by xyoye on 2018/7/24.
  */
 
-public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener{
+public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener {
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
     @BindView(R.id.version_rl)
@@ -65,7 +66,7 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         pathTv.setText(downloadPath);
         String version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
-        patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
+        patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
 
         boolean isNight = AppConfig.getInstance().isThemeNight();
         themeNightCb.setChecked(isNight);
@@ -86,10 +87,12 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
         themeNightCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setThemeNight(isChecked);
-            if (isChecked){
+            SwitchThemeAnimation.create(buttonView).setDuration(800).start();
+
+            if (isChecked) {
                 SkinCompatManager.getInstance()
                         .loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
-            }else {
+            } else {
                 SkinCompatManager.getInstance()
                         .restoreDefaultTheme();
             }
@@ -109,7 +112,7 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.path_rl:
                 new FileManagerDialog(this, FileManagerDialog.SELECT_FOLDER, path -> {
                     pathTv.setText(path);
@@ -117,14 +120,14 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
                 }).hideDefault().show();
                 break;
             case R.id.version_rl:
-                Beta.checkUpgrade(false,false);
+                Beta.checkUpgrade(false, false);
                 break;
             case R.id.patch_rl:
                 SophixManager.getInstance().queryAndLoadNewPatch();
                 break;
             case R.id.about_rl:
                 Intent intent_about = new Intent(AppSettingActivity.this, WebViewActivity.class);
-                intent_about.putExtra("title","关于");
+                intent_about.putExtra("title", "关于");
                 intent_about.putExtra("link", "file:///android_asset/About_in_application.html");
                 startActivity(intent_about);
                 break;
@@ -136,9 +139,9 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
     @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPatchEvent(PatchFixEvent event){
+    public void onPatchEvent(PatchFixEvent event) {
         ToastUtils.showShort(event.getMsg());
-        patchTv.setText(AppConfig.getInstance().getPatchVersion()+"");
+        patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
     }
 
     @Override

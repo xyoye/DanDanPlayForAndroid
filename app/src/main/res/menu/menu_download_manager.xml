@@ -3,30 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.play.FolderActivity">
+    <item
+        android:id="@+id/tracker_manager"
+        android:title="tracker"
+        app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/about_download"
+    <item
+        android:id="@+id/about_download"
         android:icon="@mipmap/ic_help"
         android:title="说明"
         app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/all_start"
-        android:orderInCategory="100"
-        android:title="开始全部"
-        app:showAsAction="withText" />
-    <item
-        android:id="@+id/all_pause"
-        android:orderInCategory="100"
-        android:title="暂停全部"
-        app:showAsAction="withText" />
-    <item
-        android:id="@+id/all_delete"
-        android:orderInCategory="100"
-        android:title="删除全部"
-        app:showAsAction="withText" />
-    <item
-        android:id="@+id/tracker_manager"
-        android:orderInCategory="100"
-        android:title="tracker管理"
-        app:showAsAction="withText" />
 </menu>

@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -18,15 +17,15 @@ import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.torrent.TorrentEngine;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
-import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
+import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
-import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
@@ -36,7 +35,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/6/29.
  */
 
-public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter> implements PersonalFragmentView{
+public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter> implements PersonalFragmentView {
     @BindView(R.id.user_image_iv)
     ImageView userImageIv;
     @BindView(R.id.user_name_tv)
@@ -63,7 +62,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     @Override
     public void initView() {
-        if (changeViewFlag){
+        if (changeViewFlag) {
             changeView();
         }
     }
@@ -91,7 +90,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     }
 
-    public void updateUserInfo(){
+    public void updateUserInfo() {
         if (IApplication.isUpdateUserInfo) {
             changeViewFlag = true;
             if (loginButton != null)

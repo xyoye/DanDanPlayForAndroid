@@ -143,7 +143,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_download_manager_v2, menu);
+        getMenuInflater().inflate(R.menu.menu_download_manager, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

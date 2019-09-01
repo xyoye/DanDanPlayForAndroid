@@ -28,7 +28,7 @@
             android:layout_height="25dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:padding="5dp"
+            android:padding="3dp"
             android:layout_marginEnd="10dp"
             android:src="@mipmap/ic_dialog_cancel"/>
 

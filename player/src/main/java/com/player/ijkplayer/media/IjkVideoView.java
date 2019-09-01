@@ -438,11 +438,6 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         try {
             mMediaPlayer = createPlayer();
 
-            // TODO: create SubtitleController in MediaPlayer, but we need
-            // a context for the subtitle renderers
-            final Context context = getContext();
-            // REMOVED: SubtitleController
-
             // REMOVED: mAudioSession
             mMediaPlayer.setOnPreparedListener(mPreparedListener);
             mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
@@ -454,7 +449,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             mCurrentBufferPercentage = 0;
             String scheme = mUri.getScheme();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mIsUsingMediaDataSource &&
-                    (TextUtils.isEmpty(scheme) || scheme.equalsIgnoreCase("file"))) {
+                    (TextUtils.isEmpty(scheme) || "file".equalsIgnoreCase(scheme))) {
                 IMediaDataSource dataSource = new FileMediaDataSource(new File(mUri.toString()));
                 mMediaPlayer.setDataSource(dataSource);
             } else {
@@ -1062,17 +1057,11 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     }
 
     public IMediaPlayer createPlayer() {
-        IMediaPlayer mediaPlayer = null;
+        IMediaPlayer mediaPlayer;
 
         switch (mIsUsingPlayerType) {
-            case Constants.EXO_PLAYER: {
-                AndroidMediaPlayer androidMediaPlayer = new AndroidMediaPlayer();
-                mediaPlayer = androidMediaPlayer;
-            }
-            break;
             case Constants.IJK_ANDROID_PLAYER: {
-                AndroidMediaPlayer androidMediaPlayer = new AndroidMediaPlayer();
-                mediaPlayer = androidMediaPlayer;
+                mediaPlayer = new AndroidMediaPlayer();
             }
             break;
             case Constants.IJK_PLAYER:
@@ -1094,9 +1083,9 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
                     }
 
-                    if (mIsUsingMediaCodecH265){
-                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 0);
-                    }else {
+                    if (mIsUsingMediaCodecH265) {
+                        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 1);
+                    } else {
                         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 0);
                     }
 
@@ -1229,7 +1218,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         this.mIsUsingMediaCodec = mIsUsingMediaCodec;
     }
 
-    public void setIsUsingMediaCodecH265(boolean mIsUsingMediaCodecH265){
+    public void setIsUsingMediaCodecH265(boolean mIsUsingMediaCodecH265) {
         this.mIsUsingMediaCodecH265 = mIsUsingMediaCodecH265;
     }
 
@@ -1258,19 +1247,20 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
         this.mPixelFormat = mPixelFormat;
     }
 
-    public void setSpeed(float speed){
-        if (mIsUsingPlayerType == Constants.IJK_PLAYER){
-            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer)mMediaPlayer;
+    public void setSpeed(float speed) {
+        if (mIsUsingPlayerType == Constants.IJK_PLAYER) {
+            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mMediaPlayer;
+            ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1);
             ijkMediaPlayer.setSpeed(speed);
             mMediaPlayer.start();
         }
     }
 
-    public float getSpeed(){
-        if (mIsUsingPlayerType == Constants.IJK_PLAYER){
-            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer)mMediaPlayer;
-            return ijkMediaPlayer.getSpeed(1.0f);
-        }else {
+    public float getSpeed() {
+        if (mIsUsingPlayerType == Constants.IJK_PLAYER) {
+            IjkMediaPlayer ijkMediaPlayer = (IjkMediaPlayer) mMediaPlayer;
+            return ijkMediaPlayer.getSpeed();
+        } else {
             return 1.0f;
         }
     }

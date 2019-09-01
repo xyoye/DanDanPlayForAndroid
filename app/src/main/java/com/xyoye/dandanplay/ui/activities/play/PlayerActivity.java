@@ -29,7 +29,7 @@ import com.player.commom.receiver.ScreenBroadcastReceiver;
 import com.player.commom.utils.Constants;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.exoplayer.ExoPlayerView;
-import com.player.ijkplayer.IjkPlayerView_V2;
+import com.player.ijkplayer.IjkPlayerView;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
@@ -111,8 +111,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             mPlayer = new ExoPlayerView(this);
             setContentView((ExoPlayerView)mPlayer);
         }else {
-            mPlayer = new IjkPlayerView_V2(this);
-            setContentView((IjkPlayerView_V2)mPlayer);
+            mPlayer = new IjkPlayerView(this);
+            setContentView((IjkPlayerView)mPlayer);
         }
 
         //隐藏toolbar
@@ -312,7 +312,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     }
 
     private void initIjkPlayer(InputStream inputStream){
-        IjkPlayerView_V2 ijkPlayerView = (IjkPlayerView_V2) mPlayer;
+        IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
 
         ijkPlayerView
                 //设置弹幕事件回调，要在初始化弹幕之前完成

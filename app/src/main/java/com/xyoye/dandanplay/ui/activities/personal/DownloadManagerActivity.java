@@ -64,7 +64,6 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     private List<Fragment> fragmentList;
     private List<TaskStateBean> mTaskStateList;
-    private int selectedPosition = 0;
 
     @NonNull
     @Override
@@ -105,11 +104,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         initViewPager();
 
         int position = getIntent().getIntExtra("fragment_position", 0);
-        if (position == 0) {
-            tabLayout.setCurrentTab(0);
-        } else {
-            tabLayout.setCurrentTab(1);
-        }
+        tabLayout.setCurrentTab(position == 0 ? 0 : 1);
+        viewPager.setCurrentItem(position == 0 ? 0 : 1);
 
         if (ServiceUtils.isServiceRunning(TorrentService.class)) {
             viewPager.post(() -> {
@@ -189,7 +185,6 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     private void initViewPager() {
         DownloadFragmentAdapter fragmentAdapter = new DownloadFragmentAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentAdapter);
-        viewPager.setCurrentItem(selectedPosition);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -200,7 +195,6 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
             @Override
             public void onPageSelected(int position) {
                 tabLayout.setCurrentTab(position);
-                selectedPosition = position;
             }
 
             @Override
@@ -239,12 +233,12 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         String animeTitle = getIntent().getStringExtra("anime_title");
         String torrentFilePath = getIntent().getStringExtra("torrent_file_path");
 
-        if (!TextUtils.isEmpty(torrentFilePath)){
+        if (!TextUtils.isEmpty(torrentFilePath)) {
             try {
                 TorrentInfo torrentInfo = new TorrentInfo(new File(torrentFilePath));
                 //任务不存在则新增任务
                 TorrentTask torrentTask = TorrentEngine.getInstance().getTask(torrentInfo.infoHash().toHex());
-                if (torrentTask == null){
+                if (torrentTask == null) {
                     new TorrentFileCheckDialog(this, torrentInfo, priorityList -> {
                         Torrent torrent = new Torrent(
                                 animeTitle,
@@ -253,7 +247,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                                 priorityList);
                         startTorrentService(TorrentService.Action.ACTION_ADD_TORRENT, torrent);
                     }).show();
-                }else{
+                } else {
                     startTorrentService(null, null);
                 }
             } catch (Exception e) {
@@ -269,10 +263,10 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     private void startTorrentService(String action, Torrent torrent) {
         Intent intent = new Intent(this, TorrentService.class);
 
-        if (!TextUtils.isEmpty(action)){
+        if (!TextUtils.isEmpty(action)) {
             intent.setAction(action);
         }
-        if (torrent != null){
+        if (torrent != null) {
             intent.putExtra(TorrentService.IntentTag.ADD_TASK_TORRENT, torrent);
         }
 
@@ -304,38 +298,38 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTaskStateChangeEvent(TaskStateBean taskStateBean){
+    public void onTaskStateChangeEvent(TaskStateBean taskStateBean) {
         Iterator iterator = mTaskStateList.iterator();
         int position = 0;
         //移除任务旧状态，并将新任务状态添加到相同位置
-        while (iterator.hasNext()){
-            TaskStateBean stateBean = (TaskStateBean)iterator.next();
-            if (stateBean.torrentId.equals(taskStateBean.torrentId)){
+        while (iterator.hasNext()) {
+            TaskStateBean stateBean = (TaskStateBean) iterator.next();
+            if (stateBean.torrentId.equals(taskStateBean.torrentId)) {
                 iterator.remove();
                 break;
             }
-            position ++;
+            position++;
         }
         mTaskStateList.add(position, taskStateBean);
-        DownloadingFragment downloadingFragment = (DownloadingFragment)fragmentList.get(0);
-        if (downloadingFragment != null){
+        DownloadingFragment downloadingFragment = (DownloadingFragment) fragmentList.get(0);
+        if (downloadingFragment != null) {
             downloadingFragment.updateAdapter(mTaskStateList);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTaskRemovedEvent(String torrentHash){
+    public void onTaskRemovedEvent(String torrentHash) {
         Iterator iterator = mTaskStateList.iterator();
         //移除任务旧状态，并将新任务状态添加到相同位置
-        while (iterator.hasNext()){
-            TaskStateBean stateBean = (TaskStateBean)iterator.next();
-            if (stateBean.torrentId.equals(torrentHash)){
+        while (iterator.hasNext()) {
+            TaskStateBean stateBean = (TaskStateBean) iterator.next();
+            if (stateBean.torrentId.equals(torrentHash)) {
                 iterator.remove();
                 break;
             }
         }
-        DownloadingFragment downloadingFragment = (DownloadingFragment)fragmentList.get(0);
-        if (downloadingFragment != null){
+        DownloadingFragment downloadingFragment = (DownloadingFragment) fragmentList.get(0);
+        if (downloadingFragment != null) {
             downloadingFragment.updateAdapter(mTaskStateList);
         }
     }
@@ -343,7 +337,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     /**
      * 更新下载中任务弹幕信息
      */
-    private void updateDownloadingDanmu(Intent data){
+    private void updateDownloadingDanmu(Intent data) {
         int episodeId = data.getIntExtra("episode_id", -1);
         String danmuPath = data.getStringExtra("path");
         String taskHash = data.getStringExtra("task_hash");
@@ -359,7 +353,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                 .update()
                 .where(1, taskHash)
                 .where(2, torrentFile.getFilePath())
-                .param(4,danmuPath)
+                .param(4, danmuPath)
                 .param(5, episodeId)
                 .execute();
     }
@@ -367,14 +361,14 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     /**
      * 更新下载完成任务弹幕信息
      */
-    private void updateDownloadedDanmu(Intent data){
+    private void updateDownloadedDanmu(Intent data) {
         String danmuPath = data.getStringExtra("path");
         int episodeId = data.getIntExtra("episode_id", -1);
         int taskPosition = data.getIntExtra("position", -1);
         int taskFilePosition = data.getIntExtra("task_file_position", -1);
 
-        DownloadedFragment downloadedFragment = (DownloadedFragment)fragmentList.get(1);
-        if (downloadedFragment != null){
+        DownloadedFragment downloadedFragment = (DownloadedFragment) fragmentList.get(1);
+        if (downloadedFragment != null) {
             List<DownloadedTaskBean> downloadedTaskList = downloadedFragment.getTaskList();
             DownloadedTaskBean taskBean = downloadedTaskList.get(taskPosition);
             DownloadedTaskBean.DownloadedTaskFileBean fileBean = taskBean.getFileList().get(taskFilePosition);
@@ -392,7 +386,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                     .update()
                     .where(1, torrentHash)
                     .where(2, torrentFilePath)
-                    .param(4,danmuPath)
+                    .param(4, danmuPath)
                     .param(5, episodeId)
                     .execute();
         }

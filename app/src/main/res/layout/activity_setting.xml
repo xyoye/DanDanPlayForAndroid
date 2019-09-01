@@ -38,7 +38,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:button="@drawable/background_check_box"/>
+                    android:layout_marginEnd="10dp"
+                    android:button="@drawable/background_check_box" />
             </RelativeLayout>
 
             <View

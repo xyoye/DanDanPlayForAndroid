@@ -116,10 +116,10 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
 
     public static final int FFP_PROP_INT64_VIDEO_DECODER                    = 20003;
     public static final int FFP_PROP_INT64_AUDIO_DECODER                    = 20004;
-    public static final int     FFP_PROPV_DECODER_UNKNOWN                   = 0;
-    public static final int     FFP_PROPV_DECODER_AVCODEC                   = 1;
-    public static final int     FFP_PROPV_DECODER_MEDIACODEC                = 2;
-    public static final int     FFP_PROPV_DECODER_VIDEOTOOLBOX              = 3;
+    public static final int FFP_PROPV_DECODER_UNKNOWN                       = 0;
+    public static final int FFP_PROPV_DECODER_AVCODEC                       = 1;
+    public static final int FFP_PROPV_DECODER_MEDIACODEC                    = 2;
+    public static final int FFP_PROPV_DECODER_VIDEOTOOLBOX                  = 3;
     public static final int FFP_PROP_INT64_VIDEO_CACHED_DURATION            = 20005;
     public static final int FFP_PROP_INT64_AUDIO_CACHED_DURATION            = 20006;
     public static final int FFP_PROP_INT64_VIDEO_CACHED_BYTES               = 20007;
@@ -750,8 +750,8 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
         _setPropertyFloat(FFP_PROP_FLOAT_PLAYBACK_RATE, speed);
     }
 
-    public float getSpeed(float speed) {
-        return _getPropertyFloat(FFP_PROP_FLOAT_PLAYBACK_RATE, .0f);
+    public float getSpeed() {
+        return _getPropertyFloat(FFP_PROP_FLOAT_PLAYBACK_RATE, 1.0f);
     }
 
     public int getVideoDecoder() {

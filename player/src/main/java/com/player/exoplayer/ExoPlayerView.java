@@ -1024,7 +1024,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setSpeed(float speed) {
-                        exoPlayer.setPlaybackParameters(new PlaybackParameters(speed, speed));
+                        exoPlayer.setPlaybackParameters(new PlaybackParameters(speed, 1));
                         mDanmakuContext.setDanmuTimeRate(speed);
                     }
 

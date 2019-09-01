@@ -3,19 +3,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="180dp"
     android:layout_height="wrap_content"
+    android:background="@drawable/background_episode"
+    android:foreground="?android:attr/selectableItemBackground"
     android:minHeight="60dp"
     android:orientation="vertical"
-    android:background="@drawable/background_episode"
-    android:padding="8dp"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/episode_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="第一话"
         android:textColor="@color/text_black"
-        android:textSize="14sp"
-        android:text="第一话" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/episode_title"
@@ -24,8 +24,9 @@
         android:layout_marginTop="5dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="12sp"
-        android:text="测试标题" />
+        android:text="测试标题"
+        android:textColor="@color/text_gray"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/last_watch_tv"
@@ -34,7 +35,8 @@
         android:layout_marginTop="5dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textSize="12sp"
         android:text=""
-        android:visibility="gone"/>
+        android:textColor="@color/text_gray"
+        android:textSize="12sp"
+        android:visibility="gone" />
 </LinearLayout>

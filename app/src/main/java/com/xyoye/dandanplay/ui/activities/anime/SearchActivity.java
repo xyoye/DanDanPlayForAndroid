@@ -175,14 +175,14 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             case R.id.subgroup_tv:
                 List<SubGroupBean.SubgroupsBean> subgroupList = presenter.getSubGroupList();
                 if (subgroupList.size() > 0) {
-                    SelectInfoDialog<SubGroupBean.SubgroupsBean> selectSubgroupDialog = new SelectInfoDialog<>(SearchActivity.this, R.style.Dialog, SelectInfoEvent.SUBGROUP, subgroupList);
+                    SelectInfoDialog selectSubgroupDialog = new SelectInfoDialog(SearchActivity.this, subgroupList, SelectInfoEvent.SUBGROUP);
                     selectSubgroupDialog.show();
                 }
                 break;
             case R.id.type_tv:
                 List<AnimeTypeBean.TypesBean> typeList = presenter.getTypeList();
                 if (typeList.size() > 0) {
-                    SelectInfoDialog<AnimeTypeBean.TypesBean> selectTypeDialog = new SelectInfoDialog<>(SearchActivity.this, R.style.Dialog, SelectInfoEvent.TYPE, typeList);
+                    SelectInfoDialog selectTypeDialog = new SelectInfoDialog(SearchActivity.this, typeList);
                     selectTypeDialog.show();
                 }
                 break;

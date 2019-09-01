@@ -21,7 +21,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -32,7 +31,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/10/15.
  */
 
-public class SelectInfoDialog<T> extends Dialog {
+public class SelectInfoDialog extends Dialog {
 
     @BindView(R.id.dialog_title_tv)
     TextView dialogTitleTv;
@@ -42,15 +41,21 @@ public class SelectInfoDialog<T> extends Dialog {
     private int createType;
 
     private Context context;
-    private List<T> beanList;
-    private BaseRvAdapter<AnimeTypeBean.TypesBean> typesRvAdapter;
-    private BaseRvAdapter<SubGroupBean.SubgroupsBean> subgroupsRvAdapter;
+    private List<AnimeTypeBean.TypesBean> animeTypeList;
+    private List<SubGroupBean.SubgroupsBean> subgroupsList;
 
-    public SelectInfoDialog(@NonNull Context context, int themeResId, int createType, List<T> beanList) {
-        super(context, themeResId);
+    public SelectInfoDialog(@NonNull Context context, List<AnimeTypeBean.TypesBean> animeTypeList) {
+        super(context, R.style.Dialog);
+        this.context = context;
+        this.createType = SelectInfoEvent.TYPE;
+        this.animeTypeList = animeTypeList;
+    }
+
+    public SelectInfoDialog(@NonNull Context context, List<SubGroupBean.SubgroupsBean> subgroupsList, int createType) {
+        super(context, R.style.Dialog);
         this.context = context;
         this.createType = createType;
-        this.beanList = beanList;
+        this.subgroupsList = subgroupsList;
     }
 
     @Override
@@ -59,33 +64,28 @@ public class SelectInfoDialog<T> extends Dialog {
         setContentView(R.layout.dialog_select_rv);
         ButterKnife.bind(this);
 
-        dialogRv.setLayoutManager(new GridLayoutManager(context, 2));
-
-        typesRvAdapter = new BaseRvAdapter<AnimeTypeBean.TypesBean>(new ArrayList<>()) {
-            @NonNull
-            @Override
-            public AdapterItem<AnimeTypeBean.TypesBean> onCreateItem(int viewType) {
-                return new SelectAnimeTypeItem();
-            }
-        };
-
-        subgroupsRvAdapter = new BaseRvAdapter<SubGroupBean.SubgroupsBean>(new ArrayList<>()) {
-            @NonNull
-            @Override
-            public AdapterItem<SubGroupBean.SubgroupsBean> onCreateItem(int viewType) {
-                return new SelectSubGroupItem();
-            }
-        };
-
-        if (createType == SelectInfoEvent.TYPE){
-            typesRvAdapter.setData((List<AnimeTypeBean.TypesBean>) beanList);
-            typesRvAdapter.notifyDataSetChanged();
+        if (createType == SelectInfoEvent.TYPE) {
+            BaseRvAdapter<AnimeTypeBean.TypesBean> typesRvAdapter = new BaseRvAdapter<AnimeTypeBean.TypesBean>(animeTypeList) {
+                @NonNull
+                @Override
+                public AdapterItem<AnimeTypeBean.TypesBean> onCreateItem(int viewType) {
+                    return new SelectAnimeTypeItem();
+                }
+            };
+            dialogRv.setLayoutManager(new GridLayoutManager(context, 2));
             dialogRv.setAdapter(typesRvAdapter);
             dialogTitleTv.setText("选择资源分类");
-        }else {
+        } else {
+            BaseRvAdapter<SubGroupBean.SubgroupsBean> subgroupsRvAdapter = new BaseRvAdapter<SubGroupBean.SubgroupsBean>(subgroupsList) {
+                @NonNull
+                @Override
+                public AdapterItem<SubGroupBean.SubgroupsBean> onCreateItem(int viewType) {
+                    return new SelectSubGroupItem();
+                }
+            };
+
+            dialogRv.setLayoutManager(new GridLayoutManager(context, 2));
             dialogRv.setAdapter(subgroupsRvAdapter);
-            subgroupsRvAdapter.setData((List<SubGroupBean.SubgroupsBean>)beanList);
-            subgroupsRvAdapter.notifyDataSetChanged();
             dialogTitleTv.setText("选择字幕组");
         }
     }

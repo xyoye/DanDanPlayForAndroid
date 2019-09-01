@@ -41,10 +41,9 @@
     <color name="block_label_text_uncheck_color">#353535</color>
     <color name="block_label_text_checked_color">#2095f4</color>
     <!-- 搜索输入框颜色 -->
-    <color name="search_edit_text_bg_color">#2095f4</color>
+    <color name="search_edit_text_bg_color">#4ea9f4</color>
+    <color name="search_edit_text_hint_color">#99f6f6f6</color>
     <color name="search_history_bg_color">#66000000</color>
-    <!-- 视频图片背景颜色 -->
-    <color name="video_item_image_default_color">#353535</color>
     <!-- 长按item遮罩颜色 -->
     <color name="item_control_mask_color">#aa212121</color>
     <!-- loading弹窗颜色 -->
@@ -90,4 +89,8 @@
     <!-- 底部导航栏颜色 -->
     <color name="navigation_checked_color">#2095f4</color>
     <color name="navigation_uncheck_color">#9b9b9b</color>
+    <!-- 黑色背景颜色 -->
+    <color name="immutable_background_black_color">#212121</color>
+    <!-- 视频图片背景颜色 -->
+    <color name="video_item_image_default_color">#212121</color>
 </resources>

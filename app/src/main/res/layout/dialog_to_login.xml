@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackground"
-            android:background="@drawable/bg_dialog_item_one"
+            android:background="@drawable/background_dialog_button"
             android:gravity="center"
             android:textSize="14sp"
             android:textColor="@color/immutable_text_theme"

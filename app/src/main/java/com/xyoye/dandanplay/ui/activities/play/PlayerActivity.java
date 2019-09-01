@@ -77,6 +77,8 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by xyoye on 2018/7/4 0004.
+ * <p>
+ * 播放器页面（不需支持换肤）
  */
 
 public class PlayerActivity extends AppCompatActivity implements Lifeful, PlayerReceiverListener {
@@ -107,12 +109,12 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         super.onCreate(savedInstanceState);
 
         //播放器类型
-        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER){
+        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER) {
             mPlayer = new ExoPlayerView(this);
-            setContentView((ExoPlayerView)mPlayer);
-        }else {
+            setContentView((ExoPlayerView) mPlayer);
+        } else {
             mPlayer = new IjkPlayerView(this);
-            setContentView((IjkPlayerView)mPlayer);
+            setContentView((IjkPlayerView) mPlayer);
         }
 
         //隐藏toolbar
@@ -161,7 +163,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         //初始化不同的播放器
         if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER) {
             initExoPlayer(inputStream);
-        }else {
+        } else {
             initIjkPlayer(inputStream);
         }
 
@@ -171,22 +173,22 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             addPlayHistory(episodeId);
     }
 
-    private void initListener(){
+    private void initListener() {
         onDanmakuListener = new OnDanmakuListener() {
             @Override
             public boolean isValid() {
                 //是否可发送弹幕
-                if (!AppConfig.getInstance().isLogin()){
+                if (!AppConfig.getInstance().isLogin()) {
                     ToastUtils.showShort("当前未登陆，不能发送弹幕");
                     return false;
                 }
-                if (!StringUtils.isEmpty(danmuPath)){
+                if (!StringUtils.isEmpty(danmuPath)) {
                     File danmuFile = new File(danmuPath);
-                    if (!danmuFile.exists()){
+                    if (!danmuFile.exists()) {
                         ToastUtils.showShort("未加载弹幕文件");
                         return false;
                     }
-                }else {
+                } else {
                     ToastUtils.showShort("未加载弹幕文件");
                     return false;
                 }
@@ -195,9 +197,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
             @Override
             public void onDataObtain(BaseDanmaku data) {
-                if (episodeId == 0){
+                if (episodeId == 0) {
                     writeDanmu(data, danmuPath);
-                }else {
+                } else {
                     uploadDanmu(data);
                 }
             }
@@ -228,7 +230,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         };
 
         onOutsideListener = (what, extra) -> {
-            switch (what){
+            switch (what) {
                 //选择本地字幕
                 case Constants.INTENT_OPEN_SUBTITLE:
                     new FileManagerDialog(
@@ -277,15 +279,16 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                     setFullScreen();
                     break;
                 case Constants.INTENT_PLAY_FAILED:
-                    new CommonDialog.Builder(this)
+                    new CommonDialog
+                            .Builder(this)
                             .setDismissListener(dialog ->
-                                    PlayerActivity.this.finish()
-                            ).setOkListener(dialog ->
-                                    startActivity(new Intent(this, PlayerSettingActivity.class))
-                            ).setAutoDismiss()
+                                    PlayerActivity.this.finish())
+                            .setOkListener(dialog ->
+                                    startActivity(new Intent(this, PlayerSettingActivity.class)))
+                            .setAutoDismiss()
+                            .setNightSkin()
                             .build()
                             .show("播放失败，请尝试切换其它播放内核，获取更改播放器设置", "播放器设置", "退出播放");
-                    //Toast.makeText(this, "播放错误，试试切换其它播放器", Toast.LENGTH_LONG).show();
                     break;
             }
         };
@@ -294,13 +297,13 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         subtitleObserver = new CommOtherDataObserver<List<SubtitleBean>>() {
             @Override
             public void onSuccess(List<SubtitleBean> subtitleList) {
-                if (subtitleList.size() > 0){
+                if (subtitleList.size() > 0) {
                     //按评分排序
-                    Collections.sort(subtitleList, (o1, o2) -> o2.getRank()-o1.getRank());
+                    Collections.sort(subtitleList, (o1, o2) -> o2.getRank() - o1.getRank());
                     PlayerActivity.this.subtitleList.clear();
                     PlayerActivity.this.subtitleList.addAll(subtitleList);
                     mPlayer.onSubtitleQuery(subtitleList.size());
-                    LogUtils.e("获取字幕成功，共"+subtitleList.size()+"条");
+                    LogUtils.e("获取字幕成功，共" + subtitleList.size() + "条");
                 }
             }
 
@@ -311,7 +314,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         };
     }
 
-    private void initIjkPlayer(InputStream inputStream){
+    private void initIjkPlayer(InputStream inputStream) {
         IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
 
         ijkPlayerView
@@ -343,8 +346,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .start();
     }
 
-    private void initExoPlayer(InputStream inputStream){
-        ExoPlayerView exoPlayerView = (ExoPlayerView)mPlayer;
+    private void initExoPlayer(InputStream inputStream) {
+        ExoPlayerView exoPlayerView = (ExoPlayerView) mPlayer;
 
         exoPlayerView
                 //设置弹幕事件回调，要在初始化弹幕之前完成
@@ -429,7 +432,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     }
 
     //设置全屏
-    private void setFullScreen(){
+    private void setFullScreen() {
         //沉浸式状态栏
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -473,7 +476,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     }
 
     //写入一条弹幕到本地
-    private void writeDanmu(BaseDanmaku data, String danmuPath){
+    private void writeDanmu(BaseDanmaku data, String danmuPath) {
         BigDecimal bigDecimal = new BigDecimal(data.getTime() / 1000.00)
                 .setScale(2, BigDecimal.ROUND_HALF_UP);
         int type = data.getType();
@@ -486,13 +489,13 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         color = "16777215".equals(color) ? "0" : color;
         String comment = String.valueOf(data.text);
         String unixTime = String.valueOf(System.currentTimeMillis() / 1000);
-        String danmuText = "<d p=\""+time+","+mode+",25"+","+color+","+unixTime+",0,0,0\">"+comment+"</d>";
+        String danmuText = "<d p=\"" + time + "," + mode + ",25" + "," + color + "," + unixTime + ",0,0,0\">" + comment + "</d>";
         DanmuUtils.insertOneDanmu(danmuText, danmuPath);
     }
 
     //增加播放历史
-    private void addPlayHistory(int episodeId){
-        if (episodeId > 0){
+    private void addPlayHistory(int episodeId) {
+        if (episodeId > 0) {
             PlayHistoryBean.addPlayHistory(episodeId, new CommJsonObserver<CommJsonEntity>(this) {
                 @Override
                 public void onSuccess(CommJsonEntity commJsonEntity) {
@@ -501,36 +504,36 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
                 @Override
                 public void onError(int errorCode, String message) {
-                    LogUtils.e("add history fail: episodeId：" + episodeId+"  message："+message);
+                    LogUtils.e("add history fail: episodeId：" + episodeId + "  message：" + message);
                 }
             }, new NetworkConsumer());
         }
     }
 
     //获取本地屏蔽信息
-    private void initNormalFilter(){
+    private void initNormalFilter() {
         normalFilterList = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
                 .selectTable(13)
                 .query()
                 .setColumns(1)
                 .execute();
-        if (cursor != null){
-            while (cursor.moveToNext()){
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
                 normalFilterList.add(cursor.getString(0));
             }
         }
     }
 
     //查询字幕
-    private void querySubtitle(String videoPath){
+    private void querySubtitle(String videoPath) {
         //只查找本地视频字幕
         String localPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         if (!videoPath.startsWith(localPath))
             return;
         String thunderHash = HashUtils.getFileSHA1(videoPath);
         String shooterHash = HashUtils.getFileHash(videoPath);
-        if (!StringUtils.isEmpty(thunderHash) && !StringUtils.isEmpty(shooterHash)){
+        if (!StringUtils.isEmpty(thunderHash) && !StringUtils.isEmpty(shooterHash)) {
             Map<String, String> shooterParams = new HashMap<>();
             shooterParams.put("filehash", shooterHash);
             shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
@@ -548,7 +551,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     }
 
     //下载字幕
-    private void downloadSubtitle(String fileName, String link){
+    private void downloadSubtitle(String fileName, String link) {
         Request request = new Request.Builder().url(link).build();
         Call call = OkHttpEngine.getInstance().getOkHttpClient().newCall(request);
         call.enqueue(new Callback() {
@@ -559,21 +562,21 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                if (response.body() != null){
+                if (response.body() != null) {
                     String folderPath = AppConfig.getInstance().getDownloadFolder() + com.xyoye.dandanplay.utils.Constants.DefaultConfig.subtitleFolder;
                     File folder = new File(folderPath);
-                    if (!folder.exists()){
-                        if (!folder.mkdirs()){
+                    if (!folder.exists()) {
+                        if (!folder.mkdirs()) {
                             ToastUtils.showShort("创建字幕文件夹失败");
                             return;
                         }
                     }
                     String filePath = folderPath + "/" + fileName;
                     boolean isSaveFile = FileIOUtils.writeFileFromIS(filePath, response.body().byteStream());
-                    if (isSaveFile){
+                    if (isSaveFile) {
                         runOnUiThread(() -> mPlayer.setSubtitlePath(filePath));
 
-                    }else {
+                    } else {
                         ToastUtils.showShort("保存字幕文件失败");
                     }
                 }

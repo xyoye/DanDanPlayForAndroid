@@ -3,9 +3,6 @@ package com.xyoye.dandanplay.ui.activities.play;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,18 +13,18 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by xyoye on 2019/4/26.
  */
 
-public class PlayerManagerActivity extends AppCompatActivity {
+public class PlayerManagerActivity extends BaseMvcActivity {
     private static final int SELECT_DANMU = 102;
 
     private String videoPath;
@@ -42,11 +39,26 @@ public class PlayerManagerActivity extends AppCompatActivity {
     ImageView backIv;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_manager);
-        setFullscreen();
-        ButterKnife.bind(this);
+    protected int initPageLayoutID() {
+        return R.layout.activity_player_manager;
+    }
+
+    @Override
+    public void initPageView() {
+
+    }
+
+    @Override
+    public void initPageViewListener() {
+        View decorView = this.getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         errorTv.setVisibility(View.GONE);
         backIv.setOnClickListener(v -> PlayerManagerActivity.this.finish());
@@ -54,7 +66,18 @@ public class PlayerManagerActivity extends AppCompatActivity {
         initIntent();
     }
 
-    private void initIntent(){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SELECT_DANMU) {
+            if (resultCode == RESULT_OK) {
+                danmuPath = data.getStringExtra("path");
+                episodeId = data.getIntExtra("episode_id", 0);
+            }
+            launchPlayerActivity();
+        }
+    }
+
+    private void initIntent() {
         Intent openIntent = getIntent();
         videoTitle = openIntent.getStringExtra("video_title");
         videoPath = openIntent.getStringExtra("video_path");
@@ -66,11 +89,11 @@ public class PlayerManagerActivity extends AppCompatActivity {
 
         // TODO: 2019/8/28 使用播放器的途径有：本地文件播放，串流播放，外部视频播放，smb播放
         // TODO: 2019/8/28 除本地文件播放外，都应弹窗询问是否选择弹幕
-        
+
         //外部打开 或 smb播放
         if (Intent.ACTION_VIEW.equals(openIntent.getAction()) || isSmbPlay) {
 
-            if (!isSmbPlay){
+            if (!isSmbPlay) {
                 Uri data = getIntent().getData();
                 if (data != null) {
                     videoPath = CommonUtils.getRealFilePath(PlayerManagerActivity.this, data);
@@ -81,23 +104,23 @@ public class PlayerManagerActivity extends AppCompatActivity {
                 }
             }
 
-            if (!StringUtils.isEmpty(videoPath)){
+            if (!StringUtils.isEmpty(videoPath)) {
                 videoTitle = TextUtils.isEmpty(videoTitle)
-                                ? FileUtils.getFileName(videoPath)
-                                : videoTitle;
+                        ? FileUtils.getFileName(videoPath)
+                        : videoTitle;
                 //是否展示前往选择弹幕弹窗
                 if (AppConfig.getInstance().isShowOuterChainDanmuDialog()) {
                     new DanmuSelectDialog(this, isSelectDanmu -> {
                         if (isSelectDanmu) {
                             launchDanmuSelect(videoPath);
-                        }else {
+                        } else {
                             launchPlayerActivity();
                         }
                     }).show();
                 } else {
                     if (AppConfig.getInstance().isOuterChainDanmuSelect()) {
                         launchDanmuSelect(videoPath);
-                    }else {
+                    } else {
                         launchPlayerActivity();
                     }
                 }
@@ -106,7 +129,7 @@ public class PlayerManagerActivity extends AppCompatActivity {
                 errorTv.setVisibility(View.VISIBLE);
             }
 
-        }else {
+        } else {
             launchPlayerActivity();
         }
     }
@@ -118,9 +141,9 @@ public class PlayerManagerActivity extends AppCompatActivity {
         startActivityForResult(intent, SELECT_DANMU);
     }
 
-    private void launchPlayerActivity(){
+    private void launchPlayerActivity() {
 
-        if (TextUtils.isEmpty(videoPath)){
+        if (TextUtils.isEmpty(videoPath)) {
             ToastUtils.showShort("解析视频地址失败");
             errorTv.setVisibility(View.VISIBLE);
             return;
@@ -136,29 +159,6 @@ public class PlayerManagerActivity extends AppCompatActivity {
         PlayerManagerActivity.this.finish();
     }
 
-    private void setFullscreen() {
-        View decorView = this.getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
-        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_DANMU){
-            if (resultCode == RESULT_OK) {
-                danmuPath = data.getStringExtra("path");
-                episodeId = data.getIntExtra("episode_id", 0);
-            }
-            launchPlayerActivity();
-        }
-    }
-
     public static void launchPlayer(Context context, String title, String path, String danmu, long position, int episodeId) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
@@ -169,7 +169,7 @@ public class PlayerManagerActivity extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    public static void launchPlayerSmb(Context context, String title, String path){
+    public static void launchPlayerSmb(Context context, String title, String path) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
         intent.putExtra("video_path", path);
@@ -179,4 +179,5 @@ public class PlayerManagerActivity extends AppCompatActivity {
         intent.putExtra("smb_play", true);
         context.startActivity(intent);
     }
+
 }

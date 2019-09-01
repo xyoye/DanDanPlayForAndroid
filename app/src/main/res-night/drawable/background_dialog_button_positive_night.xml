@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+
+            <solid android:color="@color/layout_bg_color_night" />
+
+            <corners android:bottomRightRadius="5dp" />
+        </shape>
+    </item>
+
+    <item
+        android:left="0.5dp"
+        android:top="1dp">
+        <shape>
+
+            <solid android:color="@color/item_bg_color_night" />
+
+            <corners android:bottomRightRadius="5dp" />
+        </shape>
+    </item>
+</layer-list>

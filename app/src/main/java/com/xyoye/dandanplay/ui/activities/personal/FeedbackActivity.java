@@ -108,31 +108,31 @@ public class FeedbackActivity extends BaseMvcActivity {
         }
     }
 
-    private void showDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择反馈方式");
+    private void showDialog() {
         final String[] ways = {"邮件", "Github Issue"};
-        builder.setItems(ways, (dialog, which) -> {
-            if (which == 1) {
-                builder.show();
-                String android_version = "Android "+android.os.Build.VERSION.RELEASE;
-                String phone_version = android.os.Build.MODEL;
-                String version = CommonUtils.getLocalVersion(this);
-                String app_version = getResources().getString(R.string.app_name)+" 版本"+version;
 
-                Intent mail_intent = new Intent(Intent.ACTION_SEND);
-                mail_intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"xyoye1997@outlook.com"});
-                mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
-                mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version+"\n"+android_version+"\n\n"+app_version);
-                mail_intent.setType("text/plain");
-                startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
-            }
-            else if (which == 2){
-                Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
-                Intent intent1 = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent1);
-            }
-        });
-        builder.show();
+        new AlertDialog.Builder(this)
+                .setTitle("选择反馈方式")
+                .setItems(ways, (dialog, which) -> {
+                    if (which == 0) {
+                        String android_version = "Android " + android.os.Build.VERSION.RELEASE;
+                        String phone_version = android.os.Build.MODEL;
+                        String version = CommonUtils.getLocalVersion(this);
+                        String app_version = getResources().getString(R.string.app_name) + " 版本" + version;
+
+                        Intent mail_intent = new Intent(Intent.ACTION_SEND);
+                        mail_intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"xyoye1997@outlook.com"});
+                        mail_intent.putExtra(Intent.EXTRA_SUBJECT, "弹弹play - 反馈");
+                        mail_intent.putExtra(Intent.EXTRA_TEXT, phone_version + "\n" + android_version + "\n\n" + app_version);
+                        mail_intent.setType("text/plain");
+                        startActivity(Intent.createChooser(mail_intent, "选择邮件客户端"));
+                    } else if (which == 1) {
+                        Uri uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues");
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent1);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
     }
 }

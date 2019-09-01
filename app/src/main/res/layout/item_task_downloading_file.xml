@@ -1,51 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/layout_bg_color"
+    android:orientation="horizontal"
     android:paddingTop="3dp"
     android:paddingBottom="3dp">
 
     <ProgressBar
         android:id="@+id/download_duration_pb"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@null"
         android:progress="100"
         android:progressDrawable="@drawable/background_download_item"
-        style="?android:attr/progressBarStyleHorizontal"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginStart="3dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/danmu_bind_iv"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/danmu_bind_iv">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/file_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:text=""
             android:textColor="@color/text_black"
-            android:text=""/>
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/duration_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:textSize="12sp"
+            android:text=""
             android:textColor="@color/text_gray"
-            android:text=""/>
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -53,11 +54,11 @@
         android:id="@+id/danmu_bind_iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:paddingEnd="10dp"
         android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:src="@mipmap/ic_danmu_unexists"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

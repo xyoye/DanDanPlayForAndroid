@@ -11,14 +11,15 @@
         android:layout_height="56dp"
         android:layout_centerVertical="true"
         android:layout_marginStart="12dp"
-        app:cardCornerRadius="5dp"
+        app:cardCornerRadius="3dp"
         app:cardElevation="0dp">
 
         <ImageView
             android:id="@+id/cover_iv"
             android:layout_width="84dp"
             android:layout_height="56dp"
-            android:background="@color/item_bg_color"/>
+            android:scaleType="centerCrop"
+            android:background="@color/layout_bg_color"/>
 
         <TextView
             android:id="@+id/duration_tv"

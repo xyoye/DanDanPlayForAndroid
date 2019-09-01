@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.activities.setting;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PlayerSettingTipsActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.PlayerSettingDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 
@@ -123,9 +123,9 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         networkSubtitleCb.setChecked(useNetworkSubtitle);
         autoLoadLocalSubtitleCb.setChecked(autoLoadLocalSubtitle);
         autoLoadNetworkSubtitleCb.setChecked(autoLoadNetworkSubtitle);
-        if (useNetworkSubtitle){
+        if (useNetworkSubtitle) {
             autoLoadNetworkSubtitleRl.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             autoLoadNetworkSubtitleRl.setVisibility(View.GONE);
         }
     }
@@ -150,10 +150,10 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                 AppConfig.getInstance().setAutoLoadLocalSubtitle(isChecked));
         autoLoadNetworkSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setAutoLoadNetworkSubtitle(isChecked));
-        networkSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) ->{
+        networkSubtitleCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
             AppConfig.getInstance().setUseNetWorkSubtitle(isChecked);
             autoLoadNetworkSubtitleRl.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            if (!isChecked){
+            if (!isChecked) {
                 autoLoadNetworkSubtitleCb.setChecked(false);
                 AppConfig.getInstance().setAutoLoadNetworkSubtitle(false);
             }
@@ -164,26 +164,10 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.select_player_type_ll:
-                new PlayerSettingDialog(
-                        PlayerSettingActivity.this,
-                        true,
-                        result -> {
-                            if (result.equals("EXO Player")){
-                                ijkSettingLL.setVisibility(View.GONE);
-                            }else {
-                                ijkSettingLL.setVisibility(View.VISIBLE);
-                            }
-                            playerTypeTv.setText(result);
-                        }
-                ).show();
+                showSelectPlayerDialog();
                 break;
             case R.id.select_pixel_format_ll:
-                new PlayerSettingDialog(
-                        PlayerSettingActivity.this,
-                        false,
-                        result ->
-                            pixelFormatTv.setText(result)
-                ).show();
+                showSelectPixelDialog();
                 break;
         }
     }
@@ -205,5 +189,60 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_player_setting_tips, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+
+    private void showSelectPlayerDialog() {
+        final String[] playTypes = {"IJK Player", "EXO Player", "AndroidMedia Player"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("选择播放器")
+                .setItems(playTypes, (dialog, which) -> {
+                    if (which == 0) {
+                        ijkSettingLL.setVisibility(View.VISIBLE);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_PLAYER);
+                    } else if (which == 1) {
+                        ijkSettingLL.setVisibility(View.GONE);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.EXO_PLAYER);
+                    } else if (which == 3) {
+                        ijkSettingLL.setVisibility(View.VISIBLE);
+                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
+                    }
+                    playerTypeTv.setText(playTypes[which]);
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void showSelectPixelDialog(){
+        final String[] pixelTypes = {"默认格式", "RGB 565", "RGB 888", "RGBX 8888", "YV12", "OpenGL ES2"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("选择像素格式")
+                .setItems(pixelTypes, (dialog, which) -> {
+                    switch (which){
+                        case 0:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_AUTO);
+                            break;
+                        case 1:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGB565);
+                            break;
+                        case 2:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGB888);
+                            break;
+                        case 3:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_RGBX8888);
+                            break;
+                        case 4:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_YV12);
+                            break;
+                        case 5:
+                            AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_OPENGL_ES2);
+                            break;
+                    }
+                    playerTypeTv.setText(pixelTypes[which]);
+                })
+                .setNegativeButton("取消", null)
+                .show();
     }
 }

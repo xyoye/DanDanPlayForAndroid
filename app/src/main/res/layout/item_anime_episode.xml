@@ -25,7 +25,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="测试标题"
-        android:textColor="@color/text_black"
+        android:textColor="@color/text_gray"
         android:textSize="12sp" />
 
     <TextView

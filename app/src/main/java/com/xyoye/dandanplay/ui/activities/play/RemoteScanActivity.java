@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,20 +11,20 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.RemoteScanBean;
 import com.xyoye.dandanplay.ui.weight.ScanWindowView;
 import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by xyoye on 2019/7/11.
  */
 
-public class RemoteScanActivity extends AppCompatActivity implements QRCodeReaderView.OnQRCodeReadListener {
+public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderView.OnQRCodeReadListener {
     @BindView(R.id.qr_code_reader_view)
     QRCodeReaderView qrCodeReaderView;
     @BindView(R.id.finder_view)
@@ -38,8 +35,12 @@ public class RemoteScanActivity extends AppCompatActivity implements QRCodeReade
     private boolean isScanOver = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int initPageLayoutID() {
+        return R.layout.activity_remote_scan;
+    }
+
+    @Override
+    public void initPageView() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -48,15 +49,17 @@ public class RemoteScanActivity extends AppCompatActivity implements QRCodeReade
         } else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        setContentView(R.layout.activity_remote_scan);
-        ButterKnife.bind(this);
 
-        titleTv.setText("扫一扫");
-
+        setTitle("扫一扫");
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();
         scanWindowView.bindQRCodeView(qrCodeReaderView);
+    }
+
+    @Override
+    public void initPageViewListener() {
+
     }
 
     @Override

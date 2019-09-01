@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:minHeight="50dp"
     android:paddingTop="3dp"
-    android:paddingBottom="3dp">
+    android:paddingBottom="3dp"
+    android:background="@color/layout_bg_color">
 
     <CheckBox
         android:id="@+id/check_cb"

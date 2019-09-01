@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 /**
  * Created by xyoye on 2018/11/30.
@@ -26,6 +27,7 @@ public class CommonDialog extends Dialog {
     private boolean isShowExtra;
     private boolean isHideOk;
     private boolean isHideCancel;
+    private boolean isNightSkin;
     private onShowListener showListener;
     private onCancelListener cancelListener;
     private onExtraListener extraListener;
@@ -49,6 +51,7 @@ public class CommonDialog extends Dialog {
         this.isShowExtra = builder.isShowExtra;
         this.isHideOk = !builder.isHideOk;
         this.isHideCancel = !builder.isHideCancel;
+        this.isNightSkin = builder.isNightSkin;
         this.showListener = builder.showListener;
         this.extraListener = builder.extraListener;
         this.cancelListener = builder.cancelListener;
@@ -60,6 +63,16 @@ public class CommonDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(this.view);
+
+        //手动设置夜间模式的弹窗
+        if (isNightSkin){
+            view.setBackground(CommonUtils.getResDrawable(R.drawable.background_dialog_night));
+            tipsTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
+            contentTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
+        }else {
+            tipsTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+            contentTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        }
 
         okTv.setOnClickListener(v -> {
             if (okListener != null)
@@ -145,6 +158,7 @@ public class CommonDialog extends Dialog {
         private boolean isShowExtra = false;
         private boolean isHideOk = false;
         private boolean isHideCancel = false;
+        private boolean isNightSkin = false;
         private onShowListener showListener;
         private onCancelListener cancelListener;
         private onExtraListener extraListener;
@@ -197,6 +211,11 @@ public class CommonDialog extends Dialog {
 
         public Builder hideCancel(){
             this.isHideCancel = true;
+            return this;
+        }
+
+        public Builder setNightSkin(){
+            this.isNightSkin = true;
             return this;
         }
 

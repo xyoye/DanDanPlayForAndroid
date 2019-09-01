@@ -8,7 +8,6 @@
         android:id="@+id/expandable_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/item_bg_color"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

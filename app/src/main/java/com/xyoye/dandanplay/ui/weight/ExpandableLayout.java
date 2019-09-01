@@ -6,7 +6,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.LinearLayout;
+
+import skin.support.widget.SkinCompatLinearLayout;
 
 /**
  * 可折叠的Layout
@@ -14,7 +15,7 @@ import android.widget.LinearLayout;
  * Created by xyoye on 2019/8/7.
  */
 
-public class ExpandableLayout extends LinearLayout {
+public class ExpandableLayout extends SkinCompatLinearLayout {
     private View contentLayout;
     private int contentHeight;
     private int rootHeight;
@@ -44,14 +45,14 @@ public class ExpandableLayout extends LinearLayout {
 
         //子View只能有头布局和内容布局
         if (getChildCount() != 2)
-            throw new IllegalArgumentException("child view count are "+getChildCount()+" must be 2");
+            throw new IllegalArgumentException("child view count are " + getChildCount() + " must be 2");
 
         //默认高度为头布局高度
         rootHeight = getChildAt(0).getMeasuredHeight();
 
         contentLayout = getChildAt(1);
 
-        if (!isInit){
+        if (!isInit) {
             isInit = true;
             //计算初始内容布局高度
             contentHeight = contentLayout.getMeasuredHeight();

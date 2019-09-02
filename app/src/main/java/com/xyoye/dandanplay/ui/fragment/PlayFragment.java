@@ -141,7 +141,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                         videoBean.setDanmuPath("");
                 }
 
-                PlayerManagerActivity.launchPlayer(getContext(),
+                PlayerManagerActivity.launchPlayerLocal(getContext(),
                         FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
                         videoBean.getVideoPath(),
                         videoBean.getDanmuPath(),

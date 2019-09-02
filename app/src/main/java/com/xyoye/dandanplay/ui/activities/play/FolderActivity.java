@@ -322,7 +322,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
         AppConfig.getInstance().setLastPlayVideo(videoBean.getVideoPath());
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_ADAPTER_DATA));
 
-        PlayerManagerActivity.launchPlayer(
+        PlayerManagerActivity.launchPlayerLocal(
                 this,
                 FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
                 videoBean.getVideoPath(),

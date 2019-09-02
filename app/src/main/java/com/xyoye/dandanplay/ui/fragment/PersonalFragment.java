@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.torrent.TorrentEngine;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
+import com.xyoye.dandanplay.ui.activities.personal.LocalPlayHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
@@ -119,7 +120,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 }
                 break;
             case R.id.local_history_ll:
-
+                launchActivity(LocalPlayHistoryActivity.class);
                 break;
             case R.id.download_manager_ll:
                 int fragmentPosition = TorrentEngine.getInstance().hasTasks() ? 0 : 1;

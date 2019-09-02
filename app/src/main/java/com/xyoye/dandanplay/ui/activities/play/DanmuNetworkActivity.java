@@ -56,31 +56,31 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
             @Override
             public AdapterItem<DanmuMatchBean.MatchesBean> onCreateItem(int viewType) {
                 return new DanmuNetworkItem(model ->
-                    new RxPermissions(DanmuNetworkActivity.this).
-                        request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .subscribe(new Observer<Boolean>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
+                        new RxPermissions(DanmuNetworkActivity.this).
+                                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .subscribe(new Observer<Boolean>() {
+                                    @Override
+                                    public void onSubscribe(Disposable d) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onNext(Boolean aBoolean) {
-                                if (aBoolean){
-                                    showDownloadDialog(model);
-                                }
-                            }
+                                    @Override
+                                    public void onNext(Boolean aBoolean) {
+                                        if (aBoolean) {
+                                            showDownloadDialog(model);
+                                        }
+                                    }
 
-                            @Override
-                            public void onError(Throwable e) {
+                                    @Override
+                                    public void onError(Throwable e) {
 
-                            }
+                                    }
 
-                            @Override
-                            public void onComplete() {
+                                    @Override
+                                    public void onComplete() {
 
-                            }
-                        }));
+                                    }
+                                }));
             }
         };
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -90,16 +90,17 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.setAdapter(adapter);
 
         videoPath = getIntent().getStringExtra("video_path");
-        boolean isSmb = getIntent().getBooleanExtra("is_smb", false);
-        if (!isSmb){
+        if (StringUtils.isEmpty(videoPath)) {
+            ToastUtils.showShort("无匹配弹幕");
+            return;
+        }
+
+        if (getIntent().getBooleanExtra("not_local_file", false)) {
+            //非手机本地文件，无法获取MD5
+            String title = FileUtils.getFileNameNoExtension(videoPath);
+            presenter.searchDanmu(title, "");
+        } else {
             presenter.matchDanmu(videoPath);
-        }else {
-            if (!StringUtils.isEmpty(videoPath)){
-                String title = FileUtils.getFileNameNoExtension(videoPath);
-                presenter.searchDanmu(title, "");
-            }else {
-                ToastUtils.showShort("无匹配弹幕");
-            }
         }
     }
 
@@ -176,12 +177,12 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         ToastUtils.showShort(message);
     }
 
-    private void showDownloadDialog(DanmuMatchBean.MatchesBean model){
+    private void showDownloadDialog(DanmuMatchBean.MatchesBean model) {
         new DanmuDownloadDialog(DanmuNetworkActivity.this, videoPath, model, (danmuPath, episodeId) ->
                 finishActivity(episodeId, danmuPath)).show();
     }
 
-    public void finishActivity(int episodeId, String danmuPath){
+    public void finishActivity(int episodeId, String danmuPath) {
         Intent intent = getIntent();
         intent.putExtra("episode_id", episodeId);
         intent.putExtra("path", danmuPath);

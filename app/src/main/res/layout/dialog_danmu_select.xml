@@ -19,7 +19,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
-            android:text="检测到从外部打开播放器，是否需要选择弹幕？"
+            android:text="当前视频来源无弹幕，是否前往选择弹幕页面？"
             android:textColor="@color/text_black"
             android:textSize="14sp" />
 
@@ -82,7 +82,7 @@
                 android:background="@drawable/background_dialog_button_negative"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="取消"
+                android:text="直接播放"
                 android:textColor="@color/text_gray"
                 android:textSize="14sp" />
 
@@ -94,7 +94,7 @@
                 android:background="@drawable/background_dialog_button_positive"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="选择"
+                android:text="选择弹幕"
                 android:textColor="@color/immutable_text_theme"
                 android:textSize="14sp" />
         </LinearLayout>

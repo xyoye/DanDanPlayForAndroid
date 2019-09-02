@@ -70,7 +70,7 @@ public class RemoteVideoItem implements AdapterItem<RemoteVideoBean> {
         itemView.setOnClickListener(v -> {
             String videoUrl = model.getOriginUrl() + "api/v1/stream/" + model.getHash();
             int episodeId = StringUtils.isEmpty(model.getDanmuPath()) ? 0 : model.getEpisodeId();
-            PlayerManagerActivity.launchPlayer(
+            PlayerManagerActivity.launchPlayerRemote(
                     context,
                     model.getEpisodeTitle(),
                     videoUrl,

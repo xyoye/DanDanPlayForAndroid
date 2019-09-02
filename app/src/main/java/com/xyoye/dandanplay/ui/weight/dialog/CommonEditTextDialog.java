@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -154,11 +155,12 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("链接不能为空");
                 } else {
+                    KeyboardUtils.hideSoftInput(editText);
                     int lastEx = inputData.lastIndexOf("/") + 1;
                     String title = inputData;
                     if (lastEx < inputData.length())
                         title = inputData.substring(lastEx);
-                    PlayerManagerActivity.launchPlayer(getContext(), title, inputData, "", 0, 0);
+                    PlayerManagerActivity.launchPlayerStream(getContext(), title, inputData, "", 0, 0);
                     CommonEditTextDialog.this.dismiss();
                 }
                 break;

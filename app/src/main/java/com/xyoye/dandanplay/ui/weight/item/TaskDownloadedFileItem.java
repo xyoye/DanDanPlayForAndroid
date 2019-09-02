@@ -94,7 +94,7 @@ public class TaskDownloadedFileItem implements AdapterItem<DownloadedTaskBean.Do
 
         mView.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getFilePath())){
-                PlayerManagerActivity.launchPlayer(
+                PlayerManagerActivity.launchPlayerLocal(
                         mView.getContext(),
                         fileName,
                         model.getFilePath(),

@@ -141,6 +141,10 @@
         <activity
             android:name=".ui.activities.personal.FeedbackActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!-- 本地播放历史 -->
+        <activity
+            android:name=".ui.activities.personal.LocalPlayHistoryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--播放器设置-->
         <activity
             android:name=".ui.activities.setting.DownloadSettingActivity"

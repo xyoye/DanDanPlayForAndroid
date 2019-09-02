@@ -18,6 +18,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -191,7 +192,7 @@ public class CommonUtils {
     /**
      * 获取Uri真实地址
      */
-    public static @Nullable String getRealFilePath(Context context, Uri uri) {
+    public static @Nullable String getRealFilePath(Context context, @NonNull Uri uri) {
         boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {

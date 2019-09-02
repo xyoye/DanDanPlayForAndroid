@@ -7,14 +7,16 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ChangePasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ChangePasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ChangePasswordView;
 import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -83,9 +85,9 @@ public class ChangePasswordActivity extends BaseMvpActivity<ChangePasswordPresen
             AppConfig.getInstance().saveUserScreenName("");
             AppConfig.getInstance().saveUserImage("");
             AppConfig.getInstance().saveToken("");
+            EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
             if (ActivityUtils.isActivityExistsInStack(PersonalInfoActivity.class))
                 ActivityUtils.finishActivity(PersonalInfoActivity.class);
-            IApplication.isUpdateUserInfo = true;
             launchActivity(LoginActivity.class);
             ChangePasswordActivity.this.finish();
         });

@@ -10,11 +10,12 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanView;
+import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 
@@ -141,7 +142,7 @@ public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> 
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> {
-                    EventBus.getDefault().post(new RefreshFolderEvent(true));
+                    EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_ADAPTER_DATA));
                     ToastUtils.showShort("扫描完成，共新增："+newAddFileCount+"个视频");
                 });
     }

@@ -134,12 +134,12 @@ public class AnimeListActivity extends BaseMvpActivity<AnimeListPresenter> imple
 
     @Override
     public void showLoading() {
-        showLoadingDialog();
+        //showLoadingDialog();
     }
 
     @Override
     public void hideLoading() {
-        dismissLoadingDialog();
+        //dismissLoadingDialog();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,7 +24,6 @@ public class FolderItem implements AdapterItem<FolderBean>{
     TextView fileNumber;
 
     private View mView;
-    private Context mContext;
     private PlayFolderListener listener;
 
     public FolderItem(PlayFolderListener listener){
@@ -42,7 +40,6 @@ public class FolderItem implements AdapterItem<FolderBean>{
     @Override
     public void initItemViews(View itemView) {
         mView = itemView;
-        mContext = mView.getContext();
     }
 
     @Override
@@ -56,7 +53,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
         String title = FileUtils.getFileNameNoExtension(folder.substring(0, folder.length()-1));
 
         folderTitle.setText(title);
-        fileNumber.setText(String.valueOf(model.getFileNumber() + " 视频"));
+        fileNumber.setText(String.format("%s 视频", model.getFileNumber()));
 
         //是否为上次播放的文件夹
         boolean isLastPlayFolder = false;

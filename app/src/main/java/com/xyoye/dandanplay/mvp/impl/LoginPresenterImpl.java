@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
@@ -14,6 +14,8 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by xyoye on 2018/7/22.
@@ -57,13 +59,13 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
             @Override
             public void onSuccess(PersonalBean personalBean) {
                 getView().hideLoading();
-                IApplication.isUpdateUserInfo = true;
                 AppConfig.getInstance().setLogin(true);
                 AppConfig.getInstance().saveUserScreenName(personalBean.getScreenName());
                 AppConfig.getInstance().saveUserName(param.getUserName());
                 AppConfig.getInstance().saveUserImage(personalBean.getProfileImage());
                 AppConfig.getInstance().saveToken(personalBean.getToken());
                 ToastUtils.showShort("登录成功");
+                EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
                 getView().launchMain();
             }
 

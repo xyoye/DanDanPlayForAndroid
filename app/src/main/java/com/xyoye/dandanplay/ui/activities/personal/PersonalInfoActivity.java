@@ -10,13 +10,15 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -63,7 +65,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
                 AppConfig.getInstance().saveUserScreenName("");
                 AppConfig.getInstance().saveUserImage("");
                 AppConfig.getInstance().saveToken("");
-                IApplication.isUpdateUserInfo = true;
+                EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
 
                 launchActivity(LoginActivity.class);
                 PersonalInfoActivity.this.finish();
@@ -102,7 +104,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
                 new CommonEditTextDialog(PersonalInfoActivity.this, CommonEditTextDialog.SCREEN_NAME, data -> {
                     screenNameTv.setText(data[0]);
                     AppConfig.getInstance().saveUserScreenName(data[0]);
-                    IApplication.isUpdateUserInfo = true;
+                    EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
                     ToastUtils.showShort("修改昵称成功");
                 }).show();
                 break;

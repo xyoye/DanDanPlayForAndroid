@@ -5,10 +5,11 @@ import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
+import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 
@@ -63,8 +64,8 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
                 .param(2, scanType)
                 .execute();
 
-        EventBus.getDefault().post(new RefreshFolderEvent(true));
         queryScanFolderList(isScan);
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));
     }
 
     @Override
@@ -105,6 +106,6 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
                     .where(2, scanType)
                     .execute();
         }
-        EventBus.getDefault().post(new RefreshFolderEvent(true));
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));
     }
 }

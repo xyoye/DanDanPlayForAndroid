@@ -321,12 +321,12 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
 
     @Override
     public void showLoading() {
-        showLoadingDialog();
+        //showLoadingDialog();
     }
 
     @Override
     public void hideLoading() {
-        dismissLoadingDialog();
+        //dismissLoadingDialog();
     }
 
     @Override

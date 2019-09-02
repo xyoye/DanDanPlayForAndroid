@@ -18,10 +18,11 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.VideoScanPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanView;
+import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.fragment.VideoScanFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -151,7 +152,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
                     presenter.queryFormSystem(videoBean, path);
                     boolean added = presenter.saveNewVideo(videoBean);
                     if (added)
-                        EventBus.getDefault().post(new RefreshFolderEvent(true));
+                        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
                     ToastUtils.showShort(added ? "扫描成功" : "文件已存在");
                 }).show();
                 break;

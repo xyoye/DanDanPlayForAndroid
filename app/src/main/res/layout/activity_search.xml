@@ -41,7 +41,7 @@
                 android:singleLine="true"
                 android:background="@null"
                 android:textSize="14sp"
-                android:textColor="@color/edit_text_text_color"
+                android:textColor="@color/search_edit_text_text_color"
                 android:textColorHint="@color/search_edit_text_hint_color"
                 android:hint="搜索：番剧+空格+集数"
                 android:imeOptions="actionDone"

@@ -63,7 +63,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@color/edit_text_bg_color"
-            android:padding="9dp"
+            android:padding="10dp"
             android:src="@mipmap/ic_eye_close" />
 
     </RelativeLayout>

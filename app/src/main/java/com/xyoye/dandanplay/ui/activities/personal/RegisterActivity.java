@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.mvp.impl.RegisterPresenterImpl;
@@ -113,7 +112,6 @@ public class RegisterActivity extends BaseMvpActivity<RegisterPresenter> impleme
 
     @Override
     public void registerSuccess() {
-        IApplication.isUpdateUserInfo = true;
         ToLoginDialog dialog = new ToLoginDialog(this, R.style.Dialog, 0, RegisterActivity.this::finish);
         dialog.show();
     }

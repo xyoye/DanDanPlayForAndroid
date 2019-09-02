@@ -21,7 +21,6 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
@@ -31,10 +30,6 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +44,10 @@ import io.reactivex.disposables.Disposable;
  */
 
 public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> implements PlayFragmentView {
+    public static final int UPDATE_ADAPTER_DATA = 0;
+    public static final int UPDATE_DATABASE_DATA = 1;
+    public static final int UPDATE_SYSTEM_DATA = 2;
+
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout refresh;
     @BindView(R.id.rv)
@@ -191,12 +190,12 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             permissionDis.dispose();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void refreshFolderEvent(RefreshFolderEvent event){
-        if (event.isReGetData())
-            refreshVideo(false);
-        else
+    public void refreshFolderData(int updateType){
+        if (updateType == UPDATE_ADAPTER_DATA){
             adapter.notifyDataSetChanged();
+        }else {
+            refreshVideo(updateType == UPDATE_SYSTEM_DATA);
+        }
     }
 
     public void initVideoData(){
@@ -252,15 +251,5 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
 
                     }
                 });
-    }
-
-    public void registerEventBus(){
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-    }
-
-    public void unregisterEventBus(){
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
     }
 }

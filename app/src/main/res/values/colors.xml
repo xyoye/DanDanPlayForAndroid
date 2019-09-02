@@ -93,4 +93,6 @@
     <color name="immutable_background_black_color">#212121</color>
     <!-- 视频图片背景颜色 -->
     <color name="video_item_image_default_color">#212121</color>
+    <!-- 搜索输入框字体颜色 -->
+    <color name="search_edit_text_text_color">#ffffff</color>
 </resources>

@@ -10,7 +10,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
@@ -43,8 +42,6 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     @BindView(R.id.button_login)
     TextView loginButton;
 
-    private boolean changeViewFlag = false;
-
     public static PersonalFragment newInstance() {
         return new PersonalFragment();
     }
@@ -62,12 +59,6 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     @Override
     public void initView() {
-        if (changeViewFlag) {
-            changeView();
-        }
-    }
-
-    public void changeView() {
         if (AppConfig.getInstance().isLogin()) {
             loginButton.setVisibility(View.GONE);
             RequestOptions options = new RequestOptions()
@@ -82,20 +73,11 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
         } else {
             loginButton.setVisibility(View.VISIBLE);
         }
-        changeViewFlag = false;
     }
 
     @Override
     public void initListener() {
 
-    }
-
-    public void updateUserInfo() {
-        if (IApplication.isUpdateUserInfo) {
-            changeViewFlag = true;
-            if (loginButton != null)
-                changeView();
-        }
     }
 
     @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll, R.id.danmu_ll, R.id.download_manager_ll})

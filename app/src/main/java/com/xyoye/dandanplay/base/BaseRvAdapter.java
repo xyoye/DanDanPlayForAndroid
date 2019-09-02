@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  * RecyclerView 通用Adapter
  * 需要不同Item显示的，请重写getItemViewType(int position);
  * 建议用枚举类定义Item的类型
- *
+ * <p>
  * Modified by xyoye on 2019/5/27.
  */
 public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter implements IAdapter<T> {
@@ -31,14 +31,15 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter implements I
         this.mData = data;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new RcvAdapterItemViewHolder(parent.getContext(), parent, onCreateItem(viewType));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (position < mData.size()) {
             ((RcvAdapterItemViewHolder) holder).getItem().onUpdateViews(mData.get(position), position);
         } else {

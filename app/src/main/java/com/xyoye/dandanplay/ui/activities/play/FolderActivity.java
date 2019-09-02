@@ -20,14 +20,15 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
-import com.xyoye.dandanplay.bean.event.RefreshFolderEvent;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
@@ -123,7 +124,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                                     String path = videoList.get(position).getVideoPath();
                                     if (FileUtils.delete(path)){
                                         adapter.removeItem(position);
-                                        EventBus.getDefault().post(new RefreshFolderEvent(true));
+                                        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
                                     }else {
                                         ToastUtils.showShort("删除文件失败");
                                     }
@@ -319,7 +320,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     private void launchPlay(VideoBean videoBean){
         //记录此次播放
         AppConfig.getInstance().setLastPlayVideo(videoBean.getVideoPath());
-        EventBus.getDefault().post(new RefreshFolderEvent(false));
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_ADAPTER_DATA));
 
         PlayerManagerActivity.launchPlayer(
                 this,

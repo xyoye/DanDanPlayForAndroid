@@ -389,12 +389,12 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public void showLoading() {
-        showLoadingDialog();
+        //showLoadingDialog();
     }
 
     @Override
     public void hideLoading() {
-        dismissLoadingDialog();
+        //dismissLoadingDialog();
     }
 
     @Override

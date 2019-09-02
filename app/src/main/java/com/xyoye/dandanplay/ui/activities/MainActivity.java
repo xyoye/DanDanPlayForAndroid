@@ -26,7 +26,6 @@ import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
 import com.xyoye.dandanplay.torrent.TorrentService;
 import com.xyoye.dandanplay.ui.activities.play.SmbActivity;
-import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
@@ -50,7 +49,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
     private PersonalFragment personalFragment;
     private BaseMvpFragment previousFragment;
 
-    private MenuItem menuSmbItem, menuNetItem, menuRemoteItem, menuSettingItem;
+    private MenuItem menuSmbItem, menuNetItem, menuRemoteItem;
 
     private long touchTime = 0;
 
@@ -182,11 +181,9 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         menuSmbItem = menu.findItem(R.id.menu_item_smb);
         menuNetItem = menu.findItem(R.id.menu_item_network);
         menuRemoteItem = menu.findItem(R.id.menu_item_remote);
-        menuSettingItem = menu.findItem(R.id.menu_item_setting);
         menuSmbItem.setVisible(true);
         menuNetItem.setVisible(true);
         menuRemoteItem.setVisible(true);
-        menuSettingItem.setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -204,9 +201,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             //远程访问
             case R.id.menu_item_remote:
                 new RemoteDialog(this).show();
-                break;
-            case R.id.menu_item_setting:
-                launchActivity(AppSettingActivity.class);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -243,10 +237,6 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             return;
         } else if (previousFragment != null) {
             getFragmentTransaction().hide(previousFragment).commit();
-        }
-
-        if (menuSettingItem != null) {
-            menuSettingItem.setVisible(clazz == PersonalFragment.class);
         }
 
         if (clazz == HomeFragment.class) {

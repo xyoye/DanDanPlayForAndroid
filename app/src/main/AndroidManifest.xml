@@ -114,7 +114,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--扫描管理-->
         <activity
-            android:name=".ui.activities.setting.ScanSettingActivity"
+            android:name=".ui.activities.setting.ScanManagerManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--图片预览-->
         <activity
@@ -122,7 +122,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--弹幕屏蔽管理-->
         <activity
-            android:name=".ui.activities.setting.BlockSettingActivity"
+            android:name=".ui.activities.setting.DanmuBlockManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--远程访问扫描-->
         <activity

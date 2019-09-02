@@ -13,8 +13,8 @@ import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.database.DataBaseInfo;
 import com.xyoye.dandanplay.database.DataBaseManager;
-import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
-import com.xyoye.dandanplay.mvp.view.VideoScanView;
+import com.xyoye.dandanplay.mvp.presenter.ScanManagerPresenter;
+import com.xyoye.dandanplay.mvp.view.ScanManagerView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -34,11 +34,11 @@ import io.reactivex.schedulers.Schedulers;
  * Created by xyoye on 2019/5/14.
  */
 
-public class VideoScanPresenterImpl extends BaseMvpPresenterImpl<VideoScanView> implements VideoScanPresenter {
+public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerView> implements ScanManagerPresenter {
     private Disposable videoScanDis;
     private int newAddFileCount = 0;
 
-    public VideoScanPresenterImpl(VideoScanView view, Lifeful lifeful) {
+    public ScanManagerPresenterImpl(ScanManagerView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 

@@ -22,11 +22,4 @@
         android:title="远程访问"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/menu_item_setting"
-        android:orderInCategory="100"
-        android:icon="@mipmap/ic_setting"
-        android:title="设置"
-    app:showAsAction="ifRoom"/>
-
 </menu>

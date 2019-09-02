@@ -52,7 +52,7 @@ public class AnimeListActivity extends BaseMvpActivity<AnimeListPresenter> imple
                 presenter.getFavorite();
                 break;
             case PERSONAL_HISTORY:
-                setTitle("播放历史");
+                setTitle("云端播放历史");
                 presenter.getPlayHistory();
                 break;
             case ANIME_TAG:

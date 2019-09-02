@@ -149,12 +149,12 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @Override
     public void showLoading() {
-        showLoadingDialog();
+        //showLoadingDialog();
     }
 
     @Override
     public void hideLoading() {
-        dismissLoadingDialog();
+        //dismissLoadingDialog();
     }
 
     @Override

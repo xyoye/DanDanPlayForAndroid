@@ -13,7 +13,7 @@ import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.mvp.impl.VideoScanFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
-import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.item.VideoScanItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -36,7 +36,7 @@ public class VideoScanFragment extends BaseMvpFragment<VideoScanFragmentPresente
 
     private BaseRvAdapter<ScanFolderBean> adapter;
     private List<ScanFolderBean> folderList;
-    private ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener;
+    private ScanManagerManagerActivity.OnFragmentItemCheckListener itemCheckListener;
 
     public static VideoScanFragment newInstance(boolean isScanType){
         VideoScanFragment videoScanFragment = new VideoScanFragment();
@@ -134,7 +134,7 @@ public class VideoScanFragment extends BaseMvpFragment<VideoScanFragmentPresente
         return false;
     }
 
-    public void setOnItemCheckListener(ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener){
+    public void setOnItemCheckListener(ScanManagerManagerActivity.OnFragmentItemCheckListener itemCheckListener){
         this.itemCheckListener = itemCheckListener;
     }
 

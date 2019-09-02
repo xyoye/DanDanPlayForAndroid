@@ -59,7 +59,7 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
     @SuppressLint("SetTextI18n")
     @Override
     public void initView() {
-        setTitle("设置");
+        setTitle("系统设置");
         EventBus.getDefault().register(this);
 
         String downloadPath = AppConfig.getInstance().getDownloadFolder();

@@ -21,10 +21,10 @@ import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.BlockSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.DanmuBlockManagerActivity;
 import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.ScanSettingActivity;
+import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 
 import butterknife.BindView;
@@ -80,23 +80,14 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
 
     }
 
-    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login, R.id.player_setting_ll, R.id.app_setting_ll, R.id.scan_setting_ll, R.id.download_setting_ll, R.id.favorite_ll, R.id.history_ll, R.id.block_ll, R.id.danmu_ll, R.id.download_manager_ll})
+    @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login,
+            R.id.player_setting_ll, R.id.download_setting_ll, R.id.system_setting_ll,
+            R.id.follow_ll, R.id.network_history_ll, R.id.local_history_ll, R.id.download_manager_ll,
+            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.bilibili_danmu_download_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.player_setting_ll:
-                launchActivity(PlayerSettingActivity.class);
-                break;
-            case R.id.app_setting_ll:
-                launchActivity(AppSettingActivity.class);
-                break;
-            case R.id.scan_setting_ll:
-                launchActivity(ScanSettingActivity.class);
-                break;
-            case R.id.download_setting_ll:
-                int fragmentPosition = TorrentEngine.getInstance().hasTasks() ? 0 : 1;
-                Bundle bundle = new Bundle();
-                bundle.putInt("fragment_position", fragmentPosition);
-                launchActivity(DownloadManagerActivity.class, bundle);
+            case R.id.user_image_iv:
+                ToastUtils.showShort("头像功能暂未开放");
                 break;
             case R.id.user_info_rl:
                 launchActivity(PersonalInfoActivity.class);
@@ -104,31 +95,46 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
             case R.id.button_login:
                 launchActivity(LoginActivity.class);
                 break;
-            case R.id.user_image_iv:
-                ToastUtils.showShort("头像功能暂未开放");
+            case R.id.player_setting_ll:
+                launchActivity(PlayerSettingActivity.class);
                 break;
-            case R.id.favorite_ll:
+            case R.id.download_setting_ll:
+                launchActivity(DownloadSettingActivity.class);
+                break;
+            case R.id.system_setting_ll:
+                launchActivity(AppSettingActivity.class);
+                break;
+            case R.id.follow_ll:
                 if (AppConfig.getInstance().isLogin()) {
                     AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_FAVORITE);
                 } else {
                     launchActivity(LoginActivity.class);
                 }
                 break;
-            case R.id.history_ll:
+            case R.id.network_history_ll:
                 if (AppConfig.getInstance().isLogin()) {
                     AnimeListActivity.launchAnimeList(getContext(), AnimeListActivity.PERSONAL_HISTORY);
                 } else {
                     launchActivity(LoginActivity.class);
                 }
                 break;
-            case R.id.block_ll:
-                launchActivity(BlockSettingActivity.class);
-                break;
-            case R.id.danmu_ll:
-                launchActivity(DownloadBiliBiliActivity.class);
+            case R.id.local_history_ll:
+
                 break;
             case R.id.download_manager_ll:
-                launchActivity(DownloadSettingActivity.class);
+                int fragmentPosition = TorrentEngine.getInstance().hasTasks() ? 0 : 1;
+                Bundle bundle = new Bundle();
+                bundle.putInt("fragment_position", fragmentPosition);
+                launchActivity(DownloadManagerActivity.class, bundle);
+                break;
+            case R.id.video_scan_manager_ll:
+                launchActivity(ScanManagerManagerActivity.class);
+                break;
+            case R.id.danmu_block_manager_ll:
+                launchActivity(DanmuBlockManagerActivity.class);
+                break;
+            case R.id.bilibili_danmu_download_ll:
+                launchActivity(DownloadBiliBiliActivity.class);
                 break;
         }
     }

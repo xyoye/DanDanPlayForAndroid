@@ -23,7 +23,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/6/26.
  */
 
-public class BlockSettingActivity extends BaseMvpActivity<BlockManagerPresenter> implements BlockManagerView {
+public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPresenter> implements BlockManagerView {
 
     @BindView(R.id.labels_view)
     LabelsView labelsView;
@@ -43,7 +43,7 @@ public class BlockSettingActivity extends BaseMvpActivity<BlockManagerPresenter>
 
     @Override
     public void initView() {
-        setTitle("屏蔽管理");
+        setTitle("弹幕屏蔽管理");
         blockData = presenter.queryBlockData();
         labelsView.setLabels(blockData);
     }

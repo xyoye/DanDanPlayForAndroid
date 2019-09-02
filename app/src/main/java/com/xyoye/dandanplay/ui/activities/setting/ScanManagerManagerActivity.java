@@ -19,9 +19,9 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
-import com.xyoye.dandanplay.mvp.impl.VideoScanPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.VideoScanPresenter;
-import com.xyoye.dandanplay.mvp.view.VideoScanView;
+import com.xyoye.dandanplay.mvp.impl.ScanManagerPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.ScanManagerPresenter;
+import com.xyoye.dandanplay.mvp.view.ScanManagerView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.fragment.VideoScanFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
@@ -40,7 +40,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/3/30.
  */
 
-public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> implements VideoScanView {
+public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPresenter> implements ScanManagerView {
 
     @BindView(R.id.tab_layout)
     CommonTabLayout tabLayout;
@@ -54,14 +54,14 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
     @Override
     public void initView() {
-        setTitle("扫描管理");
+        setTitle("文件扫描管理");
         fragmentList = new ArrayList<>();
         VideoScanFragment scanFragment = VideoScanFragment.newInstance(true);
         VideoScanFragment blockFragment = VideoScanFragment.newInstance(false);
         fragmentList.add(scanFragment);
         fragmentList.add(blockFragment);
 
-        ScanSettingActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
+        ScanManagerManagerActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
             if (hasChecked){
                 deleteTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 deleteTv.setClickable(true);
@@ -91,8 +91,8 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
 
     @NonNull
     @Override
-    protected VideoScanPresenter initPresenter() {
-        return new VideoScanPresenterImpl(this, this);
+    protected ScanManagerPresenter initPresenter() {
+        return new ScanManagerPresenterImpl(this, this);
     }
 
     private void initTabLayout() {
@@ -144,10 +144,10 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.scan_folder_tv:
-                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
+                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
                 break;
             case R.id.scan_file_tv:
-                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
+                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
                     VideoBean videoBean = new VideoBean();
                     presenter.queryFormSystem(videoBean, path);
                     boolean added = presenter.saveNewVideo(videoBean);
@@ -181,7 +181,7 @@ public class ScanSettingActivity extends BaseMvpActivity<VideoScanPresenter> imp
                 finish();
                 break;
             case R.id.add_scan:
-                new FileManagerDialog(ScanSettingActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
+                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
                         fragmentList.get(selectedPosition).addPath(path)
                 ).show();
                 break;

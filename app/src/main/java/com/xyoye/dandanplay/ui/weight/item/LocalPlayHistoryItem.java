@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.LocalPlayHistoryBean;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class LocalPlayHistoryItem implements AdapterItem<LocalPlayHistoryBean> {
     @Override
     public void onUpdateViews(LocalPlayHistoryBean model, int position) {
         positionTv.setText(String.valueOf((position+1)));
-        videoPathTv.setText(model.getVideoPath());
+        videoPathTv.setText(CommonUtils.decodeHttpUrl(model.getVideoPath()));
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         playTimeTv.setText(dateFormat.format(model.getPlayTime()));
 

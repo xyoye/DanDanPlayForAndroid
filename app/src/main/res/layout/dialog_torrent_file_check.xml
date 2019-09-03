@@ -62,7 +62,19 @@
             android:text="取消"/>
 
         <TextView
-            android:id="@+id/confirm_tv"
+            android:id="@+id/play_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@drawable/background_dialog_button_neutral"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/text_pink"
+            android:text="播放"/>
+
+        <TextView
+            android:id="@+id/download_tv"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
@@ -71,6 +83,6 @@
             android:gravity="center"
             android:textSize="14sp"
             android:textColor="@color/immutable_text_theme"
-            android:text="确定"/>
+            android:text="下载"/>
     </LinearLayout>
 </RelativeLayout>

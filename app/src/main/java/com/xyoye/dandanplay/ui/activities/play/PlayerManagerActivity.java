@@ -11,10 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
+import com.xyoye.dandanplay.bean.params.PlayParam;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -41,12 +41,15 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     public static final int SOURCE_ORIGIN_SMB = 1003;
     //视频来源-远程连接
     public static final int SOURCE_ORIGIN_REMOTE = 1004;
+    //视频来源-在线播放
+    public static final int SOURCE_ONLINE_PREVIEW = 1005;
 
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
     private long currentPosition;
     private int episodeId;
+    private long thunderTaskId;
     private int sourceOrigin;
 
     @BindView(R.id.error_tv)
@@ -113,6 +116,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         danmuPath = openIntent.getStringExtra("danmu_path");
         currentPosition = openIntent.getLongExtra("current_position", 0);
         episodeId = openIntent.getIntExtra("episode_id", 0);
+        thunderTaskId = openIntent.getLongExtra("thunder_task_id", -1);
 
         sourceOrigin = openIntent.getIntExtra("source_origin", SOURCE_ORIGIN_LOCAL);
 
@@ -131,7 +135,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         }
 
         //检查视频地址
-        if (StringUtils.isEmpty(videoPath)) {
+        if (TextUtils.isEmpty(videoPath)) {
             ToastUtils.showShort("解析视频地址失败");
             errorTv.setVisibility(View.VISIBLE);
             return;
@@ -178,12 +182,20 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     private void launchPlayerActivity() {
         saveDatabase();
 
+        PlayParam playParam = new PlayParam();
+        playParam.setVideoTitle(videoTitle);
+        playParam.setVideoPath(videoPath);
+        playParam.setDanmuPath(danmuPath);
+        playParam.setEpisodeId(episodeId);
+        playParam.setCurrentPosition(currentPosition);
+        playParam.setSourceOrigin(sourceOrigin);
+
+        if (sourceOrigin == SOURCE_ONLINE_PREVIEW){
+            playParam.setThunderTaskId(thunderTaskId);
+        }
+
         Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtra("video_title", videoTitle);
-        intent.putExtra("video_path", videoPath);
-        intent.putExtra("danmu_path", danmuPath);
-        intent.putExtra("current_position", currentPosition);
-        intent.putExtra("episode_id", episodeId);
+        intent.putExtra("video_data", playParam);
         this.startActivity(intent);
         PlayerManagerActivity.this.finish();
     }
@@ -275,6 +287,21 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         intent.putExtra("danmu_path", danmu);
         intent.putExtra("current_position", position);
         intent.putExtra("episode_id", episodeId);
+        intent.putExtra("source_origin", SOURCE_ORIGIN_REMOTE);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 在线播放文件
+     */
+    public static void launchPlayerOnline(Context context, String title, String path, String danmu, long position, int episodeId, long thunderTaskId) {
+        Intent intent = new Intent(context, PlayerManagerActivity.class);
+        intent.putExtra("video_title", title);
+        intent.putExtra("video_path", path);
+        intent.putExtra("danmu_path", danmu);
+        intent.putExtra("current_position", position);
+        intent.putExtra("episode_id", episodeId);
+        intent.putExtra("thunder_task_id", thunderTaskId);
         intent.putExtra("source_origin", SOURCE_ORIGIN_REMOTE);
         context.startActivity(intent);
     }

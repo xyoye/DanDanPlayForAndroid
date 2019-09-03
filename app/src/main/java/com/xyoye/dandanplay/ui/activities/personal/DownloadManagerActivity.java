@@ -230,23 +230,15 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
      */
     @Override
     public void startNewTask() {
-        String animeTitle = getIntent().getStringExtra("anime_title");
-        String torrentFilePath = getIntent().getStringExtra("torrent_file_path");
+        Torrent torrent = getIntent().getParcelableExtra("download_data");
 
-        if (!TextUtils.isEmpty(torrentFilePath)) {
+        if (torrent != null){
             try {
-                TorrentInfo torrentInfo = new TorrentInfo(new File(torrentFilePath));
+                TorrentInfo torrentInfo = new TorrentInfo(new File(torrent.getTorrentFilePath()));
                 //任务不存在则新增任务
                 TorrentTask torrentTask = TorrentEngine.getInstance().getTask(torrentInfo.infoHash().toHex());
                 if (torrentTask == null) {
-                    new TorrentFileCheckDialog(this, torrentInfo, priorityList -> {
-                        Torrent torrent = new Torrent(
-                                animeTitle,
-                                torrentFilePath,
-                                AppConfig.getInstance().getDownloadFolder(),
-                                priorityList);
-                        startTorrentService(TorrentService.Action.ACTION_ADD_TORRENT, torrent);
-                    }).show();
+                    startTorrentService(TorrentService.Action.ACTION_ADD_TORRENT, torrent);
                 } else {
                     startTorrentService(null, null);
                 }
@@ -255,6 +247,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                 ToastUtils.showShort("获取下载任务详情失败");
             }
         }
+
     }
 
     /**

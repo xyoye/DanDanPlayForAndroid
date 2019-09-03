@@ -13,6 +13,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.TorrentCheckBean;
 import com.xyoye.dandanplay.ui.weight.item.TorrentFileCheckItem;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.libtorrent4j.Priority;
@@ -34,8 +35,10 @@ public class TorrentFileCheckDialog extends Dialog {
     RecyclerView fileRv;
     @BindView(R.id.cancel_tv)
     TextView cancelTv;
-    @BindView(R.id.confirm_tv)
-    TextView confirmTv;
+    @BindView(R.id.play_tv)
+    TextView playTv;
+    @BindView(R.id.download_tv)
+    TextView downloadTv;
 
     private List<TorrentCheckBean> checkBeanList;
     private TorrentInfo torrentInfo;
@@ -78,7 +81,7 @@ public class TorrentFileCheckDialog extends Dialog {
 
         cancelTv.setOnClickListener(v -> TorrentFileCheckDialog.this.dismiss());
 
-        confirmTv.setOnClickListener(v -> {
+        downloadTv.setOnClickListener(v -> {
             if (listener != null) {
                 boolean containsChecked = false;
                 List<Priority> priorityList = new ArrayList<>();
@@ -92,18 +95,47 @@ public class TorrentFileCheckDialog extends Dialog {
                             : Priority.IGNORE
                     );
                 }
-                
+
                 if (containsChecked) {
-                    listener.onSelected(priorityList);
+                    listener.onDownload(priorityList);
                     TorrentFileCheckDialog.this.dismiss();
                 } else {
                     ToastUtils.showShort("请至少选择一个下载文件");
                 }
             }
         });
+
+        playTv.setOnClickListener(v -> {
+            if (listener != null) {
+
+                int checkedCount = 0;
+                int checkPosition = 0;
+                for (int i = 0; i < checkBeanList.size(); i++) {
+                    TorrentCheckBean checkBean = checkBeanList.get(i);
+                    if (checkBean.isChecked()) {
+                        checkedCount++;
+                        checkPosition = i;
+                    }
+                }
+                if (checkedCount < 1) {
+                    ToastUtils.showShort("请至少选择一个播放文件");
+                } else if (checkedCount > 1) {
+                    ToastUtils.showShort("至多选择一个播放文件");
+                } else {
+                    if (CommonUtils.isMediaFile(checkBeanList.get(checkPosition).getName())) {
+                        listener.onPlay(checkPosition, torrentInfo.files().fileSize(checkPosition));
+                        TorrentFileCheckDialog.this.dismiss();
+                    } else {
+                        ToastUtils.showShort("不是可播放的视频文件");
+                    }
+                }
+            }
+        });
     }
 
     public interface OnTorrentSelectedListener {
-        void onSelected(List<Priority> priorityList);
+        void onDownload(List<Priority> priorityList);
+
+        void onPlay(int position, long fileSize);
     }
 }

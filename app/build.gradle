@@ -9,6 +9,7 @@ if (keyPropertiesFile.exists()) {
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
+
     defaultConfig {
         applicationId rootProject.ext.android.applicationId
         minSdkVersion rootProject.ext.android.minSdkVersion
@@ -26,29 +27,49 @@ android {
             abiFilters 'armeabi-v7a'
         }
     }
+
     signingConfigs {
+        debug {
+            storeFile keyProperties.containsKey("KEY_LOCATION")
+                    ? file(keyProperties['KEY_LOCATION'])
+                    : file("../dandanplay.jks")
+            storePassword keyProperties.containsKey("KEYSTORE_PASS")
+                    ? keyProperties['KEYSTORE_PASS']
+                    : System.getenv("KEYSTORE_PASS")
+            keyAlias keyProperties.containsKey("ALIAS_NAME")
+                    ? keyProperties['ALIAS_NAME']
+                    : System.getenv("ALIAS_NAME")
+            keyPassword keyProperties.containsKey("ALIAS_PASS")
+                    ? keyProperties['ALIAS_PASS']
+                    : System.getenv("ALIAS_PASS")
+        }
 
         release {
-            storeFile      keyProperties.containsKey("KEY_LOCATION")
-                                ? file(keyProperties['KEY_LOCATION'])
-                                : file("../dandanplay.jks")
-            storePassword  keyProperties.containsKey("KEYSTORE_PASS")
-                                ? keyProperties['KEYSTORE_PASS']
-                                : System.getenv("KEYSTORE_PASS")
-            keyAlias       keyProperties.containsKey("ALIAS_NAME")
-                                ? keyProperties['ALIAS_NAME']
-                                : System.getenv("ALIAS_NAME")
-            keyPassword    keyProperties.containsKey("ALIAS_PASS")
-                                ? keyProperties['ALIAS_PASS']
-                                : System.getenv("ALIAS_PASS")
+            storeFile keyProperties.containsKey("KEY_LOCATION")
+                    ? file(keyProperties['KEY_LOCATION'])
+                    : file("../dandanplay.jks")
+            storePassword keyProperties.containsKey("KEYSTORE_PASS")
+                    ? keyProperties['KEYSTORE_PASS']
+                    : System.getenv("KEYSTORE_PASS")
+            keyAlias keyProperties.containsKey("ALIAS_NAME")
+                    ? keyProperties['ALIAS_NAME']
+                    : System.getenv("ALIAS_NAME")
+            keyPassword keyProperties.containsKey("ALIAS_PASS")
+                    ? keyProperties['ALIAS_PASS']
+                    : System.getenv("ALIAS_PASS")
         }
     }
+
     sourceSets {
         main {
-            jniLibs.srcDirs = ['libs']
             res.srcDirs = ['src/main/res', 'src/main/res-night']
         }
     }
+
+    repositories {
+        flatDir { dirs 'libs' }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -56,10 +77,12 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+
     lintOptions {
         lintConfig file("lint.xml")
     }
@@ -68,6 +91,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':player')
+    implementation(name: 'thunder', ext: 'aar')
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["appcompat-v4"]
     implementation rootProject.ext.dependencies["design"]

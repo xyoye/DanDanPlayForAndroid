@@ -20,6 +20,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -36,6 +37,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,24 +80,24 @@ public class CommonUtils {
         long hours = mss / (1000 * 60 * 60);
         long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
         long seconds = (mss % (1000 * 60)) / 1000;
-        StringBuilder stringBuilder=new StringBuilder();
-        if (hours != 0){
+        StringBuilder stringBuilder = new StringBuilder();
+        if (hours != 0) {
             if (hours < 10)
                 stringBuilder.append("0").append(hours).append(":");
             else
                 stringBuilder.append(hours).append(":");
         }
-        if (minutes == 0){
+        if (minutes == 0) {
             stringBuilder.append("00:");
-        } else{
+        } else {
             if (minutes < 10)
                 stringBuilder.append("0").append(minutes).append(":");
             else
                 stringBuilder.append(minutes).append(":");
         }
-        if (seconds == 0){
+        if (seconds == 0) {
             stringBuilder.append("00");
-        } else{
+        } else {
             if (seconds < 10)
                 stringBuilder.append("0").append(seconds);
             else
@@ -102,6 +105,7 @@ public class CommonUtils {
         }
         return stringBuilder.toString();
     }
+
     /**
      * 从文件中读取tracker
      */
@@ -112,7 +116,7 @@ public class CommonUtils {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line;
-            while (( line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 if (StringUtils.isEmpty(line))
                     continue;
                 stringList.add(line);
@@ -147,7 +151,7 @@ public class CommonUtils {
     /**
      * 判断数字
      */
-    public static boolean isNum(String str){
+    public static boolean isNum(String str) {
         Pattern pattern = Pattern.compile("^-?[0-9]+");
         return pattern.matcher(str).matches();
     }
@@ -155,7 +159,7 @@ public class CommonUtils {
     /**
      * 判断url
      */
-    public static boolean isUrlLink(String str){
+    public static boolean isUrlLink(String str) {
         String regex = "^([hH][tT]{2}[pP]://|[hH][tT]{2}[pP][sS]://)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~/])+$";
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(str).matches();
@@ -164,8 +168,8 @@ public class CommonUtils {
     /**
      * 判断视频格式
      */
-    public static boolean isMediaFile(String fileName){
-        switch (com.blankj.utilcode.util.FileUtils.getFileExtension(fileName).toLowerCase()){
+    public static boolean isMediaFile(String fileName) {
+        switch (com.blankj.utilcode.util.FileUtils.getFileExtension(fileName).toLowerCase()) {
             case "3gp":
             case "avi":
             case "flv":
@@ -185,21 +189,23 @@ public class CommonUtils {
             case "vob":
             case "m3u8":
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
 
     /**
      * 获取Uri真实地址
      */
-    public static @Nullable String getRealFilePath(Context context, @NonNull Uri uri) {
+    public static @Nullable
+    String getRealFilePath(Context context, @NonNull Uri uri) {
         boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             String authority = uri.getAuthority();
             if (authority == null)
                 return "";
-            switch (authority){
+            switch (authority) {
                 case EXTERNAL_STORAGE:
                     String docId = DocumentsContract.getDocumentId(uri);
                     String[] exSplit = docId.split(":");
@@ -215,7 +221,7 @@ public class CommonUtils {
                 case MEDIA_DOCUMENT:
                     String[] split = DocumentsContract.getDocumentId(uri).split(":");
                     Uri contentUri = null;
-                    switch (split[0]){
+                    switch (split[0]) {
                         case "image":
                             contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                             break;
@@ -232,21 +238,21 @@ public class CommonUtils {
             return getDataColumn(context, uri, null, null);
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
-        } else if ("http".equalsIgnoreCase(uri.getScheme())){
+        } else if ("http".equalsIgnoreCase(uri.getScheme())) {
             return uri.toString();
-        } else if ("https".equalsIgnoreCase(uri.getScheme())){
+        } else if ("https".equalsIgnoreCase(uri.getScheme())) {
             return uri.toString();
         }
         return null;
     }
 
-    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs){
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
         context.grantUriPermission(context.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, selection, selectionArgs, null)) {
             if (cursor != null && cursor.moveToNext()) {
                 return cursor.getString(0);
             }
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return null;
         }
         return null;
@@ -264,7 +270,7 @@ public class CommonUtils {
             PatchFixEvent event = new PatchFixEvent();
             event.setVersion(version);
             event.setTime(TimeUtils.date2String(new java.util.Date()));
-            switch (code){
+            switch (code) {
                 //加载阶段, 成功
                 case PatchStatus.CODE_LOAD_SUCCESS:
                     msg = "加载补丁成功";
@@ -337,7 +343,7 @@ public class CommonUtils {
     /**
      * 获取Drawable资源
      */
-    public static Drawable getResDrawable(@DrawableRes int drawableId){
+    public static Drawable getResDrawable(@DrawableRes int drawableId) {
         return SkinCompatResources.getDrawable(IApplication.get_context(), drawableId);
         //return ContextCompat.getColor(IApplication.get_context(), colorId);
     }
@@ -346,7 +352,7 @@ public class CommonUtils {
      * 获取资源颜色
      */
     @ColorInt
-    public static int getResColor(@ColorRes int colorId){
+    public static int getResColor(@ColorRes int colorId) {
         return SkinCompatResources.getColor(IApplication.get_context(), colorId);
         //return ContextCompat.getColor(IApplication.get_context(), colorId);
     }
@@ -355,7 +361,7 @@ public class CommonUtils {
      * 获取加透明度的资源颜色
      */
     @ColorInt
-    public static int getResColor(@IntRange(from = 0, to = 255) int alpha, @ColorRes int colorId){
+    public static int getResColor(@IntRange(from = 0, to = 255) int alpha, @ColorRes int colorId) {
         int color = getResColor(colorId);
 
         int red = Color.red(color);
@@ -366,16 +372,41 @@ public class CommonUtils {
     }
 
     /**
+     * 复原http url转码
+     */
+    public static String decodeHttpUrl(String url) {
+        if (TextUtils.isEmpty(url) || !url.toLowerCase().startsWith("http"))
+            return url;
+
+        try {
+            //解码两次
+            if (url.contains("%252F")) {
+                String decodePath = URLDecoder.decode(url, "utf-8");
+                url = URLDecoder.decode(decodePath, "utf-8");
+            }
+            //解码一次
+            else if (url.contains("%2F")) {
+                url = URLDecoder.decode(url, "utf-8");
+
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    /**
      * 通过当前时间获取当前文件名
+     *
      * @param header 头部："COV"
-     * @param tail  尾部：".jpg";
-     * @return  "/COV_20190227_090701.jpg"
+     * @param tail   尾部：".jpg";
+     * @return "/COV_20190227_090701.jpg"
      */
     @SuppressLint("SimpleDateFormat")
-    public static String getCurrentFileName(String header, String tail){
+    public static String getCurrentFileName(String header, String tail) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-        String curTime  = formatter.format(curDate);
-        return "/"+header+"_"+curTime+tail;
+        String curTime = formatter.format(curDate);
+        return "/" + header + "_" + curTime + tail;
     }
 }

@@ -1324,8 +1324,10 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     public void stop() {
         pause();
         // 记录播放进度
-        if (mOutsideListener != null)
+        if (mOutsideListener != null){
             mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, mVideoView.getCurrentPosition());
+            mOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
+        }
         mVideoView.stopPlayback();
     }
 

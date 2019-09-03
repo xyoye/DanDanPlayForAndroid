@@ -14,6 +14,7 @@ import com.blankj.utilcode.util.Utils;
 import com.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
+import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.OpenActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -93,6 +94,9 @@ public class IApplication extends Application {
 
         //Sophix
         SophixManager.getInstance().setPatchLoadStatusStub(CommonUtils.getPatchLoadListener());
+
+        //thunder
+        XLTaskHelper.init(this);
 
         //数据库
         DataBaseManager.init(this);

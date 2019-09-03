@@ -103,6 +103,8 @@ public class Constants {
         public static final String SYSTEM_VIDEO_PATH = "系统视频";
         //默认下载文件夹
         public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DanDanPlayer";
+        //缓存路径
+        public static final String cacheFolderPath = downloadPath + "/.cache";
         //配置路径
         public static final String configPath = downloadPath + "/_config/config.txt";
         //默认种子下载文件夹名

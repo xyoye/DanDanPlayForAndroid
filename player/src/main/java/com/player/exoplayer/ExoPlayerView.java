@@ -1079,8 +1079,11 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     @Override
     public void onDestroy() {
         // 记录播放进度
-        if (mOutsideListener != null)
+        if (mOutsideListener != null){
+
+            mOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
             mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, exoPlayer.getCurrentPosition());
+        }
         exoPlayer.release();
         if (mDanmakuView != null) {
             // don't forget release!

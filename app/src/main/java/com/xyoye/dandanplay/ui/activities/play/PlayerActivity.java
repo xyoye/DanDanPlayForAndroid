@@ -30,17 +30,20 @@ import com.player.commom.utils.Constants;
 import com.player.danmaku.danmaku.model.BaseDanmaku;
 import com.player.exoplayer.ExoPlayerView;
 import com.player.ijkplayer.IjkPlayerView;
+import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.xyoye.dandanplay.bean.params.PlayParam;
 import com.xyoye.dandanplay.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants.DefaultConfig;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.HashUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -90,6 +93,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private String danmuPath;
     private long currentPosition;
     private int episodeId;
+    private long thunderTaskId;
+    private int sourceOrigin;
+
     private List<SubtitleBean> subtitleList;
     private List<String> normalFilterList;
 
@@ -132,11 +138,15 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         PlayerActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
 
         //获取播放参数
-        videoPath = getIntent().getStringExtra("video_path");
-        videoTitle = getIntent().getStringExtra("video_title");
-        danmuPath = getIntent().getStringExtra("danmu_path");
-        currentPosition = getIntent().getLongExtra("current_position", 0);
-        episodeId = getIntent().getIntExtra("episode_id", 0);
+        PlayParam playParam = getIntent().getParcelableExtra("video_data");
+
+        videoPath = playParam.getVideoPath();
+        videoTitle = playParam.getVideoTitle();
+        danmuPath = playParam.getDanmuPath();
+        currentPosition = playParam.getCurrentPosition();
+        episodeId = playParam.getEpisodeId();
+        sourceOrigin = playParam.getSourceOrigin();
+        thunderTaskId = playParam.getThunderTaskId();
 
         //初始化接口
         initListener();
@@ -281,14 +291,23 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 case Constants.INTENT_PLAY_FAILED:
                     new CommonDialog
                             .Builder(this)
-                            .setDismissListener(dialog ->
-                                    PlayerActivity.this.finish())
+                            .setDismissListener(dialog -> {
+                                onOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
+                                PlayerActivity.this.finish();
+                            })
                             .setOkListener(dialog ->
                                     startActivity(new Intent(this, PlayerSettingActivity.class)))
                             .setAutoDismiss()
                             .setNightSkin()
                             .build()
                             .show("播放失败，请尝试切换其它播放内核，获取更改播放器设置", "播放器设置", "退出播放");
+                    break;
+                case Constants.INTENT_PLAY_END:
+                    //播放停止视频缓存
+                    if (sourceOrigin == PlayerManagerActivity.SOURCE_ONLINE_PREVIEW && thunderTaskId > 0) {
+                        XLTaskHelper.getInstance().stopTask(thunderTaskId);
+                        FileUtils.deleteAllInDir(DefaultConfig.cacheFolderPath);
+                    }
                     break;
             }
         };
@@ -563,7 +582,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (response.body() != null) {
-                    String folderPath = AppConfig.getInstance().getDownloadFolder() + com.xyoye.dandanplay.utils.Constants.DefaultConfig.subtitleFolder;
+                    String folderPath = AppConfig.getInstance().getDownloadFolder() + DefaultConfig.subtitleFolder;
                     File folder = new File(folderPath);
                     if (!folder.exists()) {
                         if (!folder.mkdirs()) {

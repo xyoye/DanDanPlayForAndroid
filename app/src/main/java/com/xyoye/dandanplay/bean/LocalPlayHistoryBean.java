@@ -11,6 +11,8 @@ public class LocalPlayHistoryBean {
     private int episodeId;
     private int sourceOrigin;
     private long playTime;
+    private boolean isChecked;
+    private boolean isDeleteMode;
 
     public String getVideoPath() {
         return videoPath;
@@ -58,5 +60,21 @@ public class LocalPlayHistoryBean {
 
     public void setPlayTime(long playTime) {
         this.playTime = playTime;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public boolean isDeleteMode() {
+        return isDeleteMode;
+    }
+
+    public void setDeleteMode(boolean deleteMode) {
+        isDeleteMode = deleteMode;
     }
 }

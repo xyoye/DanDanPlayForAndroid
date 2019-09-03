@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_delete_checked"
+        android:orderInCategory="100"
+        android:title="删除"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/item_delete_cancel"
+        android:orderInCategory="100"
+        android:title="取消"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/item_delete_all"
+        android:orderInCategory="100"
+        android:title="清空"
+        app:showAsAction="ifRoom" />
+</menu>

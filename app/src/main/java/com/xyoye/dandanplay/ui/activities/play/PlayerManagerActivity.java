@@ -195,7 +195,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         Cursor cursor = DataBaseManager.getInstance()
                 .selectTable(18)
                 .query()
-                .where(1, danmuPath)
+                .where(1, videoPath)
                 .where(5, String.valueOf(sourceOrigin))
                 .execute();
         if (cursor.getCount() > 0) {
@@ -276,6 +276,20 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         intent.putExtra("current_position", position);
         intent.putExtra("episode_id", episodeId);
         intent.putExtra("source_origin", SOURCE_ORIGIN_REMOTE);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 播放历史记录
+     */
+    public static void launchPlayerHistory(Context context, String title, String path, String danmu, long position, int episodeId, int sourceOrigin) {
+        Intent intent = new Intent(context, PlayerManagerActivity.class);
+        intent.putExtra("video_title", title);
+        intent.putExtra("video_path", path);
+        intent.putExtra("danmu_path", danmu);
+        intent.putExtra("current_position", position);
+        intent.putExtra("episode_id", episodeId);
+        intent.putExtra("source_origin", sourceOrigin);
         context.startActivity(intent);
     }
 

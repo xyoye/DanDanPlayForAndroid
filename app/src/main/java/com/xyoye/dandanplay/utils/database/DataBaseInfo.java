@@ -7,7 +7,7 @@ package com.xyoye.dandanplay.utils.database;
  */
 public class DataBaseInfo {
     public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 26;
+    public static final int DATABASE_VERSION = 27;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -55,7 +55,7 @@ public class DataBaseInfo {
                 {"_id", "text"},
                 {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "anime_title", "total_length", "complete_time"},
                 {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
-                {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "anime_title", "priorities"},
+                {"_id", "torrent_file_path", "torrent_hash", "anime_title", "priorities"},
                 {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
                 {"_id", "video_path", "video_title", "danmu_path", "episode_id", "source_origin", "play_time"}
         };
@@ -77,7 +77,7 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255) NOT NULL"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255)", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "INTEGER", "INTEGER"}
         };

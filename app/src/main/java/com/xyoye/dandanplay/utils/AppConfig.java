@@ -167,7 +167,7 @@ public class AppConfig {
      * PlayerType
      */
     public int getPlayerType(){
-        return SPUtils.getInstance().getInt(Constants.PlayerConfig.SHARE_PLAYER_TYPE, com.player.commom.utils.Constants.IJK_PLAYER);
+        return SPUtils.getInstance().getInt(Constants.PlayerConfig.SHARE_PLAYER_TYPE, com.xyoye.player.commom.utils.Constants.IJK_PLAYER);
     }
 
     public void setPlayerType(int type){

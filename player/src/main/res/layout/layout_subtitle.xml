@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.player.subtitle.SubtitleTextView
+    <com.xyoye.player.subtitle.SubtitleTextView
         android:id="@+id/subTitleChina"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         android:textSize="14sp"
         android:text="" />
 
-    <com.player.subtitle.SubtitleTextView
+    <com.xyoye.player.subtitle.SubtitleTextView
         android:id="@+id/subTitleEnglish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

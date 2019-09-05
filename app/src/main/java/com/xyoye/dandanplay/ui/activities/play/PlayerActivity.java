@@ -20,16 +20,16 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.player.commom.bean.SubtitleBean;
-import com.player.commom.listener.OnDanmakuListener;
-import com.player.commom.listener.PlayerViewListener;
-import com.player.commom.receiver.BatteryBroadcastReceiver;
-import com.player.commom.receiver.PlayerReceiverListener;
-import com.player.commom.receiver.ScreenBroadcastReceiver;
-import com.player.commom.utils.Constants;
-import com.player.danmaku.danmaku.model.BaseDanmaku;
-import com.player.exoplayer.ExoPlayerView;
-import com.player.ijkplayer.IjkPlayerView;
+import com.xyoye.player.commom.bean.SubtitleBean;
+import com.xyoye.player.commom.listener.OnDanmakuListener;
+import com.xyoye.player.commom.listener.PlayerViewListener;
+import com.xyoye.player.commom.receiver.BatteryBroadcastReceiver;
+import com.xyoye.player.commom.receiver.PlayerReceiverListener;
+import com.xyoye.player.commom.receiver.ScreenBroadcastReceiver;
+import com.xyoye.player.commom.utils.Constants;
+import com.xyoye.player.danmaku.danmaku.model.BaseDanmaku;
+import com.xyoye.player.exoplayer.ExoPlayerView;
+import com.xyoye.player.ijkplayer.IjkPlayerView;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
@@ -37,7 +37,7 @@ import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.bean.params.PlayParam;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
@@ -115,7 +115,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         super.onCreate(savedInstanceState);
 
         //播放器类型
-        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER) {
+        if (AppConfig.getInstance().getPlayerType() == Constants.EXO_PLAYER) {
             mPlayer = new ExoPlayerView(this);
             setContentView((ExoPlayerView) mPlayer);
         } else {
@@ -171,7 +171,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         }
 
         //初始化不同的播放器
-        if (AppConfig.getInstance().getPlayerType() == com.player.commom.utils.Constants.EXO_PLAYER) {
+        if (AppConfig.getInstance().getPlayerType() == Constants.EXO_PLAYER) {
             initExoPlayer(inputStream);
         } else {
             initIjkPlayer(inputStream);

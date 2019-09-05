@@ -11,7 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.player.commom.bean.SubtitleBean;
+import com.xyoye.player.commom.bean.SubtitleBean;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.ui.weight.item.SubtitleItem;

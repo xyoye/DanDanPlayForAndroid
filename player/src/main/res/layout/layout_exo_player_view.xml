@@ -24,18 +24,18 @@
         app:surface_type="texture_view">
     </com.google.android.exoplayer2.ui.PlayerView>
 
-    <com.player.danmaku.ui.widget.DanmakuView
+    <com.xyoye.player.danmaku.ui.widget.DanmakuView
         android:id="@+id/sv_danmaku"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.player.subtitle.SubtitleView
+    <com.xyoye.player.subtitle.SubtitleView
         android:id="@+id/subtitle_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom">
-    </com.player.subtitle.SubtitleView>
+    </com.xyoye.player.subtitle.SubtitleView>
 
     <ProgressBar
         android:id="@+id/pb_loading"
@@ -53,20 +53,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <com.player.commom.widgets.TopBarView
+    <com.xyoye.player.commom.widgets.TopBarView
         android:id="@+id/top_bar_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.player.commom.widgets.TopBarView>
+    </com.xyoye.player.commom.widgets.TopBarView>
 
-    <com.player.commom.widgets.BottomBarView
+    <com.xyoye.player.commom.widgets.BottomBarView
         android:id="@+id/bottom_bar_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:translationY="60dp"
         android:layout_gravity="bottom"
         android:visibility="gone">
-    </com.player.commom.widgets.BottomBarView>
+    </com.xyoye.player.commom.widgets.BottomBarView>
 
     <ImageView
         android:id="@+id/iv_player_lock"
@@ -99,34 +99,34 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <com.player.commom.widgets.SkipTipView
+        <com.xyoye.player.commom.widgets.SkipTipView
             android:id="@+id/skip_tip_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone">
-        </com.player.commom.widgets.SkipTipView>
+        </com.xyoye.player.commom.widgets.SkipTipView>
 
-        <com.player.commom.widgets.SkipTipView
+        <com.xyoye.player.commom.widgets.SkipTipView
             android:id="@+id/skip_subtitle_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             app:skip_subtitle="true"
             android:visibility="gone">
-        </com.player.commom.widgets.SkipTipView>
+        </com.xyoye.player.commom.widgets.SkipTipView>
     </LinearLayout>
 
-    <com.player.commom.widgets.DanmuPostView
+    <com.xyoye.player.commom.widgets.DanmuPostView
         android:id="@+id/danmu_post_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone">
-    </com.player.commom.widgets.DanmuPostView>
+    </com.xyoye.player.commom.widgets.DanmuPostView>
 
-    <com.player.commom.widgets.DanmuBlockView
+    <com.xyoye.player.commom.widgets.DanmuBlockView
         android:id="@+id/danmu_block_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-    </com.player.commom.widgets.DanmuBlockView>
+    </com.xyoye.player.commom.widgets.DanmuBlockView>
 </FrameLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PlayerView</string>
+    <string name="app_name">player</string>
     <string name="video_record">记忆上次播放到</string>
     <string name="video_skip">继续播放</string>
 

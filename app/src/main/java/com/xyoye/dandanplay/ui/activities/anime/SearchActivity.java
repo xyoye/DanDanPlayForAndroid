@@ -17,7 +17,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.player.commom.utils.AnimHelper;
+import com.xyoye.player.commom.utils.AnimHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xunlei.downloadlib.XLDownloadManager;
 import com.xunlei.downloadlib.XLTaskHelper;
@@ -25,6 +25,7 @@ import com.xunlei.downloadlib.parameter.BtIndexSet;
 import com.xunlei.downloadlib.parameter.BtTaskParam;
 import com.xunlei.downloadlib.parameter.XLTaskLocalUrl;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -37,7 +38,7 @@ import com.xyoye.dandanplay.bean.event.SelectInfoEvent;
 import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
-import com.xyoye.dandanplay.torrent.info.Torrent;
+import com.xyoye.dandanplay.utils.torrent.info.Torrent;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
@@ -87,7 +88,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     private String searchWord;
     private int typeId = -1;
     private int subgroupsId = -1;
-    private AtomicInteger atomicInteger = new AtomicInteger(0);
+    private AtomicInteger atomicInteger;
 
     private List<SearchHistoryBean> historyList;
     private List<MagnetBean.ResourcesBean> resultList;
@@ -328,6 +329,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
                 @Override
                 public void onPlay(int position, long fileSize) {
+                    atomicInteger = new AtomicInteger(0);
                     playByThunder(position, fileSize, torrentFilePath);
                 }
             }).show();
@@ -358,12 +360,12 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
     @Override
     public void showLoading() {
-        showLoadingDialog();
+        //showLoadingDialog();
     }
 
     @Override
     public void hideLoading() {
-        dismissLoadingDialog();
+        //dismissLoadingDialog();
     }
 
     @Override
@@ -418,6 +420,9 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         presenter.search(searchText, typeId, subgroupsId);
     }
 
+    /**
+     * 启动播放
+     */
     private void playByThunder(int checkedFilePosition, long checkedFileSize, String torrentFilePath) {
         com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
                 XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
@@ -440,6 +445,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             return;
         }
 
+        //构建参数
         BtTaskParam taskParam = new BtTaskParam();
         taskParam.setCreateMode(1);
         taskParam.setFilePath(cacheFolder.getAbsolutePath());
@@ -450,6 +456,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         BtIndexSet selectIndexSet = new BtIndexSet(1);
         selectIndexSet.mIndexSet[0] = checkedFilePosition;
 
+        //选择的文件，与忽略的文件
         BtIndexSet deSelectIndexSet = new BtIndexSet(thunderTorrentInfo.mSubFileInfo.length - 1);
         int j = 0;
         for (int i = 0; i < thunderTorrentInfo.mSubFileInfo.length; i++) {
@@ -459,13 +466,21 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             }
         }
 
+        //开启任务
         long playTaskId = XLTaskHelper.getInstance().startTask(taskParam, selectIndexSet, deSelectIndexSet);
 
+        //任务出错重试
         if (playTaskId == -1) {
-            ToastUtils.showShort("播放失败，无法开始播放任务");
-            System.out.println(XLTaskHelper.getInstance().getErrorMsg(9104));
             XLTaskHelper.getInstance().stopTask(playTaskId);
-            FileUtils.deleteAllInDir(Constants.DefaultConfig.cacheFolderPath);
+            //重试两次
+            if (atomicInteger.get() < 3) {
+                XLDownloadManager.getInstance().uninit();
+                XLTaskHelper.init(IApplication.get_context());
+                playByThunder(checkedFilePosition, checkedFileSize, torrentFilePath);
+            } else {
+                FileUtils.deleteAllInDir(Constants.DefaultConfig.cacheFolderPath);
+                ToastUtils.showShort("播放失败，无法开始播放任务");
+            }
             return;
         }
 
@@ -474,6 +489,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         XLTaskLocalUrl localUrl = new XLTaskLocalUrl();
         XLDownloadManager.getInstance().getLocalUrl(filePath, localUrl);
 
+        //启动播放
         PlayerManagerActivity.launchPlayerOnline(
                 this,
                 fileName,

@@ -13,13 +13,11 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
-import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.utils.torrent.TorrentEngine;
+import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,10 +101,10 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.pause_all_tv:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_PAUSE, -1));
+                TorrentEngine.getInstance().pauseAll();
                 break;
             case R.id.start_all_tv:
-                EventBus.getDefault().post(new TorrentEvent(TorrentEvent.EVENT_ALL_START, -1));
+                TorrentEngine.getInstance().resumeAll();
                 break;
         }
     }

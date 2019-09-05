@@ -9,7 +9,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.DownloadedFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;

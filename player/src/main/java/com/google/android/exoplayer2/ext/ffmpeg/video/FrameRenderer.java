@@ -17,7 +17,7 @@ package com.google.android.exoplayer2.ext.ffmpeg.video;
 
 import android.opengl.GLES20;
 
-import com.player.exoplayer.meida.egl.GLViewRenderer;
+import com.xyoye.player.exoplayer.meida.egl.GLViewRenderer;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

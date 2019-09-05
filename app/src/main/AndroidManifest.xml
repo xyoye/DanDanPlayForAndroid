@@ -156,7 +156,7 @@
 
         <service android:name=".service.SmbService" />
 
-        <service android:name=".torrent.TorrentService"/>
+        <service android:name=".utils.torrent.TorrentService"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

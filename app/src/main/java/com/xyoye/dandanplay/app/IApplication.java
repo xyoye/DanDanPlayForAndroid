@@ -11,11 +11,11 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.blankj.utilcode.util.Utils;
-import com.player.commom.utils.PlayerConfigShare;
+import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
 import com.xunlei.downloadlib.XLTaskHelper;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.activities.OpenActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;

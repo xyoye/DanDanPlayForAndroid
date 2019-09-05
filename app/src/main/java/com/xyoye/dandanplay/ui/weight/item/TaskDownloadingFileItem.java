@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -10,12 +9,9 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.torrent.info.Torrent;
-import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
-import com.xyoye.dandanplay.ui.activities.play.DanmuNetworkActivity;
+import com.xyoye.dandanplay.utils.torrent.info.Torrent;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
@@ -108,19 +104,19 @@ public class TaskDownloadingFileItem implements AdapterItem<Torrent.TorrentFile>
         });
 
         danmuBindIv.setOnClickListener(v -> {
-            if (CommonUtils.isMediaFile(model.getFilePath())) {
-                if (model.getFileDoneLength() > 16 * 1024 * 1024) {
-                    Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
-                    intent.putExtra("task_hash", taskHash);
-                    intent.putExtra("video_path", model.getFilePath());
-                    intent.putExtra("task_file_position", position);
-                    mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADING_DANMU_BIND);
-                } else {
-                    ToastUtils.showShort("需下载16M后才能匹配弹幕");
-                }
-            } else {
-                ToastUtils.showShort("不支持绑定弹幕的文件格式");
-            }
+//            if (CommonUtils.isMediaFile(model.getFilePath())) {
+//                if (model.getFileDoneLength() > 16 * 1024 * 1024) {
+//                    Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
+//                    intent.putExtra("task_hash", taskHash);
+//                    intent.putExtra("video_path", model.getFilePath());
+//                    intent.putExtra("task_file_position", position);
+//                    mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADING_DANMU_BIND);
+//                } else {
+//                    ToastUtils.showShort("需下载16M后才能匹配弹幕");
+//                }
+//            } else {
+//                ToastUtils.showShort("不支持绑定弹幕的文件格式");
+//            }
         });
     }
 }

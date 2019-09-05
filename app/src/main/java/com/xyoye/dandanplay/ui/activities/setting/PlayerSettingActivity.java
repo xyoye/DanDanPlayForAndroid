@@ -67,15 +67,15 @@ public class PlayerSettingActivity extends BaseMvcActivity {
 
         int playerType = AppConfig.getInstance().getPlayerType();
         switch (playerType) {
-            case com.player.commom.utils.Constants.EXO_PLAYER:
+            case com.xyoye.player.commom.utils.Constants.EXO_PLAYER:
                 playerTypeTv.setText("EXO Player");
                 ijkSettingLL.setVisibility(View.GONE);
                 break;
-            case com.player.commom.utils.Constants.IJK_ANDROID_PLAYER:
+            case com.xyoye.player.commom.utils.Constants.IJK_ANDROID_PLAYER:
                 playerTypeTv.setText("AndroidMedia Player");
                 ijkSettingLL.setVisibility(View.VISIBLE);
                 break;
-            case com.player.commom.utils.Constants.IJK_PLAYER:
+            case com.xyoye.player.commom.utils.Constants.IJK_PLAYER:
             default:
                 playerTypeTv.setText("IJK Player");
                 ijkSettingLL.setVisibility(View.VISIBLE);
@@ -200,13 +200,13 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                 .setItems(playTypes, (dialog, which) -> {
                     if (which == 0) {
                         ijkSettingLL.setVisibility(View.VISIBLE);
-                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.xyoye.player.commom.utils.Constants.IJK_PLAYER);
                     } else if (which == 1) {
                         ijkSettingLL.setVisibility(View.GONE);
-                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.EXO_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.xyoye.player.commom.utils.Constants.EXO_PLAYER);
                     } else if (which == 3) {
                         ijkSettingLL.setVisibility(View.VISIBLE);
-                        AppConfig.getInstance().setPlayerType(com.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
+                        AppConfig.getInstance().setPlayerType(com.xyoye.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
                     }
                     playerTypeTv.setText(playTypes[which]);
                 })

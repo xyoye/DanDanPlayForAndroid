@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
 import com.xyoye.dandanplay.utils.Lifeful;

@@ -2,7 +2,7 @@ package com.xyoye.dandanplay.utils;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.player.commom.bean.SubtitleBean;
+import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.io.IOException;
 import java.util.ArrayList;

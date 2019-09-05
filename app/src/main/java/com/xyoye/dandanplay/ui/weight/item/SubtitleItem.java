@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.player.commom.bean.SubtitleBean;
+import com.xyoye.player.commom.bean.SubtitleBean;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 

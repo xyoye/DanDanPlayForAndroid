@@ -65,7 +65,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/add_block_rl">
 
-        <com.player.commom.widgets.LabelsView
+        <com.xyoye.player.commom.widgets.LabelsView
             android:id="@+id/labels_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
             app:selectType="MULTI"
             app:maxSelect="0">
 
-        </com.player.commom.widgets.LabelsView>
+        </com.xyoye.player.commom.widgets.LabelsView>
 
     </RelativeLayout>
 

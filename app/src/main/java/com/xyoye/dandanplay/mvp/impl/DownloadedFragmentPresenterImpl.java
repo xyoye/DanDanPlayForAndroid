@@ -5,8 +5,7 @@ import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.bean.SmbBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -19,7 +18,6 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**

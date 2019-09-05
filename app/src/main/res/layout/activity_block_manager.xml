@@ -9,7 +9,7 @@
         android:id="@+id/toolbar_layout"
         layout="@layout/layout_toolbar"/>
 
-    <com.player.commom.widgets.LabelsView
+    <com.xyoye.player.commom.widgets.LabelsView
         android:id="@+id/labels_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -29,7 +29,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_rl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-    </com.player.commom.widgets.LabelsView>
+    </com.xyoye.player.commom.widgets.LabelsView>
 
     <RelativeLayout
         android:id="@+id/bottom_rl"

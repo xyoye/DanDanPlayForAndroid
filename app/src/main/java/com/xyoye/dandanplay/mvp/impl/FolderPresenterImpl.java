@@ -11,7 +11,7 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.service.SmbService;

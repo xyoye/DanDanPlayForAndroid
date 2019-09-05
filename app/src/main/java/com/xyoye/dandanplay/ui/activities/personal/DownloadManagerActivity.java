@@ -19,21 +19,19 @@ import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
-import com.xyoye.dandanplay.torrent.TorrentEngine;
-import com.xyoye.dandanplay.torrent.TorrentService;
-import com.xyoye.dandanplay.torrent.TorrentTask;
-import com.xyoye.dandanplay.torrent.info.TaskStateBean;
-import com.xyoye.dandanplay.torrent.info.Torrent;
+import com.xyoye.dandanplay.utils.torrent.TorrentEngine;
+import com.xyoye.dandanplay.utils.torrent.TorrentService;
+import com.xyoye.dandanplay.utils.torrent.TorrentTask;
+import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.utils.torrent.info.Torrent;
 import com.xyoye.dandanplay.ui.activities.anime.TrackerActivity;
 import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.TabEntity;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 
@@ -109,7 +107,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
         if (ServiceUtils.isServiceRunning(TorrentService.class)) {
             viewPager.post(() -> {
-                mTaskStateList = TorrentService.taskStateCache.getAll();
+                mTaskStateList.clear();
+                mTaskStateList.addAll(TorrentService.taskStateCache);
                 downloadingFragment.updateAdapter(mTaskStateList);
             });
             startNewTask();
@@ -232,7 +231,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     public void startNewTask() {
         Torrent torrent = getIntent().getParcelableExtra("download_data");
 
-        if (torrent != null){
+        if (torrent != null) {
             try {
                 TorrentInfo torrentInfo = new TorrentInfo(new File(torrent.getTorrentFilePath()));
                 //任务不存在则新增任务
@@ -272,17 +271,26 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @Override
     public void pauseTask(String taskHash) {
-        TorrentEngine.getInstance().getTask(taskHash).pause();
+        TorrentTask torrentTask = TorrentEngine.getInstance().getTask(taskHash);
+        if (torrentTask != null) {
+            torrentTask.pause();
+        }
     }
 
     @Override
     public void resumeTask(String taskHash) {
-        TorrentEngine.getInstance().getTask(taskHash).resume();
+        TorrentTask torrentTask = TorrentEngine.getInstance().getTask(taskHash);
+        if (torrentTask != null) {
+            torrentTask.resume();
+        }
     }
 
     @Override
     public void deleteTask(String taskHash, boolean withFile) {
-        TorrentEngine.getInstance().getTask(taskHash).remove(withFile);
+        TorrentTask torrentTask = TorrentEngine.getInstance().getTask(taskHash);
+        if (torrentTask != null) {
+            torrentTask.remove(withFile);
+        }
     }
 
     @Override
@@ -336,7 +344,11 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         String taskHash = data.getStringExtra("task_hash");
         int taskFilePosition = data.getIntExtra("task_file_position", -1);
         //更新下载中信息
-        Torrent torrent = TorrentEngine.getInstance().getTask(taskHash).getTorrent();
+        TorrentTask torrentTask = TorrentEngine.getInstance().getTask(taskHash);
+        if (torrentTask == null) {
+            return;
+        }
+        Torrent torrent = torrentTask.getTorrent();
         Torrent.TorrentFile torrentFile = torrent.getChildFileList().get(taskFilePosition);
         torrentFile.setDanmuEpisodeId(episodeId);
         torrentFile.setDanmuFilePath(danmuPath);

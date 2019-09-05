@@ -45,7 +45,7 @@ import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener.EventDispatcher;
-import com.player.exoplayer.meida.egl.GLThread;
+import com.xyoye.player.exoplayer.meida.egl.GLThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

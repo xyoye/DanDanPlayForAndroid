@@ -14,7 +14,7 @@ import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
-import com.xyoye.dandanplay.torrent.TorrentEngine;
+import com.xyoye.dandanplay.utils.torrent.TorrentEngine;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;

@@ -13,7 +13,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.LocalPlayHistoryBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationDivider;
 import com.xyoye.dandanplay.ui.weight.item.LocalPlayHistoryItem;
 import com.xyoye.dandanplay.utils.CommonUtils;

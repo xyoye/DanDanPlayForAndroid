@@ -10,7 +10,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SmbPresenter;
 import com.xyoye.dandanplay.mvp.view.SmbView;
 import com.xyoye.dandanplay.service.SmbService;
@@ -20,7 +20,7 @@ import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
-import com.xyoye.dandanplay.utils.smbv2.SmbServer;
+import com.xyoye.dandanplay.utils.smb.SmbServer;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;

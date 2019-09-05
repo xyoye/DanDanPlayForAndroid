@@ -9,8 +9,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.torrent.info.TaskStateBean;
-import com.xyoye.dandanplay.torrent.utils.TorrentStateCode;
+import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.utils.torrent.utils.TorrentStateCode;
 import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadingDetailDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.TaskManageListener;

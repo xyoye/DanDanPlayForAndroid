@@ -1,162 +1,177 @@
-//package com.xyoye.dandanplay.utils.smb;
+//package com.xyoye.dandanplay.utils.smbv2;
 //
-//import com.blankj.utilcode.util.FileUtils;
-//import com.blankj.utilcode.util.StringUtils;
+//import android.text.TextUtils;
+//
 //import com.xyoye.dandanplay.utils.jlibtorrent.BtTask;
-//import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
-//import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequest;
-//import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequestListener;
-//import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPResponse;
-//import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
-//import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPStatus;
+//import com.xyoye.dandanplay.utils.smbv2.http.HttpContentListener;
 //
 //import java.io.File;
 //import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
 //import java.io.IOException;
 //import java.io.InputStream;
+//import java.net.InetAddress;
+//import java.net.NetworkInterface;
+//import java.net.ServerSocket;
+//import java.net.Socket;
+//import java.net.SocketException;
+//import java.util.ArrayList;
+//import java.util.Enumeration;
+//import java.util.List;
 //
+///**
+// * Created by xyoye on 2019/7/19.
+// */
 //
-//public class TorrentServer extends Thread implements HTTPRequestListener {
-//    public static String playFilePath = "";
+//public class TorrentServer extends Thread implements HttpContentListener {
+//    //torrent绑定的本地端口
+//    public static int TORRENT_PORT = 2222;
+//    //torrent绑定的本地IP
+//    public static String TORRENT_IP = "";
 //
-//    private HTTPServerList httpServerList = new HTTPServerList();
-//    // 默认的共享端口
-//    private int HTTPPort = 2222;
-//    // 绑定的ip
-//    private String bindIP = null;
-//    // 绑定的下载任务
+//    //种子下载任务
 //    private BtTask btTask;
+//    //种子下载文件地址
+//    private static String btFilePath;
 //
-//    public TorrentServer(BtTask btTask){
+//    //用于接收客户端（播放器）请求的Socket
+//    private ServerSocket serverSocket = null;
+//    //本地可用IP地址列表
+//    private List<InetAddress> inetAddressList;
+//
+//    public TorrentServer() {
+//        getInetAddressList();
+//    }
+//
+//    public void setTorrentTask(BtTask btTask) {
 //        this.btTask = btTask;
 //    }
 //
-//    public void updateTask(BtTask btTask){
-//        this.btTask = btTask;
+//    public static void setBtFilePath(String filePath){
+//        btFilePath = filePath;
+//    }
+//
+//    public void stopTorrentServer() {
+//        if (serverSocket != null) {
+//            try {
+//                serverSocket.close();
+//                serverSocket = null;
+//                TORRENT_IP = "";
+//                TORRENT_PORT = 2222;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
 //    }
 //
 //    @Override
 //    public void run() {
 //        super.run();
-//        int retryCount = 0;
 //
-//        int bindPort = getHTTPPort();
-//        HTTPServerList serverList = getHttpServerList();
-//        while (!serverList.open(bindPort)) {
+//        //创建ServerSocket
+//        int retryCount = 0;
+//        int port = 2222;
+//        while (!createServerSocket(port)) {
 //            retryCount++;
 //            if (retryCount > 100) {
 //                return;
 //            }
-//            setHTTPPort(bindPort + 1);
-//            bindPort = getHTTPPort();
+//            port++;
 //        }
-//        serverList.addRequestListener(this);
-//        serverList.start();
 //
-//        LocalIPUtil.IP = serverList.getHTTPServer(0).getBindAddress();
-//        LocalIPUtil.PORT = serverList.getHTTPServer(0).getBindPort();
+//        //在ServerSocket关闭之前一直监听请求
+//        while (!serverSocket.isClosed()){
+//            try {
+//                Socket socket = serverSocket.accept();
+//                socket.setSoTimeout(getTimeOut());
+//                //接收到请求后，新建线程处理请求
+//                new TorrentServerThread(socket, btTask, btFilePath,this).start();
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                break;
+//            }
+//        }
+//    }
 //
+//    private synchronized int getTimeOut(){
+//        return 15 * 1000;
+//    }
+//
+//    //获取本机接口地址
+//    private void getInetAddressList(){
+//        inetAddressList = new ArrayList<>();
+//        try {
+//            //机器上所有的接口
+//            Enumeration enumeration = NetworkInterface.getNetworkInterfaces();
+//            while (enumeration.hasMoreElements()) {
+//                NetworkInterface networkInterface = (NetworkInterface) enumeration.nextElement();
+//                //绑定到此网络接口的InetAddress
+//                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+//                while (inetAddresses.hasMoreElements()) {
+//                    InetAddress inetAddress = inetAddresses.nextElement();
+//                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+//                        inetAddressList.add(inetAddress);
+//                    }
+//                }
+//            }
+//        } catch (SocketException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    //创建ServerSocket
+//    private boolean createServerSocket(int port) {
+//        if (serverSocket != null) {
+//            return true;
+//        }
+//        for (int i = 0; i < inetAddressList.size(); i++) {
+//            String hostAddress = inetAddressList.get(i).getHostAddress();
+//            if (!TextUtils.isEmpty(hostAddress)) {
+//                try {
+//                    InetAddress inetAddress = InetAddress.getByName(hostAddress);
+//                    TORRENT_IP = hostAddress;
+//                    TORRENT_PORT = port;
+//                    serverSocket = new ServerSocket(TORRENT_PORT, 0, inetAddress);
+//                    return true;
+//                } catch (IOException e) {
+//                    return false;
+//                }
+//            }
+//        }
+//        return false;
 //    }
 //
 //    @Override
-//    public void httpRequestRecieved(HTTPRequest httpRequest) {
-//        if (btTask == null)
-//            return;
-//
-//        long[] ranges = httpRequest.getContentRange();
-//        if (ranges[1] == 0)
-//            ranges[1] = 10 * 1024;
-//
-//        String filePath;
-//        if (!StringUtils.isEmpty(playFilePath)){
-//            filePath = playFilePath;
-//        }else {
-//            return;
-//        }
-//
-//        int filePosition = -1;
-//
-//        Torrent torrent = btTask.getTorrent();
-//        for (int i=0; i<torrent.getTorrentFileList().size(); i++){
-//            Torrent.TorrentFile torrentFile = torrent.getTorrentFileList().get(i);
-//            if (filePath.equals(torrentFile.getPath())){
-//                filePosition = i;
-//            }
-//        }
-//
-//        if (filePosition == -1)
-//            return;
-//
+//    //获取视频内容
+//    public InputStream getContentInputStream() {
+//        InputStream inputStream = null;
 //        try {
-//
-//            File videoFile = new File(filePath);
-//            if (ranges[0] > videoFile.length() || ranges[1] > videoFile.length()){
-//                return;
-//            }
-//            if (ranges[1] > videoFile.length() - ranges[0]){
-//                ranges[1] = videoFile.length() - ranges[0];
-//            }
-//
-//            //设置查询的条件
-//            btTask.setQueryPrice(filePosition, ranges[0], ranges[1]-ranges[0]);
-//            //获取查询的结果
-//            while (!btTask.getQueryPriceResult()){
-//                Thread.sleep(200);
-//            }
-//
-//            // 获取文件的大小
-//            long contentLen = videoFile.length();
-//            // 获取文件类型
-//            String contentType = FileUtils.getFileExtension(filePath);
-//            // 获取文文件流
-//            InputStream inputStream = new FileInputStream(videoFile);
-//
-//            if (contentLen <= 0 || contentType.length() <= 0) {
-//                httpRequest.returnBadRequest();
-//                return;
-//            }
-//
-//            HTTPResponse httpRes = new HTTPResponse();
-//            httpRes.setContentType(contentType);
-//            httpRes.setStatusCode(HTTPStatus.OK);
-//            httpRes.setContentLength(contentLen);
-//            httpRes.setContentInputStream(inputStream);
-//
-//            httpRequest.post(httpRes);
-//
-//            inputStream.close();
-//        } catch (IOException e) {
-//            httpRequest.returnBadRequest();
-//        } catch (InterruptedException e) {
+//            File videoFile = new File(btFilePath);
+//            inputStream = new FileInputStream(videoFile);
+//        }catch (FileNotFoundException e){
 //            e.printStackTrace();
 //        }
-//
+//        return inputStream;
 //    }
 //
-//
-//
-//    public String getBindIP() {
-//        return bindIP;
+//    @Override
+//    //获取视频格式
+//    public String getContentType() {
+//        if (TextUtils.isEmpty(btFilePath))
+//            return "";
+//        int lastPoi = btFilePath.lastIndexOf('.');
+//        int lastSep = btFilePath.lastIndexOf(File.separator);
+//        if (lastPoi == -1 || lastSep >= lastPoi) return "";
+//        return "." + btFilePath.substring(lastPoi + 1);
 //    }
 //
-//    public void setBindIP(String bindIP) {
-//        this.bindIP = bindIP;
+//    @Override
+//    //获取视频长度
+//    public long getContentLength() {
+//        File videoFile = new File(btFilePath);
+//        if (videoFile.exists())
+//            return videoFile.length();
+//        else
+//            return 0;
 //    }
-//
-//    public HTTPServerList getHttpServerList() {
-//        return httpServerList;
-//    }
-//
-//    public void setHttpServerList(HTTPServerList httpServerList) {
-//        this.httpServerList = httpServerList;
-//    }
-//
-//    public int getHTTPPort() {
-//        return HTTPPort;
-//    }
-//
-//    public void setHTTPPort(int hTTPPort) {
-//        HTTPPort = hTTPPort;
-//    }
-//
 //}

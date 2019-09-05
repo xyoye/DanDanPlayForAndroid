@@ -7,7 +7,7 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
-import com.xyoye.dandanplay.torrent.TorrentService;
+import com.xyoye.dandanplay.utils.torrent.TorrentService;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 import io.reactivex.Observable;

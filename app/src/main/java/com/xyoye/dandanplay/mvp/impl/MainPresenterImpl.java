@@ -10,7 +10,7 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
 import com.xyoye.dandanplay.utils.AppConfig;

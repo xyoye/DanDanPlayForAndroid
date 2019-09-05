@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.torrent.utils.TorrentUtils;
+import com.xyoye.dandanplay.utils.torrent.utils.TorrentUtils;
 
 import java.util.List;
 

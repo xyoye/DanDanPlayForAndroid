@@ -9,7 +9,7 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.BlockManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
-import com.player.commom.widgets.LabelsView;
+import com.xyoye.player.commom.widgets.LabelsView;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 

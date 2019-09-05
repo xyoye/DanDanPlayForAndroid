@@ -1,142 +1,166 @@
 package com.xyoye.dandanplay.utils.smb;
 
-import com.blankj.utilcode.util.FileUtils;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequest;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPRequestListener;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPResponse;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPServerList;
-import com.xyoye.dandanplay.utils.smb.cybergarage.http.HTTPStatus;
+import android.text.TextUtils;
 
+import com.xyoye.dandanplay.utils.smb.http.HttpContentListener;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 import jcifs.smb.SmbFile;
 
+/**
+ * Created by xyoye on 2019/7/18.
+ */
 
-public class SmbServer extends Thread implements HTTPRequestListener {
+public class SmbServer extends Thread implements HttpContentListener {
+    //smb绑定的本地端口
+    public static int SMB_PORT = 2222;
+    //smb绑定的本地IP
+    public static String SMB_IP = "";
 
-    public static final String CONTENT_EXPORT_URI = "/smb";
-    public static final String tag = "dlna.certus.iptv.sharefile.server.ShareFileManager";
-    private HTTPServerList httpServerList = new HTTPServerList();
-    // 默认的共享端口
-    private int HTTPPort = 2222;
-    // 绑定的ip
-    private String bindIP = null;
+    //smb文件，用于获取视频内容及信息
+    private static SmbFile playSmbFile;
 
+    //用于接收客户端（播放器）请求的Socket
+    private ServerSocket serverSocket = null;
+    //本地可用IP地址列表
+    private List<InetAddress> inetAddressList;
 
-    public String getBindIP() {
-        return bindIP;
+    public SmbServer() {
+        getInetAddressList();
     }
 
-    public void setBindIP(String bindIP) {
-        this.bindIP = bindIP;
+    public static void setPlaySmbFile(SmbFile smbFile) {
+        playSmbFile = smbFile;
     }
 
-    public HTTPServerList getHttpServerList() {
-        return httpServerList;
-    }
-
-    public void setHttpServerList(HTTPServerList httpServerList) {
-        this.httpServerList = httpServerList;
-    }
-
-    public int getHTTPPort() {
-        return HTTPPort;
-    }
-
-    public void setHTTPPort(int hTTPPort) {
-        HTTPPort = hTTPPort;
+    public void stopSmbServer() {
+        if (serverSocket != null) {
+            try {
+                serverSocket.close();
+                serverSocket = null;
+                SMB_IP = "";
+                SMB_PORT = 2222;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void run() {
         super.run();
 
-        /**************************************************
-         *
-         * 创建http服务器，接收共享请求
-         *
-         *************************************************/
-        // 重试次数
-        int retryCnt = 0;
-        // 获取端口 2222
-        int bindPort = getHTTPPort();
-
-        HTTPServerList hsl = getHttpServerList();
-        while (!hsl.open(bindPort)) {
-            retryCnt++;
-            // 重试次数大于服务器重试次数时返回
-            if (100 < retryCnt) {
+        //创建ServerSocket
+        int retryCount = 0;
+        int port = 2222;
+        while (!createServerSocket(port)) {
+            retryCount++;
+            if (retryCount > 100) {
                 return;
             }
-            setHTTPPort(bindPort + 1);
-            bindPort = getHTTPPort();
+            port++;
         }
-        // 给集合中的每个HTTPServer对象添加HTTPRequestListener对象
-        hsl.addRequestListener(this);
-        // 调用集合中所有HTTPServer的start方法
-        hsl.start();
 
-        LocalIPUtil.IP = hsl.getHTTPServer(0).getBindAddress();
-        LocalIPUtil.PORT = hsl.getHTTPServer(0).getBindPort();
+        //在ServerSocket关闭之前一直监听请求
+        while (!serverSocket.isClosed()){
+            try {
+                Socket socket = serverSocket.accept();
+                socket.setSoTimeout(getTimeOut());
+                //接收到请求后，新建线程处理请求
+                new SmbServerThread(socket, this).start();
+            }catch (Exception e){
+                e.printStackTrace();
+                break;
+            }
+        }
+    }
 
+    private synchronized int getTimeOut(){
+        return 15 * 1000;
+    }
+
+    //获取本机接口地址
+    private void getInetAddressList(){
+        inetAddressList = new ArrayList<>();
+        try {
+            //机器上所有的接口
+            Enumeration enumeration = NetworkInterface.getNetworkInterfaces();
+            while (enumeration.hasMoreElements()) {
+                NetworkInterface networkInterface = (NetworkInterface) enumeration.nextElement();
+                //绑定到此网络接口的InetAddress
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress()) {
+                        inetAddressList.add(inetAddress);
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //创建ServerSocket
+    private boolean createServerSocket(int port) {
+        if (serverSocket != null) {
+            return true;
+        }
+        for (int i = 0; i < inetAddressList.size(); i++) {
+            String hostAddress = inetAddressList.get(i).getHostAddress();
+            if (!TextUtils.isEmpty(hostAddress)) {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(hostAddress);
+                    SMB_IP = hostAddress;
+                    SMB_PORT = port;
+                    serverSocket = new ServerSocket(SMB_PORT, 0, inetAddress);
+                    return true;
+                } catch (IOException e) {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
-    public void httpRequestRecieved(HTTPRequest httpReq) {
-
-        String uri = httpReq.getURI();
-
-        if (!uri.startsWith(CONTENT_EXPORT_URI)) {
-            httpReq.returnBadRequest();
-            return;
-        }
-
+    //获取视频内容
+    public InputStream getContentInputStream() {
+        InputStream inputStream = null;
         try {
-            uri = URLDecoder.decode(uri, "UTF-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
+            inputStream = playSmbFile.getInputStream();
+        }catch (IOException e){
+            e.printStackTrace();
         }
-        //截取文件的信息
-        String filePaths = "smb://" + uri.substring(5);
+        return inputStream;
+}
 
-        //判断uri中是否包含参数
-        int indexOf = filePaths.indexOf("&");
-
-        if (indexOf != -1) {
-            filePaths = filePaths.substring(0, indexOf);
-        }
-
-        try {
-            SmbFile file = new SmbFile(filePaths);
-
-            // 获取文件的大小
-            long contentLen = file.length();
-            // 获取文件类型
-            String contentType = "." + FileUtils.getFileExtension(filePaths);
-            // 获取文文件流
-            InputStream contentIn = file.getInputStream();
-
-            if (contentLen <= 0 || contentType.length() <= 0 || contentIn == null) {
-                httpReq.returnBadRequest();
-                return;
-            }
-
-            HTTPResponse httpRes = new HTTPResponse();
-            httpRes.setContentType(contentType);
-            httpRes.setStatusCode(HTTPStatus.OK);
-            httpRes.setContentLength(contentLen);
-            httpRes.setContentInputStream(contentIn);
-
-            httpReq.post(httpRes);
-
-            contentIn.close();
-        } catch (IOException e) {
-            httpReq.returnBadRequest();
-        }
-
+    @Override
+    //获取视频格式
+    public String getContentType() {
+        String smbFilePath = playSmbFile.getPath();
+        if (TextUtils.isEmpty(smbFilePath))
+            return "";
+        int lastPoi = smbFilePath.lastIndexOf('.');
+        int lastSep = smbFilePath.lastIndexOf(File.separator);
+        if (lastPoi == -1 || lastSep >= lastPoi) return "";
+        return "." +smbFilePath.substring(lastPoi + 1);
     }
 
+    @Override
+    //获取视频长度
+    public long getContentLength() {
+        return playSmbFile.getContentLengthLong();
+    }
 }

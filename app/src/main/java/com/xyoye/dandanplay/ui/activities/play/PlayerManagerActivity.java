@@ -15,7 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.params.PlayParam;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;

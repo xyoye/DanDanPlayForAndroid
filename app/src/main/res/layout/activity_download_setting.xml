@@ -43,24 +43,24 @@
                 android:textColor="@color/text_black"
                 android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="5dp"
-                android:layout_toStartOf="@+id/change_engine_iv"
-                android:text="切换"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginEnd="5dp"-->
+                <!--android:layout_toStartOf="@+id/change_engine_iv"-->
+                <!--android:text="切换"-->
+                <!--android:textColor="@color/text_gray"-->
+                <!--android:textSize="12sp" />-->
 
-            <ImageView
-                android:id="@+id/change_engine_iv"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:src="@drawable/ic_arrow_right_dark" />
+            <!--<ImageView-->
+                <!--android:id="@+id/change_engine_iv"-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginEnd="15dp"-->
+                <!--android:src="@drawable/ic_arrow_right_dark" />-->
         </RelativeLayout>
 
         <View

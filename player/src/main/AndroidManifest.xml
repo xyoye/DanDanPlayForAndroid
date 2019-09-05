@@ -1,11 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.player.ijkplayer">
-    <uses-sdk tools:overrideLibrary="tv.danmaku.ijk.media.player_arm64"/>
-    <uses-permission android:name="android.permission.BATTERY_STATS"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.xyoye.player">
+
+    <uses-sdk tools:overrideLibrary="tv.danmaku.ijk.media.player_arm64" />
+
+    <uses-permission
+        android:name="android.permission.BATTERY_STATS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;

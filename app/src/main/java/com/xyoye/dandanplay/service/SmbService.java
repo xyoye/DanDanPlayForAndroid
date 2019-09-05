@@ -13,7 +13,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.play.SmbActivity;
-import com.xyoye.dandanplay.utils.smbv2.SmbServer;
+import com.xyoye.dandanplay.utils.smb.SmbServer;
 
 /**
  * Created by xyoye on 2018/11/22.

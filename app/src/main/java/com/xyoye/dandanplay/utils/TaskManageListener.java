@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.utils;
 
-import com.xyoye.dandanplay.torrent.info.TaskStateBean;
+import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
 
 import java.util.List;
 

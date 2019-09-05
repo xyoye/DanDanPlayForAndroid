@@ -12,7 +12,7 @@ import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SearchHistoryBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.utils.AppConfig;

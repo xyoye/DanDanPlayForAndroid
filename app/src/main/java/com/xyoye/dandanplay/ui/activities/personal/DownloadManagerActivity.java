@@ -2,11 +2,13 @@ package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,6 +28,8 @@ import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.utils.TabEntity;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -92,12 +96,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         if (ServiceUtils.isServiceRunning(TorrentService.class)) {
             startNewTask();
         } else {
-            Intent intent = new Intent(this, TorrentService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+            startTorrentService(null, null);
             presenter.observeService();
         }
     }
@@ -199,9 +198,14 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //没有下载任务在执行，关闭服务
+        if (TorrentEngine.getInstance().getTaskList().size() == 0) {
+            startTorrentService(TorrentService.Action.ACTION_SHUTDOWN, null);
+        }
     }
 
     /**
@@ -209,7 +213,30 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
      */
     @Override
     public void startNewTask() {
+        Torrent torrent = getIntent().getParcelableExtra("download_data");
+        if (torrent != null){
+            startTorrentService(TorrentService.Action.ACTION_ADD_TORRENT, torrent);
+        }
+    }
 
+    /**
+     * 开启下载服务
+     */
+    private void startTorrentService(String action, Torrent torrent) {
+        Intent intent = new Intent(this, TorrentService.class);
+
+        if (!TextUtils.isEmpty(action)) {
+            intent.setAction(action);
+        }
+        if (torrent != null) {
+            intent.putExtra(TorrentService.IntentTag.ADD_TASK_TORRENT, torrent);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+            startService(intent);
+        }
     }
 
     private class DownloadFragmentAdapter extends FragmentPagerAdapter {

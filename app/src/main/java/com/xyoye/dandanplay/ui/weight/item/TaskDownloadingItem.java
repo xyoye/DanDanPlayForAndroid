@@ -9,12 +9,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
-import com.xyoye.dandanplay.utils.torrent.utils.TorrentStateCode;
 import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadingDetailDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.jlibtorrent.TaskStateBean;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentStateCode;
 
 import butterknife.BindView;
 
@@ -66,13 +66,13 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onUpdateViews(TaskStateBean taskState, int position) {
-        downloadTitleTv.setText(taskState.name);
+        downloadTitleTv.setText(taskState.getTaskName());
 
-        switch (taskState.stateCode){
+        switch (taskState.getStateCode()){
             case DOWNLOADING:
-                String downloadSpeed = CommonUtils.convertFileSize(taskState.downloadSpeed);
+                String downloadSpeed = CommonUtils.convertFileSize(taskState.getDownloadSpeed());
                 downloadSpeedTv.setText("↓ "+downloadSpeed+"/s");
-                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationPb.setProgress(taskState.getProgress());
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
@@ -81,7 +81,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 break;
             case PAUSED:
                 downloadSpeedTv.setText("↓ --");
-                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationPb.setProgress(taskState.getProgress());
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_pause);
@@ -90,22 +90,12 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 break;
             case STOPPED:
                 downloadSpeedTv.setText("↓ --");
-                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationPb.setProgress(taskState.getProgress());
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_over);
                 downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_pink));
                 downloadStatusTv.setText("已停止");
-                break;
-            case SEEDING:
-                String uploadSpeed = CommonUtils.convertFileSize(taskState.uploadSpeed);
-                downloadSpeedTv.setText("↑ "+uploadSpeed+"/s");
-                downloadDurationPb.setProgress(taskState.progress);
-                downloadDurationTv.setText(getDuration(taskState));
-
-                downloadStatusIv.setImageResource(R.mipmap.ic_download_start);
-                downloadStatusTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
-                downloadStatusTv.setText("上传中");
                 break;
             case UNKNOWN:
                 downloadSpeedTv.setText("↓ --");
@@ -145,7 +135,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
                 break;
             case ALLOCATING:
                 downloadSpeedTv.setText("↓ --");
-                downloadDurationPb.setProgress(taskState.progress);
+                downloadDurationPb.setProgress(taskState.getProgress());
                 downloadDurationTv.setText(getDuration(taskState));
 
                 downloadStatusIv.setImageResource(R.mipmap.ic_download_wait);
@@ -163,15 +153,15 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
 
         //点击图标切换任务状态
         downloadCtrlRl.setOnClickListener(v -> {
-            if (taskState.stateCode == TorrentStateCode.PAUSED){
-                taskManageListener.resumeTask(taskState.torrentId);
+            if (taskState.getStateCode() == TorrentStateCode.PAUSED){
+                taskManageListener.resumeTask(taskState.getTorrentHash());
             }else {
-                taskManageListener.pauseTask(taskState.torrentId);
+                taskManageListener.pauseTask(taskState.getTorrentHash());
             }
         });
     }
 
     private String getDuration(TaskStateBean taskState) {
-        return CommonUtils.convertFileSize(taskState.receivedBytes) +"/" +CommonUtils.convertFileSize(taskState.totalBytes);
+        return CommonUtils.convertFileSize(taskState.getReceivedBytes()) +"/" +CommonUtils.convertFileSize(taskState.getTotalBytes());
     }
 }

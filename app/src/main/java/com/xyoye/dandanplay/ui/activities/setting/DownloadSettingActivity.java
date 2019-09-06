@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
-import com.xyoye.dandanplay.utils.torrent.utils.TorrentConfig;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentConfig;
 
 import butterknife.BindView;
 import butterknife.OnClick;

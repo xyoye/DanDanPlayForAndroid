@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.bean;
 
-import com.xyoye.dandanplay.utils.torrent.utils.TorrentUtils;
+
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentUtil;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class DownloadedTaskBean {
     }
 
     public String getMagnet() {
-        return TorrentUtils.MAGNET_HEADER + torrentHash;
+        return TorrentUtil.MAGNET_HEADER + torrentHash;
     }
 
     public long getTotalSize() {

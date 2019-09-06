@@ -55,7 +55,7 @@ public class DataBaseInfo {
                 {"_id", "text"},
                 {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "anime_title", "total_length", "complete_time"},
                 {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
-                {"_id", "torrent_file_path", "torrent_hash", "anime_title", "priorities"},
+                {"_id", "task_torrent_hash", "torrent_file_path", "save_dir_path", "anime_title", "priorities"},
                 {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
                 {"_id", "video_path", "video_title", "danmu_path", "episode_id", "source_origin", "play_time"}
         };

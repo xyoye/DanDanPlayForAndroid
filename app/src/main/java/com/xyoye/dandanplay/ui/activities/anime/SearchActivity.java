@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -17,6 +18,9 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.frostwire.jlibtorrent.Priority;
+import com.frostwire.jlibtorrent.TorrentInfo;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.player.commom.utils.AnimHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xunlei.downloadlib.XLDownloadManager;
@@ -38,7 +42,6 @@ import com.xyoye.dandanplay.bean.event.SelectInfoEvent;
 import com.xyoye.dandanplay.mvp.impl.SearchPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
-import com.xyoye.dandanplay.utils.torrent.info.Torrent;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
@@ -53,8 +56,6 @@ import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.libtorrent4j.Priority;
-import org.libtorrent4j.TorrentInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -316,10 +317,19 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             new TorrentFileCheckDialog(this, torrentInfo, new TorrentFileCheckDialog.OnTorrentSelectedListener() {
                 @Override
                 public void onDownload(List<Priority> priorityList) {
+                    String saveDirPath = AppConfig.getInstance().getDownloadFolder();
+                    String taskName = torrentInfo.name();
+
+                    if (!TextUtils.isEmpty(animeTitle)){
+                        saveDirPath += "/" + animeTitle;
+                    }else {
+                        saveDirPath += "/" + taskName;
+                    }
+
                     Torrent torrent = new Torrent(
-                            animeTitle,
                             torrentFilePath,
-                            AppConfig.getInstance().getDownloadFolder(),
+                            saveDirPath,
+                            animeTitle,
                             priorityList);
 
                     Intent intent = new Intent(SearchActivity.this, DownloadManagerActivity.class);

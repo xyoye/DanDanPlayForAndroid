@@ -9,15 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.frostwire.jlibtorrent.Priority;
+import com.frostwire.jlibtorrent.TorrentInfo;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.TorrentCheckBean;
 import com.xyoye.dandanplay.ui.weight.item.TorrentFileCheckItem;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.libtorrent4j.Priority;
-import org.libtorrent4j.TorrentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,7 @@ public class TorrentFileCheckDialog extends Dialog {
                         containsChecked = checkBean.isChecked();
                     }
                     priorityList.add(checkBean.isChecked()
-                            ? Priority.DEFAULT
+                            ? Priority.NORMAL
                             : Priority.IGNORE
                     );
                 }

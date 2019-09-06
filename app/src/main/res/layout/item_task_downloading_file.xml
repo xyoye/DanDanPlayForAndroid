@@ -49,16 +49,4 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/danmu_bind_iv"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:src="@mipmap/ic_danmu_unexists"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </android.support.constraint.ConstraintLayout>

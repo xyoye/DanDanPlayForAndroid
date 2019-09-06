@@ -2,7 +2,7 @@
 //
 //import android.text.TextUtils;
 //
-//import com.xyoye.dandanplay.utils.jlibtorrent.TorrentTask;
+//import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 //import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 //import com.xyoye.dandanplay.utils.smbv2.http.HttpContentListener;
 //import com.xyoye.dandanplay.utils.smbv2.http.HttpResponse;
@@ -26,11 +26,11 @@
 //    //获取视频内容及信息的接口
 //    private HttpContentListener httpContent;
 //    //种子下载任务
-//    private TorrentTask btTask;
+//    private TorrentEngine btTask;
 //    //播放文件地址
 //    private String videoFilePath;
 //
-//    TorrentServerThread(Socket socket, TorrentTask btTask, String videoFilePath, HttpContentListener httpContentListener) {
+//    TorrentServerThread(Socket socket, TorrentEngine btTask, String videoFilePath, HttpContentListener httpContentListener) {
 //        this.socket = socket;
 //        this.btTask = btTask;
 //        this.videoFilePath = videoFilePath;

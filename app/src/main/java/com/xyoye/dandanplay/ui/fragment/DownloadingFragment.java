@@ -13,11 +13,11 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.mvp.impl.DownloadingFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadingFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadingFragmentView;
-import com.xyoye.dandanplay.utils.torrent.TorrentEngine;
-import com.xyoye.dandanplay.utils.torrent.info.TaskStateBean;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.jlibtorrent.TaskStateBean;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         taskRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         taskRv.setNestedScrollingEnabled(false);
         taskRv.setItemViewCacheSize(10);
-        SimpleItemAnimator simpleItemAnimator = ((SimpleItemAnimator)taskRv.getItemAnimator());
+        SimpleItemAnimator simpleItemAnimator = ((SimpleItemAnimator) taskRv.getItemAnimator());
         if (simpleItemAnimator != null)
             simpleItemAnimator.setSupportsChangeAnimations(false);
 
@@ -109,11 +109,11 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         }
     }
 
-    public void setTaskManageListener(TaskManageListener taskManageListener){
+    public void setTaskManageListener(TaskManageListener taskManageListener) {
         this.taskManageListener = taskManageListener;
     }
 
-    public void updateAdapter(List<TaskStateBean> stateBeanList){
+    public void updateAdapter(List<TaskStateBean> stateBeanList) {
         taskStateBeanList.clear();
         taskStateBeanList.addAll(stateBeanList);
         taskRvAdapter.notifyDataSetChanged();

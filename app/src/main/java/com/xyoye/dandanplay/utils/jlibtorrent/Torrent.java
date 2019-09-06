@@ -2,9 +2,11 @@ package com.xyoye.dandanplay.utils.jlibtorrent;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.frostwire.jlibtorrent.Priority;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,15 +19,21 @@ public class Torrent implements Parcelable {
     private String saveDirPath;
     private String animeTitle;
     private String hash;
-    private long length;
-    private long downloaded;
-    private boolean isError;
-    private long downloadRate;
-    private boolean isRecoveryTask;
-    private List<TorrentFile> torrentFileList;
+    private boolean isRestoreTask;
+    private List<Priority> priorityList;
 
-    public Torrent() {
+    public Torrent(String torrentFilePath, String saveDirPath, String animeTitle, List<Priority> priorityList) {
+        this.torrentPath = torrentFilePath;
+        this.saveDirPath = saveDirPath;
+        this.animeTitle = animeTitle;
+        this.priorityList = priorityList;
+    }
 
+    public Torrent(String torrentFilePath, String saveDirPath, String animeTitle, String priorityStr) {
+        this.torrentPath = torrentFilePath;
+        this.saveDirPath = saveDirPath;
+        this.animeTitle = animeTitle;
+        this.priorityList = priority2List(priorityStr);
     }
 
     protected Torrent(Parcel in) {
@@ -34,12 +42,8 @@ public class Torrent implements Parcelable {
         saveDirPath = in.readString();
         animeTitle = in.readString();
         hash = in.readString();
-        length = in.readLong();
-        downloaded = in.readLong();
-        isError = in.readInt() != 0;
-        downloadRate = in.readLong();
-        isRecoveryTask = in.readInt() != 0;
-        torrentFileList = in.createTypedArrayList(TorrentFile.CREATOR);
+        isRestoreTask = in.readInt() != 0;
+        priorityList = priority2List(in.readString());
     }
 
     public String getTitle() {
@@ -82,84 +86,55 @@ public class Torrent implements Parcelable {
         this.hash = hash;
     }
 
-    public long getLength() {
-        return length;
+    public boolean isRestoreTask() {
+        return isRestoreTask;
     }
 
-    public void setLength(long length) {
-        this.length = length;
+    public void setRestoreTask(boolean recoveryTask) {
+        isRestoreTask = recoveryTask;
     }
 
-    public long getDownloaded() {
-        return downloaded;
-    }
-
-    public void setDownloaded(long downloaded) {
-        this.downloaded = downloaded;
-    }
-
-    public boolean isError() {
-        return isError;
-    }
-
-    public void setError(boolean error) {
-        isError = error;
-    }
-
-    public long getDownloadRate() {
-        return downloadRate;
-    }
-
-    public void setDownloadRate(long downloadRate) {
-        this.downloadRate = downloadRate;
-    }
-
-    public boolean isRecoveryTask() {
-        return isRecoveryTask;
-    }
-
-    public void setRecoveryTask(boolean recoveryTask) {
-        isRecoveryTask = recoveryTask;
-    }
-
-    public Priority[] getPriporities() {
-        if (torrentFileList == null || torrentFileList.size() == 0) {
+    public Priority[] getPriorities() {
+        if (priorityList == null || priorityList.size() == 0) {
             return new Priority[0];
         }
 
-        Priority[] priorities = new Priority[torrentFileList.size()];
-        for (int i = 0; i < torrentFileList.size(); i++) {
-            priorities[i] = torrentFileList.get(i).isChecked()
-                    ? Priority.NORMAL
-                    : Priority.IGNORE;
-        }
-
-        return priorities;
+        return priorityList.toArray(new Priority[0]);
     }
 
     public String getPriorityStr() {
-        if (torrentFileList == null || torrentFileList.size() == 0) {
+        if (priorityList == null || priorityList.size() == 0) {
             return "";
         }
 
         StringBuilder priorityBuilder = new StringBuilder();
-        for (int i = 0; i < torrentFileList.size(); i++) {
-            priorityBuilder.append(
-                    (torrentFileList.get(i).isChecked())
-                            ? ("1;")
-                            : ("0;")
-            );
+        for (int i = 0; i < priorityList.size(); i++) {
+            priorityBuilder.append(priorityList.get(i).swig()).append(";");
         }
 
         return priorityBuilder.substring(0, priorityBuilder.length() - 1);
     }
 
-    public List<TorrentFile> getTorrentFileList() {
-        return torrentFileList;
+    public List<Priority> priority2List(String priorityStr) {
+        List<Priority> priorityList = new ArrayList<>();
+        if (priorityStr.contains(";")) {
+            for (String str : priorityStr.split(";")) {
+                priorityList.add(Priority.valueOf(str));
+            }
+        } else {
+            priorityList.add(Priority.valueOf(priorityStr));
+        }
+        return priorityList;
     }
 
-    public void setTorrentFileList(List<TorrentFile> torrentFileList) {
-        this.torrentFileList = torrentFileList;
+    /**
+     * 是否能生成任务
+     */
+    public boolean isCanBeTask() {
+        return !TextUtils.isEmpty(torrentPath) &&
+                !TextUtils.isEmpty(saveDirPath) &&
+                !TextUtils.isEmpty(hash) &&
+                priorityList.size() > 0;
     }
 
     public static final Creator<Torrent> CREATOR = new Creator<Torrent>() {
@@ -186,118 +161,7 @@ public class Torrent implements Parcelable {
         dest.writeString(saveDirPath);
         dest.writeString(animeTitle);
         dest.writeString(hash);
-        dest.writeLong(length);
-        dest.writeLong(downloaded);
-        dest.writeInt((byte) (isError ? 1 : 0));
-        dest.writeLong(downloadRate);
-        dest.writeInt((byte) (isRecoveryTask ? 1 : 0));
-        dest.writeTypedList(torrentFileList);
-    }
-
-    public static class TorrentFile implements Parcelable {
-        private boolean isChecked;
-        private long length;
-        private String path;
-        private String name;
-        private String danmuPath;
-        private int episodeId;
-        private long downloaded;
-
-        public TorrentFile() {
-        }
-
-        protected TorrentFile(Parcel in) {
-            isChecked = in.readByte() != 0;
-            path = in.readString();
-            name = in.readString();
-            danmuPath = in.readString();
-            episodeId = in.readInt();
-            length = in.readLong();
-            downloaded = in.readLong();
-        }
-
-        public boolean isChecked() {
-            return isChecked;
-        }
-
-        public void setChecked(boolean checked) {
-            isChecked = checked;
-        }
-
-        public long getLength() {
-            return length;
-        }
-
-        public void setLength(long length) {
-            this.length = length;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getDanmuPath() {
-            return danmuPath;
-        }
-
-        public void setDanmuPath(String danmuPath) {
-            this.danmuPath = danmuPath;
-        }
-
-        public int getEpisodeId() {
-            return episodeId;
-        }
-
-        public void setEpisodeId(int episodeId) {
-            this.episodeId = episodeId;
-        }
-
-        public long getDownloaded() {
-            return downloaded;
-        }
-
-        public void setDownloaded(long downloaded) {
-            this.downloaded = downloaded;
-        }
-
-        public static final Creator<TorrentFile> CREATOR = new Creator<TorrentFile>() {
-            @Override
-            public TorrentFile createFromParcel(Parcel in) {
-                return new TorrentFile(in);
-            }
-
-            @Override
-            public TorrentFile[] newArray(int size) {
-                return new TorrentFile[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeByte((byte) (isChecked ? 1 : 0));
-            dest.writeString(path);
-            dest.writeString(name);
-            dest.writeString(danmuPath);
-            dest.writeInt(episodeId);
-            dest.writeLong(length);
-            dest.writeLong(downloaded);
-        }
+        dest.writeInt((byte) (isRestoreTask ? 1 : 0));
+        dest.writeString(getPriorityStr());
     }
 }

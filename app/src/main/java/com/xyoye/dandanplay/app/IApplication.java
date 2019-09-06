@@ -44,8 +44,6 @@ public class IApplication extends Application {
     public static List<String> trackers = new ArrayList<>();
     //云屏蔽弹幕列表
     public static List<String> cloudFilterList = new ArrayList<>();
-    //是否第一次打开任务管理界面
-    public static boolean isFirstOpenTaskPage = true;
     //应用是否正常的启动
     public static boolean startCorrectlyFlag = false;
 

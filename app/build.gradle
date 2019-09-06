@@ -125,6 +125,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
+    implementation 'commons-io:commons-io:2.5'
     implementation "com.frostwire:jlibtorrent:1.2.0.16"
     implementation "com.frostwire:jlibtorrent-android-arm:1.2.0.16"
 

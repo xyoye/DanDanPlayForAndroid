@@ -2,7 +2,7 @@
 //
 //import android.text.TextUtils;
 //
-//import com.xyoye.dandanplay.utils.jlibtorrent.TorrentTask;
+//import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 //import com.xyoye.dandanplay.utils.smbv2.http.HttpContentListener;
 //
 //import java.io.File;
@@ -30,7 +30,7 @@
 //    public static String TORRENT_IP = "";
 //
 //    //种子下载任务
-//    private TorrentTask btTask;
+//    private TorrentEngine btTask;
 //    //种子下载文件地址
 //    private static String btFilePath;
 //
@@ -43,7 +43,7 @@
 //        getInetAddressList();
 //    }
 //
-//    public void setTorrentTask(TorrentTask btTask) {
+//    public void setTorrentTask(TorrentEngine btTask) {
 //        this.btTask = btTask;
 //    }
 //

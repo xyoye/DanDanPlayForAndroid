@@ -92,14 +92,6 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
         taskRvAdapter.notifyDataSetChanged();
     }
 
-    public List<DownloadedTaskBean> getTaskList() {
-        return taskList;
-    }
-
-    public void updateTask() {
-        presenter.queryDownloadedTask();
-    }
-
     @Override
     public void onTaskDelete(int position, String taskHash, boolean withFile) {
 
@@ -126,5 +118,9 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
         //内存中数据
         if (position > -1 && position < taskList.size())
             taskRvAdapter.removeItem(position);
+    }
+
+    public void updateTask() {
+        presenter.queryDownloadedTask();
     }
 }

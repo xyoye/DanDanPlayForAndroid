@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentChildFile;
@@ -56,17 +55,17 @@ public class TaskDownloadingFileItem implements AdapterItem<TorrentChildFile> {
 
         //文件是否忽略下载
         if (model.isChecked()) {
-            fileNameTv.setTextColor(IApplication.get_resource().getColor(R.color.text_black));
+            fileNameTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
             int progress = model.getFileSize() == 0
                     ? 0
                     : (int) (model.getFileReceived() * 100 / model.getFileSize());
             downloadDurationPb.setProgress(progress);
 
-            String duration = CommonUtils.convertFileSize(model.getFileSize()) + "/" + CommonUtils.convertFileSize(model.getFileReceived());
+            String duration = CommonUtils.convertFileSize(model.getFileReceived()) + "/" + CommonUtils.convertFileSize(model.getFileSize());
             duration += "  (" + progress + "%)";
             durationTv.setText(duration);
         } else {
-            fileNameTv.setTextColor(IApplication.get_resource().getColor(R.color.text_gray));
+            fileNameTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             downloadDurationPb.setProgress(0);
             durationTv.setText("已忽略");
         }

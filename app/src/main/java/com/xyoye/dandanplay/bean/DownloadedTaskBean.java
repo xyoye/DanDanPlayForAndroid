@@ -15,7 +15,6 @@ public class DownloadedTaskBean {
     private String saveDirPath;
     private String torrentFilePath;
     private String torrentHash;
-    private String animeTitle;
     private long totalSize;
     private String completeTime;
     private List<DownloadedTaskFileBean> fileList;
@@ -70,14 +69,6 @@ public class DownloadedTaskBean {
 
     public void setTorrentHash(String torrentHash) {
         this.torrentHash = torrentHash;
-    }
-
-    public String getAnimeTitle() {
-        return animeTitle;
-    }
-
-    public void setAnimeTitle(String animeTitle) {
-        this.animeTitle = animeTitle;
     }
 
     public String getCompleteTime() {

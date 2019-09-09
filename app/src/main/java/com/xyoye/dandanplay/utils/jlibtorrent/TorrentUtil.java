@@ -1,7 +1,9 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.frostwire.jlibtorrent.ErrorCode;
 import com.frostwire.jlibtorrent.FileStorage;
 import com.xyoye.dandanplay.utils.Constants;
@@ -29,55 +31,35 @@ public class TorrentUtil {
     /**
      * 删除下载任务中的文件
      */
-    public static void deleteTaskFile(Torrent torrent) {
-//        if (StringUtils.isEmpty(torrent.getAnimeTitle())) {
-//            //无番剧标题，删除整个下载文件夹，因为每个下载文件的文件夹大概率不相同
-//            FileUtils.deleteDir(torrent.getSaveDirPath());
-//        } else {
-//            //有番剧标题，判断是否为多个文件
-//            File childFile = new File(torrent.getTorrentFileList().get(0).getPath());
-//            File parentFile = childFile.getParentFile();
-//            //单文件，直接删除文件，多文件删除多文件文件夹
-//            if (parentFile.getAbsolutePath().endsWith(torrent.getAnimeTitle())) {
-//                FileUtils.delete(torrent.getTorrentFileList().get(0).getPath());
-//            } else {
-//                FileUtils.deleteDir(parentFile);
-//            }
-//        }
+    public static void deleteTaskFile(String saveDirPath) {
+        FileUtils.deleteDir(saveDirPath);
     }
 
     /**
      * 将下载任务中迁移到已完成任务
      */
     public static void transferDownloaded(Torrent torrent, TorrentTask torrentTask){
-        Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(16)
-                .query()
-                .execute();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-        while (cursor.moveToNext()){
-            DataBaseManager.getInstance()
-                    .selectTable(14)
-                    .insert()
-                    .param(1, torrent.getTitle())
-                    .param(2, torrent.getSaveDirPath())
-                    .param(3, torrent.getTorrentPath())
-                    .param(4, torrent.getHash())
-                    .param(5, torrent.getAnimeTitle())
-                    .param(6, torrentTask.getTotalWanted())
-                    .param(7, simpleDateFormat.format(new Date()))
-                    .postExecute();
+        DataBaseManager.getInstance()
+                .selectTable(14)
+                .insert()
+                .param(1, torrent.getTitle())
+                .param(2, torrent.getSaveDirPath())
+                .param(3, torrent.getTorrentPath())
+                .param(4, torrent.getHash())
+                .param(5, torrentTask.getTotalWanted())
+                .param(6, simpleDateFormat.format(new Date()))
+                .postExecute();
 
-            FileStorage fileStorage = torrentTask.getTorrentFiles();
-            for (int i = 0; i < fileStorage.numFiles(); i++) {
-                DataBaseManager.getInstance()
-                        .selectTable(15)
-                        .insert()
-                        .param(1, torrent.getHash())
-                        .param(2, fileStorage.filePath(i))
-                        .param(3, fileStorage.fileSize(i))
-                        .postExecute();
-            }
+        FileStorage fileStorage = torrentTask.getTorrentFiles();
+        for (int i = 0; i < fileStorage.numFiles(); i++) {
+            DataBaseManager.getInstance()
+                    .selectTable(15)
+                    .insert()
+                    .param(1, torrent.getHash())
+                    .param(2, fileStorage.filePath(i))
+                    .param(3, fileStorage.fileSize(i))
+                    .postExecute();
         }
 
         deleteDownloadingData(torrent.getHash());
@@ -87,7 +69,8 @@ public class TorrentUtil {
      * 移除数据库中正在下载的文件
      */
     public static void deleteDownloadingData(String torrentHash){
-        DataBaseManager.getInstance().selectTable(16)
+        DataBaseManager.getInstance()
+                .selectTable(16)
                 .delete()
                 .where(1, torrentHash)
                 .postExecute();
@@ -96,20 +79,28 @@ public class TorrentUtil {
     /**
      * 将种子下载新任务保存到数据库中
      */
-    public static void insertNewTask(String torrentHash,
-                                     String torrentFilePath,
-                                     String saveDirPath,
-                                     String animeTitle,
-                                     String priorities) {
-        DataBaseManager.getInstance()
+    public static void insertNewTask(Torrent torrent) {
+
+        Cursor cursor = DataBaseManager.getInstance()
                 .selectTable(16)
-                .insert()
-                .param(1, torrentHash)
-                .param(2, torrentFilePath)
-                .param(3, saveDirPath)
-                .param(4, animeTitle)
-                .param(5, priorities)
-                .postExecute();
+                .query()
+                .where(1, torrent.getHash())
+                .execute();
+
+        if (cursor.getCount() == 0) {
+
+            DataBaseManager.getInstance()
+                    .selectTable(16)
+                    .insert()
+                    .param(1, torrent.getHash())
+                    .param(2, torrent.getTorrentPath())
+                    .param(3, torrent.getSaveDirPath())
+                    .param(4, torrent.getPriorityStr())
+                    .postExecute();
+        }
+
+
+
     }
 
     /**
@@ -125,7 +116,6 @@ public class TorrentUtil {
 
         while (cursor.moveToNext()){
             Torrent torrent = new Torrent(
-                    cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(3),
                     cursor.getString(4)

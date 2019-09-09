@@ -52,7 +52,7 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
 
         //查询记录
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(18)
+                .selectTable(17)
                 .query()
                 .setOrderByColumnDesc(6)
                 .execute();
@@ -121,7 +121,7 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
                 break;
             case R.id.item_delete_all:
                 DataBaseManager.getInstance()
-                        .selectTable(18)
+                        .selectTable(17)
                         .delete()
                         .postExecute();
                 historyList.clear();
@@ -145,7 +145,7 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
                     LocalPlayHistoryBean historyBean = (LocalPlayHistoryBean) iterator.next();
                     if (historyBean.isChecked()) {
                         DataBaseManager.getInstance()
-                                .selectTable(18)
+                                .selectTable(17)
                                 .delete()
                                 .where(1, historyBean.getVideoPath())
                                 .where(5, String.valueOf(historyBean.getSourceOrigin()))

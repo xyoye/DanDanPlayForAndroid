@@ -57,14 +57,15 @@ public class TorrentTask {
 
     private long lastSaveResumeTime;
 
-
     public TorrentTask(Torrent mTorrent, TorrentHandle mTorrentHandle, TorrentEngineCallback engineCallback) {
         this.mTorrent = mTorrent;
         this.mTorrentHandle = mTorrentHandle;
         this.engineCallback = engineCallback;
         this.taskListener = new TaskListener();
+
+        this.addTrackers(IApplication.trackers);
+        mTorrent.setTitle(mTorrentHandle.name());
         TorrentEngine.getInstance().addListener(taskListener);
-        addTrackers(IApplication.trackers);
     }
 
     /**
@@ -144,7 +145,7 @@ public class TorrentTask {
     /**
      * 获取子文件信息
      */
-    public FileStorage getTorrentFiles(){
+    public FileStorage getTorrentFiles() {
         if (!mTorrentHandle.isValid())
             return null;
 
@@ -171,17 +172,10 @@ public class TorrentTask {
     }
 
     /**
-     * 获取有效的已下载的大小
-     */
-    public long getReceivedBytes() {
-        return mTorrentHandle.isValid() ? mTorrentHandle.status().totalPayloadDownload() : 0;
-    }
-
-    /**
      * 获取已下载的总下载大小
      */
     public long getTotalReceivedBytes() {
-        return mTorrentHandle.isValid() ? mTorrentHandle.status().allTimeDownload() : 0;
+        return mTorrentHandle.isValid() ? mTorrentHandle.status().totalDone() : 0;
     }
 
 
@@ -394,8 +388,9 @@ public class TorrentTask {
      */
     private void torrentRemoved() {
         if (engineCallback != null)
-            engineCallback.onTorrentRemoved(mTorrent.getHash());
+            engineCallback.onTorrentRemoved(mTorrent);
 
+        TorrentEngine.getInstance().removeTorrentTask(mTorrent.getHash());
         TorrentEngine.getInstance().removeListener(taskListener);
     }
 

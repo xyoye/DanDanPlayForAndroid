@@ -53,7 +53,7 @@ public class TorrentConfig {
      * 最大同时活动任务数量
      */
     public int getMaxTaskCount() {
-        return SPUtils.getInstance().getInt(MAX_ACTIVITY_TASK, 4);
+        return SPUtils.getInstance().getInt(MAX_ACTIVITY_TASK, 3);
     }
 
     public void setMaxTaskCount(int taskCount) {
@@ -64,7 +64,7 @@ public class TorrentConfig {
      * 最大下载速度
      */
     public int getMaxDownloadRate() {
-        return SPUtils.getInstance().getInt(MAX_DOWNLOAD_RATE, 1000);
+        return SPUtils.getInstance().getInt(MAX_DOWNLOAD_RATE, 0);
     }
 
     public void setMaxDownloadRate(int rate) {
@@ -75,7 +75,7 @@ public class TorrentConfig {
      * 最大上传速度
      */
     public int getMaxUploadRate() {
-        return SPUtils.getInstance().getInt(MAX_UPLOAD_RATE, 1000);
+        return SPUtils.getInstance().getInt(MAX_UPLOAD_RATE, 0);
     }
 
     public void setMaxUploadRate(int rate) {

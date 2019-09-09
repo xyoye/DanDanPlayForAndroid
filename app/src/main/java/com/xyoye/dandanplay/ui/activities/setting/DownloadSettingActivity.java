@@ -10,6 +10,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentConfig;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,15 +46,15 @@ public class DownloadSettingActivity extends BaseMvcActivity {
         boolean onlyWifi = TorrentConfig.getInstance().isDownloadOnlyWifi();
         onlyWifiDownloadCb.setChecked(onlyWifi);
 
-        long downloadRate = TorrentConfig.getInstance().getMaxDownloadRate();
-        if (downloadRate == -1){
+        long downloadRate = TorrentConfig.getInstance().getMaxDownloadRate() / 1000;
+        if (downloadRate == 0) {
             downloadRateTv.setText("无限制");
-        }else {
-            downloadRateTv.setText(downloadRate+" k/s");
+        } else {
+            downloadRateTv.setText(downloadRate + " k/s");
         }
 
         int taskCount = TorrentConfig.getInstance().getMaxTaskCount();
-        taskCountTv.setText(taskCount+"");
+        taskCountTv.setText(taskCount + "");
     }
 
     @Override
@@ -101,23 +102,25 @@ public class DownloadSettingActivity extends BaseMvcActivity {
         builder.setTitle("选择最大任务数量");
         final String[] engines = {"1", "2", "3", "4", "5"};
         builder.setItems(engines, (dialog, which) -> {
-            TorrentConfig.getInstance().setMaxTaskCount(which+1);
-            taskCountTv.setText((which+1)+"");
+            TorrentConfig.getInstance().setMaxTaskCount(which + 1);
+            taskCountTv.setText((which + 1) + "");
+            TorrentEngine.getInstance().updateSetting();
         });
         builder.show();
     }
 
 
     @SuppressLint("SetTextI18n")
-    private void setMaxDownloadRate(){
+    private void setMaxDownloadRate() {
         new CommonEditTextDialog(this, CommonEditTextDialog.MAX_DOWNLOAD_RATE, result -> {
             int downloadRate = Integer.valueOf(result[0]);
-            TorrentConfig.getInstance().setMaxDownloadRate(downloadRate);
-            if (downloadRate == -1){
+            TorrentConfig.getInstance().setMaxDownloadRate(downloadRate * 1000);
+            if (downloadRate == 0) {
                 downloadRateTv.setText("无限制");
-            }else {
-                downloadRateTv.setText(downloadRate+" k/s");
+            } else {
+                downloadRateTv.setText(downloadRate + " k/s");
             }
+            TorrentEngine.getInstance().updateSetting();
         }).show();
     }
 }

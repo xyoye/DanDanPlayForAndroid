@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.flyco.tablayout.CommonTabLayout;
@@ -19,6 +19,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.event.TorrentServiceEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
@@ -28,10 +29,15 @@ import com.xyoye.dandanplay.ui.fragment.DownloadedFragment;
 import com.xyoye.dandanplay.ui.fragment.DownloadingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.utils.TabEntity;
+import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentConfig;
 import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
+import com.xyoye.dandanplay.utils.jlibtorrent.TorrentTask;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,8 +91,6 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         fragmentList.add(downloadingFragment);
         fragmentList.add(downloadedFragment);
 
-        initTabLayout();
-
         initViewPager();
 
         int position = getIntent().getIntExtra("fragment_position", 0);
@@ -103,7 +107,51 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
     @Override
     public void initListener() {
+        TaskManageListener taskManageListener = new TaskManageListener() {
+            @Override
+            public void pauseTask(String taskHash) {
+                TorrentTask torrentTask = TorrentEngine.getInstance().getTorrentTask(taskHash);
+                if (torrentTask != null)
+                    torrentTask.pause();
+            }
 
+            @Override
+            public void resumeTask(String taskHash) {
+                boolean isWifiLimit = TorrentConfig.getInstance().isDownloadOnlyWifi() && !NetworkUtils.isWifiConnected();
+                if (isWifiLimit) {
+                    ToastUtils.showShort("仅限WIFI下载");
+                } else {
+                    TorrentTask torrentTask = TorrentEngine.getInstance().getTorrentTask(taskHash);
+                    if (torrentTask != null)
+                        torrentTask.resume();
+                }
+            }
+
+            @Override
+            public void deleteTask(String taskHash, boolean withFile) {
+                TorrentTask torrentTask = TorrentEngine.getInstance().getTorrentTask(taskHash);
+                if (torrentTask != null)
+                    torrentTask.remove(false);
+            }
+
+            @Override
+            public void pauseAllTask() {
+                TorrentEngine.getInstance().pauseAll();
+            }
+
+            @Override
+            public void resumeAllTask() {
+                boolean isWifiLimit = TorrentConfig.getInstance().isDownloadOnlyWifi() && !NetworkUtils.isWifiConnected();
+                if (isWifiLimit) {
+                    ToastUtils.showShort("仅限WIFI下载");
+                } else {
+                    TorrentEngine.getInstance().resumeAll();
+                }
+            }
+        };
+
+        DownloadingFragment downloadingFragment = (DownloadingFragment) fragmentList.get(0);
+        downloadingFragment.setTaskManageListener(taskManageListener);
     }
 
     @Override
@@ -144,8 +192,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
         ToastUtils.showShort(message);
     }
 
-
-    private void initTabLayout() {
+    private void initViewPager() {
         ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
         mTabEntities.add(new TabEntity("下载中", 0, 0));
         mTabEntities.add(new TabEntity("已完成", 0, 0));
@@ -162,9 +209,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
 
             }
         });
-    }
 
-    private void initViewPager() {
         DownloadFragmentAdapter fragmentAdapter = new DownloadFragmentAdapter(getSupportFragmentManager(), fragmentList);
         viewPager.setAdapter(fragmentAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -203,8 +248,8 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     protected void onDestroy() {
         super.onDestroy();
         //没有下载任务在执行，关闭服务
-        if (TorrentEngine.getInstance().getTaskList().size() == 0) {
-            startTorrentService(TorrentService.Action.ACTION_SHUTDOWN, null);
+        if (TorrentEngine.getInstance().isAllowExit()) {
+            stopService(new Intent(this, TorrentService.class));
         }
     }
 
@@ -214,10 +259,21 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     @Override
     public void startNewTask() {
         Torrent torrent = getIntent().getParcelableExtra("download_data");
-        if (torrent != null){
+        if (torrent != null) {
             startTorrentService(TorrentService.Action.ACTION_ADD_TORRENT, torrent);
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onServiceEvent(TorrentServiceEvent event) {
+        DownloadingFragment downloadingFragment = (DownloadingFragment) fragmentList.get(0);
+        downloadingFragment.updateAdapter(TorrentService.taskStateMap.values());
+        if (event.isTaskFinish()) {
+            DownloadedFragment downloadedFragment = (DownloadedFragment) fragmentList.get(1);
+            downloadedFragment.updateTask();
+        }
+    }
+
 
     /**
      * 开启下载服务

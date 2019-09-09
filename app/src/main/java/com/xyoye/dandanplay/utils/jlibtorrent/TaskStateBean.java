@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.utils.jlibtorrent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class TaskStateBean implements Parcelable {
+public class TaskStateBean implements Parcelable, Comparable<TaskStateBean> {
     private String torrentHash;
     private String taskName;
     private String saveDirPath;
@@ -12,6 +12,7 @@ public class TaskStateBean implements Parcelable {
     private long receivedBytes;
     private long totalBytes;
     private long downloadSpeed;
+    private long taskBuildTime;
 
     public static TaskStateBean buildTaskState(TorrentTask torrentTask){
         Torrent torrent = torrentTask.getTorrent();
@@ -21,9 +22,10 @@ public class TaskStateBean implements Parcelable {
                 torrent.getSaveDirPath(),
                 torrentTask.getStateCode(),
                 torrentTask.getProgress(),
-                torrentTask.getReceivedBytes(),
+                torrentTask.getTotalReceivedBytes(),
                 torrentTask.getTotalWanted(),
-                torrentTask.getDownloadSpeed()
+                torrentTask.getDownloadSpeed(),
+                torrent.getTaskBuildTime()
         );
     }
 
@@ -34,7 +36,8 @@ public class TaskStateBean implements Parcelable {
                          int progress,
                          long receivedBytes,
                          long totalBytes,
-                         long downloadSpeed) {
+                         long downloadSpeed,
+                         long taskBuildTime) {
 
         this.torrentHash = torrentHash;
         this.taskName = name;
@@ -44,6 +47,7 @@ public class TaskStateBean implements Parcelable {
         this.receivedBytes = receivedBytes;
         this.totalBytes = totalBytes;
         this.downloadSpeed = downloadSpeed;
+        this.taskBuildTime = taskBuildTime;
     }
 
     public TaskStateBean(Parcel source) {
@@ -55,6 +59,7 @@ public class TaskStateBean implements Parcelable {
         receivedBytes = source.readLong();
         totalBytes = source.readLong();
         downloadSpeed = source.readLong();
+        taskBuildTime = source.readLong();
     }
 
     public String getTorrentHash() {
@@ -136,6 +141,7 @@ public class TaskStateBean implements Parcelable {
         dest.writeLong(receivedBytes);
         dest.writeLong(totalBytes);
         dest.writeLong(downloadSpeed);
+        dest.writeLong(taskBuildTime);
     }
 
     public static final Parcelable.Creator<TaskStateBean> CREATOR =
@@ -163,6 +169,7 @@ public class TaskStateBean implements Parcelable {
         result = prime * result + (int) (receivedBytes ^ (receivedBytes >>> 32));
         result = prime * result + (int) (totalBytes ^ (totalBytes >>> 32));
         result = prime * result + (int) (downloadSpeed ^ (downloadSpeed >>> 32));
+        result = prime * result + (int) (taskBuildTime ^ (taskBuildTime >>> 32));
 
         return result;
     }
@@ -184,6 +191,12 @@ public class TaskStateBean implements Parcelable {
                 progress == state.progress &&
                 receivedBytes == state.receivedBytes &&
                 totalBytes == state.totalBytes &&
-                downloadSpeed == state.downloadSpeed;
+                downloadSpeed == state.downloadSpeed &&
+                taskBuildTime == state.taskBuildTime;
+    }
+
+    @Override
+    public int compareTo(TaskStateBean o) {
+        return Long.compare(taskBuildTime, o.taskBuildTime);
     }
 }

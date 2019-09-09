@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.frostwire.jlibtorrent.AlertListener;
 import com.frostwire.jlibtorrent.ErrorCode;
 import com.frostwire.jlibtorrent.SessionManager;
@@ -43,32 +44,19 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
     private Queue<NewTaskRunnable> mNewTaskQueue;
     //新增任务的线程池
     private ExecutorService mNewTaskExecutor;
-
+    //下载引擎与下载服务的回调
     private TorrentEngineCallback engineCallback;
 
     private TorrentEngine() {
-        // TODO: 2019/9/5 开发中开启log
-        super(true);
-
+        super(false);
         mTaskMap = new ConcurrentHashMap<>();
         mNewTaskMap = new ConcurrentHashMap<>();
         mNewTaskQueue = new LinkedList<>();
         mNewTaskExecutor = Executors.newCachedThreadPool();
-
         //添加回调
         addListener(this);
-
         //启动下载引擎
-        start(new SessionParams(
-                        new SettingsPack()
-                                .setString(settings_pack.string_types.dht_bootstrap_nodes.swigValue(), TorrentUtil.getDhtBootstrapNodeString())//路由表
-                                .downloadRateLimit(0)//下载速度限制
-                                .uploadRateLimit(0)//上传速度限制
-                                .connectionsLimit(200)//连接数量限制
-                                .activeDhtLimit(88)//dht限制
-                                .anonymousMode(false)//是否为匿名模式
-                )
-        );
+        start(new SessionParams(getEngineSetting()));
     }
 
     public static TorrentEngine getInstance() {
@@ -77,8 +65,8 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
 
     @Override
     protected void onAfterStart() {
+        //恢复未完成的任务
         restoreTask();
-
         if (engineCallback != null)
             engineCallback.onEngineStarted();
     }
@@ -110,10 +98,7 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
 
         torrent.setRestoreTask(false);
         mNewTaskQueue.add(new NewTaskRunnable(torrent, this));
-
-        if (mNewTaskMap.size() == 0) {
-            queueNewTask();
-        }
+        queueNewTask();
     }
 
     /**
@@ -136,6 +121,19 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
                 continue;
             torrentTask.resume();
         }
+    }
+
+    /**
+     * 检查是否可退出下载服务
+     */
+    public boolean isAllowExit() {
+        if (mTaskMap.values().size() == 0)
+            return true;
+        for (TorrentTask torrentTask : mTaskMap.values()) {
+            if (!torrentTask.isPaused())
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -162,7 +160,7 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
     /**
      * 根据hash移除一个任务信息
      */
-    public void removeTorrentTask(String hash){
+    public void removeTorrentTask(String hash) {
         mTaskMap.remove(hash);
     }
 
@@ -225,6 +223,34 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
         return stats().uploadRate();
     }
 
+
+    /**
+     * 初始下载配置
+     */
+    private SettingsPack getEngineSetting() {
+        return new SettingsPack()
+                .setString(settings_pack.string_types.dht_bootstrap_nodes.swigValue(), TorrentUtil.getDhtBootstrapNodeString())//路由表
+                .downloadRateLimit(TorrentConfig.getInstance().getMaxDownloadRate())//下载速度限制
+                .uploadRateLimit(0)//上传速度限制
+                .connectionsLimit(200)//连接数量限制
+                .activeDhtLimit(88)//dht限制
+                .anonymousMode(false)//是否为匿名模式
+                .activeLimit(TorrentConfig.getInstance().getMaxTaskCount());//最大活动任务数量
+    }
+
+    /**
+     * 外部更新配置
+     */
+    public void updateSetting() {
+        applySettings(
+                new SettingsPack()
+                        .downloadRateLimit(TorrentConfig.getInstance().getMaxDownloadRate())
+                        .activeLimit(TorrentConfig.getInstance().getMaxTaskCount()));
+        if (swig() != null) {
+            TorrentUtil.saveSessionData(saveState());
+        }
+    }
+
     @Override
     public int[] types() {
         return ACCEPT_ALERT_TYPE;
@@ -244,12 +270,13 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
                 if (torrent == null)
                     break;
 
+                torrent.setTaskBuildTime(System.currentTimeMillis());
                 mTaskMap.put(hash, new TorrentTask(torrent, torrentHandle, engineCallback));
 
                 queueNewTask();
 
                 if (engineCallback != null)
-                    engineCallback.onTorrentAdded(hash);
+                    engineCallback.onTorrentAdded(hash, torrent.isRestoreTask());
                 break;
             case TORRENT_REMOVED:
                 mTaskMap.remove(((TorrentRemovedAlert) alert).infoHash().toHex());
@@ -270,6 +297,7 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
         if (mTaskMap.containsKey(newTorrent.getHash()))
             return false;
         mNewTaskMap.put(newTorrent.getHash(), newTorrent);
+        LogUtils.e("已执行任务添加");
         return true;
     }
 

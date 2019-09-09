@@ -161,19 +161,16 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void search(String text, int type, int subgroup) {
-        getView().showLoading();
         MagnetBean.searchMagnet(text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifeful()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
                 if (magnetBean != null && magnetBean.getResources() != null){
-                    getView().hideLoading();
                     getView().refreshSearch(magnetBean.getResources());
                 }
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }
@@ -192,7 +189,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void downloadTorrent(String magnet){
-        getView().showLoading();
+        getView().showDownloadTorrentLoading();
         MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
             @Override
             public void onSuccess(ResponseBody responseBody) {
@@ -200,13 +197,13 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 downloadPath += Constants.DefaultConfig.torrentFolder;
                 downloadPath += "/" + magnet.substring(20) +".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
-                getView().hideLoading();
+                getView().dismissDownloadTorrentLoading();
                 getView().downloadTorrentOver(downloadPath, magnet);
             }
 
             @Override
             public void onError(int errorCode, String message) {
-                getView().hideLoading();
+                getView().dismissDownloadTorrentLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort("下载种子文件失败");
             }

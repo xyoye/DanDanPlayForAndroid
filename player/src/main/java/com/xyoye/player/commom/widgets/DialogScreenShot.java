@@ -51,24 +51,16 @@ public class DialogScreenShot extends Dialog {
 
         shotIv.setImageBitmap(bitmap);
 
-        shotCancelBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogScreenShot.this.dismiss();
-            }
-        });
+        shotCancelBt.setOnClickListener(v -> DialogScreenShot.this.dismiss());
 
-        shotSaveBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String path = saveImage(bitmap);
-                if (path == null){
-                    ToastUtils.showShort("保存截图失败");
-                }else {
-                    ToastUtils.showLong("保存成功："+path);
-                }
-                DialogScreenShot.this.dismiss();
+        shotSaveBt.setOnClickListener(v -> {
+            String path = saveImage(bitmap);
+            if (path == null) {
+                ToastUtils.showShort("保存截图失败");
+            } else {
+                ToastUtils.showLong("保存成功：" + path);
             }
+            DialogScreenShot.this.dismiss();
         });
     }
 
@@ -89,12 +81,12 @@ public class DialogScreenShot extends Dialog {
     }
 
     @SuppressLint("SimpleDateFormat")
-    public String saveImage(Bitmap bitmap) {
+    private String saveImage(Bitmap bitmap) {
         FileOutputStream fos = null;
-        String imagePath = null;
+        String imagePath;
         try {
             //make folder
-            String folderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DanDanPlayer/_image";
+            String folderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DanDanPlay/_image";
             File folder = new File(folderPath);
             if (!folder.exists()) {
                 folder.mkdirs();

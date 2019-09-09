@@ -144,7 +144,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
                     fileStorage.fileName(i),
                     fileStorage.fileSize(i),
                     receivedBytes[i],
-                    priorities[i] == Priority.IGNORE
+                    priorities[i] != Priority.IGNORE
             );
             childFileList.add(childFile);
         }

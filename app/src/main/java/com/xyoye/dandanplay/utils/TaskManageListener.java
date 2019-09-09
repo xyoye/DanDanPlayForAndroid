@@ -10,4 +10,8 @@ public interface TaskManageListener {
     void resumeTask(String taskHash);
 
     void deleteTask(String taskHash, boolean withFile);
+
+    void pauseAllTask();
+
+    void resumeAllTask();
 }

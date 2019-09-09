@@ -17,22 +17,26 @@ public class Torrent implements Parcelable {
     private String title;
     private String torrentPath;
     private String saveDirPath;
-    private String animeTitle;
     private String hash;
     private boolean isRestoreTask;
+    private long taskBuildTime;
     private List<Priority> priorityList;
 
-    public Torrent(String torrentFilePath, String saveDirPath, String animeTitle, List<Priority> priorityList) {
+    /**
+     * 新增任务
+     */
+    public Torrent(String torrentFilePath, String saveDirPath, List<Priority> priorityList) {
         this.torrentPath = torrentFilePath;
         this.saveDirPath = saveDirPath;
-        this.animeTitle = animeTitle;
         this.priorityList = priorityList;
     }
 
-    public Torrent(String torrentFilePath, String saveDirPath, String animeTitle, String priorityStr) {
+    /**
+     * 恢复任务
+     */
+    public Torrent(String torrentFilePath, String saveDirPath, String priorityStr) {
         this.torrentPath = torrentFilePath;
         this.saveDirPath = saveDirPath;
-        this.animeTitle = animeTitle;
         this.priorityList = priority2List(priorityStr);
     }
 
@@ -40,9 +44,9 @@ public class Torrent implements Parcelable {
         title = in.readString();
         torrentPath = in.readString();
         saveDirPath = in.readString();
-        animeTitle = in.readString();
         hash = in.readString();
         isRestoreTask = in.readInt() != 0;
+        taskBuildTime = in.readLong();
         priorityList = priority2List(in.readString());
     }
 
@@ -70,14 +74,6 @@ public class Torrent implements Parcelable {
         this.saveDirPath = saveDirPath;
     }
 
-    public String getAnimeTitle() {
-        return animeTitle;
-    }
-
-    public void setAnimeTitle(String animeTitle) {
-        this.animeTitle = animeTitle;
-    }
-
     public String getHash() {
         return hash;
     }
@@ -92,6 +88,14 @@ public class Torrent implements Parcelable {
 
     public void setRestoreTask(boolean recoveryTask) {
         isRestoreTask = recoveryTask;
+    }
+
+    public long getTaskBuildTime() {
+        return taskBuildTime;
+    }
+
+    public void setTaskBuildTime(long taskBuildTime) {
+        this.taskBuildTime = taskBuildTime;
     }
 
     public Priority[] getPriorities() {
@@ -119,10 +123,12 @@ public class Torrent implements Parcelable {
         List<Priority> priorityList = new ArrayList<>();
         if (priorityStr.contains(";")) {
             for (String str : priorityStr.split(";")) {
-                priorityList.add(Priority.valueOf(str));
+                int value = Integer.valueOf(str);
+                priorityList.add(Priority.fromSwig(value));
             }
         } else {
-            priorityList.add(Priority.valueOf(priorityStr));
+            int value = Integer.valueOf(priorityStr);
+            priorityList.add(Priority.fromSwig(value));
         }
         return priorityList;
     }
@@ -133,7 +139,6 @@ public class Torrent implements Parcelable {
     public boolean isCanBeTask() {
         return !TextUtils.isEmpty(torrentPath) &&
                 !TextUtils.isEmpty(saveDirPath) &&
-                !TextUtils.isEmpty(hash) &&
                 priorityList.size() > 0;
     }
 
@@ -159,9 +164,9 @@ public class Torrent implements Parcelable {
         dest.writeString(title);
         dest.writeString(torrentPath);
         dest.writeString(saveDirPath);
-        dest.writeString(animeTitle);
         dest.writeString(hash);
         dest.writeInt((byte) (isRestoreTask ? 1 : 0));
+        dest.writeLong(taskBuildTime);
         dest.writeString(getPriorityStr());
     }
 }

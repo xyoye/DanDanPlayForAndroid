@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.frostwire.jlibtorrent.Priority;
 import com.frostwire.jlibtorrent.TorrentInfo;
 import com.xyoye.dandanplay.utils.Constants;
@@ -33,6 +34,7 @@ public class NewTaskRunnable implements Runnable {
 
             Priority[] priorities = mTorrent.getPriorities();
             if (priorities == null || priorities.length != torrentInfo.numFiles()) {
+                LogUtils.e("添加任务失败");
                 return;
             }
 

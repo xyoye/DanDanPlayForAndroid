@@ -20,8 +20,6 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.frostwire.jlibtorrent.Priority;
 import com.frostwire.jlibtorrent.TorrentInfo;
-import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
-import com.xyoye.player.commom.utils.AnimHelper;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xunlei.downloadlib.XLDownloadManager;
 import com.xunlei.downloadlib.XLTaskHelper;
@@ -50,8 +48,11 @@ import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
+import com.xyoye.player.commom.utils.AnimHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -320,16 +321,20 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                     String saveDirPath = AppConfig.getInstance().getDownloadFolder();
                     String taskName = torrentInfo.name();
 
-                    if (!TextUtils.isEmpty(animeTitle)){
-                        saveDirPath += "/" + animeTitle;
-                    }else {
-                        saveDirPath += "/" + taskName;
+                    //单文件时会以文件名作为下载任务名称，去除后缀
+                    if (taskName.contains(".") && CommonUtils.isMediaFile(taskName)){
+                        taskName = taskName.substring(0, taskName.lastIndexOf("."));
                     }
+
+                    //有番剧名则路径名为：下载目录/番剧名/任务名称/视频
+                    if (!TextUtils.isEmpty(animeTitle)) {
+                        saveDirPath += "/" + animeTitle;
+                    }
+                    saveDirPath += "/" + taskName;
 
                     Torrent torrent = new Torrent(
                             torrentFilePath,
                             saveDirPath,
-                            animeTitle,
                             priorityList);
 
                     Intent intent = new Intent(SearchActivity.this, DownloadManagerActivity.class);
@@ -369,18 +374,13 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     @Override
-    public void showLoading() {
-        //showLoadingDialog();
+    public void showDownloadTorrentLoading() {
+        showLoadingDialog();
     }
 
     @Override
-    public void hideLoading() {
-        //dismissLoadingDialog();
-    }
-
-    @Override
-    public void showError(String message) {
-        ToastUtils.showShort(message);
+    public void dismissDownloadTorrentLoading() {
+        dismissLoadingDialog();
     }
 
     @Override

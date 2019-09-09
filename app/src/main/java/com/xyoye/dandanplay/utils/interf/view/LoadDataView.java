@@ -19,7 +19,7 @@ public interface LoadDataView {
 
     /**
      * 错误信息返回
-     * @param message
+     * @param message 错误信息
      */
     void showError(String message);
 }

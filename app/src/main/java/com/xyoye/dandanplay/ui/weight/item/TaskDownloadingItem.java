@@ -44,7 +44,7 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
     private Context context;
     private TaskManageListener taskManageListener;
 
-    public TaskDownloadingItem(TaskManageListener taskManageListener){
+    public TaskDownloadingItem(TaskManageListener taskManageListener) {
         this.taskManageListener = taskManageListener;
     }
 
@@ -68,10 +68,10 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
     public void onUpdateViews(TaskStateBean taskState, int position) {
         downloadTitleTv.setText(taskState.getTaskName());
 
-        switch (taskState.getStateCode()){
+        switch (taskState.getStateCode()) {
             case DOWNLOADING:
                 String downloadSpeed = CommonUtils.convertFileSize(taskState.getDownloadSpeed());
-                downloadSpeedTv.setText("↓ "+downloadSpeed+"/s");
+                downloadSpeedTv.setText("↓ " + downloadSpeed + "/s");
                 downloadDurationPb.setProgress(taskState.getProgress());
                 downloadDurationTv.setText(getDuration(taskState));
 
@@ -146,22 +146,22 @@ public class TaskDownloadingItem implements AdapterItem<TaskStateBean> {
 
 
         //单击展示详情弹窗
-        downloadInfoRl.setOnClickListener(v ->  {
+        downloadInfoRl.setOnClickListener(v -> {
             String statusStr = downloadStatusTv.getText().toString();
             new TaskDownloadingDetailDialog(context, taskState, statusStr, taskManageListener).show();
         });
 
         //点击图标切换任务状态
         downloadCtrlRl.setOnClickListener(v -> {
-            if (taskState.getStateCode() == TorrentStateCode.PAUSED){
+            if (taskState.getStateCode() == TorrentStateCode.PAUSED) {
                 taskManageListener.resumeTask(taskState.getTorrentHash());
-            }else {
+            } else {
                 taskManageListener.pauseTask(taskState.getTorrentHash());
             }
         });
     }
 
     private String getDuration(TaskStateBean taskState) {
-        return CommonUtils.convertFileSize(taskState.getReceivedBytes()) +"/" +CommonUtils.convertFileSize(taskState.getTotalBytes());
+        return CommonUtils.convertFileSize(taskState.getReceivedBytes()) + "/" + CommonUtils.convertFileSize(taskState.getTotalBytes());
     }
 }

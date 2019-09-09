@@ -11,7 +11,7 @@ import java.util.List;
  * Created by xyoye on 2019/1/8.
  */
 
-public interface SearchView extends BaseMvpView, LoadDataView {
+public interface SearchView extends BaseMvpView{
     void refreshHistory(List<SearchHistoryBean> historyList, boolean doSearch);
 
     void refreshSearch(List<MagnetBean.ResourcesBean> searchResult);
@@ -21,4 +21,8 @@ public interface SearchView extends BaseMvpView, LoadDataView {
     void downloadExisted(String torrentPath, String magnet);
 
     String getDownloadFolder();
+
+    void showDownloadTorrentLoading();
+
+    void dismissDownloadTorrentLoading();
 }

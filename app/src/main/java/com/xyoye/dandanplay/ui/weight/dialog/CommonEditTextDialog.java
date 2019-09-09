@@ -108,7 +108,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 break;
             case MAX_DOWNLOAD_RATE:
                 titleTv.setText("最大下载速度");
-                editText.setHint("请输入最大下载速度(k/s)，-1为无限制");
+                editText.setHint("请输入最大下载速度(k/s)，0为无限制");
                 editText.setMaxLines(1);
                 break;
         }

@@ -205,14 +205,14 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      */
     public void saveDatabase() {
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(18)
+                .selectTable(17)
                 .query()
                 .where(1, videoPath)
                 .where(5, String.valueOf(sourceOrigin))
                 .execute();
         if (cursor.getCount() > 0) {
             DataBaseManager.getInstance()
-                    .selectTable(18)
+                    .selectTable(17)
                     .update()
                     .param(2, videoTitle)
                     .param(3, danmuPath)
@@ -223,7 +223,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                     .execute();
         } else {
             DataBaseManager.getInstance()
-                    .selectTable(18)
+                    .selectTable(17)
                     .insert()
                     .param(1, videoPath)
                     .param(2, videoTitle)

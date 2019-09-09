@@ -63,7 +63,7 @@ public class CrashHandleUtils implements UncaughtExceptionHandler {
      * 初始化
      */
     public void init(CrashListener crashListener) {
-        this.path = Environment.getExternalStorageDirectory() + "/DanDanPlayer/_crash/";
+        this.path = Environment.getExternalStorageDirectory() + "/DanDanPlay/_crash/";
         this.crashListener = crashListener;
 
         mContext = IApplication.get_context();
@@ -205,7 +205,7 @@ public class CrashHandleUtils implements UncaughtExceptionHandler {
      */
     @SuppressLint("SimpleDateFormat")
     public static String saveCatchInfo2FileV2(Throwable ex) {
-        String path = Environment.getExternalStorageDirectory() + "/DanDanPlayer/_crash/";
+        String path = Environment.getExternalStorageDirectory() + "/DanDanPlay/_crash/";
         StringBuilder sb = new StringBuilder();
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);

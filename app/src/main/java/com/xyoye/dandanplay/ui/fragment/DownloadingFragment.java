@@ -17,9 +17,10 @@ import com.xyoye.dandanplay.ui.weight.item.TaskDownloadingItem;
 import com.xyoye.dandanplay.utils.TaskManageListener;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.TaskStateBean;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -101,10 +102,12 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.pause_all_tv:
-                TorrentEngine.getInstance().pauseAll();
+                if (taskManageListener != null)
+                    taskManageListener.pauseAllTask();
                 break;
             case R.id.start_all_tv:
-                TorrentEngine.getInstance().resumeAll();
+                if (taskManageListener != null)
+                    taskManageListener.resumeAllTask();
                 break;
         }
     }
@@ -113,9 +116,10 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         this.taskManageListener = taskManageListener;
     }
 
-    public void updateAdapter(List<TaskStateBean> stateBeanList) {
+    public void updateAdapter(Collection<TaskStateBean> stateBeanList) {
         taskStateBeanList.clear();
         taskStateBeanList.addAll(stateBeanList);
+        Collections.sort(taskStateBeanList);
         taskRvAdapter.notifyDataSetChanged();
         downloadingTaskNumberTv.setText(
                 String.valueOf(taskRvAdapter.getItemCount()));

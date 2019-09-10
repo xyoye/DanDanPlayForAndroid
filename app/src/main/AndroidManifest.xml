@@ -144,9 +144,13 @@
         <activity
             android:name=".ui.activities.personal.LocalPlayHistoryActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--播放器设置-->
+        <!-- 播放器设置 -->
         <activity
             android:name=".ui.activities.setting.DownloadSettingActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!-- 崩溃页面 -->
+        <activity
+            android:name=".ui.activities.personal.CrashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"

@@ -121,11 +121,11 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.6'
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-    implementation 'commons-io:commons-io:2.5'
     implementation "com.frostwire:jlibtorrent:1.2.0.16"
     implementation "com.frostwire:jlibtorrent-android-arm:1.2.0.16"
 

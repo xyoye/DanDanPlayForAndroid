@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.app;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
@@ -11,15 +10,15 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.blankj.utilcode.util.Utils;
+import com.xyoye.dandanplay.ui.activities.OpenActivity;
+import com.xyoye.dandanplay.ui.activities.personal.CrashActivity;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
-import com.xyoye.dandanplay.ui.activities.OpenActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.CrashHandleUtils;
 import com.xyoye.dandanplay.utils.KeyUtil;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
 
@@ -29,6 +28,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import cat.ereza.customactivityoncrash.config.CaocConfig;
 import skin.support.SkinCompatManager;
 import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
@@ -50,7 +50,6 @@ public class IApplication extends Application {
     public static Handler mainHandler;
     public static ThreadPoolExecutor executor;
     public static Context _context;
-    public static Resources _resource;
     public static AssetManager _asset;
     public static CookiesManager cookiesManager;
 
@@ -59,7 +58,6 @@ public class IApplication extends Application {
     public void onCreate() {
         super.onCreate();
         _context = this.getApplicationContext();
-        _resource = _context.getResources();
         _asset = _context.getAssets();
 
         //AndroidUtilsCode
@@ -76,16 +74,15 @@ public class IApplication extends Application {
                 .setSkinAllActivityEnable(true)
                 .loadSkin();
 
-        //crash
-        CrashHandleUtils.getInstance().init(() -> {
-            //OpenActivity
-            Intent restartIntent = new Intent(_context, OpenActivity.class);
-            restartIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);//必须添加FLAG_ACTIVITY_CLEAR_TASK否则会无线重启
-            startActivity(restartIntent);
-
-            //杀死当前进程
-            android.os.Process.killProcess(android.os.Process.myPid());
-        });
+        //Crash
+        CaocConfig.Builder.create()
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM)
+                .enabled(true)
+                .trackActivities(true)
+                .minTimeBetweenCrashesMs(2000)
+                .restartActivity(OpenActivity.class)
+                .errorActivity(CrashActivity.class)
+                .apply();
 
         //Bugly
         Bugly.init(getApplicationContext(), KeyUtil.getBuglyAppId(getApplicationContext()), false);
@@ -142,10 +139,6 @@ public class IApplication extends Application {
 
     public static Context get_context() {
         return _context;
-    }
-
-    public static Resources get_resource() {
-        return _resource;
     }
 
     public static AssetManager get_asset() {

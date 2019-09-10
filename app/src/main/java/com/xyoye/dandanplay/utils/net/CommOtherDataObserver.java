@@ -3,9 +3,7 @@ package com.xyoye.dandanplay.utils.net;
 import android.app.ProgressDialog;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.JsonSyntaxException;
-import com.xyoye.dandanplay.utils.CrashHandleUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.net.SocketTimeoutException;
@@ -78,8 +76,7 @@ public abstract class CommOtherDataObserver<T> implements Observer<T>  {
         } else if (e instanceof SocketTimeoutException) {
             return "服务器繁忙";
         } else {
-            CrashHandleUtils.saveCatchInfo2FileV2(e);
-            return e.toString();
+            return "其它异常: "+e.getClass();
         }
     }
 

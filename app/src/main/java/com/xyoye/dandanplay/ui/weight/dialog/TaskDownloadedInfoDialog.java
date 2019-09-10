@@ -1,25 +1,17 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.ui.weight.item.TaskDownloadedFileItem;
-import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,29 +21,23 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/3/5.
  */
 
-public class TaskDownloadedDetailDialog extends Dialog {
+public class TaskDownloadedInfoDialog extends Dialog {
     @BindView(R.id.name_tv)
     TextView nameTv;
     @BindView(R.id.path_tv)
     TextView pathTv;
     @BindView(R.id.magnet_tv)
     TextView magnetTv;
-    @BindView(R.id.file_rv)
-    RecyclerView fileRv;
     @BindView(R.id.status_tv)
     TextView statusTv;
 
     private Context context;
     private int taskPosition;
     private DownloadedTaskBean taskBean;
-    private BaseRvAdapter<DownloadedTaskBean.DownloadedTaskFileBean> fileAdapter;
-    private Activity mActivity;
     private TaskDeleteListener taskDeleteListener;
-    private List<DownloadedTaskBean.DownloadedTaskFileBean> fileBeanList;
 
-    public TaskDownloadedDetailDialog(@NonNull Context context, int taskPosition, DownloadedTaskBean taskBean, TaskDeleteListener taskDeleteListener) {
+    public TaskDownloadedInfoDialog(@NonNull Context context, int taskPosition, DownloadedTaskBean taskBean, TaskDeleteListener taskDeleteListener) {
         super(context, R.style.Dialog);
-        this.mActivity = (Activity) context;
         this.taskPosition = taskPosition;
         this.context = context;
         this.taskBean = taskBean;
@@ -61,34 +47,20 @@ public class TaskDownloadedDetailDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_download_task_detail);
+        setContentView(R.layout.dialog_downloaded_task_info);
         ButterKnife.bind(this, this);
 
         nameTv.setText(taskBean.getTitle());
         pathTv.setText(taskBean.getSaveDirPath());
         magnetTv.setText(taskBean.getMagnet());
         statusTv.setText("已完成");
-
-        fileBeanList = taskBean.getFileList();
-
-        fileRv.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        fileRv.setNestedScrollingEnabled(false);
-        fileRv.setItemViewCacheSize(10);
-        fileAdapter = new BaseRvAdapter<DownloadedTaskBean.DownloadedTaskFileBean>(fileBeanList) {
-            @NonNull
-            @Override
-            public AdapterItem<DownloadedTaskBean.DownloadedTaskFileBean> onCreateItem(int viewType) {
-                return new TaskDownloadedFileItem(taskPosition, mActivity);
-            }
-        };
-        fileRv.setAdapter(fileAdapter);
     }
 
-    @OnClick({R.id.dialog_cancel_iv, R.id.path_tv, R.id.magnet_tv, R.id.delete_tv})
+    @OnClick({R.id.close_tv, R.id.path_tv, R.id.magnet_tv, R.id.delete_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.dialog_cancel_iv:
-                TaskDownloadedDetailDialog.this.dismiss();
+            case R.id.close_tv:
+                TaskDownloadedInfoDialog.this.dismiss();
                 break;
             case R.id.path_tv:
                 String path = taskBean.getSaveDirPath();
@@ -121,12 +93,6 @@ public class TaskDownloadedDetailDialog extends Dialog {
                 break;
         }
 
-    }
-
-    public void updateFileList(DownloadedTaskBean taskBean) {
-        fileBeanList.clear();
-        fileBeanList.addAll(taskBean.getFileList());
-        fileAdapter.notifyDataSetChanged();
     }
 
     public interface TaskDeleteListener {

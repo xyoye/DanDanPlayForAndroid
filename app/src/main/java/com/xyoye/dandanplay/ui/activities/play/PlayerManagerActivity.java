@@ -14,6 +14,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
+import com.xyoye.dandanplay.bean.BindDanmuBean;
+import com.xyoye.dandanplay.bean.params.BindDanmuParam;
 import com.xyoye.dandanplay.bean.params.PlayParam;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
@@ -97,8 +99,11 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_DANMU) {
             if (resultCode == RESULT_OK) {
-                danmuPath = data.getStringExtra("path");
-                episodeId = data.getIntExtra("episode_id", 0);
+                BindDanmuBean bindDanmuBean = getIntent().getParcelableExtra("bind_data");
+                if (bindDanmuBean != null){
+                    danmuPath = bindDanmuBean.getDanmuPath();
+                    episodeId = bindDanmuBean.getEpisodeId();
+                }
             }
             if (TextUtils.isEmpty(videoPath)) {
                 ToastUtils.showShort("解析视频地址失败");
@@ -170,9 +175,9 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      * 跳转至选择弹幕页面
      */
     private void launchDanmuSelect(String videoPath) {
+        BindDanmuParam param = new BindDanmuParam(videoPath, true);
         Intent intent = new Intent(PlayerManagerActivity.this, DanmuNetworkActivity.class);
-        intent.putExtra("video_path", videoPath);
-        intent.putExtra("not_local_file", true);
+        intent.putExtra("bind_param", param);
         startActivityForResult(intent, SELECT_DANMU);
     }
 

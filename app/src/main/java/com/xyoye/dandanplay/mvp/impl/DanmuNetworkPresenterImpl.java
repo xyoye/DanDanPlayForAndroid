@@ -102,12 +102,12 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
                 getView().hideLoading();
                 if (danmuSearchBean.getAnimes().size() > 0){
                     List<DanmuMatchBean.MatchesBean> matchesBeanList = new ArrayList<>();
-                    for (DanmuSearchBean.AnimesBean animesBean : danmuSearchBean.getAnimes()){
+                    for (DanmuSearchBean.AnimesBean animeBean : danmuSearchBean.getAnimes()){
                         DanmuMatchBean.MatchesBean matchesBean = new DanmuMatchBean.MatchesBean();
-                        for (DanmuSearchBean.AnimesBean.EpisodesBean episodesBean : animesBean.getEpisodes()){
-                            matchesBean.setAnimeId(animesBean.getAnimeId());
-                            matchesBean.setAnimeTitle(animesBean.getAnimeTitle());
-                            matchesBean.setType(animesBean.getType());
+                        for (DanmuSearchBean.AnimesBean.EpisodesBean episodesBean : animeBean.getEpisodes()){
+                            matchesBean.setAnimeId(animeBean.getAnimeId());
+                            matchesBean.setAnimeTitle(animeBean.getAnimeTitle());
+                            matchesBean.setType(animeBean.getType());
                             matchesBean.setEpisodeId(episodesBean.getEpisodeId());
                             matchesBean.setEpisodeTitle(episodesBean.getEpisodeTitle());
                             matchesBeanList.add(matchesBean);

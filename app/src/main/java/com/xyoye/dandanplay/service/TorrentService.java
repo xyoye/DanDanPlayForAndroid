@@ -32,6 +32,7 @@ import com.xyoye.dandanplay.utils.jlibtorrent.WifiReceiver;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by xyoye on 2019/8/22.
@@ -46,35 +47,25 @@ public class TorrentService extends Service {
     private static final int NOTIFY_SYNC_TIME = 1000; //ms
 
     private WifiReceiver wifiReceiver;
-    private TorrentEngineCallback engineCallback;
     private Runnable syncNotifyRunnable;
     private Handler syncNotifyHandler;
 
-    private boolean isAlreadyRunning;
+    private AtomicBoolean isRefreshing = new AtomicBoolean(false);
     public static ConcurrentHashMap<String, TaskStateBean> taskStateMap = new ConcurrentHashMap<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        initNotification();
-
         initData();
 
         initListener();
 
-        initHandler();
+        updateUIData();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!isAlreadyRunning) {
-            TorrentEngine.getInstance().setEngineCallback(engineCallback);
-            //恢复任务后立即开始可能会出现崩溃，延长用户可操作下载项时间
-            syncNotifyHandler.postDelayed(syncNotifyRunnable, NOTIFY_SYNC_TIME + 500);
-            isAlreadyRunning = true;
-        }
-
         if (intent != null && intent.getAction() != null) {
             if (Action.ACTION_ADD_TORRENT.equals(intent.getAction())) {
                 Torrent torrent = intent.getParcelableExtra(IntentTag.ADD_TASK_TORRENT);
@@ -93,19 +84,28 @@ public class TorrentService extends Service {
      * 初始化数据
      */
     private void initData() {
+        //初始化广播
         wifiReceiver = new WifiReceiver(isConnected -> {
             if (TorrentConfig.getInstance().isDownloadOnlyWifi() && !isConnected) {
                 ToastUtils.showShort("wifi连接断开，已暂停所有下载任务");
                 TorrentEngine.getInstance().pauseAll();
             }
         });
-        registerReceiver(wifiReceiver,new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
-    }
+        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION));
 
-    /**
-     * 初始化通知
-     */
-    private void initNotification() {
+        //初始化刷新
+        syncNotifyHandler = new Handler();
+        syncNotifyRunnable = new Runnable() {
+            @Override
+            public void run() {
+                isRefreshing.set(true);
+                updateUIData();
+                startForeground(NOTIFICATION_ID, buildNotification());
+                syncNotifyHandler.postDelayed(this, NOTIFY_SYNC_TIME);
+            }
+        };
+
+        //初始化通知
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("com.xyoye.dandanplay.TorrentService.DownloadChannel", "TorrentService", NotificationManager.IMPORTANCE_LOW);
@@ -124,7 +124,7 @@ public class TorrentService extends Service {
      * 初始化下载回调
      */
     public void initListener() {
-        engineCallback = new TorrentEngineCallback() {
+        TorrentEngine.getInstance().setEngineCallback(new TorrentEngineCallback() {
 
             @Override
             public void onEngineStarted() {
@@ -206,6 +206,10 @@ public class TorrentService extends Service {
                 Torrent torrent = torrentTask.getTorrent();
                 if (torrent == null) return;
 
+                if (!isRefreshing.get()) {
+                    syncNotifyHandler.postDelayed(syncNotifyRunnable, NOTIFY_SYNC_TIME);
+                }
+
                 updateUI(torrentTask);
             }
 
@@ -234,31 +238,7 @@ public class TorrentService extends Service {
                 ToastUtils.showShort("启动下载服务失败，请尝试重启应用");
                 Log.e(TAG, "onSessionError: " + errorMsg);
             }
-        };
-    }
-
-    /**
-     * 初始化刷新Handler
-     */
-    private void initHandler() {
-        syncNotifyHandler = new Handler();
-        syncNotifyRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isAlreadyRunning) {
-                    for (TorrentTask torrentTask : TorrentEngine.getInstance().getTaskList()) {
-                        TaskStateBean taskState = TaskStateBean.buildTaskState(torrentTask);
-                        String hash = taskState.getTorrentHash();
-                        taskStateMap.remove(hash);
-                        taskStateMap.put(hash, taskState);
-
-                    }
-                    EventBus.getDefault().post(new TorrentServiceEvent());
-                    startForeground(NOTIFICATION_ID, buildNotification());
-                }
-                syncNotifyHandler.postDelayed(this, NOTIFY_SYNC_TIME);
-            }
-        };
+        });
     }
 
     /**
@@ -279,15 +259,11 @@ public class TorrentService extends Service {
             foregroundNotify.setChannelId("com.xyoye.dandanplay.TorrentService.DownloadChannel");
         }
 
-        if (isAlreadyRunning) {
-            foregroundNotify.setContentText("任务数量: " + TorrentEngine.getInstance().getTaskList().size());
-            String speed = "速度: " +
-                    "↓" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getDownloadRate()) + "/s ." +
-                    "↑" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getUploadRate()) + "/s";
-            foregroundNotify.setContentText(speed);
-        } else {
-            foregroundNotify.setContentText("暂无任务");
-        }
+        foregroundNotify.setContentText("任务数量: " + TorrentEngine.getInstance().getTaskList().size());
+        String speed = "速度: " +
+                "↓" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getDownloadRate()) + "/s ." +
+                "↑" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getUploadRate()) + "/s";
+        foregroundNotify.setContentText(speed);
         Notification notify = foregroundNotify.build();
         notify.flags = Notification.FLAG_FOREGROUND_SERVICE;
         return notify;
@@ -312,6 +288,19 @@ public class TorrentService extends Service {
         EventBus.getDefault().post(new TorrentServiceEvent(isTaskFinish));
     }
 
+    /**
+     * 刷新界面任务数据
+     */
+    private void updateUIData() {
+        for (TorrentTask torrentTask : TorrentEngine.getInstance().getTaskList()) {
+            TaskStateBean taskState = TaskStateBean.buildTaskState(torrentTask);
+            String hash = taskState.getTorrentHash();
+            taskStateMap.remove(hash);
+            taskStateMap.put(hash, taskState);
+        }
+        EventBus.getDefault().post(new TorrentServiceEvent());
+    }
+
     @Override
     public void onDestroy() {
         try {
@@ -321,10 +310,10 @@ public class TorrentService extends Service {
 
         if (syncNotifyHandler != null) {
             syncNotifyHandler.removeCallbacks(syncNotifyRunnable);
+            isRefreshing.set(false);
         }
 
         taskStateMap.clear();
-        isAlreadyRunning = false;
         super.onDestroy();
     }
 

@@ -19,6 +19,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.BindDanmuBean;
 import com.xyoye.dandanplay.bean.event.TorrentServiceEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
@@ -49,7 +50,6 @@ import butterknife.BindView;
  */
 
 public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPresenter> implements DownloadManagerView {
-    public static final int TASK_DOWNLOADING_DANMU_BIND = 1001;
     public static final int TASK_DOWNLOADED_DANMU_BIND = 1002;
 
     @BindView(R.id.tab_layout)
@@ -234,10 +234,20 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == TASK_DOWNLOADING_DANMU_BIND) {
+            if (requestCode == TASK_DOWNLOADED_DANMU_BIND) {
+                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
+                if (bindDanmuBean == null)
+                    return;
 
-            } else if (requestCode == TASK_DOWNLOADED_DANMU_BIND) {
+                int episodeId = bindDanmuBean.getEpisodeId();
+                String danmuPath = bindDanmuBean.getDanmuPath();
+                int taskPosition = bindDanmuBean.getItemPosition();
+                int taskFilePosition = bindDanmuBean.getTaskFilePosition();
 
+                DownloadedFragment downloadedFragment = (DownloadedFragment) fragmentList.get(1);
+                if (downloadedFragment != null) {
+                    downloadedFragment.updateDanmu(taskPosition, taskFilePosition, danmuPath, episodeId);
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

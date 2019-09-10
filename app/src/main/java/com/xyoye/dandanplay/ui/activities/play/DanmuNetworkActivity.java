@@ -16,7 +16,9 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
+import com.xyoye.dandanplay.bean.BindDanmuBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
+import com.xyoye.dandanplay.bean.params.BindDanmuParam;
 import com.xyoye.dandanplay.mvp.impl.DanmuNetworkPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
 import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
@@ -36,21 +38,24 @@ import io.reactivex.disposables.Disposable;
 
 /**
  * Created by xyoye on 2018/7/4.
+ *
+ * 网络弹幕绑定界面
  */
-
 
 public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter> implements DanmuNetworkView {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private String videoPath;
     private BaseRvAdapter<DanmuMatchBean.MatchesBean> adapter;
-
+    private BindDanmuParam bindDanmuParam;
 
     @Override
     @SuppressLint("CheckResult")
     public void initView() {
         setTitle("选择网络弹幕");
+
+        bindDanmuParam = getIntent().getParcelableExtra("bind_param");
+
         adapter = new BaseRvAdapter<DanmuMatchBean.MatchesBean>(new ArrayList<>()) {
             @NonNull
             @Override
@@ -89,18 +94,17 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.addItemDecoration(new ItemDecorationSpaces(0, 0, 0, 1));
         recyclerView.setAdapter(adapter);
 
-        videoPath = getIntent().getStringExtra("video_path");
-        if (StringUtils.isEmpty(videoPath)) {
+        if (StringUtils.isEmpty(bindDanmuParam.getVideoPath())) {
             ToastUtils.showShort("无匹配弹幕");
             return;
         }
 
-        if (getIntent().getBooleanExtra("not_local_file", false)) {
+        if (bindDanmuParam.isOutsideFile()) {
             //非手机本地文件，无法获取MD5
-            String title = FileUtils.getFileNameNoExtension(videoPath);
+            String title = FileUtils.getFileNameNoExtension(bindDanmuParam.getVideoPath());
             presenter.searchDanmu(title, "");
         } else {
-            presenter.matchDanmu(videoPath);
+            presenter.matchDanmu(bindDanmuParam.getVideoPath());
         }
     }
 
@@ -178,18 +182,19 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     }
 
     private void showDownloadDialog(DanmuMatchBean.MatchesBean model) {
-        new DanmuDownloadDialog(DanmuNetworkActivity.this, videoPath, model, (danmuPath, episodeId) ->
-                finishActivity(episodeId, danmuPath)).show();
+        new DanmuDownloadDialog(DanmuNetworkActivity.this, bindDanmuParam.getVideoPath(), model,
+                (danmuPath, episodeId) -> finishActivity(episodeId, danmuPath)).show();
     }
 
     public void finishActivity(int episodeId, String danmuPath) {
+        BindDanmuBean danmuBean = new BindDanmuBean();
+        danmuBean.setDanmuPath(danmuPath);
+        danmuBean.setEpisodeId(episodeId);
+        danmuBean.setItemPosition(bindDanmuParam.getItemPosition());
+        danmuBean.setTaskFilePosition(bindDanmuParam.getTaskFilePosition());
+
         Intent intent = getIntent();
-        intent.putExtra("episode_id", episodeId);
-        intent.putExtra("path", danmuPath);
-        intent.putExtra("position", getIntent().getIntExtra("position", -1));
-        //下载任务绑定弹幕
-        intent.putExtra("task_hash", getIntent().getStringExtra("task_hash"));
-        intent.putExtra("task_file_position", getIntent().getIntExtra("task_file_position", -1));
+        intent.putExtra("bind_data", danmuBean);
         setResult(RESULT_OK, intent);
         finish();
     }

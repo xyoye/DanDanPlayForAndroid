@@ -67,7 +67,7 @@ public class TaskDownloadingDetailDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_download_task_detail);
+        setContentView(R.layout.dialog_downloaded_task_info);
         ButterKnife.bind(this, this);
 
         nameTv.setText(taskStateBean.getTaskName());

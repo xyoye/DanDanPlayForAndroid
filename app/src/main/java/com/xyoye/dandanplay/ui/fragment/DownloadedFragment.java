@@ -3,18 +3,20 @@ package com.xyoye.dandanplay.ui.fragment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.impl.DownloadedFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
-import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedDetailDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedFileDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadedItem;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
@@ -26,13 +28,14 @@ import butterknife.BindView;
  * Created by xyoye on 2019/8/1.
  */
 
-public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresenter> implements DownloadedFragmentView, TaskDownloadedDetailDialog.TaskDeleteListener {
+public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresenter> implements DownloadedFragmentView, TaskDownloadedInfoDialog.TaskDeleteListener {
 
     @BindView(R.id.task_rv)
     RecyclerView taskRv;
 
     private BaseRvAdapter<DownloadedTaskBean> taskRvAdapter;
     private List<DownloadedTaskBean> taskList;
+    private SparseArray<TaskDownloadedFileDialog> dialogArray = new SparseArray<>();
 
     public static DownloadedFragment newInstance() {
         return new DownloadedFragment();
@@ -57,7 +60,7 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
             @NonNull
             @Override
             public AdapterItem<DownloadedTaskBean> onCreateItem(int viewType) {
-                return new TaskDownloadedItem(DownloadedFragment.this);
+                return new TaskDownloadedItem(dialogArray, DownloadedFragment.this);
             }
         };
         taskRv.setAdapter(taskRvAdapter);
@@ -96,10 +99,8 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
     public void onTaskDelete(int position, String taskHash, boolean withFile) {
 
         //删除系统中文件
-        if(withFile){
-            for (DownloadedTaskBean.DownloadedTaskFileBean fileBean : taskList.get(position).getFileList()){
-                FileUtils.delete(fileBean.getFilePath());
-            }
+        if (withFile) {
+            FileUtils.deleteDir(taskList.get(position).getSaveDirPath());
         }
 
         //删除数据库中信息
@@ -122,5 +123,35 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
 
     public void updateTask() {
         presenter.queryDownloadedTask();
+    }
+
+    public void updateDanmu(int taskPosition, int taskFilePosition, String danmuPath, int episodeId) {
+        if (taskPosition == -1 || taskFilePosition == -1)
+            return;
+
+        if (taskPosition < taskList.size()) {
+            DownloadedTaskBean taskBean = taskList.get(taskPosition);
+            if (taskFilePosition < taskBean.getFileList().size()) {
+                DownloadedTaskBean.DownloadedTaskFileBean fileBean = taskBean.getFileList().get(taskFilePosition);
+                fileBean.setDanmuPath(danmuPath);
+                fileBean.setEpisode_id(episodeId);
+
+                String hash = taskBean.getTorrentHash();
+                DataBaseManager.getInstance()
+                        .selectTable(15)
+                        .update()
+                        .param(4, danmuPath)
+                        .param(5, episodeId)
+                        .where(1, hash)
+                        .postExecute();
+
+                TaskDownloadedFileDialog downloadedFileDialog = dialogArray.get(taskPosition);
+                if (downloadedFileDialog != null && downloadedFileDialog.isShowing()) {
+                    downloadedFileDialog.updateFileList();
+                }
+
+                taskRvAdapter.notifyItemChanged(taskPosition);
+            }
+        }
     }
 }

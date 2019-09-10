@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
 import android.database.Cursor;
-import android.text.TextUtils;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.frostwire.jlibtorrent.ErrorCode;
@@ -38,7 +37,7 @@ public class TorrentUtil {
     /**
      * 将下载任务中迁移到已完成任务
      */
-    public static void transferDownloaded(Torrent torrent, TorrentTask torrentTask){
+    public static void transferDownloaded(Torrent torrent, TorrentTask torrentTask) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         DataBaseManager.getInstance()
                 .selectTable(14)
@@ -53,11 +52,12 @@ public class TorrentUtil {
 
         FileStorage fileStorage = torrentTask.getTorrentFiles();
         for (int i = 0; i < fileStorage.numFiles(); i++) {
+            String filePath = torrent.getSaveDirPath() + "/" + fileStorage.filePath(i);
             DataBaseManager.getInstance()
                     .selectTable(15)
                     .insert()
                     .param(1, torrent.getHash())
-                    .param(2, fileStorage.filePath(i))
+                    .param(2, filePath)
                     .param(3, fileStorage.fileSize(i))
                     .postExecute();
         }
@@ -68,7 +68,7 @@ public class TorrentUtil {
     /**
      * 移除数据库中正在下载的文件
      */
-    public static void deleteDownloadingData(String torrentHash){
+    public static void deleteDownloadingData(String torrentHash) {
         DataBaseManager.getInstance()
                 .selectTable(16)
                 .delete()
@@ -100,7 +100,6 @@ public class TorrentUtil {
         }
 
 
-
     }
 
     /**
@@ -114,7 +113,7 @@ public class TorrentUtil {
 
         List<Torrent> torrentList = new ArrayList<>();
 
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             Torrent torrent = new Torrent(
                     cursor.getString(2),
                     cursor.getString(3),

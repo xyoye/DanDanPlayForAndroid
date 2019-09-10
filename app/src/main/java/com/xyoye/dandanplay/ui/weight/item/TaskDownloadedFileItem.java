@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
+import com.xyoye.dandanplay.bean.params.BindDanmuParam;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.play.DanmuNetworkActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
@@ -82,10 +83,9 @@ public class TaskDownloadedFileItem implements AdapterItem<DownloadedTaskBean.Do
 
         danmuBindIv.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getFilePath())) {
-                Intent intent = new Intent(mView.getContext(), DanmuNetworkActivity.class);
-                intent.putExtra("position", taskPosition);
-                intent.putExtra("video_path", model.getFilePath());
-                intent.putExtra("task_file_position", position);
+                BindDanmuParam param = new BindDanmuParam(model.getFilePath(), taskPosition, position);
+                Intent intent = new Intent(mActivity, DanmuNetworkActivity.class);
+                intent.putExtra("bind_param", param);
                 mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADED_DANMU_BIND);
             } else {
                 ToastUtils.showShort("不支持绑定弹幕的文件格式");

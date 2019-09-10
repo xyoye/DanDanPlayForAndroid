@@ -90,7 +90,7 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     public void querySqlDevice() {
         querySqlDeviceDis = Observable.create((ObservableOnSubscribe<List<SmbBean>>) emitter -> {
             Cursor deviceCursor = DataBaseManager.getInstance()
-                                    .selectTable(7)
+                                    .selectTable("smb_device")
                                     .query()
                                     .execute();
             List<SmbBean> deviceList = new ArrayList<>();
@@ -136,9 +136,9 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     public void addSqlDevice(SmbBean smbBean) {
 
         Cursor cursor = DataBaseManager.getInstance()
-                        .selectTable(7)
+                        .selectTable("smb_device")
                         .query()
-                        .where(3, smbBean.getUrl())
+                        .where("device_ip", smbBean.getUrl())
                         .execute();
         if (cursor.getCount() > 0){
             updateSqlDevice(smbBean);
@@ -149,29 +149,29 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
         String deviceName = StringUtils.isEmpty(smbBean.getName()) ? "UnKnow" : smbBean.getName();
         DataBaseManager.getInstance()
-                .selectTable(7)
+                .selectTable("smb_device")
                 .insert()
-                .param(1, deviceName)
-                .param(3, smbBean.getUrl())
-                .param(4, smbBean.getAccount())
-                .param(5, smbBean.getPassword())
-                .param(6, smbBean.getDomain())
-                .param(7, smbBean.isAnonymous() ? 1 : 0)
+                .param("device_name", deviceName)
+                .param("device_ip", smbBean.getUrl())
+                .param("device_user_name", smbBean.getAccount())
+                .param("device_user_password", smbBean.getPassword())
+                .param("device_user_domain", smbBean.getDomain())
+                .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
                 .postExecute();
     }
 
     @Override
     public void updateSqlDevice(SmbBean smbBean) {
         DataBaseManager.getInstance()
-                .selectTable(7)
+                .selectTable("smb_device")
                 .update()
-                .param(1, smbBean.getName())
-                .param(1, smbBean.getNickName())
-                .param(4, smbBean.getAccount())
-                .param(5, smbBean.getPassword())
-                .param(6, smbBean.getDomain())
-                .param(7, smbBean.isAnonymous() ? 1 : 0)
-                .where(3, smbBean.getUrl())
+                .param( "device_name", smbBean.getName())
+                .param("device_nick_name", smbBean.getNickName())
+                .param("device_user_name", smbBean.getAccount())
+                .param("device_user_password", smbBean.getPassword())
+                .param("device_user_domain", smbBean.getDomain())
+                .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
+                .where("device_ip", smbBean.getUrl())
                 .postExecute();
     }
 
@@ -354,9 +354,9 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     @Override
     public void removeSqlDevice(String url) {
         DataBaseManager.getInstance()
-                .selectTable(7)
+                .selectTable("smb_device")
                 .delete()
-                .where(3, url)
+                .where("device_ip", url)
                 .postExecute();
     }
 }

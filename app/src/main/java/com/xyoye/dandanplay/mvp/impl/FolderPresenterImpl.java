@@ -82,12 +82,12 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     @Override
     public void updateDanmu(String danmuPath, int episodeId, String[] whereArgs) {
         DataBaseManager.getInstance()
-                .selectTable(2)
+                .selectTable("file")
                 .update()
-                .param(3, danmuPath)
-                .param(6, episodeId)
-                .where(1, whereArgs[0])
-                .where(2, whereArgs[1])
+                .param("danmu_path", danmuPath)
+                .param("danmu_episode_id", episodeId)
+                .where("folder_path", whereArgs[0])
+                .where("file_path", whereArgs[1])
                 .postExecute();
     }
 
@@ -97,18 +97,18 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
             String folderPath = FileUtils.getDirName(filePath);
             //delete file
             DataBaseManager.getInstance()
-                    .selectTable(2)
+                    .selectTable("file")
                     .delete()
-                    .where(1, folderPath)
-                    .where(2, filePath)
+                    .where("folder_path", folderPath)
+                    .where("file_path", filePath)
                     .execute();
 
             //folder file number reduce, if number-1 == 0, delete folder
             Cursor cursor = DataBaseManager.getInstance()
-                    .selectTable(1)
+                    .selectTable("folder")
                     .query()
-                    .setColumns(2)
-                    .where(1, folderPath)
+                    .queryColumns("file_number")
+                    .where("folder_path", folderPath)
                     .execute();
 
             //if folder exist
@@ -116,16 +116,16 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 int number = cursor.getInt(0);
                 if (number > 2){
                     DataBaseManager.getInstance()
-                            .selectTable(1)
+                            .selectTable("folder")
                             .update()
-                            .param(2, --number)
-                            .where(1, folderPath)
+                            .param("file_number", --number)
+                            .where("folder_path", folderPath)
                             .execute();
                 }else {
                     DataBaseManager.getInstance()
-                            .selectTable(1)
+                            .selectTable("folder")
                             .delete()
-                            .where(1, folderPath)
+                            .where("folder_path", folderPath)
                             .execute();
                 }
             }
@@ -200,19 +200,19 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     private List<VideoBean> getDataBaseVideo(String folderPath){
         List<VideoBean> videoBeans = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(2)
+                .selectTable("file")
                 .query()
-                .where(1, folderPath)
+                .where("folder_path", folderPath)
                 .execute();
         while (cursor.moveToNext()){
             String filePath = cursor.getString(2);
             File file = new File(filePath);
             if (!file.exists()){
                 DataBaseManager.getInstance()
-                        .selectTable(2)
+                        .selectTable("file")
                         .delete()
-                        .where(1, folderPath)
-                        .where(2, filePath)
+                        .where("folder_path", folderPath)
+                        .where("file_path", filePath)
                         .postExecute();
                 continue;
             }

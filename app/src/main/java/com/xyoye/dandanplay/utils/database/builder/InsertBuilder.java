@@ -23,56 +23,65 @@ public class InsertBuilder{
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, String value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, String value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Byte value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Byte value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Short value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Short value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Integer value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Integer value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Long value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Long value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Float value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Float value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Double value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Double value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, Boolean value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, Boolean value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public InsertBuilder param(int column, byte[] value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public InsertBuilder param(String colName, byte[] value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 

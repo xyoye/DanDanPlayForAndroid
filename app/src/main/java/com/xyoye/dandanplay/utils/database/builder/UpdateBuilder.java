@@ -14,14 +14,14 @@ import io.reactivex.annotations.CheckReturnValue;
 /**
  * Created by xyoye on 2019/4/17.
  */
-public class UpdateBuilder{
+public class UpdateBuilder {
     private SQLiteDatabase sqLiteDatabase;
     private int tablePosition;
     private ContentValues mValues;
     private List<String> whereClause;
     private List<String> whereArgs;
 
-    UpdateBuilder(int tablePosition, SQLiteDatabase sqLiteDatabase){
+    UpdateBuilder(int tablePosition, SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
         this.tablePosition = tablePosition;
         mValues = new ContentValues();
@@ -38,60 +38,78 @@ public class UpdateBuilder{
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, String value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder where(String colName, String value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        String whereClauseText = colName + " = ?";
+        whereClause.add(whereClauseText);
+        whereArgs.add(value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Byte value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, String value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Short value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Byte value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Integer value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Short value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Long value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Integer value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Float value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Long value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Double value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Float value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, Boolean value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Double value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
     @CheckReturnValue
-    public UpdateBuilder param(int column, byte[] value) {
-        mValues.put(DataBaseInfo.getFieldNames()[tablePosition][column], value);
+    public UpdateBuilder param(String colName, Boolean value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
         return this;
     }
 
-    public int execute(){
+    @CheckReturnValue
+    public UpdateBuilder param(String colName, byte[] value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        mValues.put(colName, value);
+        return this;
+    }
+
+    public int execute() {
         if (mValues == null)
             return 0;
 
@@ -103,15 +121,15 @@ public class UpdateBuilder{
             clauseBuilder.append(whereClause.get(i)).append(" AND ");
             args[i] = whereArgs.get(i);
         }
-        if (clauseBuilder.length() > 5){
-            clause = clauseBuilder.substring(0, clauseBuilder.length()-5);
-        }else {
+        if (clauseBuilder.length() > 5) {
+            clause = clauseBuilder.substring(0, clauseBuilder.length() - 5);
+        } else {
             clause = "";
         }
-        return sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause , args);
+        return sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause, args);
     }
 
-    public void postExecute(){
+    public void postExecute() {
         IApplication.getExecutor().execute(this::execute);
     }
 }

@@ -58,10 +58,10 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
     public void addScanFolder(String path, boolean isScan) {
         String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         DataBaseManager.getInstance()
-                .selectTable(11)
+                .selectTable("scan_folder")
                 .insert()
-                .param(1, path)
-                .param(2, scanType)
+                .param("folder_path", path)
+                .param("folder_type", scanType)
                 .execute();
 
         queryScanFolderList(isScan);
@@ -72,9 +72,9 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
     public void queryScanFolderList(boolean isScan) {
         String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
                 Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(11)
+                .selectTable("scan_folder")
                 .query()
-                .where(2, scanType)
+                .where("folder_type", scanType)
                 .execute();
 
         List<ScanFolderBean> folderList = new ArrayList<>();
@@ -92,18 +92,18 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
             //将不删除系统视频，只改变为屏蔽或扫描
             String newScanType = isScan ? Constants.ScanType.BLOCK : Constants.ScanType.SCAN;
             DataBaseManager.getInstance()
-                    .selectTable(11)
+                    .selectTable("scan_folder")
                     .update()
-                    .where(1, path)
-                    .where(2, scanType)
-                    .param(2, newScanType)
+                    .where("folder_path", path)
+                    .where("folder_type", scanType)
+                    .param("folder_type", newScanType)
                     .execute();
         }else {
             DataBaseManager.getInstance()
-                    .selectTable(11)
+                    .selectTable("scan_folder")
                     .delete()
-                    .where(1, path)
-                    .where(2, scanType)
+                    .where("folder_path", path)
+                    .where("folder_type", scanType)
                     .execute();
         }
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));

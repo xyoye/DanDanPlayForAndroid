@@ -16,7 +16,6 @@ import java.util.Map;
  * Created by xyoye on 2018/8/5.
  */
 
-
 public class RegisterParam implements Serializable {
 
     /**

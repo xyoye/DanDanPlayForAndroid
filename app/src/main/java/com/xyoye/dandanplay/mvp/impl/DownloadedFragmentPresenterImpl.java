@@ -60,7 +60,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
             List<DownloadedTaskBean> taskList = new ArrayList<>();
             Cursor taskCursor = DataBaseManager
                     .getInstance()
-                    .selectTable(14)
+                    .selectTable("downloaded_task")
                     .query()
                     .execute();
             while (taskCursor.moveToNext()) {
@@ -109,9 +109,9 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
         List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
         Cursor fileCursor = DataBaseManager
                 .getInstance()
-                .selectTable(15)
+                .selectTable("downloaded_file")
                 .query()
-                .where(1, taskHash)
+                .where("task_torrent_hash", taskHash)
                 .execute();
         while (fileCursor.moveToNext()) {
             DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();

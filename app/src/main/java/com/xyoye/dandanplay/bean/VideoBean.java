@@ -6,7 +6,6 @@ import java.io.Serializable;
  * Created by xyoye on 2018/6/30.
  */
 
-
 public class VideoBean implements Serializable {
     private int _id;
     private String videoPath;

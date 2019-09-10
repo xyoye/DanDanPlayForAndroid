@@ -72,10 +72,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     public VideoBean getLastPlayVideo(String videoPath) {
         VideoBean videoBean = null;
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(2)
+                .selectTable("file")
                 .query()
-                .setColumns(3, 4, 6)
-                .where(2, videoPath)
+                .queryColumns("danmu_path", "current_position", "danmu_episode_id")
+                .where("file_path", videoPath)
                 .execute();
         if (cursor.moveToNext()){
             videoBean = new VideoBean();
@@ -100,10 +100,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     @Override
     public void deleteFolder(String folderPath) {
         DataBaseManager.getInstance()
-                .selectTable(11)
+                .selectTable("scan_folder")
                 .insert()
-                .param(1, folderPath)
-                .param(2, "0")
+                .param("folder_path", folderPath)
+                .param("folder_type", "0")
                 .execute();
     }
 
@@ -153,9 +153,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
         //查询所有视频
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(2)
+                .selectTable("file")
                 .query()
-                .setColumns(1, 2)
+                .queryColumns("folder_path", "file_path")
                 .execute();
         while (cursor.moveToNext()){
             String folderPath = cursor.getString(0);
@@ -189,7 +189,8 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             File file = new File(filePath);
             if (file.exists()){
                 if (beanMap.containsKey(folderPath)){
-                    int number = beanMap.get(folderPath);
+                    Integer number = beanMap.get(folderPath);
+                    number = number == null ? 0 : number;
                     beanMap.put(folderPath, ++number);
                 }else {
                     beanMap.put(folderPath, 1);
@@ -204,20 +205,20 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
             folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
             DataBaseManager.getInstance()
-                    .selectTable(1)
+                    .selectTable("folder")
                     .update()
-                    .param(2, entry.getValue())
-                    .where(1, entry.getKey())
+                    .param("file_number", entry.getValue())
+                    .where("folder_path", entry.getKey())
                     .execute();
         }
 
         //删除不存在的文件
         for (Map.Entry<String, String> entry : deleteMap.entrySet()){
             DataBaseManager.getInstance()
-                    .selectTable(2)
+                    .selectTable("file")
                     .delete()
-                    .where(1, entry.getKey())
-                    .where(2, entry.getValue())
+                    .where("folder_path", entry.getKey())
+                    .where("file_path", entry.getValue())
                     .execute();
         }
         return folderBeanList;
@@ -231,10 +232,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         List<String> folderList = new ArrayList<>();
         //查询屏蔽目录
         Cursor blockCursor = DataBaseManager.getInstance()
-                .selectTable(11)
+                .selectTable("scan_folder")
                 .query()
-                .setColumns(1)
-                .where(2, scanType)
+                .queryColumns("folder_path")
+                .where("folder_type", scanType)
                 .execute();
 
         //获取所有屏蔽目录
@@ -259,20 +260,20 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
 
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(2)
+                .selectTable("file")
                 .query()
-                .where(1, folderPath)
-                .where(2, videoBean.getVideoPath())
+                .where("folder_path", folderPath)
+                .where("file_path", videoBean.getVideoPath())
                 .execute();
         if (!cursor.moveToNext()) {
             DataBaseManager.getInstance()
-                    .selectTable(2)
+                    .selectTable("file")
                     .insert()
-                    .param(1, folderPath)
-                    .param(2, videoBean.getVideoPath())
-                    .param(5, String.valueOf(videoBean.getVideoDuration()))
-                    .param(7, String.valueOf(videoBean.getVideoSize()))
-                    .param(8, videoBean.get_id())
+                    .param("folder_path", folderPath)
+                    .param("file_path", videoBean.getVideoPath())
+                    .param("duration", String.valueOf(videoBean.getVideoDuration()))
+                    .param("file_size", String.valueOf(videoBean.getVideoSize()))
+                    .param("file_id", videoBean.get_id())
                     .postExecute();
         }
         cursor.close();

@@ -84,10 +84,15 @@ public class TaskDownloadedInfoDialog extends Dialog {
                 new CommonDialog.Builder(context)
                         .setAutoDismiss()
                         .showExtra()
-                        .setOkListener(dialog ->
-                                taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), false))
-                        .setExtraListener(dialog ->
-                                taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), true))
+                        .setOkListener(dialog -> {
+                            taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), false);
+                            TaskDownloadedInfoDialog.this.dismiss();
+                        })
+
+                        .setExtraListener(dialog -> {
+                            taskDeleteListener.onTaskDelete(taskPosition, taskBean.getTorrentHash(), true);
+                            TaskDownloadedInfoDialog.this.dismiss();
+                        })
                         .build()
                         .show("确认删除任务？", "删除任务和文件");
                 break;

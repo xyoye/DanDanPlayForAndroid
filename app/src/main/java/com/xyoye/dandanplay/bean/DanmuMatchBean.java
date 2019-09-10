@@ -16,7 +16,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by xyoye on 2018/7/9.
  */
 
-
 public class DanmuMatchBean extends CommJsonEntity implements Serializable{
 
     /**

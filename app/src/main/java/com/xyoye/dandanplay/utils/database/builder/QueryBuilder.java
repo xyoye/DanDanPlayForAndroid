@@ -13,19 +13,19 @@ import io.reactivex.annotations.CheckReturnValue;
 /**
  * Created by xyoye on 2019/4/17.
  */
-public class QueryBuilder{
+public class QueryBuilder {
     private SQLiteDatabase sqLiteDatabase;
     private int tablePosition;
-    private int[] columns;
+    private String[] colNames;
     private List<String> whereClause;
     private List<String> whereArgs;
-    private int groupColumn = -1;
+    private String groupColName;
     private String having = null;
     private boolean isAsc = true;
-    private int orderByColumn = -1;
+    private String orderByColName;
     private String limit = null;
 
-    QueryBuilder(int tablePosition, SQLiteDatabase sqLiteDatabase){
+    QueryBuilder(int tablePosition, SQLiteDatabase sqLiteDatabase) {
         this.tablePosition = tablePosition;
         this.sqLiteDatabase = sqLiteDatabase;
         whereClause = new ArrayList<>();
@@ -33,96 +33,82 @@ public class QueryBuilder{
     }
 
     @CheckReturnValue
-    public QueryBuilder setColumns(int... columns){
-        this.columns = columns;
+    public QueryBuilder queryColumns(String... colNames) {
+        this.colNames = colNames;
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder where(int column, String value) {
-        if ( value == null)  value = "";
-        String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
+    public QueryBuilder where(String colName, String value) {
+        if (value == null) value = "";
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        String whereClauseText = colName + " = ?";
         whereClause.add(whereClauseText);
         whereArgs.add(value);
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder setGroupByColumn(int column){
-        this.groupColumn = column;
+    public QueryBuilder setGroupByColumn(String colName) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        this.groupColName = colName;
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder setHaving(String having){
+    public QueryBuilder setHaving(String having) {
         this.having = having;
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder setOrderByColumnAsc(int column){
+    public QueryBuilder setOrderByColumnAsc(String colName) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
         isAsc = true;
-        this.orderByColumn = column;
+        this.orderByColName = colName;
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder setOrderByColumnDesc(int column){
+    public QueryBuilder setOrderByColumnDesc(String colName) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
         isAsc = false;
-        this.orderByColumn = column;
+        this.orderByColName = colName;
         return this;
     }
 
     @CheckReturnValue
-    public QueryBuilder setLimit(String limit){
+    public QueryBuilder setLimit(String limit) {
         this.limit = limit;
         return this;
     }
 
     @CheckReturnValue
-    public Cursor execute(){
-
-        //select columns
-        String[] columnsText = null;
-        if (columns != null && columns.length > 0){
-            columnsText = new String[columns.length];
-            for (int i = 0; i < columns.length; i++) {
-                columnsText[i] = DataBaseInfo.getFieldNames()[tablePosition][columns[i]];
-            }
-        }
+    public Cursor execute() {
 
         //selection
         String clause = null;
         String[] args = null;
-        if (whereArgs.size() > 0){
+        if (whereArgs.size() > 0) {
             args = new String[whereClause.size()];
             StringBuilder clauseBuilder = new StringBuilder();
             for (int i = 0; i < whereClause.size(); i++) {
                 clauseBuilder.append(whereClause.get(i)).append(" AND ");
                 args[i] = whereArgs.get(i);
             }
-            if (clauseBuilder.length() > 5){
-                clause = clauseBuilder.substring(0, clauseBuilder.length()-5);
+            if (clauseBuilder.length() > 5) {
+                clause = clauseBuilder.substring(0, clauseBuilder.length() - 5);
             }
         }
 
-        //group by
-        String groupByText = null;
-        if (groupColumn != -1){
-            groupByText = DataBaseInfo.getFieldNames()[tablePosition][groupColumn];
-        }
-
         //order by
-        String orderByText = null;
-        if (orderByColumn != -1){
-            orderByText = DataBaseInfo.getFieldNames()[tablePosition][orderByColumn];
-        }
-        if (isAsc){
-            orderByText = orderByText == null ? null : orderByText+" ASC";
-        }else {
-            orderByText = orderByText == null ? null : orderByText+" DESC";
+        String orderByText;
+        if (isAsc) {
+            orderByText = orderByColName == null ? null : orderByColName + " ASC";
+        } else {
+            orderByText = orderByColName == null ? null : orderByColName + " DESC";
         }
 
-        return sqLiteDatabase.query(DataBaseInfo.getTableNames()[tablePosition], columnsText, clause, args, groupByText, having, orderByText, limit);
+        return sqLiteDatabase.query(DataBaseInfo.getTableNames()[tablePosition], colNames, clause, args, groupColName, having, orderByText, limit);
     }
 }

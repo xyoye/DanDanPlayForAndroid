@@ -68,9 +68,9 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         List<SearchHistoryBean> historyBeanList = new ArrayList<>();
 
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(9)
+                .selectTable("search_history")
                 .query()
-                .setOrderByColumnDesc(2)
+                .setOrderByColumnDesc("time")
                 .execute();
         while (cursor.moveToNext()){
             int _id = cursor.getInt(0);
@@ -94,7 +94,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     public List<AnimeTypeBean.TypesBean> getTypeList() {
         List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(4)
+                .selectTable("anime_type")
                 .query()
                 .execute();
         while (cursor.moveToNext()){
@@ -110,7 +110,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     public List<SubGroupBean.SubgroupsBean> getSubGroupList() {
         List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(5)
+                .selectTable("subgroup")
                 .query()
                 .execute();
         while (cursor.moveToNext()){
@@ -125,36 +125,36 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public void addHistory(String text) {
         DataBaseManager.getInstance()
-                .selectTable(9)
+                .selectTable("search_history")
                 .insert()
-                .param(1, text)
-                .param(2, System.currentTimeMillis())
+                .param("text", text)
+                .param("time", System.currentTimeMillis())
                 .postExecute();
     }
 
     @Override
     public void updateHistory(int _id) {
         DataBaseManager.getInstance()
-                .selectTable(9)
+                .selectTable("search_history")
                 .update()
-                .param(2, System.currentTimeMillis())
-                .where(0, _id+"")
+                .param("time", System.currentTimeMillis())
+                .where("_id", _id+"")
                 .postExecute();
     }
 
     @Override
     public void deleteHistory(int _id) {
         DataBaseManager.getInstance()
-                .selectTable(9)
+                .selectTable("search_history")
                 .delete()
-                .where(0, _id+"")
+                .where("_id", _id+"")
                 .postExecute();
     }
 
     @Override
     public void deleteAllHistory() {
         DataBaseManager.getInstance()
-                .selectTable(9)
+                .selectTable("search_history")
                 .delete()
                 .postExecute();
     }

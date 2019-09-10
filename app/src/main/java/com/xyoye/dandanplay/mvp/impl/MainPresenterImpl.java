@@ -80,16 +80,16 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     @Override
     public void initScanFolder(){
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(11)
+                .selectTable("scan_folder")
                 .query()
                 .execute();
         if (!cursor.moveToNext()){
             //增加默认扫描文件夹
             DataBaseManager.getInstance()
-                    .selectTable(11)
+                    .selectTable("scan_folder")
                     .insert()
-                    .param(1, Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
-                    .param(2, Constants.ScanType.SCAN)
+                    .param("folder_path", Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
+                    .param("folder_type", Constants.ScanType.SCAN)
                     .execute();
         }
     }
@@ -125,21 +125,21 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             public void onSuccess(AnimeTypeBean animeTypeBean) {
                 if (animeTypeBean != null && animeTypeBean.getTypes() != null && animeTypeBean.getTypes().size() > 0){
                     DataBaseManager.getInstance()
-                            .selectTable(4)
+                            .selectTable("anime_type")
                             .delete()
                             .execute();
                     DataBaseManager.getInstance()
-                            .selectTable(4)
+                            .selectTable("anime_type")
                             .insert()
-                            .param(1, -1)
-                            .param(2, "全部")
+                            .param("type_id", -1)
+                            .param("type_name", "全部")
                             .execute();
                     for (AnimeTypeBean.TypesBean typesBean : animeTypeBean.getTypes()){
                         DataBaseManager.getInstance()
-                                .selectTable(4)
+                                .selectTable("anime_type")
                                 .insert()
-                                .param(1, typesBean.getId())
-                                .param(2, typesBean.getName())
+                                .param("type_id", typesBean.getId())
+                                .param("type_name", typesBean.getName())
                                 .execute();
                     }
                 }
@@ -161,23 +161,23 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                 if (subGroupBean != null && subGroupBean.getSubgroups() != null && subGroupBean.getSubgroups().size() > 0){
 
                     DataBaseManager.getInstance()
-                            .selectTable(5)
+                            .selectTable("subgroup")
                             .delete()
                             .execute();
 
                     DataBaseManager.getInstance()
-                            .selectTable(5)
+                            .selectTable("subgroup")
                             .insert()
-                            .param(1, -1)
-                            .param(2, "全部")
+                            .param("subgroup_id", -1)
+                            .param("subgroup_name", "全部")
                             .execute();
 
                     for (SubGroupBean.SubgroupsBean subgroupsBean : subGroupBean.getSubgroups()){
                         DataBaseManager.getInstance()
-                                .selectTable(5)
+                                .selectTable("subgroup")
                                 .insert()
-                                .param(1, subgroupsBean.getId())
-                                .param(2, subgroupsBean.getName())
+                                .param("subgroup_id", subgroupsBean.getId())
+                                .param("subgroup_name", subgroupsBean.getName())
                                 .execute();
                     }
                 }
@@ -198,14 +198,14 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
             IApplication.cloudFilterList.addAll(filters);
 
             DataBaseManager.getInstance()
-                    .selectTable(10)
+                    .selectTable("cloud_filter")
                     .delete()
                     .execute();
             for (int i=0; i<filters.size(); i++){
                 DataBaseManager.getInstance()
-                        .selectTable(10)
+                        .selectTable("cloud_filter")
                         .insert()
-                        .param(1, filters.get(i))
+                        .param("filter", filters.get(i))
                         .execute();
             }
         });
@@ -216,9 +216,9 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
         //云屏蔽数据
         List<String> cloudFilter = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                        .selectTable(10)
+                        .selectTable("cloud_filter")
                         .query()
-                        .setColumns(1)
+                        .queryColumns("filter")
                         .execute();
 
         while (cursor.moveToNext()){

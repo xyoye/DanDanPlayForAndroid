@@ -10,6 +10,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadedFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
@@ -18,6 +19,8 @@ import com.xyoye.dandanplay.ui.weight.dialog.TaskDownloadedInfoDialog;
 import com.xyoye.dandanplay.ui.weight.item.TaskDownloadedItem;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +100,6 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
 
     @Override
     public void onTaskDelete(int position, String taskHash, boolean withFile) {
-
         //删除系统中文件
         if (withFile) {
             FileUtils.deleteDir(taskList.get(position).getSaveDirPath());
@@ -105,18 +107,20 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
 
         //删除数据库中信息
         DataBaseManager.getInstance()
-                .selectTable(14)
+                .selectTable("downloaded_task")
                 .delete()
-                .where(1, taskHash)
+                .where("torrent_hash", taskHash)
                 .execute();
         DataBaseManager.getInstance()
-                .selectTable(15)
+                .selectTable("downloaded_file")
                 .delete()
-                .where(1, taskHash)
+                .where("task_torrent_hash", taskHash)
                 .execute();
 
+        //刷新媒体库数据
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));
 
-        //内存中数据
+        //更新界面数据
         if (position > -1 && position < taskList.size())
             taskRvAdapter.removeItem(position);
     }
@@ -138,13 +142,14 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
 
                 String hash = taskBean.getTorrentHash();
                 DataBaseManager.getInstance()
-                        .selectTable(15)
+                        .selectTable("downloaded_file")
                         .update()
-                        .param(4, danmuPath)
-                        .param(5, episodeId)
-                        .where(1, hash)
+                        .param("danmu_path", danmuPath)
+                        .param("danmu_episode_id", episodeId)
+                        .where("task_torrent_hash", hash)
                         .postExecute();
 
+                //更新弹窗中的图标
                 TaskDownloadedFileDialog downloadedFileDialog = dialogArray.get(taskPosition);
                 if (downloadedFileDialog != null && downloadedFileDialog.isShowing()) {
                     downloadedFileDialog.updateFileList();

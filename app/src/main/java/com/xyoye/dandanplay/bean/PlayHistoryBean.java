@@ -18,7 +18,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by xyoye on 2018/7/24.
  */
 
-
 public class PlayHistoryBean extends CommJsonEntity implements Serializable {
 
     private List<PlayHistoryAnimesBean> playHistoryAnimes;

@@ -1,13 +1,18 @@
 package com.xyoye.dandanplay.utils.database;
 
+import android.database.SQLException;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *数据库表名，字段名，字段类型
  *
  * Modified by xyoye on 2015/12/29.
  */
 public class DataBaseInfo {
-    public static final String DATABASE_NAME = "db_data.db";
-    public static final int DATABASE_VERSION = 28;
+    static final String DATABASE_NAME = "db_data.db";
+    static final int DATABASE_VERSION = 28;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -90,5 +95,31 @@ public class DataBaseInfo {
 
     public static String[] getTableNames() {
         return TableNames;
+    }
+
+    /**
+     * 检查表是否存在
+     */
+    public static int checkTableName(String tableName){
+        List<String> tableList = Arrays.asList(TableNames);
+        int tablePosition = tableList.indexOf(tableName);
+        if (tablePosition >= 0) {
+            return tablePosition;
+        } else {
+            throw new SQLException("\""+tableName + "\" table not found");
+        }
+    }
+
+    /**
+     * 检查字段是否存在于表中
+     */
+    public static void checkColumnName(String colName, int tablePosition){
+        String[] colArray = FieldNames[tablePosition];
+        List<String> colList = Arrays.asList(colArray);
+        int colPosition = colList.indexOf(colName);
+        if (colPosition < 0){
+            String tableName = DataBaseInfo.getTableNames()[tablePosition];
+            throw new SQLException("\""+colName + "\" field no found in the "+tableName + "table");
+        }
     }
 }

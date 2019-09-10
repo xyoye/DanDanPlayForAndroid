@@ -223,18 +223,18 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             @Override
             public void deleteBlock(String text) {
                 DataBaseManager.getInstance()
-                        .selectTable(13)
+                        .selectTable("danmu_block")
                         .delete()
-                        .where(1, text)
+                        .where("text", text)
                         .postExecute();
             }
 
             @Override
             public void addBlock(String text) {
                 DataBaseManager.getInstance()
-                        .selectTable(13)
+                        .selectTable("danmu_block")
                         .insert()
-                        .param(1, text)
+                        .param("text", text)
                         .postExecute();
             }
         };
@@ -278,11 +278,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                     EventBus.getDefault().post(event);
                     //更新数据库中进度
                     DataBaseManager.getInstance()
-                            .selectTable(2)
+                            .selectTable("file")
                             .update()
-                            .param(4, event.getCurrentPosition())
-                            .where(1, event.getFolderPath())
-                            .where(2, event.getVideoPath())
+                            .param("current_position", event.getCurrentPosition())
+                            .where("folder_path", event.getFolderPath())
+                            .where("file_path", event.getVideoPath())
                             .postExecute();
                     break;
                 case Constants.INTENT_RESET_FULL_SCREEN:
@@ -533,9 +533,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private void initNormalFilter() {
         normalFilterList = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(13)
+                .selectTable("danmu_block")
                 .query()
-                .setColumns(1)
+                .queryColumns("text")
                 .execute();
         if (cursor != null) {
             while (cursor.moveToNext()) {

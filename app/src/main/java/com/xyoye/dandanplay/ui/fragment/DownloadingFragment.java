@@ -120,8 +120,8 @@ public class DownloadingFragment extends BaseMvpFragment<DownloadingFragmentPres
         taskStateBeanList.clear();
         taskStateBeanList.addAll(stateBeanList);
         Collections.sort(taskStateBeanList);
+
         taskRvAdapter.notifyDataSetChanged();
-        downloadingTaskNumberTv.setText(
-                String.valueOf(taskRvAdapter.getItemCount()));
+        downloadingTaskNumberTv.setText(String.valueOf(taskRvAdapter.getItemCount()));
     }
 }

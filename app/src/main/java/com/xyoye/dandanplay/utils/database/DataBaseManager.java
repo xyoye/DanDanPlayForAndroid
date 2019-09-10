@@ -36,13 +36,14 @@ public class DataBaseManager {
     }
 
     public synchronized void closeDatabase() {
-        if(mOpenCounter.decrementAndGet() == 0) {
+        if (mOpenCounter.decrementAndGet() == 0) {
             mDatabase.close();
         }
     }
 
     //选择操作表
-    public ActionBuilder selectTable(int tablePosition){
+    public ActionBuilder selectTable(String tableName) {
+        int tablePosition = DataBaseInfo.checkTableName(tableName);
         return new ActionBuilder(tablePosition, getSQLiteDatabase());
     }
 
@@ -54,7 +55,7 @@ public class DataBaseManager {
     }
 
     private synchronized SQLiteDatabase openDatabase() {
-        if(mOpenCounter.incrementAndGet() == 1) {
+        if (mOpenCounter.incrementAndGet() == 1) {
             mDatabase = mDatabaseHelper.getWritableDatabase();
         }
         return mDatabase;

@@ -40,25 +40,25 @@ public class TorrentUtil {
     public static void transferDownloaded(Torrent torrent, TorrentTask torrentTask) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         DataBaseManager.getInstance()
-                .selectTable(14)
+                .selectTable("downloaded_task")
                 .insert()
-                .param(1, torrent.getTitle())
-                .param(2, torrent.getSaveDirPath())
-                .param(3, torrent.getTorrentPath())
-                .param(4, torrent.getHash())
-                .param(5, torrentTask.getTotalWanted())
-                .param(6, simpleDateFormat.format(new Date()))
+                .param("task_title", torrent.getTitle())
+                .param("save_dir_path", torrent.getSaveDirPath())
+                .param("torrent_file_path", torrent.getTorrentPath())
+                .param("torrent_hash", torrent.getHash())
+                .param("total_length", torrentTask.getTotalWanted())
+                .param("complete_time", simpleDateFormat.format(new Date()))
                 .postExecute();
 
         FileStorage fileStorage = torrentTask.getTorrentFiles();
         for (int i = 0; i < fileStorage.numFiles(); i++) {
             String filePath = torrent.getSaveDirPath() + "/" + fileStorage.filePath(i);
             DataBaseManager.getInstance()
-                    .selectTable(15)
+                    .selectTable("downloaded_file")
                     .insert()
-                    .param(1, torrent.getHash())
-                    .param(2, filePath)
-                    .param(3, fileStorage.fileSize(i))
+                    .param("task_torrent_hash", torrent.getHash())
+                    .param("file_path", filePath)
+                    .param("file_length", fileStorage.fileSize(i))
                     .postExecute();
         }
 
@@ -70,9 +70,9 @@ public class TorrentUtil {
      */
     public static void deleteDownloadingData(String torrentHash) {
         DataBaseManager.getInstance()
-                .selectTable(16)
+                .selectTable("downloading_task")
                 .delete()
-                .where(1, torrentHash)
+                .where("task_torrent_hash", torrentHash)
                 .postExecute();
     }
 
@@ -82,20 +82,20 @@ public class TorrentUtil {
     public static void insertNewTask(Torrent torrent) {
 
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(16)
+                .selectTable("downloading_task")
                 .query()
-                .where(1, torrent.getHash())
+                .where("task_torrent_hash", torrent.getHash())
                 .execute();
 
         if (cursor.getCount() == 0) {
 
             DataBaseManager.getInstance()
-                    .selectTable(16)
+                    .selectTable("downloading_task")
                     .insert()
-                    .param(1, torrent.getHash())
-                    .param(2, torrent.getTorrentPath())
-                    .param(3, torrent.getSaveDirPath())
-                    .param(4, torrent.getPriorityStr())
+                    .param("task_torrent_hash", torrent.getHash())
+                    .param("torrent_file_path", torrent.getTorrentPath())
+                    .param("save_dir_path", torrent.getSaveDirPath())
+                    .param("priorities", torrent.getPriorityStr())
                     .postExecute();
         }
 
@@ -107,7 +107,7 @@ public class TorrentUtil {
      */
     public static List<Torrent> queryRestoreTorrentList() {
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(16)
+                .selectTable("downloading_task")
                 .query()
                 .execute();
 

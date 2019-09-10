@@ -7,7 +7,6 @@ import java.io.Serializable;
  * Created by xyoye on 2018/7/2.
  */
 
-
 public class FileManagerBean implements Serializable{
     private File file;
     private String name;

@@ -19,7 +19,6 @@ import okhttp3.ResponseBody;
  * Created by xyoye on 2018/10/13.
  */
 
-
 public class MagnetBean implements Parcelable{
 
     /**

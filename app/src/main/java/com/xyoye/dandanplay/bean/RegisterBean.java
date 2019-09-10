@@ -15,7 +15,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by xyoye on 2018/8/5.
  */
 
-
 public class RegisterBean extends CommJsonEntity implements Serializable {
 
     /**

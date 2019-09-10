@@ -51,9 +51,9 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     public List<String> queryBlockData() {
         List<String> blockList = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(13)
+                .selectTable("danmu_block")
                 .query()
-                .setColumns(1)
+                .queryColumns("text")
                 .execute();
         if (cursor != null){
             while (cursor.moveToNext()){
@@ -66,7 +66,7 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     @Override
     public void deleteALl() {
         DataBaseManager.getInstance()
-                .selectTable(13)
+                .selectTable("danmu_block")
                 .delete()
                 .postExecute();
     }
@@ -75,9 +75,9 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     public void deleteBlock(List<String> textList) {
         for (String text : textList){
             DataBaseManager.getInstance()
-                    .selectTable(13)
+                    .selectTable("danmu_block")
                     .delete()
-                    .where(1, text)
+                    .where("text", text)
                     .execute();
         }
 
@@ -87,9 +87,9 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     public void addBlock(List<String> textList) {
         for (String text : textList){
             DataBaseManager.getInstance()
-                    .selectTable(13)
+                    .selectTable("danmu_block")
                     .insert()
-                    .param(1, text)
+                    .param("text", text)
                     .execute();
         }
     }

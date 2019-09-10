@@ -27,8 +27,9 @@ public class DeleteBuilder{
     }
 
     @CheckReturnValue
-    public DeleteBuilder where(int column, String value) {
-        String whereClauseText = DataBaseInfo.getFieldNames()[tablePosition][column] + " = ?";
+    public DeleteBuilder where(String colName, String value) {
+        DataBaseInfo.checkColumnName(colName, tablePosition);
+        String whereClauseText = colName + " = ?";
         whereClause.add(whereClauseText);
         whereArgs.add(value);
         return this;

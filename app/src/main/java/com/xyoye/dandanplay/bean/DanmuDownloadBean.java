@@ -14,7 +14,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by xyoye on 2018/7/14.
  */
 
-
 public class DanmuDownloadBean implements Serializable{
 
     /**

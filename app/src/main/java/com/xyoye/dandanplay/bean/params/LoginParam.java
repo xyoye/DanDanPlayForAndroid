@@ -16,7 +16,6 @@ import java.util.Map;
  * Created by xyoye on 2018/7/22.
  */
 
-
 public class LoginParam implements Serializable {
 
     /**

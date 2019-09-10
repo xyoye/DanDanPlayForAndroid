@@ -210,32 +210,32 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      */
     public void saveDatabase() {
         Cursor cursor = DataBaseManager.getInstance()
-                .selectTable(17)
+                .selectTable("local_play_history")
                 .query()
-                .where(1, videoPath)
-                .where(5, String.valueOf(sourceOrigin))
+                .where("video_path", videoPath)
+                .where("source_origin", String.valueOf(sourceOrigin))
                 .execute();
         if (cursor.getCount() > 0) {
             DataBaseManager.getInstance()
-                    .selectTable(17)
+                    .selectTable("local_play_history")
                     .update()
-                    .param(2, videoTitle)
-                    .param(3, danmuPath)
-                    .param(4, String.valueOf(episodeId))
-                    .param(6, String.valueOf(System.currentTimeMillis()))
-                    .where(1, videoPath)
-                    .where(5, String.valueOf(sourceOrigin))
+                    .param("video_title", videoTitle)
+                    .param("danmu_path", danmuPath)
+                    .param("episode_id", episodeId)
+                    .param("play_time", System.currentTimeMillis())
+                    .where("video_path", videoPath)
+                    .where("source_origin", String.valueOf(sourceOrigin))
                     .execute();
         } else {
             DataBaseManager.getInstance()
-                    .selectTable(17)
+                    .selectTable("local_play_history")
                     .insert()
-                    .param(1, videoPath)
-                    .param(2, videoTitle)
-                    .param(3, danmuPath)
-                    .param(4, episodeId)
-                    .param(5, sourceOrigin)
-                    .param(6, System.currentTimeMillis())
+                    .param("video_path", videoPath)
+                    .param("video_title", videoTitle)
+                    .param("danmu_path", danmuPath)
+                    .param("episode_id", episodeId)
+                    .param("source_origin", sourceOrigin)
+                    .param("play_time", System.currentTimeMillis())
                     .execute();
         }
     }

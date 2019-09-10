@@ -8,7 +8,6 @@ import java.util.Map;
  * Created by xyoye on 2018/7/9.
  */
 
-
 public class DanmuMatchParam implements Serializable{
 
     private String fileName;

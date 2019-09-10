@@ -101,21 +101,21 @@ public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerVi
         values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
 
         Cursor cursor = DataBaseManager.getInstance()
-                        .selectTable(2)
+                        .selectTable("file")
                         .query()
-                        .where(1, folderPath)
-                        .where(2, videoBean.getVideoPath())
+                        .where("folder_path", folderPath)
+                        .where("file_path", videoBean.getVideoPath())
                         .execute();
 
         if (!cursor.moveToNext()) {
             DataBaseManager.getInstance()
-                    .selectTable(2)
+                    .selectTable("file")
                     .insert()
-                    .param(1, folderPath)
-                    .param(2, videoBean.getVideoPath())
-                    .param(5, String.valueOf(videoBean.getVideoDuration()))
-                    .param(7, String.valueOf(videoBean.getVideoSize()))
-                    .param(8, videoBean.get_id())
+                    .param("folder_path", folderPath)
+                    .param("file_path", videoBean.getVideoPath())
+                    .param("duration", String.valueOf(videoBean.getVideoDuration()))
+                    .param("file_size", String.valueOf(videoBean.getVideoSize()))
+                    .param("file_id", videoBean.get_id())
                     .execute();
             cursor.close();
             return true;

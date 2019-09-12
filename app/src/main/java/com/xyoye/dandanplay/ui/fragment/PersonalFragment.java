@@ -26,10 +26,13 @@ import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.jlibtorrent.TorrentEngine;
+import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.SwitchThemeAnimation;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import skin.support.SkinCompatManager;
+import skin.support.utils.SkinPreference;
 
 /**
  * Created by xyoye on 2018/6/29.
@@ -42,6 +45,10 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     TextView userNameTv;
     @BindView(R.id.button_login)
     TextView loginButton;
+    @BindView(R.id.skin_iv)
+    ImageView skinIv;
+    @BindView(R.id.skin_tv)
+    TextView skinTv;
 
     public static PersonalFragment newInstance() {
         return new PersonalFragment();
@@ -74,6 +81,16 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
         } else {
             loginButton.setVisibility(View.VISIBLE);
         }
+
+        if (isLoadedSkin()) {
+            skinIv.setImageResource(R.mipmap.ic_skin_light);
+            skinTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_orange));
+            skinTv.setText("日间模式");
+        } else {
+            skinIv.setImageResource(R.mipmap.ic_skin_dark);
+            skinTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_black));
+            skinTv.setText("夜间模式");
+        }
     }
 
     @Override
@@ -84,7 +101,8 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login,
             R.id.player_setting_ll, R.id.download_setting_ll, R.id.system_setting_ll,
             R.id.follow_ll, R.id.network_history_ll, R.id.local_history_ll, R.id.download_manager_ll,
-            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.bilibili_danmu_download_ll})
+            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.bilibili_danmu_download_ll,
+            R.id.skin_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.user_image_iv:
@@ -136,6 +154,44 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
             case R.id.bilibili_danmu_download_ll:
                 launchActivity(DownloadBiliBiliActivity.class);
                 break;
+            case R.id.skin_ll:
+                switchSkin();
+                break;
+        }
+    }
+
+    /**
+     * 切换皮肤
+     */
+    private void switchSkin() {
+        SwitchThemeAnimation.create(skinIv).setDuration(800).start();
+        if (isLoadedSkin()) {
+            SkinCompatManager.getInstance()
+                    .restoreDefaultTheme();
+            skinIv.setImageResource(R.mipmap.ic_skin_dark);
+            skinTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_black));
+            skinTv.setText("夜间模式");
+        } else {
+            SkinCompatManager.getInstance()
+                    .loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
+            skinIv.setImageResource(R.mipmap.ic_skin_light);
+            skinTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_orange));
+            skinTv.setText("日间模式");
+        }
+    }
+
+    /**
+     * 是否已换肤
+     */
+    private boolean isLoadedSkin() {
+        switch (SkinPreference.getInstance().getSkinStrategy()) {
+            case SkinCompatManager.SKIN_LOADER_STRATEGY_ASSETS:
+            case SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN:
+            case SkinCompatManager.SKIN_LOADER_STRATEGY_PREFIX_BUILD_IN:
+                return true;
+            case SkinCompatManager.SKIN_LOADER_STRATEGY_NONE:
+            default:
+                return false;
         }
     }
 }

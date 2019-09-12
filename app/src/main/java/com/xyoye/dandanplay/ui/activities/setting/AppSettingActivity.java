@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,14 +22,12 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.SwitchThemeAnimation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
-import skin.support.SkinCompatManager;
 
 /**
  * Created by xyoye on 2018/7/24.
@@ -53,8 +50,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
     TextView versionTv;
     @BindView(R.id.download_path_tv)
     TextView pathTv;
-    @BindView(R.id.theme_night_cb)
-    CheckBox themeNightCb;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -67,9 +62,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         String version = CommonUtils.getLocalVersion(this);
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
-
-        boolean isNight = AppConfig.getInstance().isThemeNight();
-        themeNightCb.setChecked(isNight);
     }
 
     @Override
@@ -83,19 +75,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         patchRl.setOnLongClickListener(v -> {
             new PatchHisDialog(AppSettingActivity.this, R.style.Dialog).show();
             return true;
-        });
-
-        themeNightCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            AppConfig.getInstance().setThemeNight(isChecked);
-            SwitchThemeAnimation.create(buttonView).setDuration(800).start();
-
-            if (isChecked) {
-                SkinCompatManager.getInstance()
-                        .loadSkin("night", SkinCompatManager.SKIN_LOADER_STRATEGY_BUILD_IN);
-            } else {
-                SkinCompatManager.getInstance()
-                        .restoreDefaultTheme();
-            }
         });
     }
 

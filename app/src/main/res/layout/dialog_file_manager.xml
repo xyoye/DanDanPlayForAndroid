@@ -10,12 +10,12 @@
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="12dp"
-        android:textSize="16sp"
+        android:text=""
         android:textColor="@color/text_black"
-        android:text=""/>
+        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/path_ll"
@@ -23,35 +23,42 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_tv"
         android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="当前："
             android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            android:text="当前："/>
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/path_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:ellipsize="start"
+            android:singleLine="true"
+            android:text=""
             android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            android:text=""/>
+            android:textSize="12sp" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/file_rv"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/path_ll"
         android:layout_above="@+id/action_ll"
-        android:layout_marginTop="5dp">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_below="@+id/path_ll"
+        android:layout_marginTop="5dp"
+        android:background="@color/layout_bg_color">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/file_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/action_ll"
@@ -66,9 +73,9 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:padding="10dp"
+            android:text="默认根目录"
             android:textColor="@color/text_black"
-            android:textSize="14sp"
-            android:text="默认根目录"/>
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -82,9 +89,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:text="取消"
                 android:textColor="@color/immutable_text_pink"
-                android:textSize="14sp"
-                android:text="取消"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/confirm_tv"
@@ -92,9 +99,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:padding="10dp"
+                android:text="确定"
                 android:textColor="@color/immutable_text_theme"
-                android:textSize="14sp"
-                android:text="确定"/>
+                android:textSize="14sp" />
 
         </LinearLayout>
     </RelativeLayout>

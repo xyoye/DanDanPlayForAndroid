@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -56,12 +58,14 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.xyoye.player.R;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
 import com.xyoye.player.commom.utils.AnimHelper;
 import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.commom.utils.Constants;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
+import com.xyoye.player.commom.utils.TimeFormatUtils;
 import com.xyoye.player.commom.widgets.BottomBarView;
 import com.xyoye.player.commom.widgets.DanmuBlockView;
 import com.xyoye.player.commom.widgets.DanmuPostView;
@@ -83,15 +87,12 @@ import com.xyoye.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.IDataSource;
 import com.xyoye.player.exoplayer.meida.ExoFFmpegPlayer;
-import com.xyoye.player.R;
 import com.xyoye.player.ijkplayer.media.IRenderView;
 import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
 import com.xyoye.player.subtitle.util.TimedTextObject;
-import com.xyoye.player.commom.utils.TimeFormatUtils;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -325,8 +326,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         View.inflate(context, R.layout.layout_exo_player_view, this);
         //获取播放器实例，ffmpeg扩展不支持TextureView
         exoPlayer = isUseSurfaceView
-                        ? new ExoFFmpegPlayer(mAttachActivity, trackSelector)
-                        : ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
+                ? new ExoFFmpegPlayer(mAttachActivity, trackSelector)
+                : ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
         //屏幕翻转控制
         mOrientationListener = new OrientationEventListener(mAttachActivity) {
             @Override
@@ -578,8 +579,12 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             @Override
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
-                    if (isVideoPlaying() && mIsExoPlayerReady) {
-                        mDanmakuView.start();
+                    if (mIsExoPlayerReady) {
+                        if (!isVideoPlaying()) {
+                            _togglePlayStatus();
+                        }
+                        long seek = mDanmakuView.getCurrentTime() - topBarView.getDanmuSettingView().getDanmuExtraTime();
+                        mDanmakuView.start(seek);
                     }
                 });
             }
@@ -669,9 +674,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         DanmuBlockView.DanmuBlockListener danmuBlockCallBack = new DanmuBlockView.DanmuBlockListener() {
             @Override
             public void removeBlock(List<String> data) {
-                for (String text : data){
+                for (String text : data) {
                     //从数据库移除
-                    if (mDanmakuListener != null){
+                    if (mDanmakuListener != null) {
                         mDanmakuListener.deleteBlock(text);
                     }
                     //弹幕中移除
@@ -681,9 +686,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
             @Override
             public void addBlock(List<String> data) {
-                for (String text : data){
+                for (String text : data) {
                     //添加到数据库
-                    if(mDanmakuListener != null){
+                    if (mDanmakuListener != null) {
                         mDanmakuListener.addBlock(text);
                     }
                     //添加到弹幕屏蔽
@@ -736,7 +741,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
         //监听进度条触摸放开事件，隐藏跳转View
         bottomBarView.setSeekBarTouchCallBack((view, motionEvent) -> {
-            if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 hideView(HIDE_VIEW_END_GESTURE);
             }
             return false;
@@ -870,6 +875,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setOpenSubtitleSelector() {
+                        pause();
+                        hideView(HIDE_VIEW_ALL);
                         mOutsideListener.onAction(Constants.INTENT_OPEN_SUBTITLE, 0);
                     }
 
@@ -908,6 +915,13 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 .setDanmuNumberLimit(numberLimit)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
                 .setListener(new SettingDanmuView.SettingDanmuListener() {
+                    @Override
+                    public void openDanmuSelector() {
+                        pause();
+                        hideView(HIDE_VIEW_ALL);
+                        mOutsideListener.onAction(Constants.INTENT_OPEN_DANMU, 0);
+                    }
+
                     @Override
                     public void setDanmuSize(int progress) {
                         mDanmakuContext.setScaleTextSize((float) progress / 50);
@@ -1079,7 +1093,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     @Override
     public void onDestroy() {
         // 记录播放进度
-        if (mOutsideListener != null){
+        if (mOutsideListener != null) {
 
             mOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
             mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, exoPlayer.getCurrentPosition());
@@ -1163,9 +1177,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 查询到网络字幕
      */
     @Override
-    public void onSubtitleQuery(int size){
+    public void onSubtitleQuery(int size) {
         topBarView.getSubtitleSettingView().setNetwoekSubtitleVisible(true);
-        if(isAutoLoadNetworkSubtitle)
+        if (isAutoLoadNetworkSubtitle)
             mOutsideListener.onAction(Constants.INTENT_AUTO_SUBTITLE, 0);
         else
             _showSkipSub(size);
@@ -1194,18 +1208,37 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置弹幕资源
      */
-    public ExoPlayerView setDanmakuSource(InputStream stream) {
-        if (stream == null) {
+    public ExoPlayerView setDanmakuSource(String danmuPath) {
+        if (TextUtils.isEmpty(danmuPath) || !FileUtils.isFileExists(danmuPath)) {
             return this;
         }
         try {
-            mDanmakuLoader.load(stream);
+            mDanmakuLoader.load(danmuPath);
+            IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
+            mDanmakuParser.load(dataSource);
         } catch (IllegalDataException e) {
             e.printStackTrace();
+            ToastUtils.showShort("弹幕加载失败");
         }
-        IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
-        mDanmakuParser.load(dataSource);
         return this;
+    }
+
+    /**
+     * 切换弹幕资源
+     */
+    @Override
+    public void changeDanmuSource(String danmuPath) {
+        try {
+            mDanmakuView.release();
+            mDanmakuLoader.load(danmuPath);
+            IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
+            mDanmakuParser.load(dataSource);
+            //装载弹幕
+            mDanmakuView.prepare(mDanmakuParser, mDanmakuContext);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+            ToastUtils.showShort("弹幕加载失败");
+        }
     }
 
     /**
@@ -1273,7 +1306,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 是否查询网络字幕
      */
-    public ExoPlayerView setNetworkSubtitle(boolean isOpen){
+    public ExoPlayerView setNetworkSubtitle(boolean isOpen) {
         isQueryNetworkSubtitle = isOpen;
         return this;
     }
@@ -1281,7 +1314,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 是否自动加载同名字幕
      */
-    public ExoPlayerView setAutoLoadLocalSubtitle(boolean isAuto){
+    public ExoPlayerView setAutoLoadLocalSubtitle(boolean isAuto) {
         isAutoLoadLocalSubtitle = isAuto;
         return this;
     }
@@ -1289,7 +1322,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 是否自动加载网络字幕
      */
-    public ExoPlayerView setAutoLoadNetworkSubtitle(boolean isAuto){
+    public ExoPlayerView setAutoLoadNetworkSubtitle(boolean isAuto) {
         isAutoLoadNetworkSubtitle = isAuto;
         return this;
     }
@@ -1321,7 +1354,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             //装载弹幕
             mDanmakuView.prepare(mDanmakuParser, mDanmakuContext);
             //查询网络字幕
-            if (isQueryNetworkSubtitle && mOutsideListener != null){
+            if (isQueryNetworkSubtitle && mOutsideListener != null) {
                 mOutsideListener.onAction(Constants.INTENT_QUERY_SUBTITLE, 0);
             }
         }
@@ -1854,11 +1887,11 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      * 激活弹幕
      */
     private void _resumeDanmaku() {
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
             if (mDanmakuTargetPosition != INVALID_VALUE) {
                 mDanmakuView.seekTo(mDanmakuTargetPosition - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuTargetPosition = INVALID_VALUE;
-            } else {
+            } else if (mDanmakuView.isPaused()) {
                 mDanmakuView.resume();
             }
         }

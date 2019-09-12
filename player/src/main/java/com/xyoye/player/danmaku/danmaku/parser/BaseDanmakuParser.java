@@ -74,6 +74,11 @@ public abstract class BaseDanmakuParser {
     }
     
     public BaseDanmakuParser load(IDataSource<?> source) {
+        //更换弹幕资源时清空旧弹幕数据
+        if (mDanmakus != null){
+            mDanmakus.clear();
+            mDanmakus = null;
+        }
         mDataSource = source;
         return this;
     }

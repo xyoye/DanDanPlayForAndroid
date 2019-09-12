@@ -30,16 +30,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
+import com.xyoye.player.R;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
 import com.xyoye.player.commom.utils.AnimHelper;
 import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.commom.utils.Constants;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
+import com.xyoye.player.commom.utils.TimeFormatUtils;
 import com.xyoye.player.commom.widgets.BottomBarView;
 import com.xyoye.player.commom.widgets.DanmuBlockView;
 import com.xyoye.player.commom.widgets.DanmuPostView;
@@ -60,16 +63,13 @@ import com.xyoye.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.xyoye.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.IDataSource;
-import com.xyoye.player.R;
 import com.xyoye.player.ijkplayer.media.IjkVideoView;
 import com.xyoye.player.ijkplayer.media.MediaPlayerParams;
 import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
 import com.xyoye.player.subtitle.util.TimedTextObject;
-import com.xyoye.player.commom.utils.TimeFormatUtils;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -549,8 +549,12 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             @Override
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
-                    if (mVideoView.isPlaying() && mIsIjkPlayerReady) {
-                        mDanmakuView.start();
+                    if (mIsIjkPlayerReady) {
+                        if (!mVideoView.isPlaying()){
+                            _togglePlayStatus();
+                        }
+                        long seek = (long) mVideoView.getCurrentPosition() - topBarView.getDanmuSettingView().getDanmuExtraTime();
+                        mDanmakuView.start(seek);
                     }
                 });
             }
@@ -850,6 +854,8 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setOpenSubtitleSelector() {
+                        pause();
+                        hideView(HIDE_VIEW_ALL);
                         mOutsideListener.onAction(Constants.INTENT_OPEN_SUBTITLE, 0);
                     }
 
@@ -888,6 +894,13 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 .setDanmuNumberLimit(numberLimit)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
                 .setListener(new SettingDanmuView.SettingDanmuListener() {
+                    @Override
+                    public void openDanmuSelector() {
+                        pause();
+                        hideView(HIDE_VIEW_ALL);
+                        mOutsideListener.onAction(Constants.INTENT_OPEN_DANMU, 0);
+                    }
+
                     @Override
                     public void setDanmuSize(int progress) {
                         mDanmakuContext.setScaleTextSize((float) progress / 50);
@@ -1152,18 +1165,37 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     /**
      * 设置弹幕资源
      */
-    public IjkPlayerView setDanmakuSource(InputStream stream) {
-        if (stream == null) {
+    public IjkPlayerView setDanmakuSource(String danmuPath) {
+        if (TextUtils.isEmpty(danmuPath) || !FileUtils.isFileExists(danmuPath)) {
             return this;
         }
         try {
-            mDanmakuLoader.load(stream);
+            mDanmakuLoader.load(danmuPath);
+            IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
+            mDanmakuParser.load(dataSource);
         } catch (IllegalDataException e) {
             e.printStackTrace();
+            ToastUtils.showShort("弹幕加载失败");
         }
-        IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
-        mDanmakuParser.load(dataSource);
         return this;
+    }
+
+    /**
+     * 切换弹幕资源
+     */
+    @Override
+    public void changeDanmuSource(String danmuPath) {
+        try {
+            mDanmakuView.release();
+            mDanmakuLoader.load(danmuPath);
+            IDataSource<?> dataSource = mDanmakuLoader.getDataSource();
+            mDanmakuParser.load(dataSource);
+            //装载弹幕
+            mDanmakuView.prepare(mDanmakuParser, mDanmakuContext);
+        } catch (IllegalDataException e) {
+            e.printStackTrace();
+            ToastUtils.showShort("弹幕加载失败");
+        }
     }
 
     /**
@@ -1324,7 +1356,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     public void stop() {
         pause();
         // 记录播放进度
-        if (mOutsideListener != null){
+        if (mOutsideListener != null) {
             mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, mVideoView.getCurrentPosition());
             mOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
         }
@@ -1829,11 +1861,11 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      * 激活弹幕
      */
     private void _resumeDanmaku() {
-        if (mDanmakuView != null && mDanmakuView.isPrepared() && mDanmakuView.isPaused()) {
+        if (mDanmakuView != null && mDanmakuView.isPrepared()) {
             if (mDanmakuTargetPosition != INVALID_VALUE) {
                 mDanmakuView.seekTo(mDanmakuTargetPosition - topBarView.getDanmuSettingView().getDanmuExtraTime());
                 mDanmakuTargetPosition = INVALID_VALUE;
-            } else {
+            } else if (mDanmakuView.isPaused()) {
                 mDanmakuView.resume();
             }
         }

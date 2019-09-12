@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
@@ -54,7 +53,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
     LinearLayout closeActionLl;
 
     private View mView;
-    private Context mContext;
     private VideoItemEventListener listener;
 
     public VideoItem(VideoItemEventListener listener) {
@@ -69,7 +67,6 @@ public class VideoItem implements AdapterItem<VideoBean> {
     @Override
     public void initItemViews(View itemView) {
         mView = itemView;
-        mContext = mView.getContext();
     }
 
     @Override
@@ -123,17 +120,25 @@ public class VideoItem implements AdapterItem<VideoBean> {
             danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
         }
 
+        videoActionLl.setVisibility(View.GONE);
+
         danmuTipsIv.setOnClickListener(v -> listener.openDanmuSetting(position));
         videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
-        unbindDanmuActionLl.setOnClickListener(v -> listener.unBindDanmu(position));
-        deleteActionLl.setOnClickListener(v -> listener.onDelete(position));
+        unbindDanmuActionLl.setOnClickListener(v -> {
+            listener.unBindDanmu(position);
+            videoActionLl.setVisibility(View.GONE);
+        });
+        deleteActionLl.setOnClickListener(v -> {
+            listener.onDelete(position);
+            videoActionLl.setVisibility(View.GONE);
+        });
+        closeActionLl.setOnClickListener(v ->
+                videoActionLl.setVisibility(View.GONE));
 
         videoInfoRl.setOnLongClickListener(v -> {
             videoActionLl.setVisibility(View.VISIBLE);
             return true;
         });
-
-        closeActionLl.setOnClickListener(v -> videoActionLl.setVisibility(View.GONE));
 
     }
 

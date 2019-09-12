@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +19,33 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.xunlei.downloadlib.XLTaskHelper;
+import com.xyoye.dandanplay.app.IApplication;
+import com.xyoye.dandanplay.bean.PlayHistoryBean;
+import com.xyoye.dandanplay.bean.UploadDanmuBean;
+import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
+import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
+import com.xyoye.dandanplay.bean.params.PlayParam;
+import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.fragment.PlayFragment;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants.DefaultConfig;
+import com.xyoye.dandanplay.utils.DanmuUtils;
+import com.xyoye.dandanplay.utils.HashUtils;
+import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.SubtitleConverter;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
+import com.xyoye.dandanplay.utils.net.CommJsonObserver;
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
+import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
+import com.xyoye.dandanplay.utils.net.RetrofitService;
+import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 import com.xyoye.player.commom.bean.SubtitleBean;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
@@ -30,39 +56,11 @@ import com.xyoye.player.commom.utils.Constants;
 import com.xyoye.player.danmaku.danmaku.model.BaseDanmaku;
 import com.xyoye.player.exoplayer.ExoPlayerView;
 import com.xyoye.player.ijkplayer.IjkPlayerView;
-import com.xunlei.downloadlib.XLTaskHelper;
-import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.PlayHistoryBean;
-import com.xyoye.dandanplay.bean.UploadDanmuBean;
-import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
-import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
-import com.xyoye.dandanplay.bean.params.PlayParam;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
-import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
-import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.Constants.DefaultConfig;
-import com.xyoye.dandanplay.utils.DanmuUtils;
-import com.xyoye.dandanplay.utils.HashUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.SubtitleConverter;
-import com.xyoye.dandanplay.utils.net.CommJsonEntity;
-import com.xyoye.dandanplay.utils.net.CommJsonObserver;
-import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.net.RetroFactory;
-import com.xyoye.dandanplay.utils.net.RetrofitService;
-import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +78,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by xyoye on 2018/7/4 0004.
- *
+ * <p>
  * 播放器页面（不需支持换肤）
  */
 
@@ -160,21 +158,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
     //初始化播放器
     private void initPlayer() {
-        //获取弹幕数据流
-        InputStream inputStream = null;
-        if (!TextUtils.isEmpty(danmuPath) && FileUtils.isFileExists(danmuPath)) {
-            try {
-                inputStream = new FileInputStream(new File(danmuPath));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
         //初始化不同的播放器
         if (AppConfig.getInstance().getPlayerType() == Constants.EXO_PLAYER) {
-            initExoPlayer(inputStream);
+            initExoPlayer();
         } else {
-            initIjkPlayer(inputStream);
+            initIjkPlayer();
         }
 
         isInit = true;
@@ -241,6 +229,21 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
         onOutsideListener = (what, extra) -> {
             switch (what) {
+                //选择本地弹幕
+                case Constants.INTENT_OPEN_DANMU:
+                    new FileManagerDialog(PlayerActivity.this, videoPath, FileManagerDialog.SELECT_DANMU,
+                            path -> {
+                                DataBaseManager.getInstance()
+                                        .selectTable("file")
+                                        .update()
+                                        .param("danmu_path", path)
+                                        .where("file_path", videoPath)
+                                        .postExecute();
+                                EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
+                                mPlayer.changeDanmuSource(path);
+                            }
+                    ).show();
+                    break;
                 //选择本地字幕
                 case Constants.INTENT_OPEN_SUBTITLE:
                     new FileManagerDialog(
@@ -333,7 +336,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         };
     }
 
-    private void initIjkPlayer(InputStream inputStream) {
+    private void initIjkPlayer() {
         IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
 
         ijkPlayerView
@@ -347,7 +350,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
                 //设置弹幕数据源
-                .setDanmakuSource(inputStream)
+                .setDanmakuSource(danmuPath)
                 //默认展示弹幕
                 .showOrHideDanmaku(true)
                 //跳转至上一次播放进度
@@ -365,7 +368,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .start();
     }
 
-    private void initExoPlayer(InputStream inputStream) {
+    private void initExoPlayer() {
         ExoPlayerView exoPlayerView = (ExoPlayerView) mPlayer;
 
         exoPlayerView
@@ -379,7 +382,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .setCloudFilterData(IApplication.cloudFilterList,
                         AppConfig.getInstance().isCloudDanmuFilter())
                 //设置弹幕数据源
-                .setDanmakuSource(inputStream)
+                .setDanmakuSource(danmuPath)
                 //默认展示弹幕
                 .showOrHideDanmaku(true)
                 //跳转至上一次播放进度

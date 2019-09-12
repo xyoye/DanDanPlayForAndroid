@@ -133,7 +133,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@color/text_gray"
                 android:textSize="12sp"
-                android:text="取消弹幕"/>
+                android:text="移除弹幕"/>
         </LinearLayout>
 
         <LinearLayout

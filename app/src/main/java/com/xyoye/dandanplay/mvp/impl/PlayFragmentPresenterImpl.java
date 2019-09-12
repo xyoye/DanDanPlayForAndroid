@@ -1,21 +1,28 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.utils.database.DataBaseInfo;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.bean.event.UpdateFolderDanmuEvent;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.database.DataBaseInfo;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -77,7 +84,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .queryColumns("danmu_path", "current_position", "danmu_episode_id")
                 .where("file_path", videoPath)
                 .execute();
-        if (cursor.moveToNext()){
+        if (cursor.moveToNext()) {
             videoBean = new VideoBean();
             videoBean.setVideoPath(videoPath);
             videoBean.setDanmuPath(cursor.getString(0));
@@ -89,12 +96,20 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     }
 
     @Override
-    public void refreshVideo(boolean reScan) {
-        if (reScan){
+    public void refreshVideo(Context context, boolean reScan) {
+        //通知系统刷新目录
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+        if (context != null)
+            context.sendBroadcast(intent);
+
+        if (reScan) {
             scanAndRefreshVideo();
-            return;
+        }else {
+            refreshVideo();
         }
-        refreshVideo();
+
+        EventBus.getDefault().post(new UpdateFolderDanmuEvent());
     }
 
     @Override
@@ -110,7 +125,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 仅根据数据库数据刷新界面
      */
-    private void refreshVideo(){
+    private void refreshVideo() {
         querySqlFileDis = Observable
                 .create((ObservableOnSubscribe<List<FolderBean>>) emitter ->
                         emitter.onNext(getVideoFormDatabase()))
@@ -122,7 +137,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 扫描所有文件，更新数据库，刷新界面数据
      */
-    private void scanAndRefreshVideo(){
+    private void scanAndRefreshVideo() {
         //获取需要扫描的目录
         List<String> scanFolderList = getScanFolder(Constants.ScanType.SCAN);
         boolean isScanMediaStore = scanFolderList.remove(Constants.DefaultConfig.SYSTEM_VIDEO_PATH);
@@ -141,7 +156,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 从数据库中读取文件夹目录，过滤屏蔽目录及不扫描目录
      */
-    private List<FolderBean> getVideoFormDatabase(){
+    private List<FolderBean> getVideoFormDatabase() {
         List<FolderBean> folderBeanList = new ArrayList<>();
         Map<String, Integer> beanMap = new HashMap<>();
         Map<String, String> deleteMap = new HashMap<>();
@@ -157,15 +172,15 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .queryColumns("folder_path", "file_path")
                 .execute();
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             String folderPath = cursor.getString(0);
             String filePath = cursor.getString(1);
 
             //过滤屏蔽目录
             boolean isBlock = false;
-            for (String blockPath : blockList){
+            for (String blockPath : blockList) {
                 //视频属于屏蔽目录下视频，过滤
-                if (filePath.startsWith(blockPath)){
+                if (filePath.startsWith(blockPath)) {
                     isBlock = true;
                     break;
                 }
@@ -173,10 +188,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             if (isBlock) continue;
 
             //过滤非扫描目录，扫描包括系统目录时不用过滤
-            if (!scanList.contains(Constants.DefaultConfig.SYSTEM_VIDEO_PATH)){
+            if (!scanList.contains(Constants.DefaultConfig.SYSTEM_VIDEO_PATH)) {
                 boolean isNotScan = true;
-                for (String scanPath : scanList){
-                    if (filePath.startsWith(scanPath)){
+                for (String scanPath : scanList) {
+                    if (filePath.startsWith(scanPath)) {
                         isNotScan = false;
                         break;
                     }
@@ -187,22 +202,22 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             //计算文件夹中文件数量
             //文件不存在记录需要删除的文件
             File file = new File(filePath);
-            if (file.exists()){
-                if (beanMap.containsKey(folderPath)){
+            if (file.exists()) {
+                if (beanMap.containsKey(folderPath)) {
                     Integer number = beanMap.get(folderPath);
                     number = number == null ? 0 : number;
                     beanMap.put(folderPath, ++number);
-                }else {
+                } else {
                     beanMap.put(folderPath, 1);
                 }
-            }else {
+            } else {
                 deleteMap.put(folderPath, filePath);
             }
         }
         cursor.close();
 
         //更新文件夹文件数量
-        for (Map.Entry<String, Integer> entry : beanMap.entrySet()){
+        for (Map.Entry<String, Integer> entry : beanMap.entrySet()) {
             folderBeanList.add(new FolderBean(entry.getKey(), entry.getValue()));
             DataBaseManager.getInstance()
                     .selectTable("folder")
@@ -213,7 +228,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         }
 
         //删除不存在的文件
-        for (Map.Entry<String, String> entry : deleteMap.entrySet()){
+        for (Map.Entry<String, String> entry : deleteMap.entrySet()) {
             DataBaseManager.getInstance()
                     .selectTable("file")
                     .delete()
@@ -226,9 +241,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     /**
      * 获取扫描或屏蔽目录
+     *
      * @param scanType ScanType.BLOCK || ScanType.SCAN
      */
-    private List<String> getScanFolder(String scanType){
+    private List<String> getScanFolder(String scanType) {
         List<String> folderList = new ArrayList<>();
         //查询屏蔽目录
         Cursor blockCursor = DataBaseManager.getInstance()
@@ -239,7 +255,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .execute();
 
         //获取所有屏蔽目录
-        while (blockCursor.moveToNext()){
+        while (blockCursor.moveToNext()) {
             folderList.add(blockCursor.getString(0));
         }
         blockCursor.close();
@@ -250,9 +266,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * 保存视频信息到数据库
      * 跳过已存在的视频信息
      */
-    private void saveVideoToDatabase(VideoBean videoBean){
+    private void saveVideoToDatabase(VideoBean videoBean) {
         String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
-        ContentValues values=new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(DataBaseInfo.getFieldNames()[2][1], folderPath);
         values.put(DataBaseInfo.getFieldNames()[2][2], videoBean.getVideoPath());
         values.put(DataBaseInfo.getFieldNames()[2][5], String.valueOf(videoBean.getVideoDuration()));
@@ -282,7 +298,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 获取系统中视频信息
      */
-    private boolean queryVideoFormMediaStore(boolean isScanMediaStore){
+    private boolean queryVideoFormMediaStore(boolean isScanMediaStore) {
         if (!isScanMediaStore)
             return false;
         Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -310,7 +326,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 将需要扫描的目录集合转换为文件数组
      */
-    private File[] getScanFolderFiles(List<String> folderList){
+    private File[] getScanFolderFiles(List<String> folderList) {
         File[] files = new File[folderList.size()];
 
         for (int i = 0; i < folderList.size(); i++) {
@@ -322,12 +338,12 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 遍历需要扫描的目录
      */
-    private Observable<Boolean> flatMapFile(List<String> scanFolderList){
+    private Observable<Boolean> flatMapFile(List<String> scanFolderList) {
         if (scanFolderList.size() == 0)
             return Observable.just(true);
         return Observable.fromArray(getScanFolderFiles(scanFolderList))
                 .map(folderFile -> {
-                    for (File childFile : listFiles(folderFile)){
+                    for (File childFile : listFiles(folderFile)) {
                         System.out.println(childFile.getAbsoluteFile());
                         String filePath = childFile.getAbsolutePath();
                         VideoBean videoBean = new VideoBean();
@@ -344,13 +360,13 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 递归检查目录和文件
      */
-    private List<File> listFiles(File file){
+    private List<File> listFiles(File file) {
         List<File> fileList = new ArrayList<>();
-        if(file.isDirectory()){
+        if (file.isDirectory()) {
             File[] fileArray = file.listFiles();
-            if (fileArray == null || fileArray.length == 0){
+            if (fileArray == null || fileArray.length == 0) {
                 return new ArrayList<>();
-            }else {
+            } else {
                 for (File childFile : fileArray) {
                     if (childFile.isDirectory()) {
                         fileList.addAll(listFiles(childFile));
@@ -359,7 +375,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                     }
                 }
             }
-        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())){
+        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())) {
             fileList.add(file);
         }
         return fileList;

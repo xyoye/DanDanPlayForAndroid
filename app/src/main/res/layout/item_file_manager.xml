@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="46dp"
+    android:layout_height="wrap_content"
+    android:minHeight="46dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
@@ -20,9 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:layout_toEndOf="@+id/iv"
         android:textSize="14sp"
         android:textColor="@color/text_black"
-        tools:text="测试文件名" />
+        tools:text="" />
 
 </RelativeLayout>

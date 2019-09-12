@@ -14,13 +14,35 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_white"
                 android:layout_marginTop="5dp"
-                android:textSize="16sp"
-                android:text="弹幕"/>
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_white"
+                    android:layout_centerVertical="true"
+                    android:textSize="16sp"
+                    android:text="弹幕"/>
+
+                <TextView
+                    android:id="@+id/danmu_source_change_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_white"
+                    android:text="换源"/>
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"

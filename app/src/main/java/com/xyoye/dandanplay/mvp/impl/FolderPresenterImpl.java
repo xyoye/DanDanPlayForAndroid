@@ -5,18 +5,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ServiceUtils;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
-import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -35,7 +32,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
-    private Disposable folderScanDis, serviceDis;
+    private Disposable folderScanDis;
 
     public FolderPresenterImpl(FolderView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -65,15 +62,13 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     public void destroy() {
         if (folderScanDis != null)
             folderScanDis.dispose();
-        if (serviceDis != null)
-            serviceDis.dispose();
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getVideoList(String folderPath) {
         folderScanDis = Observable.create((ObservableOnSubscribe<List<VideoBean>>) emitter ->
-                    emitter.onNext(getDataBaseVideo(folderPath)))
+                emitter.onNext(getDataBaseVideo(folderPath)))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(videoBeanList -> getView().refreshAdapter(videoBeanList));
@@ -92,49 +87,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     }
 
     @Override
-    public void deleteFile(String filePath) {
-        IApplication.getExecutor().execute(() -> {
-            String folderPath = FileUtils.getDirName(filePath);
-            //delete file
-            DataBaseManager.getInstance()
-                    .selectTable("file")
-                    .delete()
-                    .where("folder_path", folderPath)
-                    .where("file_path", filePath)
-                    .execute();
-
-            //folder file number reduce, if number-1 == 0, delete folder
-            Cursor cursor = DataBaseManager.getInstance()
-                    .selectTable("folder")
-                    .query()
-                    .queryColumns("file_number")
-                    .where("folder_path", folderPath)
-                    .execute();
-
-            //if folder exist
-            if (cursor.moveToNext()){
-                int number = cursor.getInt(0);
-                if (number > 2){
-                    DataBaseManager.getInstance()
-                            .selectTable("folder")
-                            .update()
-                            .param("file_number", --number)
-                            .where("folder_path", folderPath)
-                            .execute();
-                }else {
-                    DataBaseManager.getInstance()
-                            .selectTable("folder")
-                            .delete()
-                            .where("folder_path", folderPath)
-                            .execute();
-                }
-            }
-            cursor.close();
-        });
-    }
-
-    @Override
-    public void getDanmu(String videoPath){
+    public void getDanmu(String videoPath) {
         getView().showLoading();
         String title = FileUtils.getFileName(videoPath);
         DanmuMatchParam param = new DanmuMatchParam();
@@ -146,7 +99,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
         param.setFileSize(length);
         param.setVideoDuration(duration);
         param.setMatchMode("hashAndFileName");
-        DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
+        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifeful()) {
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();
@@ -164,50 +117,19 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
         }, new NetworkConsumer());
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    //waiting 10s to start smbService
-    public void observeService(VideoBean videoBean) {
-        getView().showLoading();
-        serviceDis = Observable.create((ObservableOnSubscribe<Boolean>) e -> {
-            int waitTime = 0;
-            while (true){
-                try {
-                    if(ServiceUtils.isServiceRunning(SmbService.class)){
-                        getView().hideLoading();
-                        e.onNext(true);
-                        break;
-                    }
-                    if (waitTime > 10){
-                        getView().hideLoading();
-                        getView().showError("开启播放服务失败");
-                        break;
-                    }
-                    waitTime++;
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean ->
-                        getView().openIntentVideo(videoBean));
-    }
-
     //获取数据库中本地文件列表，如果本地文件不存在，删除记录
     //get local file form database
-    private List<VideoBean> getDataBaseVideo(String folderPath){
+    private List<VideoBean> getDataBaseVideo(String folderPath) {
         List<VideoBean> videoBeans = new ArrayList<>();
         Cursor cursor = DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .where("folder_path", folderPath)
                 .execute();
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             String filePath = cursor.getString(2);
             File file = new File(filePath);
-            if (!file.exists()){
+            if (!file.exists()) {
                 DataBaseManager.getInstance()
                         .selectTable("file")
                         .delete()

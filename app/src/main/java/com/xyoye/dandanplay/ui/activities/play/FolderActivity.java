@@ -7,11 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
@@ -22,12 +22,12 @@ import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
+import com.xyoye.dandanplay.bean.event.UpdateFolderDanmuEvent;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.params.BindDanmuParam;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
-import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
@@ -69,6 +69,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public void initView() {
+        EventBus.getDefault().register(this);
         videoList = new ArrayList<>();
         folderPath = getIntent().getStringExtra(OpenFolderEvent.FOLDERPATH);
         String folderTitle = FileUtils.getFileNameNoExtension(folderPath.substring(0, folderPath.length() - 1));
@@ -222,19 +223,10 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         if (adapter != null) {
             adapter.notifyDataSetChanged();
-        }
-        if (ServiceUtils.isServiceRunning(SmbService.class)) {
-            stopService(new Intent(this, SmbService.class));
         }
     }
 
@@ -247,6 +239,12 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void saveCurrent(SaveCurrentEvent event) {
         adapter.getData().get(selectPosition).setCurrentPosition(event.getCurrentPosition());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void saveCurrent(UpdateFolderDanmuEvent event) {
+        if (!TextUtils.isEmpty(folderPath))
+            presenter.getVideoList(folderPath);
     }
 
     @Override

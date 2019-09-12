@@ -5,6 +5,8 @@ package com.xyoye.player.commom.utils;
  */
 public final class Constants {
     //打开字幕选择
+    public static final int INTENT_OPEN_DANMU = 1000;
+    //打开字幕选择
     public static final int INTENT_OPEN_SUBTITLE = 1001;
     //请求网络字幕
     public static final int INTENT_QUERY_SUBTITLE = 1002;

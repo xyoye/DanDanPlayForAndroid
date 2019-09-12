@@ -16,8 +16,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.R;
+import com.xyoye.player.commom.utils.CommonPlayerUtils;
 
 /**
  * Created by xyoye on 2019/2/21.
@@ -25,6 +25,7 @@ import com.xyoye.player.R;
 
 public class SettingDanmuView extends LinearLayout implements View.OnClickListener {
     //弹幕设置相关组件
+    private TextView mDanmuSourceChangeTv;
     private SeekBar mDanmuSizeSb;
     private TextView mDanmuSizeTv;
     private SeekBar mDanmuSpeedSb;
@@ -68,6 +69,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         super(context, attrs);
         View.inflate(context, R.layout.view_setting_danmu, this);
         //弹幕设置相关
+        mDanmuSourceChangeTv = findViewById(R.id.danmu_source_change_tv);
         mDanmuSizeTv = findViewById(R.id.danmu_size_tv);
         mDanmuSizeSb = findViewById(R.id.danmu_size_sb);
         mDanmuSpeedTv = findViewById(R.id.danmu_speed_tv);
@@ -86,6 +88,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         numberAutoLimitTv = findViewById(R.id.number_auto_limit_tv);
         numberInputLimitEt = findViewById(R.id.number_input_limit_et);
 
+        mDanmuSourceChangeTv.setOnClickListener(this);
         mDanmuMobileIv.setOnClickListener(this);
         mDanmuTopIv.setOnClickListener(this);
         mDanmuBottomIv.setOnClickListener(this);
@@ -316,7 +319,9 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.mobile_danmu_iv) {
+        if (id == R.id.danmu_source_change_tv) {
+            settingListener.openDanmuSelector();
+        } else if (id == R.id.mobile_danmu_iv) {
             isShowMobile = !isShowMobile;
             mDanmuMobileIv.setImageResource(isShowMobile
                     ? R.mipmap.ic_mobile_unselect
@@ -395,6 +400,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
 
 
     public interface SettingDanmuListener {
+        void openDanmuSelector();
+
         void setDanmuSize(int progress);
 
         void setDanmuSpeed(int progress);

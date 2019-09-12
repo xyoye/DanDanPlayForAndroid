@@ -91,10 +91,10 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             public boolean onLongClick(String folderPath, String folderName) {
                 new CommonDialog.Builder(getContext())
                         .setOkListener(dialog -> {
-                            if (FileUtils.deleteDir(folderPath)){
+                            if (FileUtils.deleteDir(folderPath)) {
                                 refresh.setRefreshing(true);
                                 refreshVideo(false);
-                            }else {
+                            } else {
                                 ToastUtils.showShort("删除文件夹失败");
                             }
                         })
@@ -106,7 +106,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                         .setAutoDismiss()
                         .showExtra()
                         .build()
-                        .show("确认删除文件夹["+folderName+"]？", "屏蔽目录");
+                        .show("确认删除文件夹[" + folderName + "]？", "屏蔽目录");
                 return true;
             }
         };
@@ -126,7 +126,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
 
         fastPlayBt.setOnClickListener(v -> {
             String videoPath = AppConfig.getInstance().getLastPlayVideo();
-            if (!StringUtils.isEmpty(videoPath)){
+            if (!StringUtils.isEmpty(videoPath)) {
                 VideoBean videoBean = presenter.getLastPlayVideo(videoPath);
                 if (videoBean == null)
                     return;
@@ -135,7 +135,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                 if (!videoFile.exists())
                     return;
                 //弹幕文件是否已被删除
-                if (!StringUtils.isEmpty(videoBean.getDanmuPath())){
+                if (!StringUtils.isEmpty(videoBean.getDanmuPath())) {
                     File danmuFile = new File(videoBean.getDanmuPath());
                     if (!danmuFile.exists())
                         videoBean.setDanmuPath("");
@@ -150,7 +150,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             }
         });
 
-        if (updateVideoFlag){
+        if (updateVideoFlag) {
             refresh.setRefreshing(true);
             initVideoData();
         }
@@ -190,34 +190,36 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             permissionDis.dispose();
     }
 
-    public void refreshFolderData(int updateType){
-        if (updateType == UPDATE_ADAPTER_DATA){
+    public void refreshFolderData(int updateType) {
+        if (updateType == UPDATE_ADAPTER_DATA) {
             adapter.notifyDataSetChanged();
-        }else {
-            refreshVideo(updateType == UPDATE_SYSTEM_DATA);
-        }
-    }
-
-    public void initVideoData(){
-        if (presenter == null || refresh == null){
-            updateVideoFlag = true;
         } else {
+            //通知系统刷新目录
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
             if (getContext() != null)
                 getContext().sendBroadcast(intent);
+            presenter.refreshVideo(getContext(), updateType == UPDATE_SYSTEM_DATA);
+        }
+    }
+
+    public void initVideoData() {
+        if (presenter == null || refresh == null) {
+            updateVideoFlag = true;
+        } else {
             refresh.setRefreshing(true);
-            presenter.refreshVideo(true);
+            presenter.refreshVideo(getContext(), true);
             updateVideoFlag = false;
         }
     }
 
     /**
      * 刷新文件列表
+     *
      * @param reScan 是否重新扫描文件目录
      */
     @SuppressLint("CheckResult")
-    private void refreshVideo(boolean reScan){
+    private void refreshVideo(boolean reScan) {
         new RxPermissions(this).
                 request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(new Observer<Boolean>() {
@@ -229,13 +231,8 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                     @Override
                     public void onNext(Boolean granted) {
                         if (granted) {
-                            //通知系统刷新目录
-                            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                            intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
-                            if (getContext() != null)
-                                getContext().sendBroadcast(intent);
-                            presenter.refreshVideo(reScan);
-                        }else {
+                            presenter.refreshVideo(getContext(), reScan);
+                        } else {
                             ToastUtils.showLong("未授予文件管理权限，无法扫描视频");
                             refresh.setRefreshing(false);
                         }

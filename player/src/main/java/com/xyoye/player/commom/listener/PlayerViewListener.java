@@ -24,6 +24,8 @@ public interface PlayerViewListener {
 
     void setSubtitlePath(String subtitlePath);
 
+    void changeDanmuSource(String danmuPath);
+
     void onSubtitleQuery(int size);
 
     void onScreenLocked();

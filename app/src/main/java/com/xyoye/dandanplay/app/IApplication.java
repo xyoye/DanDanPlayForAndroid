@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,7 +18,7 @@ import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.KeyUtil;
+import com.xyoye.dandanplay.utils.SoUtils;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
 
 import java.util.ArrayList;
@@ -85,7 +84,7 @@ public class IApplication extends Application {
                 .apply();
 
         //Bugly
-        Bugly.init(getApplicationContext(), KeyUtil.getBuglyAppId(getApplicationContext()), false);
+        Bugly.init(getApplicationContext(), SoUtils.getInstance().getBuglyAppId(), false);
 
         //Sophix
         SophixManager.getInstance().setPatchLoadStatusStub(CommonUtils.getPatchLoadListener());

@@ -230,8 +230,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         onOutsideListener = (what, extra) -> {
             switch (what) {
                 //选择本地弹幕
-                case Constants.INTENT_OPEN_DANMU:
-                    new FileManagerDialog(PlayerActivity.this, videoPath, FileManagerDialog.SELECT_DANMU,
+                case Constants.INTENT_OPEN_DANMU: {
+                    String folderPath = videoPath.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())
+                            ? videoPath
+                            : DefaultConfig.downloadPath;
+                    new FileManagerDialog(PlayerActivity.this, folderPath, FileManagerDialog.SELECT_DANMU,
                             path -> {
                                 DataBaseManager.getInstance()
                                         .selectTable("file")
@@ -243,16 +246,21 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                                 mPlayer.changeDanmuSource(path);
                             }
                     ).show();
-                    break;
+                }
+                break;
                 //选择本地字幕
-                case Constants.INTENT_OPEN_SUBTITLE:
+                case Constants.INTENT_OPEN_SUBTITLE: {
+                    String folderPath = videoPath.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath())
+                            ? videoPath
+                            : DefaultConfig.downloadPath;
                     new FileManagerDialog(
                             PlayerActivity.this,
-                            videoPath,
+                            folderPath,
                             FileManagerDialog.SELECT_SUBTITLE,
                             path -> mPlayer.setSubtitlePath(path)
                     ).show();
-                    break;
+                }
+                break;
                 //查询网络字幕
                 case Constants.INTENT_QUERY_SUBTITLE:
                     querySubtitle(videoPath);

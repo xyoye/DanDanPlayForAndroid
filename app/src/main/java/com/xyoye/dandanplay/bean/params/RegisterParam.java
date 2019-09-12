@@ -6,7 +6,7 @@ import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.dandanplay.utils.KeyUtil;
+import com.xyoye.dandanplay.utils.SoUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -125,7 +125,7 @@ public class RegisterParam implements Serializable {
                     this.screenName +
                     this.unixTimestamp +
                     this.userName +
-                    KeyUtil.getDanDanAppSecret(context);
+                    SoUtils.getInstance().getDanDanAppSecret();
             hash = EncryptUtils.encryptMD5ToString(builder);
         }
     }

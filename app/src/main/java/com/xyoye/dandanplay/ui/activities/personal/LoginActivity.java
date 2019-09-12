@@ -16,7 +16,7 @@ import com.xyoye.dandanplay.mvp.impl.LoginPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.ui.activities.MainActivity;
-import com.xyoye.dandanplay.utils.KeyUtil;
+import com.xyoye.dandanplay.utils.SoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -67,7 +67,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
             LoginParam param = new LoginParam();
             param.setUserName(userName);
             param.setPassword(password);
-            param.setAppId(KeyUtil.getDanDanAppId(this));
+            param.setAppId(SoUtils.getInstance().getDanDanAppId());
             param.setUnixTimestamp(System.currentTimeMillis() / 1000);
             param.buildHash(this);
             presenter.login(param);

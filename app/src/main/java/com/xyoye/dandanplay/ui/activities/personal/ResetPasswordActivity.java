@@ -7,15 +7,12 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.impl.ResetPasswordPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ResetPasswordView;
 import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
-import com.xyoye.dandanplay.utils.KeyUtil;
-
-import org.greenrobot.eventbus.EventBus;
+import com.xyoye.dandanplay.utils.SoUtils;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -64,7 +61,7 @@ public class ResetPasswordActivity extends BaseMvpActivity<ResetPasswordPresente
             ResetPasswordParam param = new ResetPasswordParam();
             param.setUserName(userName);
             param.setEmail(email);
-            param.setAppId(KeyUtil.getDanDanAppId(this));
+            param.setAppId(SoUtils.getInstance().getDanDanAppId());
             param.setUnixTimestamp(System.currentTimeMillis() / 1000);
             param.buildHash(this);
             presenter.reset(param);

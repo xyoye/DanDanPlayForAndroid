@@ -22,6 +22,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.SoUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,7 +60,9 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
         String downloadPath = AppConfig.getInstance().getDownloadFolder();
         pathTv.setText(downloadPath);
-        String version = CommonUtils.getLocalVersion(this);
+        String version = SoUtils.getInstance().isOfficialApplication()
+                ? CommonUtils.getLocalVersion(this)
+                : "非官方应用";
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
     }

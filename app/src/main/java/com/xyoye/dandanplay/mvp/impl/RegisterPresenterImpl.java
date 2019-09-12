@@ -4,14 +4,12 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.RegisterBean;
 import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.mvp.presenter.RegisterPresenter;
 import com.xyoye.dandanplay.mvp.view.RegisterView;
-import com.xyoye.dandanplay.ui.weight.dialog.ToLoginDialog;
-import com.xyoye.dandanplay.utils.KeyUtil;
+import com.xyoye.dandanplay.utils.SoUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -55,7 +53,7 @@ public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> im
     public void register(RegisterParam param) {
         getView().showLoading();
         param.setScreenName(param.getUserName());
-        param.setAppId(KeyUtil.getDanDanAppId(getView().getRegisterContext()));
+        param.setAppId(SoUtils.getInstance().getDanDanAppId());
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getRegisterContext());
         RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifeful()) {

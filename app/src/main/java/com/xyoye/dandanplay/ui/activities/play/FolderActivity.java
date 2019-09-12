@@ -249,7 +249,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_NETWORK_DANMU) {
-                BindDanmuBean bindDanmuBean = getIntent().getParcelableExtra("bind_data");
+                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
                 if (bindDanmuBean == null)
                     return;
 

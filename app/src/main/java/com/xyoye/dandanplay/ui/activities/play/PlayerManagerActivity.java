@@ -99,7 +99,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_DANMU) {
             if (resultCode == RESULT_OK) {
-                BindDanmuBean bindDanmuBean = getIntent().getParcelableExtra("bind_data");
+                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
                 if (bindDanmuBean != null){
                     danmuPath = bindDanmuBean.getDanmuPath();
                     episodeId = bindDanmuBean.getEpisodeId();

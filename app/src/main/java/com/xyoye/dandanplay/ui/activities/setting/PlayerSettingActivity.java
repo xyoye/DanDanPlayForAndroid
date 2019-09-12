@@ -240,7 +240,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                             AppConfig.getInstance().setPixelFormat(Constants.PlayerConfig.PIXEL_OPENGL_ES2);
                             break;
                     }
-                    playerTypeTv.setText(pixelTypes[which]);
+                    pixelFormatTv.setText(pixelTypes[which]);
                 })
                 .setNegativeButton("取消", null)
                 .show();

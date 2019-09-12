@@ -345,7 +345,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         //是否使用OpenSLES
         isUseOpenSLES = SPUtils.getInstance().getBoolean("open_sles");
         //使用播放器的类型
-        usePlayerType = SPUtils.getInstance().getInt("player_type");
+        usePlayerType = SPUtils.getInstance().getInt("player_type", Constants.IJK_PLAYER);
         //使用播放器的格式
         usePixelFormat = SPUtils.getInstance().getString("pixel_format", "fcc-_es2");
     }

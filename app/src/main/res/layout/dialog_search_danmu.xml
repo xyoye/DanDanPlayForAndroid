@@ -84,6 +84,7 @@
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/episode_start_tips"
+                    android:gravity="center"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textSize="14sp"

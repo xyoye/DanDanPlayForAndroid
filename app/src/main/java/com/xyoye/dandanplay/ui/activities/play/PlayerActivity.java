@@ -80,7 +80,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * Created by xyoye on 2018/7/4 0004.
- * <p>
+ *
  * 播放器页面（不需支持换肤）
  */
 

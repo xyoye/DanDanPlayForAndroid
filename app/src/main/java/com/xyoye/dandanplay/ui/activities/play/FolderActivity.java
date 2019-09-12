@@ -81,6 +81,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 return new VideoItem(new VideoItem.VideoItemEventListener() {
                     @Override
                     public void openDanmuSetting(int position) {
+                        if (position >= videoList.size()) return;
                         selectVideoBean = videoList.get(position);
                         String videoPath = videoList.get(position).getVideoPath();
                         BindDanmuParam param = new BindDanmuParam(videoPath, position);
@@ -91,6 +92,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
                     @Override
                     public void openVideo(int position) {
+                        if (position >= videoList.size()) return;
                         selectVideoBean = videoList.get(position);
                         selectPosition = position;
                         //未设置弹幕情况下，1、开启自动加载时自动加载，2、自动匹配相同目录下同名弹幕，3、匹配默认下载目录下同名弹幕
@@ -110,6 +112,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
                     @Override
                     public void unBindDanmu(int position) {
+                        if (position >= videoList.size()) return;
                         VideoBean videoBean = videoList.get(position);
                         videoBean.setEpisodeId(-1);
                         videoBean.setDanmuPath("");
@@ -120,6 +123,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
                     @Override
                     public void onDelete(int position) {
+                        if (position >= videoList.size()) return;
                         new CommonDialog.Builder(FolderActivity.this)
                                 .setOkListener(dialog -> {
                                     String path = videoList.get(position).getVideoPath();

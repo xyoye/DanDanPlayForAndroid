@@ -291,7 +291,9 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
         //介绍
         String summary = StringUtils.isEmpty(bean.getBangumi().getSummary()) ? "无" : bean.getBangumi().getSummary();
-        animeIntroTv.setText("简介：" + summary, detailInfoLL.getMeasuredWidth());
+        animeIntroTv.post(() ->
+                //OnCreate时view可能没有绘制完成，getMeasuredWidth为0
+                animeIntroTv.setText("简介：" + summary, detailInfoLL.getMeasuredWidth()));
 
         //剧集
         episodeGridList.addAll(bean.getBangumi().getEpisodes());

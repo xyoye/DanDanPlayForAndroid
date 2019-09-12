@@ -72,7 +72,7 @@ public class VideoScanFragment extends BaseMvpFragment<VideoScanFragmentPresente
             @Override
             public AdapterItem<ScanFolderBean> onCreateItem(int viewType) {
                 return new VideoScanItem((isCheck, position) -> {
-                    if (position < 0 || position > folderList.size())
+                    if (position < 0 || position >= folderList.size())
                         return;
                     folderList.get(position).setCheck(isCheck);
                     if (isCheck){

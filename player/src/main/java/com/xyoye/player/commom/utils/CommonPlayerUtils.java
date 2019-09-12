@@ -26,13 +26,16 @@ public final class CommonPlayerUtils {
 
         //可加载的字幕格式
         String[] extArray = new String[]{".ass", ".scc", ".srt", ".stl", ".ttml"};
-        int lastPoi = videoPath.lastIndexOf(".");
-        String videoPathNotExt = videoPath.substring(0, lastPoi);
 
-        for (String ext : extArray){
-            File tempFile = new File(videoPathNotExt + ext);
-            if (tempFile.exists() && tempFile.length() > 0){
-                return tempFile.getAbsolutePath();
+        int lastPoi = videoPath.lastIndexOf(".");
+        if (lastPoi > 0){
+            String videoPathNotExt = videoPath.substring(0, lastPoi);
+
+            for (String ext : extArray){
+                File tempFile = new File(videoPathNotExt + ext);
+                if (tempFile.exists() && tempFile.length() > 0){
+                    return tempFile.getAbsolutePath();
+                }
             }
         }
 

@@ -259,11 +259,11 @@ public class TorrentService extends Service {
             foregroundNotify.setChannelId("com.xyoye.dandanplay.TorrentService.DownloadChannel");
         }
 
-        foregroundNotify.setContentText("任务数量: " + TorrentEngine.getInstance().getTaskList().size());
-        String speed = "速度: " +
+        String content =
+                "速度: " +
                 "↓" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getDownloadRate()) + "/s ." +
                 "↑" + CommonUtils.convertFileSize(TorrentEngine.getInstance().getUploadRate()) + "/s";
-        foregroundNotify.setContentText(speed);
+        foregroundNotify.setContentText(content);
         Notification notify = foregroundNotify.build();
         notify.flags = Notification.FLAG_FOREGROUND_SERVICE;
         return notify;

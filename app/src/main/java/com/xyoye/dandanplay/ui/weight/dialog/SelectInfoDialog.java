@@ -98,13 +98,15 @@ public class SelectInfoDialog extends Dialog {
     @Override
     public void show() {
         super.show();
-        EventBus.getDefault().register(this);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
     }
 
     @Override
     public void hide() {
         super.hide();
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
     }
 
     @OnClick(R.id.dialog_cancel_iv)

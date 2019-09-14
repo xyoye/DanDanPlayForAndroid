@@ -122,7 +122,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
 
         videoActionLl.setVisibility(View.GONE);
 
-        danmuTipsIv.setOnClickListener(v -> listener.openDanmuSetting(position));
+        danmuTipsIv.setOnClickListener(v -> listener.bindDanmu(position));
         videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
         unbindDanmuActionLl.setOnClickListener(v -> {
             listener.unBindDanmu(position);
@@ -161,7 +161,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
     }
 
     public interface VideoItemEventListener {
-        void openDanmuSetting(int position);
+        void bindDanmu(int position);
 
         void openVideo(int position);
 

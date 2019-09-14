@@ -81,7 +81,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
             public AdapterItem<VideoBean> onCreateItem(int viewType) {
                 return new VideoItem(new VideoItem.VideoItemEventListener() {
                     @Override
-                    public void openDanmuSetting(int position) {
+                    public void bindDanmu(int position) {
                         if (position >= videoList.size()) return;
                         selectVideoBean = videoList.get(position);
                         String videoPath = videoList.get(position).getVideoPath();

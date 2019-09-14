@@ -48,11 +48,7 @@ public class SoUtils {
     }
 
     private String getKey(int key) {
-        String result = getKey(key, IApplication.get_context());
-        if (ERROR_RESULT.equals(result)) {
-            ToastUtils.showShort("错误，非官方应用");
-        }
-        return result;
+        return getKey(key, IApplication.get_context());
     }
 
     private static native String getKey(int position, Context context);

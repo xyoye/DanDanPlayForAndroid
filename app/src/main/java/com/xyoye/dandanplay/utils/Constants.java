@@ -66,8 +66,6 @@ public class Constants {
      * 系统配置
      */
     public static class Config {
-        //首次进入app
-        static final String FIRST_OPEN_APP = "first_open_app_1";
         //本地下载目录
         static final String LOCAL_DOWNLOAD_FOLDER = "local_download_folder";
         //文件夹排序方式

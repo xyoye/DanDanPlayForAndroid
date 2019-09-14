@@ -94,8 +94,9 @@ public class WebViewActivity extends BaseMvcActivity {
         //支持通过JS打开新窗口
         webSetting.setJavaScriptCanOpenWindowsAutomatically(true);
         //视图适应窗口
-        webSetting.setUseWideViewPort(true);
-        webSetting.setLoadWithOverviewMode(true);
+//        webSetting.setUseWideViewPort(true);
+//        webSetting.setLoadWithOverviewMode(true);
+        webSetting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         //允许 WebView 使用 File 协议
         webSetting.setAllowFileAccess(true);
         //允许webview对文件的操作

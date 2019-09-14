@@ -109,8 +109,8 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
                 break;
             case R.id.about_rl:
                 Intent intent_about = new Intent(AppSettingActivity.this, WebViewActivity.class);
-                intent_about.putExtra("title", "关于");
-                intent_about.putExtra("link", "file:///android_asset/About_in_application.html");
+                intent_about.putExtra("title", "关于我们");
+                intent_about.putExtra("link", "file:///android_asset/DanDanPlay.html");
                 startActivity(intent_about);
                 break;
             case R.id.feedback_rl:

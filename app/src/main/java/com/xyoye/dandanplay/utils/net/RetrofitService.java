@@ -72,9 +72,6 @@ public interface RetrofitService {
     @POST("api/v2/login")
     Observable<PersonalBean> login(@FieldMap Map<String, String> params);
 
-    @GET("api/v2/login/renew")
-    Observable<PersonalBean> reToken();
-
     @GET("api/v2/favorite")
     Observable<AnimeFavoriteBean> getFavorite();
 

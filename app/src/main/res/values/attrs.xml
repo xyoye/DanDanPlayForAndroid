@@ -86,4 +86,31 @@
             <enum name="right_bottom_triangle" value="7" />
         </attr>
     </declare-styleable>
+
+
+
+    <declare-styleable name="TextPathAnimView">
+        <attr name="duration" format="integer" />
+        <attr name="text" format="string" />
+        <attr name="text_bg_color" format="color" />
+        <attr name="text_fg_color" format="color" />
+        <attr name="text_size_scale" format="float" />
+        <attr name="text_stoke_width" format="float" />
+        <attr name="text_interval" format="dimension" />
+        <attr name="loop" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedSvgView">
+        <attr name="animatedSvgImageSizeX" format="integer"/>
+        <attr name="animatedSvgImageSizeY" format="integer"/>
+        <attr name="animatedSvgTraceTime" format="string"/>
+        <attr name="animatedSvgTraceTimePerGlyph" format="string"/>
+        <attr name="animatedSvgFillStart" format="string"/>
+        <attr name="animatedSvgFillTime" format="string"/>
+        <attr name="animatedSvgGlyphStrings" format="reference"/>
+        <attr name="animatedSvgTraceColors" format="reference"/>
+        <attr name="animatedSvgTraceResidueColors" format="reference"/>
+        <attr name="animatedSvgTraceMarkerLength" format="integer"/>
+        <attr name="animatedSvgFillColors" format="reference"/>
+    </declare-styleable>
 </resources>

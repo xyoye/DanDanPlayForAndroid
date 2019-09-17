@@ -9,7 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.blankj.utilcode.util.Utils;
-import com.xyoye.dandanplay.ui.activities.OpenActivity;
+import com.xyoye.dandanplay.ui.activities.SplashActivity;
 import com.xyoye.dandanplay.ui.activities.personal.CrashActivity;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
@@ -79,7 +79,7 @@ public class IApplication extends Application {
                 .enabled(true)
                 .trackActivities(true)
                 .minTimeBetweenCrashesMs(2000)
-                .restartActivity(OpenActivity.class)
+                .restartActivity(SplashActivity.class)
                 .errorActivity(CrashActivity.class)
                 .apply();
 

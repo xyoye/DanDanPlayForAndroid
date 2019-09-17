@@ -121,14 +121,6 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
                 .subscribe(observer);
     }
 
-    public static void reToken(CommJsonObserver<PersonalBean> observer, NetworkConsumer consumer){
-        RetroFactory.getInstance().reToken()
-                .doOnSubscribe(consumer)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
-
     public static void changePassword(ChangePasswordParam param, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().changePassword(param.getMap())
                 .doOnSubscribe(consumer)

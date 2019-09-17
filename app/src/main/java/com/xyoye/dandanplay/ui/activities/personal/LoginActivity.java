@@ -16,6 +16,7 @@ import com.xyoye.dandanplay.mvp.impl.LoginPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.ui.activities.MainActivity;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.SoUtils;
 
 import butterknife.BindView;
@@ -37,6 +38,8 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
 
     @Override
     public void initView() {
+        String userName = AppConfig.getInstance().getUserName();
+        accountEt.setText(userName);
         setTitle("登录");
     }
 

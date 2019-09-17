@@ -333,4 +333,26 @@ public class AppConfig {
     public void setRemoteLoginData(String data) {
         SPUtils.getInstance().put(Constants.Config.REMOTE_LOGIN_DATA, data);
     }
+
+    /**
+     * 是否关闭启动页
+     */
+    public boolean isCloseSplashPage() {
+        return SPUtils.getInstance().getBoolean(Constants.Config.CLOSE_SPLASH_PAGE);
+    }
+
+    public void setCloseSplashPage(boolean isClose) {
+        SPUtils.getInstance().put(Constants.Config.CLOSE_SPLASH_PAGE, isClose);
+    }
+
+    /**
+     * 上次登录时间
+     */
+    public long getLastLoginTime() {
+        return SPUtils.getInstance().getLong(Constants.Config.LAST_LOGIN_TIME);
+    }
+
+    public void setLastLoginTime(long timeMs) {
+        SPUtils.getInstance().put(Constants.Config.LAST_LOGIN_TIME, timeMs);
+    }
 }

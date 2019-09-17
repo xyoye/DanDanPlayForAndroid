@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,6 +38,8 @@ import butterknife.BindView;
 public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener {
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;
+    @BindView(R.id.close_splash_page_cb)
+    CheckBox closeSplashPageCb;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
@@ -65,6 +68,9 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
                 : "非官方应用";
         versionTv.setText(version);
         patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
+
+        boolean isClose = AppConfig.getInstance().isCloseSplashPage();
+        closeSplashPageCb.setChecked(isClose);
     }
 
     @Override
@@ -79,6 +85,9 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
             new PatchHisDialog(AppSettingActivity.this, R.style.Dialog).show();
             return true;
         });
+
+        closeSplashPageCb.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setCloseSplashPage(isChecked));
     }
 
     @NonNull

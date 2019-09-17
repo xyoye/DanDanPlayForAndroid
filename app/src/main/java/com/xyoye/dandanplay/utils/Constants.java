@@ -88,6 +88,10 @@ public class Constants {
         static final String SMB_IS_GRID_LAYOUT = "smb_is_grid_layout";
         //远程登录数据
         static final String REMOTE_LOGIN_DATA = "remote_login_data";
+        //关闭启动页
+        static final String CLOSE_SPLASH_PAGE = "close_splash_page";
+        //上次登录时间
+        static final String LAST_LOGIN_TIME = "lase_login_time";
     }
 
     /**

@@ -95,4 +95,10 @@
     <color name="video_item_image_default_color">#212121</color>
     <!-- 搜索输入框字体颜色 -->
     <color name="search_edit_text_text_color">#ffffff</color>
+    <!-- 欢迎页颜色 -->
+    <color name="splash_icon_fill_color">#002095f4</color>
+    <color name="splash_icon_trace_color">#ff2095f4</color>
+    <color name="splash_icon_residue_color">#ffffffff</color>
+    <color name="splash_text_bg_color">#00ffffff</color>
+    <color name="splash_text_fg_color">#ffffffff</color>
 </resources>

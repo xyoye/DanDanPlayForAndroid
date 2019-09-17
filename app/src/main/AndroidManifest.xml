@@ -20,9 +20,9 @@
         tools:targetApi="n">
         <!--闪屏页-->
         <activity
-            android:name=".ui.activities.OpenActivity"
+            android:name=".ui.activities.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OpenTheme">
+            android:theme="@style/WelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

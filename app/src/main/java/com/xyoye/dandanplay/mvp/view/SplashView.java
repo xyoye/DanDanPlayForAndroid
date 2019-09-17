@@ -6,6 +6,6 @@ import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
  * Created by xyoye on 2018/7/15.
  */
 
-public interface OpenView extends BaseMvpView{
-    void launch(boolean toLogin);
+public interface SplashView extends BaseMvpView{
+
 }

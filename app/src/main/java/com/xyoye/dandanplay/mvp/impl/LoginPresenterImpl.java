@@ -64,6 +64,7 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
                 AppConfig.getInstance().saveUserName(param.getUserName());
                 AppConfig.getInstance().saveUserImage(personalBean.getProfileImage());
                 AppConfig.getInstance().saveToken(personalBean.getToken());
+                AppConfig.getInstance().setLastLoginTime(System.currentTimeMillis());
                 ToastUtils.showShort("登录成功");
                 EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
                 getView().launchMain();

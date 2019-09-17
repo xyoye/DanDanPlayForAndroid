@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.utils;
+package com.xyoye.dandanplay.ui.weight;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -24,7 +24,7 @@ import android.view.ViewParent;
  */
 
 @SuppressLint("ViewConstructor")
-public class SwitchThemeAnimation extends View {
+public class SwitchThemeAnimView extends View {
 
     private Bitmap mBackground;//屏幕截图
     private Paint mPaint;
@@ -37,7 +37,7 @@ public class SwitchThemeAnimation extends View {
     private Animator.AnimatorListener mAnimatorListener;
     private ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener;
 
-    public static SwitchThemeAnimation create(View onClickView) {
+    public static SwitchThemeAnimView create(View onClickView) {
         Context context = onClickView.getContext();
         int newWidth = onClickView.getWidth() / 2;
         int newHeight = onClickView.getHeight() / 2;
@@ -47,10 +47,10 @@ public class SwitchThemeAnimation extends View {
         //起始半径
         //因为我们要避免遮挡按钮
         int radius = Math.max(newWidth, newHeight);
-        return new SwitchThemeAnimation(context, startX, startY, radius);
+        return new SwitchThemeAnimView(context, startX, startY, radius);
     }
 
-    private SwitchThemeAnimation(Context context, float startX, float startY, int radius) {
+    private SwitchThemeAnimView(Context context, float startX, float startY, int radius) {
         super(context);
         //获取activity的根视图,用来添加本View
         mRootView = (ViewGroup) ((Activity) getContext()).getWindow().getDecorView();
@@ -74,7 +74,7 @@ public class SwitchThemeAnimation extends View {
         }
     }
 
-    public SwitchThemeAnimation setDuration(long duration) {
+    public SwitchThemeAnimView setDuration(long duration) {
         mDuration = duration;
         return this;
     }
@@ -188,7 +188,7 @@ public class SwitchThemeAnimation extends View {
         return valueAnimator;
     }
 
-    public SwitchThemeAnimation setOnAnimationEndListener(OnAnimationEndListener listener) {
+    public SwitchThemeAnimView setOnAnimationEndListener(OnAnimationEndListener listener) {
         mOnAnimationEndListener = listener;
         return this;
     }

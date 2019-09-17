@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -97,8 +98,17 @@ public class SplashActivity extends BaseMvpActivity<SplashPresenter> implements 
     }
 
     @Override
-    protected void setStatusBar() {
+    public void onBackPressed() {
 
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return true;
+        } else {
+            return super.dispatchKeyEvent(event);
+        }
     }
 
     private void launchActivity() {

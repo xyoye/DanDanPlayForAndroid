@@ -27,7 +27,7 @@ import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.SwitchThemeAnimation;
+import com.xyoye.dandanplay.ui.weight.SwitchThemeAnimView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -164,7 +164,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
      * 切换皮肤
      */
     private void switchSkin() {
-        SwitchThemeAnimation.create(skinIv).setDuration(800).start();
+        SwitchThemeAnimView.create(skinIv).setDuration(800).start();
         if (isLoadedSkin()) {
             SkinCompatManager.getInstance()
                     .restoreDefaultTheme();

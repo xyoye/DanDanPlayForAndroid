@@ -92,6 +92,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                     .param("folder_type", Constants.ScanType.SCAN)
                     .execute();
         }
+        cursor.close();
     }
 
     //Tracker

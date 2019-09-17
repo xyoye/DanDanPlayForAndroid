@@ -91,6 +91,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             videoBean.setCurrentPosition(1);
             videoBean.setEpisodeId(cursor.getInt(2));
         }
+        cursor.close();
 
         return videoBean;
     }

@@ -71,9 +71,12 @@ public class JsonUtil {
         List<T> list = new ArrayList<T>();
         try {
             Gson gson = new Gson();
-            JsonArray arry = new JsonParser().parse(jsonString).getAsJsonArray();
-            for (JsonElement jsonElement : arry) {
-                list.add(gson.fromJson(jsonElement, cls));
+            JsonElement element = new JsonParser().parse(jsonString);
+            if (element.isJsonArray()){
+                JsonArray arry = element.getAsJsonArray();
+                for (JsonElement jsonElement : arry) {
+                    list.add(gson.fromJson(jsonElement, cls));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

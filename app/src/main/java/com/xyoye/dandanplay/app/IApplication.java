@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.StrictMode;
 
 import com.blankj.utilcode.util.Utils;
 import com.xyoye.dandanplay.ui.activities.SplashActivity;
@@ -104,6 +105,9 @@ public class IApplication extends Application {
         }
 
         startCorrectlyFlag = true;
+
+        //严格模式
+        //strictMode();
     }
 
     /**
@@ -134,6 +138,24 @@ public class IApplication extends Application {
             cookiesManager = new CookiesManager(get_context());
         }
         return cookiesManager;
+    }
+
+    /**
+     * 严格模式启动
+     */
+    private void strictMode(){
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
     }
 
     public static Context get_context() {

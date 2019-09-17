@@ -238,6 +238,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                     .param("play_time", System.currentTimeMillis())
                     .execute();
         }
+        cursor.close();
     }
 
     /**

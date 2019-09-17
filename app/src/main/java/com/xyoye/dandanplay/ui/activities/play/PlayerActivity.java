@@ -552,6 +552,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             while (cursor.moveToNext()) {
                 normalFilterList.add(cursor.getString(0));
             }
+            cursor.close();
         }
     }
 

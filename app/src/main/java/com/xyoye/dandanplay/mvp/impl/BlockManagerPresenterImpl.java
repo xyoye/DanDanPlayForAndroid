@@ -59,6 +59,7 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
             while (cursor.moveToNext()){
                 blockList.add(cursor.getString(0));
             }
+            cursor.close();
         }
         return blockList;
     }

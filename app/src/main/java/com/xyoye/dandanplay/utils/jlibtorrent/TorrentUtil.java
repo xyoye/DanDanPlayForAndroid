@@ -98,8 +98,7 @@ public class TorrentUtil {
                     .param("priorities", torrent.getPriorityStr())
                     .postExecute();
         }
-
-
+        cursor.close();
     }
 
     /**
@@ -121,6 +120,7 @@ public class TorrentUtil {
             );
             torrentList.add(torrent);
         }
+        cursor.close();
 
         return torrentList;
     }

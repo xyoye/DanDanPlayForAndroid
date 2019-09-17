@@ -76,6 +76,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                 taskBean.setFileList(getTaskFileList(taskBean.getTorrentHash()));
                 taskList.add(taskBean);
             }
+            taskCursor.close();
 
             emitter.onNext(taskList);
         }).subscribeOn(Schedulers.newThread())
@@ -121,6 +122,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
             fileBean.setEpisode_id(fileCursor.getInt(5));
             fileList.add(fileBean);
         }
+        fileCursor.close();
 
         return fileList;
     }

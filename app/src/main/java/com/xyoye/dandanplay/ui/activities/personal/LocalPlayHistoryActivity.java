@@ -67,6 +67,7 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
             historyBean.setPlayTime(cursor.getLong(6));
             historyList.add(historyBean);
         }
+        cursor.close();
 
         adapter = new BaseRvAdapter<LocalPlayHistoryBean>(historyList) {
             @NonNull

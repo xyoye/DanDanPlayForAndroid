@@ -149,6 +149,24 @@ public class CommonUtils {
     }
 
     /**
+     * 获取文件夹名
+     */
+    public static String getFolderName(String folderPath) {
+        if (TextUtils.isEmpty(folderPath))
+            return "";
+
+        while (folderPath.endsWith("/"))
+            folderPath = folderPath.substring(0, folderPath.length() - 1);
+
+        int index = folderPath.lastIndexOf("/");
+        if (index > 0 && index + 1 < folderPath.length()) {
+            return folderPath.substring(index + 1);
+        } else {
+            return folderPath;
+        }
+    }
+
+    /**
      * 判断数字
      */
     public static boolean isNum(String str) {

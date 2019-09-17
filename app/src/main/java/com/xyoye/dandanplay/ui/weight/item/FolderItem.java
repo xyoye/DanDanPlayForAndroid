@@ -17,7 +17,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/6/29.
  */
 
-public class FolderItem implements AdapterItem<FolderBean>{
+public class FolderItem implements AdapterItem<FolderBean> {
     @BindView(R.id.folder_title)
     TextView folderTitle;
     @BindView(R.id.file_number)
@@ -26,7 +26,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
     private View mView;
     private PlayFolderListener listener;
 
-    public FolderItem(PlayFolderListener listener){
+    public FolderItem(PlayFolderListener listener) {
         if (listener == null)
             throw new NullPointerException("call back not null");
         this.listener = listener;
@@ -50,7 +50,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
     @Override
     public void onUpdateViews(FolderBean model, int position) {
         String folder = model.getFolderPath();
-        String title = FileUtils.getFileNameNoExtension(folder.substring(0, folder.length()-1));
+        String title = CommonUtils.getFolderName(folder);
 
         folderTitle.setText(title);
         fileNumber.setText(String.format("%s 视频", model.getFileNumber()));
@@ -58,7 +58,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
         //是否为上次播放的文件夹
         boolean isLastPlayFolder = false;
         String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
-        if (!StringUtils.isEmpty(lastVideoPath)){
+        if (!StringUtils.isEmpty(lastVideoPath)) {
             String folderPath = FileUtils.getDirName(lastVideoPath);
             isLastPlayFolder = folderPath.equals(model.getFolderPath());
         }
@@ -76,7 +76,7 @@ public class FolderItem implements AdapterItem<FolderBean>{
         mView.setOnLongClickListener(v -> listener.onLongClick(model.getFolderPath(), title));
     }
 
-    public interface PlayFolderListener{
+    public interface PlayFolderListener {
         void onClick(String folderPath);
 
         boolean onLongClick(String folderPath, String folderName);

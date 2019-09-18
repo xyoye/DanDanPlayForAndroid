@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities.play;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,10 +16,10 @@ import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.BindDanmuBean;
 import com.xyoye.dandanplay.bean.params.BindDanmuParam;
 import com.xyoye.dandanplay.bean.params.PlayParam;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import java.io.File;
 
@@ -100,7 +99,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         if (requestCode == SELECT_DANMU) {
             if (resultCode == RESULT_OK) {
                 BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
-                if (bindDanmuBean != null){
+                if (bindDanmuBean != null) {
                     danmuPath = bindDanmuBean.getDanmuPath();
                     episodeId = bindDanmuBean.getEpisodeId();
                 }
@@ -195,7 +194,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         playParam.setCurrentPosition(currentPosition);
         playParam.setSourceOrigin(sourceOrigin);
 
-        if (sourceOrigin == SOURCE_ONLINE_PREVIEW){
+        if (sourceOrigin == SOURCE_ONLINE_PREVIEW) {
             playParam.setThunderTaskId(thunderTaskId);
         }
 
@@ -209,36 +208,36 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      * 保存播放历史
      */
     public void saveDatabase() {
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("local_play_history")
                 .query()
                 .where("video_path", videoPath)
                 .where("source_origin", String.valueOf(sourceOrigin))
-                .execute();
-        if (cursor.getCount() > 0) {
-            DataBaseManager.getInstance()
-                    .selectTable("local_play_history")
-                    .update()
-                    .param("video_title", videoTitle)
-                    .param("danmu_path", danmuPath)
-                    .param("episode_id", episodeId)
-                    .param("play_time", System.currentTimeMillis())
-                    .where("video_path", videoPath)
-                    .where("source_origin", String.valueOf(sourceOrigin))
-                    .execute();
-        } else {
-            DataBaseManager.getInstance()
-                    .selectTable("local_play_history")
-                    .insert()
-                    .param("video_path", videoPath)
-                    .param("video_title", videoTitle)
-                    .param("danmu_path", danmuPath)
-                    .param("episode_id", episodeId)
-                    .param("source_origin", sourceOrigin)
-                    .param("play_time", System.currentTimeMillis())
-                    .execute();
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    if (cursor.getCount() > 0) {
+                        DataBaseManager.getInstance()
+                                .selectTable("local_play_history")
+                                .update()
+                                .param("video_title", videoTitle)
+                                .param("danmu_path", danmuPath)
+                                .param("episode_id", episodeId)
+                                .param("play_time", System.currentTimeMillis())
+                                .where("video_path", videoPath)
+                                .where("source_origin", String.valueOf(sourceOrigin))
+                                .execute();
+                    } else {
+                        DataBaseManager.getInstance()
+                                .selectTable("local_play_history")
+                                .insert()
+                                .param("video_path", videoPath)
+                                .param("video_title", videoTitle)
+                                .param("danmu_path", danmuPath)
+                                .param("episode_id", episodeId)
+                                .param("source_origin", sourceOrigin)
+                                .param("play_time", System.currentTimeMillis())
+                                .execute();
+                    }
+                });
     }
 
     /**

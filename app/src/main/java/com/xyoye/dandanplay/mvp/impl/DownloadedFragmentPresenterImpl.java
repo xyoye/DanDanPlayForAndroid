@@ -1,14 +1,13 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,27 +56,27 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
     @Override
     public void queryDownloadedTask() {
         Observable.create((ObservableOnSubscribe<List<DownloadedTaskBean>>) emitter -> {
-            List<DownloadedTaskBean> taskList = new ArrayList<>();
-            Cursor taskCursor = DataBaseManager
+            List<DownloadedTaskBean> taskList = DataBaseManager
                     .getInstance()
                     .selectTable("downloaded_task")
                     .query()
-                    .execute();
-            while (taskCursor.moveToNext()) {
-                DownloadedTaskBean taskBean = new DownloadedTaskBean();
-                int taskId = taskCursor.getInt(0);
-                taskBean.set_id(taskId);
-                taskBean.setTitle(taskCursor.getString(1));
-                taskBean.setSaveDirPath(taskCursor.getString(2));
-                taskBean.setTorrentFilePath(taskCursor.getString(3));
-                taskBean.setTorrentHash(taskCursor.getString(4));
-                taskBean.setTotalSize(taskCursor.getLong(5));
-                taskBean.setCompleteTime(taskCursor.getString(6));
-                taskBean.setFileList(getTaskFileList(taskBean.getTorrentHash()));
-                taskList.add(taskBean);
-            }
-            taskCursor.close();
-
+                    .execute(cursor -> {
+                        List<DownloadedTaskBean> tempList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            DownloadedTaskBean taskBean = new DownloadedTaskBean();
+                            int taskId = cursor.getInt(0);
+                            taskBean.set_id(taskId);
+                            taskBean.setTitle(cursor.getString(1));
+                            taskBean.setSaveDirPath(cursor.getString(2));
+                            taskBean.setTorrentFilePath(cursor.getString(3));
+                            taskBean.setTorrentHash(cursor.getString(4));
+                            taskBean.setTotalSize(cursor.getLong(5));
+                            taskBean.setCompleteTime(cursor.getString(6));
+                            taskBean.setFileList(getTaskFileList(taskBean.getTorrentHash()));
+                            tempList.add(taskBean);
+                        }
+                        return tempList;
+                    });
             emitter.onNext(taskList);
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -107,23 +106,21 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
     }
 
     private List<DownloadedTaskBean.DownloadedTaskFileBean> getTaskFileList(String taskHash) {
-        List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
-        Cursor fileCursor = DataBaseManager
-                .getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("downloaded_file")
                 .query()
                 .where("task_torrent_hash", taskHash)
-                .execute();
-        while (fileCursor.moveToNext()) {
-            DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();
-            fileBean.setFilePath(fileCursor.getString(2));
-            fileBean.setFileLength(fileCursor.getLong(3));
-            fileBean.setDanmuPath(fileCursor.getString(4));
-            fileBean.setEpisode_id(fileCursor.getInt(5));
-            fileList.add(fileBean);
-        }
-        fileCursor.close();
-
-        return fileList;
+                .execute(cursor -> {
+                    List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();
+                        fileBean.setFilePath(cursor.getString(2));
+                        fileBean.setFileLength(cursor.getLong(3));
+                        fileBean.setDanmuPath(cursor.getString(4));
+                        fileBean.setEpisode_id(cursor.getInt(5));
+                        fileList.add(fileBean);
+                    }
+                    return fileList;
+                });
     }
 }

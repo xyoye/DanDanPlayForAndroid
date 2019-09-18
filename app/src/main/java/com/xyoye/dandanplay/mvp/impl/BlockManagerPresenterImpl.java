@@ -1,13 +1,12 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +48,20 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
 
     @Override
     public List<String> queryBlockData() {
-        List<String> blockList = new ArrayList<>();
-        Cursor cursor = DataBaseManager.getInstance()
+
+        return DataBaseManager.getInstance()
                 .selectTable("danmu_block")
                 .query()
                 .queryColumns("text")
-                .execute();
-        if (cursor != null){
-            while (cursor.moveToNext()){
-                blockList.add(cursor.getString(0));
-            }
-            cursor.close();
-        }
-        return blockList;
+                .execute(cursor -> {
+                    List<String> blocks = new ArrayList<>();
+                    if (cursor != null) {
+                        while (cursor.moveToNext()) {
+                            blocks.add(cursor.getString(0));
+                        }
+                    }
+                    return blocks;
+                });
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
 
     @Override
     public void deleteBlock(List<String> textList) {
-        for (String text : textList){
+        for (String text : textList) {
             DataBaseManager.getInstance()
                     .selectTable("danmu_block")
                     .delete()
@@ -86,7 +86,7 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
 
     @Override
     public void addBlock(List<String> textList) {
-        for (String text : textList){
+        for (String text : textList) {
             DataBaseManager.getInstance()
                     .selectTable("danmu_block")
                     .insert()

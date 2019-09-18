@@ -51,23 +51,22 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
         historyList = new ArrayList<>();
 
         //查询记录
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("local_play_history")
                 .query()
                 .setOrderByColumnDesc("play_time")
-                .execute();
-
-        while (cursor.moveToNext()) {
-            LocalPlayHistoryBean historyBean = new LocalPlayHistoryBean();
-            historyBean.setVideoPath(cursor.getString(1));
-            historyBean.setVideoTitle(cursor.getString(2));
-            historyBean.setDanmuPath(cursor.getString(3));
-            historyBean.setEpisodeId(cursor.getInt(4));
-            historyBean.setSourceOrigin(cursor.getInt(5));
-            historyBean.setPlayTime(cursor.getLong(6));
-            historyList.add(historyBean);
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    while (cursor.moveToNext()) {
+                        LocalPlayHistoryBean historyBean = new LocalPlayHistoryBean();
+                        historyBean.setVideoPath(cursor.getString(1));
+                        historyBean.setVideoTitle(cursor.getString(2));
+                        historyBean.setDanmuPath(cursor.getString(3));
+                        historyBean.setEpisodeId(cursor.getInt(4));
+                        historyBean.setSourceOrigin(cursor.getInt(5));
+                        historyBean.setPlayTime(cursor.getLong(6));
+                        historyList.add(historyBean);
+                    }
+                });
 
         adapter = new BaseRvAdapter<LocalPlayHistoryBean>(historyList) {
             @NonNull

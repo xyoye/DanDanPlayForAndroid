@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.activities.play;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -543,17 +542,15 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     //获取本地屏蔽信息
     private void initNormalFilter() {
         normalFilterList = new ArrayList<>();
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("danmu_block")
                 .query()
                 .queryColumns("text")
-                .execute();
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                normalFilterList.add(cursor.getString(0));
-            }
-            cursor.close();
-        }
+                .execute(cursor -> {
+                    while (cursor.moveToNext()) {
+                        normalFilterList.add(cursor.getString(0));
+                    }
+                });
     }
 
     //查询字幕

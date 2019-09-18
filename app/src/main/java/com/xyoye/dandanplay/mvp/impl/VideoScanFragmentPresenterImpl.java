@@ -1,17 +1,16 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.ScanFolderBean;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -71,24 +70,24 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
     @Override
     public void queryScanFolderList(boolean isScan) {
         String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
-                Cursor cursor = DataBaseManager.getInstance()
+        List<ScanFolderBean> folderList = new ArrayList<>();
+
+        DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .query()
                 .where("folder_type", scanType)
-                .execute();
-
-        List<ScanFolderBean> folderList = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            folderList.add(new ScanFolderBean(cursor.getString(1), false));
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    while (cursor.moveToNext()) {
+                        folderList.add(new ScanFolderBean(cursor.getString(1), false));
+                    }
+                });
         getView().updateFolderList(folderList);
     }
 
     @Override
     public void deleteScanFolder(String path, boolean isScan) {
         String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
-        if (Constants.DefaultConfig.SYSTEM_VIDEO_PATH.equals(path)){
+        if (Constants.DefaultConfig.SYSTEM_VIDEO_PATH.equals(path)) {
             //将不删除系统视频，只改变为屏蔽或扫描
             String newScanType = isScan ? Constants.ScanType.BLOCK : Constants.ScanType.SCAN;
             DataBaseManager.getInstance()
@@ -98,7 +97,7 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
                     .where("folder_type", scanType)
                     .param("folder_type", newScanType)
                     .execute();
-        }else {
+        } else {
             DataBaseManager.getInstance()
                     .selectTable("scan_folder")
                     .delete()

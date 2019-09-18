@@ -84,7 +84,7 @@ public class QueryBuilder {
     }
 
     @CheckReturnValue
-    public Cursor execute() {
+    private Cursor execute() {
 
         //selection
         String clause = null;
@@ -110,5 +110,41 @@ public class QueryBuilder {
         }
 
         return sqLiteDatabase.query(DataBaseInfo.getTableNames()[tablePosition], colNames, clause, args, groupColName, having, orderByText, limit);
+    }
+
+    /**
+     * 带有返回值的处理方法
+     * 执行callback后返回值
+     */
+    @CheckReturnValue
+    public <T> T execute(QueryResultCallBack<T> callBack) {
+        Cursor cursor = execute();
+        T result = callBack.onQuery(cursor);
+        //自动检查Cursor是否关闭
+        if (cursor != null && !cursor.isClosed()){
+            cursor.close();
+        }
+        return result;
+    }
+
+    /**
+     * 不带有返回值的处理方法
+     * 只执行callback
+     */
+    public void execute(QueryNotResultCallBack callBack) {
+        Cursor cursor = execute();
+        callBack.onQuery(cursor);
+        //自动检查Cursor是否关闭
+        if (cursor != null && !cursor.isClosed()){
+            cursor.close();
+        }
+    }
+
+    public interface QueryResultCallBack<E>{
+        E onQuery(Cursor cursor);
+    }
+
+    public interface QueryNotResultCallBack{
+        void onQuery(Cursor cursor);
     }
 }

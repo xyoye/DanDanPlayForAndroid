@@ -120,36 +120,36 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     //获取数据库中本地文件列表，如果本地文件不存在，删除记录
     //get local file form database
     private List<VideoBean> getDataBaseVideo(String folderPath) {
-        List<VideoBean> videoBeans = new ArrayList<>();
-        Cursor cursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .where("folder_path", folderPath)
-                .execute();
-        while (cursor.moveToNext()) {
-            String filePath = cursor.getString(2);
-            File file = new File(filePath);
-            if (!file.exists()) {
-                DataBaseManager.getInstance()
-                        .selectTable("file")
-                        .delete()
-                        .where("folder_path", folderPath)
-                        .where("file_path", filePath)
-                        .postExecute();
-                continue;
-            }
+                .execute(cursor -> {
+                    List<VideoBean> videoBeans = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        String filePath = cursor.getString(2);
+                        File file = new File(filePath);
+                        if (!file.exists()) {
+                            DataBaseManager.getInstance()
+                                    .selectTable("file")
+                                    .delete()
+                                    .where("folder_path", folderPath)
+                                    .where("file_path", filePath)
+                                    .postExecute();
+                            continue;
+                        }
 
-            VideoBean videoBean = new VideoBean();
-            videoBean.setVideoPath(filePath);
-            videoBean.setDanmuPath(cursor.getString(3));
-            videoBean.setCurrentPosition(cursor.getInt(4));
-            videoBean.setVideoDuration(Long.parseLong(cursor.getString(5)));
-            videoBean.setEpisodeId(cursor.getInt(6));
-            videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
-            videoBean.set_id(cursor.getInt(8));
-            videoBeans.add(videoBean);
-        }
-        cursor.close();
-        return videoBeans;
+                        VideoBean videoBean = new VideoBean();
+                        videoBean.setVideoPath(filePath);
+                        videoBean.setDanmuPath(cursor.getString(3));
+                        videoBean.setCurrentPosition(cursor.getInt(4));
+                        videoBean.setVideoDuration(Long.parseLong(cursor.getString(5)));
+                        videoBean.setEpisodeId(cursor.getInt(6));
+                        videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
+                        videoBean.set_id(cursor.getInt(8));
+                        videoBeans.add(videoBean);
+                    }
+                    return videoBeans;
+                });
     }
 }

@@ -77,23 +77,19 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     @Override
     public VideoBean getLastPlayVideo(String videoPath) {
-        VideoBean videoBean = null;
-        Cursor cursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .queryColumns("danmu_path", "current_position", "danmu_episode_id")
                 .where("file_path", videoPath)
-                .execute();
-        if (cursor.moveToNext()) {
-            videoBean = new VideoBean();
-            videoBean.setVideoPath(videoPath);
-            videoBean.setDanmuPath(cursor.getString(0));
-            videoBean.setCurrentPosition(1);
-            videoBean.setEpisodeId(cursor.getInt(2));
-        }
-        cursor.close();
-
-        return videoBean;
+                .execute(cursor -> {
+                    VideoBean videoBean = new VideoBean();
+                    videoBean.setVideoPath(videoPath);
+                    videoBean.setDanmuPath(cursor.getString(0));
+                    videoBean.setCurrentPosition(1);
+                    videoBean.setEpisodeId(cursor.getInt(2));
+                    return videoBean;
+                });
     }
 
     @Override
@@ -106,7 +102,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
         if (reScan) {
             scanAndRefreshVideo();
-        }else {
+        } else {
             refreshVideo();
         }
 
@@ -168,54 +164,54 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         List<String> scanList = getScanFolder(Constants.ScanType.SCAN);
 
         //查询所有视频
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .queryColumns("folder_path", "file_path")
-                .execute();
-        while (cursor.moveToNext()) {
-            String folderPath = cursor.getString(0);
-            String filePath = cursor.getString(1);
+                .execute(cursor -> {
+                    while (cursor.moveToNext()) {
+                        String folderPath = cursor.getString(0);
+                        String filePath = cursor.getString(1);
 
-            //过滤屏蔽目录
-            boolean isBlock = false;
-            for (String blockPath : blockList) {
-                //视频属于屏蔽目录下视频，过滤
-                if (filePath.startsWith(blockPath)) {
-                    isBlock = true;
-                    break;
-                }
-            }
-            if (isBlock) continue;
+                        //过滤屏蔽目录
+                        boolean isBlock = false;
+                        for (String blockPath : blockList) {
+                            //视频属于屏蔽目录下视频，过滤
+                            if (filePath.startsWith(blockPath)) {
+                                isBlock = true;
+                                break;
+                            }
+                        }
+                        if (isBlock) continue;
 
-            //过滤非扫描目录，扫描包括系统目录时不用过滤
-            if (!scanList.contains(Constants.DefaultConfig.SYSTEM_VIDEO_PATH)) {
-                boolean isNotScan = true;
-                for (String scanPath : scanList) {
-                    if (filePath.startsWith(scanPath)) {
-                        isNotScan = false;
-                        break;
+                        //过滤非扫描目录，扫描包括系统目录时不用过滤
+                        if (!scanList.contains(Constants.DefaultConfig.SYSTEM_VIDEO_PATH)) {
+                            boolean isNotScan = true;
+                            for (String scanPath : scanList) {
+                                if (filePath.startsWith(scanPath)) {
+                                    isNotScan = false;
+                                    break;
+                                }
+                            }
+                            if (isNotScan) continue;
+                        }
+
+                        //计算文件夹中文件数量
+                        //文件不存在记录需要删除的文件
+                        File file = new File(filePath);
+                        if (file.exists()) {
+                            if (beanMap.containsKey(folderPath)) {
+                                Integer number = beanMap.get(folderPath);
+                                number = number == null ? 0 : number;
+                                beanMap.put(folderPath, ++number);
+                            } else {
+                                beanMap.put(folderPath, 1);
+                            }
+                        } else {
+                            deleteMap.put(folderPath, filePath);
+                        }
                     }
-                }
-                if (isNotScan) continue;
-            }
-
-            //计算文件夹中文件数量
-            //文件不存在记录需要删除的文件
-            File file = new File(filePath);
-            if (file.exists()) {
-                if (beanMap.containsKey(folderPath)) {
-                    Integer number = beanMap.get(folderPath);
-                    number = number == null ? 0 : number;
-                    beanMap.put(folderPath, ++number);
-                } else {
-                    beanMap.put(folderPath, 1);
-                }
-            } else {
-                deleteMap.put(folderPath, filePath);
-            }
-        }
-        cursor.close();
+                });
 
         //更新文件夹文件数量
         for (Map.Entry<String, Integer> entry : beanMap.entrySet()) {
@@ -246,21 +242,18 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * @param scanType ScanType.BLOCK || ScanType.SCAN
      */
     private List<String> getScanFolder(String scanType) {
-        List<String> folderList = new ArrayList<>();
-        //查询屏蔽目录
-        Cursor blockCursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .query()
                 .queryColumns("folder_path")
                 .where("folder_type", scanType)
-                .execute();
-
-        //获取所有屏蔽目录
-        while (blockCursor.moveToNext()) {
-            folderList.add(blockCursor.getString(0));
-        }
-        blockCursor.close();
-        return folderList;
+                .execute(cursor -> {
+                    List<String> folderList = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        folderList.add(cursor.getString(0));
+                    }
+                    return folderList;
+                });
     }
 
     /**
@@ -276,24 +269,24 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         values.put(DataBaseInfo.getFieldNames()[2][7], String.valueOf(videoBean.getVideoSize()));
         values.put(DataBaseInfo.getFieldNames()[2][8], videoBean.get_id());
 
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .where("folder_path", folderPath)
                 .where("file_path", videoBean.getVideoPath())
-                .execute();
-        if (!cursor.moveToNext()) {
-            DataBaseManager.getInstance()
-                    .selectTable("file")
-                    .insert()
-                    .param("folder_path", folderPath)
-                    .param("file_path", videoBean.getVideoPath())
-                    .param("duration", String.valueOf(videoBean.getVideoDuration()))
-                    .param("file_size", String.valueOf(videoBean.getVideoSize()))
-                    .param("file_id", videoBean.get_id())
-                    .postExecute();
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    if (!cursor.moveToNext()) {
+                        DataBaseManager.getInstance()
+                                .selectTable("file")
+                                .insert()
+                                .param("folder_path", folderPath)
+                                .param("file_path", videoBean.getVideoPath())
+                                .param("duration", String.valueOf(videoBean.getVideoDuration()))
+                                .param("file_size", String.valueOf(videoBean.getVideoSize()))
+                                .param("file_id", videoBean.get_id())
+                                .postExecute();
+                    }
+                });
     }
 
     /**

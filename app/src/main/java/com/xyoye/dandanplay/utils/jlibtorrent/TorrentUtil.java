@@ -81,48 +81,43 @@ public class TorrentUtil {
      */
     public static void insertNewTask(Torrent torrent) {
 
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("downloading_task")
                 .query()
                 .where("task_torrent_hash", torrent.getHash())
-                .execute();
-
-        if (cursor.getCount() == 0) {
-
-            DataBaseManager.getInstance()
-                    .selectTable("downloading_task")
-                    .insert()
-                    .param("task_torrent_hash", torrent.getHash())
-                    .param("torrent_file_path", torrent.getTorrentPath())
-                    .param("save_dir_path", torrent.getSaveDirPath())
-                    .param("priorities", torrent.getPriorityStr())
-                    .postExecute();
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    if (cursor.getCount() == 0) {
+                        DataBaseManager.getInstance()
+                                .selectTable("downloading_task")
+                                .insert()
+                                .param("task_torrent_hash", torrent.getHash())
+                                .param("torrent_file_path", torrent.getTorrentPath())
+                                .param("save_dir_path", torrent.getSaveDirPath())
+                                .param("priorities", torrent.getPriorityStr())
+                                .postExecute();
+                    }
+                });
     }
 
     /**
      * 查询所有未完成的任务
      */
     public static List<Torrent> queryRestoreTorrentList() {
-        Cursor cursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("downloading_task")
                 .query()
-                .execute();
-
-        List<Torrent> torrentList = new ArrayList<>();
-
-        while (cursor.moveToNext()) {
-            Torrent torrent = new Torrent(
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(4)
-            );
-            torrentList.add(torrent);
-        }
-        cursor.close();
-
-        return torrentList;
+                .execute(cursor -> {
+                    List<Torrent> torrentList = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        Torrent torrent = new Torrent(
+                                cursor.getString(2),
+                                cursor.getString(3),
+                                cursor.getString(4)
+                        );
+                        torrentList.add(torrent);
+                    }
+                    return torrentList;
+                });
     }
 
     /**

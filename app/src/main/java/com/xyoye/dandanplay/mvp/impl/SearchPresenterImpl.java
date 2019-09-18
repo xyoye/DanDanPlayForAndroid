@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.database.Cursor;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileIOUtils;
@@ -12,12 +11,12 @@ import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SearchHistoryBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -67,22 +66,22 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     public void getSearchHistory(boolean doSearch) {
         List<SearchHistoryBean> historyBeanList = new ArrayList<>();
 
-        Cursor cursor = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("search_history")
                 .query()
                 .setOrderByColumnDesc("time")
-                .execute();
-        while (cursor.moveToNext()){
-            int _id = cursor.getInt(0);
-            String text = cursor.getString(1);
-            long time = cursor.getLong(2);
-            historyBeanList.add(new SearchHistoryBean(_id, text, time));
-        }
-        cursor.close();
+                .execute(cursor -> {
+                    while (cursor.moveToNext()) {
+                        int _id = cursor.getInt(0);
+                        String text = cursor.getString(1);
+                        long time = cursor.getLong(2);
+                        historyBeanList.add(new SearchHistoryBean(_id, text, time));
+                    }
+                });
         //按搜索时间排序
         Collections.sort(historyBeanList, (a, b) -> {
             if (a.getTime() == b.getTime()) return 0;
-            return a.getTime() < b.getTime() ? 1 : -1 ;
+            return a.getTime() < b.getTime() ? 1 : -1;
         });
         //添加清除所有搜索记录，id = -1、text = ""作为标志
         if (historyBeanList.size() > 0)
@@ -92,34 +91,34 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public List<AnimeTypeBean.TypesBean> getTypeList() {
-        List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
-        Cursor cursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("anime_type")
                 .query()
-                .execute();
-        while (cursor.moveToNext()){
-            int typeId = cursor.getInt(1);
-            String typeName = cursor.getString(2);
-            typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
-        }
-        cursor.close();
-        return typeList;
+                .execute(cursor -> {
+                    List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        int typeId = cursor.getInt(1);
+                        String typeName = cursor.getString(2);
+                        typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
+                    }
+                    return typeList;
+                });
     }
 
     @Override
     public List<SubGroupBean.SubgroupsBean> getSubGroupList() {
-        List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
-        Cursor cursor = DataBaseManager.getInstance()
+        return DataBaseManager.getInstance()
                 .selectTable("subgroup")
                 .query()
-                .execute();
-        while (cursor.moveToNext()){
-            int subgroupId = cursor.getInt(1);
-            String subgroupName = cursor.getString(2);
-            subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));
-        }
-        cursor.close();
-        return subgroupList;
+                .execute(cursor -> {
+                    List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
+                    while (cursor.moveToNext()) {
+                        int subgroupId = cursor.getInt(1);
+                        String subgroupName = cursor.getString(2);
+                        subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));
+                    }
+                    return subgroupList;
+                });
     }
 
     @Override
@@ -138,7 +137,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 .selectTable("search_history")
                 .update()
                 .param("time", System.currentTimeMillis())
-                .where("_id", _id+"")
+                .where("_id", _id + "")
                 .postExecute();
     }
 
@@ -147,7 +146,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         DataBaseManager.getInstance()
                 .selectTable("search_history")
                 .delete()
-                .where("_id", _id+"")
+                .where("_id", _id + "")
                 .postExecute();
     }
 
@@ -164,7 +163,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         MagnetBean.searchMagnet(text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifeful()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
-                if (magnetBean != null && magnetBean.getResources() != null){
+                if (magnetBean != null && magnetBean.getResources() != null) {
                     getView().refreshSearch(magnetBean.getResources());
                 }
             }
@@ -180,22 +179,22 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public void searchLocalTorrent(String magnet) {
         String torrentPath = isTorrentExist(magnet);
-        if (!StringUtils.isEmpty(torrentPath)){
+        if (!StringUtils.isEmpty(torrentPath)) {
             getView().downloadExisted(torrentPath, magnet);
-        }else {
+        } else {
             downloadTorrent(magnet);
         }
     }
 
     @Override
-    public void downloadTorrent(String magnet){
+    public void downloadTorrent(String magnet) {
         getView().showDownloadTorrentLoading();
         MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
             @Override
             public void onSuccess(ResponseBody responseBody) {
                 String downloadPath = getView().getDownloadFolder();
                 downloadPath += Constants.DefaultConfig.torrentFolder;
-                downloadPath += "/" + magnet.substring(20) +".torrent";
+                downloadPath += "/" + magnet.substring(20) + ".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
                 getView().dismissDownloadTorrentLoading();
                 getView().downloadTorrentOver(downloadPath, magnet);
@@ -211,17 +210,17 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     //判断该种子是否已存在
-    private String isTorrentExist(String magnet){
+    private String isTorrentExist(String magnet) {
         String downloadPath = getView().getDownloadFolder();
         downloadPath += Constants.DefaultConfig.torrentFolder;
-        downloadPath += "/" + magnet.substring(20) +".torrent";
+        downloadPath += "/" + magnet.substring(20) + ".torrent";
         File file = new File(downloadPath);
-        if (file.exists()){
+        if (file.exists()) {
             return downloadPath;
-        } else{
+        } else {
             downloadPath = AppConfig.getInstance().getDownloadFolder();
-            downloadPath +=  Constants.DefaultConfig.torrentFolder;
-            downloadPath += "/" + magnet.substring(20) +".torrent";
+            downloadPath += Constants.DefaultConfig.torrentFolder;
+            downloadPath += "/" + magnet.substring(20) + ".torrent";
             if (file.exists())
                 return downloadPath;
             else

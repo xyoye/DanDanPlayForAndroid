@@ -160,7 +160,7 @@ public class QueryBuilder {
         IApplication.getSqlThreadPool().execute(() -> {
             Cursor cursor = execute();
             T result = callBack.onQuery(cursor);
-            if (!cursor.isClosed()) {
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
             IApplication.getMainHandler().post(() -> callBack.onResult(result));
@@ -175,10 +175,8 @@ public class QueryBuilder {
     public void postExecute(QueryAsyncCallback callBack) {
         IApplication.getSqlThreadPool().execute(() -> {
             Cursor cursor = execute();
-            if (cursor.getCount() > 0){
-                callBack.onQuery(cursor);
-            }
-            if (!cursor.isClosed()) {
+            callBack.onQuery(cursor);
+            if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
         });

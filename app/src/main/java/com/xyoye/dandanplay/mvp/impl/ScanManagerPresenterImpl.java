@@ -88,8 +88,7 @@ public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerVi
                             }
                         });
             }
-            int failedCount = pathList.size() - newAddCount;
-            ToastUtils.showShort("扫描完成，成功：" + newAddCount + " 失败：" + failedCount);
+            ToastUtils.showShort("扫描完成，新增：" + newAddCount);
         });
     }
 

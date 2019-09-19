@@ -132,7 +132,7 @@ public class IApplication extends Application {
     }
 
     /**
-     * 数据库写入线程池
+     * 数据库读写线程池
      */
     public static ExecutorService getSqlThreadPool(){
         if (sqlExecutor == null) {

@@ -78,16 +78,21 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .postExecute(new QueryAsyncResultCallback<VideoBean>() {
                     @Override
                     public VideoBean onQuery(Cursor cursor) {
-                        VideoBean videoBean = new VideoBean();
-                        videoBean.setVideoPath(videoPath);
-                        videoBean.setDanmuPath(cursor.getString(0));
-                        videoBean.setCurrentPosition(1);
-                        videoBean.setEpisodeId(cursor.getInt(2));
+                        VideoBean videoBean = null;
+                        if (cursor.moveToNext()){
+                            videoBean = new VideoBean();
+                            videoBean.setVideoPath(videoPath);
+                            videoBean.setDanmuPath(cursor.getString(0));
+                            videoBean.setCurrentPosition(cursor.getInt(1));
+                            videoBean.setEpisodeId(cursor.getInt(2));
+                        }
                         return videoBean;
                     }
 
                     @Override
                     public void onResult(VideoBean videoBean) {
+                        if (videoBean == null)
+                            return;
                         //视频文件是否已被删除
                         File videoFile = new File(videoBean.getVideoPath());
                         if (!videoFile.exists())

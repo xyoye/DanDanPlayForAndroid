@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileIOUtils;
@@ -17,12 +18,12 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -64,61 +65,84 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void getSearchHistory(boolean doSearch) {
-        List<SearchHistoryBean> historyBeanList = new ArrayList<>();
 
         DataBaseManager.getInstance()
                 .selectTable("search_history")
                 .query()
                 .setOrderByColumnDesc("time")
-                .execute(cursor -> {
-                    while (cursor.moveToNext()) {
-                        int _id = cursor.getInt(0);
-                        String text = cursor.getString(1);
-                        long time = cursor.getLong(2);
-                        historyBeanList.add(new SearchHistoryBean(_id, text, time));
+                .postExecute(new QueryAsyncResultCallback<List<SearchHistoryBean>>() {
+                    @Override
+                    public List<SearchHistoryBean> onQuery(Cursor cursor) {
+                        List<SearchHistoryBean> historyBeanList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            int _id = cursor.getInt(0);
+                            String text = cursor.getString(1);
+                            long time = cursor.getLong(2);
+                            historyBeanList.add(new SearchHistoryBean(_id, text, time));
+                        }
+                        //添加清除所有搜索记录，id = -1、text = ""作为标志
+                        if (historyBeanList.size() > 0)
+                            historyBeanList.add(new SearchHistoryBean(-1, "", -1));
+
+                        return historyBeanList;
+                    }
+
+                    @Override
+                    public void onResult(List<SearchHistoryBean> result) {
+                        getView().refreshHistory(result, doSearch);
                     }
                 });
-        //按搜索时间排序
-        Collections.sort(historyBeanList, (a, b) -> {
-            if (a.getTime() == b.getTime()) return 0;
-            return a.getTime() < b.getTime() ? 1 : -1;
-        });
-        //添加清除所有搜索记录，id = -1、text = ""作为标志
-        if (historyBeanList.size() > 0)
-            historyBeanList.add(new SearchHistoryBean(-1, "", -1));
-        getView().refreshHistory(historyBeanList, doSearch);
     }
 
     @Override
-    public List<AnimeTypeBean.TypesBean> getTypeList() {
-        return DataBaseManager.getInstance()
+    public void queryTypeList() {
+        DataBaseManager.getInstance()
                 .selectTable("anime_type")
                 .query()
-                .execute(cursor -> {
-                    List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        int typeId = cursor.getInt(1);
-                        String typeName = cursor.getString(2);
-                        typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
+                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>() {
+
+                    @Override
+                    public List<AnimeTypeBean.TypesBean> onQuery(Cursor cursor) {
+                        List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            int typeId = cursor.getInt(1);
+                            String typeName = cursor.getString(2);
+                            typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
+                        }
+                        return typeList;
                     }
-                    return typeList;
+
+                    @Override
+                    public void onResult(List<AnimeTypeBean.TypesBean> result) {
+                        getView().showAnimeTypeDialog(result);
+                    }
                 });
+
     }
 
     @Override
-    public List<SubGroupBean.SubgroupsBean> getSubGroupList() {
-        return DataBaseManager.getInstance()
+    public void querySubGroupList() {
+        DataBaseManager.getInstance()
                 .selectTable("subgroup")
                 .query()
-                .execute(cursor -> {
-                    List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        int subgroupId = cursor.getInt(1);
-                        String subgroupName = cursor.getString(2);
-                        subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));
+                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>() {
+                    @Override
+                    public List<SubGroupBean.SubgroupsBean> onQuery(Cursor cursor) {
+                        List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            int subgroupId = cursor.getInt(1);
+                            String subgroupName = cursor.getString(2);
+                            subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));
+                        }
+                        return subgroupList;
                     }
-                    return subgroupList;
+
+                    @Override
+                    public void onResult(List<SubGroupBean.SubgroupsBean> result) {
+                        getView().showSubGroupDialog(result);
+                    }
                 });
+
     }
 
     @Override

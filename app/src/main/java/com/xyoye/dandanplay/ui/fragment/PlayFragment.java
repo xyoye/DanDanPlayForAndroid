@@ -99,7 +99,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                             }
                         })
                         .setExtraListener(dialog -> {
-                            presenter.deleteFolder(folderPath);
+                            presenter.filterFolder(folderPath);
                             refresh.setRefreshing(true);
                             refreshVideo(false);
                         })
@@ -127,26 +127,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
         fastPlayBt.setOnClickListener(v -> {
             String videoPath = AppConfig.getInstance().getLastPlayVideo();
             if (!StringUtils.isEmpty(videoPath)) {
-                VideoBean videoBean = presenter.getLastPlayVideo(videoPath);
-                if (videoBean == null)
-                    return;
-                //视频文件是否已被删除
-                File videoFile = new File(videoBean.getVideoPath());
-                if (!videoFile.exists())
-                    return;
-                //弹幕文件是否已被删除
-                if (!StringUtils.isEmpty(videoBean.getDanmuPath())) {
-                    File danmuFile = new File(videoBean.getDanmuPath());
-                    if (!danmuFile.exists())
-                        videoBean.setDanmuPath("");
-                }
-
-                PlayerManagerActivity.launchPlayerLocal(getContext(),
-                        FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
-                        videoBean.getVideoPath(),
-                        videoBean.getDanmuPath(),
-                        videoBean.getCurrentPosition(),
-                        videoBean.getEpisodeId());
+                presenter.playLastVideo(getContext(), videoPath);
             }
         });
 

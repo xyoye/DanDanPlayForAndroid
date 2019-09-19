@@ -1,5 +1,7 @@
 package com.xyoye.dandanplay.utils.jlibtorrent;
 
+import android.database.Cursor;
+
 import com.blankj.utilcode.util.LogUtils;
 import com.frostwire.jlibtorrent.AlertListener;
 import com.frostwire.jlibtorrent.ErrorCode;
@@ -13,7 +15,10 @@ import com.frostwire.jlibtorrent.alerts.SessionErrorAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentRemovedAlert;
 import com.frostwire.jlibtorrent.swig.settings_pack;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -182,15 +187,37 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
      * 恢复未完成的下载任务
      */
     private void restoreTask() {
-        List<Torrent> restoreTorrentList = TorrentUtil.queryRestoreTorrentList();
-        for (Torrent torrent : restoreTorrentList) {
-            if (!torrent.isCanBeTask())
-                continue;
+        DataBaseManager.getInstance()
+                .selectTable("downloading_task")
+                .query()
+                .postExecute(new QueryAsyncResultCallback<List<Torrent>>() {
+                    @Override
+                    public List<Torrent> onQuery(Cursor cursor) {
+                        List<Torrent> torrentList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            Torrent torrent = new Torrent(
+                                    cursor.getString(2),
+                                    cursor.getString(3),
+                                    cursor.getString(4)
+                            );
+                            torrentList.add(torrent);
+                        }
+                        return torrentList;
+                    }
 
-            torrent.setRestoreTask(true);
-            mNewTaskQueue.add(new NewTaskRunnable(torrent, this));
-        }
-        queueNewTask();
+                    @Override
+                    public void onResult(List<Torrent> result) {
+                        for (Torrent torrent : result) {
+                            if (!torrent.isCanBeTask())
+                                continue;
+
+                            torrent.setRestoreTask(true);
+                            mNewTaskQueue.add(new NewTaskRunnable(torrent, TorrentEngine.this));
+                        }
+                        queueNewTask();
+                    }
+                });
+
     }
 
     /**

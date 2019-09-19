@@ -190,18 +190,10 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 }
                 break;
             case R.id.subgroup_tv:
-                List<SubGroupBean.SubgroupsBean> subgroupList = presenter.getSubGroupList();
-                if (subgroupList.size() > 0) {
-                    SelectInfoDialog selectSubgroupDialog = new SelectInfoDialog(SearchActivity.this, subgroupList, SelectInfoEvent.SUBGROUP);
-                    selectSubgroupDialog.show();
-                }
+                presenter.querySubGroupList();
                 break;
             case R.id.type_tv:
-                List<AnimeTypeBean.TypesBean> typeList = presenter.getTypeList();
-                if (typeList.size() > 0) {
-                    SelectInfoDialog selectTypeDialog = new SelectInfoDialog(SearchActivity.this, typeList);
-                    selectTypeDialog.show();
-                }
+                presenter.queryTypeList();
                 break;
             case R.id.search_iv:
                 String searchText = searchEt.getText().toString().trim();
@@ -324,7 +316,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                     String taskName = torrentInfo.name();
 
                     //单文件时会以文件名作为下载任务名称，去除后缀
-                    if (taskName.contains(".") && CommonUtils.isMediaFile(taskName)){
+                    if (taskName.contains(".") && CommonUtils.isMediaFile(taskName)) {
                         taskName = taskName.substring(0, taskName.lastIndexOf("."));
                     }
 
@@ -383,6 +375,23 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     @Override
     public void dismissDownloadTorrentLoading() {
         dismissLoadingDialog();
+    }
+
+    @Override
+    public void showAnimeTypeDialog(List<AnimeTypeBean.TypesBean> typeList) {
+        if (typeList.size() > 0) {
+            new SelectInfoDialog(SearchActivity.this, typeList).show();
+        }
+    }
+
+    @Override
+    public void showSubGroupDialog(List<SubGroupBean.SubgroupsBean> subGroupList) {
+        if (subGroupList.size() > 0) {
+            new SelectInfoDialog(
+                    SearchActivity.this,
+                    subGroupList,
+                    SelectInfoEvent.SUBGROUP).show();
+        }
     }
 
     @Override

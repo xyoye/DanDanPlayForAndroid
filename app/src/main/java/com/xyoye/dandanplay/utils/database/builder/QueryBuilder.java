@@ -3,7 +3,12 @@ package com.xyoye.dandanplay.utils.database.builder;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.database.DataBaseInfo;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncCallback;
+import com.xyoye.dandanplay.utils.database.callback.QuerySyncCallback;
+import com.xyoye.dandanplay.utils.database.callback.QuerySyncResultCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,38 +118,69 @@ public class QueryBuilder {
     }
 
     /**
-     * 带有返回值的处理方法
+     * 查询数据库，不能在主线程执行
+     *
      * 执行callback后返回值
      */
     @CheckReturnValue
-    public <T> T execute(QueryResultCallBack<T> callBack) {
+    public <T> T executeAsync(QuerySyncResultCallback<T> callBack) {
+        ActionBuilder.checkThreadLocal();
+
         Cursor cursor = execute();
         T result = callBack.onQuery(cursor);
         //自动检查Cursor是否关闭
-        if (cursor != null && !cursor.isClosed()){
+        if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
         return result;
     }
 
     /**
-     * 不带有返回值的处理方法
+     * 查询数据库，不能在主线程执行
+     *
      * 只执行callback
      */
-    public void execute(QueryNotResultCallBack callBack) {
+    public void executeAsync(QuerySyncCallback callBack) {
+        ActionBuilder.checkThreadLocal();
+
         Cursor cursor = execute();
         callBack.onQuery(cursor);
         //自动检查Cursor是否关闭
-        if (cursor != null && !cursor.isClosed()){
+        if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
     }
 
-    public interface QueryResultCallBack<E>{
-        E onQuery(Cursor cursor);
+    /**
+     * 异步查询数据库
+     *
+     * 执行callback后回调返回值
+     */
+    public <T> void postExecute(QueryAsyncResultCallback<T> callBack) {
+        IApplication.getSqlThreadPool().execute(() -> {
+            Cursor cursor = execute();
+            T result = callBack.onQuery(cursor);
+            if (!cursor.isClosed()) {
+                cursor.close();
+            }
+            IApplication.getMainHandler().post(() -> callBack.onResult(result));
+        });
     }
 
-    public interface QueryNotResultCallBack{
-        void onQuery(Cursor cursor);
+    /**
+     * 异步查询数据库
+     *
+     * 只执行callback
+     */
+    public void postExecute(QueryAsyncCallback callBack) {
+        IApplication.getSqlThreadPool().execute(() -> {
+            Cursor cursor = execute();
+            if (cursor.getCount() > 0){
+                callBack.onQuery(cursor);
+            }
+            if (!cursor.isClosed()) {
+                cursor.close();
+            }
+        });
     }
 }

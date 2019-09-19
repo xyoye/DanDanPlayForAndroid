@@ -1,7 +1,9 @@
 package com.xyoye.dandanplay.mvp.view;
 
+import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.bean.SearchHistoryBean;
+import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 
@@ -25,4 +27,8 @@ public interface SearchView extends BaseMvpView{
     void showDownloadTorrentLoading();
 
     void dismissDownloadTorrentLoading();
+
+    void showAnimeTypeDialog(List<AnimeTypeBean.TypesBean> typeList);
+
+    void showSubGroupDialog(List<SubGroupBean.SubgroupsBean> subGroupList);
 }

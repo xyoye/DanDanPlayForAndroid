@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface BlockManagerPresenter extends BaseMvpPresenter {
 
-    List<String> queryBlockData();
+    void queryBlockData();
 
     void deleteALl();
 

@@ -109,11 +109,12 @@ public class UpdateBuilder {
         return this;
     }
 
-    public int execute() {
-        if (mValues == null)
-            return 0;
+    public void executeAsync() {
+        ActionBuilder.checkThreadLocal();
 
-        // clauseList -> "clause1 = ? AND clause2 = ?"
+        if (mValues == null)
+            return;
+
         String clause;
         String[] args = new String[whereClause.size()];
         StringBuilder clauseBuilder = new StringBuilder();
@@ -126,10 +127,10 @@ public class UpdateBuilder {
         } else {
             clause = "";
         }
-        return sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause, args);
+        sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause, args);
     }
 
     public void postExecute() {
-        IApplication.getExecutor().execute(this::execute);
+        IApplication.getSqlThreadPool().execute(this::executeAsync);
     }
 }

@@ -1,12 +1,15 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
+import com.xyoye.dandanplay.utils.DanmuFilterUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,20 +50,27 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     }
 
     @Override
-    public List<String> queryBlockData() {
-
-        return DataBaseManager.getInstance()
+    public void queryBlockData() {
+        DataBaseManager.getInstance()
                 .selectTable("danmu_block")
                 .query()
                 .queryColumns("text")
-                .execute(cursor -> {
-                    List<String> blocks = new ArrayList<>();
-                    if (cursor != null) {
-                        while (cursor.moveToNext()) {
-                            blocks.add(cursor.getString(0));
+                .postExecute(new QueryAsyncResultCallback<List<String>>() {
+                    @Override
+                    public List<String> onQuery(Cursor cursor) {
+                        List<String> blocks = new ArrayList<>();
+                        if (cursor != null) {
+                            while (cursor.moveToNext()) {
+                                blocks.add(cursor.getString(0));
+                            }
                         }
+                        return blocks;
                     }
-                    return blocks;
+
+                    @Override
+                    public void onResult(List<String> result) {
+                        getView().updateData(result);
+                    }
                 });
     }
 
@@ -70,6 +80,7 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
                 .selectTable("danmu_block")
                 .delete()
                 .postExecute();
+        DanmuFilterUtils.getInstance().updateLocalFilter();
     }
 
     @Override
@@ -79,8 +90,9 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
                     .selectTable("danmu_block")
                     .delete()
                     .where("text", text)
-                    .execute();
+                    .postExecute();
         }
+        DanmuFilterUtils.getInstance().updateLocalFilter();
 
     }
 
@@ -91,7 +103,8 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
                     .selectTable("danmu_block")
                     .insert()
                     .param("text", text)
-                    .execute();
+                    .postExecute();
         }
+        DanmuFilterUtils.getInstance().updateLocalFilter();
     }
 }

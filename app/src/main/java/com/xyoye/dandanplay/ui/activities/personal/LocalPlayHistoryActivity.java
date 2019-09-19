@@ -17,6 +17,7 @@ import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationDivider;
 import com.xyoye.dandanplay.ui.weight.item.LocalPlayHistoryItem;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
@@ -49,24 +50,6 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
         setTitle("本地播放历史");
 
         historyList = new ArrayList<>();
-
-        //查询记录
-        DataBaseManager.getInstance()
-                .selectTable("local_play_history")
-                .query()
-                .setOrderByColumnDesc("play_time")
-                .execute(cursor -> {
-                    while (cursor.moveToNext()) {
-                        LocalPlayHistoryBean historyBean = new LocalPlayHistoryBean();
-                        historyBean.setVideoPath(cursor.getString(1));
-                        historyBean.setVideoTitle(cursor.getString(2));
-                        historyBean.setDanmuPath(cursor.getString(3));
-                        historyBean.setEpisodeId(cursor.getInt(4));
-                        historyBean.setSourceOrigin(cursor.getInt(5));
-                        historyBean.setPlayTime(cursor.getLong(6));
-                        historyList.add(historyBean);
-                    }
-                });
 
         adapter = new BaseRvAdapter<LocalPlayHistoryBean>(historyList) {
             @NonNull
@@ -106,6 +89,43 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
                         1)
         );
         recyclerView.setAdapter(adapter);
+
+        queryHistory();
+    }
+
+    private void queryHistory(){
+        //查询记录
+        DataBaseManager.getInstance()
+                .selectTable("local_play_history")
+                .query()
+                .setOrderByColumnDesc("play_time")
+                .postExecute(new QueryAsyncResultCallback<List<LocalPlayHistoryBean>>() {
+
+                    @Override
+                    public List<LocalPlayHistoryBean> onQuery(Cursor cursor) {
+                        List<LocalPlayHistoryBean> list = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            LocalPlayHistoryBean historyBean = new LocalPlayHistoryBean();
+                            historyBean.setVideoPath(cursor.getString(1));
+                            historyBean.setVideoTitle(cursor.getString(2));
+                            historyBean.setDanmuPath(cursor.getString(3));
+                            historyBean.setEpisodeId(cursor.getInt(4));
+                            historyBean.setSourceOrigin(cursor.getInt(5));
+                            historyBean.setPlayTime(cursor.getLong(6));
+                            list.add(historyBean);
+                        }
+                        return list;
+                    }
+
+                    @Override
+                    public void onResult(List<LocalPlayHistoryBean> result) {
+                        historyList.clear();
+                        if (result != null){
+                            historyList.addAll(result);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
     }
 
     @Override

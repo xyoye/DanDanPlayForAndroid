@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -17,6 +18,7 @@ import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
@@ -46,7 +48,7 @@ import jcifs.smb.SmbFile;
  */
 
 public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements SmbPresenter {
-    private Disposable querySqlDeviceDis, queryDeviceDis;
+    private Disposable queryDeviceDis;
 
     private CIFSContext cifsContext;
     private String rootUrl;
@@ -78,8 +80,6 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
     @Override
     public void destroy() {
-        if (querySqlDeviceDis != null)
-            querySqlDeviceDis.dispose();
         if (queryDeviceDis != null)
             queryDeviceDis.dispose();
     }
@@ -87,31 +87,33 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
     @SuppressLint("CheckResult")
     @Override
     public void querySqlDevice() {
-        querySqlDeviceDis = Observable.create(
-                (ObservableOnSubscribe<List<SmbBean>>) emitter ->
-                        emitter.onNext(
-                                DataBaseManager.getInstance()
-                                        .selectTable("smb_device")
-                                        .query()
-                                        .execute(cursor -> {
-                                            List<SmbBean> deviceList = new ArrayList<>();
-                                            while (cursor.moveToNext()) {
-                                                SmbBean deviceBean = new SmbBean();
-                                                deviceBean.setName(cursor.getString(1));
-                                                deviceBean.setNickName(cursor.getString(2));
-                                                deviceBean.setUrl(cursor.getString(3));
-                                                deviceBean.setAccount(cursor.getString(4));
-                                                deviceBean.setPassword(cursor.getString(5));
-                                                deviceBean.setDomain(cursor.getString(6));
-                                                deviceBean.setAnonymous(cursor.getInt(7) == 1);
-                                                deviceBean.setSmbType(Constants.SmbType.SQL_DEVICE);
-                                                deviceList.add(deviceBean);
-                                            }
-                                            return deviceList;
-                                        })
-                        )).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(smbBeans -> getView().refreshSqlDevice(smbBeans));
+        DataBaseManager.getInstance()
+                .selectTable("smb_device")
+                .query()
+                .postExecute(new QueryAsyncResultCallback<List<SmbBean>>() {
+                    @Override
+                    public List<SmbBean> onQuery(Cursor cursor) {
+                        List<SmbBean> deviceList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            SmbBean deviceBean = new SmbBean();
+                            deviceBean.setName(cursor.getString(1));
+                            deviceBean.setNickName(cursor.getString(2));
+                            deviceBean.setUrl(cursor.getString(3));
+                            deviceBean.setAccount(cursor.getString(4));
+                            deviceBean.setPassword(cursor.getString(5));
+                            deviceBean.setDomain(cursor.getString(6));
+                            deviceBean.setAnonymous(cursor.getInt(7) == 1);
+                            deviceBean.setSmbType(Constants.SmbType.SQL_DEVICE);
+                            deviceList.add(deviceBean);
+                        }
+                        return deviceList;
+                    }
+
+                    @Override
+                    public void onResult(List<SmbBean> result) {
+                        getView().refreshSqlDevice(result);
+                    }
+                });
     }
 
     @SuppressLint("CheckResult")
@@ -135,48 +137,37 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
 
     @Override
     public void addSqlDevice(SmbBean smbBean) {
-
-        boolean isNewDevice = DataBaseManager.getInstance()
+        DataBaseManager.getInstance()
                 .selectTable("smb_device")
                 .query()
                 .where("device_ip", smbBean.getUrl())
-                .execute(cursor -> {
+                .postExecute(cursor -> {
                     if (cursor.getCount() > 0) {
-                        updateSqlDevice(smbBean);
-                        cursor.close();
-                        return false;
+                        DataBaseManager.getInstance()
+                                .selectTable("smb_device")
+                                .update()
+                                .param("device_name", smbBean.getName())
+                                .param("device_nick_name", smbBean.getNickName())
+                                .param("device_user_name", smbBean.getAccount())
+                                .param("device_user_password", smbBean.getPassword())
+                                .param("device_user_domain", smbBean.getDomain())
+                                .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
+                                .where("device_ip", smbBean.getUrl())
+                                .postExecute();
+                    } else {
+                        String deviceName = StringUtils.isEmpty(smbBean.getName()) ? "UnKnow" : smbBean.getName();
+                        DataBaseManager.getInstance()
+                                .selectTable("smb_device")
+                                .insert()
+                                .param("device_name", deviceName)
+                                .param("device_ip", smbBean.getUrl())
+                                .param("device_user_name", smbBean.getAccount())
+                                .param("device_user_password", smbBean.getPassword())
+                                .param("device_user_domain", smbBean.getDomain())
+                                .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
+                                .executeAsync();
                     }
-                    return true;
                 });
-
-        if (isNewDevice) {
-            String deviceName = StringUtils.isEmpty(smbBean.getName()) ? "UnKnow" : smbBean.getName();
-            DataBaseManager.getInstance()
-                    .selectTable("smb_device")
-                    .insert()
-                    .param("device_name", deviceName)
-                    .param("device_ip", smbBean.getUrl())
-                    .param("device_user_name", smbBean.getAccount())
-                    .param("device_user_password", smbBean.getPassword())
-                    .param("device_user_domain", smbBean.getDomain())
-                    .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
-                    .postExecute();
-        }
-    }
-
-    @Override
-    public void updateSqlDevice(SmbBean smbBean) {
-        DataBaseManager.getInstance()
-                .selectTable("smb_device")
-                .update()
-                .param("device_name", smbBean.getName())
-                .param("device_nick_name", smbBean.getNickName())
-                .param("device_user_name", smbBean.getAccount())
-                .param("device_user_password", smbBean.getPassword())
-                .param("device_user_domain", smbBean.getDomain())
-                .param("device_anonymous", smbBean.isAnonymous() ? 1 : 0)
-                .where("device_ip", smbBean.getUrl())
-                .postExecute();
     }
 
     @SuppressLint("CheckResult")

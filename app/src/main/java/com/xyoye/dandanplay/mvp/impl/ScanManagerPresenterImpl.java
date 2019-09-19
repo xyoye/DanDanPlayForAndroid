@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
@@ -23,18 +24,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * Created by xyoye on 2019/5/14.
  */
 
 public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerView> implements ScanManagerPresenter {
-    private Disposable videoScanDis;
-    private int newAddFileCount = 0;
+    private int newAddCount = 0;
 
     public ScanManagerPresenterImpl(ScanManagerView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -62,13 +57,77 @@ public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerVi
 
     @Override
     public void destroy() {
-        if (videoScanDis != null)
-            videoScanDis.dispose();
+
     }
 
-    //查询系统中是否保存对应视频数据
     @Override
-    public void queryFormSystem(VideoBean videoBean, String path) {
+    public void saveNewVideo(List<String> pathList) {
+        newAddCount = 0;
+        IApplication.getSqlThreadPool().execute(() -> {
+            for (String videoPath : pathList) {
+                String folderPath = FileUtils.getDirName(videoPath);
+                DataBaseManager.getInstance()
+                        .selectTable("file")
+                        .query()
+                        .where("folder_path", folderPath)
+                        .where("file_path", videoPath)
+                        .executeAsync(cursor -> {
+                            if (!cursor.moveToNext()) {
+                                VideoBean videoBean = queryFormSystem(videoPath);
+                                DataBaseManager.getInstance()
+                                        .selectTable("file")
+                                        .insert()
+                                        .param("folder_path", folderPath)
+                                        .param("file_path", videoBean.getVideoPath())
+                                        .param("duration", String.valueOf(videoBean.getVideoDuration()))
+                                        .param("file_size", String.valueOf(videoBean.getVideoSize()))
+                                        .param("file_id", videoBean.get_id())
+                                        .executeAsync();
+                                EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
+                                newAddCount++;
+                            }
+                        });
+            }
+            int failedCount = pathList.size() - newAddCount;
+            ToastUtils.showShort("扫描完成，成功：" + newAddCount + " 失败：" + failedCount);
+        });
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    public void listFolder(String rootFilePath) {
+        File rootFile = new File(rootFilePath);
+        saveNewVideo(getVideoList(rootFile));
+    }
+
+    /**
+     * 查询目录下所有视频
+     */
+    private List<String> getVideoList(File file) {
+        List<String> fileList = new ArrayList<>();
+        if (file.isDirectory()) {
+            File[] fileArray = file.listFiles();
+            if (fileArray == null || fileArray.length == 0) {
+                return new ArrayList<>();
+            } else {
+                for (File childFile : fileArray) {
+                    if (childFile.isDirectory()) {
+                        fileList.addAll(getVideoList(childFile));
+                    } else if (childFile.exists() && childFile.canRead() && CommonUtils.isMediaFile(childFile.getAbsolutePath())) {
+                        fileList.add(childFile.getAbsolutePath());
+                    }
+                }
+            }
+        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())) {
+            fileList.add(file.getAbsolutePath());
+        }
+        return fileList;
+    }
+
+
+    //查询系统中是否保存对应视频数据
+    private VideoBean queryFormSystem(String path) {
+        VideoBean videoBean = new VideoBean();
         Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Video.Media._ID, MediaStore.Video.Media.DURATION},
                 MediaStore.Video.Media.DATA + " = ?",
@@ -86,77 +145,6 @@ public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerVi
             videoBean.setVideoDuration(0);
             videoBean.set_id(0);
         }
-    }
-
-    @Override
-    public boolean saveNewVideo(VideoBean videoBean) {
-        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
-        return DataBaseManager.getInstance()
-                .selectTable("file")
-                .query()
-                .where("folder_path", folderPath)
-                .where("file_path", videoBean.getVideoPath())
-                .execute(cursor -> {
-                    if (!cursor.moveToNext()) {
-                        DataBaseManager.getInstance()
-                                .selectTable("file")
-                                .insert()
-                                .param("folder_path", folderPath)
-                                .param("file_path", videoBean.getVideoPath())
-                                .param("duration", String.valueOf(videoBean.getVideoDuration()))
-                                .param("file_size", String.valueOf(videoBean.getVideoSize()))
-                                .param("file_id", videoBean.get_id())
-                                .execute();
-                        return true;
-                    }
-                    return false;
-                });
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    public void listFolder(String rootFilePath) {
-        newAddFileCount = 0;
-        videoScanDis = Observable.just(new File(rootFilePath))
-                .map(rootFile -> {
-                    for (File childFile : listFiles(rootFile)) {
-                        VideoBean videoBean = new VideoBean();
-                        queryFormSystem(videoBean, childFile.getAbsolutePath());
-                        if (saveNewVideo(videoBean)) {
-                            newAddFileCount++;
-                        }
-                    }
-                    return true;
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_ADAPTER_DATA));
-                    ToastUtils.showShort("扫描完成，共新增：" + newAddFileCount + "个视频");
-                });
-    }
-
-    /**
-     * 递归检查目录和文件
-     */
-    private List<File> listFiles(File file) {
-        List<File> fileList = new ArrayList<>();
-        if (file.isDirectory()) {
-            File[] fileArray = file.listFiles();
-            if (fileArray == null || fileArray.length == 0) {
-                return new ArrayList<>();
-            } else {
-                for (File childFile : fileArray) {
-                    if (childFile.isDirectory()) {
-                        fileList.addAll(listFiles(childFile));
-                    } else if (childFile.exists() && childFile.canRead() && CommonUtils.isMediaFile(childFile.getAbsolutePath())) {
-                        fileList.add(childFile);
-                    }
-                }
-            }
-        } else if (file.exists() && file.canRead() && CommonUtils.isMediaFile(file.getAbsolutePath())) {
-            fileList.add(file);
-        }
-        return fileList;
+        return videoBean;
     }
 }

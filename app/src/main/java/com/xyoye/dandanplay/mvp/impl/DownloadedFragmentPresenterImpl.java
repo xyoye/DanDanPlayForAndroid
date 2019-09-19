@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -8,16 +9,10 @@ import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by xyoye on 2019/8/1.
@@ -55,12 +50,12 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
 
     @Override
     public void queryDownloadedTask() {
-        Observable.create((ObservableOnSubscribe<List<DownloadedTaskBean>>) emitter -> {
-            List<DownloadedTaskBean> taskList = DataBaseManager
-                    .getInstance()
-                    .selectTable("downloaded_task")
-                    .query()
-                    .execute(cursor -> {
+        DataBaseManager.getInstance()
+                .selectTable("downloaded_task")
+                .query()
+                .postExecute(new QueryAsyncResultCallback<List<DownloadedTaskBean>>() {
+                    @Override
+                    public List<DownloadedTaskBean> onQuery(Cursor cursor) {
                         List<DownloadedTaskBean> tempList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             DownloadedTaskBean taskBean = new DownloadedTaskBean();
@@ -76,33 +71,13 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                             tempList.add(taskBean);
                         }
                         return tempList;
-                    });
-            emitter.onNext(taskList);
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<DownloadedTaskBean>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        disposables.add(d);
                     }
 
                     @Override
-                    public void onNext(List<DownloadedTaskBean> taskList) {
-                        getView().updateTask(taskList);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
+                    public void onResult(List<DownloadedTaskBean> result) {
+                        getView().updateTask(result);
                     }
                 });
-
-
     }
 
     private List<DownloadedTaskBean.DownloadedTaskFileBean> getTaskFileList(String taskHash) {
@@ -110,7 +85,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                 .selectTable("downloaded_file")
                 .query()
                 .where("task_torrent_hash", taskHash)
-                .execute(cursor -> {
+                .executeAsync(cursor -> {
                     List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
                     while (cursor.moveToNext()) {
                         DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();

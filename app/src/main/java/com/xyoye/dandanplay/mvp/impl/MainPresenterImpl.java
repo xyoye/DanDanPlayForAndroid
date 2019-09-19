@@ -11,9 +11,8 @@ import com.xyoye.dandanplay.bean.AnimeTypeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
-import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CloudFilterHandler;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.DanmuFilterUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.TrackerManager;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
@@ -21,15 +20,6 @@ import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 /**
  * Created by xyoye on 2018/6/28 0028.
@@ -50,15 +40,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
     public void process(Bundle savedInstanceState) {
         initAnimeType();
         initSubGroup();
-        long lastUpdateTime = AppConfig.getInstance().getUpdateFilterTime();
-        long nowTime = System.currentTimeMillis();
-        //七天更新一次云过滤列表
-        if (nowTime - lastUpdateTime > 7 * 24 * 60 * 60 * 1000) {
-            AppConfig.getInstance().setUpdateFilterTime(nowTime);
-            initCloudFilter();
-        } else {
-            getCloudFilter();
-        }
+        DanmuFilterUtils.getInstance().updateCloudFilter();
+        DanmuFilterUtils.getInstance().updateLocalFilter();
     }
 
     @Override
@@ -81,7 +64,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
         DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .query()
-                .execute(cursor -> {
+                .postExecute(cursor -> {
                     if (!cursor.moveToNext()) {
                         //增加默认扫描文件夹
                         DataBaseManager.getInstance()
@@ -89,7 +72,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                                 .insert()
                                 .param("folder_path", Constants.DefaultConfig.SYSTEM_VIDEO_PATH)
                                 .param("folder_type", Constants.ScanType.SCAN)
-                                .execute();
+                                .postExecute();
                     }
                 });
     }
@@ -127,20 +110,20 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                     DataBaseManager.getInstance()
                             .selectTable("anime_type")
                             .delete()
-                            .execute();
+                            .postExecute();
                     DataBaseManager.getInstance()
                             .selectTable("anime_type")
                             .insert()
                             .param("type_id", -1)
                             .param("type_name", "全部")
-                            .execute();
+                            .postExecute();
                     for (AnimeTypeBean.TypesBean typesBean : animeTypeBean.getTypes()) {
                         DataBaseManager.getInstance()
                                 .selectTable("anime_type")
                                 .insert()
                                 .param("type_id", typesBean.getId())
                                 .param("type_name", typesBean.getName())
-                                .execute();
+                                .postExecute();
                     }
                 }
             }
@@ -163,14 +146,14 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                     DataBaseManager.getInstance()
                             .selectTable("subgroup")
                             .delete()
-                            .execute();
+                            .postExecute();
 
                     DataBaseManager.getInstance()
                             .selectTable("subgroup")
                             .insert()
                             .param("subgroup_id", -1)
                             .param("subgroup_name", "全部")
-                            .execute();
+                            .postExecute();
 
                     for (SubGroupBean.SubgroupsBean subgroupsBean : subGroupBean.getSubgroups()) {
                         DataBaseManager.getInstance()
@@ -178,7 +161,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                                 .insert()
                                 .param("subgroup_id", subgroupsBean.getId())
                                 .param("subgroup_name", subgroupsBean.getName())
-                                .execute();
+                                .postExecute();
                     }
                 }
             }
@@ -189,71 +172,5 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
                 ToastUtils.showShort(message);
             }
         }, new NetworkConsumer());
-    }
-
-    //弹幕云过滤
-    private void initCloudFilter() {
-        IApplication.getExecutor().execute(() -> {
-            List<String> filters = getFilterString();
-            IApplication.cloudFilterList.addAll(filters);
-
-            DataBaseManager.getInstance()
-                    .selectTable("cloud_filter")
-                    .delete()
-                    .execute();
-            for (int i = 0; i < filters.size(); i++) {
-                DataBaseManager.getInstance()
-                        .selectTable("cloud_filter")
-                        .insert()
-                        .param("filter", filters.get(i))
-                        .execute();
-            }
-        });
-    }
-
-    //获取保存的云过滤数据
-    private void getCloudFilter() {
-        //云屏蔽数据
-        DataBaseManager.getInstance()
-                .selectTable("cloud_filter")
-                .query()
-                .queryColumns("filter")
-                .execute(cursor -> {
-                    while (cursor.moveToNext()) {
-                        String text = cursor.getString(0);
-                        IApplication.cloudFilterList.add(text);
-                    }
-                });
-    }
-
-    /**
-     * 下载xml
-     */
-    private List<String> getFilterString() {
-        InputStream is = null;
-        List<String> filter = new ArrayList<>();
-        try {
-            String xmlUrl = "https://api.acplay.net/config/filter.xml";
-            URL url = new URL(xmlUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(10000);
-            conn.setRequestMethod("GET");
-            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                is = conn.getInputStream();
-                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-                saxParser.parse(is, new CloudFilterHandler(filter::addAll));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (is != null)
-                    is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-        return filter;
     }
 }

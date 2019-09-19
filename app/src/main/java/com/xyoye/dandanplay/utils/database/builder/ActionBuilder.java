@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.utils.database.builder;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Looper;
 
 import io.reactivex.annotations.CheckReturnValue;
 
@@ -34,6 +35,17 @@ public class ActionBuilder{
     @CheckReturnValue
     public UpdateBuilder update(){
         return new UpdateBuilder(tablePosition, sqLiteDatabase);
+    }
+
+    /**
+     * 检查数据库操作所在线程
+     *
+     * 强制所有数据库操作不能在主线程执行
+     */
+    public static void checkThreadLocal(){
+        if (Looper.getMainLooper() == Looper.myLooper()){
+            throw new IllegalThreadStateException("database cannot run in the main thread");
+        }
     }
 
 }

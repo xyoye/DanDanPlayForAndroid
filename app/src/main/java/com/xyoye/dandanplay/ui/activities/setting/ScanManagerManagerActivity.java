@@ -11,24 +11,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.VideoBean;
-import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.ScanManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.ScanManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.ScanManagerView;
-import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.fragment.VideoScanFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.TabEntity;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +56,10 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
         fragmentList.add(blockFragment);
 
         ScanManagerManagerActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
-            if (hasChecked){
+            if (hasChecked) {
                 deleteTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
                 deleteTv.setClickable(true);
-            }else{
+            } else {
                 deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 deleteTv.setClickable(false);
             }
@@ -144,16 +138,15 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.scan_folder_tv:
-                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER, path -> presenter.listFolder(path)).show();
+                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER,
+                        path -> presenter.listFolder(path)
+                ).show();
                 break;
             case R.id.scan_file_tv:
                 new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_VIDEO, path -> {
-                    VideoBean videoBean = new VideoBean();
-                    presenter.queryFormSystem(videoBean, path);
-                    boolean added = presenter.saveNewVideo(videoBean);
-                    if (added)
-                        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
-                    ToastUtils.showShort(added ? "扫描成功" : "文件已存在");
+                    List<String> pathList = new ArrayList<>();
+                    pathList.add(path);
+                    presenter.saveNewVideo(pathList);
                 }).show();
                 break;
             case R.id.delete_tv:
@@ -163,12 +156,12 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
         }
     }
 
-    private void resetButtonStatus(){
+    private void resetButtonStatus() {
         VideoScanFragment videoScanFragment = fragmentList.get(selectedPosition);
-        if (videoScanFragment.hasChecked()){
+        if (videoScanFragment.hasChecked()) {
             deleteTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_theme));
             deleteTv.setClickable(true);
-        }else {
+        } else {
             deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             deleteTv.setClickable(false);
         }
@@ -200,8 +193,8 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
         return this;
     }
 
-    public interface OnFragmentItemCheckListener{
-        void onChecked( boolean hasChecked);
+    public interface OnFragmentItemCheckListener {
+        void onChecked(boolean hasChecked);
     }
 
     private class VideoScanFragmentAdapter extends FragmentPagerAdapter {

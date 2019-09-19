@@ -44,8 +44,10 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
     @Override
     public void initView() {
         setTitle("弹幕屏蔽管理");
-        blockData = presenter.queryBlockData();
+        blockData = new ArrayList<>();
         labelsView.setLabels(blockData);
+
+        presenter.queryBlockData();
     }
 
     @Override
@@ -94,5 +96,13 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
                 }).show();
                 break;
         }
+    }
+
+    @Override
+    public List<String> updateData(List<String> result) {
+        blockData.clear();
+        blockData.addAll(result);
+        labelsView.setLabels(blockData);
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -11,6 +12,7 @@ import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -55,13 +57,13 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void addScanFolder(String path, boolean isScan) {
-        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
+        int scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .insert()
                 .param("folder_path", path)
                 .param("folder_type", scanType)
-                .execute();
+                .postExecute();
 
         queryScanFolderList(isScan);
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));
@@ -69,41 +71,50 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
 
     @Override
     public void queryScanFolderList(boolean isScan) {
-        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
-        List<ScanFolderBean> folderList = new ArrayList<>();
-
+        int scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .query()
-                .where("folder_type", scanType)
-                .execute(cursor -> {
-                    while (cursor.moveToNext()) {
-                        folderList.add(new ScanFolderBean(cursor.getString(1), false));
+                .where("folder_type", String.valueOf(scanType))
+                .postExecute(new QueryAsyncResultCallback<List<ScanFolderBean>>() {
+                    @Override
+                    public List<ScanFolderBean> onQuery(Cursor cursor) {
+                        List<ScanFolderBean> folderList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            folderList.add(new ScanFolderBean(cursor.getString(1), false));
+                        }
+                        return folderList;
+                    }
+
+                    @Override
+                    public void onResult(List<ScanFolderBean> result) {
+                        getView().updateFolderList(result);
                     }
                 });
-        getView().updateFolderList(folderList);
+
+
     }
 
     @Override
     public void deleteScanFolder(String path, boolean isScan) {
-        String scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
+        int scanType = isScan ? Constants.ScanType.SCAN : Constants.ScanType.BLOCK;
         if (Constants.DefaultConfig.SYSTEM_VIDEO_PATH.equals(path)) {
             //将不删除系统视频，只改变为屏蔽或扫描
-            String newScanType = isScan ? Constants.ScanType.BLOCK : Constants.ScanType.SCAN;
+            int newScanType = isScan ? Constants.ScanType.BLOCK : Constants.ScanType.SCAN;
             DataBaseManager.getInstance()
                     .selectTable("scan_folder")
                     .update()
                     .where("folder_path", path)
-                    .where("folder_type", scanType)
+                    .where("folder_type", String.valueOf(scanType))
                     .param("folder_type", newScanType)
-                    .execute();
+                    .postExecute();
         } else {
             DataBaseManager.getInstance()
                     .selectTable("scan_folder")
                     .delete()
                     .where("folder_path", path)
-                    .where("folder_type", scanType)
-                    .execute();
+                    .where("folder_type", String.valueOf(scanType))
+                    .postExecute();
         }
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));
     }

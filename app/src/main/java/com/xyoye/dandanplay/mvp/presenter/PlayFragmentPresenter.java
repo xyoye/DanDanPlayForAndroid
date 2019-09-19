@@ -14,8 +14,8 @@ public interface PlayFragmentPresenter extends BaseMvpPresenter {
     //刷新视频数据
     void refreshVideo(Context context, boolean reScan);
 
-    //删除目录
-    void deleteFolder(String folderPath);
+    //屏蔽目录
+    void filterFolder(String folderPath);
 
-    VideoBean getLastPlayVideo(String videoPath);
+    void playLastVideo(Context context, String videoPath);
 }

@@ -14,6 +14,7 @@ import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -21,18 +22,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * Created by xyoye on 2018/6/30 0030.
  */
 
 public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
-    private Disposable folderScanDis;
 
     public FolderPresenterImpl(FolderView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -60,18 +54,50 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
 
     @Override
     public void destroy() {
-        if (folderScanDis != null)
-            folderScanDis.dispose();
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getVideoList(String folderPath) {
-        folderScanDis = Observable.create((ObservableOnSubscribe<List<VideoBean>>) emitter ->
-                emitter.onNext(getDataBaseVideo(folderPath)))
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoBeanList -> getView().refreshAdapter(videoBeanList));
+        DataBaseManager.getInstance()
+                .selectTable("file")
+                .query()
+                .where("folder_path", folderPath)
+                .postExecute(new QueryAsyncResultCallback<List<VideoBean>>() {
+                    @Override
+                    public List<VideoBean> onQuery(Cursor cursor) {
+                        List<VideoBean> videoBeans = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            String filePath = cursor.getString(2);
+                            File file = new File(filePath);
+                            if (!file.exists()) {
+                                DataBaseManager.getInstance()
+                                        .selectTable("file")
+                                        .delete()
+                                        .where("folder_path", folderPath)
+                                        .where("file_path", filePath)
+                                        .postExecute();
+                                continue;
+                            }
+
+                            VideoBean videoBean = new VideoBean();
+                            videoBean.setVideoPath(filePath);
+                            videoBean.setDanmuPath(cursor.getString(3));
+                            videoBean.setCurrentPosition(cursor.getInt(4));
+                            videoBean.setVideoDuration(Long.parseLong(cursor.getString(5)));
+                            videoBean.setEpisodeId(cursor.getInt(6));
+                            videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
+                            videoBean.set_id(cursor.getInt(8));
+                            videoBeans.add(videoBean);
+                        }
+                        return videoBeans;
+                    }
+
+                    @Override
+                    public void onResult(List<VideoBean> result) {
+                        getView().refreshAdapter(result);
+                    }
+                });
     }
 
     @Override
@@ -115,41 +141,5 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 getView().noMatchDanmu(videoPath);
             }
         }, new NetworkConsumer());
-    }
-
-    //获取数据库中本地文件列表，如果本地文件不存在，删除记录
-    //get local file form database
-    private List<VideoBean> getDataBaseVideo(String folderPath) {
-        return DataBaseManager.getInstance()
-                .selectTable("file")
-                .query()
-                .where("folder_path", folderPath)
-                .execute(cursor -> {
-                    List<VideoBean> videoBeans = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        String filePath = cursor.getString(2);
-                        File file = new File(filePath);
-                        if (!file.exists()) {
-                            DataBaseManager.getInstance()
-                                    .selectTable("file")
-                                    .delete()
-                                    .where("folder_path", folderPath)
-                                    .where("file_path", filePath)
-                                    .postExecute();
-                            continue;
-                        }
-
-                        VideoBean videoBean = new VideoBean();
-                        videoBean.setVideoPath(filePath);
-                        videoBean.setDanmuPath(cursor.getString(3));
-                        videoBean.setCurrentPosition(cursor.getInt(4));
-                        videoBean.setVideoDuration(Long.parseLong(cursor.getString(5)));
-                        videoBean.setEpisodeId(cursor.getInt(6));
-                        videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
-                        videoBean.set_id(cursor.getInt(8));
-                        videoBeans.add(videoBean);
-                    }
-                    return videoBeans;
-                });
     }
 }

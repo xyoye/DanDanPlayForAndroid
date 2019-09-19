@@ -145,8 +145,8 @@ public class Constants {
      */
     public static class ScanType {
         //屏蔽目录
-        public static final String BLOCK = "0";
+        public static final int BLOCK = 0;
         //扫描目录
-        public static final String SCAN = "1";
+        public static final int SCAN = 1;
     }
 }

@@ -10,17 +10,20 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.UpdateFolderDanmuEvent;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
+import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseInfo;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -30,18 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * Created by xyoye on 2018/6/29.
  */
 
 public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {
-    private Disposable querySqlFileDis, refreshFileDis;
 
     public PlayFragmentPresenterImpl(PlayFragmentView view, Lifeful lifeful) {
         super(view, lifeful);
@@ -69,29 +65,56 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
 
     @Override
     public void destroy() {
-        if (querySqlFileDis != null)
-            querySqlFileDis.dispose();
-        if (refreshFileDis != null)
-            refreshFileDis.dispose();
+
     }
 
     @Override
-    public VideoBean getLastPlayVideo(String videoPath) {
-        return DataBaseManager.getInstance()
+    public void playLastVideo(Context context, String videoPath) {
+        DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .queryColumns("danmu_path", "current_position", "danmu_episode_id")
                 .where("file_path", videoPath)
-                .execute(cursor -> {
-                    VideoBean videoBean = new VideoBean();
-                    videoBean.setVideoPath(videoPath);
-                    videoBean.setDanmuPath(cursor.getString(0));
-                    videoBean.setCurrentPosition(1);
-                    videoBean.setEpisodeId(cursor.getInt(2));
-                    return videoBean;
+                .postExecute(new QueryAsyncResultCallback<VideoBean>() {
+                    @Override
+                    public VideoBean onQuery(Cursor cursor) {
+                        VideoBean videoBean = new VideoBean();
+                        videoBean.setVideoPath(videoPath);
+                        videoBean.setDanmuPath(cursor.getString(0));
+                        videoBean.setCurrentPosition(1);
+                        videoBean.setEpisodeId(cursor.getInt(2));
+                        return videoBean;
+                    }
+
+                    @Override
+                    public void onResult(VideoBean videoBean) {
+                        //视频文件是否已被删除
+                        File videoFile = new File(videoBean.getVideoPath());
+                        if (!videoFile.exists())
+                            return;
+                        //弹幕文件是否已被删除
+                        if (!StringUtils.isEmpty(videoBean.getDanmuPath())) {
+                            File danmuFile = new File(videoBean.getDanmuPath());
+                            if (!danmuFile.exists())
+                                videoBean.setDanmuPath("");
+                        }
+
+                        PlayerManagerActivity.launchPlayerLocal(context,
+                                FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
+                                videoBean.getVideoPath(),
+                                videoBean.getDanmuPath(),
+                                videoBean.getCurrentPosition(),
+                                videoBean.getEpisodeId());
+                    }
                 });
     }
 
+    /**
+     * 刷新视频文件
+     *
+     * @param reScan true: 重新扫描整个系统目录
+     *               false: 只查询数据库数据
+     */
     @Override
     public void refreshVideo(Context context, boolean reScan) {
         //通知系统刷新目录
@@ -101,74 +124,123 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             context.sendBroadcast(intent);
 
         if (reScan) {
-            scanAndRefreshVideo();
+            refreshAllVideo();
         } else {
-            refreshVideo();
+            refreshDatabaseVideo();
         }
 
         EventBus.getDefault().post(new UpdateFolderDanmuEvent());
     }
 
     @Override
-    public void deleteFolder(String folderPath) {
+    public void filterFolder(String folderPath) {
         DataBaseManager.getInstance()
                 .selectTable("scan_folder")
                 .insert()
                 .param("folder_path", folderPath)
-                .param("folder_type", "0")
-                .execute();
-    }
-
-    /**
-     * 仅根据数据库数据刷新界面
-     */
-    private void refreshVideo() {
-        querySqlFileDis = Observable
-                .create((ObservableOnSubscribe<List<FolderBean>>) emitter ->
-                        emitter.onNext(getVideoFormDatabase()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoList -> getView().refreshAdapter(videoList));
+                .param("folder_type", Constants.ScanType.BLOCK)
+                .postExecute();
     }
 
     /**
      * 扫描所有文件，更新数据库，刷新界面数据
      */
-    private void scanAndRefreshVideo() {
+    private void refreshAllVideo() {
         //获取需要扫描的目录
-        List<String> scanFolderList = getScanFolder(Constants.ScanType.SCAN);
-        boolean isScanMediaStore = scanFolderList.remove(Constants.DefaultConfig.SYSTEM_VIDEO_PATH);
+        DataBaseManager.getInstance()
+                .selectTable("scan_folder")
+                .query()
+                .queryColumns("folder_path")
+                .where("folder_type", String.valueOf(Constants.ScanType.SCAN))
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>() {
+                    @Override
+                    public List<FolderBean> onQuery(Cursor cursor) {
+                        List<String> scanFolderList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            scanFolderList.add(cursor.getString(0));
+                        }
 
-        refreshFileDis = Observable.just(isScanMediaStore)
-                //刷新系统文件
-                .map(result -> queryVideoFormMediaStore(isScanMediaStore))
-                //遍历需要扫描的目录
-                .zipWith(flatMapFile(scanFolderList),
-                        (aBoolean, aBoolean2) -> getVideoFormDatabase())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(videoList -> getView().refreshAdapter(videoList));
+                        //是否获取系统中视频信息
+                        boolean isScanMediaStore = scanFolderList.remove(Constants.DefaultConfig.SYSTEM_VIDEO_PATH);
+                        if (isScanMediaStore) {
+                            queryVideoFormMediaStore();
+                        }
+
+                        //遍历需要扫描的目录
+                        queryVideoFormStorage(scanFolderList);
+
+                        return DataBaseManager.getInstance()
+                                .selectTable("scan_folder")
+                                .query()
+                                .queryColumns("folder_path", "folder_type")
+                                .executeAsync(scanTypeCursor -> {
+                                    List<String> scanList = new ArrayList<>();
+                                    List<String> blockList = new ArrayList<>();
+
+                                    while (scanTypeCursor.moveToNext()) {
+                                        if (Constants.ScanType.SCAN == scanTypeCursor.getInt(1)) {
+                                            scanList.add(scanTypeCursor.getString(0));
+                                        } else {
+                                            blockList.add(scanTypeCursor.getString(0));
+                                        }
+                                    }
+                                    return getVideoFormDatabase(scanList, blockList);
+                                });
+                    }
+
+                    @Override
+                    public void onResult(List<FolderBean> result) {
+                        getView().refreshAdapter(result);
+                    }
+                });
+    }
+
+    /**
+     * 仅根据数据库数据刷新界面
+     */
+    private void refreshDatabaseVideo() {
+        DataBaseManager.getInstance()
+                .selectTable("scan_folder")
+                .query()
+                .queryColumns("folder_path", "folder_type")
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>() {
+
+                    @Override
+                    public List<FolderBean> onQuery(Cursor cursor) {
+                        List<String> scanList = new ArrayList<>();
+                        List<String> blockList = new ArrayList<>();
+
+                        while (cursor.moveToNext()) {
+                            if (Constants.ScanType.SCAN == cursor.getInt(1)) {
+                                scanList.add(cursor.getString(0));
+                            } else {
+                                blockList.add(cursor.getString(0));
+                            }
+                        }
+                        return getVideoFormDatabase(scanList, blockList);
+                    }
+
+                    @Override
+                    public void onResult(List<FolderBean> result) {
+                        getView().refreshAdapter(result);
+                    }
+                });
     }
 
     /**
      * 从数据库中读取文件夹目录，过滤屏蔽目录及不扫描目录
      */
-    private List<FolderBean> getVideoFormDatabase() {
+    private List<FolderBean> getVideoFormDatabase(List<String> scanList, List<String> blockList) {
         List<FolderBean> folderBeanList = new ArrayList<>();
         Map<String, Integer> beanMap = new HashMap<>();
         Map<String, String> deleteMap = new HashMap<>();
-
-        //查询所有屏蔽目录
-        List<String> blockList = getScanFolder(Constants.ScanType.BLOCK);
-        //查询所有扫描目录
-        List<String> scanList = getScanFolder(Constants.ScanType.SCAN);
 
         //查询所有视频
         DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
                 .queryColumns("folder_path", "file_path")
-                .execute(cursor -> {
+                .executeAsync(cursor -> {
                     while (cursor.moveToNext()) {
                         String folderPath = cursor.getString(0);
                         String filePath = cursor.getString(1);
@@ -221,7 +293,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                     .update()
                     .param("file_number", entry.getValue())
                     .where("folder_path", entry.getKey())
-                    .execute();
+                    .executeAsync();
         }
 
         //删除不存在的文件
@@ -231,29 +303,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                     .delete()
                     .where("folder_path", entry.getKey())
                     .where("file_path", entry.getValue())
-                    .execute();
+                    .executeAsync();
         }
         return folderBeanList;
-    }
-
-    /**
-     * 获取扫描或屏蔽目录
-     *
-     * @param scanType ScanType.BLOCK || ScanType.SCAN
-     */
-    private List<String> getScanFolder(String scanType) {
-        return DataBaseManager.getInstance()
-                .selectTable("scan_folder")
-                .query()
-                .queryColumns("folder_path")
-                .where("folder_type", scanType)
-                .execute(cursor -> {
-                    List<String> folderList = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        folderList.add(cursor.getString(0));
-                    }
-                    return folderList;
-                });
     }
 
     /**
@@ -274,7 +326,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .where("folder_path", folderPath)
                 .where("file_path", videoBean.getVideoPath())
-                .execute(cursor -> {
+                .executeAsync(cursor -> {
                     if (!cursor.moveToNext()) {
                         DataBaseManager.getInstance()
                                 .selectTable("file")
@@ -284,7 +336,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                                 .param("duration", String.valueOf(videoBean.getVideoDuration()))
                                 .param("file_size", String.valueOf(videoBean.getVideoSize()))
                                 .param("file_id", videoBean.get_id())
-                                .postExecute();
+                                .executeAsync();
                     }
                 });
     }
@@ -292,9 +344,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     /**
      * 获取系统中视频信息
      */
-    private boolean queryVideoFormMediaStore(boolean isScanMediaStore) {
-        if (!isScanMediaStore)
-            return false;
+    private void queryVideoFormMediaStore() {
         Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, null);
         if (cursor != null) {
@@ -314,41 +364,29 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
             }
             cursor.close();
         }
-        return true;
-    }
-
-    /**
-     * 将需要扫描的目录集合转换为文件数组
-     */
-    private File[] getScanFolderFiles(List<String> folderList) {
-        File[] files = new File[folderList.size()];
-
-        for (int i = 0; i < folderList.size(); i++) {
-            files[i] = new File(folderList.get(i));
-        }
-        return files;
     }
 
     /**
      * 遍历需要扫描的目录
      */
-    private Observable<Boolean> flatMapFile(List<String> scanFolderList) {
+    private void queryVideoFormStorage(List<String> scanFolderList) {
         if (scanFolderList.size() == 0)
-            return Observable.just(true);
-        return Observable.fromArray(getScanFolderFiles(scanFolderList))
-                .map(folderFile -> {
-                    for (File childFile : listFiles(folderFile)) {
-                        System.out.println(childFile.getAbsoluteFile());
-                        String filePath = childFile.getAbsolutePath();
-                        VideoBean videoBean = new VideoBean();
-                        videoBean.setVideoPath(filePath);
-                        videoBean.setVideoDuration(0);
-                        videoBean.setVideoSize(childFile.length());
-                        videoBean.set_id(0);
-                        saveVideoToDatabase(videoBean);
-                    }
-                    return true;
-                });
+            return;
+        File[] fileArray = new File[scanFolderList.size()];
+        for (int i = 0; i < scanFolderList.size(); i++) {
+            fileArray[i] = new File(scanFolderList.get(i));
+        }
+        for (File parentFile : fileArray) {
+            for (File childFile : listFiles(parentFile)) {
+                String filePath = childFile.getAbsolutePath();
+                VideoBean videoBean = new VideoBean();
+                videoBean.setVideoPath(filePath);
+                videoBean.setVideoDuration(0);
+                videoBean.setVideoSize(childFile.length());
+                videoBean.set_id(0);
+                saveVideoToDatabase(videoBean);
+            }
+        }
     }
 
     /**

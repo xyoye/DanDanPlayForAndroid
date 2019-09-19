@@ -110,12 +110,12 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
                 .selectTable("downloaded_task")
                 .delete()
                 .where("torrent_hash", taskHash)
-                .execute();
+                .postExecute();
         DataBaseManager.getInstance()
                 .selectTable("downloaded_file")
                 .delete()
                 .where("task_torrent_hash", taskHash)
-                .execute();
+                .postExecute();
 
         //刷新媒体库数据
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_SYSTEM_DATA));

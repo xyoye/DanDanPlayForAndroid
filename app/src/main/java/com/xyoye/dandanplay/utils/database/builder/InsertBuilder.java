@@ -85,13 +85,15 @@ public class InsertBuilder{
         return this;
     }
 
-    public long execute(){
-        if (mValues != null)
-            return sqLiteDatabase.insert(DataBaseInfo.getTableNames()[tablePosition], null, mValues);
-        return -1;
+    public void executeAsync(){
+        ActionBuilder.checkThreadLocal();
+
+        if (mValues != null){
+            sqLiteDatabase.insert(DataBaseInfo.getTableNames()[tablePosition], null, mValues);
+        }
     }
 
     public void postExecute(){
-        IApplication.getExecutor().execute(this::execute);
+        IApplication.getSqlThreadPool().execute(this::executeAsync);
     }
 }

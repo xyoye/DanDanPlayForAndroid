@@ -213,7 +213,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                 .query()
                 .where("video_path", videoPath)
                 .where("source_origin", String.valueOf(sourceOrigin))
-                .execute(cursor -> {
+                .postExecute(cursor -> {
                     if (cursor.getCount() > 0) {
                         DataBaseManager.getInstance()
                                 .selectTable("local_play_history")
@@ -224,7 +224,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                                 .param("play_time", System.currentTimeMillis())
                                 .where("video_path", videoPath)
                                 .where("source_origin", String.valueOf(sourceOrigin))
-                                .execute();
+                                .executeAsync();
                     } else {
                         DataBaseManager.getInstance()
                                 .selectTable("local_play_history")
@@ -235,7 +235,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                                 .param("episode_id", episodeId)
                                 .param("source_origin", sourceOrigin)
                                 .param("play_time", System.currentTimeMillis())
-                                .execute();
+                                .executeAsync();
                     }
                 });
     }

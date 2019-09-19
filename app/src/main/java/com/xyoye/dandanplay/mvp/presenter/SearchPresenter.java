@@ -1,19 +1,15 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
-import com.xyoye.dandanplay.bean.AnimeTypeBean;
-import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
-
-import java.util.List;
 
 /**
  * Created by xyoye on 2019/1/8.
  */
 
 public interface SearchPresenter extends BaseMvpPresenter {
-    List<AnimeTypeBean.TypesBean> getTypeList();
+    void queryTypeList();
 
-    List<SubGroupBean.SubgroupsBean> getSubGroupList();
+    void querySubGroupList();
 
     void getSearchHistory(boolean doSearch);
 

@@ -19,7 +19,6 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xunlei.downloadlib.XLTaskHelper;
-import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
@@ -33,6 +32,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants.DefaultConfig;
+import com.xyoye.dandanplay.utils.DanmuFilterUtils;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.HashUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
@@ -94,7 +94,6 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private int sourceOrigin;
 
     private List<SubtitleBean> subtitleList;
-    private List<String> normalFilterList;
 
     //电源广播
     private BatteryBroadcastReceiver batteryReceiver;
@@ -147,9 +146,6 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
         //初始化接口
         initListener();
-
-        //初始化屏蔽信息
-        initNormalFilter();
 
         //初始化播放器
         initPlayer();
@@ -352,9 +348,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(normalFilterList)
+                .setNormalFilterData(DanmuFilterUtils.getInstance().getLocalFilter())
                 //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList,
+                .setCloudFilterData(DanmuFilterUtils.getInstance().getCloudFilter(),
                         AppConfig.getInstance().isCloudDanmuFilter())
                 //设置弹幕数据源
                 .setDanmakuSource(danmuPath)
@@ -384,9 +380,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 //内部事件回调
                 .setOnInfoListener(onOutsideListener)
                 //设置普通屏蔽弹幕
-                .setNormalFilterData(normalFilterList)
+                .setNormalFilterData(DanmuFilterUtils.getInstance().getLocalFilter())
                 //设置云屏蔽数据
-                .setCloudFilterData(IApplication.cloudFilterList,
+                .setCloudFilterData(DanmuFilterUtils.getInstance().getCloudFilter(),
                         AppConfig.getInstance().isCloudDanmuFilter())
                 //设置弹幕数据源
                 .setDanmakuSource(danmuPath)
@@ -537,20 +533,6 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 }
             }, new NetworkConsumer());
         }
-    }
-
-    //获取本地屏蔽信息
-    private void initNormalFilter() {
-        normalFilterList = new ArrayList<>();
-        DataBaseManager.getInstance()
-                .selectTable("danmu_block")
-                .query()
-                .queryColumns("text")
-                .execute(cursor -> {
-                    while (cursor.moveToNext()) {
-                        normalFilterList.add(cursor.getString(0));
-                    }
-                });
     }
 
     //查询字幕

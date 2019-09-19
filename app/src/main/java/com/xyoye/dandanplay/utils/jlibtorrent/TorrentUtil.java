@@ -85,7 +85,7 @@ public class TorrentUtil {
                 .selectTable("downloading_task")
                 .query()
                 .where("task_torrent_hash", torrent.getHash())
-                .execute(cursor -> {
+                .postExecute(cursor -> {
                     if (cursor.getCount() == 0) {
                         DataBaseManager.getInstance()
                                 .selectTable("downloading_task")
@@ -94,29 +94,8 @@ public class TorrentUtil {
                                 .param("torrent_file_path", torrent.getTorrentPath())
                                 .param("save_dir_path", torrent.getSaveDirPath())
                                 .param("priorities", torrent.getPriorityStr())
-                                .postExecute();
+                                .executeAsync();
                     }
-                });
-    }
-
-    /**
-     * 查询所有未完成的任务
-     */
-    public static List<Torrent> queryRestoreTorrentList() {
-        return DataBaseManager.getInstance()
-                .selectTable("downloading_task")
-                .query()
-                .execute(cursor -> {
-                    List<Torrent> torrentList = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        Torrent torrent = new Torrent(
-                                cursor.getString(2),
-                                cursor.getString(3),
-                                cursor.getString(4)
-                        );
-                        torrentList.add(torrent);
-                    }
-                    return torrentList;
                 });
     }
 

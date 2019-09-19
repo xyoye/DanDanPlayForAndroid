@@ -25,6 +25,8 @@ import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -42,16 +44,15 @@ import skin.support.flycotablayout.app.SkinFlycoTabLayoutInflater;
 public class IApplication extends Application {
     //tracker列表
     public static List<String> trackers = new ArrayList<>();
-    //云屏蔽弹幕列表
-    public static List<String> cloudFilterList = new ArrayList<>();
     //应用是否正常的启动
     public static boolean startCorrectlyFlag = false;
 
-    public static Handler mainHandler;
-    public static ThreadPoolExecutor executor;
-    public static Context _context;
-    public static AssetManager _asset;
-    public static CookiesManager cookiesManager;
+    private static Handler mainHandler;
+    private static ThreadPoolExecutor executor;
+    private static ExecutorService sqlExecutor;
+    private static Context _context;
+    private static AssetManager _asset;
+    private static CookiesManager cookiesManager;
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -115,7 +116,7 @@ public class IApplication extends Application {
      */
     public static Handler getMainHandler(){
         if (mainHandler == null){
-            return new Handler(Looper.getMainLooper());
+            mainHandler = new Handler(Looper.getMainLooper());
         }
         return mainHandler;
     }
@@ -128,6 +129,16 @@ public class IApplication extends Application {
             executor = new ThreadPoolExecutor(3, 10, 200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
         }
         return executor;
+    }
+
+    /**
+     * 数据库写入线程池
+     */
+    public static ExecutorService getSqlThreadPool(){
+        if (sqlExecutor == null) {
+            sqlExecutor = Executors.newSingleThreadExecutor();
+        }
+        return sqlExecutor;
     }
 
     /**

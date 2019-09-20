@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.RemoteVideoBean;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
@@ -60,6 +61,7 @@ public class RemoteVideoItem implements AdapterItem<RemoteVideoBean> {
         coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
         Glide.with(context)
                 .load(imageUrl)
+                .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(coverIv);
 
         String duration = CommonUtils.formatDuring(model.getDuration() * 1000);

@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.xyoye.dandanplay.R;
@@ -59,6 +61,7 @@ public class ImagePreviewActivity extends BaseMvcActivity {
             previewIv.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
             Glide.with(this)
                     .load(originUrl)
+                    .transition((DrawableTransitionOptions.withCrossFade()))
                     .into(previewIv);
         }
 
@@ -79,6 +82,7 @@ public class ImagePreviewActivity extends BaseMvcActivity {
                             Glide.with(this)
                                .asBitmap()
                                .load(originUrl)
+                               .transition((BitmapTransitionOptions.withCrossFade()))
                                .into(new SimpleTarget<Bitmap>() {
                                    @Override
                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {

@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeBean;
@@ -62,6 +63,7 @@ public class AnimeMoreItem implements AdapterItem<AnimeBean> {
         Glide.with(imageIv.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
+                .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(imageIv);
 
         titleTv.setText(model.getAnimeTitle());

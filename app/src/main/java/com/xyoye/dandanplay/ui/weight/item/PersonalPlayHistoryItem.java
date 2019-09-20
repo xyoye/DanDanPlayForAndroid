@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
@@ -54,6 +55,7 @@ public class PersonalPlayHistoryItem implements AdapterItem<PlayHistoryBean.Play
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
+                .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(imageView);
 
         animeTitle.setText(model.getAnimeTitle());

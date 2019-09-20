@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.AnimeTagBean;
@@ -62,6 +63,7 @@ public class TagAnimeItem implements AdapterItem<AnimeTagBean.AnimesBean> {
         Glide.with(imageView.getContext())
                 .load(model.getImageUrl())
                 .apply(options)
+                .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(imageView);
 
         anime_title.setText(model.getAnimeTitle());

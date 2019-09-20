@@ -18,6 +18,7 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -259,6 +260,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         //封面
         Glide.with(this)
                 .load(bean.getBangumi().getImageUrl())
+                .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(animeImageIv);
 
         this.setTitle(bean.getBangumi().getAnimeTitle());

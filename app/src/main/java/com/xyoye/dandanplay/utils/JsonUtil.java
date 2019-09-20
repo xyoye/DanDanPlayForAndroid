@@ -64,7 +64,13 @@ public class JsonUtil {
      * @throws "JsonConvertException"
      */
     public static <T> T fromJson(String js, Class<T> clazz) {
-        return gson().fromJson(js, clazz);
+        T t = null;
+        try {
+            t = gson().fromJson(js, clazz);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return t;
     }
 
     public static <T> List<T> getObjectList(String jsonString, Class<T> cls){

@@ -1,22 +1,5 @@
 package com.xyoye.dandanplay.ui.weight;
 
-/*
- * Copyright (C) 2008 ZXing authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -29,7 +12,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.scan.camera.CameraManager;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
 
@@ -68,20 +50,24 @@ public final class ScanWindowView extends View {
 
     @SuppressLint("CustomViewStyleable")
     public ScanWindowView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public ScanWindowView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         //初始化自定义属性信息
-        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.finder_view);
-        frameColor = array.getColor(R.styleable.finder_view_frame_color, CommonUtils.getResColor(R.color.scan_window_frame));
-        rectColor = array.getColor(R.styleable.finder_view_rect_color, CommonUtils.getResColor(R.color.scan_window_corner));
-        lineColor = array.getColor(R.styleable.finder_view_line_color, CommonUtils.getResColor(R.color.scan_window_laser));
-        maskColor = array.getColor(R.styleable.finder_view_mask_color, CommonUtils.getResColor(R.color.scan_window_mask));
-        previewX = array.getDimension(R.styleable.finder_view_preview_x, 0f);
-        previewY = array.getDimension(R.styleable.finder_view_preview_y, 0f);
-        centerX = array.getBoolean(R.styleable.finder_view_preview_centerHorizontal, false);
-        centerY = array.getBoolean(R.styleable.finder_view_preview_centerVertical, false);
-        previewWidth = array.getDimension(R.styleable.finder_view_preview_width, 0);
-        previewHeight = array.getDimension(R.styleable.finder_view_preview_height, 0);
-        showFrame = array.getBoolean(R.styleable.finder_view_show_frame, false);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.ScanWindowView);
+        frameColor = array.getColor(R.styleable.ScanWindowView_frame_color, getResources().getColor(R.color.scan_window_frame));
+        rectColor = array.getColor(R.styleable.ScanWindowView_rect_color,  getResources().getColor(R.color.scan_window_corner));
+        lineColor = array.getColor(R.styleable.ScanWindowView_line_color,  getResources().getColor(R.color.scan_window_laser));
+        maskColor = array.getColor(R.styleable.ScanWindowView_mask_color,  getResources().getColor(R.color.scan_window_mask));
+        previewX = array.getDimension(R.styleable.ScanWindowView_preview_x, 0f);
+        previewY = array.getDimension(R.styleable.ScanWindowView_preview_y, 0f);
+        centerX = array.getBoolean(R.styleable.ScanWindowView_preview_centerHorizontal, false);
+        centerY = array.getBoolean(R.styleable.ScanWindowView_preview_centerVertical, false);
+        previewWidth = array.getDimension(R.styleable.ScanWindowView_preview_width, 0);
+        previewHeight = array.getDimension(R.styleable.ScanWindowView_preview_height, 0);
+        showFrame = array.getBoolean(R.styleable.ScanWindowView_show_frame, false);
         array.recycle();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
@@ -94,13 +80,14 @@ public final class ScanWindowView extends View {
             scannerStart = previewY;
             scannerEnd = previewY + previewHeight - SCANNER_LINE_HEIGHT;
         }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
 
         if (centerX) previewX = (width - previewWidth) / 2;
         if (centerY) previewY = (height - previewHeight) / 2;
 
-        cameraManager.setFramingRectF(new RectF(previewX, previewY, previewX + previewWidth, previewY + previewHeight));
+        if(cameraManager != null)
+            cameraManager.setFramingRectF(new RectF(previewX, previewY, previewX + previewWidth, previewY + previewHeight));
 
         // Draw the exterior (i.e. outside the framing rect) darkened
         drawExterior(canvas, width, height);
@@ -185,7 +172,7 @@ public final class ScanWindowView extends View {
         canvas.drawRect(0, previewY + previewHeight + 1, width, height, paint);
     }
 
-    public void drawViewfinder() {
+    public void drawWindow() {
         invalidate();
     }
 

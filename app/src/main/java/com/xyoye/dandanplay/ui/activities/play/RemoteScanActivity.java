@@ -67,7 +67,7 @@ public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderV
         super.onResume();
         if (qrCodeReaderView != null) {
             qrCodeReaderView.startCamera();
-            scanWindowView.drawViewfinder();
+            scanWindowView.drawWindow();
         }
     }
 

@@ -55,7 +55,7 @@
         <attr name="outlineExcludePadding" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="finder_view">
+    <declare-styleable name="ScanWindowView">
         <attr name="show_frame" format="boolean"/>
         <attr name="mask_color" format="color"/>
         <attr name="line_color" format="color"/>

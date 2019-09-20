@@ -46,7 +46,7 @@
 
     <LinearLayout
         android:id="@+id/address_ll"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -55,12 +55,13 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/app_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="18sp"
             android:textColor="@color/splash_text_fg_color"
-            android:text="弹弹paly 概念版"/>
+            android:text=""/>
 
         <TextView
             android:layout_width="wrap_content"

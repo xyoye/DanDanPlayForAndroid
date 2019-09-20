@@ -9,7 +9,9 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.SplashPresenterImpl;
@@ -33,6 +35,8 @@ public class SplashActivity extends BaseMvpActivity<SplashPresenter> implements 
     TextPathAnimView textPathView;
     @BindView(R.id.address_ll)
     LinearLayout addressLl;
+    @BindView(R.id.app_name_tv)
+    TextView appNameTv;
 
 
     @Override
@@ -63,6 +67,9 @@ public class SplashActivity extends BaseMvpActivity<SplashPresenter> implements 
         alphaAnimation.setRepeatCount(Animation.ABSOLUTE);
         alphaAnimation.setInterpolator(new LinearInterpolator());
         alphaAnimation.setDuration(2000);
+
+        String appName = "弹弹play 概念版 v"+ AppUtils.getAppVersionName();
+        appNameTv.setText(appName);
 
         textPathView.setAnimListener(new TextPathAnimView.AnimListener() {
             @Override

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -38,6 +39,10 @@ public class TorrentFileCheckDialog extends Dialog {
     TextView playTv;
     @BindView(R.id.download_tv)
     TextView downloadTv;
+    @BindView(R.id.all_not_check_tv)
+    TextView allNotCheckTv;
+    @BindView(R.id.all_check_tv)
+    TextView allCheckTv;
 
     private List<TorrentCheckBean> checkBeanList;
     private TorrentInfo torrentInfo;
@@ -72,8 +77,7 @@ public class TorrentFileCheckDialog extends Dialog {
             @NonNull
             @Override
             public AdapterItem<TorrentCheckBean> onCreateItem(int viewType) {
-                return new TorrentFileCheckItem((position, isChecked) ->
-                        checkBeanList.get(position).setChecked(isChecked));
+                return new TorrentFileCheckItem();
             }
         };
         fileRv.setAdapter(checkAdapter);
@@ -129,6 +133,20 @@ public class TorrentFileCheckDialog extends Dialog {
                     }
                 }
             }
+        });
+
+        allCheckTv.setOnClickListener(v -> {
+            for (TorrentCheckBean checkBean : checkBeanList) {
+                checkBean.setChecked(true);
+            }
+            checkAdapter.notifyDataSetChanged();
+        });
+
+        allNotCheckTv.setOnClickListener(v -> {
+            for (TorrentCheckBean checkBean : checkBeanList) {
+                checkBean.setChecked(false);
+            }
+            checkAdapter.notifyDataSetChanged();
         });
     }
 

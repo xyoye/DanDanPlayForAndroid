@@ -15,7 +15,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="46dp">
 
             <TextView
                 android:id="@+id/dialog_title_tv"
@@ -25,6 +25,29 @@
                 android:textColor="@color/text_black"
                 android:textSize="16sp"
                 android:text="选择下载文件" />
+
+            <TextView
+                android:id="@+id/all_not_check_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="全不选"
+                android:textColor="@color/text_pink"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/all_check_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="全选"
+                android:textColor="@color/text_theme"
+                android:textSize="12sp" />
 
             <View
                 android:layout_width="match_parent"

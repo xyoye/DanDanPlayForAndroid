@@ -70,9 +70,10 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 .selectTable("search_history")
                 .query()
                 .setOrderByColumnDesc("time")
-                .postExecute(new QueryAsyncResultCallback<List<SearchHistoryBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<SearchHistoryBean>>(getLifeful()) {
                     @Override
                     public List<SearchHistoryBean> onQuery(Cursor cursor) {
+                        if (cursor == null) return new ArrayList<>();
                         List<SearchHistoryBean> historyBeanList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             int _id = cursor.getInt(0);
@@ -99,10 +100,12 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         DataBaseManager.getInstance()
                 .selectTable("anime_type")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>(getLifeful()) {
 
                     @Override
                     public List<AnimeTypeBean.TypesBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             int typeId = cursor.getInt(1);
@@ -125,9 +128,11 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         DataBaseManager.getInstance()
                 .selectTable("subgroup")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>(getLifeful()) {
                     @Override
                     public List<SubGroupBean.SubgroupsBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             int subgroupId = cursor.getInt(1);

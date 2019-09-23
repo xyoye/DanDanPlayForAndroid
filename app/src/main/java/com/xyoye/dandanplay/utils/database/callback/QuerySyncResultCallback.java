@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.utils.database.callback;
 
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
 /**
  * Created by xyoye on 2019/9/18.
@@ -9,5 +10,5 @@ import android.database.Cursor;
  */
 public interface QuerySyncResultCallback<T> {
 
-    T onQuery(Cursor cursor);
+    T onQuery(@Nullable Cursor cursor);
 }

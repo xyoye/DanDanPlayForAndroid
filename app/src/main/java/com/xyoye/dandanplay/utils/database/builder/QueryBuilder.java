@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.utils.database.DataBaseInfo;
-import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncCallback;
+import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.database.callback.QuerySyncCallback;
 import com.xyoye.dandanplay.utils.database.callback.QuerySyncResultCallback;
 
@@ -114,7 +114,9 @@ public class QueryBuilder {
             orderByText = orderByColName == null ? null : orderByColName + " DESC";
         }
 
-        return sqLiteDatabase.query(DataBaseInfo.getTableNames()[tablePosition], colNames, clause, args, groupColName, having, orderByText, limit);
+        if (sqLiteDatabase.isOpen())
+            return sqLiteDatabase.query(DataBaseInfo.getTableNames()[tablePosition], colNames, clause, args, groupColName, having, orderByText, limit);
+        return null;
     }
 
     /**
@@ -144,10 +146,12 @@ public class QueryBuilder {
         ActionBuilder.checkThreadLocal();
 
         Cursor cursor = execute();
-        callBack.onQuery(cursor);
-        //自动检查Cursor是否关闭
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
+        if (cursor != null){
+            callBack.onQuery(cursor);
+            //自动检查Cursor是否关闭
+            if (!cursor.isClosed()) {
+                cursor.close();
+            }
         }
     }
 
@@ -163,7 +167,7 @@ public class QueryBuilder {
             if (cursor != null && !cursor.isClosed()) {
                 cursor.close();
             }
-            IApplication.getMainHandler().post(() -> callBack.onResult(result));
+            IApplication.getMainHandler().post(() -> callBack.onPrepared(result));
         });
     }
 
@@ -175,9 +179,11 @@ public class QueryBuilder {
     public void postExecute(QueryAsyncCallback callBack) {
         IApplication.getSqlThreadPool().execute(() -> {
             Cursor cursor = execute();
-            callBack.onQuery(cursor);
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
+            if (cursor != null){
+                callBack.onQuery(cursor);
+                if (!cursor.isClosed()) {
+                    cursor.close();
+                }
             }
         });
     }

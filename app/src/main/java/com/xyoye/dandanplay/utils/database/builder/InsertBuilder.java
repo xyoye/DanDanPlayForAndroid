@@ -88,7 +88,7 @@ public class InsertBuilder{
     public void executeAsync(){
         ActionBuilder.checkThreadLocal();
 
-        if (mValues != null){
+        if (mValues != null && sqLiteDatabase.isOpen()){
             sqLiteDatabase.insert(DataBaseInfo.getTableNames()[tablePosition], null, mValues);
         }
     }

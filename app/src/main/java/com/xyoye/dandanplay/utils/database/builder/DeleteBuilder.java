@@ -52,7 +52,8 @@ public class DeleteBuilder {
             clause = "";
         }
 
-        sqLiteDatabase.delete(DataBaseInfo.getTableNames()[tablePosition], clause, args);
+        if (sqLiteDatabase.isOpen())
+            sqLiteDatabase.delete(DataBaseInfo.getTableNames()[tablePosition], clause, args);
     }
 
     public void postExecute() {

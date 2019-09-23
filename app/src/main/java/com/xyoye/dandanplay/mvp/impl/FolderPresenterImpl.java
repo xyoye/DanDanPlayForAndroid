@@ -63,9 +63,10 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 .selectTable("file")
                 .query()
                 .where("folder_path", folderPath)
-                .postExecute(new QueryAsyncResultCallback<List<VideoBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<VideoBean>>(getLifeful()) {
                     @Override
                     public List<VideoBean> onQuery(Cursor cursor) {
+                        if (cursor == null) return new ArrayList<>();
                         List<VideoBean> videoBeans = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             String filePath = cursor.getString(2);

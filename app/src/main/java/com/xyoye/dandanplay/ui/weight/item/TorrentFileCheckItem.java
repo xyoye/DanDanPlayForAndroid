@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
@@ -17,17 +18,17 @@ import butterknife.BindView;
 
 public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
 
-    @BindView(R.id.check_cb)
-    CheckBox checkCb;
+    @BindView(R.id.check_iv)
+    ImageView checkIv;
     @BindView(R.id.file_name_tv)
     TextView fileNameTv;
     @BindView(R.id.file_size_tv)
     TextView fileSizeTv;
 
-    private TorrentFileCheckListener listener;
+    private View mView;
 
-    public TorrentFileCheckItem(TorrentFileCheckListener listener){
-        this.listener = listener;
+    public TorrentFileCheckItem() {
+
     }
 
     @Override
@@ -37,7 +38,7 @@ public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
 
     @Override
     public void initItemViews(View itemView) {
-
+        mView = itemView;
     }
 
     @Override
@@ -47,17 +48,19 @@ public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
 
     @Override
     public void onUpdateViews(TorrentCheckBean model, int position) {
-        checkCb.setChecked(model.isChecked());
+        checkIv.setBackground(getCheckBoxBg(model.isChecked()));
         fileNameTv.setText(model.getName());
         fileSizeTv.setText(CommonUtils.convertFileSize(model.getLength()));
 
-        checkCb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (listener != null)
-                listener.onCheck(position, isChecked);
+        mView.setOnClickListener(v -> {
+            model.setChecked(!model.isChecked());
+            checkIv.setBackground(getCheckBoxBg(model.isChecked()));
         });
     }
 
-    public interface TorrentFileCheckListener{
-        void onCheck(int position, boolean isChecked);
+    private Drawable getCheckBoxBg(boolean isCheck) {
+        return isCheck
+                ? CommonUtils.getResDrawable(R.drawable.ic_check_box_checked)
+                : CommonUtils.getResDrawable(R.drawable.ic_check_box_uncheck);
     }
 }

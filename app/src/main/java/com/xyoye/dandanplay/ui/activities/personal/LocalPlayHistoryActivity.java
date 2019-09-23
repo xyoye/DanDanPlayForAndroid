@@ -99,10 +99,12 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
                 .selectTable("local_play_history")
                 .query()
                 .setOrderByColumnDesc("play_time")
-                .postExecute(new QueryAsyncResultCallback<List<LocalPlayHistoryBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<LocalPlayHistoryBean>>(this) {
 
                     @Override
                     public List<LocalPlayHistoryBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<LocalPlayHistoryBean> list = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             LocalPlayHistoryBean historyBean = new LocalPlayHistoryBean();

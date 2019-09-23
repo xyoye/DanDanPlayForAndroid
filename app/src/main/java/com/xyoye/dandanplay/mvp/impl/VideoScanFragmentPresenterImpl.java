@@ -76,9 +76,11 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
                 .selectTable("scan_folder")
                 .query()
                 .where("folder_type", String.valueOf(scanType))
-                .postExecute(new QueryAsyncResultCallback<List<ScanFolderBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<ScanFolderBean>>(getLifeful()) {
                     @Override
                     public List<ScanFolderBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<ScanFolderBean> folderList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             folderList.add(new ScanFolderBean(cursor.getString(1), false));

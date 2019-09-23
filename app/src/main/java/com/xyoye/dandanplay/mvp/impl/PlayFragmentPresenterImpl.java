@@ -75,11 +75,12 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .queryColumns("danmu_path", "current_position", "danmu_episode_id")
                 .where("file_path", videoPath)
-                .postExecute(new QueryAsyncResultCallback<VideoBean>() {
+                .postExecute(new QueryAsyncResultCallback<VideoBean>(getLifeful()) {
                     @Override
                     public VideoBean onQuery(Cursor cursor) {
+                        if (cursor == null) return null;
                         VideoBean videoBean = null;
-                        if (cursor.moveToNext()){
+                        if (cursor.moveToNext()) {
                             videoBean = new VideoBean();
                             videoBean.setVideoPath(videoPath);
                             videoBean.setDanmuPath(cursor.getString(0));
@@ -157,9 +158,11 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .queryColumns("folder_path")
                 .where("folder_type", String.valueOf(Constants.ScanType.SCAN))
-                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifeful()) {
                     @Override
                     public List<FolderBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<String> scanFolderList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             scanFolderList.add(cursor.getString(0));
@@ -179,6 +182,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                                 .query()
                                 .queryColumns("folder_path", "folder_type")
                                 .executeAsync(scanTypeCursor -> {
+                                    if (scanTypeCursor == null)
+                                        return new ArrayList<>();
+
                                     List<String> scanList = new ArrayList<>();
                                     List<String> blockList = new ArrayList<>();
 
@@ -208,10 +214,12 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .selectTable("scan_folder")
                 .query()
                 .queryColumns("folder_path", "folder_type")
-                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifeful()) {
 
                     @Override
                     public List<FolderBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<String> scanList = new ArrayList<>();
                         List<String> blockList = new ArrayList<>();
 

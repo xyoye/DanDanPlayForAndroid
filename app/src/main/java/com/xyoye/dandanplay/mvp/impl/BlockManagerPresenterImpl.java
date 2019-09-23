@@ -55,14 +55,14 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
                 .selectTable("danmu_block")
                 .query()
                 .queryColumns("text")
-                .postExecute(new QueryAsyncResultCallback<List<String>>() {
+                .postExecute(new QueryAsyncResultCallback<List<String>>(getLifeful()) {
                     @Override
                     public List<String> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<String> blocks = new ArrayList<>();
-                        if (cursor != null) {
-                            while (cursor.moveToNext()) {
-                                blocks.add(cursor.getString(0));
-                            }
+                        while (cursor.moveToNext()) {
+                            blocks.add(cursor.getString(0));
                         }
                         return blocks;
                     }

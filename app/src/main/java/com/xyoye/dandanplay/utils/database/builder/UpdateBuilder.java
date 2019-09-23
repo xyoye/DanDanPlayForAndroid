@@ -127,7 +127,8 @@ public class UpdateBuilder {
         } else {
             clause = "";
         }
-        sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause, args);
+        if (sqLiteDatabase.isOpen())
+            sqLiteDatabase.update(DataBaseInfo.getTableNames()[tablePosition], mValues, clause, args);
     }
 
     public void postExecute() {

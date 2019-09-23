@@ -53,9 +53,11 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
         DataBaseManager.getInstance()
                 .selectTable("downloaded_task")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<DownloadedTaskBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<DownloadedTaskBean>>(getLifeful()) {
                     @Override
                     public List<DownloadedTaskBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<DownloadedTaskBean> tempList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             DownloadedTaskBean taskBean = new DownloadedTaskBean();
@@ -86,6 +88,8 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
                 .query()
                 .where("task_torrent_hash", taskHash)
                 .executeAsync(cursor -> {
+                    if (cursor == null)
+                        return new ArrayList<>();
                     List<DownloadedTaskBean.DownloadedTaskFileBean> fileList = new ArrayList<>();
                     while (cursor.moveToNext()) {
                         DownloadedTaskBean.DownloadedTaskFileBean fileBean = new DownloadedTaskBean.DownloadedTaskFileBean();

@@ -90,9 +90,11 @@ public class SmbPresenterImpl extends BaseMvpPresenterImpl<SmbView> implements S
         DataBaseManager.getInstance()
                 .selectTable("smb_device")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<SmbBean>>() {
+                .postExecute(new QueryAsyncResultCallback<List<SmbBean>>(getLifeful()) {
                     @Override
                     public List<SmbBean> onQuery(Cursor cursor) {
+                        if (cursor == null)
+                            return new ArrayList<>();
                         List<SmbBean> deviceList = new ArrayList<>();
                         while (cursor.moveToNext()) {
                             SmbBean deviceBean = new SmbBean();

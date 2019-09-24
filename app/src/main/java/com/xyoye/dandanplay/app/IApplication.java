@@ -10,8 +10,10 @@ import android.os.Looper;
 import android.os.StrictMode;
 
 import com.blankj.utilcode.util.Utils;
+import com.tencent.tauth.Tencent;
 import com.xyoye.dandanplay.ui.activities.SplashActivity;
 import com.xyoye.dandanplay.ui.activities.personal.CrashActivity;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
@@ -53,6 +55,7 @@ public class IApplication extends Application {
     private static Context _context;
     private static AssetManager _asset;
     private static CookiesManager cookiesManager;
+    private static Tencent mTencent;
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -106,6 +109,8 @@ public class IApplication extends Application {
         }
 
         startCorrectlyFlag = true;
+
+        mTencent = Tencent.createInstance(Constants.DefaultConfig.QQ_APP_ID, this);
 
         //严格模式
         //strictMode();
@@ -167,6 +172,10 @@ public class IApplication extends Application {
                 .penaltyLog()
                 .penaltyDeath()
                 .build());
+    }
+
+    public static Tencent getTencent(){
+        return mTencent;
     }
 
     public static Context get_context() {

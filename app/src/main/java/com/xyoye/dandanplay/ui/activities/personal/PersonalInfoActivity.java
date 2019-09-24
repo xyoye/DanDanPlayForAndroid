@@ -9,7 +9,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.tencent.tauth.Tencent;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalInfoPresenterImpl;
@@ -60,6 +62,12 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
 
         loginOutBt.setOnClickListener(v -> {
             if (AppConfig.getInstance().isLogin()){
+                //退出QQ登录
+                Tencent tencent = IApplication.getTencent();
+                if (tencent.isSessionValid()){
+                    tencent.logout(IApplication.get_context());
+                }
+
                 AppConfig.getInstance().setLogin(false);
                 AppConfig.getInstance().saveUserName("");
                 AppConfig.getInstance().saveUserScreenName("");

@@ -9,15 +9,22 @@ import android.widget.ImageView;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.tencent.connect.common.Constants;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
+import com.xyoye.dandanplay.bean.QQLoginBean;
 import com.xyoye.dandanplay.bean.params.LoginParam;
+import com.xyoye.dandanplay.bean.params.ThreePartLoginParam;
 import com.xyoye.dandanplay.mvp.impl.LoginPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.ui.activities.MainActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.SoUtils;
+import com.xyoye.dandanplay.utils.JsonUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -35,6 +42,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     ImageView eyeIv;
 
     private boolean isPasswordShow = false;
+    private IUiListener mLoginListener;
 
     @Override
     public void initView() {
@@ -45,7 +53,35 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
 
     @Override
     public void initListener() {
+        mLoginListener = new IUiListener() {
+            @Override
+            public void onComplete(Object response) {
+                if (null == response) {
+                    ToastUtils.showShort("登录失败，QQ返回数据异常");
+                    return;
+                }
+                QQLoginBean loginBean = JsonUtil.fromJson(String.valueOf(response), QQLoginBean.class);
+                if (loginBean != null) {
+                    ThreePartLoginParam loginParam = new ThreePartLoginParam();
+                    loginParam.setAccessToken(loginBean.getAccess_token());
+                    loginParam.setUserId(loginBean.getOpenid());
+                    loginParam.buildHash();
+                    presenter.loginByQQ(loginParam);
+                } else {
+                    ToastUtils.showShort("登录失败，QQ返回数据异常");
+                }
+            }
 
+            @Override
+            public void onError(UiError uiError) {
+                ToastUtils.showShort("登录失败：" + uiError.errorMessage);
+            }
+
+            @Override
+            public void onCancel() {
+                ToastUtils.showShort("QQ登录取消");
+            }
+        };
     }
 
     @NonNull
@@ -70,9 +106,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
             LoginParam param = new LoginParam();
             param.setUserName(userName);
             param.setPassword(password);
-            param.setAppId(SoUtils.getInstance().getDanDanAppId());
-            param.setUnixTimestamp(System.currentTimeMillis() / 1000);
-            param.buildHash(this);
+            param.buildHash();
             presenter.login(param);
         }
     }
@@ -97,11 +131,6 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     public void showLoading() {
         showLoadingDialog();
     }
@@ -116,7 +145,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
         ToastUtils.showShort(message);
     }
 
-    @OnClick({R.id.eye_iv, R.id.login_bt, R.id.to_register_tv, R.id.to_reset_password_tv})
+    @OnClick({R.id.eye_iv, R.id.login_bt, R.id.to_register_tv, R.id.to_reset_password_tv, R.id.login_qq_iv, R.id.login_weibo_iv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.eye_iv:
@@ -138,6 +167,19 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> implements Lo
             case R.id.to_reset_password_tv:
                 launchActivity(ResetPasswordActivity.class);
                 break;
+            case R.id.login_qq_iv:
+                IApplication.getTencent().login(this, "all", mLoginListener);
+                break;
+            case R.id.login_weibo_iv:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_LOGIN ||
+                requestCode == Constants.REQUEST_APPBAR) {
+            Tencent.onActivityResultData(requestCode, resultCode, data, mLoginListener);
         }
     }
 }

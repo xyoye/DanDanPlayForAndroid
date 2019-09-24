@@ -14,46 +14,52 @@ import java.util.Map;
  * Created by xyoye on 2018/7/22.
  */
 
-public class LoginParam implements Serializable {
+public class ThreePartLoginParam implements Serializable {
 
     /**
-     * userName : string
-     * password : string
+     * source : qq
+     * userId : string
+     * accessToken : string
      * appId : string
      * unixTimestamp : 0
      * hash : string
      */
 
-    private String userName;
-    private String password;
+    private String source;
+    private String userId;
+    private String accessToken;
     private String appId;
-    private String hash;
     private long unixTimestamp;
+    private String hash;
 
-    public String getUserName() {
-        return userName;
+    public void setSource(String source) {
+        this.source = source;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void buildHash() {
         unixTimestamp = System.currentTimeMillis() / 1000;
         appId = SoUtils.getInstance().getDanDanAppId();
-        if (StringUtils.isEmpty(userName) ||
-                StringUtils.isEmpty(password) ||
-                StringUtils.isEmpty(appId)) {
+
+        if (StringUtils.isEmpty(accessToken) ||
+                StringUtils.isEmpty(appId) ||
+                StringUtils.isEmpty(source) ||
+                StringUtils.isEmpty(userId) ||
+                unixTimestamp == 0) {
             ToastUtils.showShort("登录信息错误");
         } else {
-            String builder = this.appId +
-                    this.password +
+            String builder = this.accessToken +
+                    this.appId +
+                    this.source +
                     this.unixTimestamp +
-                    this.userName +
+                    this.userId +
                     SoUtils.getInstance().getDanDanAppSecret();
             hash = EncryptUtils.encryptMD5ToString(builder);
         }
@@ -61,8 +67,9 @@ public class LoginParam implements Serializable {
 
     public Map<String, String> getMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("userName", this.userName);
-        map.put("password", this.password);
+        map.put("source", this.source);
+        map.put("userId", this.userId);
+        map.put("accessToken", this.accessToken);
         map.put("appId", this.appId);
         map.put("unixTimestamp", this.unixTimestamp + "");
         map.put("hash", this.hash);

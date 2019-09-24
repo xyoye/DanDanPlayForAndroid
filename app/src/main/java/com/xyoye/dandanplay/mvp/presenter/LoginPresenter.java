@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
 import com.xyoye.dandanplay.bean.params.LoginParam;
+import com.xyoye.dandanplay.bean.params.ThreePartLoginParam;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 /**
@@ -9,4 +10,8 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
 public interface LoginPresenter extends BaseMvpPresenter {
     void login(LoginParam param);
+
+    void loginByQQ(ThreePartLoginParam param);
+
+    void loginByWB(ThreePartLoginParam param);
 }

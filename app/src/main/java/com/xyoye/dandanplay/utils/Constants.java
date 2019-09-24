@@ -118,6 +118,8 @@ public class Constants {
         public static final String subtitleFolder = "/_zimu";
         //默认番剧封面缓存路径
         public static final String imageFolder =  downloadPath + "/_image";
+        //QQ_APP_ID
+        public static final String QQ_APP_ID = "1109831787";
     }
 
     /**

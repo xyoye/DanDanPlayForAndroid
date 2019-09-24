@@ -72,6 +72,10 @@ public interface RetrofitService {
     @POST("api/v2/login")
     Observable<PersonalBean> login(@FieldMap Map<String, String> params);
 
+    @FormUrlEncoded
+    @POST("api/v2/applogin")
+    Observable<PersonalBean> loginByThreePart(@FieldMap Map<String, String> params);
+
     @GET("api/v2/favorite")
     Observable<AnimeFavoriteBean> getFavorite();
 

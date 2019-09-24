@@ -92,6 +92,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':player')
     implementation(name: 'thunder', ext: 'aar')
+    implementation(name: 'openDefault-4.4.1', ext: 'aar')
+    implementation files('libs/open_sdk_r6137_lite.jar')
     implementation rootProject.ext.dependencies["appcompat-v7"]
     implementation rootProject.ext.dependencies["appcompat-v4"]
     implementation rootProject.ext.dependencies["design"]

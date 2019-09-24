@@ -134,6 +134,8 @@ public class TaskDownloadingDetailDialog extends Dialog {
     private List<TorrentChildFile> getChildFileList() {
         String torrentHash = taskStateBean.getTorrentHash();
         TorrentTask torrentTask = TorrentEngine.getInstance().getTorrentTask(torrentHash);
+        if (torrentTask == null)
+            return new ArrayList<>();
         FileStorage fileStorage = torrentTask.getTorrentFiles();
         long[] receivedBytes = torrentTask.getFilesReceivedBytes();
         Priority[] priorities = torrentTask.getTorrent().getPriorities();

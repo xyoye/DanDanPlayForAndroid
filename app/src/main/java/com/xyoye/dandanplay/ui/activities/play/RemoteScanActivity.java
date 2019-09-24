@@ -14,7 +14,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.RemoteScanBean;
 import com.xyoye.dandanplay.ui.weight.ScanWindowView;
-import com.xyoye.dandanplay.utils.JsonUtil;
+import com.xyoye.dandanplay.utils.JsonUtils;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
 
 import butterknife.BindView;
@@ -90,7 +90,7 @@ public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderV
     public void onQRCodeRead(String result, PointF[] points) {
         if (!TextUtils.isEmpty(result) && !isScanOver) {
             isScanOver = true;
-            RemoteScanBean scanBean = JsonUtil.fromJson(result, RemoteScanBean.class);
+            RemoteScanBean scanBean = JsonUtils.fromJson(result, RemoteScanBean.class);
             if (scanBean != null && scanBean.getIp() != null && scanBean.getIp().size() != 0){
                 Intent intent = new Intent(this, RemoteActivity.class);
                 intent.putExtra("remote_data", scanBean);

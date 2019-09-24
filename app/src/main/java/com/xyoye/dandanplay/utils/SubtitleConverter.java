@@ -33,7 +33,7 @@ public class SubtitleConverter {
     private static List<SubtitleBean> shooter2subtitle(ResponseBody shooterBody, String filePath){
         List<SubtitleBean.Shooter> shooterList = new ArrayList<>();
         try {
-            shooterList = JsonUtil.getObjectList(shooterBody.string(), SubtitleBean.Shooter.class);
+            shooterList = JsonUtils.getObjectList(shooterBody.string(), SubtitleBean.Shooter.class);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -61,7 +61,7 @@ public class SubtitleConverter {
     private static List<SubtitleBean> thunder2subtitle(ResponseBody thunderBody){
         SubtitleBean.Thunder thunderBean = null;
         try {
-            thunderBean = JsonUtil.fromJson(thunderBody.string(), SubtitleBean.Thunder.class);
+            thunderBean = JsonUtils.fromJson(thunderBody.string(), SubtitleBean.Thunder.class);
         }catch (IOException e){
             e.printStackTrace();
         }

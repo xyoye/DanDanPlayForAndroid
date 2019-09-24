@@ -13,7 +13,7 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.JsonUtil;
+import com.xyoye.dandanplay.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class PatchHisDialog extends Dialog {
     public PatchHisDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         mContext = context;
-        eventList = JsonUtil.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
+        eventList = JsonUtils.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
         if (eventList == null) eventList = new ArrayList<>();
     }
 

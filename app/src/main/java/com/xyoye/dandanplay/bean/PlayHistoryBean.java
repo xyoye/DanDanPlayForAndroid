@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.bean;
 
 import com.xyoye.dandanplay.bean.params.HistoryParam;
-import com.xyoye.dandanplay.utils.JsonUtil;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;

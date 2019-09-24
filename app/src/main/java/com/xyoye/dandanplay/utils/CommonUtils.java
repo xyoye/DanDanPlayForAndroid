@@ -282,7 +282,7 @@ public class CommonUtils {
     public static PatchLoadStatusListener getPatchLoadListener() {
         return (mode, code, serviceMsg, version) -> {
             String msg = "";
-            List<PatchFixEvent> eventList = JsonUtil.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
+            List<PatchFixEvent> eventList = JsonUtils.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
             if (eventList == null) eventList = new ArrayList<>();
             AppConfig.getInstance().setPatchVersion(version);
             PatchFixEvent event = new PatchFixEvent();
@@ -354,7 +354,7 @@ public class CommonUtils {
             event.setMsg(msg);
             eventList.add(event);
             EventBus.getDefault().post(event);
-            SPUtils.getInstance().put("patch_his", JsonUtil.toJson(eventList));
+            SPUtils.getInstance().put("patch_his", JsonUtils.toJson(eventList));
         };
     }
 

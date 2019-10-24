@@ -38,7 +38,6 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
-import com.xyoye.dandanplay.ui.weight.ScanWindowView;
 import com.xyoye.dandanplay.utils.scan.camera.CameraManager;
 
 import java.io.IOException;
@@ -72,7 +71,6 @@ public class QRCodeReaderView extends SurfaceView
     private boolean mQrDecodingEnabled = true;
     private DecodeFrameTask decodeFrameTask;
     private Map<DecodeHintType, Object> decodeHints;
-    private ScanWindowView mFinderView;
 
     public QRCodeReaderView(Context context) {
         this(context, null);

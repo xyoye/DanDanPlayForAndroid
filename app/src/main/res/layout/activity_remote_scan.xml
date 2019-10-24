@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView
         android:id="@+id/qr_code_reader_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.xyoye.dandanplay.ui.weight.ScanWindowView
-        android:id="@+id/finder_view"
+    <com.xyoye.dandanplay.utils.scan.view.ScanWindowRelayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:preview_width="275dp"
-        app:preview_height="275dp"
-        app:preview_centerHorizontal="true"
-        app:preview_y="114dp"
-        app:show_frame="true"/>
+        android:background="#60000000">
+
+        <com.xyoye.dandanplay.utils.scan.view.ScanWindowView
+            android:id="@+id/scan_window_view"
+            android:layout_width="275dp"
+            android:layout_height="275dp"
+            android:layout_marginTop="114dp"
+            android:layout_centerHorizontal="true"
+            app:show_frame="true"/>
+
+    </com.xyoye.dandanplay.utils.scan.view.ScanWindowRelayout>
 
     <TextView
         android:layout_width="wrap_content"

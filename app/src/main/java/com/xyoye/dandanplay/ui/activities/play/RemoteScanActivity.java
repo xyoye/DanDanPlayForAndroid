@@ -13,9 +13,9 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.RemoteScanBean;
-import com.xyoye.dandanplay.ui.weight.ScanWindowView;
 import com.xyoye.dandanplay.utils.JsonUtils;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
+import com.xyoye.dandanplay.utils.scan.view.ScanWindowView;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -27,7 +27,7 @@ import butterknife.OnClick;
 public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderView.OnQRCodeReadListener {
     @BindView(R.id.qr_code_reader_view)
     QRCodeReaderView qrCodeReaderView;
-    @BindView(R.id.finder_view)
+    @BindView(R.id.scan_window_view)
     ScanWindowView scanWindowView;
     @BindView(R.id.title_tv)
     TextView titleTv;
@@ -54,7 +54,8 @@ public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderV
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();
-        scanWindowView.bindQRCodeView(qrCodeReaderView);
+        scanWindowView.post(() ->
+                qrCodeReaderView.getCameraManager().setFramingRectF(scanWindowView.getRectF()));
     }
 
     @Override
@@ -67,7 +68,6 @@ public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderV
         super.onResume();
         if (qrCodeReaderView != null) {
             qrCodeReaderView.startCamera();
-            scanWindowView.drawWindow();
         }
     }
 

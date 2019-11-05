@@ -270,8 +270,8 @@ public class CommonUtils {
             if (cursor != null && cursor.moveToNext()) {
                 return cursor.getString(0);
             }
-        } catch (IllegalStateException e) {
-            return null;
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            e.printStackTrace();
         }
         return null;
     }

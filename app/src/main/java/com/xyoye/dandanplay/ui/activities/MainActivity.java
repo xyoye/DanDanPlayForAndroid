@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -30,7 +31,6 @@ import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.RemoteDialog;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -168,7 +168,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
             } else {
                 if (ServiceUtils.isServiceRunning(TorrentService.class))
                     ServiceUtils.stopService(TorrentService.class);
-                finish();
+                AppUtils.exitApp();
             }
         }
         return false;

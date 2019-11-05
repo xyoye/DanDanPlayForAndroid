@@ -68,7 +68,7 @@ public class SplashActivity extends BaseMvpActivity<SplashPresenter> implements 
         alphaAnimation.setInterpolator(new LinearInterpolator());
         alphaAnimation.setDuration(2000);
 
-        String appName = "弹弹play 概念版 v"+ AppUtils.getAppVersionName();
+        String appName = "弹弹play 概念版 v" + AppUtils.getAppVersionName();
         appNameTv.setText(appName);
 
         textPathView.setAnimListener(new TextPathAnimView.AnimListener() {
@@ -79,7 +79,8 @@ public class SplashActivity extends BaseMvpActivity<SplashPresenter> implements 
 
             @Override
             public void onEnd() {
-                textPathView.postDelayed(() -> launchActivity(), 350);
+                if (textPathView != null)
+                    textPathView.postDelayed(() -> launchActivity(), 350);
             }
 
             @Override

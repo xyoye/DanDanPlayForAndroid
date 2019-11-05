@@ -85,7 +85,7 @@ public class InsertBuilder{
         return this;
     }
 
-    public void executeAsync(){
+    public synchronized void executeAsync(){
         ActionBuilder.checkThreadLocal();
 
         if (mValues != null && sqLiteDatabase.isOpen()){

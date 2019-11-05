@@ -109,7 +109,7 @@ public class UpdateBuilder {
         return this;
     }
 
-    public void executeAsync() {
+    public synchronized void executeAsync() {
         ActionBuilder.checkThreadLocal();
 
         if (mValues == null)

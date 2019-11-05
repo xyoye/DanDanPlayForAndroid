@@ -409,6 +409,10 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     private void search(String searchText) {
+        // TODO: 2019/11/5 3.5.1 临时性修改
+        if (searchEt == null)
+            return;
+
         AnimHelper.doHideAnimator(historyRl);
         searchEt.setText(searchText);
         searchEt.clearFocus();
@@ -478,13 +482,15 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         selectIndexSet.mIndexSet[0] = checkedFilePosition;
 
         //选择的文件，与忽略的文件
-        BtIndexSet deSelectIndexSet = new BtIndexSet(thunderTorrentInfo.mSubFileInfo.length - 1);
-        int j = 0;
+        List<Integer> deselectIndexList = new ArrayList<>();
         for (int i = 0; i < thunderTorrentInfo.mSubFileInfo.length; i++) {
             if (i != checkedFilePosition) {
-                deSelectIndexSet.mIndexSet[j] = i;
-                j++;
+                deselectIndexList.add(i);
             }
+        }
+        BtIndexSet deSelectIndexSet = new BtIndexSet(deselectIndexList.size());
+        for (int i = 0; i < deselectIndexList.size(); i++) {
+            deSelectIndexSet.mIndexSet[i] = deselectIndexList.get(i);
         }
 
         //开启任务

@@ -358,6 +358,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * 获取系统中视频信息
      */
     private void queryVideoFormMediaStore() {
+        // TODO: 2019/11/5 3.5.1 临时性修改
+        Context context = getView().getContext();
+        if (context == null)
+            return;
         Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, null);
         if (cursor != null) {

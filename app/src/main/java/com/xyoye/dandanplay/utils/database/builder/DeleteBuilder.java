@@ -36,7 +36,7 @@ public class DeleteBuilder {
         return this;
     }
 
-    public void executeAsync() {
+    public synchronized void executeAsync() {
         ActionBuilder.checkThreadLocal();
 
         String clause;

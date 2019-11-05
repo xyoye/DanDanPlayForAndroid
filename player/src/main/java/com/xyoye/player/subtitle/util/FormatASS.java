@@ -512,7 +512,8 @@ public class FormatASS implements TimedTextFileFormat {
 
         Caption newCaption = new Caption();
 
-        for (int i = 0; i < dialogueFormat.length; i++) {
+        int maxLength = dialogueFormat.length > line.length ? line.length : dialogueFormat.length;
+        for (int i = 0; i < maxLength; i++) {
             String trimmedDialogueFormat = dialogueFormat[i].trim();
             //we go through every format parameter and save the interesting values
             if (trimmedDialogueFormat.equalsIgnoreCase("Style")) {

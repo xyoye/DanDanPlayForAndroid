@@ -125,7 +125,7 @@ public class QueryBuilder {
      * 执行callback后返回值
      */
     @CheckReturnValue
-    public <T> T executeAsync(QuerySyncResultCallback<T> callBack) {
+    public synchronized <T> T executeAsync(QuerySyncResultCallback<T> callBack) {
         ActionBuilder.checkThreadLocal();
 
         Cursor cursor = execute();
@@ -142,7 +142,7 @@ public class QueryBuilder {
      *
      * 只执行callback
      */
-    public void executeAsync(QuerySyncCallback callBack) {
+    public synchronized void executeAsync(QuerySyncCallback callBack) {
         ActionBuilder.checkThreadLocal();
 
         Cursor cursor = execute();

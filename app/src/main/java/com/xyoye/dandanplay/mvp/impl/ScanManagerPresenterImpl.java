@@ -72,8 +72,6 @@ public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerVi
                         .where("folder_path", folderPath)
                         .where("file_path", videoPath)
                         .executeAsync(cursor -> {
-                            if (cursor == null)
-                                return;
                             if (!cursor.moveToNext()) {
                                 VideoBean videoBean = queryFormSystem(videoPath);
                                 DataBaseManager.getInstance()

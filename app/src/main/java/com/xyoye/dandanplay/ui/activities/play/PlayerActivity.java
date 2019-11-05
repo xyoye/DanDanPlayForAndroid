@@ -306,7 +306,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                             .setAutoDismiss()
                             .setNightSkin()
                             .build()
-                            .show("播放失败，请尝试切换其它播放内核，获取更改播放器设置", "播放器设置", "退出播放");
+                            .show("播放失败，请尝试更改播放器设置，或者切换其它播放内核", "播放器设置", "退出播放");
                     break;
                 case Constants.INTENT_PLAY_END:
                     //播放停止视频缓存

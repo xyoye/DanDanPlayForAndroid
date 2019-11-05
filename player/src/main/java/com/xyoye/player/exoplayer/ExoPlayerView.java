@@ -583,6 +583,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                         if (!isVideoPlaying()) {
                             _togglePlayStatus();
                         }
+                        // TODO: 2019/11/5 3.5.1 临时性修改
+                        if (mDanmakuView == null)
+                            return;
                         long seek = mDanmakuView.getCurrentTime() - topBarView.getDanmuSettingView().getDanmuExtraTime();
                         mDanmakuView.start(seek);
                     }

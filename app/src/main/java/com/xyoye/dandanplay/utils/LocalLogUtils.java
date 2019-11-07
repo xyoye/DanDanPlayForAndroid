@@ -16,12 +16,46 @@ public class LocalLogUtils {
     private ExecutorService singleExecutor;
     private File mLogFile;
     private SimpleDateFormat dateFormat;
-    private boolean isEnableLog;
 
     private LocalLogUtils() {
-        isEnableLog = AppConfig.getInstance().isOnlinePlayLogEnable();
         dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         singleExecutor = Executors.newSingleThreadExecutor();
+
+        createLogFile();
+    }
+
+    private static class Holder {
+        static LocalLogUtils instance = new LocalLogUtils();
+    }
+
+    public static LocalLogUtils getInstance() {
+        return Holder.instance;
+    }
+
+    public void write(String log) {
+        singleExecutor.execute(() -> {
+            try {
+                if (!AppConfig.getInstance().isOnlinePlayLogEnable()) return;
+
+                String time = dateFormat.format(System.currentTimeMillis());
+                String realLog = time + "   "+log;
+
+                if (mLogFile == null || !mLogFile.exists()){
+                    createLogFile();
+                }
+
+                FileWriter fileWriter = new FileWriter(mLogFile, true);
+                fileWriter.write(realLog);
+                fileWriter.write("\n");
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void createLogFile(){
         mLogFile = new File(Constants.DefaultConfig.logPath);
         File folder = mLogFile.getParentFile();
         if (!folder.exists() || !folder.isDirectory()){
@@ -35,32 +69,5 @@ public class LocalLogUtils {
                 e.printStackTrace();
             }
         }
-    }
-
-    private static class Holder {
-        static LocalLogUtils instance = new LocalLogUtils();
-    }
-
-    public static LocalLogUtils getInstance() {
-        return Holder.instance;
-    }
-
-    public void write(String log) {
-        if (!isEnableLog) return;
-
-        singleExecutor.execute(() -> {
-            try {
-                String time = dateFormat.format(System.currentTimeMillis());
-                String realLog = time + "   "+log;
-
-                FileWriter fileWriter = new FileWriter(mLogFile, true);
-                fileWriter.write(realLog);
-                fileWriter.write("\n");
-                fileWriter.flush();
-                fileWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 }

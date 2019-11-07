@@ -50,6 +50,7 @@ import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.LocalLogUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.player.commom.utils.AnimHelper;
@@ -59,8 +60,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import butterknife.BindView;
@@ -449,10 +453,13 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
      * 启动播放
      */
     private void playByThunder(int checkedFilePosition, long checkedFileSize, String torrentFilePath) {
+        LocalLogUtils.getInstance().write("启动播放，准备播放第"+(checkedFilePosition+1)+"个任务");
+
         com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
                 XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
         if (thunderTorrentInfo == null) {
             ToastUtils.showShort("播放失败，无法解析播放内容");
+            LocalLogUtils.getInstance().write("播放失败，无法解析种子");
             return;
         }
 
@@ -460,6 +467,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         if (!cacheFolder.exists()) {
             if (!cacheFolder.mkdirs()) {
                 ToastUtils.showShort("播放失败，创建缓存文件夹失败");
+                LocalLogUtils.getInstance().write("播放失败，无法创建缓存文件");
                 return;
             }
         }
@@ -467,6 +475,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
         if (cacheFolder.getFreeSpace() < checkedFileSize) {
             ToastUtils.showShort("播放失败，剩余缓存空间不足");
+            LocalLogUtils.getInstance().write("播放失败，剩余缓存空间不足");
             return;
         }
 
@@ -493,11 +502,22 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             deSelectIndexSet.mIndexSet[i] = deselectIndexList.get(i);
         }
 
+        LocalLogUtils.getInstance().write("准备创建任务");
         //开启任务
-        long playTaskId = XLTaskHelper.getInstance().startTask(taskParam, selectIndexSet, deSelectIndexSet);
+        long[] taskStatus = XLTaskHelper.getInstance().startTask(taskParam, selectIndexSet, deSelectIndexSet);
+
+        long playTaskId = taskStatus[0];
+        LocalLogUtils.getInstance().write("创建任务完成，任务ID："+playTaskId);
+        LocalLogUtils.getInstance().write("任务状态："+ Arrays.toString(taskStatus));
 
         //任务出错重试
         if (playTaskId == -1) {
+            LocalLogUtils.getInstance().write("创建任务失败");
+            LocalLogUtils.getInstance().write("reason1: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[1]));
+            LocalLogUtils.getInstance().write("reason2: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[2]));
+            LocalLogUtils.getInstance().write("reason3: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[3]));
+            LocalLogUtils.getInstance().write("reason4: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[4]));
+            LocalLogUtils.getInstance().write("reason5: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[5]));
             XLTaskHelper.getInstance().stopTask(playTaskId);
             //重试两次
             if (atomicInteger.get() < 3) {
@@ -507,6 +527,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             } else {
                 FileUtils.deleteAllInDir(Constants.DefaultConfig.cacheFolderPath);
                 ToastUtils.showShort("播放失败，无法开始播放任务");
+                LocalLogUtils.getInstance().write("播放失败，重试3次后依旧无法创建播放任务");
             }
             return;
         }
@@ -515,6 +536,10 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         String filePath = taskParam.mFilePath + "/" + fileName;
         XLTaskLocalUrl localUrl = new XLTaskLocalUrl();
         XLDownloadManager.getInstance().getLocalUrl(filePath, localUrl);
+
+        LocalLogUtils.getInstance().write("创建任务成功，启动播放器");
+        LocalLogUtils.getInstance().write("文件名："+fileName);
+        LocalLogUtils.getInstance().write("播放链接："+localUrl.mStrUrl);
 
         //启动播放
         PlayerManagerActivity.launchPlayerOnline(

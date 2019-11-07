@@ -276,6 +276,17 @@ public class AppConfig {
     }
 
     /**
+     * 在线播放是否生成日志
+     */
+    public boolean isOnlinePlayLogEnable() {
+        return SPUtils.getInstance().getBoolean(Constants.PlayerConfig.ONLINE_PLAY_LOG, true);
+    }
+
+    public void setOnlinePlayLogEnable(boolean isEnable) {
+        SPUtils.getInstance().put(Constants.PlayerConfig.ONLINE_PLAY_LOG, isEnable);
+    }
+
+    /**
      * 开启弹幕云过滤
      */
     public boolean isCloudDanmuFilter() {

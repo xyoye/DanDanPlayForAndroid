@@ -54,6 +54,8 @@ public class PlayerSettingActivity extends BaseMvcActivity {
     CheckBox autoLoadNetworkSubtitleCb;
     @BindView(R.id.auto_load_network_subtitle_rl)
     RelativeLayout autoLoadNetworkSubtitleRl;
+    @BindView(R.id.online_play_log_cb)
+    CheckBox onLinePlayCheckBox;
 
     @Override
     protected int initPageLayoutID() {
@@ -113,6 +115,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         boolean useNetworkSubtitle = AppConfig.getInstance().isUseNetWorkSubtitle();
         boolean autoLoadLocalSubtitle = AppConfig.getInstance().isAutoLoadLocalSubtitle();
         boolean autoLoadNetworkSubtitle = AppConfig.getInstance().isAutoLoadNetworkSubtitle();
+        boolean onlinePlayLogEnable = AppConfig.getInstance().isOnlinePlayLogEnable();
         mediaCodeCCb.setChecked(mediaCodeC);
         mediaCodeCH265Cb.setChecked(mediaCodeCH265);
         openSLESCb.setChecked(openSLES);
@@ -123,6 +126,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
         networkSubtitleCb.setChecked(useNetworkSubtitle);
         autoLoadLocalSubtitleCb.setChecked(autoLoadLocalSubtitle);
         autoLoadNetworkSubtitleCb.setChecked(autoLoadNetworkSubtitle);
+        onLinePlayCheckBox.setChecked(onlinePlayLogEnable);
         if (useNetworkSubtitle) {
             autoLoadNetworkSubtitleRl.setVisibility(View.VISIBLE);
         } else {
@@ -158,6 +162,8 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                 AppConfig.getInstance().setAutoLoadNetworkSubtitle(false);
             }
         });
+        onLinePlayCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppConfig.getInstance().setOnlinePlayLogEnable(isChecked));
     }
 
     @OnClick({R.id.select_player_type_ll, R.id.select_pixel_format_ll})

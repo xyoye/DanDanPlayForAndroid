@@ -21,23 +21,21 @@ public class Time {
 			
 		} else if (format.equalsIgnoreCase("h:mm:ss.cs")){
 			// this type of format:  1:02:22.51 (used in .ASS/.SSA) 
-			int h, m, s, cs;
+			int h =0, m = 0, s = 0, cs = 0;
 			String[] hms = value.split(":");
-			h = Integer.parseInt(hms[0]);
-			m = Integer.parseInt(hms[1]);
 			try {
+				h = Integer.parseInt(hms[0]);
+				m = Integer.parseInt(hms[1]);
 				s = Integer.parseInt(hms[2].substring(0, 2));
 				cs = Integer.parseInt(hms[2].substring(3, 5));
 			}catch (NumberFormatException e){
-				s = 0;
 				try {
 					String[] values = value.split(".");
 					if (values.length > 0)
 						cs = Integer.parseInt(value.split(".")[1]);
 					else
 						cs = Integer.parseInt(value);
-				}catch (Exception ex){
-					cs = 0;
+				}catch (Exception ignore){
 				}
 			}
 

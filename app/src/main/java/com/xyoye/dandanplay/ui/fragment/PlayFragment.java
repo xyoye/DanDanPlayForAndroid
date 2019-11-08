@@ -19,21 +19,22 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FolderBean;
-import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.mvp.impl.PlayFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PlayFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.play.FolderActivity;
-import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
-import java.io.File;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import io.reactivex.Observer;
@@ -144,6 +145,11 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
 
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
+        Collections.sort(beans, (o1, o2) -> {
+            String name01 = CommonUtils.getFolderName(o1.getFolderPath());
+            String name02 = CommonUtils.getFolderName(o2.getFolderPath());
+            return Collator.getInstance(Locale.CHINESE).compare(name01, name02);
+        });
         adapter.setData(beans);
         if (refresh != null)
             refresh.setRefreshing(false);

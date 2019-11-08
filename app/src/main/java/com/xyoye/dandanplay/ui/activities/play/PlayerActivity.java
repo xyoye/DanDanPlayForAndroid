@@ -295,7 +295,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                     setFullScreen();
                     break;
                 case Constants.INTENT_PLAY_FAILED:
-                    new CommonDialog
+                    CommonDialog.Builder builder = new CommonDialog
                             .Builder(this)
                             .setDismissListener(dialog -> {
                                 onOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
@@ -305,8 +305,14 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                                     startActivity(new Intent(this, PlayerSettingActivity.class)))
                             .setAutoDismiss()
                             .setNightSkin()
-                            .build()
-                            .show("播放失败，请尝试更改播放器设置，或者切换其它播放内核", "播放器设置", "退出播放");
+                            .setTouchNotCancel();
+                    if (sourceOrigin == PlayerManagerActivity.SOURCE_ONLINE_PREVIEW) {
+                        builder.setHideOk(false).build()
+                                .show("播放失败，资源文件无法下载，请重试或切换其它资源", "", "退出播放");
+                    } else {
+                        builder.setHideOk(true).build()
+                                .show("播放失败，请尝试更改播放器设置，或者切换其它播放内核", "播放器设置", "退出播放");
+                    }
                     break;
                 case Constants.INTENT_PLAY_END:
                     //播放停止视频缓存

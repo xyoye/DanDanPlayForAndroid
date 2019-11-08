@@ -457,7 +457,9 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
         com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
                 XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
-        if (thunderTorrentInfo == null) {
+        // TODO: 2019/11/8 使用LibTorrent解析的种子信息和用迅雷解析的信息可能会不一致，
+        // TODO: 2019/11/8 必须在显示选择播放文件弹窗前，判断使用何种方式解析种子
+        if (thunderTorrentInfo == null || checkedFilePosition >= thunderTorrentInfo.mSubFileInfo.length) {
             ToastUtils.showShort("播放失败，无法解析播放内容");
             LocalLogUtils.getInstance().write("播放失败，无法解析种子");
             return;

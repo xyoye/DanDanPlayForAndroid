@@ -89,6 +89,9 @@ public class LocalPlayHistoryItem implements AdapterItem<LocalPlayHistoryBean> {
             case PlayerManagerActivity.SOURCE_ORIGIN_STREAM:
                 sourceOriginTv.setText("串流播放");
                 break;
+            case PlayerManagerActivity.SOURCE_ONLINE_PREVIEW:
+                sourceOriginTv.setText("在线播放");
+                break;
             default:
                 sourceOriginTv.setText("未知来源播放");
                 break;

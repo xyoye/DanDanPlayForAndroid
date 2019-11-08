@@ -148,8 +148,8 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         }
 
         //检查视频标题
-        videoTitle = TextUtils.isEmpty(videoTitle) ? FileUtils.getFileNameNoExtension(videoPath) : videoTitle;
-        searchWord = TextUtils.isEmpty(searchWord) ? videoTitle : searchWord;
+        videoTitle = TextUtils.isEmpty(videoTitle) ? FileUtils.getFileName(videoPath) : videoTitle;
+        searchWord = TextUtils.isEmpty(searchWord) ? FileUtils.getFileNameNoExtension(videoPath) : searchWord;
 
         //选择弹幕弹窗及跳转
         if (sourceOrigin != SOURCE_ORIGIN_LOCAL) {

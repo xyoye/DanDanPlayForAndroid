@@ -27,6 +27,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
@@ -94,16 +95,27 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.addItemDecoration(new ItemDecorationSpaces(0, 0, 0, 1));
         recyclerView.setAdapter(adapter);
 
-        if (StringUtils.isEmpty(bindDanmuParam.getVideoPath())) {
-            ToastUtils.showShort("无匹配弹幕");
-            return;
-        }
-
         if (bindDanmuParam.isOutsideFile()) {
+            if (StringUtils.isEmpty(bindDanmuParam.getSearchWord())) {
+                ToastUtils.showShort("无匹配弹幕");
+                return;
+            }
             //非手机本地文件，无法获取MD5
-            String title = FileUtils.getFileNameNoExtension(bindDanmuParam.getVideoPath());
-            presenter.searchDanmu(title, "");
+            String searchWord = bindDanmuParam.getSearchWord();
+            String episode = "";
+            if (searchWord.trim().contains(" ")){
+                String[] wordAndEpisode = searchWord.split(" ");
+                if (wordAndEpisode.length == 2 && CommonUtils.isNum(wordAndEpisode[1])){
+                    searchWord = wordAndEpisode[0];
+                    episode = wordAndEpisode[1];
+                }
+            }
+            presenter.searchDanmu(searchWord, episode);
         } else {
+            if (StringUtils.isEmpty(bindDanmuParam.getVideoPath())) {
+                ToastUtils.showShort("无匹配弹幕");
+                return;
+            }
             presenter.matchDanmu(bindDanmuParam.getVideoPath());
         }
     }

@@ -60,11 +60,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import butterknife.BindView;
@@ -92,6 +90,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     private boolean isSearch = false;
     private String animeTitle;
     private String searchWord;
+    private String lastSearchWord;
     private int typeId = -1;
     private int subgroupsId = -1;
     private AtomicInteger atomicInteger;
@@ -446,6 +445,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             historyAdapter.notifyDataSetChanged();
             presenter.updateHistory(historyBean.get_id());
         }
+        lastSearchWord = searchText;
         presenter.search(searchText, typeId, subgroupsId);
     }
 
@@ -549,6 +549,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 "",
                 0,
                 0,
-                playTaskId);
+                playTaskId,
+                lastSearchWord);
     }
 }

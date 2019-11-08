@@ -9,13 +9,14 @@ import android.os.Parcelable;
 
 public class BindDanmuParam implements Parcelable {
     private String videoPath;
+    private String searchWord;
     private int itemPosition;
 
     private boolean outsideFile;
     private int taskFilePosition;
 
-    public BindDanmuParam(String videoPath, boolean outsideFile) {
-        this.videoPath = videoPath;
+    public BindDanmuParam(String searchWord, boolean outsideFile) {
+        this.searchWord = searchWord;
         this.outsideFile = outsideFile;
     }
 
@@ -36,6 +37,14 @@ public class BindDanmuParam implements Parcelable {
 
     public void setVideoPath(String videoPath) {
         this.videoPath = videoPath;
+    }
+
+    public String getSearchWord() {
+        return searchWord;
+    }
+
+    public void setSearchWord(String searchWord) {
+        this.searchWord = searchWord;
     }
 
     public int getItemPosition() {
@@ -64,6 +73,7 @@ public class BindDanmuParam implements Parcelable {
 
     protected BindDanmuParam(Parcel in) {
         videoPath = in.readString();
+        searchWord = in.readString();
         itemPosition = in.readInt();
         outsideFile = in.readByte() != 0;
         taskFilePosition = in.readInt();
@@ -89,6 +99,7 @@ public class BindDanmuParam implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(videoPath);
+        dest.writeString(searchWord);
         dest.writeInt(itemPosition);
         dest.writeByte((byte) (outsideFile ? 1 : 0));
         dest.writeInt(taskFilePosition);

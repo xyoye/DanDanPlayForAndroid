@@ -52,13 +52,12 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     private int episodeId;
     private long thunderTaskId;
     private int sourceOrigin;
+    private String searchWord;
 
     @BindView(R.id.error_tv)
     TextView errorTv;
     @BindView(R.id.back_iv)
     ImageView backIv;
-
-    private DanmuSelectDialog danmuSelectDialog;
 
     @Override
     protected int initPageLayoutID() {
@@ -67,13 +66,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
 
     @Override
     public void initPageView() {
-        danmuSelectDialog = new DanmuSelectDialog(this, isSelectDanmu -> {
-            if (isSelectDanmu) {
-                launchDanmuSelect(videoPath);
-            } else {
-                launchPlayerActivity();
-            }
-        });
+
     }
 
     @Override
@@ -121,6 +114,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         currentPosition = openIntent.getLongExtra("current_position", 0);
         episodeId = openIntent.getIntExtra("episode_id", 0);
         thunderTaskId = openIntent.getLongExtra("thunder_task_id", -1);
+        searchWord = openIntent.getStringExtra("search_word");
 
         sourceOrigin = openIntent.getIntExtra("source_origin", SOURCE_ORIGIN_LOCAL);
 
@@ -154,16 +148,23 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         }
 
         //检查视频标题
-        videoTitle = TextUtils.isEmpty(videoTitle) ? FileUtils.getFileName(videoPath) : videoTitle;
+        videoTitle = TextUtils.isEmpty(videoTitle) ? FileUtils.getFileNameNoExtension(videoPath) : videoTitle;
+        searchWord = TextUtils.isEmpty(searchWord) ? videoTitle : searchWord;
 
         //选择弹幕弹窗及跳转
         if (sourceOrigin != SOURCE_ORIGIN_LOCAL) {
             if (showSelectDanmuDialog) {
-                danmuSelectDialog.show();
+                new DanmuSelectDialog(this, isSelectDanmu -> {
+                    if (isSelectDanmu) {
+                        launchDanmuSelect(searchWord);
+                    } else {
+                        launchPlayerActivity();
+                    }
+                }).show();
                 return;
             }
             if (autoLaunchDanmuPage) {
-                launchDanmuSelect(videoPath);
+                launchDanmuSelect(searchWord);
                 return;
             }
         }
@@ -173,8 +174,8 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     /**
      * 跳转至选择弹幕页面
      */
-    private void launchDanmuSelect(String videoPath) {
-        BindDanmuParam param = new BindDanmuParam(videoPath, true);
+    private void launchDanmuSelect(String searchWord) {
+        BindDanmuParam param = new BindDanmuParam(searchWord, true);
         Intent intent = new Intent(PlayerManagerActivity.this, DanmuNetworkActivity.class);
         intent.putExtra("bind_param", param);
         startActivityForResult(intent, SELECT_DANMU);
@@ -299,7 +300,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     /**
      * 在线播放文件
      */
-    public static void launchPlayerOnline(Context context, String title, String path, String danmu, long position, int episodeId, long thunderTaskId) {
+    public static void launchPlayerOnline(Context context, String title, String path, String danmu, long position, int episodeId, long thunderTaskId, String searchWord) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
         intent.putExtra("video_path", path);
@@ -307,7 +308,8 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         intent.putExtra("current_position", position);
         intent.putExtra("episode_id", episodeId);
         intent.putExtra("thunder_task_id", thunderTaskId);
-        intent.putExtra("source_origin", SOURCE_ORIGIN_REMOTE);
+        intent.putExtra("search_word", searchWord);
+        intent.putExtra("source_origin", SOURCE_ONLINE_PREVIEW);
         context.startActivity(intent);
     }
 

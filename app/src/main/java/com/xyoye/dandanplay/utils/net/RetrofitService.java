@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
+import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.util.List;
 import java.util.Map;
@@ -125,11 +126,11 @@ public interface RetrofitService {
     @FormUrlEncoded
     @Headers({"query:shooter"})
     @POST("/api/subapi.php")
-    Observable<ResponseBody> queryShooter(@FieldMap Map<String, String> map);
+    Observable<List<SubtitleBean.Shooter>> queryShooter(@FieldMap Map<String, String> map);
 
     @Headers({"query:thunder"})
     @GET("/subxl/{videoHash}.json")
-    Observable<ResponseBody> queryThunder(@Path("videoHash") String videoHash);
+    Observable<SubtitleBean.Thunder> queryThunder(@Path("videoHash") String videoHash);
 
     @GET("/api/v2/search/tag")
     Observable<AnimeTagBean> getAnimeListByTag(@Query("tags") String tagId);

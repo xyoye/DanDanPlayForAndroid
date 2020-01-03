@@ -139,21 +139,18 @@ public class AnimeSeasonActivity extends BaseMvpActivity<AnimeSeasonPresenter> i
 
 
         if (selectYear == nowYear){
-            if (nowMonth >= 7 && nowMonth < 10){
-                if ( selectMonth > 7)
-                    selectMonth = 7;
+            if (nowMonth < 10 && nowMonth >= 7){
+                selectMonth = 7;
                 month10Tv.setEnabled(false);
                 month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-            }else if (nowMonth >= 4){
-                if ( selectMonth > 4)
-                    selectMonth = 4;
+            }else if (nowMonth < 7 && nowMonth >= 4){
+                selectMonth = 4;
                 month10Tv.setEnabled(false);
                 month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month7Tv.setEnabled(false);
                 month7Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-            } else if (nowMonth >= 1){
-                if ( selectMonth > 1)
-                    selectMonth = 1;
+            } else if (nowMonth < 4){
+                selectMonth = 1;
                 month10Tv.setEnabled(false);
                 month10Tv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
                 month7Tv.setEnabled(false);

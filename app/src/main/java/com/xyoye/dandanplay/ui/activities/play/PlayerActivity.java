@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Call;
@@ -556,8 +557,13 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             shooterParams.put("format", "json");
             shooterParams.put("lang", "Chn");
             RetrofitService service = RetroFactory.getSubtitleInstance();
+
+            Observable<List<SubtitleBean.Shooter>> shooterObservable = service.queryShooter(shooterParams)
+                    .onErrorReturnItem(new ArrayList<>());
+
             service.queryThunder(thunderHash)
-                    .zipWith(service.queryShooter(shooterParams), (thunder, shooters) ->
+                    .onErrorReturnItem(new SubtitleBean.Thunder())
+                    .zipWith(shooterObservable, (thunder, shooters) ->
                             SubtitleConverter.transform(thunder, shooters, videoPath))
                     .doOnSubscribe(new NetworkConsumer())
                     .subscribeOn(Schedulers.io())

@@ -210,7 +210,7 @@ public class PlayerSettingActivity extends BaseMvcActivity {
                     } else if (which == 1) {
                         ijkSettingLL.setVisibility(View.GONE);
                         AppConfig.getInstance().setPlayerType(com.xyoye.player.commom.utils.Constants.EXO_PLAYER);
-                    } else if (which == 3) {
+                    } else if (which == 2) {
                         ijkSettingLL.setVisibility(View.VISIBLE);
                         AppConfig.getInstance().setPlayerType(com.xyoye.player.commom.utils.Constants.IJK_ANDROID_PLAYER);
                     }

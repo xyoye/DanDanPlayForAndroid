@@ -4,11 +4,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.player.commom.bean.SubtitleBean;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.ResponseBody;
 
 /**
  * 以body转bean的原因是，okhttp采用的是gson来解析结果，
@@ -23,20 +20,14 @@ import okhttp3.ResponseBody;
 
 public class SubtitleConverter {
 
-    public static List<SubtitleBean> transform(ResponseBody thunder, ResponseBody shooter, String videoPath){
+    public static List<SubtitleBean> transform(SubtitleBean.Thunder thunderBean, List<SubtitleBean.Shooter> shooterList, String videoPath){
         List<SubtitleBean> subtitleList = new ArrayList<>();
-        subtitleList.addAll(shooter2subtitle(shooter, videoPath));
-        subtitleList.addAll(thunder2subtitle(thunder));
+        subtitleList.addAll(shooter2subtitle(shooterList, videoPath));
+        subtitleList.addAll(thunder2subtitle(thunderBean));
         return subtitleList;
     }
 
-    private static List<SubtitleBean> shooter2subtitle(ResponseBody shooterBody, String filePath){
-        List<SubtitleBean.Shooter> shooterList = new ArrayList<>();
-        try {
-            shooterList = JsonUtils.getObjectList(shooterBody.string(), SubtitleBean.Shooter.class);
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+    private static List<SubtitleBean> shooter2subtitle(List<SubtitleBean.Shooter> shooterList, String filePath){
 
         if (shooterList == null || shooterList.size() == 0){
             return new ArrayList<>();
@@ -58,13 +49,7 @@ public class SubtitleConverter {
         return subtitleList;
     }
 
-    private static List<SubtitleBean> thunder2subtitle(ResponseBody thunderBody){
-        SubtitleBean.Thunder thunderBean = null;
-        try {
-            thunderBean = JsonUtils.fromJson(thunderBody.string(), SubtitleBean.Thunder.class);
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+    private static List<SubtitleBean> thunder2subtitle(SubtitleBean.Thunder thunderBean){
 
         if (thunderBean == null || thunderBean.getSublist() == null || thunderBean.getSublist().size() == 0){
             return new ArrayList<>();

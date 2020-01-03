@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpFragment;
+import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
@@ -29,6 +30,8 @@ import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.ui.weight.SwitchThemeAnimView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -166,6 +169,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
      * 切换皮肤
      */
     private void switchSkin() {
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
         SwitchThemeAnimView.create(skinIv).setDuration(800).start();
         if (isLoadedSkin()) {
             SkinCompatManager.getInstance()

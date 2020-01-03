@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.utils.smb;
 import android.text.TextUtils;
 
 import com.xyoye.dandanplay.utils.smb.http.HttpContentListener;
+import com.xyoye.libsmb.SmbManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,20 +17,17 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import jcifs.smb.SmbFile;
-
 /**
  * Created by xyoye on 2019/7/18.
  */
 
 public class SmbServer extends Thread implements HttpContentListener {
+    //smb绑定的文件名
+    public static String SMB_FILE_NAME;
     //smb绑定的本地端口
     public static int SMB_PORT = 2222;
     //smb绑定的本地IP
     public static String SMB_IP = "";
-
-    //smb文件，用于获取视频内容及信息
-    private static SmbFile playSmbFile;
 
     //用于接收客户端（播放器）请求的Socket
     private ServerSocket serverSocket = null;
@@ -38,10 +36,6 @@ public class SmbServer extends Thread implements HttpContentListener {
 
     public SmbServer() {
         getInetAddressList();
-    }
-
-    public static void setPlaySmbFile(SmbFile smbFile) {
-        playSmbFile = smbFile;
     }
 
     public void stopSmbServer() {
@@ -137,30 +131,23 @@ public class SmbServer extends Thread implements HttpContentListener {
     @Override
     //获取视频内容
     public InputStream getContentInputStream() {
-        InputStream inputStream = null;
-        try {
-            inputStream = playSmbFile.getInputStream();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        return inputStream;
-}
+        return SmbManager.getInstance().getController().getFileInputStream(SMB_FILE_NAME);
+    }
 
     @Override
     //获取视频格式
     public String getContentType() {
-        String smbFilePath = playSmbFile.getPath();
-        if (TextUtils.isEmpty(smbFilePath))
+        if (TextUtils.isEmpty(SMB_FILE_NAME))
             return "";
-        int lastPoi = smbFilePath.lastIndexOf('.');
-        int lastSep = smbFilePath.lastIndexOf(File.separator);
+        int lastPoi = SMB_FILE_NAME.lastIndexOf('.');
+        int lastSep = SMB_FILE_NAME.lastIndexOf(File.separator);
         if (lastPoi == -1 || lastSep >= lastPoi) return "";
-        return "." +smbFilePath.substring(lastPoi + 1);
+        return "." +SMB_FILE_NAME.substring(lastPoi + 1);
     }
 
     @Override
     //获取视频长度
     public long getContentLength() {
-        return playSmbFile.getContentLengthLong();
+        return SmbManager.getInstance().getController().getFileLength(SMB_FILE_NAME);
     }
 }

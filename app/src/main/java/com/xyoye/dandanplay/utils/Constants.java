@@ -92,6 +92,8 @@ public class Constants {
         static final String REMOTE_LOGIN_DATA = "remote_login_data";
         //关闭启动页
         static final String CLOSE_SPLASH_PAGE = "close_splash_page";
+        //SMB测试功能
+        static final String SMB_BETA_FEATURE = "smb_beta_feature";
         //上次登录时间
         static final String LAST_LOGIN_TIME = "lase_login_time";
     }
@@ -130,8 +132,6 @@ public class Constants {
     public static class SmbType{
         public static final int SQL_DEVICE = 1;
         public static final int LAN_DEVICE = 2;
-        public static final int FOLDER = 3;
-        public static final int FILE = 4;
     }
 
     /**

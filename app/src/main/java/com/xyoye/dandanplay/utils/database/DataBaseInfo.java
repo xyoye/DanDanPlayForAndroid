@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DataBaseInfo {
     static final String DATABASE_NAME = "db_data.db";
-    static final int DATABASE_VERSION = 28;
+    static final int DATABASE_VERSION = 29;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -50,7 +50,7 @@ public class DataBaseInfo {
                 {"_id", "type_id", "type_name"},
                 {"_id", "subgroup_id", "subgroup_name"},
                 {"_id", "torrent_path", "anime_title", "torrent_magnet", "isDone", "priorities"},
-                {"_id", "device_name", "device_nick_name", "device_ip", "device_user_name", "device_user_password", "device_user_domain", "device_anonymous"},
+                {"_id", "device_name", "device_nick_name", "device_ip", "device_user_name", "device_user_password", "device_user_domain", "device_anonymous", "device_share"},
                 {"_id", "tracker"},
                 {"_id", "text", "time"},
                 {"_id", "filter"},
@@ -71,7 +71,7 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "INTEGER"},
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},

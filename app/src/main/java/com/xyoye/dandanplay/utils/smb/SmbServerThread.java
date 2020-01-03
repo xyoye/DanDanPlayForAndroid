@@ -16,6 +16,8 @@ import java.net.Socket;
 
 /**
  * Created by xyoye on 2019/7/18.
+ * <p>
+ * 处理请求，返回响应
  */
 
 public class SmbServerThread extends Thread {
@@ -60,9 +62,12 @@ public class SmbServerThread extends Thread {
 
         String headerLine = readRequestHeaderLine(bufferedInputStream);
         while (!TextUtils.isEmpty(headerLine)) {
+            //Range : byte-
             int colonIdx = headerLine.indexOf(':');
             if (colonIdx > 0) {
+                //Range
                 String name = new String(headerLine.getBytes(), 0, colonIdx);
+                //(byte-) (byte 1-123) (byte -123)
                 String value = new String(headerLine.getBytes(), colonIdx + 1, headerLine.length() - colonIdx - 1);
                 if (name.equals("Range")) {
                     int cutIndex = value.indexOf("=");
@@ -127,6 +132,7 @@ public class SmbServerThread extends Thread {
 
         if (contentLength <= 0 || contentType.length() <= 0 || contentInputStream == null) {
             printLog("----- handle failed : smb file error -----");
+            printLog("----- length:" + contentLength + " stream:" + (contentInputStream == null) + " -----");
             HttpResponse badResponse = new HttpResponse();
             badResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             badResponse.setContentLength(0);
@@ -168,6 +174,7 @@ public class SmbServerThread extends Thread {
             //必须返回！！！
             outputStream.write("\r\n".getBytes());
 
+            //无法处理的请求
             if (badRequest) {
                 outputStream.flush();
                 printLog("----- return bad response -----");

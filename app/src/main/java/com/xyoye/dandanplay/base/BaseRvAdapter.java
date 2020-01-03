@@ -31,6 +31,10 @@ public abstract class BaseRvAdapter<T> extends RecyclerView.Adapter implements I
         this.mData = data;
     }
 
+    public BaseRvAdapter() {
+
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

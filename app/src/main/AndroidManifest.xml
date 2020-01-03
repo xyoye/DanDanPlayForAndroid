@@ -97,7 +97,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--SMB-->
         <activity
-            android:name=".ui.activities.play.SmbActivity"
+            android:name=".ui.activities.smb.SmbDeviceActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!--SMB File-->
+        <activity
+            android:name=".ui.activities.smb.SmbFileActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--Tracker管理-->
         <activity

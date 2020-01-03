@@ -12,7 +12,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.ui.activities.play.SmbActivity;
+import com.xyoye.dandanplay.ui.activities.smb.SmbDeviceActivity;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 
 /**
@@ -59,7 +59,7 @@ public class SmbService extends Service {
     }
 
     private Notification buildNotification(){
-        Intent intent = new Intent(this, SmbActivity.class);
+        Intent intent = new Intent(this, SmbDeviceActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent,0);
 
         Notification.Builder builder = new Notification.Builder(this)

@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.base;
 
-import android.content.Context;
-
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
@@ -17,33 +15,14 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements BaseMvpPresenter {
 
-    private Context mContext;
     private T view;
     private Lifeful lifeful;
     protected List<Disposable> disposables;
-
-    public BaseMvpPresenterImpl(T view) {
-        this.view = view;
-        disposables = new ArrayList<>();
-    }
-
-    @Deprecated
-    public BaseMvpPresenterImpl(Context mContext, T view) {
-        this.mContext = mContext;
-        this.view = view;
-    }
 
     public BaseMvpPresenterImpl(T view, Lifeful lifeful) {
         this.view = view;
         this.lifeful = lifeful;
         disposables = new ArrayList<>();
-    }
-
-    @Deprecated
-    public BaseMvpPresenterImpl(Context mContext, T view, Lifeful lifeful) {
-        this.mContext = mContext;
-        this.view = view;
-        this.lifeful = lifeful;
     }
 
     @Override
@@ -61,11 +40,6 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
             if (disposable != null)
                 disposable.dispose();
         }
-    }
-
-    @Deprecated
-    public Context getContext() {
-        return mContext;
     }
 
     public T getView() {

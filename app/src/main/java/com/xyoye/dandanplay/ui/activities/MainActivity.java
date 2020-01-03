@@ -25,7 +25,7 @@ import com.xyoye.dandanplay.mvp.impl.MainPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
 import com.xyoye.dandanplay.service.TorrentService;
-import com.xyoye.dandanplay.ui.activities.play.SmbActivity;
+import com.xyoye.dandanplay.ui.activities.smb.SmbDeviceActivity;
 import com.xyoye.dandanplay.ui.fragment.HomeFragment;
 import com.xyoye.dandanplay.ui.fragment.PersonalFragment;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
@@ -191,7 +191,7 @@ public class MainActivity extends BaseMvpActivity<MainPresenter> implements Main
         switch (item.getItemId()) {
             //局域网
             case R.id.menu_item_smb:
-                launchActivity(SmbActivity.class);
+                launchActivity(SmbDeviceActivity.class);
                 break;
             //串流弹窗
             case R.id.menu_item_network:

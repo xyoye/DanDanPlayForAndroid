@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="1dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/item_bg_color"
+    android:background="@drawable/background_smb_device_normal"
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
-        android:id="@+id/grid_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -47,40 +47,4 @@
             android:ellipsize="end"
             tools:text="name"/>
     </LinearLayout>
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/liner_cl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/liner_smb_cover_iv"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="5dp"
-            android:layout_marginStart="7dp"
-            android:src="@mipmap/ic_smb_lan_device"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/liner_smb_name_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="12dp"
-            android:textSize="12sp"
-            android:textColor="@color/text_black"
-            tools:text="name"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/liner_smb_cover_iv"/>
-
-    </android.support.constraint.ConstraintLayout>
-
 </RelativeLayout>

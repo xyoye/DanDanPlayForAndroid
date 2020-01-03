@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.utils.smb;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.xyoye.dandanplay.bean.SmbBean;
+import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.Constants;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class SearchSmbDevicesTask implements Runnable {
 
     @Override
     public void run() {
-        List<SmbBean> deviceList = new ArrayList<>();
+        List<SmbDeviceBean> deviceList = new ArrayList<>();
         String netRange = mLocalIp.substring(0, mLocalIp.lastIndexOf(".") + 1);
         LinkedList<SocketChannel> sockets = new LinkedList<>();
         Selector selector;
@@ -110,11 +110,11 @@ public class SearchSmbDevicesTask implements Runnable {
                             e.printStackTrace();
                         }
 
-                        SmbBean smbBean = new SmbBean();
-                        smbBean.setUrl(ip);
-                        smbBean.setName(deviceName);
-                        smbBean.setSmbType(Constants.SmbType.LAN_DEVICE);
-                        deviceList.add(smbBean);
+                        SmbDeviceBean smbDeviceBean = new SmbDeviceBean();
+                        smbDeviceBean.setUrl(ip);
+                        smbDeviceBean.setName(deviceName);
+                        smbDeviceBean.setSmbType(Constants.SmbType.LAN_DEVICE);
+                        deviceList.add(smbDeviceBean);
                         Log.d(TAG, "found share at " + ip);
                     }
                 }
@@ -136,6 +136,6 @@ public class SearchSmbDevicesTask implements Runnable {
 
 
     public interface FindLanDevicesListener{
-        void onEnd(List<SmbBean> deviceList);
+        void onEnd(List<SmbDeviceBean> deviceList);
     }
 }

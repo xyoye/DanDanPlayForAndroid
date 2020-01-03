@@ -357,6 +357,17 @@ public class AppConfig {
     }
 
     /**
+     * 是否开启SMB测试功能
+     */
+    public boolean isOpenSmbBetaFeature() {
+        return SPUtils.getInstance().getBoolean(Constants.Config.SMB_BETA_FEATURE);
+    }
+
+    public void setOpenSmbBetaFeature(boolean isOpen) {
+        SPUtils.getInstance().put(Constants.Config.SMB_BETA_FEATURE, isOpen);
+    }
+
+    /**
      * 上次登录时间
      */
     public long getLastLoginTime() {

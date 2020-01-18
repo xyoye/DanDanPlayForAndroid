@@ -7,8 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.service.SmbService;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SmbDeviceDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
@@ -41,6 +43,10 @@ import butterknife.OnClick;
 public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> implements SmbDeviceView {
     @BindView(R.id.smb_rv)
     RecyclerView smbRv;
+    @BindView(R.id.add_device_tv)
+    TextView addDeviceTv;
+    @BindView(R.id.scan_device_tv)
+    TextView scanDeviceTv;
     @BindView(R.id.edit_tv)
     TextView editTv;
     @BindView(R.id.delete_tv)
@@ -49,6 +55,8 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     private BaseRvAdapter<SmbDeviceBean> adapter;
     private List<SmbDeviceBean> smbList;
     private boolean isEdit = false;
+
+    private MenuItem exitEditItem;
 
     @NonNull
     @Override
@@ -77,7 +85,10 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
 
                     @Override
                     public void onLongClick(int position) {
-                        onItemLongClick(position);
+                        if (isEdit)
+                            onItemClick(position);
+                        else
+                            switchEditMode(true, position);
                     }
                 });
             }
@@ -131,38 +142,47 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
             case R.id.scan_device_tv:
                 presenter.queryLanDevice();
                 break;
-            case R.id.edit_tv:
-                SmbDeviceBean checkedBean = null;
-                int checkedPosition = -1;
-                for (int i = 0; i < smbList.size(); i++) {
-                    if (smbList.get(i).isEditStatus()) {
-                        checkedBean = smbList.get(i);
-                        checkedPosition = i;
-                        break;
-                    }
-                }
-                if (!isEdit || checkedBean == null)
+            case R.id.edit_tv: {
+                int position = getEditingDevice();
+                if (position < 0)
                     return;
-                final int removePosition = checkedPosition;
-                new SmbDeviceDialog(this, checkedBean, SmbDeviceAction.ACTION_DEVICE_EDIT, deviceBean -> {
+
+                SmbDeviceBean editDeviceBean = smbList.get(position);
+                new SmbDeviceDialog(this, editDeviceBean, SmbDeviceAction.ACTION_DEVICE_EDIT, deviceBean -> {
+                    switchEditMode(false, -1);
                     presenter.addSqlDevice(deviceBean);
-                    smbList.remove(removePosition);
+                    smbList.remove(editDeviceBean);
                     smbList.add(0, deviceBean);
                     adapter.notifyDataSetChanged();
                     presenter.loginSmbDevice(deviceBean);
                 }).show();
                 break;
+            }
             case R.id.delete_tv:
-                String ip = null;
-                for (SmbDeviceBean deviceBean : smbList) {
-                    if (deviceBean.isEditStatus()) {
-                        ip = deviceBean.getUrl();
-                        break;
-                    }
-                }
-                if (!isEdit || TextUtils.isEmpty(ip))
+                int position = getEditingDevice();
+                if (position < 0)
                     return;
-                presenter.removeSqlDevice(ip);
+
+                new CommonDialog.Builder(this)
+                        .setOkListener(dialog -> {
+                            String url = smbList.get(position).getUrl();
+                            presenter.removeSqlDevice(url);
+                            adapter.removeItem(position);
+
+                            if (smbList.size() == 0){
+                                switchEditMode(false, -1);
+                            } else if (position < smbList.size()){
+                                smbList.get(position).setEditStatus(true);
+                                adapter.notifyItemChanged(position);
+                            } else {
+                                smbList.get(smbList.size() - 1).setEditStatus(true);
+                                adapter.notifyItemChanged(smbList.size() - 1);
+                            }
+                        })
+                        .setCancelListener(CommonDialog::dismiss)
+                        .setAutoDismiss()
+                        .build()
+                        .show("确认移除该设备？");
                 break;
         }
     }
@@ -230,19 +250,29 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (isEdit) {
-                isEdit = false;
-                editTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-                deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-                for (int i = 0; i < smbList.size(); i++) {
-                    smbList.get(i).setEditStatus(false);
-                }
-                adapter.notifyDataSetChanged();
+                switchEditMode(false, -1);
                 return true;
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_smb, menu);
+        exitEditItem = menu.findItem(R.id.exit_edit_item);
+        exitEditItem.setVisible(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.exit_edit_item) {
+            switchEditMode(false, -1);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void onItemClick(int position) {
@@ -274,13 +304,50 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
         }
     }
 
-    private void onItemLongClick(int position) {
+    private int getEditingDevice() {
         for (int i = 0; i < smbList.size(); i++) {
-            smbList.get(i).setEditStatus(i == position);
+            SmbDeviceBean deviceBean = smbList.get(i);
+            if (deviceBean.isEditStatus()) {
+                return i;
+            }
         }
-        adapter.notifyDataSetChanged();
-        isEdit = true;
-        editTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
-        deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+        return -1;
+    }
+
+    private void switchEditMode(boolean isEdit, int position) {
+        this.isEdit = isEdit;
+        if (isEdit) {
+            editTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+            deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+            scanDeviceTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
+            addDeviceTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
+            addDeviceTv.setClickable(false);
+            scanDeviceTv.setClickable(false);
+            editTv.setClickable(true);
+            deleteTv.setClickable(true);
+
+            exitEditItem.setVisible(true);
+
+            for (int i = 0; i < smbList.size(); i++) {
+                smbList.get(i).setEditStatus(i == position);
+            }
+            adapter.notifyDataSetChanged();
+        } else {
+            editTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
+            deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
+            scanDeviceTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+            addDeviceTv.setTextColor(CommonUtils.getResColor(R.color.text_black));
+            addDeviceTv.setClickable(true);
+            scanDeviceTv.setClickable(true);
+            editTv.setClickable(false);
+            deleteTv.setClickable(false);
+
+            exitEditItem.setVisible(false);
+
+            for (int i = 0; i < smbList.size(); i++) {
+                smbList.get(i).setEditStatus(false);
+            }
+            adapter.notifyDataSetChanged();
+        }
     }
 }

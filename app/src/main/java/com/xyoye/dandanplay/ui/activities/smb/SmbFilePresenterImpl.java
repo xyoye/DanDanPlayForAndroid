@@ -49,7 +49,7 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
 
     @Override
     public void resume() {
-        smbController.closeInputStream();
+
     }
 
     @Override

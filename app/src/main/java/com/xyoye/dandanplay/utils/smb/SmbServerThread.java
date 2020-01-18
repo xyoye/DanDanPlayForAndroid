@@ -168,8 +168,10 @@ public class SmbServerThread extends Thread {
                                                boolean badRequest) {
         printLog("----- dispatch http response -----");
 
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
         try {
-            OutputStream outputStream = httpSocket.getOutputStream();
+            outputStream = httpSocket.getOutputStream();
             outputStream.write(response.getResponseHeader().getBytes());
             //必须返回！！！
             outputStream.write("\r\n".getBytes());
@@ -181,7 +183,7 @@ public class SmbServerThread extends Thread {
                 return;
             }
 
-            InputStream inputStream = response.getContentInputStream();
+            inputStream = response.getContentInputStream();
             if (contentOffset > 0) {
                 if (inputStream.skip(contentOffset) > 0) {
                     printLog("----- input stream skip -----:" + contentOffset);
@@ -211,6 +213,14 @@ public class SmbServerThread extends Thread {
         } catch (Exception e) {
             printLog("----- send video data error -----:" + e.getMessage());
             e.printStackTrace();
+        } finally {
+            try {if (inputStream != null)
+                inputStream.close();
+                if (outputStream != null)
+                    outputStream.close();
+            }catch (IOException ignore){
+
+            }
         }
     }
 

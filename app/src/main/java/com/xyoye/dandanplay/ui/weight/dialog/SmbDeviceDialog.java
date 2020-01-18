@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.helper.SmbDeviceAction;
 
 import butterknife.BindView;
@@ -121,6 +122,7 @@ public class SmbDeviceDialog extends Dialog {
                 }
 
                 SmbDeviceBean deviceBean = new SmbDeviceBean();
+
                 deviceBean.setUrl(ip);
                 deviceBean.setAccount(account);
                 deviceBean.setPassword(password);
@@ -128,6 +130,7 @@ public class SmbDeviceDialog extends Dialog {
                 deviceBean.setNickName(nickNameEt.getText().toString());
                 deviceBean.setRootFolder(shareEt.getText().toString());
                 deviceBean.setAnonymous(isAnonymous);
+                deviceBean.setSmbType(Constants.SmbType.SQL_DEVICE);
                 callback.onDeviceUpdate(deviceBean);
                 SmbDeviceDialog.this.dismiss();
                 break;

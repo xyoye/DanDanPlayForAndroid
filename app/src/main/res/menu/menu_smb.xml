@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/exit_edit_item"
+        android:orderInCategory="100"
+        android:title="退出编辑"
+        app:showAsAction="ifRoom" />
+</menu>

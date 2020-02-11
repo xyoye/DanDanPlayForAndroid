@@ -27,6 +27,44 @@ public class DanmuFilterUtils {
         return Holder.instance;
     }
 
+    /**
+     * 添加一个屏蔽关键词
+     */
+    public void addLocalFilter(String text){
+        DataBaseManager.getInstance()
+                .selectTable("danmu_block")
+                .insert()
+                .param("text", text)
+                .postExecute();
+        localFilterList.add(text);
+    }
+
+    /**
+     * 移除一个屏蔽关键词
+     */
+    public void removeLocalFilter(String text){
+        DataBaseManager.getInstance()
+                .selectTable("danmu_block")
+                .delete()
+                .where("text", text)
+                .postExecute();
+        localFilterList.remove(text);
+    }
+
+    /**
+     * 清空屏蔽关键词
+     */
+    public void clearLocalFilter(){
+        DataBaseManager.getInstance()
+                .selectTable("danmu_block")
+                .delete()
+                .postExecute();
+        localFilterList.clear();
+    }
+
+    /**
+     * 更新本地屏蔽关键词
+     */
     public void updateLocalFilter() {
         DataBaseManager.getInstance()
                 .selectTable("danmu_block")
@@ -39,6 +77,9 @@ public class DanmuFilterUtils {
                 });
     }
 
+    /**
+     * 更新云屏蔽关键词
+     */
     public void updateCloudFilter() {
         long lastUpdateTime = AppConfig.getInstance().getUpdateFilterTime();
         long nowTime = System.currentTimeMillis();

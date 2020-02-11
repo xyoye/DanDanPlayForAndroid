@@ -206,20 +206,12 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
 
             @Override
             public void deleteBlock(String text) {
-                DataBaseManager.getInstance()
-                        .selectTable("danmu_block")
-                        .delete()
-                        .where("text", text)
-                        .postExecute();
+                DanmuFilterUtils.getInstance().removeLocalFilter(text);
             }
 
             @Override
             public void addBlock(String text) {
-                DataBaseManager.getInstance()
-                        .selectTable("danmu_block")
-                        .insert()
-                        .param("text", text)
-                        .postExecute();
+                DanmuFilterUtils.getInstance().addLocalFilter(text);
             }
         };
 
@@ -292,9 +284,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                             .where("file_path", event.getVideoPath())
                             .postExecute();
                     break;
+                //设置全屏
                 case Constants.INTENT_RESET_FULL_SCREEN:
                     setFullScreen();
                     break;
+                //播放失败
                 case Constants.INTENT_PLAY_FAILED:
                     CommonDialog.Builder builder = new CommonDialog
                             .Builder(this)
@@ -315,8 +309,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                                 .show("播放失败，请尝试更改播放器设置，或者切换其它播放内核", "播放器设置", "退出播放");
                     }
                     break;
+                //视频播放结束
                 case Constants.INTENT_PLAY_END:
-                    //播放停止视频缓存
                     if (sourceOrigin == PlayerManagerActivity.SOURCE_ONLINE_PREVIEW && thunderTaskId > 0) {
                         XLTaskHelper.getInstance().stopTask(thunderTaskId);
                         FileUtils.deleteAllInDir(DefaultConfig.cacheFolderPath);

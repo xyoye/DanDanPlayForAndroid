@@ -51,60 +51,26 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
 
     @Override
     public void queryBlockData() {
-        DataBaseManager.getInstance()
-                .selectTable("danmu_block")
-                .query()
-                .queryColumns("text")
-                .postExecute(new QueryAsyncResultCallback<List<String>>(getLifeful()) {
-                    @Override
-                    public List<String> onQuery(Cursor cursor) {
-                        if (cursor == null)
-                            return new ArrayList<>();
-                        List<String> blocks = new ArrayList<>();
-                        while (cursor.moveToNext()) {
-                            blocks.add(cursor.getString(0));
-                        }
-                        return blocks;
-                    }
-
-                    @Override
-                    public void onResult(List<String> result) {
-                        getView().updateData(result);
-                    }
-                });
+        getView().updateData(DanmuFilterUtils.getInstance().getLocalFilter());
     }
 
     @Override
     public void deleteALl() {
-        DataBaseManager.getInstance()
-                .selectTable("danmu_block")
-                .delete()
-                .postExecute();
-        DanmuFilterUtils.getInstance().updateLocalFilter();
+        DanmuFilterUtils.getInstance().clearLocalFilter();
     }
 
     @Override
     public void deleteBlock(List<String> textList) {
         for (String text : textList) {
-            DataBaseManager.getInstance()
-                    .selectTable("danmu_block")
-                    .delete()
-                    .where("text", text)
-                    .postExecute();
+            DanmuFilterUtils.getInstance().removeLocalFilter(text);
         }
-        DanmuFilterUtils.getInstance().updateLocalFilter();
 
     }
 
     @Override
     public void addBlock(List<String> textList) {
         for (String text : textList) {
-            DataBaseManager.getInstance()
-                    .selectTable("danmu_block")
-                    .insert()
-                    .param("text", text)
-                    .postExecute();
+            DanmuFilterUtils.getInstance().addLocalFilter(text);
         }
-        DanmuFilterUtils.getInstance().updateLocalFilter();
     }
 }

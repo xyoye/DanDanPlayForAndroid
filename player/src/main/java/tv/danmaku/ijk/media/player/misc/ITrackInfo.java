@@ -31,6 +31,8 @@ public interface ITrackInfo {
 
     String getTitle();
 
+    String getCodecName();
+
     int getTrackType();
 
     String getInfoInline();

@@ -136,7 +136,6 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         });
 
         subtitleStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            //ijk播放器暂不提供字幕流管理
             if (isExoPlayer) {
                 for (int i = 0; i < subtitleTrackList.size(); i++) {
                     if (i == position)
@@ -145,6 +144,22 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                         subtitleTrackList.get(i).setSelect(false);
                 }
                 listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
+                subtitleStreamAdapter.notifyDataSetChanged();
+            } else {
+                //deselectAll except position
+                for (int i = 0; i < subtitleTrackList.size(); i++) {
+                    if (i == position) continue;
+                    listener.deselectTrack(subtitleTrackList.get(i).getStream(), subtitleTrackList.get(i).getLanguage(), true);
+                    subtitleTrackList.get(i).setSelect(false);
+                }
+                //select or deselect position
+                if (subtitleTrackList.get(position).isSelect()) {
+                    listener.deselectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), true);
+                    subtitleTrackList.get(position).setSelect(false);
+                } else {
+                    listener.selectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), true);
+                    subtitleTrackList.get(position).setSelect(true);
+                }
                 subtitleStreamAdapter.notifyDataSetChanged();
             }
         });

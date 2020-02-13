@@ -79,6 +79,11 @@ public class AndroidTrackInfo implements ITrackInfo {
         return "und";
     }
 
+    @Override
+    public String getCodecName() {
+        return "und";
+    }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int getTrackType() {

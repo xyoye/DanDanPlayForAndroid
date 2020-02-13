@@ -26,6 +26,11 @@
         android:layout_gravity="bottom">
     </com.xyoye.player.subtitle.SubtitleView>
 
+    <com.xyoye.player.subtitle.ijk.IJKSubtitleView
+        android:id="@+id/ijk_subtitle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <ProgressBar
         android:id="@+id/pb_loading"
         android:layout_width="50dp"

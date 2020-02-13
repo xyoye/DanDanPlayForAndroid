@@ -43,6 +43,7 @@ import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.commom.utils.Constants;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.xyoye.player.commom.utils.TimeFormatUtils;
+import com.xyoye.player.commom.utils.TrackInfoUtils;
 import com.xyoye.player.commom.widgets.BottomBarView;
 import com.xyoye.player.commom.widgets.DanmuBlockView;
 import com.xyoye.player.commom.widgets.DanmuPostView;
@@ -68,6 +69,8 @@ import com.xyoye.player.ijkplayer.media.MediaPlayerParams;
 import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
+import com.xyoye.player.subtitle.ijk.IJKSubtitleUtils;
+import com.xyoye.player.subtitle.ijk.IJKSubtitleView;
 import com.xyoye.player.subtitle.util.TimedTextObject;
 
 import java.util.ArrayList;
@@ -114,6 +117,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     private IjkVideoView mVideoView;
     //字幕View
     private SubtitleView mSubtitleView;
+    private IJKSubtitleView ijkSubtitleView;
     //弹幕View
     private IDanmakuView mDanmakuView;
     //顶部布局
@@ -355,6 +359,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         mVideoView = findViewById(R.id.ijk_video_view);
         mDanmakuView = findViewById(R.id.sv_danmaku);
         mSubtitleView = findViewById(R.id.subtitle_view);
+        ijkSubtitleView = findViewById(R.id.ijk_subtitle_view);
         //头部、底部、跳转提示
         bottomBarView = findViewById(R.id.bottom_bar_view);
         topBarView = findViewById(R.id.top_bar_view);
@@ -505,29 +510,15 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         IMediaPlayer.OnPreparedListener ijkPreparedCallback = iMediaPlayer -> {
             ITrackInfo[] info = mVideoView.getTrackInfo();
             if (info != null) {
-                int selectAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
-                int audioN = 1;
-                for (int i = 0; i < info.length; i++) {
-                    if (info[i].getTrackType() == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
-                        VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                        String name = TextUtils.isEmpty(info[i].getTitle())
-                                ? (TextUtils.isEmpty(info[i].getLanguage())
-                                ? "UND"
-                                : info[i].getLanguage())
-                                : info[i].getTitle();
-                        videoInfoTrack.setName("音频流#" + audioN + "（" + name + "）");
-                        videoInfoTrack.setStream(i);
-                        if (i == selectAudioTrack) videoInfoTrack.setSelect(true);
-                        audioN++;
-                        audioTrackList.add(videoInfoTrack);
-                    }
-                }
-                VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                videoInfoTrack.setName("IJK播放器不支持字幕流管理");
-                videoInfoTrack.setStream(-1);
-                videoInfoTrack.setSelect(true);
-                subtitleTrackList.add(videoInfoTrack);
-                //ijk不提供内置字幕管理
+                int selectedAudioTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+                int selectedSubTrack = mVideoView.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT);
+
+                TrackInfoUtils trackInfoUtils = new TrackInfoUtils();
+                trackInfoUtils.initTrackInfo(info, selectedAudioTrack, selectedSubTrack);
+
+                audioTrackList.clear();
+                audioTrackList.addAll(trackInfoUtils.getAudioTrackList());
+                subtitleTrackList.addAll(trackInfoUtils.getSubTrackList());
                 topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(false);
                 topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
                 topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
@@ -544,6 +535,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             _switchStatus(status);
             return true;
         };
+        //内嵌字幕回调
+        IMediaPlayer.OnTimedTextListener ijkPlayTimedTextListener = (mp, text) ->
+                IJKSubtitleUtils.showSubtitle(ijkSubtitleView, mp, text.getText());
         //弹幕view绘制事件回调
         DrawHandler.Callback drawHandlerCallBack = new DrawHandler.Callback() {
             @Override
@@ -695,6 +689,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         mVideoView.setOnPreparedListener(ijkPreparedCallback);
         mVideoView.setOnErrorListener(ijkErrorCallback);
         mVideoView.setOnInfoListener(ijkPlayInfoCallback);
+        mVideoView.setOnTimedTextListener(ijkPlayTimedTextListener);
         mDanmakuView.setCallback(drawHandlerCallBack);
 
         topBarView.setCallBack(topBarCallBack);

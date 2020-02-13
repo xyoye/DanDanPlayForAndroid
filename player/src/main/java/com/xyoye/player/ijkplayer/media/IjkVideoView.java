@@ -46,6 +46,7 @@ import java.util.Map;
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 import tv.danmaku.ijk.media.player.TextureMediaPlayer;
 import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
@@ -83,6 +84,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
     private int mCurrentBufferPercentage;
     private IMediaPlayer.OnErrorListener mOnErrorListener;
     private IMediaPlayer.OnInfoListener mOnInfoListener;
+    private IMediaPlayer.OnTimedTextListener mOnTimedTextListener;
     private int mSeekWhenPrepared;  // recording the seek position while preparing
     private boolean mCanPause = true;
     private boolean mCanSeekBack = true;
@@ -446,6 +448,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             mMediaPlayer.setOnInfoListener(mInfoListener);
             mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
             mMediaPlayer.setOnSeekCompleteListener(mSeekCompleteListener);
+            mMediaPlayer.setOnTimedTextListener(mTimedTextListener);
             mCurrentBufferPercentage = 0;
             String scheme = mUri.getScheme();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mIsUsingMediaDataSource &&
@@ -467,12 +470,7 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             // target state that was there before.
             mCurrentState = MediaPlayerParams.STATE_PREPARING;
             attachMediaController();
-        } catch (IOException ex) {
-            Log.w(TAG, "Unable to open content: " + mUri, ex);
-            mCurrentState = MediaPlayerParams.STATE_ERROR;
-            mTargetState = MediaPlayerParams.STATE_ERROR;
-            mErrorListener.onError(mMediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
-        } catch (IllegalArgumentException ex) {
+        } catch (IOException | IllegalArgumentException ex) {
             Log.w(TAG, "Unable to open content: " + mUri, ex);
             mCurrentState = MediaPlayerParams.STATE_ERROR;
             mTargetState = MediaPlayerParams.STATE_ERROR;
@@ -707,6 +705,15 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
                 }
             };
 
+    private IMediaPlayer.OnTimedTextListener mTimedTextListener = new IMediaPlayer.OnTimedTextListener() {
+        @Override
+        public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
+            if (mOnTimedTextListener != null){
+                mOnTimedTextListener.onTimedText(mp, text);
+            }
+        }
+    };
+
     private IMediaPlayer.OnSeekCompleteListener mSeekCompleteListener = new IMediaPlayer.OnSeekCompleteListener() {
 
         @Override
@@ -745,6 +752,10 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
      */
     public void setOnErrorListener(IMediaPlayer.OnErrorListener l) {
         mOnErrorListener = l;
+    }
+
+    public void setOnTimedTextListener(IMediaPlayer.OnTimedTextListener l){
+        mOnTimedTextListener = l;
     }
 
     /**

@@ -40,25 +40,24 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.xyoye.player.R;
+import com.xyoye.player.commom.bean.ExoTrackInfoBean;
+import com.xyoye.player.commom.bean.TrackInfoBean;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
 import com.xyoye.player.commom.utils.AnimHelper;
@@ -66,6 +65,7 @@ import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.commom.utils.Constants;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.xyoye.player.commom.utils.TimeFormatUtils;
+import com.xyoye.player.commom.utils.TrackInfoUtils;
 import com.xyoye.player.commom.widgets.BottomBarView;
 import com.xyoye.player.commom.widgets.DanmuBlockView;
 import com.xyoye.player.commom.widgets.DanmuPostView;
@@ -88,7 +88,6 @@ import com.xyoye.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.IDataSource;
 import com.xyoye.player.exoplayer.meida.ExoFFmpegPlayer;
 import com.xyoye.player.ijkplayer.media.IRenderView;
-import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
 import com.xyoye.player.subtitle.util.TimedTextObject;
@@ -236,9 +235,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
     //音频流数据
-    private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
+    private List<TrackInfoBean> audioTrackList = new ArrayList<>();
     //字幕流数据
-    private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
+    private List<TrackInfoBean> subtitleTrackList = new ArrayList<>();
 
     //隐藏控制栏视图Runnable
     private Runnable mHideBarRunnable = () -> hideView(HIDE_VIEW_AUTO);
@@ -515,52 +514,18 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         Player.EventListener playerEventListener = new Player.EventListener() {
             @Override
             public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-                subtitleTrackList.clear();
+
+                TrackInfoUtils trackInfoUtils = new TrackInfoUtils();
+                trackInfoUtils.initTrackInfo(trackSelector, trackSelections);
+
                 audioTrackList.clear();
-                String audioId = "";
-                String subtitleId = "";
-                for (TrackSelection selection : trackSelections.getAll()) {
-                    if (selection == null) continue;
-                    Format selectionFormat = selection.getSelectedFormat();
-                    if (MimeTypes.isAudio(selectionFormat.sampleMimeType)) {
-                        audioId = selectionFormat.id;
-                        continue;
-                    }
-                    if (MimeTypes.isText(selectionFormat.sampleMimeType)) {
-                        subtitleId = selectionFormat.id;
-                    }
-                }
-                for (int i = 0; i < trackGroups.length; i++) {
-                    TrackGroup trackGroup = trackGroups.get(i);
-                    if (trackGroup.length < 1) continue;
-                    Format tempFormat = trackGroup.getFormat(0);
-                    if (MimeTypes.isAudio(tempFormat.sampleMimeType)) {
-                        for (int j = 0; j < trackGroup.length; j++) {
-                            Format format = trackGroup.getFormat(j);
-                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("音频流#" + (subtitleTrackList.size() + 1) + "（" + format.language + "）");
-                            videoInfoTrack.setStream(i);
-                            videoInfoTrack.setLanguage(format.language);
-                            if (!StringUtils.isEmpty(audioId) && audioId.equals(format.id))
-                                videoInfoTrack.setSelect(true);
-                            audioTrackList.add(videoInfoTrack);
-                        }
-                    } else if (MimeTypes.isText(tempFormat.sampleMimeType)) {
-                        for (int j = 0; j < trackGroup.length; j++) {
-                            Format format = trackGroup.getFormat(j);
-                            VideoInfoTrack videoInfoTrack = new VideoInfoTrack();
-                            videoInfoTrack.setName("字幕流#" + (subtitleTrackList.size() + 1) + "（" + format.language + "）");
-                            videoInfoTrack.setStream(i);
-                            videoInfoTrack.setLanguage(format.language);
-                            if (!StringUtils.isEmpty(subtitleId) && subtitleId.equals(format.id))
-                                videoInfoTrack.setSelect(true);
-                            subtitleTrackList.add(videoInfoTrack);
-                        }
-                    }
-                    topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(subtitleTrackList.size() > 0);
-                    topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
-                    topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
-                }
+                subtitleTrackList.clear();
+                audioTrackList.addAll(trackInfoUtils.getAudioTrackList());
+                subtitleTrackList.addAll(trackInfoUtils.getSubTrackList());
+
+                topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(subtitleTrackList.size() > 0);
+                topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
+                topBarView.getPlayerSettingView().setAudioTrackList(audioTrackList);
             }
 
             @Override
@@ -1023,19 +988,26 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 .setOrientationAllow(allowOrientationChange)
                 .setExoPlayerType()
                 .setSettingListener(new SettingPlayerView.SettingVideoListener() {
+
                     @Override
-                    public void selectTrack(int streamId, String language, boolean isAudio) {
-                        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
-                        if (isAudio) {
-                            parametersBuilder.setPreferredAudioLanguage(language);
-                        } else {
-                            parametersBuilder.setPreferredTextLanguage(language);
+                    public void selectTrack(TrackInfoBean trackInfo, boolean isAudio) {
+                        ExoTrackInfoBean trackInfoBean = (ExoTrackInfoBean) trackInfo;
+
+                        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+                        TrackGroupArray trackGroupArray = null;
+                        if (mappedTrackInfo != null) {
+                            trackGroupArray = mappedTrackInfo.getTrackGroups(trackInfoBean.getRenderId());
                         }
+                        DefaultTrackSelector.SelectionOverride override =
+                                new DefaultTrackSelector.SelectionOverride(trackInfoBean.getTrackGroupId(), trackInfoBean.getTrackId());
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
+                        parametersBuilder.setRendererDisabled(trackInfoBean.getRenderId(), false);
+                        parametersBuilder.setSelectionOverride(trackInfoBean.getRenderId(), trackGroupArray, override);
                         trackSelector.setParameters(parametersBuilder);
                     }
 
                     @Override
-                    public void deselectTrack(int streamId, String language, boolean isAudio) {
+                    public void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
 
                     }
 

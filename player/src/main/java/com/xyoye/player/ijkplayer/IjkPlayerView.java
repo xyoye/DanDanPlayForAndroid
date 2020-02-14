@@ -36,6 +36,8 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.xyoye.player.R;
+import com.xyoye.player.commom.bean.IJKTrackInfoBean;
+import com.xyoye.player.commom.bean.TrackInfoBean;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
 import com.xyoye.player.commom.utils.AnimHelper;
@@ -66,7 +68,6 @@ import com.xyoye.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.IDataSource;
 import com.xyoye.player.ijkplayer.media.IjkVideoView;
 import com.xyoye.player.ijkplayer.media.MediaPlayerParams;
-import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
 import com.xyoye.player.subtitle.ijk.IJKSubtitleUtils;
@@ -224,9 +225,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
     //音频流数据
-    private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
+    private List<TrackInfoBean> audioTrackList = new ArrayList<>();
     //字幕流数据
-    private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
+    private List<TrackInfoBean> subtitleTrackList = new ArrayList<>();
 
     //隐藏控制栏视图Runnable
     private Runnable mHideBarRunnable = () -> hideView(HIDE_VIEW_AUTO);
@@ -517,11 +518,12 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 trackInfoUtils.initTrackInfo(info, selectedAudioTrack, selectedSubTrack);
 
                 audioTrackList.clear();
+                subtitleTrackList.clear();
                 audioTrackList.addAll(trackInfoUtils.getAudioTrackList());
                 subtitleTrackList.addAll(trackInfoUtils.getSubTrackList());
                 topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(false);
                 topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
-                topBarView.getPlayerSettingView().setVideoTrackList(audioTrackList);
+                topBarView.getPlayerSettingView().setAudioTrackList(audioTrackList);
             }
         };
         //播放器错误事件回调
@@ -993,15 +995,18 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         topBarView.getPlayerSettingView()
                 .setOrientationAllow(allowOrientationChange)
                 .setSettingListener(new SettingPlayerView.SettingVideoListener() {
+
                     @Override
-                    public void selectTrack(int streamId, String language, boolean isAudio) {
-                        mVideoView.selectTrack(streamId);
+                    public void selectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
+                        IJKTrackInfoBean ijkTrackInfoBean = (IJKTrackInfoBean) trackInfoBean;
+                        mVideoView.selectTrack(ijkTrackInfoBean.getStreamId());
                         mVideoView.seekTo(mVideoView.getCurrentPosition());
                     }
 
                     @Override
-                    public void deselectTrack(int streamId, String language, boolean isAudio) {
-                        mVideoView.deselectTrack(streamId);
+                    public void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
+                        IJKTrackInfoBean ijkTrackInfoBean = (IJKTrackInfoBean) trackInfoBean;
+                        mVideoView.deselectTrack(ijkTrackInfoBean.getStreamId());
                     }
 
                     @Override
@@ -1362,8 +1367,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      * 跳转
      */
     public void seekTo(long position) {
-        Long positionLong = position;
-        mVideoView.seekTo(positionLong.intValue());
+        mVideoView.seekTo(Long.valueOf(position).intValue());
         if (position != 0)
             mDanmakuTargetPosition = position;
     }

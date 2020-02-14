@@ -12,11 +12,11 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.xyoye.player.commom.adapter.StreamAdapter;
-import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.R;
+import com.xyoye.player.commom.adapter.StreamAdapter;
+import com.xyoye.player.commom.bean.TrackInfoBean;
+import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.player.ijkplayer.media.IRenderView;
-import com.xyoye.player.ijkplayer.media.VideoInfoTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +42,8 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
     //是否允许屏幕翻转
     private boolean isAllowScreenOrientation = true;
 
-    private List<VideoInfoTrack> audioTrackList = new ArrayList<>();
-    private List<VideoInfoTrack> subtitleTrackList = new ArrayList<>();
+    private List<TrackInfoBean> audioTrackList = new ArrayList<>();
+    private List<TrackInfoBean> subtitleTrackList = new ArrayList<>();
     private SettingVideoListener listener;
 
     public SettingPlayerView(Context context) {
@@ -115,20 +115,20 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                     else
                         audioTrackList.get(i).setSelect(false);
                 }
-                listener.selectTrack(-1, audioTrackList.get(position).getLanguage(), true);
+                listener.selectTrack(audioTrackList.get(position), true);
             } else {
                 //deselectAll except position
                 for (int i = 0; i < audioTrackList.size(); i++) {
                     if (i == position) continue;
-                    listener.deselectTrack(audioTrackList.get(i).getStream(), audioTrackList.get(i).getLanguage(), true);
+                    listener.deselectTrack(audioTrackList.get(i), true);
                     audioTrackList.get(i).setSelect(false);
                 }
                 //select or deselect position
                 if (audioTrackList.get(position).isSelect()) {
-                    listener.deselectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                    listener.deselectTrack(audioTrackList.get(position), true);
                     audioTrackList.get(position).setSelect(false);
                 } else {
-                    listener.selectTrack(audioTrackList.get(position).getStream(), audioTrackList.get(position).getLanguage(), true);
+                    listener.selectTrack(audioTrackList.get(position), true);
                     audioTrackList.get(position).setSelect(true);
                 }
             }
@@ -143,21 +143,21 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                     else
                         subtitleTrackList.get(i).setSelect(false);
                 }
-                listener.selectTrack(-1, subtitleTrackList.get(position).getLanguage(), false);
+                listener.selectTrack(subtitleTrackList.get(position), false);
                 subtitleStreamAdapter.notifyDataSetChanged();
             } else {
                 //deselectAll except position
                 for (int i = 0; i < subtitleTrackList.size(); i++) {
                     if (i == position) continue;
-                    listener.deselectTrack(subtitleTrackList.get(i).getStream(), subtitleTrackList.get(i).getLanguage(), true);
+                    listener.deselectTrack(subtitleTrackList.get(i), true);
                     subtitleTrackList.get(i).setSelect(false);
                 }
                 //select or deselect position
                 if (subtitleTrackList.get(position).isSelect()) {
-                    listener.deselectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), true);
+                    listener.deselectTrack(subtitleTrackList.get(position), true);
                     subtitleTrackList.get(position).setSelect(false);
                 } else {
-                    listener.selectTrack(subtitleTrackList.get(position).getStream(), subtitleTrackList.get(position).getLanguage(), true);
+                    listener.selectTrack(subtitleTrackList.get(position), true);
                     subtitleTrackList.get(position).setSelect(true);
                 }
                 subtitleStreamAdapter.notifyDataSetChanged();
@@ -212,14 +212,14 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         this.listener = listener;
     }
 
-    public void setVideoTrackList(List<VideoInfoTrack> audioTrackList) {
+    public void setAudioTrackList(List<TrackInfoBean> audioTrackList) {
         this.audioTrackList.clear();
         this.audioTrackList.addAll(audioTrackList);
         this.audioStreamAdapter.notifyDataSetChanged();
         this.audioRl.setVisibility(audioTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
-    public void setSubtitleTrackList(List<VideoInfoTrack> subtitleTrackList) {
+    public void setSubtitleTrackList(List<TrackInfoBean> subtitleTrackList) {
         this.subtitleTrackList.clear();
         this.subtitleTrackList.addAll(subtitleTrackList);
         this.subtitleStreamAdapter.notifyDataSetChanged();
@@ -293,9 +293,9 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
     }
 
     public interface SettingVideoListener {
-        void selectTrack(int streamId, String language, boolean isAudio);
+        void selectTrack(TrackInfoBean trackInfoBean, boolean isAudio);
 
-        void deselectTrack(int streamId, String language, boolean isAudio);
+        void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio);
 
         void setSpeed(float speed);
 

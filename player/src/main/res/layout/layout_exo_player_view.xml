@@ -32,10 +32,7 @@
     <com.xyoye.player.subtitle.SubtitleView
         android:id="@+id/subtitle_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom">
-    </com.xyoye.player.subtitle.SubtitleView>
+        android:layout_height="match_parent"/>
 
     <ProgressBar
         android:id="@+id/pb_loading"

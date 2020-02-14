@@ -68,10 +68,9 @@ import com.xyoye.player.danmaku.danmaku.parser.BiliDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.parser.IDataSource;
 import com.xyoye.player.ijkplayer.media.IjkVideoView;
 import com.xyoye.player.ijkplayer.media.MediaPlayerParams;
+import com.xyoye.player.subtitle.SubtitleManager;
 import com.xyoye.player.subtitle.SubtitleParser;
 import com.xyoye.player.subtitle.SubtitleView;
-import com.xyoye.player.subtitle.ijk.IJKSubtitleUtils;
-import com.xyoye.player.subtitle.ijk.IJKSubtitleView;
 import com.xyoye.player.subtitle.util.TimedTextObject;
 
 import java.util.ArrayList;
@@ -116,9 +115,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
 
     //视频View
     private IjkVideoView mVideoView;
-    //字幕View
-    private SubtitleView mSubtitleView;
-    private IJKSubtitleView ijkSubtitleView;
     //弹幕View
     private IDanmakuView mDanmakuView;
     //顶部布局
@@ -193,8 +189,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     private boolean mIsNeverPlay = true;
     //上次播放跳转时间
     private long mSkipPosition = INVALID_VALUE;
-    //是否展示字幕
-    private boolean isShowSubtitle = false;
     // 是否播放结束
     private boolean mIsPlayComplete = false;
     //是否使用surfaceView
@@ -238,6 +232,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     //隐藏选取字幕提示视图Runnable
     private Runnable mHideSkipSubRunnable = this::_hideSkipSub;
 
+    //字幕管理器
+    private SubtitleManager subtitleManager;
+
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -257,9 +254,10 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                     break;
                 //更新字幕消息
                 case MSG_UPDATE_SUBTITLE:
-                    if (topBarView.getSubtitleSettingView().isLoadSubtitle() && isShowSubtitle) {
+                    if (topBarView.getSubtitleSettingView().isLoadSubtitle()
+                            && subtitleManager.isShowExternalSubtitle()) {
                         long position = mVideoView.getCurrentPosition() + (int) (topBarView.getSubtitleSettingView().getTimeOffset() * 1000);
-                        mSubtitleView.seekTo(position);
+                        subtitleManager.seekExSubTo(position);
                         msg = obtainMessage(MSG_UPDATE_SUBTITLE);
                         sendMessageDelayed(msg, 1000);
                     }
@@ -267,11 +265,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 //设置字幕源
                 case MSG_SET_SUBTITLE_SOURCE:
                     TimedTextObject subtitleObj = (TimedTextObject) msg.obj;
-                    isShowSubtitle = true;
                     topBarView.getSubtitleSettingView().setLoadSubtitle(true);
                     topBarView.getSubtitleSettingView().setSubtitleLoadStatus(true);
-                    mSubtitleView.setData(subtitleObj);
-                    mSubtitleView.start();
+                    subtitleManager.setExSubData(subtitleObj);
                     Toast.makeText(getContext(), "加载字幕成功", Toast.LENGTH_LONG).show();
                     break;
             }
@@ -359,8 +355,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         //主要的控件：视频、弹幕、字幕
         mVideoView = findViewById(R.id.ijk_video_view);
         mDanmakuView = findViewById(R.id.sv_danmaku);
-        mSubtitleView = findViewById(R.id.subtitle_view);
-        ijkSubtitleView = findViewById(R.id.ijk_subtitle_view);
+        //字幕View
+        SubtitleView subtitleView = findViewById(R.id.subtitle_view);
+        subtitleManager = new SubtitleManager(subtitleView);
         //头部、底部、跳转提示
         bottomBarView = findViewById(R.id.bottom_bar_view);
         topBarView = findViewById(R.id.top_bar_view);
@@ -539,14 +536,14 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         };
         //内嵌字幕回调
         IMediaPlayer.OnTimedTextListener ijkPlayTimedTextListener = (mp, text) ->
-                IJKSubtitleUtils.showSubtitle(ijkSubtitleView, mp, text.getText());
+                subtitleManager.setInnerSub(text.getText());
         //弹幕view绘制事件回调
         DrawHandler.Callback drawHandlerCallBack = new DrawHandler.Callback() {
             @Override
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
                     if (mIsIjkPlayerReady) {
-                        if (!mVideoView.isPlaying()){
+                        if (!mVideoView.isPlaying()) {
                             _togglePlayStatus();
                         }
                         long seek = (long) mVideoView.getCurrentPosition() - topBarView.getDanmuSettingView().getDanmuExtraTime();
@@ -798,37 +795,31 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      * 初始化字幕设置View
      */
     public void initSubtitleSettingView() {
-        int subtitleChineseProgress = PlayerConfigShare.getInstance().getSubtitleChineseSize();
-        int subtitleEnglishProgress = PlayerConfigShare.getInstance().getSubtitleEnglishSize();
-        float subtitleChineseSize = (float) subtitleChineseProgress / 100 * ConvertUtils.dp2px(18);
-        float subtitleEnglishSize = (float) subtitleEnglishProgress / 100 * ConvertUtils.dp2px(18);
-        mSubtitleView.setTextSize(subtitleChineseSize, subtitleEnglishSize);
+        int subtitleTextSizeProgress = PlayerConfigShare.getInstance().getSubtitleTextSize();
+        subtitleManager.setTextSizeProgress(subtitleTextSizeProgress);
         topBarView.getSubtitleSettingView()
-                .initSubtitleCnSize(subtitleChineseProgress)
-                .initSubtitleEnSize(subtitleEnglishProgress)
+                .initSubtitleTextSize(subtitleTextSizeProgress)
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
                         if (!topBarView.getSubtitleSettingView().isLoadSubtitle() && isChecked) {
                             switchView.setChecked(false);
                             Toast.makeText(getContext(), "未加载字幕源", Toast.LENGTH_LONG).show();
+                            subtitleManager.hideExSub();
+                            return;
                         }
                         if (isChecked) {
-                            isShowSubtitle = true;
-                            mSubtitleView.show();
+                            subtitleManager.showExSub();
                             mHandler.sendEmptyMessage(MSG_UPDATE_SUBTITLE);
                         } else {
-                            isShowSubtitle = false;
-                            mSubtitleView.hide();
+                            subtitleManager.hideExSub();
                         }
                     }
 
                     @Override
-                    public void setSubtitleCnSize(int progress) {
-                        float calcProgress = (float) progress;
-                        float textSize = (calcProgress / 100) * ConvertUtils.dp2px(18);
-                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_CHINA, textSize);
-                        PlayerConfigShare.getInstance().setSubtitleChineseSize(progress);
+                    public void setSubtitleTextSize(int progress) {
+                        subtitleManager.setTextSizeProgress(progress);
+                        PlayerConfigShare.getInstance().setSubtitleTextSize(progress);
                     }
 
                     @Override
@@ -842,24 +833,10 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                     }
 
                     @Override
-                    public void setSubtitleEnSize(int progress) {
-                        float calcProgress = (float) progress;
-                        float textSize = (calcProgress / 100) * ConvertUtils.dp2px(18);
-                        mSubtitleView.setTextSize(SubtitleView.LANGUAGE_TYPE_ENGLISH, textSize);
-                        PlayerConfigShare.getInstance().setSubtitleEnglishSize(progress);
-                    }
-
-                    @Override
                     public void setOpenSubtitleSelector() {
                         pause();
                         hideView(HIDE_VIEW_ALL);
                         mOutsideListener.onAction(Constants.INTENT_OPEN_SUBTITLE, 0);
-                    }
-
-                    @Override
-                    public void setSubtitleLanguageType(int type) {
-                        PlayerConfigShare.getInstance().setSubtitleLanguageType(type);
-                        mSubtitleView.setLanguage(type);
                     }
 
                     @Override
@@ -1118,7 +1095,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void setSubtitlePath(String subtitlePath) {
-        isShowSubtitle = false;
         topBarView.getSubtitleSettingView().setLoadSubtitle(false);
         topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
         new Thread(() -> {
@@ -1334,7 +1310,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         }
         //已加载字幕，则播放字幕
         if (topBarView.getSubtitleSettingView().isLoadSubtitle())
-            mSubtitleView.start();
+            subtitleManager.showExSub();
     }
 
     /**
@@ -1345,8 +1321,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         if (mVideoView.isPlaying()) {
             mVideoView.pause();
         }
-        if (topBarView.getSubtitleSettingView().isLoadSubtitle())
-            mSubtitleView.pause();
         _pauseDanmaku();
     }
 

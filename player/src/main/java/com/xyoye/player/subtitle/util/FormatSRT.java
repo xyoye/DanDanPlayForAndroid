@@ -52,7 +52,7 @@ public class FormatSRT implements TimedTextFileFormat {
 
 		//first lets load the file
 		//creating a reader with correct encoding
-		Charset defaultCharset = Charset.forName("utf-16");
+		Charset defaultCharset = Charset.forName("GBK");
 		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
 		BufferedReader br = new BufferedReader(in);
 

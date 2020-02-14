@@ -2,8 +2,6 @@ package com.xyoye.player.commom.utils;
 
 import android.content.Context;
 
-import com.xyoye.player.subtitle.SubtitleView;
-
 /**
  * Created by xyoye on 2018/7/2.
  */
@@ -97,30 +95,12 @@ public class PlayerConfigShare {
      *  ===================字幕======================
      */
 
-    public int getSubtitleLanguageType(){
-        int type = getShare().loadIntSharedPreference(Constants.SUBTITLE_LANGUAGE);
-        return type == 0 ? SubtitleView.LANGUAGE_TYPE_CHINA : type;
+    public void setSubtitleTextSize(int textSize){
+        getShare().saveSharedPreferences(Constants.SUBTITLE_SIZE, textSize);
     }
 
-    public void setSubtitleLanguageType(int languageType){
-        getShare().saveSharedPreferences(Constants.SUBTITLE_LANGUAGE, languageType);
-    }
-
-    public void setSubtitleChineseSize(int chineseSize){
-        getShare().saveSharedPreferences(Constants.SUBTITLE_CHINESE_SIZE, chineseSize);
-    }
-
-    public int getSubtitleChineseSize(){
-        int size = getShare().loadIntSharedPreference(Constants.SUBTITLE_CHINESE_SIZE);
-        return size == 0 ? 50 : size;
-    }
-
-    public void setSubtitleEnglishSize(int englishSize){
-        getShare().saveSharedPreferences(Constants.SUBTITLE_ENGLISH_SIZE, englishSize);
-    }
-
-    public int getSubtitleEnglishSize(){
-        int size = getShare().loadIntSharedPreference(Constants.SUBTITLE_ENGLISH_SIZE);
+    public int getSubtitleTextSize(){
+        int size = getShare().loadIntSharedPreference(Constants.SUBTITLE_SIZE);
         return size == 0 ? 50 : size;
     }
 

@@ -7,11 +7,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <RelativeLayout
                 android:id="@+id/subtitle_network_rl"
@@ -22,27 +23,28 @@
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
-                    android:textSize="16sp"
-                    android:text="网络字幕"/>
+                    android:text="网络字幕"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/subtitle_network_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
                     android:foreground="?android:attr/selectableItemBackground"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:text="选择"
                     android:textColor="@color/text_white"
-                    android:textSize="14sp"
-                    android:text="选择"/>
+                    android:textSize="14sp" />
 
             </RelativeLayout>
 
@@ -52,35 +54,36 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
-                    android:textSize="16sp"
-                    android:text="外挂字幕"/>
+                    android:text="外挂字幕"
+                    android:textColor="@color/text_white"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/subtitle_change_source_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentEnd="true"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="3dp"
+                    android:text="换源"
                     android:textColor="@color/text_white"
-                    android:text="换源"/>
+                    android:textSize="14sp" />
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
 
@@ -88,28 +91,28 @@
                     android:id="@+id/subtitle_status_tips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_white"
                     android:layout_centerVertical="true"
-                    android:textSize="14sp"
-                    android:text="字幕状态"/>
+                    android:text="字幕状态"
+                    android:textColor="@color/text_white"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/subtitle_load_status_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_red"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/subtitle_status_tips"
                     android:layout_marginStart="10dp"
-                    android:textSize="12sp"
-                    android:text="(未加载)"/>
+                    android:layout_toEndOf="@id/subtitle_status_tips"
+                    android:text="(未加载)"
+                    android:textColor="@color/text_red"
+                    android:textSize="12sp" />
 
                 <Switch
                     android:id="@+id/subtitle_sw"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"/>
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
             </RelativeLayout>
 
             <LinearLayout
@@ -122,66 +125,35 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="文字大小"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="中文大小"/>
+                        android:textSize="14sp" />
 
                     <TextView
-                        android:id="@+id/subtitle_chinese_size_tv"
+                        android:id="@+id/subtitle_text_size_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:text="50%"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="50%"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <SeekBar
-                    android:id="@+id/subtitle_chinese_size_sb"
+                    android:id="@+id/subtitle_text_size_sb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="5dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="英文大小"/>
-
-                    <TextView
-                        android:id="@+id/subtitle_english_size_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="50%"/>
-                </LinearLayout>
-
-                <SeekBar
-                    android:id="@+id/subtitle_english_size_sb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -194,17 +166,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="时间调节"
                     android:textColor="@color/text_white"
-                    android:textSize="14sp"
-                    android:text="时间调节"/>
+                    android:textSize="14sp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp">
 
                     <LinearLayout
@@ -212,103 +184,54 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:orientation="horizontal">
+
                         <TextView
                             android:id="@+id/subtitle_extra_time_reduce"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:textColor="@color/text_white"
-                            android:gravity="center"
                             android:layout_gravity="center_vertical"
-                            android:textSize="18sp"
                             android:background="@color/selected_view_bg"
-                            android:text="—"/>
+                            android:gravity="center"
+                            android:text="—"
+                            android:textColor="@color/text_white"
+                            android:textSize="18sp" />
+
                         <EditText
                             android:id="@+id/subtitle_extra_time_et"
                             android:layout_width="60dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginEnd="10dp"
-                            android:theme="@style/BlockEditText"
                             android:gravity="center"
                             android:imeOptions="actionDone"
-                            android:maxLines="1"
-                            android:maxLength="50"
-                            android:textColor="@color/text_white"
                             android:inputType="number"
+                            android:maxLength="50"
+                            android:maxLines="1"
+                            android:text="0.0"
+                            android:textColor="@color/text_white"
                             android:textSize="14sp"
-                            android:text="0.0"/>
+                            android:theme="@style/BlockEditText" />
+
                         <TextView
                             android:id="@+id/subtitle_extra_time_add"
                             android:layout_width="28dp"
                             android:layout_height="28dp"
-                            android:textColor="@color/text_white"
-                            android:gravity="center"
                             android:layout_gravity="center_vertical"
-                            android:textSize="18sp"
                             android:background="@color/selected_view_bg"
-                            android:text="+"/>
-
+                            android:gravity="center"
+                            android:text="+"
+                            android:textColor="@color/text_white"
+                            android:textSize="18sp" />
                     </LinearLayout>
 
                 </RelativeLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/text_white"
-                    android:textSize="14sp"
-                    android:text="语言设置"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/only_chinese_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="中文"/>
-                    <TextView
-                        android:id="@+id/only_english_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="英文"/>
-                    <TextView
-                        android:id="@+id/both_language_tv"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:paddingTop="5dp"
-                        android:paddingBottom="5dp"
-                        android:gravity="center"
-                        android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="双语"/>
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
@@ -316,31 +239,31 @@
                 <EditText
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
                     android:layout_marginStart="10dp"
-                    android:theme="@style/BlockEditText"
+                    android:layout_weight="3"
+                    android:hint="请输入编码格式"
                     android:imeOptions="actionDone"
-                    android:maxLines="1"
                     android:maxLength="50"
+                    android:maxLines="1"
                     android:textColor="@color/text_white"
-                    android:textSize="14sp"
                     android:textColorHint="@color/text_hint"
-                    android:hint="请输入编码格式"/>
+                    android:textSize="14sp"
+                    android:theme="@style/BlockEditText" />
 
                 <TextView
                     android:id="@+id/add_encoding_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
-                    android:gravity="center"
+                    android:layout_weight="1"
                     android:background="@color/selected_view_bg"
+                    android:gravity="center"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="确定"
                     android:textColor="@color/text_white"
-                    android:textSize="14sp"
-                    android:text="确定" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -354,32 +277,33 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="内置字幕"
                     android:textColor="@color/text_white"
-                    android:textSize="16sp"
-                    android:text="内置字幕"/>
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="字体大小"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="字体大小"/>
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/subtitle_other_size_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:text="50%"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="50%"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <SeekBar
@@ -387,80 +311,85 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="背景色_字体色"
                     android:textColor="@color/text_white"
-                    android:textSize="14sp"
-                    android:text="背景色_字体色"/>
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/inter_bg_black_white"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:gravity="center"
+                        android:text="黑_白"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="黑_白"/>
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/inter_bg_white_black"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:gravity="center"
+                        android:text="白_黑"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="白_黑"/>
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/inter_bg_tran_black"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:gravity="center"
+                        android:text="无_黑"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="无_黑"/>
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/inter_bg_tran_white"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:gravity="center"
+                        android:text="无_白"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="无_白"/>
+                        android:textSize="14sp" />
+
                     <TextView
                         android:id="@+id/inter_bg_tran_tran"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
-                        android:gravity="center"
+                        android:text="隐藏"
                         android:textColor="@color/text_white"
-                        android:textSize="14sp"
-                        android:text="隐藏"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

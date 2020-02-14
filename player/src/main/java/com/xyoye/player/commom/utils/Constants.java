@@ -41,9 +41,7 @@ public final class Constants {
     public static final String DANMU_NUMBER_LIMIT = "danmu_number_limit";
 
     //字幕
-    public static final String SUBTITLE_CHINESE_SIZE = "subtitle_chinese_size_v2";
-    public static final String SUBTITLE_ENGLISH_SIZE = "subtitle_english_size_v2";
-    public static final String SUBTITLE_LANGUAGE = "subtitle_language";
+    public static final String SUBTITLE_SIZE = "subtitle_size";
 
     //旋屏
     public static final String ORIENTATION_CHANGE = "orientation_change";

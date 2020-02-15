@@ -17,10 +17,22 @@ import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by xyoye on 2018/6/30 0030.
@@ -154,5 +166,109 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 getView().noMatchDanmu(videoPath);
             }
         }, new NetworkConsumer());
+    }
+
+    @Override
+    public void bindAllDanmu(List<VideoBean> videoList) {
+        Observable.just(videoList)
+                .map(videoBeans -> {
+                    Set<Observable<DanmuMatchBean>> requestList = new HashSet<>();
+                    for (VideoBean videoBean : videoBeans) {
+                        Map<String, String> danmuMatchParam = getDanmuMatchParam(videoBean.getVideoPath());
+                        requestList.add(
+                                RetroFactory.getInstance().matchDanmu(danmuMatchParam)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        //请求成功时，将视频地址放入结果，用于最后的匹配
+                                        .doOnNext(danmuMatchBean -> danmuMatchBean.setVideoPath(videoBean.getVideoPath()))
+                                        //请求错误时不抛出，返回不为NULL的空对象
+                                        .onErrorReturnItem(new DanmuMatchBean()));
+                    }
+
+                    return Observable.zipIterable(requestList, resultObjectArray -> {
+                        List<DanmuMatchBean> resultBeanList = new ArrayList<>();
+                        for (Object result : resultObjectArray) {
+                            DanmuMatchBean resultBean = (DanmuMatchBean) result;
+                            //排除请求错误时，产生的不为NULL的空对象
+                            if (resultBean == null)
+                                continue;
+                            resultBeanList.add(resultBean);
+                        }
+                        return resultBeanList;
+                    }, true, 1);
+                })
+                .flatMap((Function<Observable<List<DanmuMatchBean>>, ObservableSource<List<DanmuMatchBean>>>)
+                        listObservable -> listObservable)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<DanmuMatchBean>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<DanmuMatchBean> danmuMatchBeans) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
+    }
+
+    private Map<String, String> getDanmuMatchParam(String videoPath) {
+        String title = FileUtils.getFileName(videoPath);
+        DanmuMatchParam param = new DanmuMatchParam();
+        String hash = MD5Util.getVideoFileHash(videoPath);
+        long length = new File(videoPath).length();
+        long duration = MD5Util.getVideoDuration(videoPath);
+        param.setFileName(title);
+        param.setFileHash(hash);
+        param.setFileSize(length);
+        param.setVideoDuration(duration);
+        param.setMatchMode("hashAndFileName");
+        return param.getMap();
+    }
+
+    @Override
+    public void unbindAllDanmu(String folderPath) {
+        DataBaseManager.getInstance()
+                .selectTable("file")
+                .update()
+                .param("danmu_path", "")
+                .where("folder_path", folderPath)
+                .postExecute();
+
+        getVideoList(folderPath);
+    }
+
+    @Override
+    public void bindAllZimu(List<VideoBean> videoList) {
+
+    }
+
+    @Override
+    public void unbindAllZimu(String folderPath) {
+        DataBaseManager.getInstance()
+                .selectTable("file")
+                .update()
+                .param("zimu_path", "")
+                .where("folder_path", folderPath)
+                .postExecute();
+
+        getVideoList(folderPath);
+    }
+
+    private void bindDanmu(int position, String videoPath) {
+
     }
 }

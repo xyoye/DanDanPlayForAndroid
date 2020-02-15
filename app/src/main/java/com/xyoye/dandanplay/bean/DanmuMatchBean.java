@@ -26,6 +26,8 @@ public class DanmuMatchBean extends CommJsonEntity implements Serializable{
     private boolean isMatched;
     private List<MatchesBean> matches;
 
+    private String videoPath;
+
     public boolean isIsMatched() {
         return isMatched;
     }
@@ -40,6 +42,14 @@ public class DanmuMatchBean extends CommJsonEntity implements Serializable{
 
     public void setMatches(List<MatchesBean> matches) {
         this.matches = matches;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 
     public static class MatchesBean {

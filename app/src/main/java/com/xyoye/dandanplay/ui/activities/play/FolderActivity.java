@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.activities.play;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -200,27 +201,12 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sort_by_name:
-                int nameType = AppConfig.getInstance().getFolderSortType();
-                if (nameType == Constants.FolderSort.NAME_ASC)
-                    sort(Constants.FolderSort.NAME_DESC);
-                else if (nameType == Constants.FolderSort.NAME_DESC)
-                    sort(Constants.FolderSort.NAME_ASC);
-                else
-                    sort(Constants.FolderSort.NAME_ASC);
-                adapter.notifyDataSetChanged();
-                break;
-            case R.id.sort_by_duration:
-                int durationType = AppConfig.getInstance().getFolderSortType();
-                if (durationType == Constants.FolderSort.DURATION_ASC)
-                    sort(Constants.FolderSort.DURATION_DESC);
-                else if (durationType == Constants.FolderSort.DURATION_DESC)
-                    sort(Constants.FolderSort.DURATION_ASC);
-                else
-                    sort(Constants.FolderSort.DURATION_ASC);
-                adapter.notifyDataSetChanged();
-                break;
+        if (item.getItemId() == R.id.item_video_edit) {
+            if (videoList != null && videoList.size() > 0){
+                showVideoEditDialog();
+            } else {
+                ToastUtils.showShort("视频列表为空");
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -351,7 +337,100 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 videoBean.getEpisodeId());
     }
 
-    public void sort(int type) {
+    private void showVideoEditDialog() {
+        final String[] playTypes = {"弹幕管理", "字幕管理", "视频排序"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("全局编辑")
+                .setItems(playTypes, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            showDanmuEditDialog();
+                            break;
+                        case 1:
+                            showSubtitleEditDialog();
+                            break;
+                        case 2:
+                            showVideoSortDialog();
+                            break;
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void showDanmuEditDialog() {
+        final String[] playTypes = {"绑定 所有视频弹幕", "解绑 所有视频弹幕"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("弹幕管理")
+                .setItems(playTypes, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            presenter.bindAllDanmu(videoList);
+                            break;
+                        case 1:
+                            presenter.unbindAllDanmu(folderPath);
+                            break;
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void showSubtitleEditDialog() {
+        final String[] playTypes = {"绑定 所有视频字幕", "解绑 所有视频字幕"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("字幕管理")
+                .setItems(playTypes, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            presenter.bindAllZimu(videoList);
+                            break;
+                        case 1:
+                            presenter.unbindAllZimu(folderPath);
+                            break;
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void showVideoSortDialog() {
+        final String[] playTypes = {"按 文件名 排序", "按 视频时长 排序"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("视频排序")
+                .setItems(playTypes, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            int nameType = AppConfig.getInstance().getFolderSortType();
+                            if (nameType == Constants.FolderSort.NAME_ASC)
+                                sort(Constants.FolderSort.NAME_DESC);
+                            else if (nameType == Constants.FolderSort.NAME_DESC)
+                                sort(Constants.FolderSort.NAME_ASC);
+                            else
+                                sort(Constants.FolderSort.NAME_ASC);
+                            adapter.notifyDataSetChanged();
+                            break;
+                        case 1:
+                            int durationType = AppConfig.getInstance().getFolderSortType();
+                            if (durationType == Constants.FolderSort.DURATION_ASC)
+                                sort(Constants.FolderSort.DURATION_DESC);
+                            else if (durationType == Constants.FolderSort.DURATION_DESC)
+                                sort(Constants.FolderSort.DURATION_ASC);
+                            else
+                                sort(Constants.FolderSort.DURATION_ASC);
+                            adapter.notifyDataSetChanged();
+                            break;
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    private void sort(int type) {
         if (type == Constants.FolderSort.NAME_ASC) {
             Collections.sort(videoList,
                     (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o1.getVideoPath()), FileUtils.getFileNameNoExtension(o2.getVideoPath())));

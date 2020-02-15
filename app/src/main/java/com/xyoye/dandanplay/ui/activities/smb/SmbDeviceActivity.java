@@ -243,7 +243,9 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SmbManager.getInstance().getController().release();
+        if(SmbManager.getInstance().getController() != null){
+            SmbManager.getInstance().getController().release();
+        }
         if (ServiceUtils.isServiceRunning(SmbService.class))
             ServiceUtils.stopService(SmbService.class);
     }

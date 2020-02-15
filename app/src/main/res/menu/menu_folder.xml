@@ -5,15 +5,9 @@
     tools:context=".ui.activities.play.FolderActivity">
 
     <item
-        android:id="@+id/sort_by_name"
+        android:id="@+id/item_video_edit"
         android:orderInCategory="100"
-        android:title="按文件名排序"
-        app:showAsAction="withText"
-        />
-    <item
-        android:id="@+id/sort_by_duration"
-        android:orderInCategory="100"
-        android:title="按时长排序"
-        app:showAsAction="withText"
-        />
+        android:icon="@mipmap/ic_video_edit"
+        android:title="video_edit"
+        app:showAsAction="ifRoom"/>
 </menu>

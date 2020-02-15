@@ -48,6 +48,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
+    private String zimuPath;
     private long currentPosition;
     private int episodeId;
     private long thunderTaskId;
@@ -111,6 +112,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         videoTitle = openIntent.getStringExtra("video_title");
         videoPath = openIntent.getStringExtra("video_path");
         danmuPath = openIntent.getStringExtra("danmu_path");
+        zimuPath = openIntent.getStringExtra("zimu_path");
         currentPosition = openIntent.getLongExtra("current_position", 0);
         episodeId = openIntent.getIntExtra("episode_id", 0);
         thunderTaskId = openIntent.getLongExtra("thunder_task_id", -1);
@@ -144,6 +146,14 @@ public class PlayerManagerActivity extends BaseMvcActivity {
             File danmuFile = new File(danmuPath);
             if (!danmuFile.exists() || !danmuFile.isFile()) {
                 danmuPath = "";
+            }
+        }
+
+        //检查字幕地址
+        if (!TextUtils.isEmpty(zimuPath)) {
+            File zimuFile = new File(zimuPath);
+            if (!zimuFile.exists() || !zimuFile.isFile()) {
+                zimuPath = "";
             }
         }
 
@@ -191,6 +201,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         playParam.setVideoTitle(videoTitle);
         playParam.setVideoPath(videoPath);
         playParam.setDanmuPath(danmuPath);
+        playParam.setZimuPath(zimuPath);
         playParam.setEpisodeId(episodeId);
         playParam.setCurrentPosition(currentPosition);
         playParam.setSourceOrigin(sourceOrigin);
@@ -221,6 +232,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                                 .update()
                                 .param("video_title", videoTitle)
                                 .param("danmu_path", danmuPath)
+                                .param("zimu_path", zimuPath)
                                 .param("episode_id", episodeId)
                                 .param("play_time", System.currentTimeMillis())
                                 .where("video_path", videoPath)
@@ -233,6 +245,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
                                 .param("video_path", videoPath)
                                 .param("video_title", videoTitle)
                                 .param("danmu_path", danmuPath)
+                                .param("zimu_path", zimuPath)
                                 .param("episode_id", episodeId)
                                 .param("source_origin", sourceOrigin)
                                 .param("play_time", System.currentTimeMillis())
@@ -244,11 +257,12 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     /**
      * 播放本地文件
      */
-    public static void launchPlayerLocal(Context context, String title, String path, String danmu, long position, int episodeId) {
+    public static void launchPlayerLocal(Context context, String title, String path, String danmu, String zimu, long position, int episodeId) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
         intent.putExtra("video_path", path);
         intent.putExtra("danmu_path", danmu);
+        intent.putExtra("zimu_path", zimu);
         intent.putExtra("current_position", position);
         intent.putExtra("episode_id", episodeId);
         intent.putExtra("source_origin", SOURCE_ORIGIN_LOCAL);
@@ -316,11 +330,12 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     /**
      * 播放历史记录
      */
-    public static void launchPlayerHistory(Context context, String title, String path, String danmu, long position, int episodeId, int sourceOrigin) {
+    public static void launchPlayerHistory(Context context, String title, String path, String danmu, String zimu, long position, int episodeId, int sourceOrigin) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
         intent.putExtra("video_path", path);
         intent.putExtra("danmu_path", danmu);
+        intent.putExtra("zimu_path", zimu);
         intent.putExtra("current_position", position);
         intent.putExtra("episode_id", episodeId);
         intent.putExtra("source_origin", sourceOrigin);

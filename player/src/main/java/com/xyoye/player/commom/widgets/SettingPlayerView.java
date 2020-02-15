@@ -30,20 +30,16 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
     private TextView speed50Tv, speed75Tv, speed100Tv, speed125Tv, speed150Tv, speed200Tv;
 
     private RecyclerView audioRv;
-    private RecyclerView subtitleRv;
     private Switch orientationChangeSw;
     private LinearLayout audioRl;
-    private LinearLayout subtitleRl;
-    private StreamAdapter audioStreamAdapter;
-    private StreamAdapter subtitleStreamAdapter;
     private RadioGroup mAspectRatioOptions;
 
+    private StreamAdapter audioStreamAdapter;
     private boolean isExoPlayer = false;
     //是否允许屏幕翻转
     private boolean isAllowScreenOrientation = true;
 
     private List<TrackInfoBean> audioTrackList = new ArrayList<>();
-    private List<TrackInfoBean> subtitleTrackList = new ArrayList<>();
     private SettingVideoListener listener;
 
     public SettingPlayerView(Context context) {
@@ -63,9 +59,7 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         speed150Tv = this.findViewById(R.id.speed150_tv);
         speed200Tv = this.findViewById(R.id.speed200_tv);
         audioRv = this.findViewById(R.id.audio_track_rv);
-        subtitleRv = this.findViewById(R.id.subtitle_track_rv);
         audioRl = this.findViewById(R.id.audio_track_ll);
-        subtitleRl = this.findViewById(R.id.subtitle_track_ll);
         mAspectRatioOptions = this.findViewById(R.id.aspect_ratio_group);
         orientationChangeSw = this.findViewById(R.id.orientation_change_sw);
 
@@ -88,24 +82,10 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         speed150Tv.setOnClickListener(this);
         speed200Tv.setOnClickListener(this);
 
-        if (audioTrackList == null || audioTrackList.size() <= 0) {
-            audioTrackList = new ArrayList<>();
-            audioRl.setVisibility(GONE);
-        }
-        if (subtitleTrackList == null || subtitleTrackList.size() <= 0) {
-            subtitleTrackList = new ArrayList<>();
-            subtitleRl.setVisibility(GONE);
-        }
-
         audioStreamAdapter = new StreamAdapter(R.layout.item_video_track, audioTrackList);
         audioRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         audioRv.setItemViewCacheSize(10);
         audioRv.setAdapter(audioStreamAdapter);
-
-        subtitleStreamAdapter = new StreamAdapter(R.layout.item_video_track, subtitleTrackList);
-        subtitleRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        subtitleRv.setItemViewCacheSize(10);
-        subtitleRv.setAdapter(subtitleStreamAdapter);
 
         audioStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             if (isExoPlayer) {
@@ -133,35 +113,6 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
                 }
             }
             audioStreamAdapter.notifyDataSetChanged();
-        });
-
-        subtitleStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            if (isExoPlayer) {
-                for (int i = 0; i < subtitleTrackList.size(); i++) {
-                    if (i == position)
-                        subtitleTrackList.get(i).setSelect(true);
-                    else
-                        subtitleTrackList.get(i).setSelect(false);
-                }
-                listener.selectTrack(subtitleTrackList.get(position), false);
-                subtitleStreamAdapter.notifyDataSetChanged();
-            } else {
-                //deselectAll except position
-                for (int i = 0; i < subtitleTrackList.size(); i++) {
-                    if (i == position) continue;
-                    listener.deselectTrack(subtitleTrackList.get(i), true);
-                    subtitleTrackList.get(i).setSelect(false);
-                }
-                //select or deselect position
-                if (subtitleTrackList.get(position).isSelect()) {
-                    listener.deselectTrack(subtitleTrackList.get(position), true);
-                    subtitleTrackList.get(position).setSelect(false);
-                } else {
-                    listener.selectTrack(subtitleTrackList.get(position), true);
-                    subtitleTrackList.get(position).setSelect(true);
-                }
-                subtitleStreamAdapter.notifyDataSetChanged();
-            }
         });
 
         this.setOnTouchListener((v, event) -> true);
@@ -215,15 +166,8 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
     public void setAudioTrackList(List<TrackInfoBean> audioTrackList) {
         this.audioTrackList.clear();
         this.audioTrackList.addAll(audioTrackList);
-        this.audioStreamAdapter.notifyDataSetChanged();
+        this.audioStreamAdapter.setNewData(audioTrackList);
         this.audioRl.setVisibility(audioTrackList.size() < 1 ? GONE : VISIBLE);
-    }
-
-    public void setSubtitleTrackList(List<TrackInfoBean> subtitleTrackList) {
-        this.subtitleTrackList.clear();
-        this.subtitleTrackList.addAll(subtitleTrackList);
-        this.subtitleStreamAdapter.notifyDataSetChanged();
-        this.subtitleRl.setVisibility(subtitleTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
     public void setSpeedCtrlLLVis(boolean visibility) {

@@ -386,7 +386,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="视频匹配到网络字幕后，自动加载评分最高的字幕"
+                        android:text="未绑定字幕时，加载视频匹配的网络字幕，优先级低"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -424,7 +424,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="加载视频同名字幕，优先级高"
+                        android:text="未绑定字幕时，加载视频的本地同名字幕，优先级高"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                 </LinearLayout>

@@ -11,6 +11,7 @@ public class PlayParam implements Parcelable {
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
+    private String zimuPath;
     private long currentPosition;
     private int episodeId;
 
@@ -24,6 +25,7 @@ public class PlayParam implements Parcelable {
         videoPath = in.readString();
         videoTitle = in.readString();
         danmuPath = in.readString();
+        zimuPath = in.readString();
         currentPosition = in.readLong();
         episodeId = in.readInt();
         sourceOrigin = in.readInt();
@@ -52,6 +54,14 @@ public class PlayParam implements Parcelable {
 
     public void setDanmuPath(String danmuPath) {
         this.danmuPath = danmuPath;
+    }
+
+    public String getZimuPath() {
+        return zimuPath;
+    }
+
+    public void setZimuPath(String zimuPath) {
+        this.zimuPath = zimuPath;
     }
 
     public long getCurrentPosition() {
@@ -112,6 +122,7 @@ public class PlayParam implements Parcelable {
         dest.writeString(videoPath);
         dest.writeString(videoTitle);
         dest.writeString(danmuPath);
+        dest.writeString(zimuPath);
         dest.writeLong(currentPosition);
         dest.writeInt(episodeId);
         dest.writeInt(sourceOrigin);

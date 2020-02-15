@@ -2,9 +2,7 @@ package com.xyoye.dandanplay.ui.activities.play;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -121,6 +119,17 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                         String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
                         presenter.updateDanmu("", -1, new String[]{folderPath, videoBean.getVideoPath()});
                     }
+
+                    @Override
+                    public void unBindZimu(int position) {
+                        if (position >= videoList.size()) return;
+                        VideoBean videoBean = videoList.get(position);
+                        videoBean.setZimuPath("");
+                        adapter.notifyItemChanged(position);
+                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                        presenter.updateZimu("", new String[]{folderPath, videoBean.getVideoPath()});
+                    }
+
 
                     @Override
                     public void onDelete(int position) {
@@ -337,6 +346,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
                 videoBean.getVideoPath(),
                 videoBean.getDanmuPath(),
+                videoBean.getZimuPath(),
                 videoBean.getCurrentPosition(),
                 videoBean.getEpisodeId());
     }

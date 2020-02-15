@@ -113,11 +113,18 @@ public class LocalPlayHistoryItem implements AdapterItem<LocalPlayHistoryBean> {
                 }
             }
 
+            String zimuPath = model.getZimuPath();
+            File zimuFile = new File(zimuPath);
+            if (!zimuFile.exists()) {
+                zimuPath = "";
+            }
+
             PlayerManagerActivity.launchPlayerHistory(
                     view.getContext(),
                     model.getVideoTitle(),
                     model.getVideoPath(),
                     danmuPath,
+                    zimuPath,
                     0,
                     episodeId,
                     model.getSourceOrigin());

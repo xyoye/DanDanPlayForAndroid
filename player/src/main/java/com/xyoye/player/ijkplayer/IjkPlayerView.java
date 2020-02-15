@@ -519,7 +519,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 audioTrackList.addAll(trackInfoUtils.getAudioTrackList());
                 subtitleTrackList.addAll(trackInfoUtils.getSubTrackList());
                 topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(false);
-                topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
+                topBarView.getSubtitleSettingView().setSubtitleTrackList(subtitleTrackList);
                 topBarView.getPlayerSettingView().setAudioTrackList(audioTrackList);
             }
         };
@@ -800,6 +800,19 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         topBarView.getSubtitleSettingView()
                 .initSubtitleTextSize(subtitleTextSizeProgress)
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
+                    @Override
+                    public void selectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
+                        IJKTrackInfoBean ijkTrackInfoBean = (IJKTrackInfoBean) trackInfoBean;
+                        mVideoView.selectTrack(ijkTrackInfoBean.getStreamId());
+                        mVideoView.seekTo(mVideoView.getCurrentPosition());
+                    }
+
+                    @Override
+                    public void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
+                        IJKTrackInfoBean ijkTrackInfoBean = (IJKTrackInfoBean) trackInfoBean;
+                        mVideoView.deselectTrack(ijkTrackInfoBean.getStreamId());
+                    }
+
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
                         if (!topBarView.getSubtitleSettingView().isLoadSubtitle() && isChecked) {
@@ -1095,6 +1108,8 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void setSubtitlePath(String subtitlePath) {
+        if (TextUtils.isEmpty(subtitlePath))
+            return;
         topBarView.getSubtitleSettingView().setLoadSubtitle(false);
         topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
         new Thread(() -> {
@@ -1113,7 +1128,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void onSubtitleQuery(int size) {
-        topBarView.getSubtitleSettingView().setNetwoekSubtitleVisible(true);
+        topBarView.getSubtitleSettingView().setNetworkSubtitleVisible(true);
         if (isAutoLoadNetworkSubtitle)
             mOutsideListener.onAction(Constants.INTENT_AUTO_SUBTITLE, 0);
         else

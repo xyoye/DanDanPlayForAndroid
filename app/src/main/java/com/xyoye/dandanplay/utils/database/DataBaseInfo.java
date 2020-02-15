@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DataBaseInfo {
     static final String DATABASE_NAME = "db_data.db";
-    static final int DATABASE_VERSION = 29;
+    static final int DATABASE_VERSION = 30;
 
     private static String[][] FieldNames;
     private static String[][] FieldTypes;
@@ -45,7 +45,7 @@ public class DataBaseInfo {
         FieldNames = new String[][] {
                 {"_id", "folder_path"},
                 {"_id", "folder_path", "file_number"},
-                {"_id", "folder_path", "file_path", "danmu_path", "current_position", "duration", "danmu_episode_id", "file_size", "file_id"},
+                {"_id", "folder_path", "file_path", "danmu_path", "current_position", "duration", "danmu_episode_id", "file_size", "file_id", "zimu_path"},
                 {"_id", "title", "description", "url", "image_url"},
                 {"_id", "type_id", "type_name"},
                 {"_id", "subgroup_id", "subgroup_name"},
@@ -60,13 +60,13 @@ public class DataBaseInfo {
                 {"_id", "task_title", "save_dir_path", "torrent_file_path", "torrent_hash", "total_length", "complete_time"},
                 {"_id", "task_torrent_hash", "file_path", "file_length", "danmu_path", "danmu_episode_id"},
                 {"_id", "task_torrent_hash", "torrent_file_path", "save_dir_path", "priorities"},
-                {"_id", "video_path", "video_title", "danmu_path", "episode_id", "source_origin", "play_time"}
+                {"_id", "video_path", "video_title", "danmu_path", "episode_id", "source_origin", "play_time", "zimu_path"}
         };
 
         FieldTypes = new String[][] {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL","INTEGER NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER","VARCHAR(255)", "INTEGER" },
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL","VARCHAR(255) NOT NULL","VARCHAR(255)", "INTEGER", "VARCHAR(255) NOT NULL", "INTEGER","VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "INTEGER", "VARCHAR(255)"},
@@ -81,7 +81,7 @@ public class DataBaseInfo {
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "INTEGER", "VARCHAR(255)"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "INTEGER", "VARCHAR(255)", "INTEGER"},
                 {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255)", "VARCHAR(255) NOT NULL", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255) NOT NULL"},
-                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "INTEGER", "INTEGER"}
+                {"INTEGER PRIMARY KEY AUTOINCREMENT", "VARCHAR(255) NOT NULL", "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "INTEGER", "INTEGER", "VARCHAR(255)"}
         };
     }
 

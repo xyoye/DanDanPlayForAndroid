@@ -12,20 +12,12 @@ public class VideoBean implements Serializable {
     private long videoDuration;
     private long videoSize;
     private String danmuPath;
+    private String zimuPath;
     private long currentPosition;
     private int episodeId;
     private boolean notCover;
 
     public VideoBean() {
-    }
-
-    public VideoBean(String videoPath, boolean notCover, long videoDuration, String danmuPath, long currentPosition, int episodeId) {
-        this.videoPath = videoPath;
-        this.notCover = notCover;
-        this.videoDuration = videoDuration;
-        this.danmuPath = danmuPath;
-        this.currentPosition = currentPosition;
-        this.episodeId = episodeId;
     }
 
     public int get_id() {
@@ -74,6 +66,14 @@ public class VideoBean implements Serializable {
 
     public void setDanmuPath(String danmuPath) {
         this.danmuPath = danmuPath;
+    }
+
+    public String getZimuPath() {
+        return zimuPath;
+    }
+
+    public void setZimuPath(String zimuPath) {
+        this.zimuPath = zimuPath;
     }
 
     public long getCurrentPosition() {

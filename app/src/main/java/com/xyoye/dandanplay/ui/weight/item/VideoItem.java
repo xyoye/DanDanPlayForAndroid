@@ -43,10 +43,16 @@ public class VideoItem implements AdapterItem<VideoBean> {
     ImageView bindDanmuIv;
     @BindView(R.id.bind_danmu_tv)
     TextView bindDanmuTv;
+    @BindView(R.id.bind_zimu_iv)
+    ImageView bindZimuIv;
+    @BindView(R.id.bind_zimu_tv)
+    TextView bindZimuTv;
     @BindView(R.id.delete_action_ll)
     LinearLayout deleteActionLl;
     @BindView(R.id.unbind_danmu_action_ll)
     LinearLayout unbindDanmuActionLl;
+    @BindView(R.id.unbind_zimu_action_ll)
+    LinearLayout unbindZimuActionLl;
     @BindView(R.id.video_action_ll)
     LinearLayout videoActionLl;
     @BindView(R.id.close_action_ll)
@@ -99,6 +105,16 @@ public class VideoItem implements AdapterItem<VideoBean> {
             unbindDanmuActionLl.setEnabled(false);
         }
 
+        if (!StringUtils.isEmpty(model.getZimuPath())) {
+            bindZimuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
+            bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
+            unbindZimuActionLl.setEnabled(true);
+        } else {
+            bindZimuIv.setImageResource(R.mipmap.ic_cant_unbind_danmu);
+            bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
+            unbindZimuActionLl.setEnabled(false);
+        }
+
         //是否为上次播放的视频
         boolean isLastPlayVideo = false;
         String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
@@ -126,6 +142,10 @@ public class VideoItem implements AdapterItem<VideoBean> {
         videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
         unbindDanmuActionLl.setOnClickListener(v -> {
             listener.unBindDanmu(position);
+            videoActionLl.setVisibility(View.GONE);
+        });
+        unbindZimuActionLl.setOnClickListener(v -> {
+            listener.unBindZimu(position);
             videoActionLl.setVisibility(View.GONE);
         });
         deleteActionLl.setOnClickListener(v -> {
@@ -166,6 +186,8 @@ public class VideoItem implements AdapterItem<VideoBean> {
         void openVideo(int position);
 
         void unBindDanmu(int position);
+
+        void unBindZimu(int position);
 
         void onDelete(int position);
     }

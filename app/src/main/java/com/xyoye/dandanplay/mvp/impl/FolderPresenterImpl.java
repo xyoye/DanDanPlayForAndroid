@@ -89,6 +89,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                             videoBean.setEpisodeId(cursor.getInt(6));
                             videoBean.setVideoSize(Long.parseLong(cursor.getString(7)));
                             videoBean.set_id(cursor.getInt(8));
+                            videoBean.setZimuPath(cursor.getString(9));
                             videoBeans.add(videoBean);
                         }
                         return videoBeans;
@@ -108,6 +109,17 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 .update()
                 .param("danmu_path", danmuPath)
                 .param("danmu_episode_id", episodeId)
+                .where("folder_path", whereArgs[0])
+                .where("file_path", whereArgs[1])
+                .postExecute();
+    }
+
+    @Override
+    public void updateZimu(String zimuPath, String[] whereArgs) {
+        DataBaseManager.getInstance()
+                .selectTable("file")
+                .update()
+                .param("zimu_path", zimuPath)
                 .where("folder_path", whereArgs[0])
                 .where("file_path", whereArgs[1])
                 .postExecute();

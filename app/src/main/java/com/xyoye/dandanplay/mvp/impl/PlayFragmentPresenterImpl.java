@@ -73,7 +73,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
         DataBaseManager.getInstance()
                 .selectTable("file")
                 .query()
-                .queryColumns("danmu_path", "current_position", "danmu_episode_id")
+                .queryColumns("danmu_path", "current_position", "danmu_episode_id", "zimu_path")
                 .where("file_path", videoPath)
                 .postExecute(new QueryAsyncResultCallback<VideoBean>(getLifeful()) {
                     @Override
@@ -86,6 +86,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                             videoBean.setDanmuPath(cursor.getString(0));
                             videoBean.setCurrentPosition(cursor.getInt(1));
                             videoBean.setEpisodeId(cursor.getInt(2));
+                            videoBean.setZimuPath(cursor.getString(3));
                         }
                         return videoBean;
                     }
@@ -104,11 +105,19 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                             if (!danmuFile.exists())
                                 videoBean.setDanmuPath("");
                         }
+                        //字幕幕文件是否已被删除
+                        if (!StringUtils.isEmpty(videoBean.getZimuPath())) {
+                            File zimuFile = new File(videoBean.getZimuPath());
+                            if (!zimuFile.exists())
+                                videoBean.setZimuPath("");
+                        }
 
-                        PlayerManagerActivity.launchPlayerLocal(context,
+                        PlayerManagerActivity.launchPlayerLocal(
+                                context,
                                 FileUtils.getFileNameNoExtension(videoBean.getVideoPath()),
                                 videoBean.getVideoPath(),
                                 videoBean.getDanmuPath(),
+                                videoBean.getZimuPath(),
                                 videoBean.getCurrentPosition(),
                                 videoBean.getEpisodeId());
                     }

@@ -523,7 +523,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 subtitleTrackList.addAll(trackInfoUtils.getSubTrackList());
 
                 topBarView.getSubtitleSettingView().setInnerSubtitleCtrl(subtitleTrackList.size() > 0);
-                topBarView.getPlayerSettingView().setSubtitleTrackList(subtitleTrackList);
+                topBarView.getSubtitleSettingView().setSubtitleTrackList(subtitleTrackList);
                 topBarView.getPlayerSettingView().setAudioTrackList(audioTrackList);
             }
 
@@ -791,7 +791,30 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         subtitleManager.setTextSizeProgress(subtitleTextSizeProgress);
         topBarView.getSubtitleSettingView()
                 .initSubtitleTextSize(subtitleTextSizeProgress)
+                .setExoPlayerType()
                 .initListener(new SettingSubtitleView.SettingSubtitleListener() {
+                    @Override
+                    public void selectTrack(TrackInfoBean trackInfo, boolean isAudio) {
+                        ExoTrackInfoBean trackInfoBean = (ExoTrackInfoBean) trackInfo;
+
+                        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+                        TrackGroupArray trackGroupArray = null;
+                        if (mappedTrackInfo != null) {
+                            trackGroupArray = mappedTrackInfo.getTrackGroups(trackInfoBean.getRenderId());
+                        }
+                        DefaultTrackSelector.SelectionOverride override =
+                                new DefaultTrackSelector.SelectionOverride(trackInfoBean.getTrackGroupId(), trackInfoBean.getTrackId());
+                        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
+                        parametersBuilder.setRendererDisabled(trackInfoBean.getRenderId(), false);
+                        parametersBuilder.setSelectionOverride(trackInfoBean.getRenderId(), trackGroupArray, override);
+                        trackSelector.setParameters(parametersBuilder);
+                    }
+
+                    @Override
+                    public void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio) {
+
+                    }
+
                     @Override
                     public void setSubtitleSwitch(Switch switchView, boolean isChecked) {
                         if (!topBarView.getSubtitleSettingView().isLoadSubtitle() && isChecked) {
@@ -1115,6 +1138,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void setSubtitlePath(String subtitlePath) {
+        if (TextUtils.isEmpty(subtitlePath))
+            return;
         topBarView.getSubtitleSettingView().setLoadSubtitle(false);
         topBarView.getSubtitleSettingView().setSubtitleLoadStatus(false);
         new Thread(() -> {
@@ -1133,7 +1158,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     @Override
     public void onSubtitleQuery(int size) {
-        topBarView.getSubtitleSettingView().setNetwoekSubtitleVisible(true);
+        topBarView.getSubtitleSettingView().setNetworkSubtitleVisible(true);
         if (isAutoLoadNetworkSubtitle)
             mOutsideListener.onAction(Constants.INTENT_AUTO_SUBTITLE, 0);
         else

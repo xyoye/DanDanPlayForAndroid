@@ -8,6 +8,7 @@ public class LocalPlayHistoryBean {
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
+    private String zimuPath;
     private int episodeId;
     private int sourceOrigin;
     private long playTime;
@@ -36,6 +37,14 @@ public class LocalPlayHistoryBean {
 
     public void setDanmuPath(String danmuPath) {
         this.danmuPath = danmuPath;
+    }
+
+    public String getZimuPath() {
+        return zimuPath;
+    }
+
+    public void setZimuPath(String zimuPath) {
+        this.zimuPath = zimuPath;
     }
 
     public int getEpisodeId() {

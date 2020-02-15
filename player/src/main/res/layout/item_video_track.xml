@@ -16,6 +16,6 @@
         android:layout_height="wrap_content"
         android:textColor="@color/text_white"
         android:textSize="14sp"
-        android:text="测试"/>
+        android:text=""/>
 
 </LinearLayout>

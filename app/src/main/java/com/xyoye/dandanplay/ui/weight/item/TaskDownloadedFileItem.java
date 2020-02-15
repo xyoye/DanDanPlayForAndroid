@@ -99,6 +99,7 @@ public class TaskDownloadedFileItem implements AdapterItem<DownloadedTaskBean.Do
                         fileName,
                         model.getFilePath(),
                         model.getDanmuPath(),
+                        "",
                         0,
                         model.getEpisode_id()
                 );

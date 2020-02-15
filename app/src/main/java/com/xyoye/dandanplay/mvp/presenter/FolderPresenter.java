@@ -12,5 +12,7 @@ public interface FolderPresenter extends BaseMvpPresenter {
 
     void updateDanmu(String danmuPath, int episodeId, String[] whereArgs);
 
+    void updateZimu(String zimuPath, String[] whereArgs);
+
     void getDanmu(String videoPath);
 }

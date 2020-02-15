@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
@@ -18,7 +20,12 @@ import android.widget.Toast;
 
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.xyoye.player.R;
+import com.xyoye.player.commom.adapter.StreamAdapter;
+import com.xyoye.player.commom.bean.TrackInfoBean;
 import com.xyoye.player.commom.utils.CommonPlayerUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.exoplayer2.text.CaptionStyleCompat.EDGE_TYPE_NONE;
 
@@ -46,6 +53,12 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
     private SeekBar subtitleTextSizeSB;
     private TextView subtitleTextSizeTv;
 
+    //字幕流设置
+    private LinearLayout subtitleRl;
+    private RecyclerView subtitleRv;
+    private StreamAdapter subtitleStreamAdapter;
+
+    private boolean isExoPlayer = false;
     //时间偏移量
     private float timeOffset;
     //是否已加载字幕
@@ -54,6 +67,9 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
     private boolean isShowInnerCtrl = false;
     //控制回调
     private SettingSubtitleListener settingListener = null;
+
+    //字幕流数据
+    private List<TrackInfoBean> subtitleTrackList;
 
     public SettingSubtitleView(Context context) {
         this(context, null);
@@ -82,6 +98,9 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         outerSizeLL = findViewById(R.id.outer_size_LL);
         outerTimeLL = findViewById(R.id.outer_time_LL);
 
+        subtitleRl = findViewById(R.id.subtitle_track_ll);
+        subtitleRv = findViewById(R.id.subtitle_track_rv);
+
         bgBW.setOnClickListener(this);
         bgWB.setOnClickListener(this);
         bgTB.setOnClickListener(this);
@@ -89,7 +108,6 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         bgTT.setOnClickListener(this);
 
         findViewById(R.id.subtitle_change_source_tv).setOnClickListener(this);
-        findViewById(R.id.add_encoding_tv).setOnClickListener(this);
         findViewById(R.id.subtitle_extra_time_add).setOnClickListener(this);
         findViewById(R.id.subtitle_extra_time_reduce).setOnClickListener(this);
         findViewById(R.id.subtitle_network_tv).setOnClickListener(this);
@@ -100,6 +118,41 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
         //默认内置字幕背景色为黑+白
         bgBW.setBackgroundColor(CommonPlayerUtils.getResColor(context, R.color.selected_view_bg));
+
+        subtitleTrackList = new ArrayList<>();
+        subtitleStreamAdapter = new StreamAdapter(R.layout.item_video_track, subtitleTrackList);
+        subtitleStreamAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            if (isExoPlayer) {
+                for (int i = 0; i < subtitleTrackList.size(); i++) {
+                    if (i == position)
+                        subtitleTrackList.get(i).setSelect(true);
+                    else
+                        subtitleTrackList.get(i).setSelect(false);
+                }
+                settingListener.selectTrack(subtitleTrackList.get(position), false);
+                subtitleStreamAdapter.notifyDataSetChanged();
+            } else {
+                //deselectAll except position
+                for (int i = 0; i < subtitleTrackList.size(); i++) {
+                    if (i == position) continue;
+                    settingListener.deselectTrack(subtitleTrackList.get(i), true);
+                    subtitleTrackList.get(i).setSelect(false);
+                }
+                //select or deselect position
+                if (subtitleTrackList.get(position).isSelect()) {
+                    settingListener.deselectTrack(subtitleTrackList.get(position), true);
+                    subtitleTrackList.get(position).setSelect(false);
+                } else {
+                    settingListener.selectTrack(subtitleTrackList.get(position), true);
+                    subtitleTrackList.get(position).setSelect(true);
+                }
+                subtitleStreamAdapter.notifyDataSetChanged();
+            }
+        });
+
+        subtitleRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        subtitleRv.setItemViewCacheSize(10);
+        subtitleRv.setAdapter(subtitleStreamAdapter);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -185,6 +238,11 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
 
     public SettingSubtitleView initListener(SettingSubtitleListener settingListener) {
         this.settingListener = settingListener;
+        return this;
+    }
+
+    public SettingSubtitleView setExoPlayerType() {
+        this.isExoPlayer = true;
         return this;
     }
 
@@ -283,8 +341,15 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
         isLoadSubtitle = loadDanmu;
     }
 
-    public void setNetwoekSubtitleVisible(boolean isShow) {
+    public void setNetworkSubtitleVisible(boolean isShow) {
         networkSubtitleRl.setVisibility(isShow ? VISIBLE : GONE);
+    }
+
+    public void setSubtitleTrackList(List<TrackInfoBean> trackList) {
+        this.subtitleTrackList.clear();
+        this.subtitleTrackList.addAll(trackList);
+        this.subtitleStreamAdapter.setNewData(trackList);
+        this.subtitleRl.setVisibility(subtitleTrackList.size() < 1 ? GONE : VISIBLE);
     }
 
     @Override
@@ -314,6 +379,10 @@ public class SettingSubtitleView extends LinearLayout implements View.OnClickLis
     }
 
     public interface SettingSubtitleListener {
+        void selectTrack(TrackInfoBean trackInfoBean, boolean isAudio);
+
+        void deselectTrack(TrackInfoBean trackInfoBean, boolean isAudio);
+
         void setSubtitleSwitch(Switch switchView, boolean isChecked);
 
         void setSubtitleTextSize(int progress);

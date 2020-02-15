@@ -114,6 +114,7 @@ public class LocalPlayHistoryActivity extends BaseMvcActivity {
                             historyBean.setEpisodeId(cursor.getInt(4));
                             historyBean.setSourceOrigin(cursor.getInt(5));
                             historyBean.setPlayTime(cursor.getLong(6));
+                            historyBean.setZimuPath(cursor.getString(7));
                             list.add(historyBean);
                         }
                         return list;

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -89,6 +90,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private String videoPath;
     private String videoTitle;
     private String danmuPath;
+    private String zimuPath;
     private long currentPosition;
     private int episodeId;
     private long thunderTaskId;
@@ -140,6 +142,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         videoPath = playParam.getVideoPath();
         videoTitle = playParam.getVideoTitle();
         danmuPath = playParam.getDanmuPath();
+        zimuPath = playParam.getZimuPath();
         currentPosition = playParam.getCurrentPosition();
         episodeId = playParam.getEpisodeId();
         sourceOrigin = playParam.getSourceOrigin();
@@ -245,7 +248,16 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                             PlayerActivity.this,
                             folderPath,
                             FileManagerDialog.SELECT_SUBTITLE,
-                            path -> mPlayer.setSubtitlePath(path)
+                            path -> {
+                                DataBaseManager.getInstance()
+                                        .selectTable("file")
+                                        .update()
+                                        .param("zimu_path", path)
+                                        .where("file_path", videoPath)
+                                        .postExecute();
+                                EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
+                                mPlayer.setSubtitlePath(path);
+                            }
                     ).show();
                 }
                 break;
@@ -343,6 +355,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private void initIjkPlayer() {
         IjkPlayerView ijkPlayerView = (IjkPlayerView) mPlayer;
 
+        boolean autoLoadLocalSubtitle = AppConfig.getInstance().isAutoLoadLocalSubtitle()
+                && TextUtils.isEmpty(zimuPath);
+        boolean autoLoadNetworkSubtitle = AppConfig.getInstance().isAutoLoadNetworkSubtitle()
+                && TextUtils.isEmpty(zimuPath);
+
         ijkPlayerView
                 //设置弹幕事件回调，要在初始化弹幕之前完成
                 .setDanmakuListener(onDanmakuListener)
@@ -362,18 +379,25 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 //是否开启网络字幕
                 .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
                 //是否自动加载同名字幕
-                .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
+                .setAutoLoadLocalSubtitle(autoLoadLocalSubtitle)
                 //是否自动加载网络字幕
-                .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                .setAutoLoadNetworkSubtitle(autoLoadNetworkSubtitle)
                 //设置标题
                 .setTitle(videoTitle)
                 //设置视频路径
                 .setVideoPath(videoPath)
                 .start();
+
+        mPlayer.setSubtitlePath(zimuPath);
     }
 
     private void initExoPlayer() {
         ExoPlayerView exoPlayerView = (ExoPlayerView) mPlayer;
+
+        boolean autoLoadLocalSubtitle = AppConfig.getInstance().isAutoLoadLocalSubtitle()
+                && TextUtils.isEmpty(zimuPath);
+        boolean autoLoadNetworkSubtitle = AppConfig.getInstance().isAutoLoadNetworkSubtitle()
+                && TextUtils.isEmpty(zimuPath);
 
         exoPlayerView
                 //设置弹幕事件回调，要在初始化弹幕之前完成
@@ -394,14 +418,16 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 //是否开启网络字幕
                 .setNetworkSubtitle(AppConfig.getInstance().isUseNetWorkSubtitle())
                 //是否自动加载同名字幕
-                .setAutoLoadLocalSubtitle(AppConfig.getInstance().isAutoLoadLocalSubtitle())
+                .setAutoLoadLocalSubtitle(autoLoadLocalSubtitle)
                 //是否自动加载网络字幕
-                .setAutoLoadNetworkSubtitle(AppConfig.getInstance().isAutoLoadNetworkSubtitle())
+                .setAutoLoadNetworkSubtitle(autoLoadNetworkSubtitle)
                 //设置标题
                 .setTitle(videoTitle)
                 //设置视频路径
                 .setVideoPath(videoPath)
                 .start();
+
+        mPlayer.setSubtitlePath(zimuPath);
     }
 
     @Override
@@ -590,8 +616,16 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                     String filePath = folderPath + "/" + fileName;
                     boolean isSaveFile = FileIOUtils.writeFileFromIS(filePath, response.body().byteStream());
                     if (isSaveFile) {
-                        runOnUiThread(() -> mPlayer.setSubtitlePath(filePath));
-
+                        runOnUiThread(() -> {
+                            DataBaseManager.getInstance()
+                                    .selectTable("file")
+                                    .update()
+                                    .param("zimu_path", filePath)
+                                    .where("file_path", videoPath)
+                                    .postExecute();
+                            EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
+                            mPlayer.setSubtitlePath(filePath);
+                        });
                     } else {
                         ToastUtils.showShort("保存字幕文件失败");
                     }

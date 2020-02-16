@@ -5,15 +5,20 @@ package com.xyoye.dandanplay.bean;
  */
 
 public class VideoBindAllDanmuBean {
-    private int position;
+    private String danmuPath;
     private String videoPath;
 
-    public int getPosition() {
-        return position;
+    public VideoBindAllDanmuBean(String danmuPath, String videoPath) {
+        this.danmuPath = danmuPath;
+        this.videoPath = videoPath;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
+    public String getDanmuPath() {
+        return danmuPath;
+    }
+
+    public void setDanmuPath(String danmuPath) {
+        this.danmuPath = danmuPath;
     }
 
     public String getVideoPath() {

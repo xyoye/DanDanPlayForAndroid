@@ -35,8 +35,12 @@ public class VideoItem implements AdapterItem<VideoBean> {
     TextView durationTv;
     @BindView(R.id.title_tv)
     TextView titleTv;
+    @BindView(R.id.tips_ll)
+    LinearLayout tipsLl;
     @BindView(R.id.danmu_tips_iv)
     ImageView danmuTipsIv;
+    @BindView(R.id.zimu_tips_tv)
+    TextView zimuTipsTv;
     @BindView(R.id.video_info_rl)
     RelativeLayout videoInfoRl;
     @BindView(R.id.bind_danmu_iv)
@@ -96,20 +100,25 @@ public class VideoItem implements AdapterItem<VideoBean> {
         }
 
         if (!StringUtils.isEmpty(model.getDanmuPath())) {
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
             bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
             bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
             unbindDanmuActionLl.setEnabled(true);
         } else {
+            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
             bindDanmuIv.setImageResource(R.mipmap.ic_cant_unbind_danmu);
             bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             unbindDanmuActionLl.setEnabled(false);
         }
 
         if (!StringUtils.isEmpty(model.getZimuPath())) {
+            zimuTipsTv.setVisibility(View.VISIBLE);
+            zimuTipsTv.setText(FileUtils.getFileExtension(model.getZimuPath()).toUpperCase());
             bindZimuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
             bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
             unbindZimuActionLl.setEnabled(true);
         } else {
+            zimuTipsTv.setVisibility(View.GONE);
             bindZimuIv.setImageResource(R.mipmap.ic_cant_unbind_danmu);
             bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             unbindZimuActionLl.setEnabled(false);
@@ -130,15 +139,9 @@ public class VideoItem implements AdapterItem<VideoBean> {
         durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
         if (model.getVideoDuration() == 0) durationTv.setVisibility(View.GONE);
 
-        if (StringUtils.isEmpty(model.getDanmuPath())) {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
-        } else {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
-        }
-
         videoActionLl.setVisibility(View.GONE);
 
-        danmuTipsIv.setOnClickListener(v -> listener.bindDanmu(position));
+        tipsLl.setOnClickListener(v -> listener.bindDanmu(position));
         videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
         unbindDanmuActionLl.setOnClickListener(v -> {
             listener.unBindDanmu(position);

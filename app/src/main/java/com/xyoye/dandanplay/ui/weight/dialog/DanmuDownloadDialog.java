@@ -70,8 +70,11 @@ public class DanmuDownloadDialog extends Dialog{
                     List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
                     statusTv.setText("开始保存...");
                     String danmuName = bean.getAnimeTitle()+"_"
-                            + bean.getEpisodeTitle().replace(" ","_")
-                            + ".xml";
+                            + bean.getEpisodeTitle().replace(" ","_");
+                    if (danmuName.length() > 80) {
+                        danmuName = danmuName.substring(0, 80);
+                    }
+                    danmuName += ".xml";
                     String danmuPath;
                     //如果视频文件在下载路径中，下载弹幕至视频所在文件夹
                     //否则下载弹幕至默认下载文件夹

@@ -24,6 +24,9 @@ public class DanmuDownloadBean implements Serializable{
     private int count;
     private List<CommentsBean> comments;
 
+    private String animeTitle;
+    private String episodeTitle;
+
     public int getCount() {
         return count;
     }
@@ -38,6 +41,22 @@ public class DanmuDownloadBean implements Serializable{
 
     public void setComments(List<CommentsBean> comments) {
         this.comments = comments;
+    }
+
+    public String getAnimeTitle() {
+        return animeTitle;
+    }
+
+    public void setAnimeTitle(String animeTitle) {
+        this.animeTitle = animeTitle;
+    }
+
+    public String getEpisodeTitle() {
+        return episodeTitle;
+    }
+
+    public void setEpisodeTitle(String episodeTitle) {
+        this.episodeTitle = episodeTitle;
     }
 
     public static class CommentsBean {

@@ -367,7 +367,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 .setItems(playTypes, (dialog, which) -> {
                     switch (which) {
                         case 0:
-                            presenter.bindAllDanmu(videoList);
+                            presenter.bindAllDanmu(videoList, folderPath);
                             break;
                         case 1:
                             presenter.unbindAllDanmu(folderPath);
@@ -386,7 +386,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 .setItems(playTypes, (dialog, which) -> {
                     switch (which) {
                         case 0:
-                            presenter.bindAllZimu(videoList);
+                            presenter.bindAllZimu(videoList, folderPath);
                             break;
                         case 1:
                             presenter.unbindAllZimu(folderPath);

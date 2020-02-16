@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/image_rl"
-        android:layout_toStartOf="@+id/danmu_tips_iv"
+        android:layout_toStartOf="@+id/tips_ll"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="5dp"
         android:orientation="vertical">
@@ -59,19 +59,37 @@
         android:id="@+id/video_info_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toStartOf="@+id/danmu_tips_iv">
+        android:layout_toStartOf="@+id/tips_ll">
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/danmu_tips_iv"
-        android:layout_width="50dp"
+    <LinearLayout
+        android:id="@+id/tips_ll"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:paddingEnd="10dp"
-        android:paddingStart="10dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:contentDescription="@string/load_danmaku"
-        android:src="@mipmap/ic_danmu_exists"/>
+        android:gravity="center"
+        android:orientation="vertical"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <ImageView
+            android:id="@+id/danmu_tips_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/load_danmaku"
+            android:src="@mipmap/ic_danmu_exists"/>
+
+        <TextView
+            android:id="@+id/zimu_tips_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/theme_color"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/video_action_ll"

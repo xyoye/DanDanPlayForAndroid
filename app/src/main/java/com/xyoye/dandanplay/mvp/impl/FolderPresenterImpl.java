@@ -3,14 +3,21 @@ package com.xyoye.dandanplay.mvp.impl;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
+import com.xyoye.dandanplay.bean.DanmuDownloadBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.bean.VideoBindAllDanmuBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
@@ -18,6 +25,7 @@ import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
+import com.xyoye.player.commom.utils.CommonPlayerUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,6 +118,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                     @Override
                     public void onResult(List<VideoBean> result) {
                         getView().refreshAdapter(result);
+                        getView().hideLoading();
                     }
                 });
     }
@@ -169,74 +178,62 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     }
 
     @Override
-    public void bindAllDanmu(List<VideoBean> videoList) {
+    public void bindAllDanmu(List<VideoBean> videoList, String mFolderPath) {
         Observable.just(videoList)
-                .map(videoBeans -> {
-                    Set<Observable<DanmuMatchBean>> requestList = new HashSet<>();
-                    for (VideoBean videoBean : videoBeans) {
-                        Map<String, String> danmuMatchParam = getDanmuMatchParam(videoBean.getVideoPath());
-                        requestList.add(
-                                RetroFactory.getInstance().matchDanmu(danmuMatchParam)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        //请求成功时，将视频地址放入结果，用于最后的匹配
-                                        .doOnNext(danmuMatchBean -> danmuMatchBean.setVideoPath(videoBean.getVideoPath()))
-                                        //请求错误时不抛出，返回不为NULL的空对象
-                                        .onErrorReturnItem(new DanmuMatchBean()));
-                    }
-
-                    return Observable.zipIterable(requestList, resultObjectArray -> {
-                        List<DanmuMatchBean> resultBeanList = new ArrayList<>();
-                        for (Object result : resultObjectArray) {
-                            DanmuMatchBean resultBean = (DanmuMatchBean) result;
-                            //排除请求错误时，产生的不为NULL的空对象
-                            if (resultBean == null)
-                                continue;
-                            resultBeanList.add(resultBean);
-                        }
-                        return resultBeanList;
-                    }, true, 1);
-                })
-                .flatMap((Function<Observable<List<DanmuMatchBean>>, ObservableSource<List<DanmuMatchBean>>>)
+                .map(videoBeans ->
+                        //将所有弹幕的获取请求一起发出
+                        Observable.zipIterable(getAllDanmuRequest(videoList), resultObjectArray -> {
+                            List<VideoBindAllDanmuBean> resultBeanList = new ArrayList<>();
+                            for (Object result : resultObjectArray) {
+                                if (result instanceof VideoBindAllDanmuBean) {
+                                    VideoBindAllDanmuBean resultBean = (VideoBindAllDanmuBean) result;
+                                    //排除请求错误时，产生的对象
+                                    if (TextUtils.isEmpty(resultBean.getDanmuPath()))
+                                        continue;
+                                    resultBeanList.add(resultBean);
+                                }
+                            }
+                            return resultBeanList;
+                        }, true, 1)
+                )
+                .flatMap((Function<Observable<List<VideoBindAllDanmuBean>>, ObservableSource<List<VideoBindAllDanmuBean>>>)
                         listObservable -> listObservable)
+                //将所有弹幕绑定至数据库中对应的视频文件
+                .map(videoBindAllDanmuBeans -> {
+                    for (VideoBindAllDanmuBean videoBindAllDanmuBean : videoBindAllDanmuBeans) {
+                        DataBaseManager.getInstance().selectTable("file")
+                                .update()
+                                .param("danmu_path", videoBindAllDanmuBean.getDanmuPath())
+                                .where("file_path", videoBindAllDanmuBean.getVideoPath())
+                                .postExecute();
+                    }
+                    return videoBindAllDanmuBeans.size();
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<DanmuMatchBean>>() {
+                .subscribe(new Observer<Integer>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
-
+                    public void onSubscribe(Disposable disposable) {
+                        getView().showLoading();
                     }
 
                     @Override
-                    public void onNext(List<DanmuMatchBean> danmuMatchBeans) {
-
+                    public void onNext(Integer count) {
+                        getVideoList(mFolderPath);
+                        ToastUtils.showLong("成功，共为"+count+"视频绑定弹幕");
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-
+                    public void onError(Throwable throwable) {
+                        throwable.printStackTrace();
+                        ToastUtils.showShort("失败: "+throwable.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-
                     }
                 });
 
-    }
-
-    private Map<String, String> getDanmuMatchParam(String videoPath) {
-        String title = FileUtils.getFileName(videoPath);
-        DanmuMatchParam param = new DanmuMatchParam();
-        String hash = MD5Util.getVideoFileHash(videoPath);
-        long length = new File(videoPath).length();
-        long duration = MD5Util.getVideoDuration(videoPath);
-        param.setFileName(title);
-        param.setFileHash(hash);
-        param.setFileSize(length);
-        param.setVideoDuration(duration);
-        param.setMatchMode("hashAndFileName");
-        return param.getMap();
     }
 
     @Override
@@ -252,8 +249,25 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
     }
 
     @Override
-    public void bindAllZimu(List<VideoBean> videoList) {
+    public void bindAllZimu(List<VideoBean> videoList, String folderPath) {
+        int count = 0;
+        String zimuDownloadFolder = AppConfig.getInstance().getDownloadFolder()
+                + Constants.DefaultConfig.subtitleFolder;
+        for (VideoBean videoBean : videoList){
+            String zimuPath = CommonPlayerUtils.getSubtitlePath(videoBean.getVideoPath(), zimuDownloadFolder);
+            if (!TextUtils.isEmpty(zimuPath)){
+                DataBaseManager.getInstance()
+                        .selectTable("file")
+                        .update()
+                        .param("zimu_path", zimuPath)
+                        .where("file_path", videoBean.getVideoPath())
+                        .postExecute();
+                count++;
+            }
+        }
 
+        getVideoList(folderPath);
+        ToastUtils.showLong("成功，共为"+count+"视频绑定字幕");
     }
 
     @Override
@@ -268,7 +282,88 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
         getVideoList(folderPath);
     }
 
-    private void bindDanmu(int position, String videoPath) {
+    /**
+     * 获取匹配弹幕的参数
+     */
+    private Map<String, String> getDanmuMatchParam(String videoPath) {
+        String title = FileUtils.getFileName(videoPath);
+        DanmuMatchParam param = new DanmuMatchParam();
+        String hash = MD5Util.getVideoFileHash(videoPath);
+        long length = new File(videoPath).length();
+        long duration = MD5Util.getVideoDuration(videoPath);
+        param.setFileName(title);
+        param.setFileHash(hash);
+        param.setFileSize(length);
+        param.setVideoDuration(duration);
+        param.setMatchMode("hashAndFileName");
+        return param.getMap();
+    }
 
+    /**
+     * 获取绑定弹幕的所有流程的观察者列表
+     */
+    private Set<Observable<VideoBindAllDanmuBean>> getAllDanmuRequest(List<VideoBean> videoBeans) {
+        Set<Observable<VideoBindAllDanmuBean>> requestList = new HashSet<>();
+        for (VideoBean videoBean : videoBeans) {
+            requestList
+                    //1.匹配单个视频的弹幕
+                    .add(RetroFactory.getInstance().matchDanmu(getDanmuMatchParam(videoBean.getVideoPath()))
+                            //2.提取弹幕列表中第一个弹幕信息
+                            .flatMap((Function<DanmuMatchBean, ObservableSource<DanmuDownloadBean>>) danmuMatchBean -> {
+                                String episodeId = "";
+                                if (danmuMatchBean.getMatches() != null
+                                        && danmuMatchBean.getMatches().size() > 0
+                                        && danmuMatchBean.getMatches().get(0) != null) {
+                                    episodeId = danmuMatchBean.getMatches().get(0).getEpisodeId() + "";
+                                }
+                                //3.下载第一个弹幕
+                                return RetroFactory.getInstance().downloadDanmu(episodeId).doOnNext(danmuDownloadBean -> {
+                                    if (danmuMatchBean.getMatches() != null
+                                            && danmuMatchBean.getMatches().size() > 0
+                                            && danmuMatchBean.getMatches().get(0) != null) {
+                                        String animeTitle = danmuMatchBean.getMatches().get(0).getAnimeTitle();
+                                        String episodeTitle = danmuMatchBean.getMatches().get(0).getEpisodeTitle();
+                                        danmuDownloadBean.setAnimeTitle(animeTitle);
+                                        danmuDownloadBean.setEpisodeTitle(episodeTitle);
+                                    }
+                                });
+                            })
+                            //4.保存弹幕到文件中
+                            .map(danmuDownloadBean -> {
+                                if (danmuDownloadBean == null || danmuDownloadBean.getComments() == null) {
+                                    return new VideoBindAllDanmuBean("", "");
+                                } else {
+                                    List<DanmuDownloadBean.CommentsBean> comments = danmuDownloadBean.getComments();
+                                    String danmuName = danmuDownloadBean.getAnimeTitle() + "_"
+                                            + danmuDownloadBean.getEpisodeTitle().replace(" ", "_");
+                                    if (danmuName.length() > 80) {
+                                        danmuName = danmuName.substring(0, 80);
+                                    }
+                                    danmuName += ".xml";
+                                    String danmuPath;
+                                    //如果视频文件在下载路径中，下载弹幕至视频所在文件夹
+                                    //否则下载弹幕至默认下载文件夹
+                                    if (FileUtils.getDirName(videoBean.getVideoPath()).startsWith(AppConfig.getInstance().getDownloadFolder())) {
+                                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                                        danmuPath = folderPath.substring(0, folderPath.length() - 1)
+                                                + Constants.DefaultConfig.danmuFolder
+                                                + "/" + danmuName;
+                                    } else {
+                                        danmuPath = AppConfig.getInstance().getDownloadFolder()
+                                                + Constants.DefaultConfig.danmuFolder
+                                                + "/" + danmuName;
+                                    }
+                                    //去除内容时间一样的弹幕
+                                    DanmuUtils.saveDanmuSourceFormDanDan(comments, danmuPath);
+                                    return new VideoBindAllDanmuBean(danmuPath, videoBean.getVideoPath());
+                                }
+                            })
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            //请求错误时不抛出，返回不为NULL的空对象
+                            .onErrorReturnItem(new VideoBindAllDanmuBean("", ""))
+                    );
+        }
+        return requestList;
     }
 }

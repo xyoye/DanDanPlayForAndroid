@@ -19,11 +19,11 @@ public interface FolderPresenter extends BaseMvpPresenter {
 
     void getDanmu(String videoPath);
 
-    void bindAllDanmu(List<VideoBean> videoList);
+    void bindAllDanmu(List<VideoBean> videoList, String folderPath);
 
     void unbindAllDanmu(String folderPath);
 
-    void bindAllZimu(List<VideoBean> videoList);
+    void bindAllZimu(List<VideoBean> videoList, String folderPath);
 
     void unbindAllZimu(String folderPath);
 }

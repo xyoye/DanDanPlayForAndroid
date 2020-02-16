@@ -23,7 +23,6 @@ public class CookiesManager implements CookieJar {
 
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-        LogUtils.d("cookie", "saveFromResponse");
         if (cookies.size() > 0) {
             for (Cookie item : cookies) {
                 try {
@@ -38,17 +37,14 @@ public class CookiesManager implements CookieJar {
     @Override
     public List<Cookie> loadForRequest(HttpUrl url) {
         List<Cookie> cookies = cookieStore.get(url);
-        LogUtils.d("cookie", "loadForRequest");
         StringBuilder cookieHeader = new StringBuilder();
         for (int i = 0, size = cookies.size(); i < size; i++) {
             if (i > 0) {
                 cookieHeader.append("; ");
             }
             Cookie cookie = cookies.get(i);
-            LogUtils.d("cookies_token_load",getToken(cookie));
             cookieHeader.append(cookie.name()).append('=').append(cookie.value());
         }
-        LogUtils.d("cookies_load", cookieHeader.toString());
         return cookies;
     }
 

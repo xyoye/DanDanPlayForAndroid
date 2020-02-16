@@ -228,6 +228,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private boolean isAutoLoadNetworkSubtitle = false;
     //是否使用surface view
     private boolean isUseSurfaceView;
+    //字幕下载文件夹
+    private String subtitleDownloadFolder;
 
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
@@ -1174,11 +1176,20 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     /**
+     * 设置字幕下载地址
+     */
+    public ExoPlayerView setSubtitleFolder(String subtitleFolder){
+        this.subtitleDownloadFolder = subtitleFolder;
+        return this;
+    }
+
+    /**
      * 设置视频资源
      */
     public ExoPlayerView setVideoPath(String videoPath) {
         loadDefaultSubtitle(videoPath);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mAttachActivity, Util.getUserAgent(mAttachActivity, "com.xyoye.dandanplay.player"));
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mAttachActivity,
+                Util.getUserAgent(mAttachActivity, "com.xyoye.dandanplay.player"));
         MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(videoPath));
         exoPlayer.prepare(videoSource);
         seekTo(0);
@@ -1889,7 +1900,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
      */
     public void loadDefaultSubtitle(String videoPath) {
         if (!isAutoLoadLocalSubtitle) return;
-        String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
+        String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath, subtitleDownloadFolder);
         if (!StringUtils.isEmpty(subtitlePath)) {
             //找到本地同名字幕，不自动加载网络字幕
             isAutoLoadNetworkSubtitle = false;

@@ -109,6 +109,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     //字幕查询观察者
     CommOtherDataObserver<List<SubtitleBean>> subtitleObserver;
 
+    //系统字幕下载路径
+    public String subtitleDownloadPath;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,6 +150,9 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         episodeId = playParam.getEpisodeId();
         sourceOrigin = playParam.getSourceOrigin();
         thunderTaskId = playParam.getThunderTaskId();
+
+        subtitleDownloadPath = AppConfig.getInstance().getDownloadFolder()
+                + com.xyoye.dandanplay.utils.Constants.DefaultConfig.subtitleFolder;
 
         //初始化接口
         initListener();
@@ -384,6 +390,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .setAutoLoadNetworkSubtitle(autoLoadNetworkSubtitle)
                 //设置标题
                 .setTitle(videoTitle)
+                //设置字幕下载路径
+                .setSubtitleFolder(subtitleDownloadPath)
                 //设置视频路径
                 .setVideoPath(videoPath)
                 .start();
@@ -423,6 +431,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 .setAutoLoadNetworkSubtitle(autoLoadNetworkSubtitle)
                 //设置标题
                 .setTitle(videoTitle)
+                //设置字幕下载路径
+                .setSubtitleFolder(subtitleDownloadPath)
                 //设置视频路径
                 .setVideoPath(videoPath)
                 .start();

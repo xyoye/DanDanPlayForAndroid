@@ -115,7 +115,6 @@ public class DanmuUtils {
             handler.endDocument();
             File file = new File(savePath);
             String content = xmlWriter.toString();
-            if (content == null) return;
             if (!createOrExistsFile(file)) return;
             try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
                 bw.write(content);

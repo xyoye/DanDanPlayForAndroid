@@ -215,6 +215,8 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     private boolean isAutoLoadLocalSubtitle = false;
     //是否自动加载网络字幕
     private boolean isAutoLoadNetworkSubtitle = false;
+    //字幕下载地址
+    private String subtitleDownloadFolder;
 
     //云屏蔽数据
     private List<String> cloudFilterList = new ArrayList<>();
@@ -1144,6 +1146,14 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     }
 
     /**
+     * 设置字幕下载地址
+     */
+    public IjkPlayerView setSubtitleFolder(String subtitleFolder){
+        this.subtitleDownloadFolder = subtitleFolder;
+        return this;
+    }
+
+    /**
      * 设置视频资源
      */
     public IjkPlayerView setVideoPath(String videoPath) {
@@ -1873,7 +1883,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
      */
     public void loadDefaultSubtitle(String videoPath) {
         if (!isAutoLoadLocalSubtitle) return;
-        String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath);
+        String subtitlePath = CommonPlayerUtils.getSubtitlePath(videoPath, subtitleDownloadFolder);
         if (!StringUtils.isEmpty(subtitlePath)) {
             //找到本地同名字幕，不自动加载网络字幕
             isAutoLoadNetworkSubtitle = false;

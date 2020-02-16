@@ -24,7 +24,7 @@ public final class CommonPlayerUtils {
      * 字幕名：test.ass | test.sc.ass
      * 过滤：test1.ass
      */
-    public static String getSubtitlePath(String videoPath) {
+    public static String getSubtitlePath(String videoPath, String subtitleDownloadFolder) {
         if (TextUtils.isEmpty(videoPath) || !videoPath.contains("."))
             return "";
 
@@ -61,6 +61,28 @@ public final class CommonPlayerUtils {
                 }
             }
         }
+
+        if (subtitlePathList.size() < 1 && !TextUtils.isEmpty(subtitleDownloadFolder)){
+            File folder = new File(subtitleDownloadFolder);
+            if (folder.exists() && folder.isDirectory()){
+                for (File childFile : folder.listFiles()) {
+                    String childFileName = FileUtils.getFileName(childFile);
+                    String videoNameNoExt = FileUtils.getFileNameNoExtension(videoFile);
+                    //文件路径头与视频路径头相同
+                    if (childFileName.startsWith(videoNameNoExt)) {
+                        String extension = FileUtils.getFileExtension(childFileName);
+                        //文件结尾存在与可用字幕格式中
+                        if (extensionList.contains(extension.toUpperCase())) {
+                            //存在xxx.ass直接返回
+                            if (childFileName.length() == videoNameNoExt.length() + extension.length() + 1)
+                                return childFile.getAbsolutePath();
+                            subtitlePathList.add(childFile.getAbsolutePath());
+                        }
+                    }
+                }
+            }
+        }
+
         if (subtitlePathList.size() < 1) {
             return "";
         } else if (subtitlePathList.size() == 1) {

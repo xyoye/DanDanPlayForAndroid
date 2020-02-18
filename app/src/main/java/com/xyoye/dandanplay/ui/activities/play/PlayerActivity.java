@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities.play;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -50,6 +51,7 @@ import com.xyoye.player.commom.bean.SubtitleBean;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
 import com.xyoye.player.commom.receiver.BatteryBroadcastReceiver;
+import com.xyoye.player.commom.receiver.HeadsetBroadcastReceiver;
 import com.xyoye.player.commom.receiver.PlayerReceiverListener;
 import com.xyoye.player.commom.receiver.ScreenBroadcastReceiver;
 import com.xyoye.player.commom.utils.Constants;
@@ -102,6 +104,8 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     private BatteryBroadcastReceiver batteryReceiver;
     //锁屏广播
     private ScreenBroadcastReceiver screenReceiver;
+    //耳机设备广播
+    private HeadsetBroadcastReceiver headsetReceiver;
     //弹幕回调
     private OnDanmakuListener onDanmakuListener;
     //内部事件回调
@@ -136,8 +140,10 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         //注册监听广播
         batteryReceiver = new BatteryBroadcastReceiver(this);
         screenReceiver = new ScreenBroadcastReceiver(this);
+        headsetReceiver = new HeadsetBroadcastReceiver(this);
         PlayerActivity.this.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         PlayerActivity.this.registerReceiver(screenReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        PlayerActivity.this.registerReceiver(headsetReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
 
         //获取播放参数
         PlayParam playParam = getIntent().getParcelableExtra("video_data");
@@ -445,6 +451,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
         mPlayer.onDestroy();
         this.unregisterReceiver(batteryReceiver);
         this.unregisterReceiver(screenReceiver);
+        this.unregisterReceiver(headsetReceiver);
         if (subtitleObserver != null)
             subtitleObserver.dispose();
         super.onDestroy();
@@ -491,6 +498,11 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     @Override
     public void onScreenLocked() {
         mPlayer.onScreenLocked();
+    }
+
+    @Override
+    public void onHeadsetRemoved(){
+        mPlayer.onPause();
     }
 
     //设置全屏

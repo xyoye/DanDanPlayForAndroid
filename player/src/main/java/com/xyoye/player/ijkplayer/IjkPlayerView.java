@@ -9,7 +9,6 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -328,16 +327,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         mAudioManager = (AudioManager) mAttachActivity.getSystemService(Context.AUDIO_SERVICE);
         if (mAudioManager != null)
             mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        //亮度管理
-        try {
-            int brightness = Settings.System.getInt(mAttachActivity.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
-            float progress = 1.0F * (float) brightness / 255.0F;
-            WindowManager.LayoutParams layout = mAttachActivity.getWindow().getAttributes();
-            layout.screenBrightness = progress;
-            mAttachActivity.getWindow().setAttributes(layout);
-        } catch (Settings.SettingNotFoundException var7) {
-            var7.printStackTrace();
-        }
 
         //是否使用surfaceView
         isUseSurfaceView = SPUtils.getInstance().getBoolean("surface_renders");
@@ -1615,7 +1604,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         if (mCurBrightness < 0) {
             mCurBrightness = mAttachActivity.getWindow().getAttributes().screenBrightness;
             if (mCurBrightness < 0.0f) {
-                mCurBrightness = 0.5f;
+                mCurBrightness = 0.1f;
             } else if (mCurBrightness < 0.01f) {
                 mCurBrightness = 0.01f;
             }

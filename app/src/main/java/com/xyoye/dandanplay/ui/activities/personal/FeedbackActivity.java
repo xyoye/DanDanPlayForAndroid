@@ -50,10 +50,11 @@ public class FeedbackActivity extends BaseMvcActivity {
         setTitle("意见反馈");
 
         List<FeedbackBean> commonFeedbackList = new ArrayList<>();
-        commonFeedbackList.add(new FeedbackBean("1、视频播放失败", "尝试在播放器设置中切换播放器内核，一般选择ijkplayer内核或exoplayer内核。\n\n如果还是不能播放请在确保资源有效的情况下，保留视频资源，并联系开发人员，开发人员可能需要以此视频资源进行测试改进"));
-        commonFeedbackList.add(new FeedbackBean("2、视频播放卡顿", "尝试在播放器设置中开启硬解码或切换像素格式类型，一般选择Yv12或OpenGL ES2。\n\n如果播放依然卡顿请保留视频资源，并联系开发人员，开发人员可能需要以此视频资源进行测试"));
-        commonFeedbackList.add(new FeedbackBean("3、下载速度慢", "尝试切换其它下载资源，或在tracker设置中增加tracker。\n\n下载资源并不属于弹弹，弹弹play 概念版仅提供下载手段，并不保证资源的完整性和有效性。"));
-        commonFeedbackList.add(new FeedbackBean("4、扫描不到视频", "尝试在扫描设置中单独添加该视频，或将该视频文件夹加入扫描目录列表。\n\n视频扫描为了保证体验流畅，采取的视频收集方式是获取系统内部的视频，所以某些视频可能不能及时扫描或无法扫描。"));
+        commonFeedbackList.add(new FeedbackBean("1、在线视频播放失败", "1.切换播放资源，由于视频资源并非弹弹所有，所以无法保证视频质量，一般来说较新的资源能播放的机率较大。\n2.切换网络，移动网络与WIFI间相互切换\n注：墙外可能会无法播放"));
+        commonFeedbackList.add(new FeedbackBean("2、本地视频播放失败", "尝试在播放器设置中切换播放器内核，一般选择ijkplayer内核或exoplayer内核。\n\n如果还是不能播放请在确保资源有效的情况下，保留视频资源，并联系开发人员，开发人员可能需要以此视频资源进行测试改进"));
+        commonFeedbackList.add(new FeedbackBean("3、视频播放卡顿", "尝试在播放器设置中开启硬解码或切换像素格式类型，一般选择Yv12或OpenGL ES2。\n\n如果播放依然卡顿请保留视频资源，并联系开发人员，开发人员可能需要以此视频资源进行测试"));
+        commonFeedbackList.add(new FeedbackBean("4、下载速度慢", "尝试切换其它下载资源，或在tracker设置中增加tracker。\n\n下载资源并不属于弹弹，弹弹play 概念版仅提供下载手段，并不保证资源的完整性和有效性。"));
+        commonFeedbackList.add(new FeedbackBean("5、扫描不到视频", "尝试在扫描设置中单独添加该视频，或将该视频文件夹加入扫描目录列表。\n\n视频扫描为了保证体验流畅，采取的视频收集方式是获取系统内部的视频，所以某些视频可能不能及时扫描或无法扫描。"));
 
         BaseRvAdapter<FeedbackBean> feedbackAdapter = new BaseRvAdapter<FeedbackBean>(commonFeedbackList) {
             @NonNull

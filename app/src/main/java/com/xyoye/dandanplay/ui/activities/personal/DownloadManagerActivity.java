@@ -164,7 +164,7 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
                         .hideCancel()
                         .setAutoDismiss()
                         .build()
-                        .show(getResources().getString(R.string.about_download), "关于下载", "确定", "");
+                        .show(getResources().getString(R.string.about_download_torrent), "关于下载", "确定", "");
                 break;
             case R.id.tracker_manager:
                 startActivity(new Intent(DownloadManagerActivity.this, TrackerActivity.class));

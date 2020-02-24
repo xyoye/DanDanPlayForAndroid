@@ -96,6 +96,8 @@ public class Constants {
         static final String SMB_BETA_FEATURE = "smb_beta_feature";
         //上次登录时间
         static final String LAST_LOGIN_TIME = "lase_login_time";
+        //射手（伪）网API密钥
+        static final String SHOOTER_API_SECRET = "shooter_api_secret";
     }
 
     /**

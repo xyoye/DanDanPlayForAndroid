@@ -14,7 +14,7 @@ import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.net.RetrofitService;
+import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 

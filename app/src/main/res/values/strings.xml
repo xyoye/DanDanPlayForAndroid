@@ -24,13 +24,21 @@
         from zh.wikipedia.org
     </string>
 
-    <string name="about_download">
+    <string name="about_download_torrent">
         下载速度慢原因：\n
         &#160;&#160;1、种子资源不行，需要找其他资源下载\n
         &#160;&#160;2、tracker不足，你可以到tracker管理页面了解添加tracker\n\n
         种子资源不属弹弹所有，所以并不保证资源的完整性和有效性。\n\n
 
         注：长按下载项可对其进行管理
+    </string>
+
+    <string name="about_download_subtitle">
+        本应用使用的是开源字幕API，来源于射手（伪）网\nhttps://assrt.net/\n\n
+
+        由于API对查询次数有限制，所以需要使用者提供API密钥，该密钥为使用者在射手（伪）网中所有，本应用仅保存密钥于本地，不会以其它方式获取或公开密钥\n\n
+
+        获取API密钥需登录射手网，在用户面板取得\nhttps://secure.assrt.net/user/logon.xml
     </string>
 
     <string name="mkv_tips">

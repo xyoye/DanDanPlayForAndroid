@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.bean;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
-import com.xyoye.dandanplay.utils.net.RetrofitService;
+import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 
 import java.io.Serializable;
 import java.util.List;

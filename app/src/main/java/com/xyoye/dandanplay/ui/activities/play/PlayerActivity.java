@@ -45,8 +45,9 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
-import com.xyoye.dandanplay.utils.net.RetrofitService;
+import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
+import com.xyoye.dandanplay.utils.net.service.SubtitleRetrofitService;
 import com.xyoye.player.commom.bean.SubtitleBean;
 import com.xyoye.player.commom.listener.OnDanmakuListener;
 import com.xyoye.player.commom.listener.PlayerViewListener;
@@ -598,7 +599,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
             shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
             shooterParams.put("format", "json");
             shooterParams.put("lang", "Chn");
-            RetrofitService service = RetroFactory.getSubtitleInstance();
+            SubtitleRetrofitService service = RetroFactory.getSubtitleInstance();
 
             Observable<List<SubtitleBean.Shooter>> shooterObservable = service.queryShooter(shooterParams)
                     .onErrorReturnItem(new ArrayList<>());

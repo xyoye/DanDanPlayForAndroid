@@ -1,4 +1,4 @@
-package com.xyoye.dandanplay.utils.net;
+package com.xyoye.dandanplay.utils.net.service;
 
 import com.xyoye.dandanplay.bean.AnimeTagBean;
 import com.xyoye.dandanplay.bean.BangumiBean;
@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.bean.UploadDanmuBean;
 import com.xyoye.dandanplay.bean.params.HistoryParam;
+import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.util.List;
@@ -102,18 +103,6 @@ public interface RetrofitService {
     @POST("/api/v2/user/profile")
     Observable<CommJsonEntity> changeScreenName(@Field("screenName") String screenName);
 
-    @GET("/list")
-    Observable<MagnetBean> searchMagnet(@Query("keyword") String keyword, @Query("type") String typeId, @Query("subgroup") String subGroupId);
-
-    @GET("/type")
-    Observable<AnimeTypeBean> getAnimeType();
-
-    @GET("/subgroup")
-    Observable<SubGroupBean> getSubGroup();
-
-    @POST("/Magnet/Parse")
-    Observable<ResponseBody> downloadTorrent(@Body RequestBody requestBody);
-
     @POST("/api/v2/playhistory")
     Observable<CommJsonEntity> addPlayHistory(@Body HistoryParam params);
 
@@ -122,15 +111,6 @@ public interface RetrofitService {
 
     @GET("/api/v2/bangumi/season/anime/{year}/{month}")
     Observable<BangumiBean> getSeasonAnime(@Path("year") String year, @Path("month") String month);
-
-    @FormUrlEncoded
-    @Headers({"query:shooter"})
-    @POST("/api/subapi.php")
-    Observable<List<SubtitleBean.Shooter>> queryShooter(@FieldMap Map<String, String> map);
-
-    @Headers({"query:thunder"})
-    @GET("/subxl/{videoHash}.json")
-    Observable<SubtitleBean.Thunder> queryThunder(@Path("videoHash") String videoHash);
 
     @GET("/api/v2/search/tag")
     Observable<AnimeTagBean> getAnimeListByTag(@Query("tags") String tagId);

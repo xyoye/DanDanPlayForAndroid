@@ -22,6 +22,7 @@ import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LocalPlayHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
+import com.xyoye.dandanplay.ui.activities.personal.ShooterSubActivity;
 import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
 import com.xyoye.dandanplay.ui.activities.setting.DanmuBlockManagerActivity;
 import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
@@ -106,8 +107,8 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login,
             R.id.player_setting_ll, R.id.download_setting_ll, R.id.system_setting_ll,
             R.id.follow_ll, R.id.network_history_ll, R.id.local_history_ll, R.id.download_manager_ll,
-            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.bilibili_danmu_download_ll,
-            R.id.skin_ll})
+            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.skin_ll,
+            R.id.bilibili_danmu_download_ll, R.id.subtitle_download_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.user_image_iv:
@@ -156,11 +157,14 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
             case R.id.danmu_block_manager_ll:
                 launchActivity(DanmuBlockManagerActivity.class);
                 break;
+            case R.id.skin_ll:
+                switchSkin();
+                break;
             case R.id.bilibili_danmu_download_ll:
                 launchActivity(DownloadBiliBiliActivity.class);
                 break;
-            case R.id.skin_ll:
-                switchSkin();
+            case R.id.subtitle_download_ll:
+                launchActivity(ShooterSubActivity.class);
                 break;
         }
     }

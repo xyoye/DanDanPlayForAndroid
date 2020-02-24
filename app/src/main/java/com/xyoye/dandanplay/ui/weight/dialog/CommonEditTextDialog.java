@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.weight.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
     public static final int ADD_BLOCK = 2;
     public static final int REMOTE_TOKEN = 3;
     public static final int MAX_DOWNLOAD_RATE = 4;
+    public static final int SAVE_SHOOTER_API_SECRET = 5;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -56,14 +58,14 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
     public CommonEditTextDialog(@NonNull Context context, int type) {
         super(context, R.style.Dialog);
         this.type = type;
-        blockList = new ArrayList<>();
+        this.blockList = new ArrayList<>();
     }
 
     public CommonEditTextDialog(@NonNull Context context, int type, CommonEditTextListener listener) {
         super(context, R.style.Dialog);
         this.type = type;
         this.listener = listener;
-        blockList = new ArrayList<>();
+        this.blockList = new ArrayList<>();
     }
 
     public CommonEditTextDialog(@NonNull Context context, int type, List<String> blockList, CommonEditTextListener listener) {
@@ -79,6 +81,7 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         this.fullListener = listener;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +112,11 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
             case MAX_DOWNLOAD_RATE:
                 titleTv.setText("最大下载速度");
                 editText.setHint("请输入最大下载速度(k/s)，0为无限制");
+                editText.setMaxLines(1);
+                break;
+            case SAVE_SHOOTER_API_SECRET:
+                titleTv.setText("API密钥");
+                editText.setHint("请输入射手（伪）网API密钥");
                 editText.setMaxLines(1);
                 break;
         }
@@ -222,6 +230,18 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 } else if (!CommonUtils.isNum(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("请输入正确的速度");
+                } else if (listener != null) {
+                    listener.onConfirm(inputData);
+                    CommonEditTextDialog.this.dismiss();
+                }
+                break;
+            case SAVE_SHOOTER_API_SECRET:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("请输入API密钥");
+                } else if (inputData.length() != 32) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("请输入32位API密钥");
                 } else if (listener != null) {
                     listener.onConfirm(inputData);
                     CommonEditTextDialog.this.dismiss();

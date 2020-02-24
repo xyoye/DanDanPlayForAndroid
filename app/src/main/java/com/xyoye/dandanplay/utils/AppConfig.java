@@ -377,4 +377,15 @@ public class AppConfig {
     public void setLastLoginTime(long timeMs) {
         SPUtils.getInstance().put(Constants.Config.LAST_LOGIN_TIME, timeMs);
     }
+
+    /**
+     *  射手（伪）网API密钥
+     */
+    public String getShooterApiSecret() {
+        return SPUtils.getInstance().getString(Constants.Config.SHOOTER_API_SECRET);
+    }
+
+    public void setShooterApiSecret(String apiSecret) {
+        SPUtils.getInstance().put(Constants.Config.SHOOTER_API_SECRET, apiSecret);
+    }
 }

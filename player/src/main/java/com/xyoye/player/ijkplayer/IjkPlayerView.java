@@ -748,6 +748,11 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     @SuppressLint("UseSparseArrays")
     private void initDanmu() {
         SettingDanmuView mSettingDanmuView = topBarView.getDanmuSettingView();
+        //设置最大行数
+        int maxLine = mSettingDanmuView.getDanmuMaxLine();
+        Map<Integer, Integer> maxDanmuLineMap = new HashMap<>();
+        maxDanmuLineMap.put(BaseDanmaku.TYPE_SCROLL_LR, maxLine);
+        maxDanmuLineMap.put(BaseDanmaku.TYPE_SCROLL_RL, maxLine);
         //设置禁止重叠
         Map<Integer, Boolean> overlappingEnablePair = new HashMap<>();
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_LR, true);
@@ -760,6 +765,8 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         mDanmakuContext = DanmakuContext.create();
         //设置防弹幕重叠
         mDanmakuContext.preventOverlapping(overlappingEnablePair);
+        //设置弹幕行数
+        mDanmakuContext.setMaximumLines(maxLine == -1 ? null : maxDanmuLineMap);
         //合并重复弹幕
         mDanmakuContext.setDuplicateMergingEnabled(true);
         //弹幕文字大小
@@ -861,6 +868,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
         int numberLimit = PlayerConfigShare.getInstance().getDanmuNumberLimit();
+        int maxLine = PlayerConfigShare.getInstance().getDanmuMaxLine();
         boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
         boolean isShowTop = PlayerConfigShare.getInstance().isShowTopDanmu();
         boolean isShowBottom = PlayerConfigShare.getInstance().isShowBottomDanmu();
@@ -870,6 +878,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 .setDanmuSpeed(progressSpeed)
                 .setDanmuAlpha(progressAlpha)
                 .setDanmuNumberLimit(numberLimit)
+                .setDanmuMaxLine(maxLine)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
                 .setListener(new SettingDanmuView.SettingDanmuListener() {
                     @Override
@@ -963,6 +972,16 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                     public void setNumberLimit(int num) {
                         PlayerConfigShare.getInstance().setDanmuNumberLimit(num);
                         mDanmakuContext.setMaximumVisibleSizeInScreen(num);
+                    }
+
+                    @Override
+                    @SuppressLint("UseSparseArrays")
+                    public void setMaxLine(int num) {
+                        PlayerConfigShare.getInstance().setDanmuMaxLine(num);
+                        Map<Integer, Integer> maxLineMap = new HashMap<>();
+                        maxLineMap.put(BaseDanmaku.TYPE_SCROLL_LR, num);
+                        maxLineMap.put(BaseDanmaku.TYPE_SCROLL_RL, num);
+                        mDanmakuContext.setMaximumLines(num == -1 ? null : maxLineMap);
                     }
                 })
                 .init();

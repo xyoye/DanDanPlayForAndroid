@@ -75,6 +75,14 @@ public class PlayerConfigShare {
         getShare().saveSharedPreferences(Constants.DANMU_NUMBER_LIMIT, num);
     }
 
+    public int getDanmuMaxLine(){
+        return getShare().loadIntSharedPreference(Constants.DANMU_MAX_LINE);
+    }
+
+    public void setDanmuMaxLine(int num){
+        getShare().saveSharedPreferences(Constants.DANMU_MAX_LINE, num);
+    }
+
     public boolean isShowTopDanmu(){
         return getShare().load(Constants.DANMU_TOP, true);
     }

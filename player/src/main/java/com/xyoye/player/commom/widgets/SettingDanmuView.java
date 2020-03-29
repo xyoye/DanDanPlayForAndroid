@@ -39,6 +39,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private Switch mDanmuCloudFilter;
     private TextView numberNoLimitTv, numberAutoLimitTv;
     private EditText numberInputLimitEt;
+    private TextView maxLineTv;
+    private EditText maxLineEt;
     //是否开启云屏蔽
     private boolean isOpenCloudFilter = false;
     //弹幕文字大小
@@ -49,6 +51,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private float mDanmuSpeed;
     //弹幕同屏数量
     private int mDanmuNumberLimit;
+    //滚动弹幕最大行数
+    private int mDanmuMaxLine;
     //弹幕屏蔽获取
     private boolean isShowTop = true;
     private boolean isShowMobile = true;
@@ -87,6 +91,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         numberNoLimitTv = findViewById(R.id.number_no_limit_tv);
         numberAutoLimitTv = findViewById(R.id.number_auto_limit_tv);
         numberInputLimitEt = findViewById(R.id.number_input_limit_et);
+        maxLineEt = findViewById(R.id.max_line_et);
+        maxLineTv = findViewById(R.id.max_line_tv);
 
         mDanmuSourceChangeTv.setOnClickListener(this);
         mDanmuMobileIv.setOnClickListener(this);
@@ -97,6 +103,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         reduceDanmuExtraTimeTv.setOnClickListener(this);
         numberNoLimitTv.setOnClickListener(this);
         numberAutoLimitTv.setOnClickListener(this);
+        maxLineTv.setOnClickListener(this);
 
         danmuExtraTimeEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
         danmuExtraTimeEt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -104,6 +111,9 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         numberInputLimitEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
         numberInputLimitEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         numberInputLimitEt.setSingleLine(true);
+        maxLineEt.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        maxLineEt.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        maxLineEt.setSingleLine(true);
     }
 
     public SettingDanmuView setListener(SettingDanmuListener settingListener) {
@@ -149,6 +159,12 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     //初始同屏数量
     public SettingDanmuView setDanmuNumberLimit(int num) {
         setLimitSize(num);
+        return this;
+    }
+
+    //初始同屏数量
+    public SettingDanmuView setDanmuMaxLine(int num) {
+        setMaxLine(num);
         return this;
     }
 
@@ -283,6 +299,27 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             return false;
         });
 
+        maxLineEt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                try {
+                    String lineText = maxLineEt.getText().toString().trim();
+                    int num = Integer.valueOf(lineText);
+                    if (num < 1) {
+                        ToastUtils.showShort("滚动弹幕行数不能小于1");
+                        return true;
+                    }
+                    setMaxLine(num);
+                    settingListener.setMaxLine(num);
+                } catch (Exception e) {
+                    ToastUtils.showShort("请输入正确的数量");
+                    return true;
+                }
+                maxLineEt.clearFocus();
+                return false;
+            }
+            return false;
+        });
+
         mDanmuCloudFilter.setOnCheckedChangeListener((buttonView, isChecked) ->
                 settingListener.setCloudFilter(isChecked));
 
@@ -292,7 +329,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     }
 
     /**
-     * 设置语言类型
+     * 设置同屏数量
      */
     @SuppressLint("SetTextI18n")
     private void setLimitSize(int num) {
@@ -313,6 +350,22 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
                 numberAutoLimitTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
                 numberInputLimitEt.setText(num + "");
                 break;
+        }
+    }
+
+
+    /**
+     * 设置最大滚动行数
+     */
+    @SuppressLint("SetTextI18n")
+    private void setMaxLine(int num) {
+        mDanmuMaxLine = num;
+        if (num == -1) {
+            maxLineTv.setBackgroundColor(CommonPlayerUtils.getResColor(getContext(), R.color.selected_view_bg));
+            maxLineEt.setText("");
+        } else {
+            maxLineTv.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.sel_item_background));
+            maxLineEt.setText(num + "");
         }
     }
 
@@ -355,6 +408,9 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         } else if (id == R.id.number_no_limit_tv) {
             setLimitSize(0);
             settingListener.setNumberLimit(0);
+        } else if (id == R.id.max_line_tv){
+            setMaxLine(-1);
+            settingListener.setMaxLine(-1);
         }
     }
 
@@ -398,6 +454,10 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         return mDanmuNumberLimit;
     }
 
+    public int getDanmuMaxLine() {
+        return mDanmuMaxLine;
+    }
+
 
     public interface SettingDanmuListener {
         void openDanmuSelector();
@@ -425,5 +485,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         void setExtraTimeReduce(int time);
 
         void setNumberLimit(int num);
+
+        void setMaxLine(int num);
     }
 }

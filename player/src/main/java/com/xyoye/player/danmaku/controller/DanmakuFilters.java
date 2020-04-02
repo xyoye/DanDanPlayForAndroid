@@ -7,7 +7,6 @@ import com.xyoye.player.danmaku.danmaku.model.Duration;
 import com.xyoye.player.danmaku.danmaku.model.IDanmakus;
 import com.xyoye.player.danmaku.danmaku.model.android.DanmakuContext;
 import com.xyoye.player.danmaku.danmaku.model.android.Danmakus;
-import com.xyoye.player.danmaku.danmaku.util.SystemClock;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -248,7 +247,7 @@ public class DanmakuFilters {
                 return false;
             }
 
-            long elapsedTime = SystemClock.uptimeMillis() - timer.currMillisecond;
+            long elapsedTime = DimensionTimer.getInstance().get2dTime() - timer.currMillisecond;
             return elapsedTime >= mMaxTime;
         }
 
@@ -434,11 +433,11 @@ public class DanmakuFilters {
 
         private final void removeTimeoutDanmakus(final IDanmakus danmakus, final long limitTime) {
             danmakus.forEachSync(new IDanmakus.DefaultConsumer<BaseDanmaku>() {
-                long startTime = SystemClock.uptimeMillis();
+                long startTime = DimensionTimer.getInstance().get2dTime();
                 @Override
                 public int accept(BaseDanmaku item) {
                     try {
-                        if (SystemClock.uptimeMillis() - startTime > limitTime) {
+                        if (DimensionTimer.getInstance().get2dTime() - startTime > limitTime) {
                             return ACTION_BREAK;
                         }
                         if (item.isTimeOut()) {
@@ -456,7 +455,7 @@ public class DanmakuFilters {
         private void removeTimeoutDanmakus(LinkedHashMap<String, BaseDanmaku> danmakus,
                 int limitTime) {
             Iterator<Entry<String, BaseDanmaku>> it = danmakus.entrySet().iterator();
-            long startTime = SystemClock.uptimeMillis();
+            long startTime = DimensionTimer.getInstance().get2dTime();
             while (it.hasNext()) {
                 try {
                     Entry<String, BaseDanmaku> entry = it.next();
@@ -469,7 +468,7 @@ public class DanmakuFilters {
                 } catch (Exception e) {
                     break;
                 }
-                if (SystemClock.uptimeMillis() - startTime > limitTime) {
+                if (DimensionTimer.getInstance().get2dTime() - startTime > limitTime) {
                     break;
                 }
             }

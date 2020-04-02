@@ -113,9 +113,9 @@ public class PlayerManagerActivity extends BaseMvcActivity {
         videoPath = openIntent.getStringExtra("video_path");
         danmuPath = openIntent.getStringExtra("danmu_path");
         zimuPath = openIntent.getStringExtra("zimu_path");
-        currentPosition = openIntent.getLongExtra("current_position", 0);
+        currentPosition = openIntent.getLongExtra("current_position", 0L);
         episodeId = openIntent.getIntExtra("episode_id", 0);
-        thunderTaskId = openIntent.getLongExtra("thunder_task_id", -1);
+        thunderTaskId = openIntent.getLongExtra("thunder_task_id", -1L);
         searchWord = openIntent.getStringExtra("search_word");
 
         sourceOrigin = openIntent.getIntExtra("source_origin", SOURCE_ORIGIN_LOCAL);
@@ -272,12 +272,13 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     /**
      * 播放局域网文件
      */
-    public static void launchPlayerSmb(Context context, String title, String path) {
+    public static void launchPlayerSmb(Context context, String title, String path, String zimu) {
         Intent intent = new Intent(context, PlayerManagerActivity.class);
         intent.putExtra("video_title", title);
         intent.putExtra("video_path", path);
         intent.putExtra("danmu_path", "");
-        intent.putExtra("current_position", 0);
+        intent.putExtra("zimu_path", zimu);
+        intent.putExtra("current_position", 0L);
         intent.putExtra("episode_id", 0);
         intent.putExtra("source_origin", SOURCE_ORIGIN_SMB);
         context.startActivity(intent);

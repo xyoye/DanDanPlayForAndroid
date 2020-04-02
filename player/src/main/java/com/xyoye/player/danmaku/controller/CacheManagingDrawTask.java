@@ -688,7 +688,7 @@ public class CacheManagingDrawTask extends DrawTask {
                 IDanmakus danmakus = null;
                 try {
                     long begin = mTimer.currMillisecond;
-                    long end = begin + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate()) * 2;
+                    long end = begin + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * 2;
                     if (danmakuList != null)
                         danmakus = danmakuList.subnew(begin - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION, end);
                 } catch (Exception e) {
@@ -723,11 +723,11 @@ public class CacheManagingDrawTask extends DrawTask {
             private long prepareCaches(final boolean repositioned) {
                 preMeasure();
                 final long curr = mCacheTimer.currMillisecond - 30;
-                final long end = curr + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mScreenSize * mContext.getDanmuTimeRate());
+                final long end = curr + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mScreenSize;
                 if (end < mTimer.currMillisecond) {
                     return 0;
                 }
-                final long startTime = SystemClock.uptimeMillis();
+                final long startTime = DimensionTimer.getInstance().get2dTime();
                 IDanmakus danmakus = null;
                 int tryCount = 0;
                 boolean hasException = false;
@@ -819,7 +819,7 @@ public class CacheManagingDrawTask extends DrawTask {
                         // build cache
                         buildCache(item, false);
                         if (!repositioned) {
-                            long consumingTime = SystemClock.uptimeMillis() - startTime;
+                            long consumingTime = DimensionTimer.getInstance().get2dTime() - startTime;
                             if (consumingTime >= DanmakuFactory.COMMON_DANMAKU_DURATION * mScreenSize) {
 //                            message = "break at consumingTime out:" + consumingTime;
                                 return ACTION_BREAK;
@@ -828,7 +828,7 @@ public class CacheManagingDrawTask extends DrawTask {
                         return ACTION_CONTINUE;
                     }
                 });
-                consumingTime = SystemClock.uptimeMillis() - startTime;
+                consumingTime = DimensionTimer.getInstance().get2dTime() - startTime;
                 if (item != null) {
                     mCacheTimer.update(item.getTime());
 //Log.i("cache","stop at :"+item.time+","+count+",size:"+danmakus.size()+","+message);

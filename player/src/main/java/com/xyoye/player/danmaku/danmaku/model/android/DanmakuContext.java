@@ -3,6 +3,7 @@ package com.xyoye.player.danmaku.danmaku.model.android;
 
 import android.graphics.Typeface;
 
+import com.xyoye.player.danmaku.controller.DimensionTimer;
 import com.xyoye.player.danmaku.controller.DanmakuFilters;
 import com.xyoye.player.danmaku.controller.DanmakuFilters.IDanmakuFilter;
 import com.xyoye.player.danmaku.danmaku.model.AbsDanmakuSync;
@@ -78,6 +79,8 @@ public class DanmakuContext implements Cloneable {
      * 播放时间倍率，用于倍速
      */
     public float speedTimeRate;
+
+    public DimensionTimer timer2d = DimensionTimer.getInstance();
 
     public AbsDanmakuSync danmakuSync;
 
@@ -189,6 +192,7 @@ public class DanmakuContext implements Cloneable {
      */
     public void setDanmuTimeRate(float rate){
         speedTimeRate = rate;
+        timer2d.setTimeRate(speedTimeRate);
     }
 
     public float getDanmuTimeRate(){

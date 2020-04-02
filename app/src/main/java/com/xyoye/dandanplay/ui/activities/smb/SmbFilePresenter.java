@@ -1,6 +1,9 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
+import com.xyoye.libsmb.info.SmbFileInfo;
+
+import java.util.List;
 
 /**
  * Created by xyoye on 2020/1/3.
@@ -14,5 +17,5 @@ interface SmbFilePresenter extends BaseMvpPresenter {
 
     void openChildDirectory(String dirName);
 
-    void openFile(String fileName);
+    void openFile(List<SmbFileInfo> smbFileInfoList, String fileName);
 }

@@ -197,7 +197,7 @@ public class DrawHandler extends Handler {
         int what = msg.what;
         switch (what) {
             case PREPARE:
-                mTimeBase = SystemClock.uptimeMillis();
+                mTimeBase = DimensionTimer.getInstance().get2dTime();
                 if (mParser == null || !mDanmakuView.isViewReady()) {
                     sendEmptyMessageDelayed(PREPARE, 100);
                 } else {
@@ -261,7 +261,7 @@ public class DrawHandler extends Handler {
                 if (mReady) {
                     mRenderingState.reset();
                     mDrawTimes.clear();
-                    mTimeBase = SystemClock.uptimeMillis() - pausedPosition;
+                    mTimeBase = DimensionTimer.getInstance().get2dTime() - pausedPosition;
                     timer.update(pausedPosition);
                     removeMessages(RESUME);
                     sendEmptyMessage(UPDATE);
@@ -385,7 +385,7 @@ public class DrawHandler extends Handler {
         if (quitFlag) {
             return;
         }
-        long startMS = SystemClock.uptimeMillis();
+        long startMS = DimensionTimer.getInstance().get2dTime();
         long d = syncTimer(startMS);
         if (d < 0 && !mNonBlockModeEnable) {
             removeMessages(UPDATE);
@@ -423,11 +423,11 @@ public class DrawHandler extends Handler {
         mThread = new UpdateThread("DFM Update") {
             @Override
             public void run() {
-                long lastTime = SystemClock.uptimeMillis();
+                long lastTime = DimensionTimer.getInstance().get2dTime();
                 long dTime = 0;
                 while (!isQuited() && !quitFlag) {
-                    long startMS = SystemClock.uptimeMillis();
-                    dTime = SystemClock.uptimeMillis() - lastTime;
+                    long startMS = DimensionTimer.getInstance().get2dTime();
+                    dTime = DimensionTimer.getInstance().get2dTime() - lastTime;
                     long diffTime = mFrameUpdateRate - dTime;
                     if (diffTime > 1 && !mNonBlockModeEnable) {
                         SystemClock.sleep(1);
@@ -473,7 +473,7 @@ public class DrawHandler extends Handler {
             return;
         }
         Choreographer.getInstance().postFrameCallback(mFrameCallback);
-        long startMS = SystemClock.uptimeMillis();
+        long startMS = DimensionTimer.getInstance().get2dTime();
         long d = syncTimer(startMS);
         if (d < 0) {
             removeMessages(UPDATE);
@@ -547,7 +547,7 @@ public class DrawHandler extends Handler {
 
     private void syncTimerIfNeeded() {
         if (mInWaitingState) {
-            syncTimer(SystemClock.uptimeMillis());
+            syncTimer(DimensionTimer.getInstance().get2dTime());
         }
     }
 
@@ -783,7 +783,7 @@ public class DrawHandler extends Handler {
         if (isStop() || !isPrepared() || mInSeekingAction) {
             return;
         }
-        mRenderingState.sysTime = SystemClock.uptimeMillis();
+        mRenderingState.sysTime = DimensionTimer.getInstance().get2dTime();
         mInWaitingState = true;
         if (mUpdateInSeparateThread) {
             if (mThread == null) {
@@ -827,7 +827,7 @@ public class DrawHandler extends Handler {
     }
 
     private synchronized void recordRenderingTime() {
-        long lastTime = SystemClock.uptimeMillis();
+        long lastTime = DimensionTimer.getInstance().get2dTime();
         mDrawTimes.addLast(lastTime);
         int frames = mDrawTimes.size();
         if (frames > MAX_RECORD_SIZE) {
@@ -880,7 +880,7 @@ public class DrawHandler extends Handler {
         if (quitFlag || !mInWaitingState) {
             return timer.currMillisecond - mRemainingTime;
         }
-        return SystemClock.uptimeMillis() - mTimeBase;
+        return DimensionTimer.getInstance().get2dTime() - mTimeBase;
     }
 
     public void clearDanmakusOnScreen() {

@@ -17,5 +17,5 @@ interface SmbFileView extends BaseMvpView {
 
     void setPreviousEnabled(boolean isEnabled);
 
-    void launchPlayerActivity(String url);
+    void launchPlayerActivity(String url, String zimu);
 }

@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -34,6 +35,8 @@ import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -426,5 +429,18 @@ public class CommonUtils {
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         String curTime = formatter.format(curDate);
         return "/" + header + "_" + curTime + tail;
+    }
+
+    /**
+     * 关闭资源
+     */
+    public static void closeResource(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

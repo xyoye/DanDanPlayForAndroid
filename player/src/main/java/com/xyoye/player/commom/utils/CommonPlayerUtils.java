@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +18,10 @@ import java.util.List;
  */
 
 public final class CommonPlayerUtils {
+
+    public static final String[] subtitleExtension = new String[]{
+            "ASS", "SCC", "SRT", "STL", "TTML"
+    };
 
     /**
      * 根据视频文件获取同文件夹下字幕
@@ -33,12 +38,7 @@ public final class CommonPlayerUtils {
             return "";
 
         //可加载的字幕格式
-        List<String> extensionList = new ArrayList<>();
-        extensionList.add("ASS");
-        extensionList.add("SCC");
-        extensionList.add("SRT");
-        extensionList.add("STL");
-        extensionList.add("TTML");
+        List<String> extensionList = Arrays.asList(subtitleExtension);
 
         //无后缀文件路径
         String videoPathNoExt = videoFile.getAbsolutePath();

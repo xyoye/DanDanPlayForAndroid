@@ -28,7 +28,6 @@ import com.xyoye.player.danmaku.danmaku.parser.BaseDanmakuParser;
 import com.xyoye.player.danmaku.danmaku.renderer.IRenderer;
 import com.xyoye.player.danmaku.danmaku.renderer.IRenderer.RenderingState;
 import com.xyoye.player.danmaku.danmaku.renderer.android.DanmakuRenderer;
-import com.xyoye.player.danmaku.danmaku.util.SystemClock;
 
 public class DrawTask implements IDrawTask {
 
@@ -164,7 +163,7 @@ public class DrawTask implements IDrawTask {
         synchronized (danmakuList) {
             if (!isClearDanmakusOnScreen) {
                 long beginMills = mTimer.currMillisecond - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION - 100;
-                long endMills = mTimer.currMillisecond + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate());
+                long endMills = mTimer.currMillisecond + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION;
                 IDanmakus tempDanmakus = danmakuList.subnew(beginMills, endMills);
                 if (tempDanmakus != null)
                     danmakus = tempDanmakus;
@@ -199,12 +198,12 @@ public class DrawTask implements IDrawTask {
         if (danmakuList == null || danmakuList.isEmpty() || mLiveDanmakus.isEmpty())
             return;
         mLiveDanmakus.forEachSync(new IDanmakus.DefaultConsumer<BaseDanmaku>() {
-            long startTime = SystemClock.uptimeMillis();
+            long startTime = DimensionTimer.getInstance().get2dTime();
 
             @Override
             public int accept(BaseDanmaku danmaku) {
                 boolean isTimeout = danmaku.isTimeOut();
-                if (SystemClock.uptimeMillis() - startTime > msec) {
+                if (DimensionTimer.getInstance().get2dTime() - startTime > msec) {
                     return ACTION_BREAK;
                 }
                 if (isTimeout) {
@@ -222,7 +221,7 @@ public class DrawTask implements IDrawTask {
     @Override
     public IDanmakus getVisibleDanmakusOnTime(long time) {
         long beginMills = time - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION - 100;
-        long endMills = time + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate());
+        long endMills = time + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION;
         IDanmakus subDanmakus = null;
         int i = 0;
         while (i++ < 3) {  //avoid ConcurrentModificationException
@@ -356,7 +355,7 @@ public class DrawTask implements IDrawTask {
             RenderingState renderingState = mRenderingState;
             // prepare screenDanmakus
             long beginMills = timer.currMillisecond - mContext.mDanmakuFactory.MAX_DANMAKU_DURATION - 100;
-            long endMills = timer.currMillisecond + (long)(mContext.mDanmakuFactory.MAX_DANMAKU_DURATION * mContext.getDanmuTimeRate());
+            long endMills = timer.currMillisecond + mContext.mDanmakuFactory.MAX_DANMAKU_DURATION;
             IDanmakus screenDanmakus = danmakus;
             if(mLastBeginMills > beginMills || timer.currMillisecond > mLastEndMills) {
                 screenDanmakus = danmakuList.sub(beginMills, endMills);
@@ -496,7 +495,7 @@ public class DrawTask implements IDrawTask {
 
     private void beginTracing(RenderingState renderingState, IDanmakus runningDanmakus, IDanmakus screenDanmakus) {
         renderingState.reset();
-        renderingState.timer.update(SystemClock.uptimeMillis());
+        renderingState.timer.update(DimensionTimer.getInstance().get2dTime());
         renderingState.indexInScreen = 0;
         renderingState.totalSizeInScreen = (runningDanmakus != null ? runningDanmakus.size() : 0) + (screenDanmakus != null ? screenDanmakus.size() : 0);
     }
@@ -509,6 +508,6 @@ public class DrawTask implements IDrawTask {
         BaseDanmaku lastDanmaku = renderingState.lastDanmaku;
         renderingState.lastDanmaku = null;
         renderingState.endTime = lastDanmaku != null ? lastDanmaku.getActualTime() : RenderingState.UNKNOWN_TIME;
-        renderingState.consumingTime = renderingState.timer.update(SystemClock.uptimeMillis());
+        renderingState.consumingTime = renderingState.timer.update(DimensionTimer.getInstance().get2dTime());
     }
 }

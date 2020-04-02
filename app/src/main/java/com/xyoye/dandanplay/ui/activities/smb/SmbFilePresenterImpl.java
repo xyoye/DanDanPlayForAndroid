@@ -2,17 +2,24 @@ package com.xyoye.dandanplay.ui.activities.smb;
 
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.service.SmbService;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.libsmb.SmbManager;
 import com.xyoye.libsmb.controller.Controller;
 import com.xyoye.libsmb.info.SmbFileInfo;
+import com.xyoye.player.commom.utils.CommonPlayerUtils;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -76,7 +83,7 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
     }
 
     @Override
-    public void openFile(String fileName) {
+    public void openFile(List<SmbFileInfo> smbFileInfoList, String fileName) {
         if (!CommonUtils.isMediaFile(fileName)) {
             ToastUtils.showShort("不是可播放的视频文件");
             return;
@@ -91,7 +98,15 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
         String videoUrl = httpUrl + "/smb/" + fileName;
         SmbServer.SMB_FILE_NAME = fileName;
 
-        getView().launchPlayerActivity(videoUrl);
+        //是否自动加载同名字幕
+        if (AppConfig.getInstance().isAutoLoadLocalSubtitle()) {
+            String zimuName = checkZimuExist(smbFileInfoList, fileName);
+            if (zimuName != null) {
+                loadSmbSubtitlePlay(videoUrl, zimuName);
+                return;
+            }
+        }
+        getView().launchPlayerActivity(videoUrl, "");
     }
 
     private void openDirectory(int actionType, String dirName) {
@@ -121,6 +136,103 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
                         getView().updateFileList(smbFileInfoList);
                         getView().updatePathText(smbController.getCurrentPath());
                         getView().setPreviousEnabled(!smbController.isRootDir());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private String checkZimuExist(List<SmbFileInfo> smbFileInfoList, String fullVideoName) {
+        //获取smb视频文件名：test.mp4 -> test.
+        String videoName = FileUtils.getFileNameNoExtension(fullVideoName) + ".";
+
+        for (SmbFileInfo fileInfo : smbFileInfoList) {
+            String fileName = fileInfo.getFileName();
+            //是否以视频文件名开头：可test.ass，不可test1.ass
+            if (fileName.startsWith(videoName)) {
+                //是否为可解析字幕：可.ass，不可.1ass
+                for (String ext : CommonPlayerUtils.subtitleExtension) {
+                    if (fileName.toUpperCase().endsWith("." + ext)) {
+                        //是否只包含最多两个点：可test.ass、test.sc.ass，不可test.1.sc.ass
+                        int pointCount = fileName.split(".").length - 1;
+                        if (pointCount <= 2) {
+                            return fileName;
+                        }
+                    }
+                }
+
+            }
+        }
+        return null;
+    }
+
+    private void loadSmbSubtitlePlay(String videoUrl, String subtitleName) {
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            FileOutputStream outputStream = null;
+            InputStream inputStream = null;
+            try {
+                String folderPath = Constants.DefaultConfig.downloadPath + Constants.DefaultConfig.subtitleFolder;
+                File folder = new File(folderPath);
+                if (!folder.exists() || !folder.isDirectory()) {
+                    folder.mkdirs();
+                }
+                File subtitleFile = new File(folder, subtitleName);
+                if (subtitleFile.exists()) {
+                    subtitleFile.delete();
+                }
+                subtitleFile.createNewFile();
+
+                outputStream = new FileOutputStream(subtitleFile);
+
+                inputStream = SmbManager.getInstance().getController().getFileInputStream(subtitleName);
+                long contentLength = SmbManager.getInstance().getController().getFileLength(subtitleName);
+                if (inputStream != null) {
+
+                    int bufferSize = 512 * 1024;
+                    long readTotalSize = 0;
+                    byte[] readBuffer = new byte[bufferSize];
+                    long readSize = (bufferSize > contentLength) ? contentLength : bufferSize;
+                    int readLen = inputStream.read(readBuffer, 0, (int) readSize);
+
+                    while (readLen > 0 && readTotalSize < contentLength) {
+                        outputStream.write(readBuffer, 0, readLen);
+                        readTotalSize += readLen;
+                        readSize = (bufferSize > (contentLength - readTotalSize))
+                                ? (contentLength - readTotalSize)
+                                : bufferSize;
+                        readLen = inputStream.read(readBuffer, 0, (int) readSize);
+                    }
+                    outputStream.flush();
+                    emitter.onNext(subtitleFile.getAbsolutePath());
+                } else {
+                    emitter.onNext("");
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            } finally {
+                CommonUtils.closeResource(outputStream);
+                CommonUtils.closeResource(inputStream);
+            }
+            emitter.onComplete();
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String subtitleFilePath) {
+                        getView().launchPlayerActivity(videoUrl, subtitleFilePath);
                     }
 
                     @Override

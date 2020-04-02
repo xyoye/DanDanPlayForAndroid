@@ -63,7 +63,7 @@ public class SmbFileActivity extends BaseMvpActivity<SmbFilePresenter> implement
                     if (isDir) {
                         presenter.openChildDirectory(fileName);
                     } else {
-                        presenter.openFile(fileName);
+                        presenter.openFile(smbFileList, fileName);
                     }
                 });
             }
@@ -112,11 +112,12 @@ public class SmbFileActivity extends BaseMvpActivity<SmbFilePresenter> implement
     }
 
     @Override
-    public void launchPlayerActivity(String videoUrl) {
+    public void launchPlayerActivity(String videoUrl, String zimu) {
         PlayerManagerActivity.launchPlayerSmb(
                 SmbFileActivity.this,
                 FileUtils.getFileNameNoExtension(videoUrl),
-                videoUrl
+                videoUrl,
+                zimu
         );
     }
 }

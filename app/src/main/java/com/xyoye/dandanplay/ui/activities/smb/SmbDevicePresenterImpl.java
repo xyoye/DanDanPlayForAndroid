@@ -173,7 +173,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
 
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             SmbManager smbManager = SmbManager.getInstance();
-            smbManager.setEnable(true, openBetaFeature, openBetaFeature, true);
+            smbManager.setEnable(true, openBetaFeature, true, openBetaFeature);
             if (smbManager.linkStart(smbLinkInfo))
                 emitter.onNext(true);
             else

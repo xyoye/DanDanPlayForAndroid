@@ -60,6 +60,7 @@
         修复时间：下一次启动应用\n
         补丁大小：20~80k左右\n\n
     </string>
+    <string name="source_origin">以下信息由动漫花园资源网（share.dmhy.org）提供</string>
 
     <string-array name="splash_svg_data">
         <item>

@@ -77,6 +77,10 @@ public final class SharedPreferencesUtil {
         return getShare().getInt(key, 0);
     }
 
+    public int loadIntSharedPreference(String key, int defaultValue) {
+        return getShare().getInt(key, defaultValue);
+    }
+
     public void saveSharedPreferences(String key, float value) {
         SharedPreferences.Editor editor = getShare().edit();
         editor.putFloat(key, value);

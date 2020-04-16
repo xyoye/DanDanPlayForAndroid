@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
@@ -36,7 +35,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,15 +58,25 @@ public class CommonUtils {
     private static final String MEDIA_DOCUMENT = "com.android.providers.media.documents";
     private static final String DOWNLOAD_URI = "content://downloads/public_downloads";
 
+    private static String appVersion = "";
+
     /**
      * 获取本地软件版本号
      */
-    public static String getLocalVersion(Context context) {
+    public static String getAppVersion() {
+        if (!TextUtils.isEmpty(appVersion)) {
+            return appVersion;
+        }
+
+        if (!SoUtils.getInstance().isOfficialApplication()) {
+            return "非官方应用";
+        }
+
         String localVersionName = "";
         try {
-            PackageInfo packageInfo = context.getApplicationContext()
+            PackageInfo packageInfo = IApplication.get_context()
                     .getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
+                    .getPackageInfo(IApplication.get_context().getPackageName(), 0);
             localVersionName = packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

@@ -118,7 +118,7 @@ public class FeedbackActivity extends BaseMvcActivity {
                     if (which == 0) {
                         String android_version = "Android " + android.os.Build.VERSION.RELEASE;
                         String phone_version = android.os.Build.MODEL;
-                        String version = CommonUtils.getLocalVersion(this);
+                        String version = CommonUtils.getAppVersion();
                         String app_version = getResources().getString(R.string.app_name) + " 版本" + version;
 
                         Intent mail_intent = new Intent(Intent.ACTION_SEND);

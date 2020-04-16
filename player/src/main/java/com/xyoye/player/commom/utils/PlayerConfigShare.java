@@ -76,7 +76,7 @@ public class PlayerConfigShare {
     }
 
     public int getDanmuMaxLine(){
-        return getShare().loadIntSharedPreference(Constants.DANMU_MAX_LINE);
+        return getShare().loadIntSharedPreference(Constants.DANMU_MAX_LINE, -1);
     }
 
     public void setDanmuMaxLine(int num){

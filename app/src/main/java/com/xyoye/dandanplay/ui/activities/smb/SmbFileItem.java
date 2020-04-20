@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.libsmb.info.SmbFileInfo;
+import com.xyoye.smb.info.SmbFileInfo;
 
 import butterknife.BindView;
 

@@ -8,16 +8,16 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
-import com.xyoye.libsmb.SmbManager;
-import com.xyoye.libsmb.exception.SmbLinkException;
-import com.xyoye.libsmb.info.SmbLinkInfo;
+import com.xyoye.smb.SmbManager;
+import com.xyoye.smb.exception.SmbLinkException;
+import com.xyoye.smb.info.SmbLinkInfo;
+import com.xyoye.smb.info.SmbType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,7 +89,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
                             deviceBean.setDomain(cursor.getString(6));
                             deviceBean.setAnonymous(cursor.getInt(7) == 1);
                             deviceBean.setRootFolder(cursor.getString(8));
-                            deviceBean.setSmbType(Constants.SmbType.SQL_DEVICE);
+                            deviceBean.setSmbType(Constants.SmbSourceType.SQL_DEVICE);
                             deviceList.add(deviceBean);
                         }
                         return deviceList;
@@ -160,7 +160,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
 
     @SuppressLint("CheckResult")
     @Override
-    public void loginSmbDevice(SmbDeviceBean smbDeviceBean) {
+    public void loginSmbDevice(SmbDeviceBean smbDeviceBean, SmbType smbType) {
         SmbLinkInfo smbLinkInfo = new SmbLinkInfo();
         smbLinkInfo.setAccount(smbDeviceBean.getAccount());
         smbLinkInfo.setIP(smbDeviceBean.getUrl());
@@ -169,11 +169,9 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
         smbLinkInfo.setAnonymous(smbDeviceBean.isAnonymous());
         smbLinkInfo.setRootFolder(smbDeviceBean.getRootFolder());
 
-        boolean openBetaFeature = AppConfig.getInstance().isOpenSmbBetaFeature();
-
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             SmbManager smbManager = SmbManager.getInstance();
-            smbManager.setEnable(true, openBetaFeature, true, openBetaFeature);
+            smbManager.setSmbType(smbType);
             if (smbManager.linkStart(smbLinkInfo))
                 emitter.onNext(true);
             else
@@ -196,9 +194,13 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
                     public void onError(Throwable e) {
                         if (e instanceof SmbLinkException){
                             SmbLinkException exception = (SmbLinkException)e;
-                            ToastUtils.showShort("登录失败："+exception.getDetailExceptions().get(0).getErrorMsg());
+                            String errorMsg = "";
+                            if (exception.getDetailExceptions() != null && exception.getDetailExceptions().size() > 0){
+                                errorMsg = "\n" + exception.getDetailExceptions().get(0).getErrorMsg();
+                            }
+                            ToastUtils.showShort("登录失败，试试切换连接工具"+errorMsg);
                         }else {
-                            ToastUtils.showShort("登录失败："+e.getMessage());
+                            ToastUtils.showShort("登录失败，试试切换连接工具\n"+e.getMessage());
                         }
                     }
 

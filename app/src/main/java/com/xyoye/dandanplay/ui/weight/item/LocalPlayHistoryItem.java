@@ -114,9 +114,13 @@ public class LocalPlayHistoryItem implements AdapterItem<LocalPlayHistoryBean> {
             }
 
             String zimuPath = model.getZimuPath();
-            File zimuFile = new File(zimuPath);
-            if (!zimuFile.exists()) {
+            if (TextUtils.isEmpty(zimuPath)){
                 zimuPath = "";
+            } else {
+                File zimuFile = new File(zimuPath);
+                if (!zimuFile.exists()) {
+                    zimuPath = "";
+                }
             }
 
             PlayerManagerActivity.launchPlayerHistory(

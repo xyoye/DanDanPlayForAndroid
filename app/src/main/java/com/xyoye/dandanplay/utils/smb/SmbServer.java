@@ -3,7 +3,7 @@ package com.xyoye.dandanplay.utils.smb;
 import android.text.TextUtils;
 
 import com.xyoye.dandanplay.utils.smb.http.HttpContentListener;
-import com.xyoye.libsmb.SmbManager;
+import com.xyoye.smb.SmbManager;
 
 import java.io.File;
 import java.io.IOException;

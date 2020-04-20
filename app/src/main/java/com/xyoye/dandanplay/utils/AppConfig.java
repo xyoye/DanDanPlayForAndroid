@@ -1,6 +1,9 @@
 package com.xyoye.dandanplay.utils;
 
+import android.text.TextUtils;
+
 import com.blankj.utilcode.util.SPUtils;
+import com.xyoye.smb.info.SmbType;
 
 /**
  * Created by xyoye on 2018/7/2.
@@ -357,14 +360,18 @@ public class AppConfig {
     }
 
     /**
-     * 是否开启SMB测试功能
+     * 上次使用的SMB连接工具
      */
-    public boolean isOpenSmbBetaFeature() {
-        return SPUtils.getInstance().getBoolean(Constants.Config.SMB_BETA_FEATURE);
+    public SmbType getSmbTools() {
+        String typeStr = SPUtils.getInstance().getString(Constants.Config.SMB_TOOLS_TYPE);
+        if (!TextUtils.isEmpty(typeStr)){
+            return SmbType.valueOf(typeStr);
+        }
+        return SmbType.SMBJ_RPC;
     }
 
-    public void setOpenSmbBetaFeature(boolean isOpen) {
-        SPUtils.getInstance().put(Constants.Config.SMB_BETA_FEATURE, isOpen);
+    public void setSmbTools(SmbType smbType) {
+        SPUtils.getInstance().put(Constants.Config.SMB_TOOLS_TYPE, smbType.toString());
     }
 
     /**

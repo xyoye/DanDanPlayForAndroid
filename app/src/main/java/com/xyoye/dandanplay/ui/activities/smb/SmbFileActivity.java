@@ -13,8 +13,8 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.libsmb.SmbManager;
-import com.xyoye.libsmb.info.SmbFileInfo;
+import com.xyoye.smb.SmbManager;
+import com.xyoye.smb.info.SmbFileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class SmbFileActivity extends BaseMvpActivity<SmbFilePresenter> implement
 
     @Override
     public void initView() {
-        setTitle("局域网 " + SmbManager.getInstance().getSmbType());
+        setTitle("局域网 " + SmbManager.getInstance().getSmbTypeName());
 
         smbFileList = new ArrayList<>();
         smbFileRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

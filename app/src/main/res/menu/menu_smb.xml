@@ -7,4 +7,12 @@
         android:orderInCategory="100"
         android:title="退出编辑"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/switch_tools_item"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_switch_smb_tools"
+        android:title="切换连接工具"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 </menu>

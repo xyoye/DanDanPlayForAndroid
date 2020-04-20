@@ -1,1 +1,2 @@
-include ':app', ':player' 
+include ':app', ':player'
+include ':smb'

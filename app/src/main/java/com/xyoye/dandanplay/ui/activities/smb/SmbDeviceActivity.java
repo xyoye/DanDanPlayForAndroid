@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -23,11 +24,13 @@ import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SmbDeviceDialog;
+import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.helper.SmbDeviceAction;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.libsmb.SmbManager;
+import com.xyoye.smb.SmbManager;
+import com.xyoye.smb.info.SmbType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -55,8 +58,11 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     private BaseRvAdapter<SmbDeviceBean> adapter;
     private List<SmbDeviceBean> smbList;
     private boolean isEdit = false;
+    private int index = -1;
 
-    private MenuItem exitEditItem;
+    private MenuItem exitEditItem, switchToolsItem;
+
+    private SmbType smbType;
 
     @NonNull
     @Override
@@ -72,6 +78,9 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     @Override
     public void initView() {
         setTitle("局域网");
+
+        smbType = AppConfig.getInstance().getSmbTools();
+
         smbList = new ArrayList<>();
         adapter = new BaseRvAdapter<SmbDeviceBean>(smbList) {
             @NonNull
@@ -132,11 +141,11 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.add_device_tv:
-                new SmbDeviceDialog(this, null, SmbDeviceAction.ACTION_DEVICE_ADD, deviceBean -> {
+                new SmbDeviceDialog(this, smbType, null, SmbDeviceAction.ACTION_DEVICE_ADD, deviceBean -> {
                     presenter.addSqlDevice(deviceBean);
                     smbList.add(0, deviceBean);
                     adapter.notifyDataSetChanged();
-                    presenter.loginSmbDevice(deviceBean);
+                    presenter.loginSmbDevice(deviceBean, smbType);
                 }).show();
                 break;
             case R.id.scan_device_tv:
@@ -148,13 +157,13 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
                     return;
 
                 SmbDeviceBean editDeviceBean = smbList.get(position);
-                new SmbDeviceDialog(this, editDeviceBean, SmbDeviceAction.ACTION_DEVICE_EDIT, deviceBean -> {
+                new SmbDeviceDialog(this, smbType, editDeviceBean, SmbDeviceAction.ACTION_DEVICE_EDIT, deviceBean -> {
                     switchEditMode(false, -1);
                     presenter.addSqlDevice(deviceBean);
                     smbList.remove(editDeviceBean);
                     smbList.add(0, deviceBean);
                     adapter.notifyDataSetChanged();
-                    presenter.loginSmbDevice(deviceBean);
+                    presenter.loginSmbDevice(deviceBean, smbType);
                 }).show();
                 break;
             }
@@ -169,9 +178,9 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
                             presenter.removeSqlDevice(url);
                             adapter.removeItem(position);
 
-                            if (smbList.size() == 0){
+                            if (smbList.size() == 0) {
                                 switchEditMode(false, -1);
-                            } else if (position < smbList.size()){
+                            } else if (position < smbList.size()) {
                                 smbList.get(position).setEditStatus(true);
                                 adapter.notifyItemChanged(position);
                             } else {
@@ -207,7 +216,7 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
         Iterator iterator = smbList.iterator();
         while (iterator.hasNext()) {
             SmbDeviceBean smbDeviceBean = (SmbDeviceBean) iterator.next();
-            if (smbDeviceBean.getSmbType() == Constants.SmbType.LAN_DEVICE)
+            if (smbDeviceBean.getSmbType() == Constants.SmbSourceType.LAN_DEVICE)
                 iterator.remove();
         }
 
@@ -243,7 +252,7 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(SmbManager.getInstance().getController() != null){
+        if (SmbManager.getInstance().getController() != null) {
             SmbManager.getInstance().getController().release();
         }
         if (ServiceUtils.isServiceRunning(SmbService.class))
@@ -266,6 +275,8 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
         getMenuInflater().inflate(R.menu.menu_smb, menu);
         exitEditItem = menu.findItem(R.id.exit_edit_item);
         exitEditItem.setVisible(false);
+        switchToolsItem = menu.findItem(R.id.switch_tools_item);
+        switchToolsItem.setVisible(true);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -273,6 +284,29 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.exit_edit_item) {
             switchEditMode(false, -1);
+        } else if (item.getItemId() == R.id.switch_tools_item) {
+            List<String> smbTools = new ArrayList<>();
+            smbTools.add(SmbType.SMBJ_RPC.toString());
+            smbTools.add(SmbType.JCIFS_NG.toString());
+            smbTools.add(SmbType.SMBJ.toString());
+            smbTools.add(SmbType.JCIFS.toString());
+
+            new AlertDialog.Builder(this)
+                    .setTitle("切换连接工具")
+                    .setSingleChoiceItems(smbTools.toArray(new String[0]), smbTools.indexOf(smbType.toString()), (dialog, which) -> {
+                        index = which;
+                    })
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        if (index == -1) {
+                            ToastUtils.showShort("请选择任一工具");
+                        } else {
+                            smbType = SmbType.valueOf(smbTools.get(index));
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -288,20 +322,20 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
 
         SmbDeviceBean smbDeviceBean = smbList.get(position);
         switch (smbDeviceBean.getSmbType()) {
-            case Constants.SmbType.LAN_DEVICE:
-            case Constants.SmbType.SQL_DEVICE:
+            case Constants.SmbSourceType.LAN_DEVICE:
+            case Constants.SmbSourceType.SQL_DEVICE:
                 //未输入账号名 && 不是匿名登录
                 if (StringUtils.isEmpty(smbDeviceBean.getAccount()) && !smbDeviceBean.isAnonymous()) {
-                    new SmbDeviceDialog(this, smbDeviceBean, SmbDeviceAction.ACTION_DEVICE_INIT, deviceBean -> {
+                    new SmbDeviceDialog(this, smbType, smbDeviceBean, SmbDeviceAction.ACTION_DEVICE_INIT, deviceBean -> {
                         smbList.remove(position);
                         presenter.addSqlDevice(deviceBean);
                         smbList.add(0, deviceBean);
                         adapter.notifyDataSetChanged();
-                        presenter.loginSmbDevice(smbDeviceBean);
+                        presenter.loginSmbDevice(smbDeviceBean, smbType);
                     }).show();
                     return;
                 }
-                presenter.loginSmbDevice(smbDeviceBean);
+                presenter.loginSmbDevice(smbDeviceBean, smbType);
                 break;
         }
     }
@@ -329,6 +363,7 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
             deleteTv.setClickable(true);
 
             exitEditItem.setVisible(true);
+            switchToolsItem.setVisible(false);
 
             for (int i = 0; i < smbList.size(); i++) {
                 smbList.get(i).setEditStatus(i == position);
@@ -345,6 +380,7 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
             deleteTv.setClickable(false);
 
             exitEditItem.setVisible(false);
+            switchToolsItem.setVisible(true);
 
             for (int i = 0; i < smbList.size(); i++) {
                 smbList.get(i).setEditStatus(false);

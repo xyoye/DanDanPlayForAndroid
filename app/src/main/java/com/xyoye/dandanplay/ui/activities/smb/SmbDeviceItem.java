@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities.smb;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -56,7 +55,7 @@ public class SmbDeviceItem implements AdapterItem<SmbDeviceBean> {
         String deviceName;
         if (!StringUtils.isEmpty(model.getNickName())) {
             deviceName = model.getNickName();
-        } else if (StringUtils.isEmpty(model.getName())) {
+        } else if (!StringUtils.isEmpty(model.getName())) {
             deviceName = model.getName();
         } else {
             deviceName = "UnKnow";
@@ -64,7 +63,7 @@ public class SmbDeviceItem implements AdapterItem<SmbDeviceBean> {
 
         smbNameTv.setText(deviceName);
         smbUrlTv.setText(model.getUrl());
-        smbCoverIv.setImageResource(model.getSmbType() == Constants.SmbType.SQL_DEVICE
+        smbCoverIv.setImageResource(model.getSmbType() == Constants.SmbSourceType.SQL_DEVICE
                 ? R.mipmap.ic_smb_sql_device
                 : R.mipmap.ic_smb_lan_device);
         itemLayout.setBackground(model.isEditStatus()

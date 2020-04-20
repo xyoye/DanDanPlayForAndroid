@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
-import com.xyoye.libsmb.info.SmbFileInfo;
+import com.xyoye.smb.info.SmbFileInfo;
 
 import java.util.List;
 

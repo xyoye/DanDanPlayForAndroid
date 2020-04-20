@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.helper.SmbDeviceAction;
+import com.xyoye.smb.info.SmbType;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,11 +52,14 @@ public class SmbDeviceDialog extends Dialog {
     private SmbDeviceAction action;
     private SmbDeviceDialogCallback callback;
 
-    public SmbDeviceDialog(@NonNull Context context, SmbDeviceBean deviceBean, SmbDeviceAction action, SmbDeviceDialogCallback callback) {
+    private SmbType smbType;
+
+    public SmbDeviceDialog(@NonNull Context context, SmbType smbType, SmbDeviceBean deviceBean, SmbDeviceAction action, SmbDeviceDialogCallback callback) {
         super(context, R.style.Dialog);
         this.deviceBean = deviceBean;
         this.action = action;
         this.callback = callback;
+        this.smbType = smbType;
 
         if (action == SmbDeviceAction.ACTION_DEVICE_EDIT && deviceBean == null){
             throw new NullPointerException("device info can not be null");
@@ -73,8 +76,7 @@ public class SmbDeviceDialog extends Dialog {
         setContentView(R.layout.dialog_smb_device);
         ButterKnife.bind(this);
 
-        boolean isSmbBetaFeatureEnable = AppConfig.getInstance().isOpenSmbBetaFeature();
-        shareLl.setVisibility(isSmbBetaFeatureEnable ? View.VISIBLE : View.GONE);
+        shareLl.setVisibility(smbType == SmbType.SMBJ ? View.VISIBLE : View.GONE);
 
         switch (action){
             case ACTION_DEVICE_ADD:
@@ -92,7 +94,7 @@ public class SmbDeviceDialog extends Dialog {
                 accountEt.setText(deviceBean.getAccount());
                 passwordEt.setText(deviceBean.getPassword());
                 domainEt.setText(deviceBean.getDomain());
-                shareEt.setText(isSmbBetaFeatureEnable ? deviceBean.getRootFolder() : "");
+                shareEt.setText(smbType == SmbType.SMBJ ? deviceBean.getRootFolder() : "");
                 anonymousCb.setChecked(deviceBean.isAnonymous());
                 nickNameEt.setText(deviceBean.getNickName());
                 break;
@@ -130,7 +132,7 @@ public class SmbDeviceDialog extends Dialog {
                 deviceBean.setNickName(nickNameEt.getText().toString());
                 deviceBean.setRootFolder(shareEt.getText().toString());
                 deviceBean.setAnonymous(isAnonymous);
-                deviceBean.setSmbType(Constants.SmbType.SQL_DEVICE);
+                deviceBean.setSmbType(Constants.SmbSourceType.SQL_DEVICE);
                 callback.onDeviceUpdate(deviceBean);
                 SmbDeviceDialog.this.dismiss();
                 break;

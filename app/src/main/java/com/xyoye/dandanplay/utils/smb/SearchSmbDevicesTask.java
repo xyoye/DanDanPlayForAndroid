@@ -8,7 +8,6 @@ import com.xyoye.dandanplay.utils.Constants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -31,12 +30,12 @@ public class SearchSmbDevicesTask implements Runnable {
     private boolean mAbort;
     private FindLanDevicesListener mListener;
 
-    public SearchSmbDevicesTask(String ip, FindLanDevicesListener listener){
+    public SearchSmbDevicesTask(String ip, FindLanDevicesListener listener) {
         mLocalIp = ip;
         mListener = listener;
     }
 
-    public void abort(){
+    public void abort() {
         mAbort = true;
     }
 
@@ -60,7 +59,8 @@ public class SearchSmbDevicesTask implements Runnable {
             SocketChannel socketChannel = null;
             try {
                 socketChannel = SocketChannel.open();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             if (socketChannel == null) continue;
             sockets.add(socketChannel);
 
@@ -68,7 +68,8 @@ public class SearchSmbDevicesTask implements Runnable {
                 socketChannel.configureBlocking(false);
                 socketChannel.register(selector, SelectionKey.OP_CONNECT);
                 socketChannel.connect(new InetSocketAddress(ip, 445));
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
 
         final long readStartTime = SystemClock.elapsedRealtime();
@@ -77,11 +78,12 @@ public class SearchSmbDevicesTask implements Runnable {
             if (selector != null) {
                 try {
                     readyChannels = selector.select(150);
-                } catch (IOException ignored) { }
+                } catch (IOException ignored) {
+                }
             }
             if (readyChannels == 0) continue;
             Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
-            while(keyIterator.hasNext()) {
+            while (keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
                 keyIterator.remove();
                 if (key.isValid() && key.isConnectable()) {
@@ -90,12 +92,12 @@ public class SearchSmbDevicesTask implements Runnable {
                     boolean v = false;
                     try {
                         v = currentChannel.finishConnect();
-                    }
-                    catch (IOException ignored) {}
-                    finally {
+                    } catch (IOException ignored) {
+                    } finally {
                         try {
                             currentChannel.close();
-                        } catch (IOException ignored) {}
+                        } catch (IOException ignored) {
+                        }
                     }
 
                     if (v) {
@@ -105,37 +107,39 @@ public class SearchSmbDevicesTask implements Runnable {
                         try {
                             Address address = SingletonContext.getInstance().getNameServiceClient().getByName(ip);
                             address.firstCalledName();
-                            deviceName =  address.nextCalledName(SingletonContext.getInstance());
-                        } catch (UnknownHostException e) {
+                            deviceName = address.nextCalledName(SingletonContext.getInstance());
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                         SmbDeviceBean smbDeviceBean = new SmbDeviceBean();
                         smbDeviceBean.setUrl(ip);
                         smbDeviceBean.setName(deviceName);
-                        smbDeviceBean.setSmbType(Constants.SmbType.LAN_DEVICE);
+                        smbDeviceBean.setSmbType(Constants.SmbSourceType.LAN_DEVICE);
                         deviceList.add(smbDeviceBean);
-                        Log.d(TAG, "found share at " + ip);
+                        Log.d(TAG, "found share at " + ip+", the device name is "+deviceName);
                     }
                 }
             }
         }
 
-        for(SocketChannel socketChannel: sockets) {
+        for (SocketChannel socketChannel : sockets) {
             try {
                 socketChannel.close();
-            } catch (IOException ignored) { }
+            } catch (IOException ignored) {
+            }
         }
         try {
             if (selector != null)
                 selector.close();
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {
+        }
 
         mListener.onEnd(deviceList);
     }
 
 
-    public interface FindLanDevicesListener{
+    public interface FindLanDevicesListener {
         void onEnd(List<SmbDeviceBean> deviceList);
     }
 }

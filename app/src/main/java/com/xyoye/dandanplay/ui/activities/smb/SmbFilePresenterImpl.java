@@ -12,9 +12,9 @@ import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
-import com.xyoye.libsmb.SmbManager;
-import com.xyoye.libsmb.controller.Controller;
-import com.xyoye.libsmb.info.SmbFileInfo;
+import com.xyoye.smb.SmbManager;
+import com.xyoye.smb.controller.Controller;
+import com.xyoye.smb.info.SmbFileInfo;
 import com.xyoye.player.commom.utils.CommonPlayerUtils;
 
 import java.io.File;

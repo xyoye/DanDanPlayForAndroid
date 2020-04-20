@@ -39,8 +39,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
     RelativeLayout pathRl;
     @BindView(R.id.close_splash_page_cb)
     CheckBox closeSplashPageCb;
-    @BindView(R.id.smb_beta_feature_cb)
-    CheckBox smbBetaFeatureCb;
     @BindView(R.id.version_rl)
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
@@ -70,9 +68,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
         boolean isClose = AppConfig.getInstance().isCloseSplashPage();
         closeSplashPageCb.setChecked(isClose);
-
-        boolean isOpen = AppConfig.getInstance().isOpenSmbBetaFeature();
-        smbBetaFeatureCb.setChecked(isOpen);
     }
 
     @Override
@@ -90,9 +85,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
 
         closeSplashPageCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setCloseSplashPage(isChecked));
-
-        smbBetaFeatureCb.setOnCheckedChangeListener((buttonView, isChecked) ->
-                AppConfig.getInstance().setOpenSmbBetaFeature(isChecked));
     }
 
     @NonNull

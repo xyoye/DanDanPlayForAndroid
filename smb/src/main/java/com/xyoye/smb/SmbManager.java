@@ -37,7 +37,8 @@ public class SmbManager {
      *
      * @param smbLinkInfo link data
      */
-    public boolean linkStart(SmbLinkInfo smbLinkInfo) {
+    public boolean linkStart(SmbType smbType, SmbLinkInfo smbLinkInfo) {
+        this.mSmbType = smbType;
 
         smbLinkException.clearException();
 
@@ -104,9 +105,5 @@ public class SmbManager {
      */
     public SmbLinkException getException() {
         return smbLinkException;
-    }
-
-    public void setSmbType(SmbType smbType) {
-        this.mSmbType = smbType;
     }
 }

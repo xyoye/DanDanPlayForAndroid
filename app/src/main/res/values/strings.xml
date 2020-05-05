@@ -34,11 +34,12 @@
     </string>
 
     <string name="about_download_subtitle">
-        本应用使用的是开源字幕API，来源于射手（伪）网\nhttps://assrt.net/\n\n
+        获取API密钥需登录射手网，在用户面板取得\nhttps://secure.assrt.net/user/logon.xml\n\n
 
-        由于API对查询次数有限制，所以需要使用者提供API密钥，该密钥为使用者在射手（伪）网中所有，本应用仅保存密钥于本地，不会以其它方式获取或公开密钥\n\n
+        密钥为使用者所有，本应用仅保存密钥于本地，不会以其它方式获取或公开密钥\n\n
 
-        获取API密钥需登录射手网，在用户面板取得\nhttps://secure.assrt.net/user/logon.xml
+        本应用使用的是射手（伪）网（https://assrt.net）提供的开源字幕API
+
     </string>
 
     <string name="mkv_tips">

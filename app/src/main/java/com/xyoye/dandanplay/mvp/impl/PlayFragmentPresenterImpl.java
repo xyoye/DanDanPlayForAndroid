@@ -157,6 +157,19 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .postExecute();
     }
 
+    @Override
+    public void deleteFolderVideo(String folderPath) {
+        File folder = new File(folderPath);
+        if (folder.exists() && folder.isDirectory()){
+            for (File file : folder.listFiles()){
+                if (CommonUtils.isMediaFile(file.getAbsolutePath())){
+                    file.delete();
+                }
+            }
+        }
+        getView().deleteFolderSuccess();
+    }
+
     /**
      * 扫描所有文件，更新数据库，刷新界面数据
      */

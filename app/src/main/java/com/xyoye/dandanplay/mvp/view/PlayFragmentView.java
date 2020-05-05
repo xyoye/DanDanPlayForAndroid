@@ -16,4 +16,6 @@ public interface PlayFragmentView extends BaseMvpView, LoadDataView {
     void refreshAdapter(List<FolderBean> beans);
 
     Context getContext();
+
+    void deleteFolderSuccess();
 }

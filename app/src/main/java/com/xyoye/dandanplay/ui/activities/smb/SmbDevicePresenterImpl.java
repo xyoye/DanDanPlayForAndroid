@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities.smb;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -168,6 +169,11 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
         smbLinkInfo.setPassword(smbDeviceBean.getPassword());
         smbLinkInfo.setAnonymous(smbDeviceBean.isAnonymous());
         smbLinkInfo.setRootFolder(smbDeviceBean.getRootFolder());
+
+        if (smbType == SmbType.SMBJ && TextUtils.isEmpty(smbLinkInfo.getRootFolder())){
+            getView().showError("错误！使用SMBJ登录时Share（根目录）不能为空");
+            return;
+        }
 
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             SmbManager smbManager = SmbManager.getInstance();

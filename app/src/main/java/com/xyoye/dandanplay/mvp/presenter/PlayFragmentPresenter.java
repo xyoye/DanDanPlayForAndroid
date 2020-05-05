@@ -17,5 +17,7 @@ public interface PlayFragmentPresenter extends BaseMvpPresenter {
     //屏蔽目录
     void filterFolder(String folderPath);
 
+    void deleteFolderVideo(String folderPath);
+
     void playLastVideo(Context context, String videoPath);
 }

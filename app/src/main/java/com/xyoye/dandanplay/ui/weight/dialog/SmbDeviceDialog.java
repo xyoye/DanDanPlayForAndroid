@@ -111,6 +111,7 @@ public class SmbDeviceDialog extends Dialog {
                 String ip = ipEt.getText().toString();
                 String account = accountEt.getText().toString();
                 String password = passwordEt.getText().toString();
+                String rootFolder = shareEt.getText().toString();
                 boolean isAnonymous = anonymousCb.isChecked();
 
                 if (TextUtils.isEmpty(ip)){
@@ -123,6 +124,11 @@ public class SmbDeviceDialog extends Dialog {
                     return;
                 }
 
+                if (smbType == SmbType.SMBJ && TextUtils.isEmpty(rootFolder)){
+                    ToastUtils.showShort("SMBJ登录时，Share（根目录）不能为空");
+                    return;
+                }
+
                 SmbDeviceBean deviceBean = new SmbDeviceBean();
 
                 deviceBean.setUrl(ip);
@@ -130,7 +136,7 @@ public class SmbDeviceDialog extends Dialog {
                 deviceBean.setPassword(password);
                 deviceBean.setDomain(domainEt.getText().toString());
                 deviceBean.setNickName(nickNameEt.getText().toString());
-                deviceBean.setRootFolder(shareEt.getText().toString());
+                deviceBean.setRootFolder(rootFolder);
                 deviceBean.setAnonymous(isAnonymous);
                 deviceBean.setSmbType(Constants.SmbSourceType.SQL_DEVICE);
                 callback.onDeviceUpdate(deviceBean);

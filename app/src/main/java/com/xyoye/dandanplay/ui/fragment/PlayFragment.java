@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -91,14 +90,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             @Override
             public boolean onLongClick(String folderPath, String folderName) {
                 new CommonDialog.Builder(getContext())
-                        .setOkListener(dialog -> {
-                            if (FileUtils.deleteDir(folderPath)) {
-                                refresh.setRefreshing(true);
-                                refreshVideo(false);
-                            } else {
-                                ToastUtils.showShort("删除文件夹失败");
-                            }
-                        })
+                        .setOkListener(dialog -> presenter.deleteFolderVideo(folderPath))
                         .setExtraListener(dialog -> {
                             presenter.filterFolder(folderPath);
                             refresh.setRefreshing(true);
@@ -107,7 +99,7 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
                         .setAutoDismiss()
                         .showExtra()
                         .build()
-                        .show("确认删除文件夹[" + folderName + "]？", "屏蔽目录");
+                        .show("确认删除文件夹 [" + folderName + "] 内视频文件？", "屏蔽目录");
                 return true;
             }
         };
@@ -153,6 +145,12 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
         adapter.setData(beans);
         if (refresh != null)
             refresh.setRefreshing(false);
+    }
+
+    @Override
+    public void deleteFolderSuccess() {
+        refresh.setRefreshing(true);
+        refreshVideo(false);
     }
 
     @Override

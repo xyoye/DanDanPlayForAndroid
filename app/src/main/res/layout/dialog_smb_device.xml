@@ -131,37 +131,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="17dp"
-                android:layout_marginEnd="17dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="78dp"
-                    android:layout_height="wrap_content"
-                    android:text="Domain"
-                    android:textColor="@color/text_black"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/domain_et"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/item_bg_color"
-                    android:hint="请输入域 (可忽略)"
-                    android:maxLines="1"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:singleLine="true"
-                    android:textColor="@color/edit_text_text_color"
-                    android:textColorHint="@color/edit_text_hint_color"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/share_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -182,7 +151,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/item_bg_color"
-                    android:hint="请输入根目录 (可忽略)"
+                    android:hint="请输入根目录"
+                    android:maxLines="1"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:singleLine="true"
+                    android:textColor="@color/edit_text_text_color"
+                    android:textColorHint="@color/edit_text_hint_color"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="17dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="78dp"
+                    android:layout_height="wrap_content"
+                    android:text="Domain"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/domain_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/item_bg_color"
+                    android:hint="请输入域 (可忽略)"
                     android:maxLines="1"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"

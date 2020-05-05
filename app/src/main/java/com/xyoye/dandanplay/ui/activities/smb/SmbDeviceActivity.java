@@ -18,6 +18,7 @@ import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
@@ -253,7 +254,8 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     protected void onDestroy() {
         super.onDestroy();
         if (SmbManager.getInstance().getController() != null) {
-            SmbManager.getInstance().getController().release();
+            IApplication.getExecutor().execute(() ->
+                    SmbManager.getInstance().getController().release());
         }
         if (ServiceUtils.isServiceRunning(SmbService.class))
             ServiceUtils.stopService(SmbService.class);

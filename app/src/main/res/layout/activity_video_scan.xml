@@ -68,13 +68,26 @@
             android:id="@+id/delete_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="7dp"
+            android:layout_toStartOf="@+id/add_tv"
+            android:clickable="false"
+            android:padding="10dp"
+            android:text="删除"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/add_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="12dp"
             android:clickable="false"
             android:padding="10dp"
-            android:text="删除"
-            android:textColor="@color/text_gray"
+            android:text="添加"
+            android:textColor="@color/text_theme"
             android:textSize="14sp" />
 
     </RelativeLayout>

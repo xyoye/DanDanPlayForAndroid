@@ -6,8 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -134,7 +132,7 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
         });
     }
 
-    @OnClick({R.id.scan_folder_tv, R.id.scan_file_tv, R.id.delete_tv})
+    @OnClick({R.id.scan_folder_tv, R.id.scan_file_tv, R.id.delete_tv, R.id.add_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.scan_folder_tv:
@@ -153,6 +151,11 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
                 fragmentList.get(selectedPosition).deleteChecked();
                 resetButtonStatus();
                 break;
+            case R.id.add_tv:
+                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
+                        fragmentList.get(selectedPosition).addPath(path)
+                ).show();
+                break;
         }
     }
 
@@ -165,27 +168,6 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
             deleteTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
             deleteTv.setClickable(false);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-            case R.id.add_scan:
-                new FileManagerDialog(ScanManagerManagerActivity.this, FileManagerDialog.SELECT_FOLDER, path ->
-                        fragmentList.get(selectedPosition).addPath(path)
-                ).show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_scan, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

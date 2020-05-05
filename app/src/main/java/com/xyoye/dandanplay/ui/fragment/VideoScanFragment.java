@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.ui.weight.item.VideoScanItem;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -117,12 +118,15 @@ public class VideoScanFragment extends BaseMvpFragment<VideoScanFragmentPresente
     }
 
     public void deleteChecked(){
-        for (ScanFolderBean bean : folderList) {
-            if (bean.isCheck()) {
+        Iterator iterator = folderList.iterator();
+        while (iterator.hasNext()){
+            ScanFolderBean bean = (ScanFolderBean) iterator.next();
+            if (bean.isCheck()){
                 presenter.deleteScanFolder(bean.getFolder(), isScanType);
+                iterator.remove();
             }
         }
-        presenter.queryScanFolderList(isScanType);
+        adapter.notifyDataSetChanged();
     }
 
     public boolean hasChecked(){

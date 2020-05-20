@@ -190,7 +190,7 @@ public class FormatASS implements TimedTextFileFormat {
                                 if (dialogs.length > 1) {
                                     caption = parseDialogueForASS(dialogs[1].trim().split(",", dialogueFormat.length), dialogueFormat, timer, tto);
                                     //and save the caption
-                                    int key = caption.start.mseconds;
+                                    long key = caption.start.mseconds;
                                     //in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
                                     while (tto.captions.containsKey(key)) key++;
                                     tto.captions.put(key, caption);

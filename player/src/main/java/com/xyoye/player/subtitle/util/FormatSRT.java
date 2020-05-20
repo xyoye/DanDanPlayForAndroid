@@ -109,7 +109,7 @@ public class FormatSRT implements TimedTextFileFormat {
 							lineCounter++;
 						}
 						caption.content = text;
-						int key = caption.start.mseconds;
+						long key = caption.start.mseconds;
 						//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 						while (tto.captions.containsKey(key)) key++;
 						if (key != caption.start.mseconds)

@@ -439,7 +439,7 @@ public class FormatSTL implements TimedTextFileFormat {
 						//we save the style
 						currentCaption.style = style;
 						//and save the caption
-						int key = currentCaption.start.mseconds;
+						long key = currentCaption.start.mseconds;
 						//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 						while (tto.captions.containsKey(key)) key++;
 						tto.captions.put(key, currentCaption);

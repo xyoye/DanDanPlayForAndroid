@@ -52,7 +52,7 @@ public class TimedTextObject {
 	
 	//list of captions (begin time, reference)
 	//represented by a tree map to maintain order
-	public TreeMap<Integer, Caption> captions;
+	public TreeMap<Long, Caption> captions;
 	
 	//to store non fatal errors produced during parsing
 	public String warnings;

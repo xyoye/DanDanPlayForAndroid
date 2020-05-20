@@ -184,7 +184,7 @@ public class FormatSCC implements TimedTextFileFormat {
 													newCaption.end = currentTime;
 													if (newCaption.start != null){
 														//we save the caption
-														int key = newCaption.start.mseconds;
+														long key = newCaption.start.mseconds;
 														//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 														while (tto.captions.containsKey(key)) key++;
 														//we save the caption
@@ -356,7 +356,7 @@ public class FormatSCC implements TimedTextFileFormat {
 				}
 				if (newCaption.start != null){
 					//we save the caption
-					int key = newCaption.start.mseconds;
+					long key = newCaption.start.mseconds;
 					//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 					while (tto.captions.containsKey(key)) key++;
 					//we save the caption

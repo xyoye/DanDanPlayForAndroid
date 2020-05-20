@@ -19,7 +19,7 @@ public class SubtitleUtils {
             subtitleTexts = getSubtitleTexts(textSize, subtitle);
         }
 
-        if (isEmptySubtitle){
+        if (isEmptySubtitle){;
             subtitleView.setTopTexts(subtitleTexts);
             subtitleView.setBottomTexts(subtitleTexts);
             isEmptySubtitle = false;

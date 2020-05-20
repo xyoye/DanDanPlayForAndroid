@@ -56,13 +56,13 @@ public class Time {
 	}
 
 	// in an integer we can store 24 days worth of milliseconds, no need for a long
-	protected int mseconds;
+	protected long mseconds;
 
-    public int getMseconds() {
+    public long getMseconds() {
         return mseconds;
     }
 
-    public void setMseconds(int mseconds) {
+    public void setMseconds(long mseconds) {
         this.mseconds = mseconds;
     }
 
@@ -79,7 +79,7 @@ public class Time {
 		String aux;
 		if(format.equalsIgnoreCase("hh:mm:ss,ms")){
 			// this type of format:  01:02:22,501 (used in .SRT)
-			int h, m, s, ms;
+			long h, m, s, ms;
 			h =  mseconds/3600000;
 			aux = String.valueOf(h);
 			if (aux.length()==1) time.append('0');
@@ -103,7 +103,7 @@ public class Time {
 			
 		} else if(format.equalsIgnoreCase("h:mm:ss.cs")){
 			// this type of format:  1:02:22.51 (used in .ASS/.SSA)
-			int h, m, s, cs;
+			long h, m, s, cs;
 			h =  mseconds/3600000;
 			aux = String.valueOf(h);
 			if (aux.length()==1) time.append('0');
@@ -126,7 +126,7 @@ public class Time {
 			
 		} else if (format.startsWith("hhmmssff/")){
 			//this format is used in EBU's STL
-			int h, m, s, f;
+			long h, m, s, f;
 			float fps;
 			String[] args = format.split("/");
 			fps = Float.parseFloat(args[1]);
@@ -150,7 +150,7 @@ public class Time {
 			
 		} else if (format.startsWith("h:m:s:f/")){
 			//this format is used in EBU's STL
-			int h, m, s, f;
+			long h, m, s, f;
 			float fps;
 			String[] args = format.split("/");
 			fps = Float.parseFloat(args[1]);
@@ -176,7 +176,7 @@ public class Time {
 			time.append(aux);
 		} else if (format.startsWith("hh:mm:ss:ff/")){
 			//this format is used in SCC
-			int h, m, s, f;
+			long h, m, s, f;
 			float fps;
 			String[] args = format.split("/");
 			fps = Float.parseFloat(args[1]);

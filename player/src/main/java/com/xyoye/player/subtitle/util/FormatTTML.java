@@ -232,7 +232,7 @@ public class FormatTTML implements TimedTextFileFormat {
 				
 				//and save the caption
 				if (validCaption){
-					int key = caption.start.mseconds;
+					long key = caption.start.mseconds;
 					//in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
 					while (tto.captions.containsKey(key)) key++;
 					tto.captions.put(key, caption);

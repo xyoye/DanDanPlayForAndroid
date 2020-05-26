@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.utils.net;
 
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.SoUtils;
 import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 import com.xyoye.dandanplay.utils.net.service.ResRetrofitService;
@@ -118,8 +119,10 @@ public class RetroFactory {
                 .addInterceptor(chain -> {
                     Request original = chain.request();
                     Request.Builder builder = original.newBuilder()
-                            .header("Authorization", "Bearer " + AppConfig.getInstance().getToken())
-                            .header("User-Agent", "dandanplay/android " + CommonUtils.getAppVersion());
+                            .header("Authorization", "Bearer " + AppConfig.getInstance().getToken());
+                    if (SoUtils.getInstance().isOfficialApplication()){
+                        builder.header("User-Agent", "dandanplay/android " + CommonUtils.getAppVersion());
+                    }
                     return chain.proceed(builder.build());
                 })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -135,8 +138,10 @@ public class RetroFactory {
                 .readTimeout(5000, TimeUnit.MILLISECONDS)
                 .addInterceptor(chain -> {
                     Request original = chain.request();
-                    Request.Builder builder = original.newBuilder()
-                            .header("User-Agent", "dandanplay/android " + CommonUtils.getAppVersion());
+                    Request.Builder builder = original.newBuilder();
+                    if(SoUtils.getInstance().isOfficialApplication()){
+                        builder.header("User-Agent", "dandanplay/android " + CommonUtils.getAppVersion());
+                    }
                     return chain.proceed(builder.build());
                 })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))

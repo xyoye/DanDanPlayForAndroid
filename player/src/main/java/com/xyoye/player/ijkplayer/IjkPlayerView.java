@@ -1,6 +1,7 @@
 package com.xyoye.player.ijkplayer;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -533,6 +535,10 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             @Override
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
+                    if(mAttachActivity.getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED){
+                        LogUtils.e("player activity destroyed");
+                        return;
+                    }
                     if (mIsIjkPlayerReady) {
                         if (!mVideoView.isPlaying()) {
                             _togglePlayStatus();

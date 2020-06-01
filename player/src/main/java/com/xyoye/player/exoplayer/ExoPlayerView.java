@@ -1,6 +1,7 @@
 package com.xyoye.player.exoplayer;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -535,12 +537,13 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             public void prepared() {
                 mAttachActivity.runOnUiThread(() -> {
                     if (mIsExoPlayerReady) {
+                        if(mAttachActivity.getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED){
+                            LogUtils.e("player activity destroyed");
+                            return;
+                        }
                         if (!isVideoPlaying()) {
                             _togglePlayStatus();
                         }
-                        // TODO: 2019/11/5 3.5.1 临时性修改
-                        if (mDanmakuView == null)
-                            return;
                         long seek = mDanmakuView.getCurrentTime() - topBarView.getDanmuSettingView().getDanmuExtraTime();
                         mDanmakuView.start(seek);
                     }

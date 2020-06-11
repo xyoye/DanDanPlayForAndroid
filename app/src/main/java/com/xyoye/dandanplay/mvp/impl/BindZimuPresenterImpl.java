@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -13,7 +14,6 @@ import com.xyoye.dandanplay.mvp.view.BindZimuView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.HashUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.CommShooterDataObserver;
@@ -39,8 +39,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> implements BindZimuPresenter {
 
-    public BindZimuPresenterImpl(BindZimuView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public BindZimuPresenterImpl(BindZimuView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.base;
 
-import com.xyoye.dandanplay.utils.Lifeful;
+import android.arch.lifecycle.LifecycleOwner;
+
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 
@@ -16,12 +17,12 @@ import io.reactivex.disposables.Disposable;
 public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements BaseMvpPresenter {
 
     private T view;
-    private Lifeful lifeful;
+    private LifecycleOwner lifecycleOwner;
     protected List<Disposable> disposables;
 
-    public BaseMvpPresenterImpl(T view, Lifeful lifeful) {
+    public BaseMvpPresenterImpl(T view, LifecycleOwner lifecycleOwner) {
         this.view = view;
-        this.lifeful = lifeful;
+        this.lifecycleOwner = lifecycleOwner;
         disposables = new ArrayList<>();
     }
 
@@ -46,7 +47,7 @@ public abstract class BaseMvpPresenterImpl<T extends BaseMvpView> implements Bas
         return view;
     }
 
-    public Lifeful getLifeful() {
-        return lifeful;
+    public LifecycleOwner getLifecycle() {
+        return lifecycleOwner;
     }
 }

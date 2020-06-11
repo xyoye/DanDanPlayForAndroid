@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -13,7 +14,6 @@ import com.xyoye.dandanplay.mvp.presenter.MainPresenter;
 import com.xyoye.dandanplay.mvp.view.MainView;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuFilterUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.TrackerManager;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
@@ -27,8 +27,8 @@ import java.io.File;
 
 public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements MainPresenter {
 
-    public MainPresenterImpl(MainView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public MainPresenterImpl(MainView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     //番剧分类
     private void initAnimeType() {
-        AnimeTypeBean.getAnimeType(new CommOtherDataObserver<AnimeTypeBean>(getLifeful()) {
+        AnimeTypeBean.getAnimeType(new CommOtherDataObserver<AnimeTypeBean>(getLifecycle()) {
             @Override
             public void onSuccess(AnimeTypeBean animeTypeBean) {
                 if (animeTypeBean != null && animeTypeBean.getTypes() != null && animeTypeBean.getTypes().size() > 0) {
@@ -138,7 +138,7 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     //字幕组
     private void initSubGroup() {
-        SubGroupBean.getSubGroup(new CommOtherDataObserver<SubGroupBean>(getLifeful()) {
+        SubGroupBean.getSubGroup(new CommOtherDataObserver<SubGroupBean>(getLifecycle()) {
             @Override
             public void onSuccess(SubGroupBean subGroupBean) {
                 if (subGroupBean != null && subGroupBean.getSubgroups() != null && subGroupBean.getSubgroups().size() > 0) {

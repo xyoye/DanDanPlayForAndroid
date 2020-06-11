@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.provider.MediaStore;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.FolderBean;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -20,7 +22,6 @@ import com.xyoye.dandanplay.mvp.view.PlayFragmentView;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseInfo;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
@@ -39,8 +40,8 @@ import java.util.Map;
 
 public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragmentView> implements PlayFragmentPresenter {
 
-    public PlayFragmentPresenterImpl(PlayFragmentView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public PlayFragmentPresenterImpl(PlayFragmentView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .queryColumns("danmu_path", "current_position", "danmu_episode_id", "zimu_path")
                 .where("file_path", videoPath)
-                .postExecute(new QueryAsyncResultCallback<VideoBean>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<VideoBean>(getLifecycle()) {
                     @Override
                     public VideoBean onQuery(Cursor cursor) {
                         if (cursor == null) return null;
@@ -180,7 +181,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .query()
                 .queryColumns("folder_path")
                 .where("folder_type", String.valueOf(Constants.ScanType.SCAN))
-                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifecycle()) {
                     @Override
                     public List<FolderBean> onQuery(Cursor cursor) {
                         if (cursor == null)
@@ -236,7 +237,7 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
                 .selectTable("scan_folder")
                 .query()
                 .queryColumns("folder_path", "folder_type")
-                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<FolderBean>>(getLifecycle()) {
 
                     @Override
                     public List<FolderBean> onQuery(Cursor cursor) {
@@ -380,15 +381,10 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
      * 获取系统中视频信息
      */
     private void queryVideoFormMediaStore() {
-        // TODO: 2019/11/5 3.5.1 临时性修改
-        Context context = getView().getContext();
-        if (context == null)
-            return;
-        Cursor cursor = getView().getContext().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+        Cursor cursor = IApplication.get_context().getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 null, null, null, null);
         if (cursor != null) {
             while (cursor.moveToNext()) {
-
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));// 地址
                 int _id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));// id
                 long size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE));// 大小

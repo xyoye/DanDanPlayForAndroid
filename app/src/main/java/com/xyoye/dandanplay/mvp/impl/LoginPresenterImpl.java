@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -11,7 +12,6 @@ import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.mvp.presenter.LoginPresenter;
 import com.xyoye.dandanplay.mvp.view.LoginView;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -23,8 +23,8 @@ import org.greenrobot.eventbus.EventBus;
 
 public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implements LoginPresenter {
 
-    public LoginPresenterImpl(LoginView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public LoginPresenterImpl(LoginView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class LoginPresenterImpl extends BaseMvpPresenterImpl<LoginView> implemen
     @Override
     public void login(LoginParam param){
         getView().showLoading();
-        PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifeful()) {
+        PersonalBean.login(param, new CommJsonObserver<PersonalBean>(getLifecycle()) {
             @Override
             public void onSuccess(PersonalBean personalBean) {
                 getView().hideLoading();

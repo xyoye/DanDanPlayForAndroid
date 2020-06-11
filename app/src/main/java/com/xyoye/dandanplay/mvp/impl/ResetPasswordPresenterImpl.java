@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -9,7 +10,6 @@ import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ResetPasswordView;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -20,8 +20,8 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 public class ResetPasswordPresenterImpl extends BaseMvpPresenterImpl<ResetPasswordView> implements ResetPasswordPresenter {
 
-    public ResetPasswordPresenterImpl(ResetPasswordView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public ResetPasswordPresenterImpl(ResetPasswordView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ResetPasswordPresenterImpl extends BaseMvpPresenterImpl<ResetPasswo
     @Override
     public void reset(ResetPasswordParam param) {
         getView().showLoading();
-        PersonalBean.resetPassword(param, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+        PersonalBean.resetPassword(param, new CommJsonObserver<CommJsonEntity>(getLifecycle()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().hideLoading();

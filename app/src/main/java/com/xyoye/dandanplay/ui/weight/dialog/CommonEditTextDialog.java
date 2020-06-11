@@ -11,17 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.KeyboardUtils;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
-import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.net.CommJsonEntity;
-import com.xyoye.dandanplay.utils.net.CommJsonObserver;
-import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +28,7 @@ import butterknife.OnClick;
  */
 
 
-public class CommonEditTextDialog extends Dialog implements Lifeful {
+public class CommonEditTextDialog extends Dialog{
     //串流链接
     public static final int NETWORK_LINK = 0;
     //昵称
@@ -135,24 +128,6 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
         }
     }
 
-    private void changeScreenName(String screenName) {
-        PersonalBean.changeScreenName(screenName, new CommJsonObserver<CommJsonEntity>(this) {
-            @Override
-            public void onSuccess(CommJsonEntity commJsonEntity) {
-                if (listener != null) {
-                    listener.onConfirm(screenName);
-                }
-                CommonEditTextDialog.this.cancel();
-            }
-
-            @Override
-            public void onError(int errorCode, String message) {
-                LogUtils.e(message);
-                ToastUtils.showShort(message);
-            }
-        }, new NetworkConsumer());
-    }
-
     @OnClick({R.id.cancel_tv, R.id.confirm_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -197,7 +172,9 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                     inputLayout.setError("昵称长度过长");
                     return;
                 }
-                changeScreenName(inputData);
+                if (listener != null){
+                    listener.onConfirm(inputData);
+                }
                 break;
             case ADD_BLOCK:
                 if (StringUtils.isEmpty(inputData)) {
@@ -281,11 +258,6 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
             }
         }
         return isContains;
-    }
-
-    @Override
-    public boolean isAlive() {
-        return isShowing();
     }
 
     public interface CommonEditTextListener {

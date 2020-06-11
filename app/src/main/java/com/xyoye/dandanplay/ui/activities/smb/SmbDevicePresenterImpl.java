@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,7 +11,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
@@ -38,8 +38,8 @@ import io.reactivex.schedulers.Schedulers;
 public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> implements SmbDevicePresenter {
     private Disposable queryDeviceDis;
 
-    SmbDevicePresenterImpl(SmbDeviceView view, Lifeful lifeful) {
-        super(view, lifeful);
+    SmbDevicePresenterImpl(SmbDeviceView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
         DataBaseManager.getInstance()
                 .selectTable("smb_device")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<SmbDeviceBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<SmbDeviceBean>>(getLifecycle()) {
                     @Override
                     public List<SmbDeviceBean> onQuery(Cursor cursor) {
                         if (cursor == null)
@@ -170,7 +170,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
         smbLinkInfo.setAnonymous(smbDeviceBean.isAnonymous());
         smbLinkInfo.setRootFolder(smbDeviceBean.getRootFolder());
 
-        if (smbType == SmbType.SMBJ && TextUtils.isEmpty(smbLinkInfo.getRootFolder())){
+        if (smbType == SmbType.SMBJ && TextUtils.isEmpty(smbLinkInfo.getRootFolder())) {
             getView().showError("错误！使用SMBJ登录时Share（根目录）不能为空");
             return;
         }
@@ -197,15 +197,15 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
 
                     @Override
                     public void onError(Throwable e) {
-                        if (e instanceof SmbLinkException){
-                            SmbLinkException exception = (SmbLinkException)e;
+                        if (e instanceof SmbLinkException) {
+                            SmbLinkException exception = (SmbLinkException) e;
                             String errorMsg = "";
-                            if (exception.getDetailExceptions() != null && exception.getDetailExceptions().size() > 0){
+                            if (exception.getDetailExceptions() != null && exception.getDetailExceptions().size() > 0) {
                                 errorMsg = "\n" + exception.getDetailExceptions().get(0).getErrorMsg();
                             }
-                            ToastUtils.showShort("登录失败，试试切换连接工具"+errorMsg);
-                        }else {
-                            ToastUtils.showShort("登录失败，试试切换连接工具\n"+e.getMessage());
+                            ToastUtils.showShort("登录失败，试试切换连接工具" + errorMsg);
+                        } else {
+                            ToastUtils.showShort("登录失败，试试切换连接工具\n" + e.getMessage());
                         }
                     }
 

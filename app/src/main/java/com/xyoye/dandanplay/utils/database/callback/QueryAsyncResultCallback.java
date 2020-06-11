@@ -1,8 +1,8 @@
 package com.xyoye.dandanplay.utils.database.callback;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
-
-import com.xyoye.dandanplay.utils.Lifeful;
 
 import io.reactivex.annotations.Nullable;
 
@@ -12,10 +12,10 @@ import io.reactivex.annotations.Nullable;
 
 public abstract class QueryAsyncResultCallback<T> {
 
-    private Lifeful lifeful;
+    private LifecycleOwner lifecycleOwner;
 
-    public QueryAsyncResultCallback(Lifeful lifeful){
-        this.lifeful = lifeful;
+    public QueryAsyncResultCallback(LifecycleOwner lifecycleOwner){
+        this.lifecycleOwner = lifecycleOwner;
     }
 
     /**
@@ -31,7 +31,7 @@ public abstract class QueryAsyncResultCallback<T> {
      * 检查生命周期
      */
     public void onPrepared(@Nullable T result){
-        if (lifeful != null && lifeful.isAlive()){
+        if (lifecycleOwner == null || lifecycleOwner.getLifecycle().getCurrentState() != Lifecycle.State.DESTROYED){
             onResult(result);
         }
     }

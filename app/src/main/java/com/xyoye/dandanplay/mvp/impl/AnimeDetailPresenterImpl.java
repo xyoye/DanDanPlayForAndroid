@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -8,7 +9,6 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -19,8 +19,8 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailView> implements AnimeDetailPresenter {
 
-    public AnimeDetailPresenterImpl(AnimeDetailView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public AnimeDetailPresenterImpl(AnimeDetailView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
     @Override
     public void getAnimeDetail(String animeId) {
         getView().showLoading();
-        AnimeDetailBean.getAnimaDetail(animeId, new CommJsonObserver<AnimeDetailBean>(getLifeful()) {
+        AnimeDetailBean.getAnimaDetail(animeId, new CommJsonObserver<AnimeDetailBean>(getLifecycle()) {
             @Override
             public void onSuccess(AnimeDetailBean animeDetailBean) {
                 getView().hideLoading();
@@ -69,7 +69,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     @Override
     public void followConfirm(String animeId) {
-        AnimeDetailBean.follow(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+        AnimeDetailBean.follow(animeId, new CommJsonObserver<CommJsonEntity>(getLifecycle()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().afterFollow(true);
@@ -85,7 +85,7 @@ public class AnimeDetailPresenterImpl extends BaseMvpPresenterImpl<AnimeDetailVi
 
     @Override
     public void followCancel(String animeId) {
-        AnimeDetailBean.unFollow(animeId, new CommJsonObserver<CommJsonEntity>(getLifeful()) {
+        AnimeDetailBean.unFollow(animeId, new CommJsonObserver<CommJsonEntity>(getLifecycle()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().afterFollow(false);

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -10,7 +11,6 @@ import com.xyoye.dandanplay.bean.params.RegisterParam;
 import com.xyoye.dandanplay.mvp.presenter.RegisterPresenter;
 import com.xyoye.dandanplay.mvp.view.RegisterView;
 import com.xyoye.dandanplay.utils.SoUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -20,8 +20,8 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> implements RegisterPresenter {
 
-    public RegisterPresenterImpl(RegisterView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public RegisterPresenterImpl(RegisterView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class RegisterPresenterImpl extends BaseMvpPresenterImpl<RegisterView> im
         param.setAppId(SoUtils.getInstance().getDanDanAppId());
         param.setUnixTimestamp(System.currentTimeMillis()/1000);
         param.buildHash(getView().getRegisterContext());
-        RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifeful()) {
+        RegisterBean.register(param, new CommJsonObserver<RegisterBean>(getLifecycle()) {
             @Override
             public void onSuccess(RegisterBean registerBean) {
                 getView().hideLoading();

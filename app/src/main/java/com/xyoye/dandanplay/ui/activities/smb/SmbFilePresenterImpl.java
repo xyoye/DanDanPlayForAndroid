@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -10,12 +11,11 @@ import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
+import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.smb.SmbManager;
 import com.xyoye.smb.controller.Controller;
 import com.xyoye.smb.info.SmbFileInfo;
-import com.xyoye.player.commom.utils.CommonPlayerUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,8 +40,8 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
 
     private Controller smbController;
 
-    SmbFilePresenterImpl(SmbFileView view, Lifeful lifeful) {
-        super(view, lifeful);
+    SmbFilePresenterImpl(SmbFileView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

@@ -9,6 +9,4 @@ import java.util.List;
  */
 
 public interface BlockManagerView extends BaseMvpView {
-
-    List<String> updateData(List<String> blockData);
 }

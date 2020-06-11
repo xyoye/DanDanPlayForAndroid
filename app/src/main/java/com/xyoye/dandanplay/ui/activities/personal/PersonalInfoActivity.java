@@ -26,7 +26,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/23.
  */
 
-public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter> implements PersonalInfoView,View.OnClickListener {
+public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter> implements PersonalInfoView, View.OnClickListener {
     @BindView(R.id.login_out_bt)
     Button loginOutBt;
     @BindView(R.id.screen_name_rl)
@@ -38,17 +38,18 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
     @BindView(R.id.screen_name_tv)
     TextView screenNameTv;
 
+    CommonEditTextDialog changeScreenNameDialog;
 
     @Override
     public void initView() {
         setTitle("个人信息");
-        if (AppConfig.getInstance().isLogin()){
+        if (AppConfig.getInstance().isLogin()) {
             String screenName = AppConfig.getInstance().getUserScreenName();
             String userName = AppConfig.getInstance().getUserName();
 
             screenNameTv.setText(screenName);
             userNameTv.setText(userName);
-        }else {
+        } else {
             ToastUtils.showShort("请先登录再进行此操作");
         }
     }
@@ -59,7 +60,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
         passwordRl.setOnClickListener(this);
 
         loginOutBt.setOnClickListener(v -> {
-            if (AppConfig.getInstance().isLogin()){
+            if (AppConfig.getInstance().isLogin()) {
                 AppConfig.getInstance().setLogin(false);
                 AppConfig.getInstance().saveUserName("");
                 AppConfig.getInstance().saveUserScreenName("");
@@ -69,7 +70,7 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
 
                 launchActivity(LoginActivity.class);
                 PersonalInfoActivity.this.finish();
-            }else {
+            } else {
                 ToastUtils.showShort("请先登录再进行此操作");
             }
 
@@ -99,18 +100,27 @@ public class PersonalInfoActivity extends BaseMvpActivity<PersonalInfoPresenter>
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.screen_name_rl:
-                new CommonEditTextDialog(PersonalInfoActivity.this, CommonEditTextDialog.SCREEN_NAME, data -> {
-                    screenNameTv.setText(data[0]);
-                    AppConfig.getInstance().saveUserScreenName(data[0]);
-                    EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
-                    ToastUtils.showShort("修改昵称成功");
-                }).show();
+                changeScreenNameDialog = new CommonEditTextDialog(
+                        PersonalInfoActivity.this,
+                        CommonEditTextDialog.SCREEN_NAME,
+                        data -> presenter.changeScreenName(data[0])
+                );
+                changeScreenNameDialog.show();
                 break;
             case R.id.password_rl:
                 launchActivity(ChangePasswordActivity.class);
                 break;
         }
+    }
+
+    @Override
+    public void onScreenNameChanged(String screenName) {
+        changeScreenNameDialog.dismiss();
+        screenNameTv.setText(screenName);
+        AppConfig.getInstance().saveUserScreenName(screenName);
+        EventBus.getDefault().post(UpdateFragmentEvent.updatePersonal());
+        ToastUtils.showShort("修改昵称成功");
     }
 }

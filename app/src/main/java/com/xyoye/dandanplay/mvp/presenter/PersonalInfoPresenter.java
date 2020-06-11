@@ -7,4 +7,5 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
  */
 
 public interface PersonalInfoPresenter extends BaseMvpPresenter {
+    void changeScreenName(String screenName);
 }

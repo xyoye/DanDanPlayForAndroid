@@ -37,7 +37,6 @@ import com.xyoye.dandanplay.utils.Constants.DefaultConfig;
 import com.xyoye.dandanplay.utils.DanmuFilterUtils;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.HashUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -45,7 +44,6 @@ import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
-import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
 import com.xyoye.dandanplay.utils.net.service.SubtitleRetrofitService;
 import com.xyoye.player.commom.bean.SubtitleBean;
@@ -86,7 +84,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
  * 播放器页面（不需支持换肤）
  */
 
-public class PlayerActivity extends AppCompatActivity implements Lifeful, PlayerReceiverListener {
+public class PlayerActivity extends AppCompatActivity implements PlayerReceiverListener {
     PlayerViewListener mPlayer;
 
     private boolean isInit = false;
@@ -502,7 +500,7 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
     }
 
     @Override
-    public void onHeadsetRemoved(){
+    public void onHeadsetRemoved() {
         mPlayer.onPause();
     }
 
@@ -655,10 +653,5 @@ public class PlayerActivity extends AppCompatActivity implements Lifeful, Player
                 }
             }
         });
-    }
-
-    @Override
-    public boolean isAlive() {
-        return getBaseContext() != null && !(this.isDestroyed() || this.isFinishing());
     }
 }

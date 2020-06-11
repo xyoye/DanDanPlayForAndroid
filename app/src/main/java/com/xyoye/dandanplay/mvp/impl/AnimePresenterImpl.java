@@ -1,11 +1,11 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeView;
-import com.xyoye.dandanplay.utils.Lifeful;
 
 /**
  * Created by xyoye on 2018/7/15.
@@ -13,8 +13,8 @@ import com.xyoye.dandanplay.utils.Lifeful;
 
 public class AnimePresenterImpl extends BaseMvpPresenterImpl<AnimeView> implements AnimePresenter {
 
-    public AnimePresenterImpl(AnimeView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public AnimePresenterImpl(AnimeView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

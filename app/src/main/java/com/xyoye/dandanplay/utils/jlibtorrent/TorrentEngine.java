@@ -15,7 +15,6 @@ import com.frostwire.jlibtorrent.alerts.SessionErrorAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentAlert;
 import com.frostwire.jlibtorrent.alerts.TorrentRemovedAlert;
 import com.frostwire.jlibtorrent.swig.settings_pack;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
@@ -35,7 +34,7 @@ import java.util.concurrent.Executors;
  * 下载任务的管理器
  */
 
-public class TorrentEngine extends SessionManager implements AlertListener, NewTaskRunnable.OnNewTaskCallBack, Lifeful {
+public class TorrentEngine extends SessionManager implements AlertListener, NewTaskRunnable.OnNewTaskCallBack {
     private static int[] ACCEPT_ALERT_TYPE = {
             AlertType.ADD_TORRENT.swig(),
             AlertType.TORRENT_REMOVED.swig(),
@@ -191,7 +190,7 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
         DataBaseManager.getInstance()
                 .selectTable("downloading_task")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<Torrent>>(this) {
+                .postExecute(new QueryAsyncResultCallback<List<Torrent>>(null) {
                     @Override
                     public List<Torrent> onQuery(Cursor cursor) {
                         if (cursor == null)
@@ -210,6 +209,8 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
 
                     @Override
                     public void onResult(List<Torrent> result) {
+                        if (!isRunning())
+                            return;
                         for (Torrent torrent : result) {
                             if (!torrent.isCanBeTask())
                                 continue;
@@ -329,11 +330,6 @@ public class TorrentEngine extends SessionManager implements AlertListener, NewT
         mNewTaskMap.put(newTorrent.getHash(), newTorrent);
         LogUtils.e("已执行任务添加");
         return true;
-    }
-
-    @Override
-    public boolean isAlive() {
-        return isRunning();
     }
 
     private static class EngineHolder {

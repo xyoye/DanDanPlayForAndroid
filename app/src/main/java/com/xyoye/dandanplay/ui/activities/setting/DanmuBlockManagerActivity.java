@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities.setting;
 
-import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -10,9 +9,10 @@ import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.mvp.impl.BlockManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
-import com.xyoye.player.commom.widgets.LabelsView;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
+import com.xyoye.dandanplay.utils.DanmuFilterUtils;
+import com.xyoye.player.commom.widgets.LabelsView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +45,8 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
     @Override
     public void initView() {
         setTitle("弹幕屏蔽管理");
-        blockData = new ArrayList<>();
+        blockData = DanmuFilterUtils.getInstance().getLocalFilter();
         labelsView.setLabels(blockData);
-
-        presenter.queryBlockData();
     }
 
     @Override
@@ -72,11 +70,11 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
                 break;
             case R.id.delete_tv:
                 List<String> selectLabelList = labelsView.getSelectLabelDatas();
-                if (selectLabelList.size() == 0){
+                if (selectLabelList.size() == 0) {
                     ToastUtils.showShort("未选中屏蔽数据");
                     return;
                 }
-                for (String text : selectLabelList){
+                for (String text : selectLabelList) {
                     blockData.remove(text);
                 }
                 labelsView.setLabels(blockData);
@@ -86,8 +84,8 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
                 new CommonEditTextDialog(this, CommonEditTextDialog.ADD_BLOCK, blockData, data -> {
                     if (data == null || data.length == 0) return;
                     List<String> addSqlData = new ArrayList<>();
-                    for (String text : data){
-                        if (!blockData.contains(text)){
+                    for (String text : data) {
+                        if (!blockData.contains(text)) {
                             addSqlData.add(text);
                         }
                     }
@@ -97,15 +95,5 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
                 }).show();
                 break;
         }
-    }
-
-    @Override
-    public List<String> updateData(List<String> result) {
-        if(getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
-            return null;
-        blockData.clear();
-        blockData.addAll(result);
-        labelsView.setLabels(blockData);
-        return null;
     }
 }

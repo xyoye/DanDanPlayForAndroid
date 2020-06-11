@@ -1,11 +1,11 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
-import com.xyoye.dandanplay.utils.Lifeful;
 
 /**
  * Created by xyoye on 2018/7/24.
@@ -13,8 +13,8 @@ import com.xyoye.dandanplay.utils.Lifeful;
 
 public class SettingPresenterImpl extends BaseMvpPresenterImpl<SettingView> implements SettingPresenter {
 
-    public SettingPresenterImpl(SettingView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public SettingPresenterImpl(SettingView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

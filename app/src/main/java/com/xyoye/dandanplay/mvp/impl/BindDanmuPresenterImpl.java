@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -11,7 +12,6 @@ import com.xyoye.dandanplay.bean.DanmuSearchBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
 import com.xyoye.dandanplay.mvp.presenter.BindDanmuPresenter;
 import com.xyoye.dandanplay.mvp.view.BindDanmuView;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
@@ -26,8 +26,8 @@ import java.util.List;
 
 public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> implements BindDanmuPresenter {
 
-    public BindDanmuPresenterImpl(BindDanmuView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public BindDanmuPresenterImpl(BindDanmuView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> 
         param.setMatchMode("hashAndFileName");
 
         getView().showLoading();
-        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifeful()) {
+        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifecycle()) {
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();
@@ -96,7 +96,7 @@ public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> 
     @Override
     public void searchDanmu(String anime, String episode) {
         getView().showLoading();
-        DanmuSearchBean.searchDanmu(anime, episode, new CommJsonObserver<DanmuSearchBean>(getLifeful()) {
+        DanmuSearchBean.searchDanmu(anime, episode, new CommJsonObserver<DanmuSearchBean>(getLifecycle()) {
             @Override
             public void onSuccess(DanmuSearchBean danmuSearchBean) {
                 getView().hideLoading();

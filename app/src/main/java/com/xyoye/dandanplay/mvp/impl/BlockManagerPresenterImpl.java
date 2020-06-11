@@ -1,17 +1,13 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.database.Cursor;
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.BlockManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.BlockManagerView;
 import com.xyoye.dandanplay.utils.DanmuFilterUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
-import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,8 +16,8 @@ import java.util.List;
 
 public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManagerView> implements BlockManagerPresenter {
 
-    public BlockManagerPresenterImpl(BlockManagerView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public BlockManagerPresenterImpl(BlockManagerView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -47,11 +43,6 @@ public class BlockManagerPresenterImpl extends BaseMvpPresenterImpl<BlockManager
     @Override
     public void destroy() {
 
-    }
-
-    @Override
-    public void queryBlockData() {
-        getView().updateData(DanmuFilterUtils.getInstance().getLocalFilter());
     }
 
     @Override

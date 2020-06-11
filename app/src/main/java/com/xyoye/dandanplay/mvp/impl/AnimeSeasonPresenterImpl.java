@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -10,7 +11,6 @@ import com.xyoye.dandanplay.bean.SeasonAnimeBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimeSeasonPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeSeasonView;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -29,8 +29,8 @@ import static com.xyoye.dandanplay.ui.activities.anime.AnimeSeasonActivity.SORT_
 
 public class AnimeSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimeSeasonView> implements AnimeSeasonPresenter {
 
-    public AnimeSeasonPresenterImpl(AnimeSeasonView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public AnimeSeasonPresenterImpl(AnimeSeasonView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class AnimeSeasonPresenterImpl extends BaseMvpPresenterImpl<AnimeSeasonVi
     @Override
     public void getSeasonAnime(int year, int month) {
         getView().showLoading();
-        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<BangumiBean>(getLifeful()) {
+        SeasonAnimeBean.getSeasonAnimas(year+"", month+"", new CommJsonObserver<BangumiBean>(getLifecycle()) {
             @Override
             public void onSuccess(BangumiBean bangumiBean) {
                 getView().hideLoading();

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -9,7 +10,6 @@ import com.xyoye.dandanplay.bean.AnimeTagBean;
 import com.xyoye.dandanplay.bean.PlayHistoryBean;
 import com.xyoye.dandanplay.mvp.presenter.AnimeListPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeListView;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -19,8 +19,8 @@ import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
 public class AnimeListPresenterImpl extends BaseMvpPresenterImpl<AnimeListView> implements AnimeListPresenter {
 
-    public AnimeListPresenterImpl(AnimeListView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public AnimeListPresenterImpl(AnimeListView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AnimeListPresenterImpl extends BaseMvpPresenterImpl<AnimeListView> 
     @Override
     public void getPlayHistory(){
         getView().showLoading();
-        PlayHistoryBean.getPlayHistory(new CommJsonObserver<PlayHistoryBean>(getLifeful()) {
+        PlayHistoryBean.getPlayHistory(new CommJsonObserver<PlayHistoryBean>(getLifecycle()) {
             @Override
             public void onSuccess(PlayHistoryBean playHistoryBean) {
                 getView().refreshHistory(playHistoryBean);
@@ -70,7 +70,7 @@ public class AnimeListPresenterImpl extends BaseMvpPresenterImpl<AnimeListView> 
     @Override
     public void getFavorite(){
         getView().showLoading();
-        AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>(getLifeful()) {
+        AnimeFavoriteBean.getFavorite(new CommJsonObserver<AnimeFavoriteBean>(getLifecycle()) {
             @Override
             public void onSuccess(AnimeFavoriteBean animeFavoriteBean) {
                 getView().hideLoading();
@@ -89,7 +89,7 @@ public class AnimeListPresenterImpl extends BaseMvpPresenterImpl<AnimeListView> 
     @Override
     public void getByTag(int tagId) {
         getView().showLoading();
-        AnimeTagBean.getTagAnimeList(tagId+"", new CommJsonObserver<AnimeTagBean>(getLifeful()) {
+        AnimeTagBean.getTagAnimeList(tagId+"", new CommJsonObserver<AnimeTagBean>(getLifecycle()) {
             @Override
             public void onSuccess(AnimeTagBean animeTagBean) {
                 getView().hideLoading();

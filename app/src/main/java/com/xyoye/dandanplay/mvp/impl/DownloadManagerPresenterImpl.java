@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.ServiceUtils;
@@ -7,7 +8,6 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
-import com.xyoye.dandanplay.utils.Lifeful;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -24,8 +24,8 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadM
 
     private Disposable serviceDis = null;
 
-    public DownloadManagerPresenterImpl(DownloadManagerView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public DownloadManagerPresenterImpl(DownloadManagerView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

@@ -1,8 +1,9 @@
 package com.xyoye.dandanplay.utils.net;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.utils.ResponseError;
 
 import io.reactivex.Observer;
@@ -14,20 +15,20 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class CommShooterDataObserver<T> implements Observer<T> {
 
-    private Lifeful lifeful;
+    private LifecycleOwner lifecycleOwner;
     private ProgressDialog progressDialog;
     private Disposable mDisposable;
 
     public CommShooterDataObserver() {
-        lifeful = null;
+        lifecycleOwner = null;
     }
 
-    public CommShooterDataObserver(Lifeful lifeful) {
-        this.lifeful = lifeful;
+    public CommShooterDataObserver(LifecycleOwner lifecycleOwner) {
+        this.lifecycleOwner = lifecycleOwner;
     }
 
-    public CommShooterDataObserver(Lifeful lifeful, ProgressDialog progressDialog) {
-        this.lifeful = lifeful;
+    public CommShooterDataObserver(LifecycleOwner lifecycleOwner, ProgressDialog progressDialog) {
+        this.lifecycleOwner = lifecycleOwner;
         this.progressDialog = progressDialog;
         progressDialog.setOnCancelListener(dialog -> mDisposable.dispose());
     }
@@ -35,21 +36,21 @@ public abstract class CommShooterDataObserver<T> implements Observer<T> {
     @Override
     public void onSubscribe(Disposable d) {
         mDisposable = d;
-        if (lifeful != null && !lifeful.isAlive()) {
+        if (!isNotDestroyed()) {
             d.dispose();
         }
     }
 
     @Override
     public void onNext(T value) {
-        if (lifeful == null || lifeful.isAlive()) {
+        if (isNotDestroyed()) {
             onSuccess(value);
         }
     }
 
     @Override
     public void onError(Throwable throwable) {
-        if (lifeful == null || lifeful.isAlive()) {
+        if (isNotDestroyed()) {
             if (throwable instanceof ResponseError) {
                 //网络请求异常
                 ResponseError error = (ResponseError) throwable;
@@ -66,6 +67,11 @@ public abstract class CommShooterDataObserver<T> implements Observer<T> {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    private boolean isNotDestroyed() {
+        return lifecycleOwner == null ||
+                lifecycleOwner.getLifecycle().getCurrentState() != Lifecycle.State.DESTROYED;
     }
 
     public abstract void onSuccess(T t);

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -7,7 +8,6 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
 import com.xyoye.dandanplay.mvp.presenter.DownloadedFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadedFragmentView;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
@@ -19,8 +19,8 @@ import java.util.List;
  */
 
 public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<DownloadedFragmentView> implements DownloadedFragmentPresenter {
-    public DownloadedFragmentPresenterImpl(DownloadedFragmentView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public DownloadedFragmentPresenterImpl(DownloadedFragmentView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DownloadedFragmentPresenterImpl extends BaseMvpPresenterImpl<Downlo
         DataBaseManager.getInstance()
                 .selectTable("downloaded_task")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<DownloadedTaskBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<DownloadedTaskBean>>(getLifecycle()) {
                     @Override
                     public List<DownloadedTaskBean> onQuery(Cursor cursor) {
                         if (cursor == null)

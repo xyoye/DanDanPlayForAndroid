@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.StringUtils;
@@ -11,12 +12,11 @@ import com.xyoye.dandanplay.mvp.view.RemoteView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
-import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 import com.xyoye.dandanplay.utils.net.gson.GsonFactory;
 import com.xyoye.dandanplay.utils.net.okhttp.OkHttpEngine;
+import com.xyoye.dandanplay.utils.net.service.RetrofitService;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -42,8 +42,8 @@ public class RemotePresenterImpl extends BaseMvpPresenterImpl<RemoteView> implem
     private String baseUrl = "";
     private RetrofitService retrofitService;
 
-    public RemotePresenterImpl(RemoteView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public RemotePresenterImpl(RemoteView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

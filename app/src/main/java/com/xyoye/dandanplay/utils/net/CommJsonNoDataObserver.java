@@ -1,10 +1,11 @@
 package com.xyoye.dandanplay.utils.net;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.JsonSyntaxException;
-import com.xyoye.dandanplay.utils.Lifeful;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -18,20 +19,20 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class CommJsonNoDataObserver implements Observer<CommJsonEntity> {
 
-    private Lifeful lifeful;
+    private LifecycleOwner lifecycleOwner;
     private ProgressDialog progressDialog;
     private Disposable mDisposable;
 
     public CommJsonNoDataObserver() {
-        lifeful = null;
+        lifecycleOwner = null;
     }
 
-    public CommJsonNoDataObserver(Lifeful lifeful) {
-        this.lifeful = lifeful;
+    public CommJsonNoDataObserver(LifecycleOwner lifecycleOwner) {
+        this.lifecycleOwner = lifecycleOwner;
     }
 
-    public CommJsonNoDataObserver(Lifeful lifeful, ProgressDialog progressDialog) {
-        this.lifeful = lifeful;
+    public CommJsonNoDataObserver(LifecycleOwner lifecycleOwner, ProgressDialog progressDialog) {
+        this.lifecycleOwner = lifecycleOwner;
         this.progressDialog = progressDialog;
         progressDialog.setOnCancelListener(dialog -> mDisposable.dispose());
     }
@@ -39,14 +40,14 @@ public abstract class CommJsonNoDataObserver implements Observer<CommJsonEntity>
     @Override
     public void onSubscribe(Disposable d) {
         mDisposable = d;
-        if (lifeful != null && !lifeful.isAlive()) {
+        if (!isNotDestroyed()) {
             d.dispose();
         }
     }
 
     @Override
     public void onNext(CommJsonEntity value) {
-        if (lifeful == null || lifeful.isAlive()) {
+        if (isNotDestroyed()) {
             if (value.isSuccess()) {
                 onSuccess();
             } else {
@@ -57,7 +58,7 @@ public abstract class CommJsonNoDataObserver implements Observer<CommJsonEntity>
 
     @Override
     public void onError(Throwable e) {
-        if (lifeful == null || lifeful.isAlive()) {
+        if (isNotDestroyed()) {
             onError(-1, getErrorMessage(e));
         }
     }
@@ -81,6 +82,11 @@ public abstract class CommJsonNoDataObserver implements Observer<CommJsonEntity>
             return "服务器繁忙";
         }
         return "服务器繁忙";
+    }
+
+    private boolean isNotDestroyed() {
+        return lifecycleOwner == null ||
+                lifecycleOwner.getLifecycle().getCurrentState() != Lifecycle.State.DESTROYED;
     }
 
     public abstract void onSuccess();

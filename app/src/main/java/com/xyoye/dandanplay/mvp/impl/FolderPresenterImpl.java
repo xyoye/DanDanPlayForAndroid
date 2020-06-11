@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,7 +19,6 @@ import com.xyoye.dandanplay.mvp.view.FolderView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
@@ -48,8 +48,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implements FolderPresenter {
 
-    public FolderPresenterImpl(FolderView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public FolderPresenterImpl(FolderView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 .selectTable("file")
                 .query()
                 .where("folder_path", folderPath)
-                .postExecute(new QueryAsyncResultCallback<List<VideoBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<VideoBean>>(getLifecycle()) {
                     @Override
                     public List<VideoBean> onQuery(Cursor cursor) {
                         if (cursor == null) return new ArrayList<>();
@@ -159,7 +159,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
         param.setFileSize(length);
         param.setVideoDuration(duration);
         param.setMatchMode("hashAndFileName");
-        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifeful()) {
+        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifecycle()) {
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();

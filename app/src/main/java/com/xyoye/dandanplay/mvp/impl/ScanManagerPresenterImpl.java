@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +16,6 @@ import com.xyoye.dandanplay.mvp.presenter.ScanManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.ScanManagerView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,8 +31,8 @@ import java.util.List;
 public class ScanManagerPresenterImpl extends BaseMvpPresenterImpl<ScanManagerView> implements ScanManagerPresenter {
     private int newAddCount = 0;
 
-    public ScanManagerPresenterImpl(ScanManagerView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public ScanManagerPresenterImpl(ScanManagerView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

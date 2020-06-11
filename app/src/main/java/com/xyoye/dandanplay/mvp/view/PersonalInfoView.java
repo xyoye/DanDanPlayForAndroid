@@ -7,4 +7,5 @@ import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
  */
 
 public interface PersonalInfoView extends BaseMvpView {
+    void onScreenNameChanged(String screenName);
 }

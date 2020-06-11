@@ -379,7 +379,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     }
 
     private void showDanmuEditDialog() {
-        final String[] playTypes = {"绑定 所有视频弹幕", "解绑 所有视频弹幕"};
+        final String[] playTypes = {"绑定 所有视频网络弹幕", "解绑 所有视频弹幕"};
 
         new AlertDialog.Builder(this)
                 .setTitle("弹幕管理")
@@ -398,7 +398,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     }
 
     private void showSubtitleEditDialog() {
-        final String[] playTypes = {"绑定 所有视频字幕", "解绑 所有视频字幕"};
+        final String[] playTypes = {"绑定 所有视频同名字幕", "解绑 所有视频字幕"};
 
         new AlertDialog.Builder(this)
                 .setTitle("字幕管理")

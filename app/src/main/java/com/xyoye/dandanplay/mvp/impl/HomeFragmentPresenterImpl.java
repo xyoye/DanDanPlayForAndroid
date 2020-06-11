@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -11,7 +12,6 @@ import com.xyoye.dandanplay.bean.HomeDataBean;
 import com.xyoye.dandanplay.mvp.presenter.HomeFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.HomeFragmentView;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -25,8 +25,8 @@ import java.util.List;
 
 public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragmentView> implements HomeFragmentPresenter {
 
-    public HomeFragmentPresenterImpl(HomeFragmentView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public HomeFragmentPresenterImpl(HomeFragmentView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class HomeFragmentPresenterImpl extends BaseMvpPresenterImpl<HomeFragment
 
     @Override
     public void getHomeFragmentData(){
-        HomeDataBean.getHomeData(new CommOtherDataObserver<HomeDataBean>(getLifeful()) {
+        HomeDataBean.getHomeData(new CommOtherDataObserver<HomeDataBean>(getLifecycle()) {
             @Override
             public void onSuccess(HomeDataBean homeDataBean) {
                 List<String> images = new ArrayList<>();

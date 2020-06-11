@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -10,7 +11,6 @@ import com.xyoye.dandanplay.mvp.presenter.ShooterSubPresenter;
 import com.xyoye.dandanplay.mvp.view.ShooterSubView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.net.CommShooterDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 
 public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView> implements ShooterSubPresenter {
 
-    public ShooterSubPresenterImpl(ShooterSubView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public ShooterSubPresenterImpl(ShooterSubView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override

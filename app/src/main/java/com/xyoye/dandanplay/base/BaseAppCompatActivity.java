@@ -23,7 +23,6 @@ import android.view.WindowManager;
 import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.interf.IBaseView;
 
 import butterknife.ButterKnife;
@@ -38,10 +37,10 @@ import butterknife.Unbinder;
  * onPause()
  * onStop()
  * onDestroy()
- *
+ * <p>
  * Modified by xyoye on 2019/5/27.
  */
-public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, Lifeful{
+public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView {
 
     public static final String TAG = BaseAppCompatActivity.class.getSimpleName();
 
@@ -266,15 +265,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         lp.alpha = bgAlpha;
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         this.getWindow().setAttributes(lp);
-    }
-
-    @Override
-    public boolean isAlive() {
-        return activityIsAlive();
-    }
-
-    public boolean activityIsAlive() {
-        return getBaseContext() != null && !(this.isDestroyed() || this.isFinishing());
     }
 
     @Override

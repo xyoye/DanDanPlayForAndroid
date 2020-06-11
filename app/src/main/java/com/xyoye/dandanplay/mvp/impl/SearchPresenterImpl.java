@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -16,7 +17,6 @@ import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
@@ -34,8 +34,8 @@ import okhttp3.ResponseBody;
 
 public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implements SearchPresenter {
 
-    public SearchPresenterImpl(SearchView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public SearchPresenterImpl(SearchView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 .selectTable("search_history")
                 .query()
                 .setOrderByColumnDesc("time")
-                .postExecute(new QueryAsyncResultCallback<List<SearchHistoryBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<SearchHistoryBean>>(getLifecycle()) {
                     @Override
                     public List<SearchHistoryBean> onQuery(Cursor cursor) {
                         if (cursor == null) return new ArrayList<>();
@@ -99,7 +99,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         DataBaseManager.getInstance()
                 .selectTable("anime_type")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>(getLifecycle()) {
 
                     @Override
                     public List<AnimeTypeBean.TypesBean> onQuery(Cursor cursor) {
@@ -127,7 +127,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
         DataBaseManager.getInstance()
                 .selectTable("subgroup")
                 .query()
-                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>(getLifecycle()) {
                     @Override
                     public List<SubGroupBean.SubgroupsBean> onQuery(Cursor cursor) {
                         if (cursor == null)
@@ -188,7 +188,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void search(String text, int type, int subgroup) {
-        MagnetBean.searchMagnet(text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifeful()) {
+        MagnetBean.searchMagnet(text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifecycle()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
                 if (magnetBean != null && magnetBean.getResources() != null) {

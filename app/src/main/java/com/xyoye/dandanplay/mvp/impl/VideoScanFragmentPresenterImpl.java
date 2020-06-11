@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.impl;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -10,7 +11,6 @@ import com.xyoye.dandanplay.mvp.presenter.VideoScanFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.VideoScanFragmentView;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 
@@ -26,8 +26,8 @@ import java.util.List;
 public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoScanFragmentView> implements VideoScanFragmentPresenter {
 
 
-    public VideoScanFragmentPresenterImpl(VideoScanFragmentView view, Lifeful lifeful) {
-        super(view, lifeful);
+    public VideoScanFragmentPresenterImpl(VideoScanFragmentView view, LifecycleOwner lifecycleOwner) {
+        super(view, lifecycleOwner);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class VideoScanFragmentPresenterImpl extends BaseMvpPresenterImpl<VideoSc
                 .selectTable("scan_folder")
                 .query()
                 .where("folder_type", String.valueOf(scanType))
-                .postExecute(new QueryAsyncResultCallback<List<ScanFolderBean>>(getLifeful()) {
+                .postExecute(new QueryAsyncResultCallback<List<ScanFolderBean>>(getLifecycle()) {
                     @Override
                     public List<ScanFolderBean> onQuery(Cursor cursor) {
                         if (cursor == null)

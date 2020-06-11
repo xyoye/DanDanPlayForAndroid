@@ -4,14 +4,15 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
+import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.VideoBean;
@@ -19,7 +20,10 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
+import java.io.File;
+
 import butterknife.BindView;
+import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -29,38 +33,31 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class VideoItem implements AdapterItem<VideoBean> {
+
     @BindView(R.id.cover_iv)
     ImageView coverIv;
     @BindView(R.id.duration_tv)
     TextView durationTv;
     @BindView(R.id.title_tv)
     TextView titleTv;
-    @BindView(R.id.tips_ll)
-    LinearLayout tipsLl;
-    @BindView(R.id.danmu_tips_iv)
-    ImageView danmuTipsIv;
-    @BindView(R.id.zimu_tips_tv)
-    TextView zimuTipsTv;
-    @BindView(R.id.video_info_rl)
-    RelativeLayout videoInfoRl;
-    @BindView(R.id.bind_danmu_iv)
-    ImageView bindDanmuIv;
+    @BindView(R.id.item_layout)
+    ConstraintLayout itemLayout;
     @BindView(R.id.bind_danmu_tv)
     TextView bindDanmuTv;
-    @BindView(R.id.bind_zimu_iv)
-    ImageView bindZimuIv;
     @BindView(R.id.bind_zimu_tv)
     TextView bindZimuTv;
-    @BindView(R.id.delete_action_ll)
-    LinearLayout deleteActionLl;
-    @BindView(R.id.unbind_danmu_action_ll)
-    LinearLayout unbindDanmuActionLl;
-    @BindView(R.id.unbind_zimu_action_ll)
-    LinearLayout unbindZimuActionLl;
-    @BindView(R.id.video_action_ll)
-    LinearLayout videoActionLl;
-    @BindView(R.id.close_action_ll)
-    LinearLayout closeActionLl;
+    @BindView(R.id.delete_video_tv)
+    TextView deleteVideoTv;
+    @BindView(R.id.danmu_tips_tv)
+    TextView danmuTipsTv;
+    @BindView(R.id.zimu_tips_tv)
+    TextView zimuTipsTv;
+    @BindView(R.id.swipe_menu_layout)
+    EasySwipeMenuLayout swipeMenuLayout;
+    @BindView(R.id.remove_danmu_tv)
+    TextView removeDanmuTv;
+    @BindView(R.id.remove_zimu_tv)
+    TextView removeZimuTv;
 
     private View mView;
     private VideoItemEventListener listener;
@@ -89,7 +86,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
     public void onUpdateViews(final VideoBean model, final int position) {
         coverIv.setScaleType(ImageView.ScaleType.FIT_XY);
         if (!model.isNotCover()) {
-            io.reactivex.Observable
+            Observable
                     .create((ObservableOnSubscribe<Bitmap>) emitter ->
                             emitter.onNext(getBitmap(model.get_id())))
                     .subscribeOn(Schedulers.io())
@@ -99,37 +96,23 @@ public class VideoItem implements AdapterItem<VideoBean> {
             coverIv.setImageBitmap(BitmapFactory.decodeResource(mView.getResources(), R.mipmap.ic_smb_video));
         }
 
-        if (!StringUtils.isEmpty(model.getDanmuPath())) {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_exists);
-            bindDanmuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
-            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
-            unbindDanmuActionLl.setEnabled(true);
-        } else {
-            danmuTipsIv.setImageResource(R.mipmap.ic_danmu_unexists);
-            bindDanmuIv.setImageResource(R.mipmap.ic_cant_unbind_danmu);
-            bindDanmuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-            unbindDanmuActionLl.setEnabled(false);
-        }
-
-        if (!StringUtils.isEmpty(model.getZimuPath())) {
-            zimuTipsTv.setVisibility(View.VISIBLE);
-            zimuTipsTv.setText(FileUtils.getFileExtension(model.getZimuPath()).toUpperCase());
-            bindZimuIv.setImageResource(R.mipmap.ic_download_bind_danmu);
-            bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
-            unbindZimuActionLl.setEnabled(true);
-        } else {
-            zimuTipsTv.setVisibility(View.GONE);
-            bindZimuIv.setImageResource(R.mipmap.ic_cant_unbind_danmu);
-            bindZimuTv.setTextColor(CommonUtils.getResColor(R.color.text_gray));
-            unbindZimuActionLl.setEnabled(false);
-        }
-
         //是否为上次播放的视频
         boolean isLastPlayVideo = false;
         String lastVideoPath = AppConfig.getInstance().getLastPlayVideo();
         if (!StringUtils.isEmpty(lastVideoPath)) {
             isLastPlayVideo = lastVideoPath.equals(model.getVideoPath());
         }
+
+        boolean isBoundDanmu = isBoundDanmu(model.getDanmuPath());
+        boolean isBoundZimu = isBoundZimu(model.getZimuPath());
+        //是否已绑定弹幕
+        danmuTipsTv.setVisibility(isBoundDanmu ? View.VISIBLE : View.GONE);
+        removeDanmuTv.setVisibility(isBoundDanmu ? View.VISIBLE : View.GONE);
+        //是否已经绑定字幕
+        zimuTipsTv.setVisibility(isBoundZimu ? View.VISIBLE : View.GONE);
+        removeZimuTv.setVisibility(isBoundZimu ? View.VISIBLE : View.GONE);
+        //是否启用左部布局
+        swipeMenuLayout.setCanRightSwipe(isBoundDanmu || isBoundZimu);
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
         titleTv.setTextColor(isLastPlayVideo
@@ -139,30 +122,12 @@ public class VideoItem implements AdapterItem<VideoBean> {
         durationTv.setText(CommonUtils.formatDuring(model.getVideoDuration()));
         if (model.getVideoDuration() == 0) durationTv.setVisibility(View.GONE);
 
-        videoActionLl.setVisibility(View.GONE);
-
-        tipsLl.setOnClickListener(v -> listener.bindDanmu(position));
-        videoInfoRl.setOnClickListener(v -> listener.openVideo(position));
-        unbindDanmuActionLl.setOnClickListener(v -> {
-            listener.unBindDanmu(position);
-            videoActionLl.setVisibility(View.GONE);
-        });
-        unbindZimuActionLl.setOnClickListener(v -> {
-            listener.unBindZimu(position);
-            videoActionLl.setVisibility(View.GONE);
-        });
-        deleteActionLl.setOnClickListener(v -> {
-            listener.onDelete(position);
-            videoActionLl.setVisibility(View.GONE);
-        });
-        closeActionLl.setOnClickListener(v ->
-                videoActionLl.setVisibility(View.GONE));
-
-        videoInfoRl.setOnLongClickListener(v -> {
-            videoActionLl.setVisibility(View.VISIBLE);
-            return true;
-        });
-
+        bindDanmuTv.setOnClickListener(v -> listener.onBindDanmu(position));
+        bindZimuTv.setOnClickListener(v -> listener.onBindZimu(position));
+        removeDanmuTv.setOnClickListener(v -> listener.onRemoveDanmu(position));
+        removeZimuTv.setOnClickListener(v -> listener.onRemoveZimu(position));
+        deleteVideoTv.setOnClickListener(v -> listener.onVideoDelete(position));
+        itemLayout.setOnClickListener(v -> listener.onOpenVideo(position));
     }
 
     private Bitmap getBitmap(int _id) {
@@ -183,15 +148,33 @@ public class VideoItem implements AdapterItem<VideoBean> {
         return bitmap;
     }
 
+    private boolean isBoundDanmu(String danmuPath) {
+        if (!TextUtils.isEmpty(danmuPath)) {
+            File danmuFile = new File(danmuPath);
+            return danmuFile.exists();
+        }
+        return false;
+    }
+
+    private boolean isBoundZimu(String zimuPath) {
+        if (!TextUtils.isEmpty(zimuPath)) {
+            File zimuFile = new File(zimuPath);
+            return zimuFile.exists();
+        }
+        return false;
+    }
+
     public interface VideoItemEventListener {
-        void bindDanmu(int position);
+        void onBindDanmu(int position);
 
-        void openVideo(int position);
+        void onBindZimu(int position);
 
-        void unBindDanmu(int position);
+        void onRemoveDanmu(int position);
 
-        void unBindZimu(int position);
+        void onRemoveZimu(int position);
 
-        void onDelete(int position);
+        void onVideoDelete(int position);
+
+        void onOpenVideo(int position);
     }
 }

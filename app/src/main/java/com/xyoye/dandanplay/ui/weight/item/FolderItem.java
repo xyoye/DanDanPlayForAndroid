@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -23,7 +24,13 @@ public class FolderItem implements AdapterItem<FolderBean> {
     @BindView(R.id.file_number)
     TextView fileNumber;
 
-    private View mView;
+    @BindView(R.id.item_layout)
+    RelativeLayout contentLayout;
+    @BindView(R.id.shield_folder_tv)
+    TextView shieldFolderTv;
+    @BindView(R.id.delete_folder_tv)
+    TextView deleteFolderTv;
+
     private PlayFolderListener listener;
 
     public FolderItem(PlayFolderListener listener) {
@@ -39,7 +46,7 @@ public class FolderItem implements AdapterItem<FolderBean> {
 
     @Override
     public void initItemViews(View itemView) {
-        mView = itemView;
+
     }
 
     @Override
@@ -71,14 +78,17 @@ public class FolderItem implements AdapterItem<FolderBean> {
                 ? CommonUtils.getResColor(R.color.immutable_text_theme)
                 : CommonUtils.getResColor(R.color.text_gray));
 
-        mView.setOnClickListener(v -> listener.onClick(model.getFolderPath()));
+        contentLayout.setOnClickListener(v -> listener.onClick(model.getFolderPath()));
 
-        mView.setOnLongClickListener(v -> listener.onLongClick(model.getFolderPath(), title));
+        shieldFolderTv.setOnClickListener(v -> listener.onShield(model.getFolderPath(), title));
+        deleteFolderTv.setOnClickListener(v -> listener.onDelete(model.getFolderPath(), title));
     }
 
     public interface PlayFolderListener {
         void onClick(String folderPath);
 
-        boolean onLongClick(String folderPath, String folderName);
+        void onDelete(String folderPath, String title);
+
+        void onShield(String folderPath, String title);
     }
 }

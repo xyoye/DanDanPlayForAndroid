@@ -59,7 +59,7 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     private BaseRvAdapter<SmbDeviceBean> adapter;
     private List<SmbDeviceBean> smbList;
     private boolean isEdit = false;
-    private int index = -1;
+    private int index = 0;
 
     private MenuItem exitEditItem, switchToolsItem;
 
@@ -295,16 +295,14 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
 
             new AlertDialog.Builder(this)
                     .setTitle("切换连接工具")
-                    .setSingleChoiceItems(smbTools.toArray(new String[0]), smbTools.indexOf(smbType.toString()), (dialog, which) -> {
-                        index = which;
-                    })
+                    .setSingleChoiceItems(smbTools.toArray(new String[0]),
+                            smbTools.indexOf(smbType.toString()),
+                            (dialog, which) ->
+                                    index = which
+                    )
                     .setPositiveButton("确定", (dialog, which) -> {
-                        if (index == -1) {
-                            ToastUtils.showShort("请选择任一工具");
-                        } else {
-                            smbType = SmbType.valueOf(smbTools.get(index));
-                            dialog.dismiss();
-                        }
+                        smbType = SmbType.valueOf(smbTools.get(index));
+                        dialog.dismiss();
                     })
                     .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
                     .create()

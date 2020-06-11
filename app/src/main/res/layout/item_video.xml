@@ -2,210 +2,169 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="70dp"
     android:background="@color/item_bg_color">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/image_rl"
-        android:layout_width="84dp"
-        android:layout_height="56dp"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="12dp"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="0dp">
-
-        <ImageView
-            android:id="@+id/cover_iv"
-            android:layout_width="84dp"
-            android:layout_height="56dp"
-            android:scaleType="centerCrop"
-            android:background="@color/layout_bg_color"/>
-
-        <TextView
-            android:id="@+id/duration_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="14dp"
-            android:layout_gravity="end|bottom"
-            android:paddingEnd="3dp"
-            android:paddingStart="3dp"
-            android:background="@drawable/background_duration"
-            android:textColor="@color/immutable_text_white"
-            android:textSize="12sp"/>
-
-    </android.support.v7.widget.CardView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/image_rl"
-        android:layout_toStartOf="@+id/tips_ll"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="3"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
-            android:text="" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/video_info_rl"
+    <com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
+        android:id="@+id/swipe_menu_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toStartOf="@+id/tips_ll">
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/tips_ll"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:foreground="?android:attr/selectableItemBackground">
-
-        <ImageView
-            android:id="@+id/danmu_tips_iv"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/load_danmaku"
-            android:src="@mipmap/ic_danmu_exists"/>
-
-        <TextView
-            android:id="@+id/zimu_tips_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/theme_color"
-            android:textSize="12sp"
-            android:visibility="gone"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/video_action_ll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:background="@color/item_control_mask_color"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        app:leftMenuView="@+id/left"
+        app:contentView="@+id/item_layout"
+        app:rightMenuView="@+id/right"
+        app:canLeftSwipe="true"
+        app:canRightSwipe="false">
 
         <LinearLayout
-            android:id="@+id/delete_action_ll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:id="@+id/left"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="3dp"
-                android:padding="5dp"
-                android:src="@mipmap/ic_download_delete"/>
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:id="@+id/remove_danmu_tv"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/immutable_text_theme"
+                android:gravity="center"
+                android:text="移除\n弹幕"
                 android:textColor="@color/immutable_text_white"
-                android:textSize="12sp"
-                android:text="删除"/>
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/remove_zimu_tv"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/immutable_text_orange"
+                android:gravity="center"
+                android:text="移除\n字幕"
+                android:textColor="@color/immutable_text_white"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/unbind_danmu_action_ll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/item_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/bind_danmu_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="3dp"
-                android:padding="5dp"
-                android:src="@mipmap/ic_cant_unbind_danmu"/>
+                android:id="@+id/cover_iv"
+                android:layout_width="84dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:background="@color/layout_bg_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/danmu_tips_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="1dp"
+                android:background="@drawable/background_text_circle_theme"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:text="弹"
+                android:visibility="gone"
+                android:textColor="@color/immutable_text_theme"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toStartOf="@+id/zimu_tips_tv"
+                app:layout_constraintTop_toTopOf="@+id/cover_iv" />
+
+            <TextView
+                android:id="@+id/zimu_tips_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="1dp"
+                android:background="@drawable/background_text_circle_orange"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:text="字"
+                android:visibility="gone"
+                android:textColor="@color/immutable_text_orange"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="@+id/cover_iv"
+                app:layout_constraintTop_toTopOf="@+id/cover_iv" />
+
+            <TextView
+                android:id="@+id/duration_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/background_duration"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:text="00:00"
+                android:textColor="@color/immutable_text_white"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/cover_iv"
+                app:layout_constraintEnd_toEndOf="@+id/cover_iv" />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="3"
+                android:text="测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cover_iv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/bind_danmu_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp"
-                android:text="移除弹幕"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/unbind_zimu_action_ll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/bind_zimu_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="3dp"
-                android:padding="5dp"
-                android:src="@mipmap/ic_cant_unbind_danmu"/>
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/immutable_text_theme"
+                android:gravity="center"
+                android:text="绑定\n弹幕"
+                android:textColor="@color/immutable_text_white"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/bind_zimu_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/text_gray"
-                android:textSize="12sp"
-                android:text="移除字幕"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/close_action_ll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="3dp"
-                android:padding="5dp"
-                android:src="@mipmap/ic_download_close"/>
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/immutable_text_orange"
+                android:gravity="center"
+                android:text="绑定\n字幕"
+                android:textColor="@color/immutable_text_white"
+                android:textSize="12sp" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:id="@+id/delete_video_tv"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@color/immutable_text_red"
+                android:gravity="center"
+                android:text="删除\n视频"
                 android:textColor="@color/immutable_text_white"
-                android:textSize="12sp"
-                android:text="关闭"/>
+                android:textSize="12sp" />
         </LinearLayout>
-    </LinearLayout>
+    </com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>
 </RelativeLayout>

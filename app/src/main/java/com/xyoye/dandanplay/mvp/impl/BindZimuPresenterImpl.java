@@ -2,29 +2,44 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.os.Bundle;
 
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.StringUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
-import com.xyoye.dandanplay.bean.ShooterQuotaBean;
 import com.xyoye.dandanplay.bean.ShooterSubDetailBean;
 import com.xyoye.dandanplay.bean.ShooterSubtitleBean;
-import com.xyoye.dandanplay.mvp.presenter.ShooterSubPresenter;
-import com.xyoye.dandanplay.mvp.view.ShooterSubView;
+import com.xyoye.dandanplay.mvp.presenter.BindZimuPresenter;
+import com.xyoye.dandanplay.mvp.view.BindZimuView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.HashUtils;
 import com.xyoye.dandanplay.utils.Lifeful;
+import com.xyoye.dandanplay.utils.SubtitleConverter;
+import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.CommShooterDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
+import com.xyoye.dandanplay.utils.net.RetroFactory;
+import com.xyoye.dandanplay.utils.net.service.SubtitleRetrofitService;
+import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
- * Created by xyoye on 2020/2/23.
+ * Created by xyoye on 2018/7/4 0004.
  */
 
-public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView> implements ShooterSubPresenter {
+public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> implements BindZimuPresenter {
 
-    public ShooterSubPresenterImpl(ShooterSubView view, Lifeful lifeful) {
+    public BindZimuPresenterImpl(BindZimuView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 
@@ -49,29 +64,59 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
     }
 
     @Override
-    public void updateQuota() {
-        String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterQuotaBean.getShooterQuota(apiSecret, new CommShooterDataObserver<ShooterQuotaBean>() {
-            @Override
-            public void onSuccess(ShooterQuotaBean shooterQuotaBean) {
-                if (shooterQuotaBean != null && shooterQuotaBean.getUser() != null) {
-                    getView().updateQuota(shooterQuotaBean.getUser().getQuota());
-                } else {
-                    getView().showError("解析配额数据失败");
-                }
-            }
+    public void destroy() {
 
-            @Override
-            public void onError(int errorCode, String message) {
-                getView().showError(errorCode + ": " + message);
-            }
-        }, new NetworkConsumer());
     }
 
     @Override
-    public void searchSubtitle(String text, int page) {
+    public void matchZimu(String videoPath) {
+        String thunderHash = HashUtils.getFileSHA1(videoPath);
+        String shooterHash = HashUtils.getFileHash(videoPath);
+        if (StringUtils.isEmpty(thunderHash) || StringUtils.isEmpty(shooterHash)) {
+            ToastUtils.showShort("无匹配字幕");
+            return;
+        }
+
+        Map<String, String> shooterParams = new HashMap<>();
+        shooterParams.put("filehash", shooterHash);
+        shooterParams.put("pathinfo", FileUtils.getFileName(videoPath));
+        shooterParams.put("format", "json");
+        shooterParams.put("lang", "Chn");
+        SubtitleRetrofitService service = RetroFactory.getSubtitleInstance();
+
+        getView().showLoading();
+        service.queryThunder(thunderHash)
+                .onErrorReturnItem(new SubtitleBean.Thunder())
+                .zipWith(service.queryShooter(shooterParams).onErrorReturnItem(new ArrayList<>()),
+                        (thunder, shooters) -> SubtitleConverter.transform(thunder, shooters, videoPath))
+                .doOnSubscribe(new NetworkConsumer())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CommOtherDataObserver<List<SubtitleBean>>() {
+                    @Override
+                    public void onSuccess(List<SubtitleBean> subtitleList) {
+                        getView().hideLoading();
+                        if (subtitleList.size() > 0) {
+                            //按评分排序
+                            Collections.sort(subtitleList, (o1, o2) -> o2.getRank() - o1.getRank());
+                            getView().refreshZimuAdapter(subtitleList);
+                        } else {
+                            getView().showError("未找到相关字幕，请手动搜索");
+                        }
+                    }
+
+                    @Override
+                    public void onError(int errorCode, String message) {
+                        getView().hideLoading();
+                        ToastUtils.showShort(message);
+                    }
+                });
+    }
+
+    @Override
+    public void searchZimu(String videoName, int page) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterSubtitleBean.searchSubtitle(apiSecret, text, page, new CommShooterDataObserver<ShooterSubtitleBean>() {
+        ShooterSubtitleBean.searchSubtitle(apiSecret, videoName, page, new CommShooterDataObserver<ShooterSubtitleBean>() {
             @Override
             public void onSuccess(ShooterSubtitleBean shooterSubtitleBean) {
                 getView().hideLoading();
@@ -83,8 +128,10 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
                         getView().updateSubtitleList(shooterSubtitleBean.getSub().getSubs(), true);
                     } else {
                         getView().updateSubtitleList(new ArrayList<>(), false);
+                        if (page == 0) {
+                            getView().showError("未找到相关字幕");
+                        }
                     }
-
                 } else {
                     getView().showError("解析字幕数据失败");
                     getView().updateSubtitleFailed();
@@ -100,8 +147,9 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
         }, new NetworkConsumer());
     }
 
+
     @Override
-    public void querySubtitleDetail(int subtitleId) {
+    public void queryZimuDetail(int subtitleId) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
         ShooterSubDetailBean.querySubtitleDetail(apiSecret, subtitleId, new CommShooterDataObserver<ShooterSubDetailBean>() {
             @Override
@@ -147,15 +195,9 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
         ShooterSubDetailBean.downloadSubtitle(downloadLink, subtitleFile.getAbsolutePath(), unzip, new CommShooterDataObserver<String>() {
             @Override
             public void onSuccess(String resultFilePath) {
-                String msg;
-                if (unzip) {
-                    msg = "文件下载并解压成功: " + resultFilePath;
-                } else {
-                    msg = "文件下载成功: " + resultFilePath;
-                }
                 getView().hideLoading();
-                getView().showError(msg);
-                getView().subtitleDownloadSuccess();
+                getView().showError("文件下载成功，请选择需要绑定的字幕");
+                getView().subtitleDownloadSuccess(resultFilePath, unzip);
             }
 
             @Override

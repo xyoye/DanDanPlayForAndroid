@@ -140,7 +140,7 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
 
                     @Override
                     public void onError(Throwable e) {
-
+                        e.printStackTrace();
                     }
 
                     @Override

@@ -160,9 +160,9 @@ public class PlayFragmentPresenterImpl extends BaseMvpPresenterImpl<PlayFragment
     @Override
     public void deleteFolderVideo(String folderPath) {
         File folder = new File(folderPath);
-        if (folder.exists() && folder.isDirectory()){
-            for (File file : folder.listFiles()){
-                if (CommonUtils.isMediaFile(file.getAbsolutePath())){
+        if (folder.exists() && folder.isDirectory()) {
+            for (File file : folder.listFiles()) {
+                if (CommonUtils.isMediaFile(file.getAbsolutePath())) {
                     file.delete();
                 }
             }

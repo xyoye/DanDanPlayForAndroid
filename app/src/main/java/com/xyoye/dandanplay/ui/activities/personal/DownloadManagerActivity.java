@@ -19,7 +19,7 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.BindDanmuBean;
+import com.xyoye.dandanplay.bean.BindResourceBean;
 import com.xyoye.dandanplay.bean.event.TorrentServiceEvent;
 import com.xyoye.dandanplay.mvp.impl.DownloadManagerPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
@@ -237,14 +237,14 @@ public class DownloadManagerActivity extends BaseMvpActivity<DownloadManagerPres
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == TASK_DOWNLOADED_DANMU_BIND) {
-                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
-                if (bindDanmuBean == null)
+                BindResourceBean bindResourceBean = data.getParcelableExtra("bind_data");
+                if (bindResourceBean == null)
                     return;
 
-                int episodeId = bindDanmuBean.getEpisodeId();
-                String danmuPath = bindDanmuBean.getDanmuPath();
-                int taskPosition = bindDanmuBean.getItemPosition();
-                int taskFilePosition = bindDanmuBean.getTaskFilePosition();
+                int episodeId = bindResourceBean.getEpisodeId();
+                String danmuPath = bindResourceBean.getDanmuPath();
+                int taskPosition = bindResourceBean.getItemPosition();
+                int taskFilePosition = bindResourceBean.getTaskFilePosition();
 
                 DownloadedFragment downloadedFragment = (DownloadedFragment) fragmentList.get(1);
                 if (downloadedFragment != null) {

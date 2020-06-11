@@ -1,27 +1,28 @@
 package com.xyoye.dandanplay.ui.activities.play;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.BindDanmuBean;
+import com.xyoye.dandanplay.bean.BindResourceBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
-import com.xyoye.dandanplay.bean.params.BindDanmuParam;
-import com.xyoye.dandanplay.mvp.impl.DanmuNetworkPresenterImpl;
-import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
-import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
+import com.xyoye.dandanplay.bean.params.BindResourceParam;
+import com.xyoye.dandanplay.mvp.impl.BindDanmuPresenterImpl;
+import com.xyoye.dandanplay.mvp.presenter.BindDanmuPresenter;
+import com.xyoye.dandanplay.mvp.view.BindDanmuView;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
@@ -34,59 +35,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by xyoye on 2018/7/4.
- *
+ * <p>
  * 网络弹幕绑定界面
  */
 
-public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter> implements DanmuNetworkView {
+public class BindDanmuActivity extends BaseMvpActivity<BindDanmuPresenter> implements BindDanmuView {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.current_resource_path_ll)
+    LinearLayout currentResourcePathLl;
+    @BindView(R.id.current_resource_tips_tv)
+    TextView currentResourceTipsTv;
+    @BindView(R.id.current_resource_path_tv)
+    TextView currentResourcePathTv;
 
     private BaseRvAdapter<DanmuMatchBean.MatchesBean> adapter;
-    private BindDanmuParam bindDanmuParam;
+    private BindResourceParam bindResourceParam;
 
     @Override
     @SuppressLint("CheckResult")
     public void initView() {
         setTitle("选择网络弹幕");
 
-        bindDanmuParam = getIntent().getParcelableExtra("bind_param");
+        bindResourceParam = getIntent().getParcelableExtra("bind_param");
+        String currentDanmuPath = bindResourceParam.getCurrentResourcePath();
+        if (!TextUtils.isEmpty(currentDanmuPath)) {
+            currentResourcePathLl.setVisibility(View.VISIBLE);
+            currentResourceTipsTv.setText("当前弹幕: ");
+            currentResourcePathTv.setText(currentDanmuPath);
+        }
 
         adapter = new BaseRvAdapter<DanmuMatchBean.MatchesBean>(new ArrayList<>()) {
             @NonNull
             @Override
             public AdapterItem<DanmuMatchBean.MatchesBean> onCreateItem(int viewType) {
-                return new DanmuNetworkItem(model ->
-                        new RxPermissions(DanmuNetworkActivity.this).
-                                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                .subscribe(new Observer<Boolean>() {
-                                    @Override
-                                    public void onSubscribe(Disposable d) {
-
-                                    }
-
-                                    @Override
-                                    public void onNext(Boolean aBoolean) {
-                                        if (aBoolean) {
-                                            showDownloadDialog(model);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(Throwable e) {
-
-                                    }
-
-                                    @Override
-                                    public void onComplete() {
-
-                                    }
-                                }));
+                return new DanmuNetworkItem(BindDanmuActivity.this::showDownloadDialog);
             }
         };
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -95,28 +81,28 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
         recyclerView.addItemDecoration(new ItemDecorationSpaces(0, 0, 0, 1));
         recyclerView.setAdapter(adapter);
 
-        if (bindDanmuParam.isOutsideFile()) {
-            if (StringUtils.isEmpty(bindDanmuParam.getSearchWord())) {
+        if (bindResourceParam.isOutsideFile()) {
+            if (StringUtils.isEmpty(bindResourceParam.getSearchWord())) {
                 ToastUtils.showShort("无匹配弹幕");
                 return;
             }
             //非手机本地文件，无法获取MD5
-            String searchWord = bindDanmuParam.getSearchWord();
+            String searchWord = bindResourceParam.getSearchWord();
             String episode = "";
-            if (searchWord.trim().contains(" ")){
+            if (searchWord.trim().contains(" ")) {
                 String[] wordAndEpisode = searchWord.split(" ");
-                if (wordAndEpisode.length == 2 && CommonUtils.isNum(wordAndEpisode[1])){
+                if (wordAndEpisode.length == 2 && CommonUtils.isNum(wordAndEpisode[1])) {
                     searchWord = wordAndEpisode[0];
                     episode = wordAndEpisode[1];
                 }
             }
             presenter.searchDanmu(searchWord, episode);
         } else {
-            if (StringUtils.isEmpty(bindDanmuParam.getVideoPath())) {
+            if (StringUtils.isEmpty(bindResourceParam.getVideoPath())) {
                 ToastUtils.showShort("无匹配弹幕");
                 return;
             }
-            presenter.matchDanmu(bindDanmuParam.getVideoPath());
+            presenter.matchDanmu(bindResourceParam.getVideoPath());
         }
     }
 
@@ -133,7 +119,7 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
                         finishActivity(0, path)).show();
                 break;
             case R.id.search_danmu:
-                new SearchDanmuDialog(DanmuNetworkActivity.this, (anime, episode) ->
+                new SearchDanmuDialog(BindDanmuActivity.this, (anime, episode) ->
                         presenter.searchDanmu(anime, episode)).show();
                 break;
         }
@@ -148,18 +134,13 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
 
     @NonNull
     @Override
-    protected DanmuNetworkPresenter initPresenter() {
-        return new DanmuNetworkPresenterImpl(this, this);
+    protected BindDanmuPresenter initPresenter() {
+        return new BindDanmuPresenterImpl(this, this);
     }
 
     @Override
     protected int initPageLayoutID() {
-        return R.layout.activity_danmu_network;
-    }
-
-    @Override
-    public void refreshAdapter(List<DanmuMatchBean.MatchesBean> beans) {
-        adapter.setData(beans);
+        return R.layout.activity_bind_resource;
     }
 
     @Override
@@ -194,20 +175,25 @@ public class DanmuNetworkActivity extends BaseMvpActivity<DanmuNetworkPresenter>
     }
 
     private void showDownloadDialog(DanmuMatchBean.MatchesBean model) {
-        new DanmuDownloadDialog(DanmuNetworkActivity.this, bindDanmuParam.getVideoPath(), model,
+        new DanmuDownloadDialog(BindDanmuActivity.this, bindResourceParam.getVideoPath(), model,
                 (danmuPath, episodeId) -> finishActivity(episodeId, danmuPath)).show();
     }
 
     public void finishActivity(int episodeId, String danmuPath) {
-        BindDanmuBean danmuBean = new BindDanmuBean();
+        BindResourceBean danmuBean = new BindResourceBean();
         danmuBean.setDanmuPath(danmuPath);
         danmuBean.setEpisodeId(episodeId);
-        danmuBean.setItemPosition(bindDanmuParam.getItemPosition());
-        danmuBean.setTaskFilePosition(bindDanmuParam.getTaskFilePosition());
+        danmuBean.setItemPosition(bindResourceParam.getItemPosition());
+        danmuBean.setTaskFilePosition(bindResourceParam.getTaskFilePosition());
 
         Intent intent = getIntent();
         intent.putExtra("bind_data", danmuBean);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void refreshDanmuAdapter(List<DanmuMatchBean.MatchesBean> beans) {
+        adapter.setData(beans);
     }
 }

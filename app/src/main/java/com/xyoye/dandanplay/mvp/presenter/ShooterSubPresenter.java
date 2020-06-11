@@ -13,5 +13,5 @@ public interface ShooterSubPresenter extends BaseMvpPresenter {
 
     void querySubtitleDetail(int id);
 
-    void downloadSubtitleFile(String fileName, String downloadLink);
+    void downloadSubtitleFile(String fileName, String downloadLink, boolean unzip);
 }

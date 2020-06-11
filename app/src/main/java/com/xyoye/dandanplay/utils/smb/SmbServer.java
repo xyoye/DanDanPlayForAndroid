@@ -67,21 +67,15 @@ public class SmbServer extends Thread implements HttpContentListener {
         }
 
         //在ServerSocket关闭之前一直监听请求
-        while (!serverSocket.isClosed()){
+        while (serverSocket != null && !serverSocket.isClosed()){
             try {
                 Socket socket = serverSocket.accept();
-                socket.setSoTimeout(getTimeOut());
                 //接收到请求后，新建线程处理请求
                 new SmbServerThread(socket, this).start();
             }catch (Exception e){
                 e.printStackTrace();
-                break;
             }
         }
-    }
-
-    private synchronized int getTimeOut(){
-        return 15 * 1000;
     }
 
     //获取本机接口地址

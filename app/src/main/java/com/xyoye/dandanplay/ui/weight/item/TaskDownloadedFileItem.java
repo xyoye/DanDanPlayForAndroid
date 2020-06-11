@@ -13,9 +13,9 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.DownloadedTaskBean;
-import com.xyoye.dandanplay.bean.params.BindDanmuParam;
+import com.xyoye.dandanplay.bean.params.BindResourceParam;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
-import com.xyoye.dandanplay.ui.activities.play.DanmuNetworkActivity;
+import com.xyoye.dandanplay.ui.activities.play.BindDanmuActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -83,8 +83,8 @@ public class TaskDownloadedFileItem implements AdapterItem<DownloadedTaskBean.Do
 
         danmuBindIv.setOnClickListener(v -> {
             if (CommonUtils.isMediaFile(model.getFilePath())) {
-                BindDanmuParam param = new BindDanmuParam(model.getFilePath(), taskPosition, position);
-                Intent intent = new Intent(mActivity, DanmuNetworkActivity.class);
+                BindResourceParam param = new BindResourceParam(model.getFilePath(), taskPosition, position);
+                Intent intent = new Intent(mActivity, BindDanmuActivity.class);
                 intent.putExtra("bind_param", param);
                 mActivity.startActivityForResult(intent, DownloadManagerActivity.TASK_DOWNLOADED_DANMU_BIND);
             } else {

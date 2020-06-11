@@ -59,13 +59,11 @@ public class SmbManager {
         } else if (mSmbType == SmbType.SMBJ_RPC) {
             controller = new SMBJ_RPCController();
             if (controller.linkStart(smbLinkInfo, smbLinkException)) {
-                ;
                 return true;
             }
         } else if (mSmbType == SmbType.SMBJ && !SmbUtils.isTextEmpty(smbLinkInfo.getRootFolder())) {
             controller = new SMBJController();
             if (controller.linkStart(smbLinkInfo, smbLinkException)) {
-                ;
                 return true;
             }
         } else if (mSmbType == SmbType.JCIFS) {

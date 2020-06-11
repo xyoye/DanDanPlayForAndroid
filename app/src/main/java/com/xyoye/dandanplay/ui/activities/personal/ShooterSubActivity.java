@@ -223,8 +223,8 @@ public class ShooterSubActivity extends BaseMvpActivity<ShooterSubPresenter> imp
 
     @Override
     public void showSubtitleDetailDialog(ShooterSubDetailBean.SubBean.SubsBean detailBean) {
-        shooterSubDetailDialog = new ShooterSubDetailDialog(this, detailBean, (fileName, link) ->
-                        presenter.downloadSubtitleFile(fileName, link));
+        shooterSubDetailDialog = new ShooterSubDetailDialog(this, detailBean, (fileName, link, unzip) ->
+                        presenter.downloadSubtitleFile(fileName, link, unzip));
         shooterSubDetailDialog.show();
     }
 
@@ -235,7 +235,7 @@ public class ShooterSubActivity extends BaseMvpActivity<ShooterSubPresenter> imp
         }
     }
 
-    private class ShooterSubtitleAdapter extends BaseQuickAdapter<ShooterSubtitleBean.SubBean.SubsBean, BaseViewHolder> {
+    private static class ShooterSubtitleAdapter extends BaseQuickAdapter<ShooterSubtitleBean.SubBean.SubsBean, BaseViewHolder> {
 
         private ShooterSubtitleAdapter(@LayoutRes int layoutResId, @Nullable List<ShooterSubtitleBean.SubBean.SubsBean> data) {
             super(layoutResId, data);

@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.activities.setting;
 
+import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -100,8 +101,8 @@ public class DanmuBlockManagerActivity extends BaseMvpActivity<BlockManagerPrese
 
     @Override
     public List<String> updateData(List<String> result) {
-        // TODO: 2019/11/5 3.5.1 临时性修改 
-        if (labelsView == null) return null;
+        if(getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
+            return null;
         blockData.clear();
         blockData.addAll(result);
         labelsView.setLabels(blockData);

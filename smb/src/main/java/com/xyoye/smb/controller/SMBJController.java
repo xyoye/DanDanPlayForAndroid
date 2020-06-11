@@ -54,9 +54,8 @@ public class SMBJController implements Controller {
         }
 
         SmbConfig smbConfig = SmbConfig.builder()
-                .withTimeout(5, TimeUnit.SECONDS)
-                .withTimeout(5, TimeUnit.SECONDS)
-                .withSoTimeout(5, TimeUnit.SECONDS)
+                .withTimeout(180, TimeUnit.SECONDS)
+                .withSoTimeout(180, TimeUnit.SECONDS)
                 .build();
 
         try {

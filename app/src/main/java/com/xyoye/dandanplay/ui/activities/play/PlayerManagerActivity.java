@@ -13,8 +13,8 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
-import com.xyoye.dandanplay.bean.BindDanmuBean;
-import com.xyoye.dandanplay.bean.params.BindDanmuParam;
+import com.xyoye.dandanplay.bean.BindResourceBean;
+import com.xyoye.dandanplay.bean.params.BindResourceParam;
 import com.xyoye.dandanplay.bean.params.PlayParam;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuSelectDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
@@ -92,10 +92,10 @@ public class PlayerManagerActivity extends BaseMvcActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_DANMU) {
             if (resultCode == RESULT_OK) {
-                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
-                if (bindDanmuBean != null) {
-                    danmuPath = bindDanmuBean.getDanmuPath();
-                    episodeId = bindDanmuBean.getEpisodeId();
+                BindResourceBean bindResourceBean = data.getParcelableExtra("bind_data");
+                if (bindResourceBean != null) {
+                    danmuPath = bindResourceBean.getDanmuPath();
+                    episodeId = bindResourceBean.getEpisodeId();
                 }
             }
             if (TextUtils.isEmpty(videoPath)) {
@@ -185,8 +185,8 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      * 跳转至选择弹幕页面
      */
     private void launchDanmuSelect(String searchWord) {
-        BindDanmuParam param = new BindDanmuParam(searchWord, true);
-        Intent intent = new Intent(PlayerManagerActivity.this, DanmuNetworkActivity.class);
+        BindResourceParam param = new BindResourceParam(searchWord, true);
+        Intent intent = new Intent(PlayerManagerActivity.this, BindDanmuActivity.class);
         intent.putExtra("bind_param", param);
         startActivityForResult(intent, SELECT_DANMU);
     }

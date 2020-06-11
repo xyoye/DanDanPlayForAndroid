@@ -88,19 +88,25 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
             }
 
             @Override
-            public boolean onLongClick(String folderPath, String folderName) {
+            public void onDelete(String folderPath, String title) {
                 new CommonDialog.Builder(getContext())
                         .setOkListener(dialog -> presenter.deleteFolderVideo(folderPath))
-                        .setExtraListener(dialog -> {
+                        .setAutoDismiss()
+                        .build()
+                        .show("确认删除文件夹 [" + title + "] 内视频文件？");
+            }
+
+            @Override
+            public void onShield(String folderPath, String title) {
+                new CommonDialog.Builder(getContext())
+                        .setOkListener(dialog -> {
                             presenter.filterFolder(folderPath);
                             refresh.setRefreshing(true);
                             refreshVideo(false);
                         })
                         .setAutoDismiss()
-                        .showExtra()
                         .build()
-                        .show("确认删除文件夹 [" + folderName + "] 内视频文件？", "屏蔽目录");
-                return true;
+                        .show("确认屏蔽文件夹 [" + title + "]及其子文件夹？");
             }
         };
 

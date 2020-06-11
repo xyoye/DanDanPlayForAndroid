@@ -139,14 +139,26 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/confirm_tv"
+                android:id="@+id/download_tv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/background_dialog_button_neutral"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="下载"
+                android:textColor="@color/immutable_text_theme"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/download_unzip_tv"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/background_dialog_button_positive"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="下载"
+                android:text="下载并解压"
                 android:textColor="@color/immutable_text_theme"
                 android:textSize="14sp" />
         </LinearLayout>

@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.activities.anime;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -412,8 +413,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     private void search(String searchText) {
-        // TODO: 2019/11/5 3.5.1 临时性修改
-        if (searchEt == null)
+        if(getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
             return;
 
         AnimHelper.doHideAnimator(historyRl);

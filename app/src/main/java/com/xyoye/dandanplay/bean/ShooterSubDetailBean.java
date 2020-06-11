@@ -1,15 +1,20 @@
 package com.xyoye.dandanplay.bean;
 
 import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.xyoye.dandanplay.utils.SevenZipUtils;
 import com.xyoye.dandanplay.utils.net.CommShooterDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 import com.xyoye.dandanplay.utils.net.utils.ShooterNetworkUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
-import okhttp3.ResponseBody;
 
 /**
  * Created by xyoye on 2020/2/24.
@@ -384,12 +389,49 @@ public class ShooterSubDetailBean {
                 .subscribe(observer);
     }
 
-    public static void downloadSubtitle(String downloadLink, String filePath, CommShooterDataObserver<Boolean> observer, NetworkConsumer consumer) {
+    public static void downloadSubtitle(String downloadLink, String filePath, boolean unzip, CommShooterDataObserver<String> observer, NetworkConsumer consumer) {
         RetroFactory.getShooterInstance().downloadSubtitle(downloadLink)
-                .map(responseBody ->
-                        FileIOUtils.writeFileFromIS(filePath, responseBody.byteStream()))
+                .map(responseBody -> {
+                    if (!FileIOUtils.writeFileFromIS(filePath, responseBody.byteStream())) {
+                        throw new IOException("写入文件失败");
+                    }
+                    return true;
+                })
+                .flatMap(unzipFile(unzip, filePath))
                 .doOnSubscribe(consumer)
                 .compose(ShooterNetworkUtils.network())
                 .subscribe(observer);
+    }
+
+    private static Function<Boolean, ObservableSource<String>> unzipFile(boolean unzip, String filePath) {
+        return writeFileResult -> {
+            if (!unzip) {
+                return Observable.just(filePath);
+            }
+            return (ObservableSource<String>) observer -> {
+                try {
+                    SevenZipUtils.extractFile(new File(filePath), new SevenZipUtils.ExtractCallback() {
+
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onProgress(int progress) {
+
+                        }
+
+                        @Override
+                        public void onCompleted(String destDirectoryPath) {
+                            observer.onNext(destDirectoryPath);
+                            observer.onComplete();
+                        }
+                    });
+                } catch (IOException e) {
+                    observer.onError(new RuntimeException("文件下载成功，解压失败"));
+                }
+            };
+        };
     }
 }

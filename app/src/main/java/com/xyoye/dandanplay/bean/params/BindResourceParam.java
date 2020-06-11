@@ -7,25 +7,26 @@ import android.os.Parcelable;
  * Created by xyoye on 2019/9/10.
  */
 
-public class BindDanmuParam implements Parcelable {
+public class BindResourceParam implements Parcelable {
     private String videoPath;
     private String searchWord;
     private int itemPosition;
+    private String currentResourcePath;
 
     private boolean outsideFile;
     private int taskFilePosition;
 
-    public BindDanmuParam(String searchWord, boolean outsideFile) {
+    public BindResourceParam(String searchWord, boolean outsideFile) {
         this.searchWord = searchWord;
         this.outsideFile = outsideFile;
     }
 
-    public BindDanmuParam(String videoPath, int itemPosition) {
+    public BindResourceParam(String videoPath, int itemPosition) {
         this.videoPath = videoPath;
         this.itemPosition = itemPosition;
     }
 
-    public BindDanmuParam(String videoPath, int itemPosition, int taskFilePosition) {
+    public BindResourceParam(String videoPath, int itemPosition, int taskFilePosition) {
         this.videoPath = videoPath;
         this.itemPosition = itemPosition;
         this.taskFilePosition = taskFilePosition;
@@ -45,6 +46,14 @@ public class BindDanmuParam implements Parcelable {
 
     public void setSearchWord(String searchWord) {
         this.searchWord = searchWord;
+    }
+
+    public String getCurrentResourcePath() {
+        return currentResourcePath;
+    }
+
+    public void setCurrentResourcePath(String currentResourcePath) {
+        this.currentResourcePath = currentResourcePath;
     }
 
     public int getItemPosition() {
@@ -71,23 +80,24 @@ public class BindDanmuParam implements Parcelable {
         this.taskFilePosition = taskFilePosition;
     }
 
-    protected BindDanmuParam(Parcel in) {
+    protected BindResourceParam(Parcel in) {
         videoPath = in.readString();
         searchWord = in.readString();
         itemPosition = in.readInt();
+        currentResourcePath = in.readString();
         outsideFile = in.readByte() != 0;
         taskFilePosition = in.readInt();
     }
 
-    public static final Creator<BindDanmuParam> CREATOR = new Creator<BindDanmuParam>() {
+    public static final Creator<BindResourceParam> CREATOR = new Creator<BindResourceParam>() {
         @Override
-        public BindDanmuParam createFromParcel(Parcel in) {
-            return new BindDanmuParam(in);
+        public BindResourceParam createFromParcel(Parcel in) {
+            return new BindResourceParam(in);
         }
 
         @Override
-        public BindDanmuParam[] newArray(int size) {
-            return new BindDanmuParam[size];
+        public BindResourceParam[] newArray(int size) {
+            return new BindResourceParam[size];
         }
     };
 
@@ -101,6 +111,7 @@ public class BindDanmuParam implements Parcelable {
         dest.writeString(videoPath);
         dest.writeString(searchWord);
         dest.writeInt(itemPosition);
+        dest.writeString(currentResourcePath);
         dest.writeByte((byte) (outsideFile ? 1 : 0));
         dest.writeInt(taskFilePosition);
     }

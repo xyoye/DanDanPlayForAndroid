@@ -9,8 +9,8 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.DanmuSearchBean;
 import com.xyoye.dandanplay.bean.params.DanmuMatchParam;
-import com.xyoye.dandanplay.mvp.presenter.DanmuNetworkPresenter;
-import com.xyoye.dandanplay.mvp.view.DanmuNetworkView;
+import com.xyoye.dandanplay.mvp.presenter.BindDanmuPresenter;
+import com.xyoye.dandanplay.mvp.view.BindDanmuView;
 import com.xyoye.dandanplay.utils.Lifeful;
 import com.xyoye.dandanplay.utils.MD5Util;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -24,9 +24,9 @@ import java.util.List;
  * Created by xyoye on 2018/7/4 0004.
  */
 
-public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetworkView> implements DanmuNetworkPresenter {
+public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> implements BindDanmuPresenter {
 
-    public DanmuNetworkPresenterImpl(DanmuNetworkView view, Lifeful lifeful) {
+    public BindDanmuPresenterImpl(BindDanmuView view, Lifeful lifeful) {
         super(view, lifeful);
     }
 
@@ -58,7 +58,7 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
     @Override
     public void matchDanmu(String videoPath) {
 
-        if (StringUtils.isEmpty(videoPath)){
+        if (StringUtils.isEmpty(videoPath)) {
             ToastUtils.showShort("无匹配弹幕");
             return;
         }
@@ -75,12 +75,12 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
         param.setMatchMode("hashAndFileName");
 
         getView().showLoading();
-        DanmuMatchBean.matchDanmu(param,  new CommJsonObserver<DanmuMatchBean>(getLifeful()){
+        DanmuMatchBean.matchDanmu(param, new CommJsonObserver<DanmuMatchBean>(getLifeful()) {
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();
                 if (danmuMatchBean.getMatches().size() > 0)
-                    getView().refreshAdapter(danmuMatchBean.getMatches());
+                    getView().refreshDanmuAdapter(danmuMatchBean.getMatches());
                 else
                     ToastUtils.showShort("无匹配弹幕");
             }
@@ -96,15 +96,15 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
     @Override
     public void searchDanmu(String anime, String episode) {
         getView().showLoading();
-        DanmuSearchBean.searchDanmu(anime, episode, new CommJsonObserver<DanmuSearchBean>(getLifeful()){
+        DanmuSearchBean.searchDanmu(anime, episode, new CommJsonObserver<DanmuSearchBean>(getLifeful()) {
             @Override
             public void onSuccess(DanmuSearchBean danmuSearchBean) {
                 getView().hideLoading();
-                if (danmuSearchBean.getAnimes().size() > 0){
+                if (danmuSearchBean.getAnimes().size() > 0) {
                     List<DanmuMatchBean.MatchesBean> matchesBeanList = new ArrayList<>();
-                    for (DanmuSearchBean.AnimesBean animeBean : danmuSearchBean.getAnimes()){
+                    for (DanmuSearchBean.AnimesBean animeBean : danmuSearchBean.getAnimes()) {
                         DanmuMatchBean.MatchesBean matchesBean = new DanmuMatchBean.MatchesBean();
-                        for (DanmuSearchBean.AnimesBean.EpisodesBean episodesBean : animeBean.getEpisodes()){
+                        for (DanmuSearchBean.AnimesBean.EpisodesBean episodesBean : animeBean.getEpisodes()) {
                             matchesBean.setAnimeId(animeBean.getAnimeId());
                             matchesBean.setAnimeTitle(animeBean.getAnimeTitle());
                             matchesBean.setType(animeBean.getType());
@@ -113,8 +113,8 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
                             matchesBeanList.add(matchesBean);
                         }
                     }
-                    getView().refreshAdapter(matchesBeanList);
-                }else
+                    getView().refreshDanmuAdapter(matchesBeanList);
+                } else
                     ToastUtils.showShort("无匹配弹幕");
             }
 
@@ -125,6 +125,4 @@ public class DanmuNetworkPresenterImpl extends BaseMvpPresenterImpl<DanmuNetwork
             }
         }, new NetworkConsumer());
     }
-
-
 }

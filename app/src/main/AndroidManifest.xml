@@ -42,9 +42,13 @@
         <activity
             android:name=".ui.activities.setting.PlayerSettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--网络弹幕-->
+        <!--绑定弹幕-->
         <activity
-            android:name=".ui.activities.play.DanmuNetworkActivity"
+            android:name=".ui.activities.play.BindDanmuActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!--绑定字幕-->
+        <activity
+            android:name=".ui.activities.play.BindZimuActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--bilibili弹幕下载-->
         <activity

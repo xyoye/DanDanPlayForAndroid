@@ -16,14 +16,14 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.BindDanmuBean;
+import com.xyoye.dandanplay.bean.BindResourceBean;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.bean.VideoBean;
 import com.xyoye.dandanplay.bean.event.OpenFolderEvent;
 import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.event.UpdateFolderDanmuEvent;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
-import com.xyoye.dandanplay.bean.params.BindDanmuParam;
+import com.xyoye.dandanplay.bean.params.BindResourceParam;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
@@ -59,6 +59,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     RecyclerView recyclerView;
 
     public final static int SELECT_NETWORK_DANMU = 104;
+    public final static int SELECT_NETWORK_ZIMU = 105;
 
     private BaseRvAdapter<VideoBean> adapter;
     private List<VideoBean> videoList;
@@ -79,19 +80,72 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
             @Override
             public AdapterItem<VideoBean> onCreateItem(int viewType) {
                 return new VideoItem(new VideoItem.VideoItemEventListener() {
+
                     @Override
-                    public void bindDanmu(int position) {
+                    public void onBindDanmu(int position) {
                         if (position >= videoList.size()) return;
                         selectVideoBean = videoList.get(position);
                         String videoPath = videoList.get(position).getVideoPath();
-                        BindDanmuParam param = new BindDanmuParam(videoPath, position);
-                        Intent intent = new Intent(FolderActivity.this, DanmuNetworkActivity.class);
+                        BindResourceParam param = new BindResourceParam(videoPath, position);
+                        param.setCurrentResourcePath(selectVideoBean.getDanmuPath());
+                        Intent intent = new Intent(FolderActivity.this, BindDanmuActivity.class);
                         intent.putExtra("bind_param", param);
                         startActivityForResult(intent, SELECT_NETWORK_DANMU);
                     }
 
                     @Override
-                    public void openVideo(int position) {
+                    public void onBindZimu(int position) {
+                        if (position >= videoList.size()) return;
+                        selectVideoBean = videoList.get(position);
+                        String videoPath = videoList.get(position).getVideoPath();
+                        BindResourceParam param = new BindResourceParam(videoPath, position);
+                        param.setCurrentResourcePath(selectVideoBean.getZimuPath());
+                        Intent intent = new Intent(FolderActivity.this, BindZimuActivity.class);
+                        intent.putExtra("bind_param", param);
+                        startActivityForResult(intent, SELECT_NETWORK_ZIMU);
+                    }
+
+                    @Override
+                    public void onRemoveDanmu(int position) {
+                        if (position >= videoList.size()) return;
+                        VideoBean videoBean = videoList.get(position);
+                        videoBean.setEpisodeId(-1);
+                        videoBean.setDanmuPath("");
+                        adapter.notifyItemChanged(position);
+                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                        presenter.updateDanmu("", -1, new String[]{folderPath, videoBean.getVideoPath()});
+                    }
+
+                    @Override
+                    public void onRemoveZimu(int position) {
+                        if (position >= videoList.size()) return;
+                        VideoBean videoBean = videoList.get(position);
+                        videoBean.setZimuPath("");
+                        adapter.notifyItemChanged(position);
+                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
+                        presenter.updateZimu("", new String[]{folderPath, videoBean.getVideoPath()});
+                    }
+
+                    @Override
+                    public void onVideoDelete(int position) {
+                        if (position >= videoList.size()) return;
+                        new CommonDialog.Builder(FolderActivity.this)
+                                .setOkListener(dialog -> {
+                                    String path = videoList.get(position).getVideoPath();
+                                    if (FileUtils.delete(path)) {
+                                        adapter.removeItem(position);
+                                        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
+                                    } else {
+                                        ToastUtils.showShort("删除文件失败");
+                                    }
+                                })
+                                .setAutoDismiss()
+                                .build()
+                                .show("确认删除文件？");
+                    }
+
+                    @Override
+                    public void onOpenVideo(int position) {
                         if (position >= videoList.size()) return;
                         selectVideoBean = videoList.get(position);
                         selectPosition = position;
@@ -108,46 +162,6 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                         } else {
                             openIntentVideo(selectVideoBean);
                         }
-                    }
-
-                    @Override
-                    public void unBindDanmu(int position) {
-                        if (position >= videoList.size()) return;
-                        VideoBean videoBean = videoList.get(position);
-                        videoBean.setEpisodeId(-1);
-                        videoBean.setDanmuPath("");
-                        adapter.notifyItemChanged(position);
-                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
-                        presenter.updateDanmu("", -1, new String[]{folderPath, videoBean.getVideoPath()});
-                    }
-
-                    @Override
-                    public void unBindZimu(int position) {
-                        if (position >= videoList.size()) return;
-                        VideoBean videoBean = videoList.get(position);
-                        videoBean.setZimuPath("");
-                        adapter.notifyItemChanged(position);
-                        String folderPath = FileUtils.getDirName(videoBean.getVideoPath());
-                        presenter.updateZimu("", new String[]{folderPath, videoBean.getVideoPath()});
-                    }
-
-
-                    @Override
-                    public void onDelete(int position) {
-                        if (position >= videoList.size()) return;
-                        new CommonDialog.Builder(FolderActivity.this)
-                                .setOkListener(dialog -> {
-                                    String path = videoList.get(position).getVideoPath();
-                                    if (FileUtils.delete(path)) {
-                                        adapter.removeItem(position);
-                                        EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
-                                    } else {
-                                        ToastUtils.showShort("删除文件失败");
-                                    }
-                                })
-                                .setAutoDismiss()
-                                .build()
-                                .show("确认删除文件？");
                     }
                 });
             }
@@ -202,7 +216,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.item_video_edit) {
-            if (videoList != null && videoList.size() > 0){
+            if (videoList != null && videoList.size() > 0) {
                 showVideoEditDialog();
             } else {
                 ToastUtils.showShort("视频列表为空");
@@ -245,23 +259,28 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+            BindResourceBean bindResourceBean = data.getParcelableExtra("bind_data");
+            if (bindResourceBean == null)
+                return;
+
+            int position = bindResourceBean.getItemPosition();
+            if (position < 0 || position > videoList.size() || videoList.size() == 0)
+                return;
+            String videoPath = videoList.get(position).getVideoPath();
+
             if (requestCode == SELECT_NETWORK_DANMU) {
-                BindDanmuBean bindDanmuBean = data.getParcelableExtra("bind_data");
-                if (bindDanmuBean == null)
-                    return;
-
-                String danmuPath = bindDanmuBean.getDanmuPath();
-                int episodeId = bindDanmuBean.getEpisodeId();
-                int position = bindDanmuBean.getItemPosition();
-
-                if (position < 0 || position > videoList.size() || videoList.size() == 0)
-                    return;
-
-                String videoPath = videoList.get(position).getVideoPath();
+                String danmuPath = bindResourceBean.getDanmuPath();
+                int episodeId = bindResourceBean.getEpisodeId();
                 presenter.updateDanmu(danmuPath, episodeId, new String[]{folderPath, videoPath});
 
                 videoList.get(position).setDanmuPath(danmuPath);
                 videoList.get(position).setEpisodeId(episodeId);
+                adapter.notifyItemChanged(position);
+            } else if (requestCode == SELECT_NETWORK_ZIMU){
+                String zimuPath = bindResourceBean.getZimuPath();
+                presenter.updateZimu(zimuPath, new String[]{folderPath, videoPath});
+
+                videoList.get(position).setZimuPath(zimuPath);
                 adapter.notifyItemChanged(position);
             }
         }

@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.mvp.view;
 import com.xyoye.dandanplay.bean.DanmuMatchBean;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;
 import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
+import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 
 
-public interface DanmuNetworkView extends BaseMvpView , LoadDataView{
+public interface BindDanmuView extends BaseMvpView, LoadDataView {
 
-    void refreshAdapter(List<DanmuMatchBean.MatchesBean> matches);
+    void refreshDanmuAdapter(List<DanmuMatchBean.MatchesBean> matches);
 }

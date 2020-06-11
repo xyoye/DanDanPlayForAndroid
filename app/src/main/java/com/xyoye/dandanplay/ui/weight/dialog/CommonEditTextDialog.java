@@ -36,12 +36,20 @@ import butterknife.OnClick;
 
 
 public class CommonEditTextDialog extends Dialog implements Lifeful {
+    //串流链接
     public static final int NETWORK_LINK = 0;
+    //昵称
     public static final int SCREEN_NAME = 1;
+    //添加弹幕屏蔽
     public static final int ADD_BLOCK = 2;
+    //PC远程连接TOKEN
     public static final int REMOTE_TOKEN = 3;
+    //最大下载速度
     public static final int MAX_DOWNLOAD_RATE = 4;
+    //射手API密钥
     public static final int SAVE_SHOOTER_API_SECRET = 5;
+    //搜索字幕
+    public static final int SEARCH_SUBTITLE = 6;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -117,6 +125,11 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
             case SAVE_SHOOTER_API_SECRET:
                 titleTv.setText("API密钥");
                 editText.setHint("请输入射手（伪）网API密钥");
+                editText.setMaxLines(1);
+                break;
+            case SEARCH_SUBTITLE:
+                titleTv.setText("搜索字幕");
+                editText.setHint("请输入视频名称");
                 editText.setMaxLines(1);
                 break;
         }
@@ -242,6 +255,15 @@ public class CommonEditTextDialog extends Dialog implements Lifeful {
                 } else if (inputData.length() != 32) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("请输入32位API密钥");
+                } else if (listener != null) {
+                    listener.onConfirm(inputData);
+                    CommonEditTextDialog.this.dismiss();
+                }
+                break;
+            case SEARCH_SUBTITLE:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("视频名称不能为空");
                 } else if (listener != null) {
                     listener.onConfirm(inputData);
                     CommonEditTextDialog.this.dismiss();

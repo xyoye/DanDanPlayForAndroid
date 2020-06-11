@@ -65,7 +65,6 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void getSearchHistory(boolean doSearch) {
-
         DataBaseManager.getInstance()
                 .selectTable("search_history")
                 .query()

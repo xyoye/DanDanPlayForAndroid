@@ -79,7 +79,7 @@
                 <TextView
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
-                    android:text="Account"
+                    android:text="帐号"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
 
@@ -110,7 +110,7 @@
                 <TextView
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
-                    android:text="Password"
+                    android:text="密码"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
 
@@ -142,7 +142,7 @@
                 <TextView
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
-                    android:text="Share"
+                    android:text="共享目录"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
 
@@ -151,7 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/item_bg_color"
-                    android:hint="请输入根目录"
+                    android:hint="请输入共享目录"
                     android:maxLines="1"
                     android:paddingTop="5dp"
                     android:paddingBottom="5dp"
@@ -173,7 +173,7 @@
                 <TextView
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
-                    android:text="Domain"
+                    android:text="域名"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
 
@@ -204,7 +204,7 @@
                 <TextView
                     android:layout_width="78dp"
                     android:layout_height="wrap_content"
-                    android:text="NickName"
+                    android:text="昵称"
                     android:textColor="@color/text_black"
                     android:textSize="14sp" />
 

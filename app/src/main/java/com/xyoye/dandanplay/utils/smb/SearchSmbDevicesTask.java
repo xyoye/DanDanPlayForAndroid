@@ -1,8 +1,11 @@
 package com.xyoye.dandanplay.utils.smb;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.Constants;
 
@@ -11,10 +14,8 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import jcifs.Address;
 import jcifs.context.SingletonContext;
@@ -24,38 +25,49 @@ import jcifs.context.SingletonContext;
  */
 
 public class SearchSmbDevicesTask implements Runnable {
-    private final static String TAG = SearchSmbDevicesTask.class.getSimpleName();
+    private enum CALL{
+        START,
 
-    private String mLocalIp;
-    private boolean mAbort;
-    private FindLanDevicesListener mListener;
+        PROGRESS,
 
-    public SearchSmbDevicesTask(String ip, FindLanDevicesListener listener) {
-        mLocalIp = ip;
-        mListener = listener;
+        ERROR,
+
+        COMPLETE
     }
 
-    public void abort() {
-        mAbort = true;
+    private final static String TAG = SearchSmbDevicesTask.class.getSimpleName();
+
+    private FindLanDevicesListener mListener;
+    private LifecycleOwner lifecycleOwner;
+
+    public SearchSmbDevicesTask(FindLanDevicesListener listener, LifecycleOwner lifecycleOwner) {
+        mListener = listener;
+        this.lifecycleOwner = lifecycleOwner;
     }
 
     @Override
     public void run() {
-        List<SmbDeviceBean> deviceList = new ArrayList<>();
+        String mLocalIp = new LocalIPUtil().getLocalIp();
+        if (mLocalIp == null || mLocalIp.isEmpty()){
+            onCallback(CALL.ERROR, 0, null, "获取手机IP地址失败");
+            return;
+        }
         String netRange = mLocalIp.substring(0, mLocalIp.lastIndexOf(".") + 1);
+
         LinkedList<SocketChannel> sockets = new LinkedList<>();
+
         Selector selector;
         try {
             selector = Selector.open();
         } catch (IOException e) {
             e.printStackTrace();
-            mListener.onEnd(new ArrayList<>());
+            onCallback(CALL.ERROR, 0, null, "启动IP遍历失败");
             return;
         }
 
+        onCallback(CALL.START, 0, null, null);
         for (int i = 1; i < 255; i++) {
             final String ip = netRange.concat(String.valueOf(i));
-            //try to connect to tcp port 445
             SocketChannel socketChannel = null;
             try {
                 socketChannel = SocketChannel.open();
@@ -73,7 +85,7 @@ public class SearchSmbDevicesTask implements Runnable {
         }
 
         final long readStartTime = SystemClock.elapsedRealtime();
-        while (!mAbort && (SystemClock.elapsedRealtime() - readStartTime) < 1000) {
+        while ((SystemClock.elapsedRealtime() - readStartTime) < 1000) {
             int readyChannels = 0;
             if (selector != null) {
                 try {
@@ -82,6 +94,7 @@ public class SearchSmbDevicesTask implements Runnable {
                 }
             }
             if (readyChannels == 0) continue;
+            int totalChannel = selector.selectedKeys().size();
             Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
             while (keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
@@ -116,7 +129,10 @@ public class SearchSmbDevicesTask implements Runnable {
                         smbDeviceBean.setUrl(ip);
                         smbDeviceBean.setName(deviceName);
                         smbDeviceBean.setSmbType(Constants.SmbSourceType.LAN_DEVICE);
-                        deviceList.add(smbDeviceBean);
+
+                        int channelCount = selector.selectedKeys().size();
+                        int progress = (int)((float)(totalChannel-channelCount) / (float)totalChannel * 100);
+                        onCallback(CALL.PROGRESS, progress, smbDeviceBean, null);
                         Log.d(TAG, "found share at " + ip+", the device name is "+deviceName);
                     }
                 }
@@ -135,11 +151,38 @@ public class SearchSmbDevicesTask implements Runnable {
         } catch (IOException ignored) {
         }
 
-        mListener.onEnd(deviceList);
+        onCallback(CALL.COMPLETE, 0, null, null);
     }
 
+    private void onCallback(CALL call, int progress, SmbDeviceBean smbDeviceBean, String msg){
+        if (lifecycleOwner.getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
+            return;
+
+        IApplication.getMainHandler().post(() -> {
+            switch (call){
+                case START:
+                    mListener.onStart();
+                    break;
+                case PROGRESS:
+                    mListener.onProgress(progress, smbDeviceBean);
+                    break;
+                case ERROR:
+                    mListener.onError(msg);
+                    break;
+                case COMPLETE:
+                    mListener.onComplete();
+                    break;
+            }
+        });
+    }
 
     public interface FindLanDevicesListener {
-        void onEnd(List<SmbDeviceBean> deviceList);
+        void onStart();
+
+        void onProgress(int progress, SmbDeviceBean deviceBean);
+
+        void onError(String msg);
+
+        void onComplete();
     }
 }

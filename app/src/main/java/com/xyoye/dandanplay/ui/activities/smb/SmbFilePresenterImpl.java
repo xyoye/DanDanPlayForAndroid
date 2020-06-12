@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ServiceUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
@@ -119,6 +120,9 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
                     emitter.onNext(smbController.getChildList(dirName));
                     break;
                 default:
+                    LogUtils.e("smbController == null:"+(smbController==null));
+                    List<SmbFileInfo> selfList = smbController.getSelfList();
+                    LogUtils.e("selfList == null:"+(selfList==null));
                     emitter.onNext(smbController.getSelfList());
                     break;
             }

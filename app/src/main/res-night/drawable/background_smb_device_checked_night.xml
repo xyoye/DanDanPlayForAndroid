@@ -5,7 +5,7 @@
         android:width="1dp"
         android:color="@color/immutable_text_theme" />
 
-    <solid android:color="@color/item_bg_color" />
+    <solid android:color="@color/item_bg_color_night" />
 
     <corners android:radius="2dp" />
 </shape>

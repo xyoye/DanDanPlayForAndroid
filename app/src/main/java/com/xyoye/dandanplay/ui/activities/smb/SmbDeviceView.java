@@ -15,7 +15,11 @@ import java.util.List;
 interface SmbDeviceView extends BaseMvpView, LoadDataView {
     void refreshSqlDevice(List<SmbDeviceBean> deviceList);
 
-    void refreshLanDevice(List<SmbDeviceBean> deviceList);
+    void showRefreshLanDeviceDialog();
+
+    void hideRefreshLanDeviceDialog();
+
+    void addLanDevice(int progress, SmbDeviceBean deviceList);
 
     void loginSuccess();
 

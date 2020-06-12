@@ -8,12 +8,12 @@ import android.text.TextUtils;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
-import com.xyoye.dandanplay.utils.smb.LocalIPUtil;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
 import com.xyoye.smb.SmbManager;
 import com.xyoye.smb.exception.SmbLinkException;
@@ -21,7 +21,6 @@ import com.xyoye.smb.info.SmbLinkInfo;
 import com.xyoye.smb.info.SmbType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -106,20 +105,27 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
     @SuppressLint("CheckResult")
     @Override
     public void queryLanDevice() {
-        getView().showLoading();
-        queryDeviceDis = Observable.create((ObservableOnSubscribe<List<SmbDeviceBean>>) emitter -> {
-            String localIp = new LocalIPUtil(getView().getContext()).getLocalIp();
-            if (!StringUtils.isEmpty(localIp)) {
-                new SearchSmbDevicesTask(localIp, deviceList -> {
-                    Collections.sort(deviceList);
-                    emitter.onNext(deviceList);
-                }).run();
-            } else {
-                getView().showError("获取手机IP地址失败");
+        IApplication.getExecutor().execute(new SearchSmbDevicesTask(new SearchSmbDevicesTask.FindLanDevicesListener() {
+            @Override
+            public void onStart() {
+                getView().showRefreshLanDeviceDialog();
             }
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(smbBeans -> getView().refreshLanDevice(smbBeans));
+
+            @Override
+            public void onProgress(int progress, SmbDeviceBean deviceBean) {
+                getView().addLanDevice(progress, deviceBean);
+            }
+
+            @Override
+            public void onError(String msg) {
+                getView().showError(msg);
+            }
+
+            @Override
+            public void onComplete() {
+                getView().hideRefreshLanDeviceDialog();
+            }
+        }, getLifecycle()));
     }
 
     @Override
@@ -148,6 +154,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
                                 .selectTable("smb_device")
                                 .insert()
                                 .param("device_name", deviceName)
+                                .param("device_nick_name", smbDeviceBean.getNickName())
                                 .param("device_ip", smbDeviceBean.getUrl())
                                 .param("device_user_name", smbDeviceBean.getAccount())
                                 .param("device_user_password", smbDeviceBean.getPassword())

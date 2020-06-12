@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -8,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +24,9 @@ import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonProgressDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SmbDeviceDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.SmbToolsDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
@@ -34,6 +36,7 @@ import com.xyoye.smb.SmbManager;
 import com.xyoye.smb.info.SmbType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,9 +62,9 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     private BaseRvAdapter<SmbDeviceBean> adapter;
     private List<SmbDeviceBean> smbList;
     private boolean isEdit = false;
-    private int index = 0;
 
     private MenuItem exitEditItem, switchToolsItem;
+    private CommonProgressDialog progressDialog;
 
     private SmbType smbType;
 
@@ -105,6 +108,8 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
         };
         smbRv.setLayoutManager(new GridLayoutManager(this, 4));
         smbRv.setAdapter(adapter);
+
+        progressDialog = new CommonProgressDialog(this);
 
         smbRv.post(() -> presenter.querySqlDevice());
 
@@ -211,8 +216,10 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     }
 
     @Override
-    public void refreshLanDevice(List<SmbDeviceBean> deviceList) {
-        hideLoading();
+    public void showRefreshLanDeviceDialog() {
+        progressDialog.show();
+        progressDialog.updateTips("扫描设备中");
+        progressDialog.updateProgress(0);
         //在所有设备移除扫描到的设备
         Iterator iterator = smbList.iterator();
         while (iterator.hasNext()) {
@@ -220,24 +227,42 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
             if (smbDeviceBean.getSmbType() == Constants.SmbSourceType.LAN_DEVICE)
                 iterator.remove();
         }
-
-        //在扫描设备中移除已有设备
-        Iterator scanIterator = deviceList.iterator();
-        while (scanIterator.hasNext()) {
-            SmbDeviceBean scanBean = (SmbDeviceBean) scanIterator.next();
-            for (SmbDeviceBean smbDeviceBean : smbList) {
-                if (smbDeviceBean.getUrl().equals(scanBean.getUrl())) {
-                    scanIterator.remove();
-                    break;
-                }
-            }
-        }
+        adapter.notifyDataSetChanged();
         //设备列表必须为GridLayoutManager
         if (smbRv.getLayoutManager() instanceof LinearLayoutManager) {
             smbRv.setLayoutManager(new GridLayoutManager(this, 4));
         }
-        smbList.addAll(deviceList);
+    }
+
+    @Override
+    public void hideRefreshLanDeviceDialog() {
+        if (progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+        Collections.sort(smbList, (o1, o2) -> {
+            if (o1.getSmbType() == Constants.SmbSourceType.LAN_DEVICE
+                    && o2.getSmbType() != Constants.SmbSourceType.LAN_DEVICE) {
+                return 1;
+            } else if (o1.getSmbType() != Constants.SmbSourceType.LAN_DEVICE
+                    && o2.getSmbType() == Constants.SmbSourceType.LAN_DEVICE) {
+                return -1;
+            } else {
+                return o1.getUrl().compareTo(o2.getUrl());
+            }
+        });
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void addLanDevice(int progress, SmbDeviceBean scanBean) {
+        //在扫描设备中移除已有设备
+        progressDialog.updateProgress(progress);
+        for (SmbDeviceBean smbDeviceBean : smbList) {
+            if (smbDeviceBean.getUrl().equals(scanBean.getUrl())) {
+                return;
+            }
+        }
+        adapter.addItem(scanBean);
     }
 
     @Override
@@ -253,6 +278,9 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (progressDialog != null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
         if (SmbManager.getInstance().getController() != null) {
             IApplication.getExecutor().execute(() ->
                     SmbManager.getInstance().getController().release());
@@ -287,26 +315,10 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
         if (item.getItemId() == R.id.exit_edit_item) {
             switchEditMode(false, -1);
         } else if (item.getItemId() == R.id.switch_tools_item) {
-            List<String> smbTools = new ArrayList<>();
-            smbTools.add(SmbType.SMBJ_RPC.toString());
-            smbTools.add(SmbType.JCIFS_NG.toString());
-            smbTools.add(SmbType.SMBJ.toString());
-            smbTools.add(SmbType.JCIFS.toString());
-
-            new AlertDialog.Builder(this)
-                    .setTitle("切换连接工具")
-                    .setSingleChoiceItems(smbTools.toArray(new String[0]),
-                            smbTools.indexOf(smbType.toString()),
-                            (dialog, which) ->
-                                    index = which
-                    )
-                    .setPositiveButton("确定", (dialog, which) -> {
-                        smbType = SmbType.valueOf(smbTools.get(index));
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss())
-                    .create()
-                    .show();
+            new SmbToolsDialog(
+                    this,
+                    smbType -> SmbDeviceActivity.this.smbType = smbType
+            ).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -331,11 +343,20 @@ public class SmbDeviceActivity extends BaseMvpActivity<SmbDevicePresenter> imple
                         presenter.addSqlDevice(deviceBean);
                         smbList.add(0, deviceBean);
                         adapter.notifyDataSetChanged();
-                        presenter.loginSmbDevice(smbDeviceBean, smbType);
+                        presenter.loginSmbDevice(deviceBean, smbType);
                     }).show();
-                    return;
+                } else if (smbType == SmbType.SMBJ && TextUtils.isEmpty(smbDeviceBean.getRootFolder())) {
+                    ToastUtils.showLong("请输入需要连接的共享目录");
+                    new SmbDeviceDialog(this, smbType, smbDeviceBean, SmbDeviceAction.ACTION_DEVICE_EDIT, deviceBean -> {
+                        smbList.remove(position);
+                        presenter.addSqlDevice(deviceBean);
+                        smbList.add(0, deviceBean);
+                        adapter.notifyDataSetChanged();
+                        presenter.loginSmbDevice(deviceBean, smbType);
+                    }).show();
+                } else {
+                    presenter.loginSmbDevice(smbDeviceBean, smbType);
                 }
-                presenter.loginSmbDevice(smbDeviceBean, smbType);
                 break;
         }
     }

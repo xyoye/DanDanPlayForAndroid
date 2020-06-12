@@ -38,7 +38,7 @@ public class SMBJController implements Controller {
     private String ROOT_FLAG = "\\";
     private String mPath;
     private DiskShare diskShare;
-    private List<SmbFileInfo> rootFileList;
+    private List<SmbFileInfo> rootFileList = new ArrayList<>();
 
     private SMBClient smbClient;
     private Connection connection;

@@ -1,5 +1,7 @@
 package com.xyoye.smb.controller;
 
+import android.text.TextUtils;
+
 import com.xyoye.smb.exception.SmbLinkException;
 import com.xyoye.smb.info.SmbFileInfo;
 import com.xyoye.smb.info.SmbLinkInfo;
@@ -163,6 +165,8 @@ public class JCIFS_NGController implements Controller {
 
     @Override
     public String getCurrentPath() {
+        if (TextUtils.isEmpty(mPath))
+            return "";
         return mPath.length() == 1 ? mPath : mPath.substring(0, mPath.length() - 1);
     }
 

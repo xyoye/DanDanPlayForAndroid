@@ -106,4 +106,19 @@
         <attr name="animatedSvgTraceMarkerLength" format="integer"/>
         <attr name="animatedSvgFillColors" format="reference"/>
     </declare-styleable>
+
+    <declare-styleable name="CircleProgressView">
+        <!--背景色-->
+        <attr name="backgroundColor" format="reference" />
+        <!--进度条颜色-->
+        <attr name="progressColor" format="reference" />
+        <!--进度-->
+        <attr name="progress" format="integer" />
+        <!--进度条宽度-->
+        <attr name="progressWidth" format="dimension" />
+        <!--字体大小-->
+        <attr name="textSize" format="dimension" />
+        <!--字体颜色-->
+        <attr name="textColor" format="reference" />
+    </declare-styleable>
 </resources>

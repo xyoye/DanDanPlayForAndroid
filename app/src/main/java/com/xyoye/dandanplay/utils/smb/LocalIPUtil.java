@@ -11,6 +11,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
+import com.xyoye.dandanplay.app.IApplication;
+
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -25,13 +27,7 @@ import java.util.List;
  */
 
 public class LocalIPUtil {
-    public static String IP = "127.0.0.1";
-    public static int PORT = 0;
-
-    private Context mContext;
-
-    public LocalIPUtil(Context context){
-        mContext = context;
+    public LocalIPUtil(){
     }
 
     public String getLocalIp(){
@@ -48,7 +44,7 @@ public class LocalIPUtil {
     }
 
     private String findLocalIp1(){
-        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) IApplication.get_context().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && connMgr != null) {
             LinkProperties linkProperties;
             String ipAddress = null;
@@ -66,12 +62,12 @@ public class LocalIPUtil {
     }
 
     private String findLocalIp2(){
-        ConnectivityManager connMgr = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) IApplication.get_context().getSystemService(Context.CONNECTIVITY_SERVICE);
         android.net.NetworkInfo wifiInfo;
         if (connMgr != null) {
             wifiInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (wifiInfo.isConnected()) {
-                WifiManager myWifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                WifiManager myWifiManager = (WifiManager) IApplication.get_context().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
                 WifiInfo myWifiInfo;
                 if (myWifiManager != null) {
                     myWifiInfo = myWifiManager.getConnectionInfo();

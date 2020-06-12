@@ -85,6 +85,9 @@ public class SmbDeviceDialog extends Dialog {
             case ACTION_DEVICE_INIT:
                 ipLl.setVisibility(View.GONE);
                 ipEt.setText(deviceBean.getUrl());
+                if (!TextUtils.isEmpty(deviceBean.getName())){
+                    nickNameEt.setText(deviceBean.getName());
+                }
                 dialogTitleTv.setText(deviceBean.getUrl());
                 break;
             case ACTION_DEVICE_EDIT:
@@ -125,7 +128,7 @@ public class SmbDeviceDialog extends Dialog {
                 }
 
                 if (smbType == SmbType.SMBJ && TextUtils.isEmpty(rootFolder)){
-                    ToastUtils.showShort("SMBJ登录时，Share（根目录）不能为空");
+                    ToastUtils.showShort("SMBJ登录时，共享目录不能为空");
                     return;
                 }
 

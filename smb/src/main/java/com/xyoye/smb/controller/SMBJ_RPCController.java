@@ -279,7 +279,7 @@ public class SMBJ_RPCController implements Controller {
     }
 
     /**
-     * get smb directory, just need reed permission
+     * get smb directory, just need read permission
      *
      * @param share    share
      * @param filePath directory path not share name

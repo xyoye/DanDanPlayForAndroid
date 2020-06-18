@@ -4,7 +4,7 @@ package com.xyoye.player.commom.utils;
  * Created by xyoye on 2018/7/1.
  */
 public final class Constants {
-    //打开字幕选择
+    //打开弹幕选择
     public static final int INTENT_OPEN_DANMU = 1000;
     //打开字幕选择
     public static final int INTENT_OPEN_SUBTITLE = 1001;

@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
 import com.xyoye.dandanplay.bean.FileManagerBean;
+import com.xyoye.dandanplay.bean.FileManagerExtraItem;
 import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -35,7 +37,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/2/15.
  */
 
-public class FileManagerDialog extends Dialog{
+public class FileManagerDialog extends Dialog {
     public final static int SELECT_FOLDER = 1001;
     public final static int SELECT_DANMU = 1002;
     public final static int SELECT_SUBTITLE = 1003;
@@ -53,6 +55,8 @@ public class FileManagerDialog extends Dialog{
     TextView confirmTv;
     @BindView(R.id.default_tv)
     TextView defaultTv;
+    @BindView(R.id.extra_tv)
+    TextView extraTv;
 
     private Context mContext;
     private BaseRvAdapter<FileManagerBean> adapter;
@@ -63,6 +67,7 @@ public class FileManagerDialog extends Dialog{
     private String originFolder;
     private int openType;
     private boolean showDefault = true;
+    private FileManagerExtraItem extraItem;
 
     public FileManagerDialog(@NonNull Context context, int openType, OnSelectedListener listener) {
         super(context, R.style.Dialog);
@@ -82,7 +87,7 @@ public class FileManagerDialog extends Dialog{
         this.listener = listener;
     }
 
-    public FileManagerDialog hideDefault(){
+    public FileManagerDialog hideDefault() {
         showDefault = false;
         return this;
     }
@@ -96,9 +101,9 @@ public class FileManagerDialog extends Dialog{
         managerList = new ArrayList<>();
 
         itemClickListener = (path, isFolder) -> {
-            if (isFolder){
+            if (isFolder) {
                 listFolder(path);
-            }else{
+            } else {
                 if (listener != null)
                     listener.onSelected(path);
                 FileManagerDialog.this.dismiss();
@@ -129,7 +134,7 @@ public class FileManagerDialog extends Dialog{
         }
     }
 
-    private void initView(){
+    private void initView() {
         adapter = new BaseRvAdapter<FileManagerBean>(managerList) {
             @NonNull
             @Override
@@ -139,10 +144,16 @@ public class FileManagerDialog extends Dialog{
         };
 
         defaultTv.setVisibility(showDefault ? View.VISIBLE : View.GONE);
-        if (showDefault){
+        if (showDefault) {
             rootPath = "/";
-        }else {
-             rootPath = Environment.getExternalStorageDirectory().getPath();
+        } else {
+            rootPath = Environment.getExternalStorageDirectory().getPath();
+        }
+
+        if (extraItem != null){
+            extraTv.setVisibility(View.VISIBLE);
+            extraTv.setText(extraItem.getExtraText());
+            extraTv.setOnClickListener(v -> extraItem.getListener().onExtraClick(FileManagerDialog.this));
         }
 
         fileRv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
@@ -150,17 +161,17 @@ public class FileManagerDialog extends Dialog{
         fileRv.setItemViewCacheSize(10);
         fileRv.setAdapter(adapter);
 
-        switch (openType){
+        switch (openType) {
             case SELECT_FOLDER:
                 titleTv.setText("选择文件夹");
                 confirmTv.setVisibility(View.VISIBLE);
                 break;
             case SELECT_DANMU:
-                titleTv.setText("选择弹幕文件");
+                titleTv.setText("选择本地弹幕文件");
                 confirmTv.setVisibility(View.GONE);
                 break;
             case SELECT_SUBTITLE:
-                titleTv.setText("选择字幕文件");
+                titleTv.setText("选择本地字幕文件");
                 confirmTv.setVisibility(View.GONE);
                 break;
             case SELECT_VIDEO:
@@ -171,7 +182,7 @@ public class FileManagerDialog extends Dialog{
         }
     }
 
-    private void listFolder(String path){
+    private void listFolder(String path) {
         pathTv.setText(path);
 
         File folder;
@@ -186,20 +197,20 @@ public class FileManagerDialog extends Dialog{
         if (contents != null) {
             for (File file : contents) {
                 FileManagerBean info = new FileManagerBean();
-                if (file.isDirectory()){
+                if (file.isDirectory()) {
                     info.setFolder(true);
                     info.setFile(file);
                     info.setName(file.getName());
                     fileList.add(info);
-                } else if (openType == SELECT_DANMU){
+                } else if (openType == SELECT_DANMU) {
                     String ext = FileUtils.getFileExtension(file);
-                    if ("XML".equals(ext.toUpperCase())){
+                    if ("XML".equals(ext.toUpperCase())) {
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
                         fileList.add(info);
                     }
-                }else if (openType == SELECT_SUBTITLE) {
+                } else if (openType == SELECT_SUBTITLE) {
                     String ext = FileUtils.getFileExtension(file);
                     switch (ext.toUpperCase()) {
                         case "ASS":
@@ -213,8 +224,8 @@ public class FileManagerDialog extends Dialog{
                             fileList.add(info);
                             break;
                     }
-                }else if (openType == SELECT_VIDEO){
-                    if (CommonUtils.isMediaFile(file.getAbsolutePath())){
+                } else if (openType == SELECT_VIDEO) {
+                    if (CommonUtils.isMediaFile(file.getAbsolutePath())) {
                         info.setFolder(false);
                         info.setFile(file);
                         info.setName(file.getName());
@@ -223,26 +234,42 @@ public class FileManagerDialog extends Dialog{
                 }
             }
             Collections.sort(fileList, (o1, o2) ->
-                    Collator.getInstance(Locale.CHINESE).compare( o1.getName(), o2.getName()));
+                    Collator.getInstance(Locale.CHINESE).compare(o1.getName(), o2.getName()));
         }
 
         if (!rootPath.equals(folder.getAbsolutePath()))
-            fileList.add(0, new FileManagerBean(folder, ".." ,true, true));
+            fileList.add(0, new FileManagerBean(folder, "..", true, true));
 
         updateView(fileList);
     }
 
-    private void updateView(List<FileManagerBean> fileList){
+    private void updateView(List<FileManagerBean> fileList) {
         managerList.clear();
         managerList.addAll(fileList);
         adapter.notifyDataSetChanged();
     }
 
-    public interface OnSelectedListener{
+    public FileManagerDialog addExtraItem(FileManagerExtraItem extra) {
+        if (extra == null)
+            return this;
+        if (TextUtils.isEmpty(extra.getExtraText()))
+            return this;
+        if (extra.getListener() == null)
+            return this;
+
+        this.extraItem = extra;
+        return this;
+    }
+
+    public interface OnSelectedListener {
         void onSelected(String path);
     }
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onItemClick(String path, boolean isFolder);
+    }
+
+    public interface OnExtraClickListener {
+        void onExtraClick(FileManagerDialog dialog);
     }
 }

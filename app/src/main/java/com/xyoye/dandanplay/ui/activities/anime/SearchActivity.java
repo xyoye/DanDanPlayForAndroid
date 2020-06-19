@@ -52,6 +52,7 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.LocalLogUtils;
+import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.player.commom.utils.AnimHelper;
@@ -263,8 +264,9 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     @SuppressLint("CheckResult")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MagnetBean.ResourcesBean model) {
-        new RxPermissions(this).
-                request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        new RxPermissions(this)
+                .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .as(RxUtils.bindLifecycle(this))
                 .subscribe(granted -> {
                     if (granted) {
                         presenter.searchLocalTorrent(model.getMagnet());

@@ -28,7 +28,9 @@ import com.xyoye.dandanplay.bean.params.BindResourceParam;
 import com.xyoye.dandanplay.mvp.impl.BindZimuPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.BindZimuPresenter;
 import com.xyoye.dandanplay.mvp.view.BindZimuView;
+import com.xyoye.dandanplay.ui.activities.personal.ShooterSubActivity;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.ShooterSubDetailDialog;
@@ -151,7 +153,11 @@ public class BindZimuActivity extends BaseMvpActivity<BindZimuPresenter> impleme
             case R.id.search_zimu:
                 String apiSecret = AppConfig.getInstance().getShooterApiSecret();
                 if (TextUtils.isEmpty(apiSecret)) {
-                    ToastUtils.showLong("密钥为空无法搜索，请到APP设置->射手字幕下载中设置API密钥");
+                    new CommonDialog.Builder(this)
+                            .setOkListener(dialog -> launchActivity(ShooterSubActivity.class))
+                            .setAutoDismiss()
+                            .build()
+                            .show("密钥为空无法搜索，请到APP设置->射手字幕下载中设置API密钥", "前往设置","取消");
                 } else {
                     new CommonEditTextDialog(this, CommonEditTextDialog.SEARCH_SUBTITLE, data -> {
                         searchText = data[0];

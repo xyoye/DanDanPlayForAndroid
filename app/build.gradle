@@ -141,8 +141,8 @@ dependencies {
     implementation 'skin.support:flycotablayout:2.1.2.2'
 
     //rx自动解除订阅
-    implementation 'com.uber.autodispose:autodispose:1.4.0'
-    implementation 'com.uber.autodispose:autodispose-android-archcomponents:1.4.0'
+    implementation 'com.uber.autodispose:autodispose:1.0.0-RC3'
+    implementation 'com.uber.autodispose:autodispose-android-archcomponents:1.0.0-RC3'
 
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

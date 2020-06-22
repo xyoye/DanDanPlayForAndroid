@@ -20,14 +20,13 @@ import com.xyoye.dandanplay.bean.FileManagerExtraItem;
 import com.xyoye.dandanplay.ui.weight.item.FileManagerItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.FileNameComparator;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.io.File;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -233,8 +232,12 @@ public class FileManagerDialog extends Dialog {
                     }
                 }
             }
-            Collections.sort(fileList, (o1, o2) ->
-                    Collator.getInstance(Locale.CHINESE).compare(o1.getName(), o2.getName()));
+            Collections.sort(fileList, new FileNameComparator<FileManagerBean>() {
+                @Override
+                public String getCompareValue(FileManagerBean fileManagerBean) {
+                    return fileManagerBean.getName();
+                }
+            });
         }
 
         if (!rootPath.equals(folder.getAbsolutePath()))

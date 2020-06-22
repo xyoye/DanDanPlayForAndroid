@@ -34,6 +34,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.FileNameComparator;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,11 +42,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 
@@ -276,7 +275,7 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 videoList.get(position).setDanmuPath(danmuPath);
                 videoList.get(position).setEpisodeId(episodeId);
                 adapter.notifyItemChanged(position);
-            } else if (requestCode == SELECT_NETWORK_ZIMU){
+            } else if (requestCode == SELECT_NETWORK_ZIMU) {
                 String zimuPath = bindResourceBean.getZimuPath();
                 presenter.updateZimu(zimuPath, new String[]{folderPath, videoPath});
 
@@ -451,11 +450,19 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     private void sort(int type) {
         if (type == Constants.FolderSort.NAME_ASC) {
-            Collections.sort(videoList,
-                    (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o1.getVideoPath()), FileUtils.getFileNameNoExtension(o2.getVideoPath())));
+            Collections.sort(videoList, new FileNameComparator<VideoBean>() {
+                @Override
+                public String getCompareValue(VideoBean videoBean) {
+                    return FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
+                }
+            });
         } else if (type == Constants.FolderSort.NAME_DESC) {
-            Collections.sort(videoList,
-                    (o1, o2) -> Collator.getInstance(Locale.CHINESE).compare(FileUtils.getFileNameNoExtension(o2.getVideoPath()), FileUtils.getFileNameNoExtension(o1.getVideoPath())));
+            Collections.sort(videoList, new FileNameComparator<VideoBean>(true) {
+                @Override
+                public String getCompareValue(VideoBean videoBean) {
+                    return FileUtils.getFileNameNoExtension(videoBean.getVideoPath());
+                }
+            });
         } else if (type == Constants.FolderSort.DURATION_ASC) {
             Collections.sort(videoList,
                     (o1, o2) -> Long.compare(o1.getVideoDuration(), o2.getVideoDuration()));

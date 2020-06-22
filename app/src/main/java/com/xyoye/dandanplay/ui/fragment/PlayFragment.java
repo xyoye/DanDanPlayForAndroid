@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -27,13 +28,12 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.item.FolderItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
+import com.xyoye.dandanplay.utils.FileNameComparator;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import io.reactivex.Observer;
@@ -143,10 +143,11 @@ public class PlayFragment extends BaseMvpFragment<PlayFragmentPresenter> impleme
 
     @Override
     public void refreshAdapter(List<FolderBean> beans) {
-        Collections.sort(beans, (o1, o2) -> {
-            String name01 = CommonUtils.getFolderName(o1.getFolderPath());
-            String name02 = CommonUtils.getFolderName(o2.getFolderPath());
-            return Collator.getInstance(Locale.CHINESE).compare(name01, name02);
+        Collections.sort(beans, new FileNameComparator<FolderBean>() {
+            @Override
+            public String getCompareValue(FolderBean folderBean) {
+                return CommonUtils.getFolderName(folderBean.getFolderPath());
+            }
         });
         adapter.setData(beans);
         if (refresh != null)

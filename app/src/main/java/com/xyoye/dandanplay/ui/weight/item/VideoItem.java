@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.VideoBean;
+import com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -112,7 +112,7 @@ public class VideoItem implements AdapterItem<VideoBean> {
         zimuTipsTv.setVisibility(isBoundZimu ? View.VISIBLE : View.GONE);
         removeZimuTv.setVisibility(isBoundZimu ? View.VISIBLE : View.GONE);
         //是否启用左部布局
-        swipeMenuLayout.setCanRightSwipe(isBoundDanmu || isBoundZimu);
+        swipeMenuLayout.setRightSwipeEnable(isBoundDanmu || isBoundZimu);
 
         titleTv.setText(FileUtils.getFileNameNoExtension(model.getVideoPath()));
         titleTv.setTextColor(isLastPlayVideo

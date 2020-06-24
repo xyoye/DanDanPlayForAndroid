@@ -5,15 +5,13 @@
     android:layout_height="70dp"
     android:background="@color/item_bg_color">
 
-    <com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
+    <com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout
         android:id="@+id/swipe_menu_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:leftMenuView="@+id/left"
         app:contentView="@+id/item_layout"
-        app:rightMenuView="@+id/right"
-        app:canLeftSwipe="true"
-        app:canRightSwipe="false">
+        app:rightMenuView="@+id/right">
 
         <LinearLayout
             android:id="@+id/left"
@@ -119,7 +117,6 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="3"
-                android:text="测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试"
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -166,5 +163,5 @@
                 android:textColor="@color/immutable_text_white"
                 android:textSize="12sp" />
         </LinearLayout>
-    </com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>
+    </com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout>
 </RelativeLayout>

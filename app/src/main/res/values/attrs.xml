@@ -121,4 +121,13 @@
         <!--字体颜色-->
         <attr name="textColor" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="EasySwipeMenuLayout">
+        <attr format="reference" name="contentView"/>
+        <attr format="reference" name="topMenuView"/>
+        <attr format="reference" name="bottomMenuView"/>
+        <attr format="reference" name="leftMenuView"/>
+        <attr format="reference" name="rightMenuView"/>
+        <attr format="float" name="fraction"/>
+    </declare-styleable>
 </resources>

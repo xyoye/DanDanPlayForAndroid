@@ -6,10 +6,9 @@
     android:layout_height="52dp"
     android:background="@color/item_bg_color">
 
-    <com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
+    <com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:canRightSwipe="true"
         app:contentView="@id/item_layout"
         app:rightMenuView="@+id/right">
 
@@ -94,5 +93,5 @@
                 android:textColor="@color/immutable_text_white"
                 android:textSize="12sp" />
         </LinearLayout>
-    </com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>
+    </com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout>
 </RelativeLayout>

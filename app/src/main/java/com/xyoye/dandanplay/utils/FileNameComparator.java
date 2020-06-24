@@ -4,6 +4,14 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Created by xyoye on 2020/6/22.
+ *
+ * 比较以数字结尾的字符串
+ * 非数字结尾部分相同的情况下，比较数字大小
+ * 解决类似[1，10，2]的排序问题
+ */
+
 public abstract class FileNameComparator<T> implements Comparator<T> {
     private boolean desc = false;
 
@@ -36,13 +44,17 @@ public abstract class FileNameComparator<T> implements Comparator<T> {
             int index1 = matcher1.start();
             int index2 = matcher2.start();
 
+            //防止数值过大
+            if (o1.length() - index1 > 18) index1 = o1.length() - 18;
+            if (o2.length() - index2 > 18) index2 = o2.length() - 18;
+
             String text1 = o1.substring(0, index1);
             String number1 = o1.substring(index1);
 
             String text2 = o2.substring(0, index2);
             String number2 = o2.substring(index2);
             if (text1.equals(text2)) {
-                return Integer.valueOf(number1).compareTo(Integer.valueOf(number2));
+                return Long.valueOf(number1).compareTo(Long.valueOf(number2));
             }
         }
         return o1.compareTo(o2);

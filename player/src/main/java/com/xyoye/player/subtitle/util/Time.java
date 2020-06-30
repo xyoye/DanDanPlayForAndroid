@@ -26,8 +26,12 @@ public class Time {
 			try {
 				h = Integer.parseInt(hms[0]);
 				m = Integer.parseInt(hms[1]);
-				s = Integer.parseInt(hms[2].substring(0, 2));
-				cs = Integer.parseInt(hms[2].substring(3, 5));
+				if (hms[2].length() >= 2){
+					s = Integer.parseInt(hms[2].substring(0, 2));
+				}
+				if (hms[2].length() >= 5){
+					cs = Integer.parseInt(hms[2].substring(3, 5));
+				}
 			}catch (NumberFormatException e){
 				try {
 					String[] values = value.split(".");

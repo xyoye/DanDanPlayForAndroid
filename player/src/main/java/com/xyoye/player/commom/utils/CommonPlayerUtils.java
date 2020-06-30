@@ -90,7 +90,11 @@ public final class CommonPlayerUtils {
         } else {
             for (String subtitlePath : subtitlePathList) {
                 String extension = FileUtils.getFileExtension(subtitlePath);
-                String centerContent = subtitlePath.substring(videoPathNoExt.length(), subtitlePath.length() - extension.length() - 1);
+                int endIndex = subtitlePath.length() - extension.length() - 1;
+                if (endIndex < videoPathNoExt.length()){
+                    continue;
+                }
+                String centerContent = subtitlePath.substring(videoPathNoExt.length(), endIndex);
                 //与必须包含“.”，如“.sc”
                 if (centerContent.contains("."))
                     return subtitlePath;

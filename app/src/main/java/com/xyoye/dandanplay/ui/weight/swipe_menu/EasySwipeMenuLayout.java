@@ -350,10 +350,7 @@ public class EasySwipeMenuLayout extends ViewGroup {
             mViewCache = this;
             mSwipeState = result;
         } else {
-            mScroller.startScroll(getScrollX(), 0, -getScrollX(), 0);
-            mScroller.startScroll(0, getScrollY(), 0, -getScrollY());
-            mViewCache = null;
-            mSwipeState = null;
+            closeMenu();
         }
         invalidate();
     }
@@ -425,6 +422,7 @@ public class EasySwipeMenuLayout extends ViewGroup {
                 mViewCache.invalidate();
                 mViewCache = null;
                 mSwipeState = null;
+                getParent().requestDisallowInterceptTouchEvent(false);
             }
         }
     }

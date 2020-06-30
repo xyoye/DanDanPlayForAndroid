@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="20dp"
     android:background="@drawable/background_dialog">
 
     <LinearLayout
@@ -22,9 +21,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text="选择下载文件"
                 android:textColor="@color/text_black"
-                android:textSize="16sp"
-                android:text="选择下载文件" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/all_not_check_tv"
@@ -52,16 +51,15 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginTop="8dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/layout_bg_color"/>
+                android:layout_marginTop="8dp"
+                android:background="@color/layout_bg_color" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/file_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
@@ -69,31 +67,31 @@
         android:id="@+id/action_ll"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/cancel_tv"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_weight="1"
             android:background="@drawable/background_dialog_button_negative"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:textSize="14sp"
+            android:text="取消"
             android:textColor="@color/text_gray"
-            android:text="取消"/>
+            android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/confirm_tv"
+            android:id="@+id/download_tv"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_weight="1"
             android:background="@drawable/background_dialog_button_positive"
+            android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
-            android:textSize="14sp"
+            android:text="下载"
             android:textColor="@color/immutable_text_theme"
-            android:text="确定"/>
+            android:textSize="14sp" />
     </LinearLayout>
 </RelativeLayout>

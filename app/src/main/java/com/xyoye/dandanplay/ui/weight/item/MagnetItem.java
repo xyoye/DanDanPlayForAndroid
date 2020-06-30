@@ -1,13 +1,15 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.MagnetBean;
+import com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout;
+import com.xyoye.dandanplay.ui.weight.swipe_menu.SwipeState;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-
-import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
@@ -26,8 +28,22 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
     TextView magnetTypeTv;
     @BindView(R.id.magnet_time_tv)
     TextView magnetTimeTv;
+    @BindView(R.id.swipe_menu_layout)
+    EasySwipeMenuLayout swipeMenuLayout;
+    @BindView(R.id.content_view)
+    LinearLayout contentView;
+    @BindView(R.id.download_resource_tv)
+    TextView downloadResourceTv;
+    @BindView(R.id.play_resource_tv)
+    TextView playResourceTv;
+    @BindView(R.id.left_view)
+    TextView updateResourceTv;
 
-    private View mView;
+    private MagnetItemListener listener;
+
+    public MagnetItem(MagnetItemListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public int getLayoutResId() {
@@ -36,7 +52,7 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
 
     @Override
     public void initItemViews(View itemView) {
-        mView = itemView;
+
     }
 
     @Override
@@ -52,8 +68,30 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
         magnetTypeTv.setText(model.getTypeName());
         magnetTimeTv.setText(model.getPublishDate());
 
-        mView.setOnClickListener(v -> {
-            EventBus.getDefault().post(model);
+        swipeMenuLayout.setRightSwipeEnable(!TextUtils.isEmpty(model.getMagnetPath()));
+
+        contentView.setOnClickListener(v -> {
+            if (swipeMenuLayout.getSwipeState() != null && swipeMenuLayout.getSwipeState() != SwipeState.SWIPE_CLOSE) {
+                swipeMenuLayout.closeMenu();
+            } else {
+                swipeMenuLayout.openMenu(SwipeState.SWIPE_RIGHT);
+            }
         });
+
+        updateResourceTv.setOnClickListener(v -> {
+            listener.onItemClick(position, true, false);
+        });
+
+        playResourceTv.setOnClickListener(v -> {
+            listener.onItemClick(position, false, true);
+        });
+
+        downloadResourceTv.setOnClickListener(v -> {
+            listener.onItemClick(position, false, false);
+        });
+    }
+
+    public interface MagnetItemListener {
+        void onItemClick(int position, boolean onlyDownload, boolean playResource);
     }
 }

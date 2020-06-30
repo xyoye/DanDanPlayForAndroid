@@ -2,11 +2,16 @@ package com.xyoye.dandanplay.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.xyoye.dandanplay.utils.AppConfig;
+import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 import com.xyoye.dandanplay.utils.net.RetroFactory;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -94,6 +99,7 @@ public class MagnetBean implements Parcelable{
         private String PageUrl;
         private String FileSize;
         private String PublishDate;
+        private String magnetPath;
         private int episodeId;
 
         protected ResourcesBean(Parcel in) {
@@ -106,6 +112,7 @@ public class MagnetBean implements Parcelable{
             PageUrl = in.readString();
             FileSize = in.readString();
             PublishDate = in.readString();
+            magnetPath = in.readString();
             episodeId = in.readInt();
         }
 
@@ -193,6 +200,14 @@ public class MagnetBean implements Parcelable{
             this.PublishDate = PublishDate;
         }
 
+        public String getMagnetPath() {
+            return magnetPath;
+        }
+
+        public void setMagnetPath(String magnetPath) {
+            this.magnetPath = magnetPath;
+        }
+
         public int getEpisodeId() {
             return episodeId;
         }
@@ -217,14 +232,21 @@ public class MagnetBean implements Parcelable{
             dest.writeString(PageUrl);
             dest.writeString(FileSize);
             dest.writeString(PublishDate);
+            dest.writeString(magnetPath);
             dest.writeInt(episodeId);
         }
     }
 
-    public static void searchMagnet(String anime, int typeId, int subGroupId, CommOtherDataObserver<MagnetBean> observer, NetworkConsumer consumer){
+    public static void searchMagnet(String animeTitle, String anime, int typeId, int subGroupId, CommOtherDataObserver<MagnetBean> observer, NetworkConsumer consumer){
         String type = typeId == -1 ? "" : typeId+"";
         String subGroup = subGroupId == -1 ? "" : subGroupId+"";
         RetroFactory.getResInstance().searchMagnet(anime, type, subGroup)
+                .map(magnetBean -> {
+                    for (ResourcesBean resourcesBean : magnetBean.getResources()){
+                        updateMagnetPath(animeTitle, resourcesBean);
+                    }
+                    return magnetBean;
+                })
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -238,5 +260,30 @@ public class MagnetBean implements Parcelable{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+    }
+    private static void updateMagnetPath(String animeTitle, MagnetBean.ResourcesBean resourcesBean){
+        String defaultPath = AppConfig.getInstance().getDownloadFolder();
+        defaultPath += Constants.DefaultConfig.torrentFolder;
+        defaultPath += "/" + resourcesBean.getMagnet().substring(20) + ".torrent";
+
+        String diyPath = null;
+        if (!TextUtils.isEmpty(animeTitle)){
+            diyPath = AppConfig.getInstance().getDownloadFolder() + "/" + animeTitle;
+            diyPath += Constants.DefaultConfig.torrentFolder;
+            diyPath += "/" + resourcesBean.getMagnet().substring(20) + ".torrent";
+        }
+
+        if (!TextUtils.isEmpty(diyPath)){
+            File diyFile = new File(diyPath);
+            if (diyFile.exists()){
+                resourcesBean.setMagnetPath(diyPath);
+                return;
+            }
+        }
+
+        File defaultFile = new File(defaultPath);
+        if (defaultFile.exists()){
+            resourcesBean.setMagnetPath(defaultPath);
+        }
     }
 }

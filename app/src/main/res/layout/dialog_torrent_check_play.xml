@@ -9,7 +9,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/action_ll"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -17,36 +16,12 @@
             android:layout_height="46dp">
 
             <TextView
-                android:id="@+id/dialog_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="选择下载文件"
+                android:text="选择播放文件"
                 android:textColor="@color/text_black"
                 android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/all_not_check_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="全不选"
-                android:textColor="@color/text_pink"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/all_check_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:gravity="center"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="全选"
-                android:textColor="@color/text_theme"
-                android:textSize="12sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -59,12 +34,11 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/file_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/action_ll"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
@@ -87,23 +61,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/background_dialog_button_neutral"
+            android:background="@drawable/background_dialog_button_positive"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="center"
             android:text="播放"
             android:textColor="@color/text_pink"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/download_tv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/background_dialog_button_positive"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:text="下载"
-            android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
     </LinearLayout>
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.TorrentCheckBean;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -27,8 +28,10 @@ public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
 
     private View mView;
 
-    public TorrentFileCheckItem() {
+    private OnCheckListener listener;
 
+    public TorrentFileCheckItem(OnCheckListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -53,8 +56,7 @@ public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
         fileSizeTv.setText(CommonUtils.convertFileSize(model.getLength()));
 
         mView.setOnClickListener(v -> {
-            model.setChecked(!model.isChecked());
-            checkIv.setBackground(getCheckBoxBg(model.isChecked()));
+            listener.onCheck(position);
         });
     }
 
@@ -62,5 +64,9 @@ public class TorrentFileCheckItem implements AdapterItem<TorrentCheckBean> {
         return isCheck
                 ? CommonUtils.getResDrawable(R.drawable.ic_check_box_checked)
                 : CommonUtils.getResDrawable(R.drawable.ic_check_box_uncheck);
+    }
+
+    public interface OnCheckListener{
+        void onCheck(int position);
     }
 }

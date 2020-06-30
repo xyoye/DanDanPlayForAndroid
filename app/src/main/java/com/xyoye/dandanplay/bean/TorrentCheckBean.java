@@ -9,6 +9,8 @@ public class TorrentCheckBean {
     private long length;
     private boolean isChecked;
 
+    private int realPlayIndex;
+
     public String getName() {
         return name;
     }
@@ -31,5 +33,13 @@ public class TorrentCheckBean {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public int getRealPlayIndex() {
+        return realPlayIndex;
+    }
+
+    public void setRealPlayIndex(int realPlayIndex) {
+        this.realPlayIndex = realPlayIndex;
     }
 }

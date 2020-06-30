@@ -1,7 +1,5 @@
 package com.xyoye.dandanplay.ui.activities.anime;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,9 +17,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.frostwire.jlibtorrent.Priority;
 import com.frostwire.jlibtorrent.TorrentInfo;
-import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xunlei.downloadlib.XLDownloadManager;
 import com.xunlei.downloadlib.XLTaskHelper;
 import com.xunlei.downloadlib.parameter.BtIndexSet;
@@ -43,16 +39,14 @@ import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
-import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.TorrentFileCheckDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TorrentCheckDownloadDialog;
+import com.xyoye.dandanplay.ui.weight.dialog.TorrentCheckPlayDialog;
 import com.xyoye.dandanplay.ui.weight.item.MagnetItem;
 import com.xyoye.dandanplay.ui.weight.item.SearchHistoryItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
-import com.xyoye.dandanplay.utils.LocalLogUtils;
-import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.jlibtorrent.Torrent;
 import com.xyoye.player.commom.utils.AnimHelper;
@@ -63,7 +57,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -132,7 +125,8 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             @NonNull
             @Override
             public AdapterItem<MagnetBean.ResourcesBean> onCreateItem(int viewType) {
-                return new MagnetItem();
+                return new MagnetItem((position, onlyDownload, playResource) ->
+                        onMagnetItemClick(position, onlyDownload, playResource));
             }
         };
         resultRv.setAdapter(resultAdapter);
@@ -157,7 +151,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     @Override
     public void initListener() {
         searchEt.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
+            if (hasFocus && historyRl.getVisibility() == View.GONE) {
                 AnimHelper.doShowAnimator(historyRl);
             }
         });
@@ -261,19 +255,6 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         search(event.getSearchText());
     }
 
-    @SuppressLint("CheckResult")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(MagnetBean.ResourcesBean model) {
-        new RxPermissions(this)
-                .request(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .as(RxUtils.bindLifecycle(this))
-                .subscribe(granted -> {
-                    if (granted) {
-                        presenter.searchLocalTorrent(model.getMagnet());
-                    }
-                });
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -310,58 +291,25 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     @Override
-    public void downloadTorrentOver(String torrentFilePath, String magnet) {
-
-        try {
-            TorrentInfo torrentInfo = new TorrentInfo(new File(torrentFilePath));
-            //任务不存在则新增任务
-            new TorrentFileCheckDialog(this, torrentInfo, new TorrentFileCheckDialog.OnTorrentSelectedListener() {
-                @Override
-                public void onDownload(List<Priority> priorityList) {
-                    String saveDirPath = AppConfig.getInstance().getDownloadFolder();
-                    String taskName = torrentInfo.name();
-
-                    //单文件时会以文件名作为下载任务名称，去除后缀
-                    if (taskName.contains(".") && CommonUtils.isMediaFile(taskName)) {
-                        taskName = taskName.substring(0, taskName.lastIndexOf("."));
-                    }
-
-                    //有番剧名则路径名为：下载目录/番剧名/任务名称/视频
-                    if (!TextUtils.isEmpty(animeTitle)) {
-                        saveDirPath += "/" + animeTitle;
-                    }
-                    saveDirPath += "/" + taskName;
-
-                    Torrent torrent = new Torrent(
-                            torrentFilePath,
-                            saveDirPath,
-                            priorityList);
-
-                    Intent intent = new Intent(SearchActivity.this, DownloadManagerActivity.class);
-                    intent.putExtra("download_data", torrent);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onPlay(int position, long fileSize) {
-                    atomicInteger = new AtomicInteger(0);
-                    playByThunder(position, fileSize, torrentFilePath);
-                }
-            }).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showShort("获取下载任务详情失败");
+    public void downloadTorrentOver(String torrentFilePath, int position, boolean onlyDownload, boolean playResource) {
+        //更新视图
+        if (position < resultList.size()) {
+            resultList.get(position).setMagnetPath(torrentFilePath);
+            resultAdapter.notifyItemChanged(position);
         }
-    }
 
-    @Override
-    public void downloadExisted(String torrentPath, String magnet) {
-        new CommonDialog.Builder(this)
-                .setOkListener(dialog -> downloadTorrentOver(torrentPath, magnet))
-                .setCancelListener(dialog -> presenter.downloadTorrent(magnet))
-                .setAutoDismiss()
-                .build()
-                .show("检测到种子文件已存在是否重新下载", "用旧的", "重新下载");
+        //仅更新种子资源
+        if (onlyDownload) {
+            ToastUtils.showShort("更新种子资源成功");
+            return;
+        }
+
+        //播放 or 下载
+        if (playResource) {
+            showPlayTorrentInfoDialog(torrentFilePath);
+        } else {
+            showDownloadTorrentInfoDialog(torrentFilePath);
+        }
     }
 
     @Override
@@ -415,7 +363,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
     }
 
     private void search(String searchText) {
-        if(getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
+        if (getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED)
             return;
 
         AnimHelper.doHideAnimator(historyRl);
@@ -448,30 +396,88 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             presenter.updateHistory(historyBean.get_id());
         }
         lastSearchWord = searchText;
-        presenter.search(searchText, typeId, subgroupsId);
+        presenter.search(animeTitle, searchText, typeId, subgroupsId);
+    }
+
+    private void onMagnetItemClick(int position, boolean onlyDownload, boolean playResource) {
+        MagnetBean.ResourcesBean resourcesBean = resultList.get(position);
+        if (onlyDownload) {
+            presenter.downloadTorrent(resourcesBean.getMagnet(), position, true, false);
+        } else {
+            if (TextUtils.isEmpty(resourcesBean.getMagnetPath())) {
+                presenter.downloadTorrent(resourcesBean.getMagnet(), position, false, playResource);
+            } else {
+                if (playResource) {
+                    showPlayTorrentInfoDialog(resourcesBean.getMagnetPath());
+                } else {
+                    showDownloadTorrentInfoDialog(resourcesBean.getMagnetPath());
+                }
+            }
+        }
+    }
+
+    private void showDownloadTorrentInfoDialog(String torrentFilePath) {
+        try {
+            TorrentInfo torrentInfo = new TorrentInfo(new File(torrentFilePath));
+            //任务不存在则新增任务
+            new TorrentCheckDownloadDialog(this, torrentInfo, priorityList -> {
+                String saveDirPath = AppConfig.getInstance().getDownloadFolder();
+                String taskName = torrentInfo.name();
+
+                //单文件时会以文件名作为下载任务名称，去除后缀
+                if (taskName.contains(".") && CommonUtils.isMediaFile(taskName)) {
+                    taskName = taskName.substring(0, taskName.lastIndexOf("."));
+                }
+
+                //有番剧名则路径名为：下载目录/番剧名/任务名称/视频
+                if (!TextUtils.isEmpty(animeTitle)) {
+                    saveDirPath += "/" + animeTitle;
+                }
+                saveDirPath += "/" + taskName;
+
+                Torrent torrent = new Torrent(
+                        torrentFilePath,
+                        saveDirPath,
+                        priorityList);
+
+                Intent intent = new Intent(SearchActivity.this, DownloadManagerActivity.class);
+                intent.putExtra("download_data", torrent);
+                startActivity(intent);
+            }).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showShort("获取下载任务详情失败");
+        }
+    }
+
+    private void showPlayTorrentInfoDialog(String torrentFilePath) {
+        com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
+                XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
+
+        if (thunderTorrentInfo == null) {
+            ToastUtils.showShort("播放失败，无法解析播放内容");
+            return;
+        }
+
+        new TorrentCheckPlayDialog(this, thunderTorrentInfo, (position, realIndex, fileSize) -> {
+            atomicInteger = new AtomicInteger(0);
+            playByThunder(realIndex, position, fileSize, torrentFilePath, thunderTorrentInfo);
+        }).show();
     }
 
     /**
      * 启动播放
      */
-    private void playByThunder(int checkedFilePosition, long checkedFileSize, String torrentFilePath) {
-        LocalLogUtils.getInstance().write("启动播放，准备播放第"+(checkedFilePosition+1)+"个任务");
-
-        com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
-                XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
-        // TODO: 2019/11/8 使用LibTorrent解析的种子信息和用迅雷解析的信息可能会不一致，
-        // TODO: 2019/11/8 必须在显示选择播放文件弹窗前，判断使用何种方式解析种子
-        if (thunderTorrentInfo == null || checkedFilePosition >= thunderTorrentInfo.mSubFileInfo.length) {
-            ToastUtils.showShort("播放失败，无法解析播放内容");
-            LocalLogUtils.getInstance().write("播放失败，无法解析种子");
-            return;
-        }
+    private void playByThunder(int realIndex,
+                               int checkedPosition,
+                               long checkedFileSize,
+                               String torrentFilePath,
+                               com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo) {
 
         File cacheFolder = new File(Constants.DefaultConfig.cacheFolderPath);
         if (!cacheFolder.exists()) {
             if (!cacheFolder.mkdirs()) {
                 ToastUtils.showShort("播放失败，创建缓存文件夹失败");
-                LocalLogUtils.getInstance().write("播放失败，无法创建缓存文件");
                 return;
             }
         }
@@ -479,7 +485,6 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
 
         if (cacheFolder.getFreeSpace() < checkedFileSize) {
             ToastUtils.showShort("播放失败，剩余缓存空间不足");
-            LocalLogUtils.getInstance().write("播放失败，剩余缓存空间不足");
             return;
         }
 
@@ -492,12 +497,12 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         taskParam.setTorrentPath(torrentFilePath);
 
         BtIndexSet selectIndexSet = new BtIndexSet(1);
-        selectIndexSet.mIndexSet[0] = checkedFilePosition;
+        selectIndexSet.mIndexSet[0] = realIndex;
 
         //选择的文件，与忽略的文件
         List<Integer> deselectIndexList = new ArrayList<>();
         for (int i = 0; i < thunderTorrentInfo.mSubFileInfo.length; i++) {
-            if (i != checkedFilePosition) {
+            if (thunderTorrentInfo.mSubFileInfo[i].mRealIndex != realIndex) {
                 deselectIndexList.add(i);
             }
         }
@@ -506,44 +511,30 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
             deSelectIndexSet.mIndexSet[i] = deselectIndexList.get(i);
         }
 
-        LocalLogUtils.getInstance().write("准备创建任务");
         //开启任务
         long[] taskStatus = XLTaskHelper.getInstance().startTask(taskParam, selectIndexSet, deSelectIndexSet);
 
         long playTaskId = taskStatus[0];
-        LocalLogUtils.getInstance().write("创建任务完成，任务ID："+playTaskId);
-        LocalLogUtils.getInstance().write("任务状态："+ Arrays.toString(taskStatus));
 
         //任务出错重试
         if (playTaskId == -1) {
-            LocalLogUtils.getInstance().write("创建任务失败");
-            LocalLogUtils.getInstance().write("reason1: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[1]));
-            LocalLogUtils.getInstance().write("reason2: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[2]));
-            LocalLogUtils.getInstance().write("reason3: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[3]));
-            LocalLogUtils.getInstance().write("reason4: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[4]));
-            LocalLogUtils.getInstance().write("reason5: "+XLTaskHelper.getInstance().getErrorMsg((int)taskStatus[5]));
             XLTaskHelper.getInstance().stopTask(playTaskId);
             //重试两次
             if (atomicInteger.get() < 3) {
                 XLDownloadManager.getInstance().uninit();
                 XLTaskHelper.init(IApplication.get_context());
-                playByThunder(checkedFilePosition, checkedFileSize, torrentFilePath);
+                playByThunder(realIndex, checkedPosition, checkedFileSize, torrentFilePath, thunderTorrentInfo);
             } else {
                 FileUtils.deleteAllInDir(Constants.DefaultConfig.cacheFolderPath);
                 ToastUtils.showShort("播放失败，无法开始播放任务");
-                LocalLogUtils.getInstance().write("播放失败，重试3次后依旧无法创建播放任务");
             }
             return;
         }
 
-        String fileName = thunderTorrentInfo.mSubFileInfo[checkedFilePosition].mFileName;
+        String fileName = thunderTorrentInfo.mSubFileInfo[checkedPosition].mFileName;
         String filePath = taskParam.mFilePath + "/" + fileName;
         XLTaskLocalUrl localUrl = new XLTaskLocalUrl();
         XLDownloadManager.getInstance().getLocalUrl(filePath, localUrl);
-
-        LocalLogUtils.getInstance().write("创建任务成功，启动播放器");
-        LocalLogUtils.getInstance().write("文件名："+fileName);
-        LocalLogUtils.getInstance().write("播放链接："+localUrl.mStrUrl);
 
         //启动播放
         PlayerManagerActivity.launchPlayerOnline(

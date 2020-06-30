@@ -116,8 +116,6 @@ public class Constants {
         public static final String torrentResumeFilePath = downloadPath + "/_config/.resume";
         //下载引擎配置保存路径
         public static final String torrentSessionPath = downloadPath + "/_config/.session";
-        //日志保存路径
-        public static final String logPath = downloadPath + "/_log/log.txt";
         //默认种子下载文件夹名
         public static final String torrentFolder = "/_torrent";
         //默认弹幕下载文件夹名

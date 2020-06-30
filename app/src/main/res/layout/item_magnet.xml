@@ -1,84 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_menu_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/item_bg_color">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp">
-
-        <TextView
-            android:id="@+id/magnet_title_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/magnet_size_tv"
-            android:layout_marginEnd="10dp"
-            android:gravity="start"
-            android:textSize="14sp"
-            android:textColor="@color/text_black"
-            android:ellipsize="end"
-            tools:text="标题"/>
-
-        <TextView
-            android:id="@+id/magnet_size_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:textColor="@color/immutable_text_orange"
-            tools:text="1024M"/>
-    </RelativeLayout>
+    app:contentView="@id/content_view"
+    app:leftMenuView="@id/left_view"
+    app:rightMenuView="@id/right_view">
 
     <LinearLayout
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10.5dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:background="@color/item_bg_color"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp">
+
+            <TextView
+                android:id="@+id/magnet_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/magnet_size_tv"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                tools:text="标题" />
+
+            <TextView
+                android:id="@+id/magnet_size_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:textColor="@color/immutable_text_orange"
+                android:textSize="18sp"
+                tools:text="1024M" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10.5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/magnet_subgroup_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp"
+                tools:text="group" />
+
+            <TextView
+                android:id="@+id/magnet_type_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp"
+                tools:text="type" />
+
+            <TextView
+                android:id="@+id/magnet_time_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp"
+                tools:text="time" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/layout_bg_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/right_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/magnet_subgroup_tv"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/text_gray"
-            android:singleLine="true"
-            tools:text="group"/>
+            android:id="@+id/play_resource_tv"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/immutable_text_pink"
+            android:gravity="center"
+            android:text="播放\n资源"
+            android:textColor="@color/immutable_text_white"
+            android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/magnet_type_tv"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/text_gray"
-            android:singleLine="true"
-            tools:text="type"/>
-
-        <TextView
-            android:id="@+id/magnet_time_tv"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/text_gray"
-            android:singleLine="true"
-            tools:text="time"/>
+            android:id="@+id/download_resource_tv"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/immutable_text_theme"
+            android:gravity="center"
+            android:text="下载\n资源"
+            android:textColor="@color/immutable_text_white"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/layout_bg_color"/>
+    <TextView
+        android:id="@+id/left_view"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:background="@color/immutable_text_orange"
+        android:gravity="center"
+        android:text="更新\n种子"
+        android:textColor="@color/immutable_text_white"
+        android:textSize="14sp" />
 
-</LinearLayout>
+</com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout>

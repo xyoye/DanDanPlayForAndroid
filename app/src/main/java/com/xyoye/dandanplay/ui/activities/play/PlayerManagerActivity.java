@@ -136,7 +136,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
 
         //检查视频地址
         if (TextUtils.isEmpty(videoPath)) {
-            ToastUtils.showShort("解析视频地址失败");
+            ToastUtils.showShort("解析视频地址失败: 空地址");
             errorTv.setVisibility(View.VISIBLE);
             return;
         }

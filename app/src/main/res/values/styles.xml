@@ -56,7 +56,7 @@
         <item name="android:windowAnimationStyle">@style/ActivityAnimStyle</item>
     </style>
 
-    <style name="Dialog">
+    <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/transparent</item>
         <item name="colorPrimary">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>

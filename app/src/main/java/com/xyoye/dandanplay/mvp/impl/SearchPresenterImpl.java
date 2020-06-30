@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.AnimeTypeBean;
@@ -15,14 +14,12 @@ import com.xyoye.dandanplay.bean.SearchHistoryBean;
 import com.xyoye.dandanplay.bean.SubGroupBean;
 import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
-import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,8 +184,8 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     @Override
-    public void search(String text, int type, int subgroup) {
-        MagnetBean.searchMagnet(text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifecycle()) {
+    public void search(String animeTitle, String text, int type, int subgroup) {
+        MagnetBean.searchMagnet(animeTitle, text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifecycle()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
                 if (magnetBean != null && magnetBean.getResources() != null) {
@@ -205,17 +202,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     }
 
     @Override
-    public void searchLocalTorrent(String magnet) {
-        String torrentPath = isTorrentExist(magnet);
-        if (!StringUtils.isEmpty(torrentPath)) {
-            getView().downloadExisted(torrentPath, magnet);
-        } else {
-            downloadTorrent(magnet);
-        }
-    }
-
-    @Override
-    public void downloadTorrent(String magnet) {
+    public void downloadTorrent(String magnet, int position, boolean onlyDownload, boolean playResource) {
         getView().showDownloadTorrentLoading();
         MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
             @Override
@@ -225,7 +212,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 downloadPath += "/" + magnet.substring(20) + ".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
                 getView().dismissDownloadTorrentLoading();
-                getView().downloadTorrentOver(downloadPath, magnet);
+                getView().downloadTorrentOver(downloadPath, position, onlyDownload, playResource);
             }
 
             @Override
@@ -235,24 +222,5 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
                 ToastUtils.showShort("下载种子文件失败");
             }
         }, new NetworkConsumer());
-    }
-
-    //判断该种子是否已存在
-    private String isTorrentExist(String magnet) {
-        String downloadPath = getView().getDownloadFolder();
-        downloadPath += Constants.DefaultConfig.torrentFolder;
-        downloadPath += "/" + magnet.substring(20) + ".torrent";
-        File file = new File(downloadPath);
-        if (file.exists()) {
-            return downloadPath;
-        } else {
-            downloadPath = AppConfig.getInstance().getDownloadFolder();
-            downloadPath += Constants.DefaultConfig.torrentFolder;
-            downloadPath += "/" + magnet.substring(20) + ".torrent";
-            if (file.exists())
-                return downloadPath;
-            else
-                return "";
-        }
     }
 }

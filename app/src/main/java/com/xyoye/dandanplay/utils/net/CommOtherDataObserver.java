@@ -68,7 +68,7 @@ public abstract class CommOtherDataObserver<T> implements Observer<T> {
     }
 
     private String getErrorMessage(Throwable e) {
-        LogUtils.e(e.toString());
+        e.printStackTrace();
         if (e instanceof JsonSyntaxException) {
             LogUtils.i("error", e.toString());
             return "数据异常";

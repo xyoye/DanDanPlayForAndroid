@@ -21,9 +21,7 @@ public interface SearchPresenter extends BaseMvpPresenter {
 
     void deleteAllHistory();
 
-    void search(String text, int type, int subgroup);
+    void search(String animeTitle, String text, int type, int subgroup);
 
-    void searchLocalTorrent(String magnet);
-
-    void downloadTorrent(String magnet);
+    void downloadTorrent(String magnet, int position, boolean onlyDownload, boolean playResource);
 }

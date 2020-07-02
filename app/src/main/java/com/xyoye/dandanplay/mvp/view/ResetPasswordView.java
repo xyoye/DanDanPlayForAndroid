@@ -11,4 +11,6 @@ import com.xyoye.dandanplay.utils.interf.view.LoadDataView;
 public interface ResetPasswordView extends BaseMvpView, LoadDataView{
 
     void resetSuccess();
+
+    void  findAccountSuccess();
 }

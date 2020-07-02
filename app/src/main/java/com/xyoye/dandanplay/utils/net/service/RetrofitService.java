@@ -100,6 +100,10 @@ public interface RetrofitService {
     Observable<CommJsonEntity> resetPassword(@FieldMap Map<String, String> params);
 
     @FormUrlEncoded
+    @POST("/api/v2/register/findmyid")
+    Observable<CommJsonEntity> findAccountByEmail(@FieldMap Map<String, String> params);
+
+    @FormUrlEncoded
     @POST("/api/v2/user/profile")
     Observable<CommJsonEntity> changeScreenName(@Field("screenName") String screenName);
 

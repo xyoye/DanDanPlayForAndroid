@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.mvp.presenter;
 
+import com.xyoye.dandanplay.bean.params.FindAccountParam;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 
@@ -8,5 +9,7 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
  */
 
 public interface ResetPasswordPresenter extends BaseMvpPresenter {
-    void reset(ResetPasswordParam param);
+    void resetPassword(ResetPasswordParam param);
+
+    void findAccount(FindAccountParam param);
 }

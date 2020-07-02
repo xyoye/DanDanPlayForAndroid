@@ -7,6 +7,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
+import com.xyoye.dandanplay.bean.params.FindAccountParam;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.mvp.presenter.ResetPasswordPresenter;
 import com.xyoye.dandanplay.mvp.view.ResetPasswordView;
@@ -50,13 +51,32 @@ public class ResetPasswordPresenterImpl extends BaseMvpPresenterImpl<ResetPasswo
     }
 
     @Override
-    public void reset(ResetPasswordParam param) {
+    public void resetPassword(ResetPasswordParam param) {
         getView().showLoading();
         PersonalBean.resetPassword(param, new CommJsonObserver<CommJsonEntity>(getLifecycle()) {
             @Override
             public void onSuccess(CommJsonEntity commJsonEntity) {
                 getView().hideLoading();
                 getView().resetSuccess();
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                LogUtils.e(message);
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    @Override
+    public void findAccount(FindAccountParam param) {
+        getView().showLoading();
+        PersonalBean.findAccountByEmail(param, new CommJsonObserver<CommJsonEntity>(getLifecycle()) {
+            @Override
+            public void onSuccess(CommJsonEntity commJsonEntity) {
+                getView().hideLoading();
+                getView().findAccountSuccess();
             }
 
             @Override

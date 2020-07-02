@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:padding="5dp"
-            android:text="忘记密码"
+            android:text="忘记帐号/密码"
             android:textColor="@color/immutable_text_theme"
             android:textSize="14sp" />
     </RelativeLayout>

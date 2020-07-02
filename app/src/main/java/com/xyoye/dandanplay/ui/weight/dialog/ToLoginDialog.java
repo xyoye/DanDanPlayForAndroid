@@ -22,6 +22,8 @@ import butterknife.OnClick;
 public class ToLoginDialog extends Dialog {
     @BindView(R.id.tips_tv)
     TextView tipsTv;
+    @BindView(R.id.confirm_tv)
+    TextView confirmTv;
 
     private ActionSuccessListener listener;
 
@@ -52,16 +54,20 @@ public class ToLoginDialog extends Dialog {
             case 2:
                 tipsTv.setText("修改密码成功，请重新登录");
                 break;
+            case 3:
+                tipsTv.setText("帐号找回成功，请前往邮箱查看帐号");
+                confirmTv.setText("确定");
+                break;
         }
     }
 
     @OnClick({R.id.confirm_tv})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.confirm_tv:
-                ToLoginDialog.this.cancel();
+        if (view.getId() == R.id.confirm_tv) {
+            ToLoginDialog.this.cancel();
+            if (listener != null){
                 listener.onSuccess();
-                break;
+            }
         }
     }
 

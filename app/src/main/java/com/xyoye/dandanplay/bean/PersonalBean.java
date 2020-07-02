@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.bean;
 
 import com.xyoye.dandanplay.bean.params.ChangePasswordParam;
+import com.xyoye.dandanplay.bean.params.FindAccountParam;
 import com.xyoye.dandanplay.bean.params.LoginParam;
 import com.xyoye.dandanplay.bean.params.ResetPasswordParam;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
@@ -131,6 +132,14 @@ public class PersonalBean extends CommJsonEntity implements Serializable {
 
     public static void resetPassword(ResetPasswordParam param, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
         RetroFactory.getInstance().resetPassword(param.getMap())
+                .doOnSubscribe(consumer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    public static void findAccountByEmail(FindAccountParam param, CommJsonObserver<CommJsonEntity> observer, NetworkConsumer consumer){
+        RetroFactory.getInstance().findAccountByEmail(param.getMap())
                 .doOnSubscribe(consumer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

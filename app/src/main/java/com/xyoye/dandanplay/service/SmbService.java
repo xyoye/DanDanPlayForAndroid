@@ -15,6 +15,8 @@ import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.smb.SmbDeviceActivity;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 
+import java.io.IOException;
+
 /**
  * Created by xyoye on 2018/11/22.
  */
@@ -22,7 +24,6 @@ import com.xyoye.dandanplay.utils.smb.SmbServer;
 public class SmbService extends Service {
     private int NOTIFICATION_ID = 1002;
 
-    private SmbServer smbServer = null;
     private NotificationManager notificationManager;
 
     @Override
@@ -50,12 +51,13 @@ public class SmbService extends Service {
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         super.onCreate();
-
-        smbServer = new SmbServer();
-        smbServer.start();
+        try {
+            SmbServer.getInstance().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private Notification buildNotification(){
@@ -86,9 +88,7 @@ public class SmbService extends Service {
         if (notificationManager != null){
             notificationManager.cancel(NOTIFICATION_ID);
         }
-        if (smbServer != null){
-            smbServer.stopSmbServer();
-        }
+        SmbServer.getInstance().stop();
         super.onDestroy();
     }
 }

@@ -95,9 +95,9 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
         }
 
         //文件Url由开启监听的IP和端口及视频地址组成
-        String httpUrl = "http://" + SmbServer.SMB_IP + ":" + SmbServer.SMB_PORT;
-        String videoUrl = httpUrl + "/smb/" + fileName;
+        int port = SmbServer.getInstance().getListeningPort();
         SmbServer.SMB_FILE_NAME = fileName;
+        String videoUrl = "http://127.0.0.1:"+port+"/smb/" + fileName;
 
         //是否自动加载同名字幕
         if (AppConfig.getInstance().isAutoLoadLocalSubtitle()) {

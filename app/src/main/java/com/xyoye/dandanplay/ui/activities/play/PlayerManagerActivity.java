@@ -185,7 +185,7 @@ public class PlayerManagerActivity extends BaseMvcActivity {
      * 跳转至选择弹幕页面
      */
     private void launchDanmuSelect(String searchWord) {
-        BindResourceParam param = new BindResourceParam(searchWord, true);
+        BindResourceParam param = new BindResourceParam(searchWord, true, sourceOrigin == SOURCE_ORIGIN_SMB);
         Intent intent = new Intent(PlayerManagerActivity.this, BindDanmuActivity.class);
         intent.putExtra("bind_param", param);
         startActivityForResult(intent, SELECT_DANMU);

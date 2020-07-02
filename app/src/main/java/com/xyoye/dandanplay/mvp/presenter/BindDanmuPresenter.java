@@ -9,5 +9,7 @@ import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 public interface BindDanmuPresenter extends BaseMvpPresenter {
     void matchDanmu(String videoPath);
 
+    void matchSmbDanmu(String videoName);
+
     void searchDanmu(String anime, String episode);
 }

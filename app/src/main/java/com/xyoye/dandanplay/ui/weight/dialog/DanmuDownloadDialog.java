@@ -94,6 +94,7 @@ public class DanmuDownloadDialog extends Dialog{
                     statusTv.setText("保存完成！");
                     ToastUtils.showShort("下载完成："+danmuPath);
 
+                    DanmuDownloadDialog.this.dismiss();
                     listener.onDownloaded(danmuPath, bean.getEpisodeId());
                 }
                 if (DanmuDownloadDialog.this.isShowing() && getOwnerActivity() != null && !getOwnerActivity().isFinishing())

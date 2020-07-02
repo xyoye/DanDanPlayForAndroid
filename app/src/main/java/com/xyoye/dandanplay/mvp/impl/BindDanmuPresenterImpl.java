@@ -79,7 +79,32 @@ public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> 
             @Override
             public void onSuccess(DanmuMatchBean danmuMatchBean) {
                 getView().hideLoading();
-                if (danmuMatchBean.getMatches().size() > 0)
+                if (danmuMatchBean != null
+                        && danmuMatchBean.getMatches() != null
+                        && danmuMatchBean.getMatches().size() > 0)
+                    getView().refreshDanmuAdapter(danmuMatchBean.getMatches());
+                else
+                    ToastUtils.showShort("无匹配弹幕");
+            }
+
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
+    }
+
+    @Override
+    public void matchSmbDanmu(String videoName) {
+        getView().showLoading();
+        DanmuMatchBean.matchSmbDanmu(videoName, new CommJsonObserver<DanmuMatchBean>(getLifecycle()) {
+            @Override
+            public void onSuccess(DanmuMatchBean danmuMatchBean) {
+                getView().hideLoading();
+                if (danmuMatchBean != null
+                        && danmuMatchBean.getMatches() != null
+                        && danmuMatchBean.getMatches().size() > 0)
                     getView().refreshDanmuAdapter(danmuMatchBean.getMatches());
                 else
                     ToastUtils.showShort("无匹配弹幕");
@@ -100,7 +125,9 @@ public class BindDanmuPresenterImpl extends BaseMvpPresenterImpl<BindDanmuView> 
             @Override
             public void onSuccess(DanmuSearchBean danmuSearchBean) {
                 getView().hideLoading();
-                if (danmuSearchBean.getAnimes().size() > 0) {
+                if (danmuSearchBean != null
+                        && danmuSearchBean.getAnimes() != null
+                        && danmuSearchBean.getAnimes().size() > 0){
                     List<DanmuMatchBean.MatchesBean> matchesBeanList = new ArrayList<>();
                     for (DanmuSearchBean.AnimesBean animeBean : danmuSearchBean.getAnimes()) {
                         DanmuMatchBean.MatchesBean matchesBean = new DanmuMatchBean.MatchesBean();

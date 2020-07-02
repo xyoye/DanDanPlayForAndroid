@@ -30,6 +30,7 @@ import com.xyoye.dandanplay.ui.weight.dialog.SearchDanmuDialog;
 import com.xyoye.dandanplay.ui.weight.item.DanmuNetworkItem;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.smb.SmbServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,15 @@ public class BindDanmuActivity extends BaseMvpActivity<BindDanmuPresenter> imple
         recyclerView.setAdapter(adapter);
 
         if (bindResourceParam.isOutsideFile()) {
+            //smb匹配弹幕
+            if (bindResourceParam.isSmbPlay()) {
+                String videoName = SmbServer.SMB_FILE_NAME;
+                if (!TextUtils.isEmpty(videoName)) {
+                    presenter.matchSmbDanmu(videoName);
+                    return;
+                }
+            }
+
             if (StringUtils.isEmpty(bindResourceParam.getSearchWord())) {
                 ToastUtils.showShort("无匹配弹幕");
                 return;
@@ -175,8 +185,12 @@ public class BindDanmuActivity extends BaseMvpActivity<BindDanmuPresenter> imple
     }
 
     private void showDownloadDialog(DanmuMatchBean.MatchesBean model) {
-        new DanmuDownloadDialog(BindDanmuActivity.this, bindResourceParam.getVideoPath(), model,
-                (danmuPath, episodeId) -> finishActivity(episodeId, danmuPath)).show();
+        new DanmuDownloadDialog(
+                BindDanmuActivity.this,
+                bindResourceParam.getVideoPath(),
+                model,
+                (danmuPath, episodeId) -> finishActivity(episodeId, danmuPath)
+        ).show();
     }
 
     public void finishActivity(int episodeId, String danmuPath) {

@@ -58,11 +58,11 @@ public class DanmuMatchParam implements Serializable{
 
     public Map<String, String> getMap(){
         Map<String, String> map = new HashMap<>();
-        map.put("fileName", this.fileName);
-        map.put("fileHash", this.fileHash);
+        map.put("fileName", fileName == null ? "null" : fileName);
+        map.put("fileHash", fileHash == null ? "null" : fileHash);
         map.put("fileSize", this.fileSize+"");
         map.put("videoDuration", this.videoDuration+"");
-        map.put("matchMode", this.matchMode);
+        map.put("matchMode", matchMode == null ? "null" : matchMode);
         return map;
     }
 }

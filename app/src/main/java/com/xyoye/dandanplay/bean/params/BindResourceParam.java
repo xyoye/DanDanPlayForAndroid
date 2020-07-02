@@ -15,10 +15,12 @@ public class BindResourceParam implements Parcelable {
 
     private boolean outsideFile;
     private int taskFilePosition;
+    private boolean isSmbPlay;
 
-    public BindResourceParam(String searchWord, boolean outsideFile) {
+    public BindResourceParam(String searchWord, boolean outsideFile, boolean isSmbPlay) {
         this.searchWord = searchWord;
         this.outsideFile = outsideFile;
+        this.isSmbPlay = isSmbPlay;
     }
 
     public BindResourceParam(String videoPath, int itemPosition) {
@@ -72,6 +74,14 @@ public class BindResourceParam implements Parcelable {
         this.outsideFile = outsideFile;
     }
 
+    public boolean isSmbPlay() {
+        return isSmbPlay;
+    }
+
+    public void setSmbPlay(boolean smbPlay) {
+        isSmbPlay = smbPlay;
+    }
+
     public int getTaskFilePosition() {
         return taskFilePosition;
     }
@@ -86,6 +96,7 @@ public class BindResourceParam implements Parcelable {
         itemPosition = in.readInt();
         currentResourcePath = in.readString();
         outsideFile = in.readByte() != 0;
+        isSmbPlay = in.readByte() != 0;
         taskFilePosition = in.readInt();
     }
 
@@ -113,6 +124,7 @@ public class BindResourceParam implements Parcelable {
         dest.writeInt(itemPosition);
         dest.writeString(currentResourcePath);
         dest.writeByte((byte) (outsideFile ? 1 : 0));
+        dest.writeByte((byte) (isSmbPlay ? 1 : 0));
         dest.writeInt(taskFilePosition);
     }
 }

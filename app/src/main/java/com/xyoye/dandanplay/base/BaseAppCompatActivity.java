@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.app.SkinAppCompatDelegateImpl;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
@@ -42,8 +41,6 @@ import butterknife.Unbinder;
  */
 public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView {
 
-    public static final String TAG = BaseAppCompatActivity.class.getSimpleName();
-
     private Toolbar mActionBarToolbar;
 
     protected boolean isDestroyed = false;
@@ -54,7 +51,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         onBeforeSetContentLayout();
         setContentView(initPageLayoutID());
@@ -132,7 +128,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
         isDestroyed = true;
         super.onDestroy();
         unbind.unbind();
@@ -270,12 +265,10 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause");
     }
 }

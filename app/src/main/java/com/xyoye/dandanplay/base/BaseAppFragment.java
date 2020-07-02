@@ -7,7 +7,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,8 +48,6 @@ import butterknife.Unbinder;
  */
 public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
-    public static final String TAG = BaseAppFragment.class.getSimpleName();
-
     protected boolean isActivityCreated = false; // 页面控件是否已初始化
 
     public boolean isFirstVisible = true; // 是否第一次可见
@@ -73,7 +70,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
-        Log.d(TAG, "setUserVisibleHint====>" + isVisibleToUser + "====>" + position);
         if (isActivityCreated) {
             if (isVisibleToUser) {
                 if (isFirstVisible) {
@@ -89,7 +85,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate====>" + position);
         super.onCreate(savedInstanceState);
         init();
     }
@@ -101,13 +96,11 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView====>" + position + "====>" + isActivityCreated + "====>" + isFirstVisible);
         return inflater.inflate(initPageLayoutId(), container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onViewCreated====>" + position);
         mFragmentView = view;
         unbind = ButterKnife.bind(this, mFragmentView);
         initPageView();
@@ -116,7 +109,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onActivityCreated====>" + position + "_" + getUserVisibleHint());
         super.onActivityCreated(savedInstanceState);
         isActivityCreated = true;
         if (getUserVisibleHint() || mIsVisibleToUser) {
@@ -131,7 +123,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
     @Override
     public void onDestroyView() {
-        Log.d(TAG, "onDestroyView====>" + position);
         super.onDestroyView();
         unbind.unbind();
         mFragmentView = null;
@@ -139,7 +130,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
     @Override
     public void onDetach() {
-        Log.d(TAG, "onDetach====>" + position);
         super.onDetach();
         //noinspection TryWithIdenticalCatches
         try {
@@ -158,7 +148,6 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
 
     @Override
     public boolean getUserVisibleHint() {
-        Log.d(TAG, "getUserVisibleHint====>" + super.getUserVisibleHint() + "====>" + position);
         return super.getUserVisibleHint();
     }
 
@@ -167,23 +156,19 @@ public abstract class BaseAppFragment extends Fragment implements IBaseView {
      * 用于ViewPager下的页面懒加载，在一个生命周期内只会调用一次
      */
     protected void onPageFirstVisible() {
-        Log.d(TAG, "onPageFirstVisible====>" + position);
     }
 
     /**
      * 逻辑处理
      */
     protected void process(Bundle savedInstanceState) {
-        Log.d(TAG, "process====>" + position);
     }
 
     protected void onPageStart() {
-        Log.d(TAG, "onPageStart====>" + super.getUserVisibleHint() + "====>" + position);
         lazyLoad();
     }
 
     protected void onPageEnd() {
-        Log.d(TAG, "onPageEnd====>" + super.getUserVisibleHint() + "====>" + position);
     }
 
     /**

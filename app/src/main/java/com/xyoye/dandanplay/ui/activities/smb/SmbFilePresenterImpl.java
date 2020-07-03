@@ -11,6 +11,7 @@ import com.xyoye.dandanplay.service.SmbService;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.smb.SmbServer;
 import com.xyoye.player.commom.utils.CommonPlayerUtils;
 import com.xyoye.smb.SmbManager;
@@ -125,6 +126,7 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
                 .subscribe(new Observer<List<SmbFileInfo>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -224,6 +226,7 @@ public class SmbFilePresenterImpl extends BaseMvpPresenterImpl<SmbFileView> impl
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(Disposable d) {

@@ -98,12 +98,17 @@ public class Style {
 				color = "00ffffff ";
 		} else if (format.equalsIgnoreCase("&HBBGGRR")){
 			//hex format from SSA
-			StringBuilder sb = new StringBuilder();
-			sb.append(value.substring(6));
-			sb.append(value, 4, 5);
-			sb.append(value, 2, 3);
-			sb.append("ff");
-			color = sb.toString();
+			if (value.length() == 3){
+				color = value.substring(3) +
+						value.substring(2, 3) +
+						value.substring(1, 2) +
+						"ff";
+			} else {
+				color = value.substring(6) +
+						value.substring(4, 5) +
+						value.substring(2, 3) +
+						"ff";
+			}
 		} else if (format.equalsIgnoreCase("&HAABBGGRR")){
 			//hex format from ASS
 			StringBuilder sb = new StringBuilder();

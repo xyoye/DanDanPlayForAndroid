@@ -20,6 +20,7 @@ import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.DanmuUtils;
 import com.xyoye.dandanplay.utils.MD5Util;
+import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
@@ -211,6 +212,7 @@ public class FolderPresenterImpl extends BaseMvpPresenterImpl<FolderView> implem
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
                 .subscribe(new Observer<Integer>() {
                     @Override
                     public void onSubscribe(Disposable disposable) {

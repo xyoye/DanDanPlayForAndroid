@@ -79,21 +79,6 @@ public class DownloadSettingActivity extends BaseMvcActivity {
     }
 
     /**
-     * 选择下载引擎
-     */
-    private void setEngine() {
-        // TODO: 2019/8/16 此处需要检查当前引擎下是否还存在任务，提示清空后才能选择
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择下载引擎");
-        final String[] engines = {TorrentConfig.Engine.LIB_TORRENT, TorrentConfig.Engine.THUNDER};
-        builder.setItems(engines, (dialog, which) -> {
-            TorrentConfig.getInstance().setDownloadEngine(engines[which]);
-            downloadEngineTv.setText(engines[which]);
-        });
-        builder.show();
-    }
-
-    /**
      * 设置最大任务数量
      */
     @SuppressLint("SetTextI18n")
@@ -113,7 +98,16 @@ public class DownloadSettingActivity extends BaseMvcActivity {
     @SuppressLint("SetTextI18n")
     private void setMaxDownloadRate() {
         new CommonEditTextDialog(this, CommonEditTextDialog.MAX_DOWNLOAD_RATE, result -> {
-            int downloadRate = Integer.valueOf(result[0]);
+            long rate = 0;
+            try {
+                rate = Long.parseLong(result[0]);
+            } catch (NumberFormatException ignore){
+            }
+
+            if (rate > Integer.MAX_VALUE / 1000){
+                rate = Integer.MAX_VALUE / 1000;
+            }
+            int downloadRate = (int)rate;
             TorrentConfig.getInstance().setMaxDownloadRate(downloadRate * 1000);
             if (downloadRate == 0) {
                 downloadRateTv.setText("无限制");

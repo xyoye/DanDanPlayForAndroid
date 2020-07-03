@@ -12,6 +12,7 @@ import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;
 import com.xyoye.dandanplay.utils.Constants;
+import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.database.callback.QueryAsyncResultCallback;
 import com.xyoye.dandanplay.utils.smb.SearchSmbDevicesTask;
@@ -191,6 +192,7 @@ public class SmbDevicePresenterImpl extends BaseMvpPresenterImpl<SmbDeviceView> 
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {

@@ -302,18 +302,20 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public void noMatchDanmu(String videoPath) {
-        String danmuPath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
-        File file = new File(danmuPath);
-        if (file.exists()) {
-            selectVideoBean.setDanmuPath(danmuPath);
-            ToastUtils.showShort("匹配到相同目录下同名弹幕");
-        } else {
-            String name = FileUtils.getFileNameNoExtension(videoPath) + ".xml";
-            danmuPath = AppConfig.getInstance().getDownloadFolder() + "/" + name;
-            file = new File(danmuPath);
+        if (videoPath.contains(".")){
+            String danmuPath = videoPath.substring(0, videoPath.lastIndexOf(".")) + ".xml";
+            File file = new File(danmuPath);
             if (file.exists()) {
                 selectVideoBean.setDanmuPath(danmuPath);
-                ToastUtils.showShort("匹配到下载目录下同名弹幕");
+                ToastUtils.showShort("匹配到相同目录下同名弹幕");
+            } else {
+                String name = FileUtils.getFileNameNoExtension(videoPath) + ".xml";
+                danmuPath = AppConfig.getInstance().getDownloadFolder() + "/" + name;
+                file = new File(danmuPath);
+                if (file.exists()) {
+                    selectVideoBean.setDanmuPath(danmuPath);
+                    ToastUtils.showShort("匹配到下载目录下同名弹幕");
+                }
             }
         }
         openIntentVideo(selectVideoBean);

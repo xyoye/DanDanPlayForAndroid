@@ -131,6 +131,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         //获取播放参数
         PlayParam playParam = getIntent().getParcelableExtra("video_data");
 
+        if (playParam == null){
+            ToastUtils.showShort("解析播放参数失败");
+            new CommonDialog.Builder(this)
+                    .setDismissListener(dialog -> PlayerActivity.this.finish())
+                    .setAutoDismiss()
+                    .setNightSkin()
+                    .setTouchNotCancel()
+                    .hideOk()
+                    .build()
+                    .show("解析播放参数失败", "", "退出重试");
+            return;
+        }
+
         videoPath = playParam.getVideoPath();
         videoTitle = playParam.getVideoTitle();
         danmuPath = playParam.getDanmuPath();

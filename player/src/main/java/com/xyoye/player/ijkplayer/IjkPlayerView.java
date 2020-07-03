@@ -80,6 +80,7 @@ import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 
@@ -528,8 +529,11 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             return true;
         };
         //内嵌字幕回调
-        IMediaPlayer.OnTimedTextListener ijkPlayTimedTextListener = (mp, text) ->
+        IMediaPlayer.OnTimedTextListener ijkPlayTimedTextListener = (mp, text) -> {
+            if (text != null){
                 subtitleManager.setInnerSub(text.getText());
+            }
+        };
         //弹幕view绘制事件回调
         DrawHandler.Callback drawHandlerCallBack = new DrawHandler.Callback() {
             @Override
@@ -537,6 +541,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 mAttachActivity.runOnUiThread(() -> {
                     if(mAttachActivity.getLifecycle().getCurrentState() == Lifecycle.State.DESTROYED){
                         LogUtils.e("player activity destroyed");
+                        return;
+                    }
+                    if (mDanmakuView == null){
                         return;
                     }
                     if (mIsIjkPlayerReady) {

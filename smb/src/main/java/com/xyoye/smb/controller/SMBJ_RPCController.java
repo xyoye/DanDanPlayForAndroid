@@ -186,7 +186,7 @@ public class SMBJ_RPCController implements Controller {
 
     @Override
     public String getCurrentPath() {
-        return mPath.length() == 0 ? "/" : mPath.replace("\\", "/");
+        return mPath == null || mPath.length() == 0 ? "/" : mPath.replace("\\", "/");
     }
 
     @Override

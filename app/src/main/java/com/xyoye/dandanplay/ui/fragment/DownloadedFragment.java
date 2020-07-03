@@ -130,7 +130,7 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
     }
 
     public void updateDanmu(int taskPosition, int taskFilePosition, String danmuPath, int episodeId) {
-        if (taskPosition == -1 || taskFilePosition == -1)
+        if (taskPosition == -1 || taskFilePosition == -1 || taskList == null)
             return;
 
         if (taskPosition < taskList.size()) {

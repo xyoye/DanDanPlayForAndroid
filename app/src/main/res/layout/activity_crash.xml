@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:gravity="center"
-        android:text="发生意外错误\n抱歉，给您带来不便"
+        android:text="发生意外错误\n很抱歉，给您带来不便\n请将错误日志复制并发送给开发人员"
         android:textColor="@color/immutable_text_black"
         android:textSize="18sp"
         android:textStyle="bold" />

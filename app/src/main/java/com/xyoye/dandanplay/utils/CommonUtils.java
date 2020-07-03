@@ -1,12 +1,19 @@
 package com.xyoye.dandanplay.utils;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
@@ -28,6 +35,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,6 +54,10 @@ import skin.support.content.res.SkinCompatResources;
  */
 
 public class CommonUtils {
+    private static final String EXTERNAL_STORAGE = "com.android.externalstorage.documents";
+    private static final String DOWNLOAD_DOCUMENT = "com.android.providers.downloads.documents";
+    private static final String MEDIA_DOCUMENT = "com.android.providers.media.documents";
+    private static final String DOWNLOAD_URI = "content://downloads/public_downloads";
 
     private static String appVersion = "";
 
@@ -221,8 +233,74 @@ public class CommonUtils {
         } else if ("https".equalsIgnoreCase(uri.getScheme())) {
             return uri.toString();
         } else {
-            return UriUtils.uri2File(uri).getAbsolutePath();
+            File file = UriUtils.uri2File(uri);
+            if (file != null)
+                return file.getAbsolutePath();
+            else {
+                try {
+                    return getUriPath(context, uri);
+                } catch (Exception ignore){
+
+                }
+            }
         }
+        return null;
+    }
+
+    private static String getUriPath(Context context, @NonNull Uri uri){
+        boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            String authority = uri.getAuthority();
+            if (authority == null)
+                return "";
+            switch (authority) {
+                case EXTERNAL_STORAGE:
+                    String docId = DocumentsContract.getDocumentId(uri);
+                    String[] exSplit = docId.split(":");
+                    String type = exSplit[0];
+                    if ("primary".equalsIgnoreCase(type)) {
+                        return Environment.getExternalStorageDirectory() + "/" + exSplit[1];
+                    }
+                    break;
+                case DOWNLOAD_DOCUMENT:
+                    String id = DocumentsContract.getDocumentId(uri);
+                    Uri documentUri = ContentUris.withAppendedId(Uri.parse(DOWNLOAD_URI), Long.parseLong(id));
+                    return getDataColumn(context, documentUri, null, null);
+                case MEDIA_DOCUMENT:
+                    String[] split = DocumentsContract.getDocumentId(uri).split(":");
+                    Uri contentUri = null;
+                    switch (split[0]) {
+                        case "image":
+                            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        case "video":
+                            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                        case "audio":
+                            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                            break;
+                    }
+                    return getDataColumn(context, contentUri, "_id=?", new String[]{split[1]});
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return getDataColumn(context, uri, null, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+        return null;
+    }
+
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        context.grantUriPermission(context.getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, selection, selectionArgs, null)) {
+            if (cursor != null && cursor.moveToNext()) {
+                return cursor.getString(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -232,7 +310,6 @@ public class CommonUtils {
         return (mode, code, serviceMsg, version) -> {
             String msg = "";
             List<PatchFixEvent> eventList = JsonUtils.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
-            if (eventList == null) eventList = new ArrayList<>();
             AppConfig.getInstance().setPatchVersion(version);
             PatchFixEvent event = new PatchFixEvent();
             event.setVersion(version);

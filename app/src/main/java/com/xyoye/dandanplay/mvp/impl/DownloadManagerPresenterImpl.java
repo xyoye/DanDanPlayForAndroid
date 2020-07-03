@@ -8,6 +8,7 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.DownloadManagerPresenter;
 import com.xyoye.dandanplay.mvp.view.DownloadManagerView;
 import com.xyoye.dandanplay.service.TorrentService;
+import com.xyoye.dandanplay.utils.RxUtils;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -78,6 +79,7 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadM
             }
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onSubscribe(Disposable d) {

@@ -17,6 +17,7 @@ public class ViewUtils {
                 }
 
                 @Override
+                @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
                 public void onViewDetachedFromWindow(View view) {}
             });
         }
@@ -28,6 +29,7 @@ public class ViewUtils {
         } else {
             view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
+                @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
                 public void onViewAttachedToWindow(View view) {}
 
                 @Override

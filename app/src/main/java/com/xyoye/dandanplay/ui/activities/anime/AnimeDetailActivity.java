@@ -37,7 +37,6 @@ import com.xyoye.dandanplay.ui.weight.item.AnimeTagItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
-import com.xyoye.dandanplay.utils.view.ViewUtils;
 import com.xyoye.dandanplay.utils.view.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;

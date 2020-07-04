@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.utils.view;
 
 import android.os.Build;
-import android.support.v4.view.OnApplyWindowInsetsListener;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.view.View;

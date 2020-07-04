@@ -164,6 +164,16 @@ public class ScrollableLayout extends LinearLayout {
         }
     }
 
+    public void removeHeadView(View view) {
+        if (view instanceof ViewGroup){
+            ViewGroup.LayoutParams lp = view.getLayoutParams();
+            extraY += lp.height;
+        }else {
+            LayoutParams lp = (LayoutParams)view.getLayoutParams();
+            extraY += view.getMeasuredHeight() + lp.topMargin;
+        }
+    }
+
     public boolean isHeadTop() {
         return mCurY == minY;
     }

@@ -119,14 +119,31 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <TextView
+    <LinearLayout
         android:id="@+id/left_view"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/immutable_text_orange"
-        android:gravity="center"
-        android:text="更新\n种子"
-        android:textColor="@color/immutable_text_white"
-        android:textSize="14sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/copy_magnet_tv"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/immutable_text_orange"
+            android:gravity="center"
+            android:text="复制\n磁链"
+            android:textColor="@color/immutable_text_white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/update_torrent_tv"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:background="@color/immutable_text_pink"
+            android:gravity="center"
+            android:text="更新\n种子"
+            android:textColor="@color/immutable_text_white"
+            android:textSize="14sp" />
+    </LinearLayout>
 
 </com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout>

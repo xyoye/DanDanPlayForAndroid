@@ -1,11 +1,16 @@
 package com.xyoye.dandanplay.ui.weight.item;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.MagnetBean;
 import com.xyoye.dandanplay.ui.weight.swipe_menu.EasySwipeMenuLayout;
 import com.xyoye.dandanplay.ui.weight.swipe_menu.SwipeState;
@@ -36,7 +41,9 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
     TextView downloadResourceTv;
     @BindView(R.id.play_resource_tv)
     TextView playResourceTv;
-    @BindView(R.id.left_view)
+    @BindView(R.id.copy_magnet_tv)
+    TextView copyMagnetTv;
+    @BindView(R.id.update_torrent_tv)
     TextView updateResourceTv;
 
     private MagnetItemListener listener;
@@ -68,7 +75,7 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
         magnetTypeTv.setText(model.getTypeName());
         magnetTimeTv.setText(model.getPublishDate());
 
-        swipeMenuLayout.setRightSwipeEnable(!TextUtils.isEmpty(model.getMagnetPath()));
+        updateResourceTv.setVisibility(TextUtils.isEmpty(model.getMagnetPath()) ? View.GONE : View.VISIBLE);
 
         contentView.setOnClickListener(v -> {
             if (swipeMenuLayout.getSwipeState() != null && swipeMenuLayout.getSwipeState() != SwipeState.SWIPE_CLOSE) {
@@ -88,6 +95,16 @@ public class MagnetItem implements AdapterItem<MagnetBean.ResourcesBean> {
 
         downloadResourceTv.setOnClickListener(v -> {
             listener.onItemClick(position, false, false);
+        });
+
+        copyMagnetTv.setOnClickListener(v -> {
+            String magnet = model.getMagnet();
+            ClipboardManager clipboardManagerMagnet = (ClipboardManager) IApplication.get_context().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData mClipDataMagnet = ClipData.newPlainText("Label", magnet);
+            if (clipboardManagerMagnet != null) {
+                clipboardManagerMagnet.setPrimaryClip(mClipDataMagnet);
+                ToastUtils.showShort("已复制磁链：" + magnet);
+            }
         });
     }
 

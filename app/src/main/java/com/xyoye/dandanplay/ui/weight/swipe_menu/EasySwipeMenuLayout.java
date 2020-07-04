@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.xyoye.dandanplay.R;
 
 import java.util.ArrayList;
@@ -20,12 +21,11 @@ import static com.xyoye.dandanplay.ui.weight.swipe_menu.SwipeState.SWIPE_CLOSE;
 
 /**
  * Created by guanaj on 2017/6/5.
- *
+ * <p>
  * Modified by xyoye on 2020/6/24.
  */
 
 public class EasySwipeMenuLayout extends ViewGroup {
-    private final static float DEFAULT_SWIPE_FRACTION = 0.3f;
 
     private ArrayList<View> mMatchParentChildren = new ArrayList<>(1);
     private static EasySwipeMenuLayout mViewCache;
@@ -35,7 +35,6 @@ public class EasySwipeMenuLayout extends ViewGroup {
     private final int mBottomViewResID;
     private final int mLeftViewResID;
     private final int mRightViewResID;
-    private final float mSwipeFraction;
 
     private View mContentView;
     private View mTopView;
@@ -78,7 +77,6 @@ public class EasySwipeMenuLayout extends ViewGroup {
         mBottomViewResID = typedArray.getResourceId(R.styleable.EasySwipeMenuLayout_bottomMenuView, -1);
         mLeftViewResID = typedArray.getResourceId(R.styleable.EasySwipeMenuLayout_leftMenuView, -1);
         mRightViewResID = typedArray.getResourceId(R.styleable.EasySwipeMenuLayout_rightMenuView, -1);
-        mSwipeFraction = typedArray.getFloat(R.styleable.EasySwipeMenuLayout_fraction, DEFAULT_SWIPE_FRACTION);
         typedArray.recycle();
     }
 
@@ -367,27 +365,31 @@ public class EasySwipeMenuLayout extends ViewGroup {
      * 根据当前的scrollX的值判断松开手后应处于何种状态
      */
     private SwipeState isShouldOpen() {
-        if (!(mScaledTouchSlop < Math.abs(finallyDistanceX))) {
+        int scrollX = getScrollX();
+        LogUtils.e("当前：" + finallyDistanceX, "临界：" + mScaledTouchSlop, "scrollX:"+scrollX);
+        if (Math.abs(finallyDistanceX) < mScaledTouchSlop) {
             return mSwipeState;
         }
         if (finallyDistanceX < 0) {
-            if (getScrollX() < 0 && mLeftView != null) {
-                if (Math.abs(mLeftView.getWidth() * mSwipeFraction) < Math.abs(getScrollX())) {
+            if (scrollX < 0 && mLeftView != null) {
+                if (Math.abs(scrollX) > mScaledTouchSlop) {
+                    LogUtils.e("LEFT");
                     return SwipeState.SWIPE_LEFT;
                 }
             }
-            if (getScrollX() > 0 && mRightView != null) {
+            if (scrollX > 0 && mRightView != null) {
+                LogUtils.e("CLOSE");
                 return SWIPE_CLOSE;
             }
         } else if (finallyDistanceX > 0) {
-            if (getScrollX() > 0 && mRightView != null) {
-
-                if (Math.abs(mRightView.getWidth() * mSwipeFraction) < Math.abs(getScrollX())) {
+            if (scrollX > 0 && mRightView != null) {
+                if (Math.abs(scrollX) > mScaledTouchSlop) {
+                    LogUtils.e("RIGHT");
                     return SwipeState.SWIPE_RIGHT;
                 }
-
             }
-            if (getScrollX() < 0 && mLeftView != null) {
+            if (scrollX < 0 && mLeftView != null) {
+                LogUtils.e("CLOSE");
                 return SWIPE_CLOSE;
             }
         }
@@ -427,14 +429,14 @@ public class EasySwipeMenuLayout extends ViewGroup {
         }
     }
 
-    public void openMenu(@NonNull SwipeState swipeState){
-        if (swipeState == mSwipeState){
+    public void openMenu(@NonNull SwipeState swipeState) {
+        if (swipeState == mSwipeState) {
             return;
         }
-        if (mSwipeState != null){
+        if (mSwipeState != null) {
             closeMenu();
         }
-        if (mScroller != null){
+        if (mScroller != null) {
             handlerSwipeMenu(swipeState);
         }
     }

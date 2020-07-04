@@ -17,7 +17,7 @@ public class ViewUtils {
                 }
 
                 @Override
-                public void onViewDetachedFromWindow(View view) { }
+                public void onViewDetachedFromWindow(View view) {}
             });
         }
     }
@@ -28,7 +28,7 @@ public class ViewUtils {
         } else {
             view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
-                public void onViewAttachedToWindow(View view) { }
+                public void onViewAttachedToWindow(View view) {}
 
                 @Override
                 public void onViewDetachedFromWindow(View view) {

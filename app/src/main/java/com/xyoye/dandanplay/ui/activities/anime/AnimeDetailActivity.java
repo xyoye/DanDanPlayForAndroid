@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -38,6 +37,8 @@ import com.xyoye.dandanplay.ui.weight.item.AnimeTagItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
+import com.xyoye.dandanplay.utils.view.ViewUtils;
+import com.xyoye.dandanplay.utils.view.WindowUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -124,13 +125,27 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public void initView() {
-        int statusBarHeight = ConvertUtils.dp2px(20);
-        toolBar.setPadding(0, statusBarHeight, 0, 0);
-        ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
-        toolbarParams.height += statusBarHeight;
-        toolbarHeight = toolbarParams.height;
 
-        scrollableLayout.addHeadView(toolBar);
+        final boolean[] isAddHeader = {false};
+        WindowUtils.doOnApplyWindowInsets(toolBar, (v, padding, margin, insets) -> {
+            ViewGroup.LayoutParams layoutParams = toolBar.getLayoutParams();
+            toolBar.setPadding(toolBar.getPaddingLeft(), padding.getTop() + insets.getSystemWindowInsetTop(), toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+            if (isAddHeader[0]) {
+                scrollableLayout.removeHeadView(toolBar);
+                isAddHeader[0] = false;
+            }
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            toolBar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            toolBar.getLayoutParams().height = toolBar.getMeasuredHeight();
+            if (!isAddHeader[0]) {
+                scrollableLayout.addHeadView(toolBar);
+                isAddHeader[0] = true;
+            }
+
+            return insets;
+        });
+        WindowUtils.requestApplyInsetsWhenAttached(toolBar);
+
         toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
         toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
 

@@ -16,6 +16,7 @@ import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.mvp.impl.PersonalFragmentPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
+import com.xyoye.dandanplay.ui.activities.ShellActivity;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
@@ -23,10 +24,10 @@ import com.xyoye.dandanplay.ui.activities.personal.LocalPlayHistoryActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LoginActivity;
 import com.xyoye.dandanplay.ui.activities.personal.PersonalInfoActivity;
 import com.xyoye.dandanplay.ui.activities.personal.ShooterSubActivity;
-import com.xyoye.dandanplay.ui.activities.setting.AppSettingActivity;
+import com.xyoye.dandanplay.ui.fragment.settings.AppSettingFragment;
 import com.xyoye.dandanplay.ui.activities.setting.DanmuBlockManagerActivity;
-import com.xyoye.dandanplay.ui.activities.setting.DownloadSettingActivity;
-import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.fragment.settings.DownloadSettingFragment;
+import com.xyoye.dandanplay.ui.fragment.settings.PlaySettingFragment;
 import com.xyoye.dandanplay.ui.activities.setting.ScanManagerManagerActivity;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -121,13 +122,19 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 launchActivity(LoginActivity.class);
                 break;
             case R.id.player_setting_ll:
-                launchActivity(PlayerSettingActivity.class);
+                Bundle player = new Bundle();
+                player.putString("fragment", PlaySettingFragment.class.getName());
+                launchActivity(ShellActivity.class,player);
                 break;
             case R.id.download_setting_ll:
-                launchActivity(DownloadSettingActivity.class);
+                Bundle download = new Bundle();
+                download.putString("fragment", DownloadSettingFragment.class.getName());
+                launchActivity(ShellActivity.class,download);
                 break;
             case R.id.system_setting_ll:
-                launchActivity(AppSettingActivity.class);
+                Bundle app = new Bundle();
+                app.putString("fragment",AppSettingFragment.class.getName());
+                launchActivity(ShellActivity.class,app);
                 break;
             case R.id.follow_ll:
                 if (AppConfig.getInstance().isLogin()) {

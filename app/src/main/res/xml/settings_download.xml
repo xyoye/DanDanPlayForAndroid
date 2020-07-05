@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="引擎">
+        <Preference
+            android:key="download_engine"
+            android:title="下载引擎" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="下载设置">
+        <SwitchPreference
+            android:key="only_wifi_download"
+            android:title="仅 WiFi 下载" />
+        <EditTextPreference
+            android:key="download_rate"
+            android:title="最大下载速度" />
+        <ListPreference
+            android:key="task_count"
+            android:title="最大下载任务数量" />
+    </PreferenceCategory>
+</PreferenceScreen>

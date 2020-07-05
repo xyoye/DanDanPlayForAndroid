@@ -13,10 +13,11 @@
             @color/colorControlNormal
         </item>
         <item name="android:windowBackground">@color/layout_bg_color</item>
+        <item name="preferenceTheme">@style/Theme.Preference</item>
     </style>
 
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="alertDialogStyle">@style/AlertDialog.SkinCompat</item>
+        <item name="alertDialogStyle">@style/AlertDialog.SkinCompat.Default</item>
         <item name="skinAlertDialogBackground">@color/layout_bg_color</item>
         <item name="skinAlertDialogTitleTextColor">@color/text_black</item>
         <item name="skinAlertDialogMessageTextColor">@color/text_black</item>
@@ -81,5 +82,42 @@
         <item name="android:activityOpenExitAnimation">@anim/anim_activity_exit</item>
         <item name="android:activityCloseEnterAnimation">@anim/anim_activity_enter</item>
         <item name="android:activityCloseExitAnimation">@anim/anim_activity_exit</item>
+    </style>
+
+    <style name="Theme.Preference" parent="PreferenceThemeOverlay">
+        <item name="preferenceFragmentCompatStyle">@style/Widget.Preference.Fragment</item>
+        <item name="preferenceStyle">@style/Widget.Preference</item>
+        <item name="dialogPreferenceStyle">@style/Widget.DialogPreference</item>
+        <item name="switchPreferenceStyle">@style/Widget.SwitchPreference</item>
+        <item name="editTextPreferenceStyle">@style/Widget.EditPreference</item>
+        <item name="preferenceCategoryStyle">@style/Widget.PreferenceCategory</item>
+    </style>
+
+    <style name="Widget.Preference.Fragment" parent="PreferenceFragment.Material">
+        <item name="android:layout">@layout/layout_base_settings_fragment</item>
+    </style>
+
+    <style name="Widget.Preference" parent="Preference.Material">
+        <item name="android:layout">@layout/layout_preference</item>
+    </style>
+
+    <style name="Widget.SwitchPreference" parent="Preference.SwitchPreference.Material">
+        <item name="android:layout">@layout/layout_preference</item>
+    </style>
+
+    <style name="Widget.DialogPreference" parent="Preference.DialogPreference.Material">
+        <item name="android:layout">@layout/layout_preference</item>
+    </style>
+
+    <style name="Widget.EditPreference" parent="Preference.DialogPreference.EditTextPreference.Material">
+        <item name="android:layout">@layout/layout_preference</item>
+    </style>
+
+    <style name="Widget.PreferenceCategory" parent="Preference.Category.Material">
+        <item name="android:layout">@layout/layout_preference_category</item>
+    </style>
+
+    <style name="AlertDialog.SkinCompat.Default">
+        <item name="singleChoiceItemLayout">@layout/widget_select_dialog_singlechoice</item>
     </style>
 </resources>

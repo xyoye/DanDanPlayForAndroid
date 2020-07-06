@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDataStore;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.xyoye.dandanplay.R;
@@ -103,7 +103,6 @@ public class PlaySettingFragment extends BaseSettingsFragment {
         playerType.setEntryValues(playerTypeValue);
         playerType.setSummary(playerType.getEntry());
         playerType.setOnPreferenceChangeListener(((preference, o) -> {
-            Log.e("playerType", "source: " + playerType.getValue() + " new: " + o);
             for (int i = 0; i < playerTypeValue.length; i++) {
                 if (playerTypeValue[i].equals(o)) {
                     playerType.setSummary(playerTypeArray[i]);
@@ -119,6 +118,13 @@ public class PlaySettingFragment extends BaseSettingsFragment {
         for (String key : keySetOfInvisiblePreferenceOnExoPlayerEnable) {
             findPreference(key).setVisible(!isExoPlayer);
         }
+
+        Preference autoLoadNetwork = findPreference("auto_load_network_subtitle");
+        autoLoadNetwork.setVisible(AppConfig.getInstance().isUseNetWorkSubtitle());
+        findPreference("network_subtitle").setOnPreferenceChangeListener((preference, o) -> {
+            autoLoadNetwork.setVisible((boolean) o);
+            return true;
+        });
 
         super.onViewCreated(view, savedInstanceState);
     }

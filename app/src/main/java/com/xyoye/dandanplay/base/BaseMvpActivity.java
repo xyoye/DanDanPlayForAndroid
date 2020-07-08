@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -75,7 +74,7 @@ public abstract class BaseMvpActivity<T extends BaseMvpPresenter> extends BaseAp
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor(), 0);
+        super.setStatusBar();
     }
 
     public void showLoadingDialog() {

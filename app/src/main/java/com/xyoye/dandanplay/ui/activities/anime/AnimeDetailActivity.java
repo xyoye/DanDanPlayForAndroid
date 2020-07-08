@@ -19,6 +19,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -119,7 +120,10 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     protected void setStatusBar() {
-
+        ImmersionBar.with(this)
+                .transparentBar()
+                .fitsSystemWindows(false)
+                .init();
     }
 
     @Override

@@ -103,10 +103,8 @@ public class ImagePreviewActivity extends BaseMvcActivity {
 
     @OnClick({R.id.back_iv})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.back_iv:
-                ImagePreviewActivity.this.finish();
-                break;
+        if (view.getId() == R.id.back_iv) {
+            ImagePreviewActivity.this.finish();
         }
     }
 

@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
@@ -128,7 +127,8 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public void initView() {
-        int statusBarHeight = ConvertUtils.dp2px(20);
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int statusBarHeight = getResources().getDimensionPixelSize(resourceId);
         toolBar.setPadding(0, statusBarHeight, 0, 0);
         ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
         toolbarParams.height += statusBarHeight;

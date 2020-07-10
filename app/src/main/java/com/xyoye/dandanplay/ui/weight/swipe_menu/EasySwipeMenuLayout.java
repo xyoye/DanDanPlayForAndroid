@@ -248,9 +248,9 @@ public class EasySwipeMenuLayout extends ViewGroup {
                 mFirstP.set(ev.getRawX(), ev.getRawY());
                 if (mViewCache != null) {
                     if (mViewCache != this) {
+                        getParent().requestDisallowInterceptTouchEvent(true);
                         mViewCache.handlerSwipeMenu(SWIPE_CLOSE);
                     }
-                    getParent().requestDisallowInterceptTouchEvent(true);
                 }
                 break;
             }
@@ -261,7 +261,9 @@ public class EasySwipeMenuLayout extends ViewGroup {
                 if (!allowHorizontalSwipe) {
                     break;
                 }
-                if (Math.abs(distanceY) > mScaledTouchSlop && Math.abs(distanceY) > Math.abs(distanceX)) {
+
+                if (Math.abs(distanceY) > Math.abs(distanceX)){
+                    getParent().requestDisallowInterceptTouchEvent(false);
                     break;
                 }
 
@@ -424,9 +426,9 @@ public class EasySwipeMenuLayout extends ViewGroup {
                 mViewCache.invalidate();
                 mViewCache = null;
                 mSwipeState = null;
-                getParent().requestDisallowInterceptTouchEvent(false);
             }
         }
+        getParent().requestDisallowInterceptTouchEvent(false);
     }
 
     public void openMenu(@NonNull SwipeState swipeState) {

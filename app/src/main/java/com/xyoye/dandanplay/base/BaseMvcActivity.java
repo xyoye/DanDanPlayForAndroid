@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.base;
 
 import android.app.Dialog;
 
-import com.jaeger.library.StatusBarUtil;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -21,7 +20,7 @@ public abstract class BaseMvcActivity extends BaseAppCompatActivity {
 
     @Override
     protected void setStatusBar() {
-        StatusBarUtil.setColor(this, getToolbarColor(), 0);
+        super.setStatusBar();
     }
 
     public void showLoadingDialog() {

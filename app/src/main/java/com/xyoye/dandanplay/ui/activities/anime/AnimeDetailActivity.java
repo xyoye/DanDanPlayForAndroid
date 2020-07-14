@@ -3,7 +3,9 @@ package com.xyoye.dandanplay.ui.activities.anime;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.view.WindowInsetsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,7 @@ import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
@@ -55,7 +58,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/7/20.
  */
 
-public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView {
+public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView, WindowUtils.InsetsListener {
     @BindView(R.id.toolbar)
     Toolbar toolBar;
     @BindView(R.id.scroll_layout)
@@ -104,6 +107,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     private boolean isFavorite = false;
     private int toolbarHeight;
     private String animeId = "";
+    private boolean isAddedHeader;
 
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeLinearAdapter;
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeGridAdapter;
@@ -119,32 +123,28 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     protected void setStatusBar() {
-
+        ImmersionBar.with(this)
+                .transparentBar()
+                .fitsSystemWindows(false)
+                .init();
     }
 
     @Override
     public void initView() {
 
-        final boolean[] isAddHeader = {false};
-        WindowUtils.doOnApplyWindowInsets(toolBar, (v, padding, margin, insets) -> {
-            ViewGroup.LayoutParams layoutParams = toolBar.getLayoutParams();
-            toolBar.setPadding(toolBar.getPaddingLeft(), padding.getTop() + insets.getSystemWindowInsetTop(), toolBar.getPaddingRight(), toolBar.getPaddingBottom());
-            if (isAddHeader[0]) {
-                scrollableLayout.removeHeadView(toolBar);
-                isAddHeader[0] = false;
-            }
-            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            toolBar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            toolBar.getLayoutParams().height = toolBar.getMeasuredHeight();
-            if (!isAddHeader[0]) {
-                scrollableLayout.addHeadView(toolBar);
-                isAddHeader[0] = true;
-            }
-
-            return insets;
-        });
-        WindowUtils.requestApplyInsetsWhenAttached(toolBar);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WindowUtils.doOnApplyWindowInsets(toolBar, this);
+            WindowUtils.requestApplyInsetsWhenAttached(toolBar);
+        } else {
+            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+            int statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+            toolBar.setPadding(0, statusBarHeight, 0, 0);
+            ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
+            toolbarParams.height += statusBarHeight;
+            toolbarHeight = toolbarParams.height;
+            scrollableLayout.addHeadView(toolBar);
+        }
+      
         toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
         toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
 
@@ -454,6 +454,26 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 }
                 break;
         }
+    }
+
+    @Override
+    public WindowInsetsCompat onApplyWindowInsets(View view, WindowUtils.Padding padding, WindowUtils.Padding margin, WindowInsetsCompat insets) {
+        ViewGroup.LayoutParams layoutParams = toolBar.getLayoutParams();
+        toolBar.setPadding(toolBar.getPaddingLeft(), padding.getTop() + insets.getSystemWindowInsetTop(), toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+        if (isAddedHeader) {
+            scrollableLayout.removeHeadView(toolBar);
+            isAddedHeader = false;
+        }
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        toolBar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        toolbarHeight = toolBar.getMeasuredHeight();
+        toolBar.getLayoutParams().height = toolbarHeight;
+        if (!isAddedHeader) {
+            scrollableLayout.addHeadView(toolBar);
+            isAddedHeader = true;
+        }
+
+        return insets;
     }
 
     public static void launchAnimeDetail(Activity activity, String animeId) {

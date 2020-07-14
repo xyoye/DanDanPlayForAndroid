@@ -79,6 +79,8 @@ public class PlaySettingFragment extends BaseSettingsFragment {
                     case R.id.setting_tips:
                         startActivity(new Intent(toolbar.getContext(), PlayerSettingTipsActivity.class));
                         break;
+                    default:
+                        break;
                 }
                 return true;
             });
@@ -138,8 +140,9 @@ public class PlaySettingFragment extends BaseSettingsFragment {
                     return AppConfig.getInstance().getPixelFormat();
                 case "player_type":
                     return String.valueOf(AppConfig.getInstance().getPlayerType());
+                default:
+                    return super.getString(key, defValue);
             }
-            return super.getString(key, defValue);
         }
 
         @Override

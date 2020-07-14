@@ -141,8 +141,9 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
                     return String.valueOf(TorrentConfig.getInstance().getMaxDownloadRate() / 1000);
                 case "task_count":
                     return String.valueOf(TorrentConfig.getInstance().getMaxTaskCount());
+                default:
+                    return super.getString(key, defValue);
             }
-            return super.getString(key, defValue);
         }
 
         @Override
@@ -170,6 +171,7 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
                         } catch (NumberFormatException ignore) {
                         }
                     }
+                    break;
             }
         }
 

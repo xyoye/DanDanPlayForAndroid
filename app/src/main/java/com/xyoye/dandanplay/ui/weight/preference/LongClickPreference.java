@@ -32,18 +32,18 @@ public class LongClickPreference extends Preference {
 
     @Override
     public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
         if (holder != null) {
             holder.itemView.setOnLongClickListener(v -> {
                 if (listener != null) {
-                    return listener.OnPreferenceLongClick(this);
+                    return listener.onPreferenceLongClick(this);
                 }
                 return false;
             });
         }
-        super.onBindViewHolder(holder);
     }
 
     public interface OnPreferenceLongClickListener {
-        boolean OnPreferenceLongClick(Preference preference);
+        boolean onPreferenceLongClick(Preference preference);
     }
 }

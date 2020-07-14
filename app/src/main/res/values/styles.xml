@@ -103,6 +103,7 @@
 
     <style name="Widget.SwitchPreference" parent="Preference.SwitchPreference.Material">
         <item name="android:layout">@layout/layout_preference</item>
+        <item name="android:widgetLayout">@layout/widget_switch</item>
     </style>
 
     <style name="Widget.DialogPreference" parent="Preference.DialogPreference.Material">

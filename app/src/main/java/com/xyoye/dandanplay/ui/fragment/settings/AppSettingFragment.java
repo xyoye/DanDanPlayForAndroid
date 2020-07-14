@@ -97,6 +97,7 @@ public class AppSettingFragment extends BaseSettingsFragment {
 
 
     static class AppSettingDataStore extends PreferenceDataStore {
+        @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
         @Override
         public void putString(String key, @Nullable String value) {
 

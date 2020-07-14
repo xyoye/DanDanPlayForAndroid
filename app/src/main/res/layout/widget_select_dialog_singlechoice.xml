@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:drawableLeft="?attr/skinListChoiceIndicatorSingle"
-    android:drawableTint="@color/color_switch_track"
+    android:drawableTint="@color/color_radio_tint"
     android:drawablePadding="20dp"
     android:drawableStart="?attr/skinListChoiceIndicatorSingle"
     android:ellipsize="marquee"

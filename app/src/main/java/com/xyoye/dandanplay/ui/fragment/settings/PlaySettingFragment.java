@@ -17,7 +17,7 @@ import com.xyoye.dandanplay.utils.Constants;
 
 public class PlaySettingFragment extends BaseSettingsFragment {
 
-    static final String[] pixelFormatArray = new String[]{
+    private static final String[] pixelFormatArray = new String[]{
             "默认格式",
             "RGB 565",
             "RGB 888",
@@ -26,7 +26,7 @@ public class PlaySettingFragment extends BaseSettingsFragment {
             "OpenGL ES2"
     };
 
-    static final String[] pixelFormatArrayValue = new String[]{
+    private static final String[] pixelFormatArrayValue = new String[]{
             Constants.PlayerConfig.PIXEL_AUTO,
             Constants.PlayerConfig.PIXEL_RGB565,
             Constants.PlayerConfig.PIXEL_RGB888,
@@ -162,6 +162,8 @@ public class PlaySettingFragment extends BaseSettingsFragment {
                         }
                     }
                     break;
+                default:
+                    break;
             }
         }
 
@@ -190,8 +192,9 @@ public class PlaySettingFragment extends BaseSettingsFragment {
                     return AppConfig.getInstance().isAutoLoadNetworkSubtitle();
                 case "network_subtitle":
                     return AppConfig.getInstance().isUseNetWorkSubtitle();
+                default:
+                    return super.getBoolean(key, defValue);
             }
-            return super.getBoolean(key, defValue);
         }
 
         @Override
@@ -229,6 +232,8 @@ public class PlaySettingFragment extends BaseSettingsFragment {
                     break;
                 case "network_subtitle":
                     AppConfig.getInstance().setUseNetWorkSubtitle(value);
+                    break;
+                default:
                     break;
             }
         }

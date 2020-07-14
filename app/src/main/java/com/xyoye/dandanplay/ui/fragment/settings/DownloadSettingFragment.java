@@ -172,6 +172,8 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
                         }
                     }
                     break;
+                default:
+                    break;
             }
         }
 

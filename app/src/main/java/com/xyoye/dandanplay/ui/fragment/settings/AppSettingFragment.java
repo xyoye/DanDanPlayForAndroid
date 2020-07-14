@@ -29,7 +29,7 @@ public class AppSettingFragment extends BaseSettingsFragment {
     private final AppSettingDataStore dataStore = new AppSettingDataStore();
 
     @Override
-    String getTitle() {
+    public String getTitle() {
         return "系统设置";
     }
 

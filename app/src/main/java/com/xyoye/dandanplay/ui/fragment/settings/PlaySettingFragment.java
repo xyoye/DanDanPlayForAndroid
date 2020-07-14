@@ -35,13 +35,13 @@ public class PlaySettingFragment extends BaseSettingsFragment {
             Constants.PlayerConfig.PIXEL_OPENGL_ES2
     };
 
-    static final String[] playerTypeArray = new String[]{
+    private static final String[] playerTypeArray = new String[]{
             "IJK Player",
             "EXO Player",
             "Android Media Player"
     };
 
-    static final String[] playerTypeValue = new String[]{
+    private static final String[] playerTypeValue = new String[]{
             String.valueOf(com.xyoye.player.commom.utils.Constants.IJK_PLAYER),
             String.valueOf(com.xyoye.player.commom.utils.Constants.EXO_PLAYER),
             String.valueOf(com.xyoye.player.commom.utils.Constants.IJK_ANDROID_PLAYER)
@@ -57,7 +57,7 @@ public class PlaySettingFragment extends BaseSettingsFragment {
     private final PlaySettingDataStore dataStore = new PlaySettingDataStore();
 
     @Override
-    String getTitle() {
+    public String getTitle() {
         return "播放器设置";
     }
 

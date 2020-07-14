@@ -19,11 +19,11 @@ import com.xyoye.dandanplay.utils.view.WindowUtils;
 public abstract class BaseSettingsFragment extends PreferenceFragmentCompat {
     private Toolbar mToolbar;
 
-    int getTitleIdRes() {
+    public int getTitleIdRes() {
         return 0;
     }
 
-    String getTitle() {
+    public String getTitle() {
         return "";
     }
 

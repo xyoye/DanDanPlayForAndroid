@@ -26,7 +26,7 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
     private final String[] taskCountArray = new String[]{"1", "2", "3", "4", "5"};
 
     @Override
-    String getTitle() {
+    public String getTitle() {
         return "下载设置";
     }
 

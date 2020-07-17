@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="@dimen/preference_category_padding_start">
+        android:paddingStart="0dp">
         <TextView
             android:id="@android:id/title"
             android:layout_width="match_parent"

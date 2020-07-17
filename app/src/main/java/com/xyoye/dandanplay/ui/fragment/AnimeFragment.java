@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.blankj.utilcode.util.ConvertUtils;
 import com.xyoye.dandanplay.R;
@@ -15,12 +14,9 @@ import com.xyoye.dandanplay.bean.BangumiBean;
 import com.xyoye.dandanplay.mvp.impl.AnimePresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimePresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeView;
-import com.xyoye.dandanplay.ui.weight.ItemDecorationDivider;
 import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
-import com.xyoye.dandanplay.ui.weight.ScrollableHelper;
 import com.xyoye.dandanplay.ui.weight.item.AnimeItem;
 import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.Collections;
@@ -32,7 +28,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/15.
  */
 
-public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements ScrollableHelper.ScrollableContainer, AnimeView {
+public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements AnimeView {
     @BindView(R.id.anime_rv)
     RecyclerView animeRv;
 
@@ -89,11 +85,6 @@ public class AnimeFragment extends BaseMvpFragment<AnimePresenter> implements Sc
     @Override
     public void initListener() {
 
-    }
-
-    @Override
-    public View getScrollableView() {
-        return animeRv;
     }
 
 }

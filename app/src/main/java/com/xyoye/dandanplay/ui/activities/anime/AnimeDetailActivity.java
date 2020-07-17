@@ -5,8 +5,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.WindowInsetsCompat;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,31 +25,21 @@ import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
 import com.xyoye.dandanplay.base.BaseRvAdapter;
-import com.xyoye.dandanplay.bean.AnimeBean;
 import com.xyoye.dandanplay.bean.AnimeDetailBean;
-import com.xyoye.dandanplay.bean.event.SearchMagnetEvent;
+import com.xyoye.dandanplay.bean.AnimeDetailEntity;
 import com.xyoye.dandanplay.mvp.impl.AnimeDetailPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.AnimeDetailPresenter;
 import com.xyoye.dandanplay.mvp.view.AnimeDetailView;
 import com.xyoye.dandanplay.ui.weight.ExpandableTextView;
-import com.xyoye.dandanplay.ui.weight.ItemDecorationSpaces;
-import com.xyoye.dandanplay.ui.weight.ScrollableLayout;
-import com.xyoye.dandanplay.ui.weight.item.AnimeEpisodeItem;
-import com.xyoye.dandanplay.ui.weight.item.AnimeMoreItem;
-import com.xyoye.dandanplay.ui.weight.item.AnimeRecommendItem;
 import com.xyoye.dandanplay.ui.weight.item.AnimeTagItem;
+import com.xyoye.dandanplay.utils.AnimeDetailAdapterManager;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 import com.xyoye.dandanplay.utils.view.WindowUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -61,8 +52,10 @@ import butterknife.OnClick;
 public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> implements AnimeDetailView, WindowUtils.InsetsListener {
     @BindView(R.id.toolbar)
     Toolbar toolBar;
-    @BindView(R.id.scroll_layout)
-    ScrollableLayout scrollableLayout;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.collapsing_toolbar_layout)
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.anime_image_iv)
     ImageView animeImageIv;
     @BindView(R.id.anime_title_tv)
@@ -73,53 +66,35 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
     TextView animeRateTv;
     @BindView(R.id.anime_follow_iv)
     ImageView animeFollowIv;
-    @BindView(R.id.select_episode_tv)
-    TextView selectEpisodeTv;
     @BindView(R.id.anime_intro_tv)
     ExpandableTextView animeIntroTv;
     @BindView(R.id.detail_info_ll)
     LinearLayout detailInfoLL;
 
-    @BindView(R.id.episode_linear_rv)
-    RecyclerView episodeLinearRv;
-    @BindView(R.id.recommend_rv)
-    RecyclerView recommendRv;
     @BindView(R.id.tag_rv)
     RecyclerView tagRv;
-    @BindView(R.id.recommend_ll)
-    LinearLayout recommendLl;
-    @BindView(R.id.more_rv)
-    RecyclerView moreRv;
-    @BindView(R.id.more_ll)
-    LinearLayout moreLl;
-    @BindView(R.id.exit_select_iv)
-    ImageView exitSelectIv;
-    @BindView(R.id.episode_grid_rv)
-    RecyclerView episodeGridRv;
-    @BindView(R.id.episode_ll)
-    LinearLayout normalEpisodeLL;
-    @BindView(R.id.recommend_all_ll)
-    LinearLayout recommendAllLL;
-    @BindView(R.id.select_episode_ll)
-    LinearLayout selectEpisodeLl;
+    @BindView(R.id.anime_detail_rv)
+    RecyclerView animeDetailRv;
 
     private AnimeDetailBean animeDetailBean;
     private boolean isFavorite = false;
-    private int toolbarHeight;
     private String animeId = "";
-    private boolean isAddedHeader;
 
-    private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeLinearAdapter;
-    private BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean> episodeGridAdapter;
-    private BaseRvAdapter<AnimeBean> recommendAdapter;
-    private BaseRvAdapter<AnimeBean> moreAdapter;
     private BaseRvAdapter<AnimeDetailBean.BangumiBean.TagsBean> tagAdapter;
-
-    private List<AnimeDetailBean.BangumiBean.EpisodesBean> episodeLinearList;
-    private List<AnimeDetailBean.BangumiBean.EpisodesBean> episodeGridList;
-    private List<AnimeBean> recommendList;
-    private List<AnimeBean> moreList;
     private List<AnimeDetailBean.BangumiBean.TagsBean> tagList;
+    private AnimeDetailAdapterManager adapterManager;
+    private AnimeDetailAdapterManager.AnimeDetailAdapter animeDetailAdapter;
+
+    @Override
+    protected int initPageLayoutID() {
+        return R.layout.activity_anime_detail;
+    }
+
+    @NonNull
+    @Override
+    protected AnimeDetailPresenter initPresenter() {
+        return new AnimeDetailPresenterImpl(this, this);
+    }
 
     @Override
     protected void setStatusBar() {
@@ -131,61 +106,23 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public void initView() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            WindowUtils.doOnApplyWindowInsets(toolBar, this);
-            WindowUtils.requestApplyInsetsWhenAttached(toolBar);
+            WindowUtils.doOnApplyWindowInsets(appBarLayout, this);
+            WindowUtils.requestApplyInsetsWhenAttached(appBarLayout);
         } else {
             int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
             int statusBarHeight = getResources().getDimensionPixelSize(resourceId);
             toolBar.setPadding(0, statusBarHeight, 0, 0);
             ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
             toolbarParams.height += statusBarHeight;
-            toolbarHeight = toolbarParams.height;
-            scrollableLayout.addHeadView(toolBar);
+            toolBar.setLayoutParams(toolbarParams);
         }
-      
+
         toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
         toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
+        collapsingToolbarLayout.setCollapsedTitleTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
 
-        episodeLinearList = new ArrayList<>();
-        episodeGridList = new ArrayList<>();
-        recommendList = new ArrayList<>();
-        moreList = new ArrayList<>();
         tagList = new ArrayList<>();
-
-        episodeLinearAdapter = new BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean>(episodeLinearList) {
-            @NonNull
-            @Override
-            public AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> onCreateItem(int viewType) {
-                return new AnimeEpisodeItem(false);
-            }
-        };
-
-        episodeGridAdapter = new BaseRvAdapter<AnimeDetailBean.BangumiBean.EpisodesBean>(episodeGridList) {
-            @NonNull
-            @Override
-            public AdapterItem<AnimeDetailBean.BangumiBean.EpisodesBean> onCreateItem(int viewType) {
-                return new AnimeEpisodeItem(true);
-            }
-        };
-
-        recommendAdapter = new BaseRvAdapter<AnimeBean>(recommendList) {
-            @NonNull
-            @Override
-            public AdapterItem<AnimeBean> onCreateItem(int viewType) {
-                return new AnimeRecommendItem();
-            }
-        };
-
-        moreAdapter = new BaseRvAdapter<AnimeBean>(moreList) {
-            @NonNull
-            @Override
-            public AdapterItem<AnimeBean> onCreateItem(int viewType) {
-                return new AnimeMoreItem();
-            }
-        };
-
         tagAdapter = new BaseRvAdapter<AnimeDetailBean.BangumiBean.TagsBean>(tagList) {
             @NonNull
             @Override
@@ -193,78 +130,25 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 return new AnimeTagItem();
             }
         };
-
-        episodeLinearRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        episodeLinearRv.setNestedScrollingEnabled(false);
-        episodeLinearRv.addItemDecoration(new ItemDecorationSpaces(10));
-        episodeLinearRv.setAdapter(episodeLinearAdapter);
-
-        episodeGridRv.setLayoutManager(new GridLayoutManager(this, 2));
-        episodeGridRv.addItemDecoration(new ItemDecorationSpaces(0, 10, 10, 10, 2));
-        episodeGridRv.setAdapter(episodeGridAdapter);
-
-        recommendRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recommendRv.setNestedScrollingEnabled(false);
-        recommendRv.addItemDecoration(new ItemDecorationSpaces(10));
-        recommendRv.setAdapter(recommendAdapter);
-
-        moreRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        moreRv.setNestedScrollingEnabled(false);
-        moreRv.setAdapter(moreAdapter);
-
         tagRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         tagRv.setAdapter(tagAdapter);
 
+        adapterManager = new AnimeDetailAdapterManager(new ArrayList<>());
+        animeDetailAdapter = adapterManager.getAnimeDetailAdapter();
+        animeDetailRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        animeDetailRv.setAdapter(animeDetailAdapter);
+
         animeId = getIntent().getStringExtra("anime_id");
         presenter.getAnimeDetail(animeId);
-
-        scrollableLayout.setHeadCount(2);
     }
 
     @Override
     public void initListener() {
-        scrollableLayout.getHelper().setCurrentScrollableContainer(() -> {
-            if (scrollableLayout.getHeadCount() == 2) {
-                return moreRv;
-            } else {
-                return episodeGridRv;
-            }
-        });
-
-        scrollableLayout.setOnScrollListener((currentY, maxY) -> {
-            //从详情信息头部计算位移
-            int scrollY = currentY - animeImageIv.getTop();
-            //最大的计算范围为详情底部
-            int maxScrollY = animeImageIv.getBottom() - toolbarHeight - animeImageIv.getTop();
-
-            //未到达详情头部一律透明
-            if (scrollY < 0) {
-                toolBar.setBackgroundColor(CommonUtils.getResColor(0, R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(0, R.color.immutable_text_white));
-            }
-            //大于详情底部一律不透明
-            else if (scrollY > maxScrollY) {
-                toolBar.setBackgroundColor(CommonUtils.getResColor(R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(R.color.immutable_text_white));
-            }
-            //按位移量计算计算透明度
-            else {
-                int alpha = (scrollY * 255) / maxScrollY;
-                toolBar.setBackgroundColor(CommonUtils.getResColor(alpha, R.color.theme_color));
-                toolBar.setTitleTextColor(CommonUtils.getResColor(alpha, R.color.immutable_text_white));
-            }
-        });
-    }
-
-    @NonNull
-    @Override
-    protected AnimeDetailPresenter initPresenter() {
-        return new AnimeDetailPresenterImpl(this, this);
-    }
-
-    @Override
-    protected int initPageLayoutID() {
-        return R.layout.activity_anime_detail;
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) ->
+                collapsingToolbarLayout.setTitleEnabled(
+                        Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()
+                )
+        );
     }
 
     @SuppressLint("SetTextI18n")
@@ -277,7 +161,8 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 .transition((DrawableTransitionOptions.withCrossFade()))
                 .into(animeImageIv);
 
-        this.setTitle(bean.getBangumi().getAnimeTitle());
+        String animeTitle = bean.getBangumi().getAnimeTitle();
+        collapsingToolbarLayout.setTitle(animeTitle);
 
         //标题
         animeTitleTv.setText(bean.getBangumi().getAnimeTitle());
@@ -311,24 +196,21 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                 //OnCreate时view可能没有绘制完成，getMeasuredWidth为0
                 animeIntroTv.setText("简介：" + summary, detailInfoLL.getMeasuredWidth()));
 
+        List<AnimeDetailEntity> entityList = new ArrayList<>();
         //剧集
-        episodeGridList.addAll(bean.getBangumi().getEpisodes());
-        episodeLinearList.addAll(bean.getBangumi().getEpisodes());
-        Collections.reverse(episodeGridList);
-        episodeGridAdapter.notifyDataSetChanged();
-        episodeLinearAdapter.notifyDataSetChanged();
+        entityList.add(new AnimeDetailEntity(AnimeDetailEntity.TYPE_EPISODE, bean.getBangumi().getEpisodes()));
         //相关推荐
         if (bean.getBangumi().getRelateds() != null && bean.getBangumi().getRelateds().size() > 0) {
-            recommendLl.setVisibility(View.VISIBLE);
-            recommendList.addAll(bean.getBangumi().getRelateds());
-            recommendAdapter.notifyDataSetChanged();
+            entityList.add(new AnimeDetailEntity(AnimeDetailEntity.TYPE_RECOMMEND, bean.getBangumi().getRelateds()));
         }
         //更多推荐
         if (bean.getBangumi().getSimilars() != null && bean.getBangumi().getSimilars().size() > 0) {
-            moreLl.setVisibility(View.VISIBLE);
-            moreList.addAll(bean.getBangumi().getSimilars());
-            moreAdapter.notifyDataSetChanged();
+            entityList.add(new AnimeDetailEntity(AnimeDetailEntity.TYPE_MORE, bean.getBangumi().getSimilars()));
         }
+
+        adapterManager.setAnimeTitle(bean.getBangumi().getAnimeTitle());
+        adapterManager.setSearchWord(bean.getBangumi().getSearchKeyword());
+        animeDetailAdapter.replaceData(entityList);
     }
 
     @Override
@@ -377,42 +259,14 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         return "连载中 · " + onAirDay;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(SearchMagnetEvent event) {
-        String episode = event.getEpisodeName();
-        if (episode.startsWith("第") && episode.endsWith("话")) {
-            String temp = episode.substring(1, episode.length() - 1);
-            episode = CommonUtils.isNum(temp) ? temp : episode;
-        }
-        Intent intent = new Intent(AnimeDetailActivity.this, SearchActivity.class);
-        intent.putExtra("anime_title", animeDetailBean.getBangumi().getAnimeTitle());
-        intent.putExtra("search_word", animeDetailBean.getBangumi().getSearchKeyword() + " " + episode);
-        intent.putExtra("is_anime", true);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-    }
-
     @Override
     public void showLoading() {
-        //showLoadingDialog();
+
     }
 
     @Override
     public void hideLoading() {
-        //dismissLoadingDialog();
+
     }
 
     @Override
@@ -420,7 +274,7 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
         ToastUtils.showShort(message);
     }
 
-    @OnClick({R.id.anime_image_iv, R.id.select_episode_tv, R.id.exit_select_iv, R.id.anime_follow_iv})
+    @OnClick({R.id.anime_image_iv, R.id.anime_follow_iv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.anime_image_iv:
@@ -429,18 +283,6 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
                     intent.putExtra("image_url", animeDetailBean.getBangumi().getImageUrl());
                     startActivity(intent);
                 }
-                break;
-            case R.id.select_episode_tv:
-                scrollableLayout.setHeadCount(1);
-                selectEpisodeLl.setVisibility(View.VISIBLE);
-                normalEpisodeLL.setVisibility(View.GONE);
-                recommendAllLL.setVisibility(View.GONE);
-                break;
-            case R.id.exit_select_iv:
-                scrollableLayout.setHeadCount(2);
-                selectEpisodeLl.setVisibility(View.GONE);
-                recommendAllLL.setVisibility(View.VISIBLE);
-                normalEpisodeLL.setVisibility(View.VISIBLE);
                 break;
             case R.id.anime_follow_iv:
                 if (AppConfig.getInstance().isLogin()) {
@@ -458,23 +300,16 @@ public class AnimeDetailActivity extends BaseMvpActivity<AnimeDetailPresenter> i
 
     @Override
     public WindowInsetsCompat onApplyWindowInsets(View view, WindowUtils.Padding padding, WindowUtils.Padding margin, WindowInsetsCompat insets) {
-        ViewGroup.LayoutParams layoutParams = toolBar.getLayoutParams();
-        toolBar.setPadding(toolBar.getPaddingLeft(), padding.getTop() + insets.getSystemWindowInsetTop(), toolBar.getPaddingRight(), toolBar.getPaddingBottom());
-        if (isAddedHeader) {
-            scrollableLayout.removeHeadView(toolBar);
-            isAddedHeader = false;
-        }
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        toolBar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        toolbarHeight = toolBar.getMeasuredHeight();
-        toolBar.getLayoutParams().height = toolbarHeight;
-        if (!isAddedHeader) {
-            scrollableLayout.addHeadView(toolBar);
-            isAddedHeader = true;
-        }
+        int statusBarHeight = padding.getTop() + insets.getSystemWindowInsetTop();
 
+        ViewGroup.LayoutParams toolbarParams = toolBar.getLayoutParams();
+        toolBar.setPadding(toolBar.getPaddingLeft(), statusBarHeight, toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+        toolbarParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        toolBar.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        toolbarParams.height = toolBar.getMeasuredHeight();
         return insets;
     }
+
 
     public static void launchAnimeDetail(Activity activity, String animeId) {
         Intent intent = new Intent(activity, AnimeDetailActivity.class);

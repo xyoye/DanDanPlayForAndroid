@@ -88,9 +88,8 @@ public class BindZimuActivity extends BaseMvpActivity<BindZimuPresenter> impleme
             @NonNull
             @Override
             public AdapterItem<SubtitleBean> onCreateItem(int viewType) {
-                return new SubtitleItem((fileName, link) -> {
-                    presenter.downloadSubtitleFile(fileName, link);
-                }
+                return new SubtitleItem((fileName, link) ->
+                        presenter.downloadSubtitleFile(fileName, link)
                 );
             }
         };
@@ -154,7 +153,7 @@ public class BindZimuActivity extends BaseMvpActivity<BindZimuPresenter> impleme
                             .setOkListener(dialog -> launchActivity(ShooterSubActivity.class))
                             .setAutoDismiss()
                             .build()
-                            .show("密钥为空无法搜索，请到APP设置->射手字幕下载中设置API密钥", "前往设置","取消");
+                            .show("密钥为空无法搜索，请到APP设置->射手字幕下载中设置API密钥", "前往设置", "取消");
                 } else {
                     new CommonEditTextDialog(this, CommonEditTextDialog.SEARCH_SUBTITLE, data -> {
                         searchText = data[0];

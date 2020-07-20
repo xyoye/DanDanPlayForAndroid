@@ -38,10 +38,6 @@
         <activity
             android:name=".ui.activities.play.FolderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--播放器设置-->
-        <activity
-            android:name=".ui.activities.setting.PlayerSettingActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--绑定弹幕-->
         <activity
             android:name=".ui.activities.play.BindDanmuActivity"
@@ -81,10 +77,6 @@
         <!--列表番剧-->
         <activity
             android:name=".ui.activities.anime.AnimeListActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!--设置-->
-        <activity
-            android:name=".ui.activities.setting.AppSettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!--播放器设置提示-->
         <activity
@@ -154,10 +146,6 @@
         <!-- 本地播放历史 -->
         <activity
             android:name=".ui.activities.personal.LocalPlayHistoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize" />
-        <!-- 播放器设置 -->
-        <activity
-            android:name=".ui.activities.setting.DownloadSettingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <!-- 崩溃页面 -->
         <activity

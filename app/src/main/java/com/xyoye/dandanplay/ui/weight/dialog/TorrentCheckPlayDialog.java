@@ -20,6 +20,7 @@ import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,6 +65,13 @@ public class TorrentCheckPlayDialog extends AlertDialog {
             torrentList.add(checkBean);
         }
 
+        //按大小排序
+        Collections.sort(torrentList, (o1, o2) -> Long.compare(o2.getLength(), o1.getLength()));
+        //默认选中第一个数据
+        if (torrentList.size() > 0) {
+            torrentList.get(0).setChecked(true);
+        }
+
         fileRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         fileRv.setNestedScrollingEnabled(false);
         fileRv.setItemViewCacheSize(10);
@@ -72,7 +80,7 @@ public class TorrentCheckPlayDialog extends AlertDialog {
             @Override
             public AdapterItem<TorrentCheckBean> onCreateItem(int viewType) {
                 return new TorrentFileCheckItem(position -> {
-                    LogUtils.e("hash: "+torrentInfo.mSubFileInfo[position].hash);
+                    LogUtils.e("hash: " + torrentInfo.mSubFileInfo[position].hash);
                     if (!CommonUtils.isMediaFile(torrentList.get(position).getName())) {
                         ToastUtils.showShort("不是可播放的视频文件");
                         return;
@@ -90,11 +98,19 @@ public class TorrentCheckPlayDialog extends AlertDialog {
         fileRv.setAdapter(checkAdapter);
     }
 
-    @OnClick({R.id.cancel_tv, R.id.play_tv})
+    @OnClick({R.id.cancel_tv, R.id.sort_by_name_tv, R.id.sort_by_length_tv, R.id.play_tv})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cancel_tv:
                 TorrentCheckPlayDialog.this.dismiss();
+                break;
+            case R.id.sort_by_name_tv:
+                Collections.sort(torrentList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+                checkAdapter.notifyDataSetChanged();
+                break;
+            case R.id.sort_by_length_tv:
+                Collections.sort(torrentList, (o1, o2) -> Long.compare(o2.getLength(), o1.getLength()));
+                checkAdapter.notifyDataSetChanged();
                 break;
             case R.id.play_tv:
                 for (int i = 0; i < torrentList.size(); i++) {

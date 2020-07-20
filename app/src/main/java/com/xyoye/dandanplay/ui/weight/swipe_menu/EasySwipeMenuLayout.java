@@ -9,10 +9,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.xyoye.dandanplay.R;
 
 import java.util.ArrayList;
@@ -368,30 +368,25 @@ public class EasySwipeMenuLayout extends ViewGroup {
      */
     private SwipeState isShouldOpen() {
         int scrollX = getScrollX();
-        LogUtils.e("当前：" + finallyDistanceX, "临界：" + mScaledTouchSlop, "scrollX:"+scrollX);
         if (Math.abs(finallyDistanceX) < mScaledTouchSlop) {
             return mSwipeState;
         }
         if (finallyDistanceX < 0) {
             if (scrollX < 0 && mLeftView != null) {
                 if (Math.abs(scrollX) > mScaledTouchSlop) {
-                    LogUtils.e("LEFT");
                     return SwipeState.SWIPE_LEFT;
                 }
             }
             if (scrollX > 0 && mRightView != null) {
-                LogUtils.e("CLOSE");
                 return SWIPE_CLOSE;
             }
         } else if (finallyDistanceX > 0) {
             if (scrollX > 0 && mRightView != null) {
                 if (Math.abs(scrollX) > mScaledTouchSlop) {
-                    LogUtils.e("RIGHT");
                     return SwipeState.SWIPE_RIGHT;
                 }
             }
             if (scrollX < 0 && mLeftView != null) {
-                LogUtils.e("CLOSE");
                 return SWIPE_CLOSE;
             }
         }
@@ -428,7 +423,10 @@ public class EasySwipeMenuLayout extends ViewGroup {
                 mSwipeState = null;
             }
         }
-        getParent().requestDisallowInterceptTouchEvent(false);
+        ViewParent parent = getParent();
+        if (parent != null){
+            parent.requestDisallowInterceptTouchEvent(false);
+        }
     }
 
     public void openMenu(@NonNull SwipeState swipeState) {

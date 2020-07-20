@@ -19,6 +19,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2019/8/16.
  */
 
+@Deprecated
 public class DownloadSettingActivity extends BaseMvcActivity {
 
     @BindView(R.id.download_engine_tv)

@@ -24,6 +24,7 @@ import butterknife.OnClick;
  * Created by xyoye on 2018/9/29.
  */
 
+@Deprecated
 public class PlayerSettingActivity extends BaseMvcActivity {
 
     @BindView(R.id.player_type_tv)

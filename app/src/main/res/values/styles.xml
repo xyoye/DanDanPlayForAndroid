@@ -99,28 +99,23 @@
 
     <style name="Widget.Preference" parent="Preference.Material">
         <item name="android:layout">@layout/layout_preference</item>
-        <item name="iconSpaceReserved">false</item>
     </style>
 
     <style name="Widget.SwitchPreference" parent="Preference.SwitchPreference.Material">
         <item name="android:layout">@layout/layout_preference</item>
         <item name="android:widgetLayout">@layout/widget_switch</item>
-        <item name="iconSpaceReserved">false</item>
     </style>
 
     <style name="Widget.DialogPreference" parent="Preference.DialogPreference.Material">
         <item name="android:layout">@layout/layout_preference</item>
-        <item name="iconSpaceReserved">false</item>
     </style>
 
     <style name="Widget.EditPreference" parent="Preference.DialogPreference.EditTextPreference.Material">
         <item name="android:layout">@layout/layout_preference</item>
-        <item name="iconSpaceReserved">false</item>
     </style>
 
     <style name="Widget.PreferenceCategory" parent="Preference.Category.Material">
         <item name="android:layout">@layout/layout_preference_category</item>
-        <item name="iconSpaceReserved">false</item>
     </style>
 
     <style name="AlertDialog.SkinCompat.Default">

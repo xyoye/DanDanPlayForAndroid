@@ -3,6 +3,7 @@ package com.xyoye.dandanplay.ui.activities.play;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,8 +28,10 @@ import com.xyoye.dandanplay.bean.params.BindResourceParam;
 import com.xyoye.dandanplay.mvp.impl.FolderPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.FolderPresenter;
 import com.xyoye.dandanplay.mvp.view.FolderView;
+import com.xyoye.dandanplay.ui.activities.ShellActivity;
 import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
+import com.xyoye.dandanplay.ui.fragment.settings.PlaySettingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.DanmuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.item.VideoItem;
@@ -323,12 +326,18 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
 
     @Override
     public void openIntentVideo(VideoBean videoBean) {
-        boolean isExoPlayer = AppConfig.getInstance().getPlayerType() == com.xyoye.player.commom.utils.Constants.EXO_PLAYER;
-        if (!isExoPlayer && FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals(".MKV") && AppConfig.getInstance().isShowMkvTips()) {
+        boolean isNotExoPlayer = AppConfig.getInstance().getPlayerType() != com.xyoye.player.commom.utils.Constants.EXO_PLAYER;
+        boolean isMkvVideo = FileUtils.getFileExtension(videoBean.getVideoPath()).toLowerCase().equals("mkv");
+        boolean isNeverShowTips = AppConfig.getInstance().isShowMkvTips();
+        if (isNotExoPlayer && isMkvVideo && isNeverShowTips) {
             new CommonDialog.Builder(this)
                     .setAutoDismiss()
                     .setOkListener(dialog -> launchPlay(videoBean))
-                    .setCancelListener(dialog -> launchActivity(PlayerSettingActivity.class))
+                    .setCancelListener(dialog -> {
+                        Bundle player = new Bundle();
+                        player.putString("fragment", PlaySettingFragment.class.getName());
+                        launchActivity(ShellActivity.class,player);
+                    })
                     .setDismissListener(dialog -> AppConfig.getInstance().hideMkvTips())
                     .build()
                     .show(getResources().getString(R.string.mkv_tips), "关于MKV格式", "我知道了", "前往设置");

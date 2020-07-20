@@ -25,8 +25,9 @@ import com.xyoye.dandanplay.bean.event.SaveCurrentEvent;
 import com.xyoye.dandanplay.bean.event.UpdateFragmentEvent;
 import com.xyoye.dandanplay.bean.params.DanmuUploadParam;
 import com.xyoye.dandanplay.bean.params.PlayParam;
-import com.xyoye.dandanplay.ui.activities.setting.PlayerSettingActivity;
+import com.xyoye.dandanplay.ui.activities.ShellActivity;
 import com.xyoye.dandanplay.ui.fragment.PlayFragment;
+import com.xyoye.dandanplay.ui.fragment.settings.PlaySettingFragment;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectSubtitleDialog;
@@ -131,7 +132,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
         //获取播放参数
         PlayParam playParam = getIntent().getParcelableExtra("video_data");
 
-        if (playParam == null){
+        if (playParam == null) {
             ToastUtils.showShort("解析播放参数失败");
             new CommonDialog.Builder(this)
                     .setDismissListener(dialog -> PlayerActivity.this.finish())
@@ -301,8 +302,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                                 onOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
                                 PlayerActivity.this.finish();
                             })
-                            .setOkListener(dialog ->
-                                    startActivity(new Intent(this, PlayerSettingActivity.class)))
+                            .setOkListener(dialog -> {
+                                Intent intent = new Intent(PlayerActivity.this, ShellActivity.class);
+                                intent.putExtra("fragment", PlaySettingFragment.class.getName());
+                                startActivity(intent);
+                            })
                             .setAutoDismiss()
                             .setNightSkin()
                             .setTouchNotCancel();

@@ -182,6 +182,8 @@ public class CommonUtils {
      * 判断数字
      */
     public static boolean isNum(String str) {
+        if (TextUtils.isEmpty(str))
+            return false;
         Pattern pattern = Pattern.compile("^-?[0-9]+");
         return pattern.matcher(str).matches();
     }

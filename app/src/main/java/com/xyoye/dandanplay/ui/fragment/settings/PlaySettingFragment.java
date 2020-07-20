@@ -75,12 +75,8 @@ public class PlaySettingFragment extends BaseSettingsFragment {
         if (toolbar != null) {
             toolbar.inflateMenu(R.menu.menu_player_setting_tips);
             toolbar.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.setting_tips:
-                        startActivity(new Intent(toolbar.getContext(), PlayerSettingTipsActivity.class));
-                        break;
-                    default:
-                        break;
+                if (item.getItemId() == R.id.setting_tips) {
+                    startActivity(new Intent(toolbar.getContext(), PlayerSettingTipsActivity.class));
                 }
                 return true;
             });

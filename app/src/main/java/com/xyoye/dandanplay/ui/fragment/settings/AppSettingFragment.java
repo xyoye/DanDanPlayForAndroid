@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.fragment.settings;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,10 +28,17 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class AppSettingFragment extends BaseSettingsFragment {
     private final AppSettingDataStore dataStore = new AppSettingDataStore();
+    private Context mAttachContext;
 
     @Override
     public String getTitle() {
         return "系统设置";
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        this.mAttachContext = context;
+        super.onAttach(context);
     }
 
     @Override
@@ -64,7 +72,7 @@ public class AppSettingFragment extends BaseSettingsFragment {
         LongClickPreference patch = (LongClickPreference) findPreference("patch");
         patch.setSummary(AppConfig.getInstance().getPatchVersion() + "");
         patch.setOnPreferenceLongClickListener(preference -> {
-            new PatchHisDialog(getActivity(), R.style.Dialog).show();
+            new PatchHisDialog(mAttachContext, R.style.Dialog).show();
             return true;
         });
         patch.setOnPreferenceClickListener(preference -> {

@@ -93,11 +93,10 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             Dialog dialog = super.onCreateDialog(savedInstanceState);
-            dialog.setOnShowListener(dialogInterface -> {
-                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    onClick(dialog, AlertDialog.BUTTON_POSITIVE);
-                });
-            });
+            dialog.setOnShowListener(dialogInterface ->
+                    ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                            .setOnClickListener(v -> onClick(dialog, AlertDialog.BUTTON_POSITIVE)
+                            ));
             return dialog;
         }
 
@@ -150,7 +149,7 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
         public void putString(String key, @Nullable String value) {
             switch (key) {
                 case "download_rate":
-                    if (TextUtils.isEmpty(value) || value.equals("0")) {
+                    if (TextUtils.isEmpty(value) || "0".equals(value)) {
                         TorrentConfig.getInstance().setMaxDownloadRate(0);
                         TorrentEngine.getInstance().updateSetting();
                     } else if (CommonUtils.isNum(value)) {

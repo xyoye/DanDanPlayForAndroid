@@ -34,6 +34,7 @@ import butterknife.BindView;
  * Created by xyoye on 2018/7/24.
  */
 
+@Deprecated
 public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implements SettingView, View.OnClickListener {
     @BindView(R.id.path_rl)
     RelativeLayout pathRl;

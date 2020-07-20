@@ -23,5 +23,7 @@ public interface BindZimuView extends BaseMvpView, LoadDataView {
 
     void showSubtitleDetailDialog(ShooterSubDetailBean.SubBean.SubsBean detailBean);
 
+    void subtitleDownloadSuccess(String resultFilePath);
+
     void subtitleDownloadSuccess(String resultFilePath, boolean unzip);
 }

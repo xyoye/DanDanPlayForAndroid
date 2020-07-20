@@ -8,6 +8,9 @@ import com.uber.autodispose.ObservableSubscribeProxy;
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider;
 
 import io.reactivex.ObservableConverter;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by xyoye on 2020/6/19.
@@ -21,5 +24,23 @@ public class RxUtils {
      */
     public static <T> ObservableConverter<T, ObservableSubscribeProxy<T>> bindLifecycle(LifecycleOwner lifecycleOwner) {
         return AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner, Lifecycle.Event.ON_DESTROY));
+    }
+
+    /**
+     * IO线程执行任务
+     */
+    public static <T> ObservableTransformer<T, T> schedulerIO() {
+        return observable ->
+                observable.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * 子线程执行任务
+     */
+    public static <T> ObservableTransformer<T, T> schedulerNew() {
+        return observable ->
+                observable.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
     }
 }

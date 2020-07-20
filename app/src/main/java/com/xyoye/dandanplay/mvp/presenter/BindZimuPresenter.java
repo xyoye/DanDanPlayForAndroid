@@ -14,5 +14,7 @@ public interface BindZimuPresenter extends BaseMvpPresenter {
 
     void queryZimuDetail(int subtitleId);
 
+    void downloadSubtitleFile(String subtitleName, String downloadLink);
+
     void downloadSubtitleFile(String fileName, String downloadLink, boolean unzip);
 }

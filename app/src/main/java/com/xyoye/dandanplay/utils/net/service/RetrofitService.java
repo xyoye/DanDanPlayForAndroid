@@ -38,6 +38,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * Created by xyoye on 2018/7/9.
@@ -126,4 +127,6 @@ public interface RetrofitService {
     @GET("api/v1/comment/{hash}")
     Observable<ResponseBody> downloadRemoteDanmu(@Path("hash") String hash);
 
+    @GET()
+    Observable<ResponseBody> downloadResource(@Url String url);
 }

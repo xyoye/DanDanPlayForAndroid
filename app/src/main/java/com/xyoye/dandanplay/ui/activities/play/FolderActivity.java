@@ -278,12 +278,14 @@ public class FolderActivity extends BaseMvpActivity<FolderPresenter> implements 
                 videoList.get(position).setDanmuPath(danmuPath);
                 videoList.get(position).setEpisodeId(episodeId);
                 adapter.notifyItemChanged(position);
+                showError("弹幕绑定完成");
             } else if (requestCode == SELECT_NETWORK_ZIMU) {
                 String zimuPath = bindResourceBean.getZimuPath();
                 presenter.updateZimu(zimuPath, new String[]{folderPath, videoPath});
 
                 videoList.get(position).setZimuPath(zimuPath);
                 adapter.notifyItemChanged(position);
+                showError("字幕绑定完成");
             }
         }
     }

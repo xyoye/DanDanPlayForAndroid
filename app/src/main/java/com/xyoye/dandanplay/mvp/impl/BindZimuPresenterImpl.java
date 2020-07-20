@@ -2,7 +2,9 @@ package com.xyoye.dandanplay.mvp.impl;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
+import android.text.TextUtils;
 
+import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -14,6 +16,7 @@ import com.xyoye.dandanplay.mvp.view.BindZimuView;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.Constants;
 import com.xyoye.dandanplay.utils.HashUtils;
+import com.xyoye.dandanplay.utils.RxUtils;
 import com.xyoye.dandanplay.utils.SubtitleConverter;
 import com.xyoye.dandanplay.utils.net.CommOtherDataObserver;
 import com.xyoye.dandanplay.utils.net.CommShooterDataObserver;
@@ -23,6 +26,7 @@ import com.xyoye.dandanplay.utils.net.service.SubtitleRetrofitService;
 import com.xyoye.player.commom.bean.SubtitleBean;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -171,6 +177,50 @@ public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> im
                 getView().showError(errorCode + ": " + message);
             }
         }, new NetworkConsumer());
+    }
+
+    @Override
+    public void downloadSubtitleFile(String subtitleName, String downloadLink) {
+        RetroFactory.getInstance().downloadResource(downloadLink)
+                .map(responseBody -> {
+                    String folderPath = AppConfig.getInstance().getDownloadFolder() + Constants.DefaultConfig.subtitleFolder;
+                    File folder = new File(folderPath);
+                    if (!folder.exists()) {
+                        if (!folder.mkdirs()) {
+                            throw new FileNotFoundException("创建字幕文件夹失败");
+                        }
+                    }
+                    String filePath = folderPath + "/" + subtitleName;
+                    boolean isSaveFile = FileIOUtils.writeFileFromIS(filePath, responseBody.byteStream());
+                    return isSaveFile ? filePath : "";
+                })
+                .compose(RxUtils.schedulerIO())
+                .as(RxUtils.bindLifecycle(getLifecycle()))
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String filePath) {
+                        if (!TextUtils.isEmpty(filePath)) {
+                            getView().subtitleDownloadSuccess(filePath);
+                        } else {
+                            getView().showError("保存字幕文件失败");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        getView().showError(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override

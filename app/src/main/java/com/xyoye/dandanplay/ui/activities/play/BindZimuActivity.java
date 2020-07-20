@@ -34,7 +34,6 @@ import com.xyoye.dandanplay.ui.weight.dialog.CommonDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.ShooterSubDetailDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.ZimuDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.item.SubtitleItem;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
@@ -89,11 +88,9 @@ public class BindZimuActivity extends BaseMvpActivity<BindZimuPresenter> impleme
             @NonNull
             @Override
             public AdapterItem<SubtitleBean> onCreateItem(int viewType) {
-                return new SubtitleItem((fileName, link) -> new ZimuDownloadDialog(
-                        BindZimuActivity.this,
-                        fileName,
-                        link,
-                        zimuPath -> finishActivity(zimuPath)).show()
+                return new SubtitleItem((fileName, link) -> {
+                    presenter.downloadSubtitleFile(fileName, link);
+                }
                 );
             }
         };
@@ -261,6 +258,11 @@ public class BindZimuActivity extends BaseMvpActivity<BindZimuPresenter> impleme
         shooterSubDetailDialog = new ShooterSubDetailDialog(this, detailBean, (fileName, link, unzip) ->
                 presenter.downloadSubtitleFile(fileName, link, unzip));
         shooterSubDetailDialog.show();
+    }
+
+    @Override
+    public void subtitleDownloadSuccess(String resultFilePath) {
+        finishActivity(resultFilePath);
     }
 
     @Override

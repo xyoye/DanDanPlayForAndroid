@@ -163,6 +163,10 @@
         <activity
             android:name=".ui.activities.personal.CrashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!-- 代理显示Fragment -->
+        <activity
+            android:name=".ui.activities.ShellActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

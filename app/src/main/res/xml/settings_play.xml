@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="视频设置" />
+    <ListPreference
+        android:key="player_type"
+        android:title="播放器类型" />
+    <ListPreference
+        android:key="pixel_format_type"
+        android:title="像素格式类型" />
+    <SwitchPreference
+        android:key="media_code_c"
+        android:title="硬解码" />
+    <SwitchPreference
+        android:key="media_code_c_h265"
+        android:title="H.265 解码" />
+    <SwitchPreference
+        android:key="open_sl_es"
+        android:summary="只要播放器还有声音，就不要打开这个设置"
+        android:title="OpenSL ES" />
+    <SwitchPreference
+        android:key="surface_renders"
+        android:summary="使用后视频渲染性能更高，但不支持截图"
+        android:title="SurfaceView" />
+    <PreferenceCategory android:title="弹幕设置">
+        <SwitchPreference
+            android:key="auto_load_danmu"
+            android:summary="未指定弹幕时，自动匹配网络弹幕并加载"
+            android:title="自动加载弹幕" />
+        <SwitchPreference
+            android:key="danmu_cloud_block"
+            android:summary="根据弹弹云端数据，屏蔽弹幕"
+            android:title="弹幕云屏蔽" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="字幕设置">
+        <SwitchPreference
+            android:key="network_subtitle"
+            android:summary="打开视频时，自动匹配网络字幕"
+            android:title="开启网络字幕" />
+        <SwitchPreference
+            android:key="auto_load_network_subtitle"
+            android:summary="未绑定字幕时，加载视频匹配的网络字幕，优先级低"
+            android:title="自动加载网络字幕" />
+        <SwitchPreference
+            android:key="auto_load_local_subtitle"
+            android:summary="未绑定字幕时，加载视频的本地同名字幕，优先级高"
+            android:title="自动加载同名字幕" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其他设置">
+        <SwitchPreference
+            android:key="outer_chain_danmu"
+            android:summary="打开外部视频时，展示选择弹幕的弹窗"
+            android:title="外链弹窗" />
+        <SwitchPreference
+            android:key="online_play_log"
+            android:summary="在线播放时，生成播放日志"
+            android:title="播放日志" />
+    </PreferenceCategory>
+</PreferenceScreen>

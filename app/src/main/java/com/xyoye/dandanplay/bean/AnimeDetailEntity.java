@@ -22,10 +22,6 @@ public class AnimeDetailEntity implements MultiItemEntity {
         this.object = object;
     }
 
-    public int getType() {
-        return type;
-    }
-
     public Object getObject() {
         return object;
     }

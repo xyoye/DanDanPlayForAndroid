@@ -18,6 +18,7 @@ import com.xyoye.dandanplay.mvp.presenter.PersonalFragmentPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalFragmentView;
 import com.xyoye.dandanplay.ui.activities.ShellActivity;
 import com.xyoye.dandanplay.ui.activities.anime.AnimeListActivity;
+import com.xyoye.dandanplay.ui.activities.personal.CommonQuestionActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadBiliBiliActivity;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.personal.LocalPlayHistoryActivity;
@@ -108,7 +109,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
     @OnClick({R.id.user_image_iv, R.id.user_info_rl, R.id.button_login,
             R.id.player_setting_ll, R.id.download_setting_ll, R.id.system_setting_ll,
             R.id.follow_ll, R.id.network_history_ll, R.id.local_history_ll, R.id.download_manager_ll,
-            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.skin_ll,
+            R.id.video_scan_manager_ll, R.id.danmu_block_manager_ll, R.id.common_question_ll, R.id.skin_ll,
             R.id.bilibili_danmu_download_ll, R.id.subtitle_download_ll})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -163,6 +164,9 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
                 break;
             case R.id.danmu_block_manager_ll:
                 launchActivity(DanmuBlockManagerActivity.class);
+                break;
+            case R.id.common_question_ll:
+                launchActivity(CommonQuestionActivity.class);
                 break;
             case R.id.skin_ll:
                 switchSkin();

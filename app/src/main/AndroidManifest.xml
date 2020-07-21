@@ -155,6 +155,10 @@
         <activity
             android:name=".ui.activities.ShellActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <!-- 常见问题页面 -->
+        <activity android:name=".ui.activities.personal.CommonQuestionActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+
         <activity
             android:name="com.tencent.bugly.beta.ui.BetaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"

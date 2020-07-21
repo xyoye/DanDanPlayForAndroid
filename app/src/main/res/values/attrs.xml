@@ -129,4 +129,11 @@
         <attr format="reference" name="leftMenuView"/>
         <attr format="reference" name="rightMenuView"/>
     </declare-styleable>
+
+    <declare-styleable name="ExpandableLayout">
+        <attr name="el_duration" format="integer" />
+        <attr name="el_expanded" format="boolean" />
+        <attr name="el_parallax" format="float" />
+        <attr name="android:orientation"/>
+    </declare-styleable>
 </resources>

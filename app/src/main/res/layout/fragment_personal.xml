@@ -325,11 +325,39 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/skin_ll"
+                android:id="@+id/common_question_ll"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="1dp"
                 android:layout_marginEnd="1dp"
+                android:layout_weight="1"
+                android:background="@color/item_bg_color"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_persona_question" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:text="常见问题"
+                    android:textColor="@color/text_black"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/skin_ll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="2dp"
                 android:layout_weight="1"
                 android:background="@color/item_bg_color"
                 android:foreground="?android:attr/selectableItemBackground"
@@ -351,17 +379,6 @@
                     android:layout_marginTop="8dp"
                     android:text="夜间模式"
                     android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginEnd="2dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
             </LinearLayout>
 
         </LinearLayout>

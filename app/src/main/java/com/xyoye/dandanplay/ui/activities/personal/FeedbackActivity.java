@@ -60,17 +60,7 @@ public class FeedbackActivity extends BaseMvcActivity {
             @NonNull
             @Override
             public AdapterItem<FeedbackBean> onCreateItem(int viewType) {
-                return new FeedbackItem(position -> {
-                    for (int i = 0; i < commonFeedbackList.size(); i++) {
-                        if (i != position) {
-                            commonFeedbackList.get(i).setOpen(false);
-                        } else {
-                            boolean isOpen = commonFeedbackList.get(i).isOpen();
-                            commonFeedbackList.get(i).setOpen(!isOpen);
-                        }
-                    }
-                    this.notifyDataSetChanged();
-                });
+                return new FeedbackItem();
             }
         };
         commonFeedbackRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));

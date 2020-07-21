@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.bean.FeedbackBean;
-import com.xyoye.dandanplay.ui.weight.ExpandableLayout;
+import com.xyoye.dandanplay.ui.weight.expandable.ExpandableLayout;
 import com.xyoye.dandanplay.utils.interf.AdapterItem;
 
 import butterknife.BindView;
@@ -18,12 +18,16 @@ import butterknife.BindView;
 public class FeedbackItem implements AdapterItem<FeedbackBean> {
     @BindView(R.id.expandable_layout)
     ExpandableLayout expandableLayout;
+    @BindView(R.id.expandable_layout_header_tv)
+    TextView headerTv;
+    @BindView(R.id.expandable_layout_header_iv)
+    ImageView tipsIv;
+    @BindView(R.id.expandable_layout_content_tv)
+    TextView contentTv;
 
-    private FeedbackItemClickListener listener;
     private View mView;
 
-    public FeedbackItem(FeedbackItemClickListener listener) {
-        this.listener = listener;
+    public FeedbackItem() {
     }
 
     @Override
@@ -43,26 +47,12 @@ public class FeedbackItem implements AdapterItem<FeedbackBean> {
 
     @Override
     public void onUpdateViews(FeedbackBean model, int position) {
-
-        TextView headerTv = expandableLayout.findViewById(R.id.expandable_layout_header_tv);
-        TextView contentTv = expandableLayout.findViewById(R.id.expandable_layout_content_tv);
-        ImageView tipsIv = expandableLayout.findViewById(R.id.expandable_layout_header_iv);
-
         headerTv.setText(model.getHeader());
         contentTv.setText(model.getContent());
 
-        if (model.isOpen()){
-            expandableLayout.show();
-            tipsIv.setRotation(90);
-        }else {
-            expandableLayout.hide();
-            tipsIv.setRotation(270);
-        }
+        expandableLayout.setOnExpansionUpdateListener((expansionFraction, state) ->
+                tipsIv.setRotation(expansionFraction * 90));
 
-        mView.setOnClickListener(v -> listener.onClick(position));
-    }
-
-    public interface FeedbackItemClickListener{
-        void onClick(int position);
+        mView.setOnClickListener(v -> expandableLayout.toggle());
     }
 }

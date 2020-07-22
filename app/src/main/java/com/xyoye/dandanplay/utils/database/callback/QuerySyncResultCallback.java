@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.utils.database.callback;
 
 import android.database.Cursor;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 /**
  * Created by xyoye on 2019/9/18.

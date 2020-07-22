@@ -10,15 +10,21 @@ ext{
     ]
 
     dependencies = [
-            "appcompat-v7" : 'com.android.support:appcompat-v7:28.0.0',
-            "appcompat-v4" : 'com.android.support:support-v4:28.0.0',
-            "design" : 'com.android.support:design:28.0.0',
-            "cardview" : 'com.android.support:cardview-v7:28.0.0',
-            "recycler" : 'com.android.support:recyclerview-v7:28.0.0',
-            "espresso-core" : 'com.android.support.test.espresso:espresso-core:3.0.2',
+            "appcompat-v7" : 'androidx.appcompat:appcompat:1.1.0',
+            "appcompat-v4" : 'androidx.appcompat:appcompat:1.1.0',
+            "design" : 'com.google.android.material:material:1.2.0-rc01',
+            "cardview" : 'androidx.cardview:cardview:1.0.0',
+            "recycler" : 'androidx.recyclerview:recyclerview:1.1.0',
+            "espresso-core" : 'androidx.test.espresso:espresso-core:3.1.0',
             "junit" : 'junit:junit:4.12',
-            "runner" : 'com.android.support.test:runner:1.0.2',
-            "constraint-layout" : 'com.android.support.constraint:constraint-layout:1.1.3',
-            "preference" : "com.android.support:preference-v7:28.0.0",
+            "runner" : 'androidx.test:runner:1.2.0',
+            "constraint-layout" : 'androidx.constraintlayout:constraintlayout:1.1.3',
+            "preference" : "androidx.preference:preference:1.1.0",
+            "legacy" : "androidx.legacy:legacy-support-core-ui:1.0.0",
+            "activity" : "androidx.activity:activity:1.1.0",
+            "fragment" : "androidx.fragment:fragment:1.2.4",
+            "viewpager" : "androidx.viewpager:viewpager:1.0.0",
+            "viewpager2" : "androidx.viewpager2:viewpager2:1.0.0",
+            "core" : "androidx.core:core:1.3.0"
     ]
 }

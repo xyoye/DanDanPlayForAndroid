@@ -109,7 +109,7 @@
 
     <declare-styleable name="CircleProgressView">
         <!--背景色-->
-        <attr name="backgroundColor" format="reference" />
+        <attr name="progressBackgroundColor" format="reference" />
         <!--进度条颜色-->
         <attr name="progressColor" format="reference" />
         <!--进度-->

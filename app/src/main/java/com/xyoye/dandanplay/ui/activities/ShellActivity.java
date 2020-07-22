@@ -2,20 +2,18 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.app.SkinAppCompatDelegateImpl;
 import android.text.TextUtils;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.SkinAppCompatDelegateImpl;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.xyoye.dandanplay.R;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * 用来加载指定的Fragment
@@ -32,17 +30,13 @@ public class ShellActivity extends AppCompatActivity {
             String className = intent.getStringExtra("fragment");
             if (!TextUtils.isEmpty(className)) {
                 try {
-                    Class<? extends Fragment> clz = (Class<? extends Fragment>) Class.forName(className);
-                    Fragment fragment = clz.getConstructor().newInstance();
                     FragmentManager manager = getSupportFragmentManager();
+                    Fragment fragment = manager.getFragmentFactory().instantiate(getClassLoader(),className);
                     FragmentTransaction transaction = manager.beginTransaction();
                     transaction.add(R.id.frame_shell,fragment,className);
                     transaction.setPrimaryNavigationFragment(fragment);
                     transaction.commit();
-                }catch (ClassNotFoundException e) {
-                    Toast.makeText(this, "无法打开此页面", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }catch ( InvocationTargetException | IllegalAccessException| InstantiationException | NoSuchMethodException | ClassCastException e) {
+                }catch ( ClassCastException e) {
                     e.printStackTrace();
                 }
             }

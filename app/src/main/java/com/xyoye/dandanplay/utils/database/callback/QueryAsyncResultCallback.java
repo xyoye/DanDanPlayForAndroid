@@ -1,8 +1,9 @@
 package com.xyoye.dandanplay.utils.database.callback;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import io.reactivex.annotations.Nullable;
 

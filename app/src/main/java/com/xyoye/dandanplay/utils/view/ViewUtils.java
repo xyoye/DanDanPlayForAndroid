@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.utils.view;
 
-import android.support.v4.view.ViewCompat;
+import androidx.core.view.ViewCompat;
 import android.view.View;
 
 public class ViewUtils {

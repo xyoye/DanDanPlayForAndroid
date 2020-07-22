@@ -15,8 +15,7 @@
  */
 package com.google.android.exoplayer2.ext.ffmpeg.audio;
 
-
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;

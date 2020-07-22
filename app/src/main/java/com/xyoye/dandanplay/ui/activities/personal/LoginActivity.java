@@ -1,11 +1,12 @@
 package com.xyoye.dandanplay.ui.activities.personal;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;

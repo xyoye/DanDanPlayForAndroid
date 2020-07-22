@@ -3,7 +3,6 @@ package com.xyoye.dandanplay.ui.weight.swipe_menu;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PointF;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +11,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
+
+import androidx.annotation.NonNull;
 
 import com.xyoye.dandanplay.R;
 

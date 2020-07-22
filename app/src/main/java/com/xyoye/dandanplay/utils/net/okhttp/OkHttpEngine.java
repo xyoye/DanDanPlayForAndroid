@@ -1,7 +1,6 @@
 package com.xyoye.dandanplay.utils.net.okhttp;
 
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.xyoye.dandanplay.app.IApplication;

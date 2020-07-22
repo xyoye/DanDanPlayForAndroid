@@ -2,7 +2,6 @@ package com.xyoye.dandanplay.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -10,6 +9,8 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.xyoye.dandanplay.R;

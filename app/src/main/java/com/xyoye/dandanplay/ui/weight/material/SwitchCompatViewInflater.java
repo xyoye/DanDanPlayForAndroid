@@ -1,9 +1,10 @@
 package com.xyoye.dandanplay.ui.weight.material;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import skin.support.design.app.SkinMaterialViewInflater;
 

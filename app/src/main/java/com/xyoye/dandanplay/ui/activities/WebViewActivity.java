@@ -13,6 +13,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -31,7 +33,7 @@ public class WebViewActivity extends BaseMvcActivity {
     @BindView(R.id.web_view)
     WebView mWebView;
     @BindView(R.id.toolbar)
-    android.support.v7.widget.Toolbar toolbar;
+    Toolbar toolbar;
 
     private ProgressView progressView;      //进度条
     private boolean isSelectUrl = false;    //选择url模式

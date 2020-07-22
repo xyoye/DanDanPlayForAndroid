@@ -3,10 +3,11 @@ package com.xyoye.dandanplay.ui.weight.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.xyoye.dandanplay.R;

@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;

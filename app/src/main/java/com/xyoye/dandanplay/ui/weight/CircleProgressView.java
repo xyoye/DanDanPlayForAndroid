@@ -6,11 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -41,7 +42,7 @@ public class CircleProgressView extends View {
     public CircleProgressView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.CircleProgressView);
-        backgroundColor = typedArray.getColor(R.styleable.CircleProgressView_backgroundColor, CommonUtils.getResColor(R.color.text_gray));
+        backgroundColor = typedArray.getColor(R.styleable.CircleProgressView_progressBackgroundColor, CommonUtils.getResColor(R.color.text_gray));
         progressColor = typedArray.getColor(R.styleable.CircleProgressView_progressColor, CommonUtils.getResColor(R.color.theme_color));
         progress = typedArray.getInt(R.styleable.CircleProgressView_progress, 0);
         progressWidth = typedArray.getDimension(R.styleable.CircleProgressView_progressWidth, dp2px(1));

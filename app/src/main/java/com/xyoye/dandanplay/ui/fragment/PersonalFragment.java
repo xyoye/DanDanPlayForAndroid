@@ -1,10 +1,11 @@
 package com.xyoye.dandanplay.ui.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.bumptech.glide.Glide;

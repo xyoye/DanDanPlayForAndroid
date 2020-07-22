@@ -2,8 +2,9 @@ package com.xyoye.dandanplay.base;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.dialog.BaseLoadingDialog;

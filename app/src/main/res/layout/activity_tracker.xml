@@ -12,14 +12,14 @@
         android:id="@+id/toolbar_layout"
         layout="@layout/layout_toolbar" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracker_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar_layout" />
 
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_tracker_bt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

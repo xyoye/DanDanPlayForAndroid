@@ -1,9 +1,10 @@
 package com.xyoye.dandanplay.utils.smb;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
 import android.os.SystemClock;
 import android.util.Log;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.bean.SmbDeviceBean;

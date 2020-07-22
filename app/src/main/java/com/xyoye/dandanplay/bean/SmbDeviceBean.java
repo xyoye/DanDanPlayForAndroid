@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.bean;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by xyoye on 2019/3/30.

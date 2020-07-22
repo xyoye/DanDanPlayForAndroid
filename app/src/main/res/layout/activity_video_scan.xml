@@ -22,7 +22,7 @@
         app:tl_textSelectColor="@color/indicator_checked_color"
         app:tl_textUnselectColor="@color/indicator_uncheck_color"/>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

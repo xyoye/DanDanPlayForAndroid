@@ -1,8 +1,9 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.FileUtils;

@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.ui.activities.personal;
 
-import android.support.annotation.NonNull;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.StringUtils;

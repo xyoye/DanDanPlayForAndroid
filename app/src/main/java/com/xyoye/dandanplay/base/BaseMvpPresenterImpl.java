@@ -1,6 +1,7 @@
 package com.xyoye.dandanplay.base;
 
-import android.arch.lifecycle.LifecycleOwner;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.xyoye.dandanplay.utils.interf.presenter.BaseMvpPresenter;
 import com.xyoye.dandanplay.utils.interf.view.BaseMvpView;

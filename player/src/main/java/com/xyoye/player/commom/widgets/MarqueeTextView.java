@@ -3,12 +3,14 @@ package com.xyoye.player.commom.widgets;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 /**
  * 跑马灯TextView
  *
  * Created by xyoye on 2019/5/9
  */
-public class MarqueeTextView extends android.support.v7.widget.AppCompatTextView {
+public class MarqueeTextView extends AppCompatTextView {
 
     public MarqueeTextView(Context context) {
         super(context);

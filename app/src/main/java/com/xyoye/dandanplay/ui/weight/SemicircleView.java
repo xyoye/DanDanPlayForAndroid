@@ -11,6 +11,8 @@ import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.xyoye.dandanplay.R;
 
 /**
@@ -19,7 +21,7 @@ import com.xyoye.dandanplay.R;
  * Created by xyoye on 2019/4/4.
  */
 
-public class SemicircleView extends android.support.v7.widget.AppCompatImageView {
+public class SemicircleView extends AppCompatImageView {
 
     private Bitmap mForeground;
 

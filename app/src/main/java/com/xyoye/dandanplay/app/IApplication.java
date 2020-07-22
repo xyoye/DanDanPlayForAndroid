@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 import skin.support.SkinCompatManager;
+import skin.support.app.SkinAppCompatViewInflater;
 import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
 import skin.support.design.app.SkinMaterialViewInflater;
@@ -72,6 +73,7 @@ public class IApplication extends Application {
                 .addInflater(new SkinCardViewInflater())                // CardView v7 控件换肤初始化[可选]
                 .addInflater(new SwitchCompatViewInflater())
                 .addInflater(new SkinFlycoTabLayoutInflater())
+                .addInflater(new SkinAppCompatViewInflater())
                 .setSkinStatusBarColorEnable(true)                      // 关闭状态栏换肤，默认打开[可选]
                 .setSkinWindowBackgroundEnable(true)                    // 关闭windowBackground换肤，默认打开[可选]
                 .setSkinAllActivityEnable(true)

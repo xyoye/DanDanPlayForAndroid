@@ -83,6 +83,7 @@ import com.xyoye.player.danmaku.controller.IDanmakuView;
 import com.xyoye.player.danmaku.danmaku.loader.ILoader;
 import com.xyoye.player.danmaku.danmaku.loader.IllegalDataException;
 import com.xyoye.player.danmaku.danmaku.loader.android.BiliDanmakuLoader;
+import com.xyoye.player.danmaku.danmaku.model.AlphaValue;
 import com.xyoye.player.danmaku.danmaku.model.BaseDanmaku;
 import com.xyoye.player.danmaku.danmaku.model.DanmakuTimer;
 import com.xyoye.player.danmaku.danmaku.model.android.DanmakuContext;
@@ -106,6 +107,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 import static android.view.GestureDetector.OnGestureListener;
 import static android.view.GestureDetector.SimpleOnGestureListener;
 import static android.widget.SeekBar.OnSeekBarChangeListener;
+import static com.xyoye.player.danmaku.danmaku.model.IDisplayer.DANMAKU_STYLE_PROJECTION;
 
 /**
  * Created by xyoye on 2019/5/7
@@ -332,6 +334,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 : ExoPlayerFactory.newSimpleInstance(mAttachActivity, trackSelector);
         //屏幕翻转控制
         mOrientationListener = new OrientationEventListener(mAttachActivity) {
+            @SuppressLint("SourceLockedOrientationActivity")
             @Override
             public void onOrientationChanged(int orientation) {
                 if (mIsNeverPlay) {
@@ -770,6 +773,9 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         mDanmakuContext.setScaleTextSize(mSettingDanmuView.getmDanmuTextSize());
         //弹幕文字透明度
         mDanmakuContext.setDanmakuTransparency(mSettingDanmuView.getmDanmuTextAlpha());
+        //弹幕文字投影透明度
+        float alpha = mSettingDanmuView.getDanmuTextPAlpha() / 100f * AlphaValue.MAX;
+        mDanmakuContext.setDanmakuStyle(DANMAKU_STYLE_PROJECTION, 0f, 0f, (int)alpha);
         //弹幕滚动速度
         mDanmakuContext.setScrollSpeedFactor(2.5f - mSettingDanmuView.getmDanmuSpeed());
         //是否显示滚动弹幕
@@ -878,6 +884,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
         int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
+        int progressPAlpha = PlayerConfigShare.getInstance().getDanmuPAlpha();
         int numberLimit = PlayerConfigShare.getInstance().getDanmuNumberLimit();
         int maxLine = PlayerConfigShare.getInstance().getDanmuMaxLine();
         boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
@@ -888,6 +895,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                 .setDanmuSize(progressSize)
                 .setDanmuSpeed(progressSpeed)
                 .setDanmuAlpha(progressAlpha)
+                .setDanmuPAlpha(progressPAlpha)
                 .setDanmuNumberLimit(numberLimit)
                 .setDanmuMaxLine(maxLine)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
@@ -908,15 +916,24 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void setDanmuSpeed(int progress) {
                         float speed = (float) progress / 40;
-                        speed = speed > 2.4f ? 2.4f : speed;
+                        speed = Math.min(speed, 2.4f);
                         mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
                         PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
                     }
 
                     @Override
                     public void setDanmuAlpha(int progress) {
+                        //设置弹幕文字透明度
                         mDanmakuContext.setDanmakuTransparency((float) progress / 100);
                         PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
+                    }
+
+                    @Override
+                    public void setDanmuPAlpha(int progress) {
+                        //设置弹幕文字描边透明度
+                        float alpha = (float) progress / 100f * AlphaValue.MAX;
+                        mDanmakuContext.setDanmakuStyle(DANMAKU_STYLE_PROJECTION, 0f, 0f, (int)alpha);
+                        PlayerConfigShare.getInstance().saveDanmuPAlpha(progress);
                     }
 
                     @Override
@@ -1004,7 +1021,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private void initPlayerSettingView() {
         boolean allowOrientationChange = PlayerConfigShare.getInstance().isAllowOrientationChange();
         topBarView.getPlayerSettingView()
-                .setOrientationAllow(allowOrientationChange)
                 .setExoPlayerType()
                 .setSettingListener(new SettingPlayerView.SettingVideoListener() {
 
@@ -1051,6 +1067,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setOrientationStatus(boolean isEnable) {
+                        PlayerConfigShare.getInstance().setAllowOrientationChange(isEnable);
                         if (mOrientationListener != null) {
                             if (isEnable)
                                 mOrientationListener.enable();
@@ -1058,7 +1075,8 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
                                 mOrientationListener.disable();
                         }
                     }
-                });
+                })
+                .setOrientationAllow(allowOrientationChange);
     }
 
     /**
@@ -1088,7 +1106,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     public void onDestroy() {
         // 记录播放进度
         if (mOutsideListener != null) {
-
             mOutsideListener.onAction(Constants.INTENT_PLAY_END, 0);
             mOutsideListener.onAction(Constants.INTENT_SAVE_CURRENT, exoPlayer.getCurrentPosition());
         }
@@ -1695,6 +1712,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
     private void _switchStatus(boolean playWhenReady, int status) {
         switch (status) {
             case Player.STATE_BUFFERING:
+                mOutsideListener.onAction(Constants.INTENT_PLAY_COMPLETE, 0);
                 mIsExoPlayerReady = false;
                 _pauseDanmaku();
                 if (!mIsNeverPlay) {
@@ -1718,6 +1736,7 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
 
             case Player.STATE_ENDED:
                 pause();
+                mOutsideListener.onAction(Constants.INTENT_PLAY_COMPLETE, 1);
                 break;
         }
     }
@@ -1837,8 +1856,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
         if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO) {
             danmuPostView.setVisibility(GONE);
         }
-        if (mOutsideListener != null)
-            mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
     }
 
     /**
@@ -1863,8 +1880,6 @@ public class ExoPlayerView extends FrameLayout implements PlayerViewListener {
             AnimHelper.viewTranslationY(bottomBarView, bottomBarView.getHeight());
             topBarView.setTopBarVisibility(false);
             mIsShowBar = false;
-            if (mOutsideListener != null)
-                mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
         }
         //截图键与控制栏的显示与隐藏是绑定的
         if (isShow) {

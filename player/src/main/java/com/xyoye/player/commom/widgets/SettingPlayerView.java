@@ -155,13 +155,14 @@ public class SettingPlayerView extends LinearLayout implements View.OnClickListe
         return this;
     }
 
-    public SettingPlayerView setOrientationAllow(boolean isAllow) {
+    public void setOrientationAllow(boolean isAllow) {
         isAllowScreenOrientation = isAllow;
-        return this;
+        orientationChangeSw.setChecked(isAllow);
     }
 
-    public void setSettingListener(SettingVideoListener listener) {
+    public SettingPlayerView setSettingListener(SettingVideoListener listener) {
         this.listener = listener;
+        return this;
     }
 
     public void setAudioTrackList(List<TrackInfoBean> audioTrackList) {

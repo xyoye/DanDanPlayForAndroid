@@ -16,15 +16,15 @@ public final class Constants {
     public static final int INTENT_AUTO_SUBTITLE = 1004;
     //保存进度
     public static final int INTENT_SAVE_CURRENT = 1005;
-    //重置全屏
-    public static final int INTENT_RESET_FULL_SCREEN = 1006;
     //播放失败
     public static final int INTENT_PLAY_FAILED = 1007;
-    //播放结束
+    //播放结束（手动停止）
     public static final int INTENT_PLAY_END = 1008;
+    //播放完成（自然结束）
+    public static final int INTENT_PLAY_COMPLETE = 1009;
 
 
-    public static final String PLAYER_CONFIG = "player_config";   //播放器配置表
+    static final String PLAYER_CONFIG = "player_config";   //播放器配置表
 
     //播放器
     public static final int EXO_PLAYER = 1;
@@ -32,18 +32,19 @@ public final class Constants {
     public static final int IJK_PLAYER = 3;
 
     //弹幕
-    public static final String DANMU_SIZE = "danmu_size_v2";
-    public static final String DANMU_ALPHA = "danmu_alpha_v2";
-    public static final String DANMU_SPEED = "danmu_speed_v2";
-    public static final String DANMU_TOP = "danmu_top";
-    public static final String DANMU_BOTTOM = "danmu_bottom";
-    public static final String DANMU_MOBILE = "danmu_mobile";
-    public static final String DANMU_NUMBER_LIMIT = "danmu_number_limit";
-    public static final String DANMU_MAX_LINE = "danmu_max_line";
+    static final String DANMU_SIZE = "danmu_size_v2";
+    static final String DANMU_ALPHA = "danmu_alpha_v2";
+    static final String DANMU_PROJECTION_ALPHA = "danmu_projection_alpha_v2";
+    static final String DANMU_SPEED = "danmu_speed_v2";
+    static final String DANMU_TOP = "danmu_top";
+    static final String DANMU_BOTTOM = "danmu_bottom";
+    static final String DANMU_MOBILE = "danmu_mobile";
+    static final String DANMU_NUMBER_LIMIT = "danmu_number_limit";
+    static final String DANMU_MAX_LINE = "danmu_max_line";
 
     //字幕
-    public static final String SUBTITLE_SIZE = "subtitle_size";
+    static final String SUBTITLE_SIZE = "subtitle_size";
 
     //旋屏
-    public static final String ORIENTATION_CHANGE = "orientation_change";
+    static final String ORIENTATION_CHANGE = "orientation_change";
 }

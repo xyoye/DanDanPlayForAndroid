@@ -34,7 +34,7 @@ public class PlayerConfigShare {
      */
     public int getDanmuSize(){
         String size = getShare().load(Constants.DANMU_SIZE, 50+"");
-        return Integer.valueOf(size);
+        return Integer.parseInt(size);
     }
 
     public void saveDanmuSize(int size){
@@ -43,7 +43,7 @@ public class PlayerConfigShare {
 
     public int getDanmuSpeed(){
         String speed = getShare().load(Constants.DANMU_SPEED, 50+"");
-        return Integer.valueOf(speed);
+        return Integer.parseInt(speed);
     }
 
     public void saveDanmuSpeed(int speed){
@@ -52,11 +52,19 @@ public class PlayerConfigShare {
 
     public int getDanmuAlpha(){
         String alpha = getShare().load(Constants.DANMU_ALPHA, 100+"");
-        return Integer.valueOf(alpha);
+        return Integer.parseInt(alpha);
     }
 
     public void saveDanmuAlpha(int alpha){
         getShare().save(Constants.DANMU_ALPHA, alpha+"");
+    }
+    public int getDanmuPAlpha(){
+        String alpha = getShare().load(Constants.DANMU_PROJECTION_ALPHA, 100+"");
+        return Integer.parseInt(alpha);
+    }
+
+    public void saveDanmuPAlpha(int alpha){
+        getShare().save(Constants.DANMU_PROJECTION_ALPHA, alpha+"");
     }
 
     public boolean isShowMobileDanmu(){

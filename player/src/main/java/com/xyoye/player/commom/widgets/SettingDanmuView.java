@@ -32,6 +32,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private TextView mDanmuSpeedTv;
     private SeekBar mDanmuAlphaSb;
     private TextView mDanmuAlphaTv;
+    private SeekBar mDanmuProjectionAlphaSb;
+    private TextView mDanmuProjectionAlphaTv;
     private ImageView mDanmuMobileIv, mDanmuTopIv, mDanmuBottomIv;
     private RelativeLayout mMoreBlockRl;
     private TextView addDanmuExtraTimeTv, reduceDanmuExtraTimeTv;
@@ -45,8 +47,10 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     private boolean isOpenCloudFilter = false;
     //弹幕文字大小
     private float mDanmuTextSize;
-    //弹幕文字大小
+    //弹幕文字透明度
     private float mDanmuTextAlpha;
+    //弹幕文字投影透明度
+    private float mDanmuTextProjectionAlpha;
     //弹幕速度大小
     private float mDanmuSpeed;
     //弹幕同屏数量
@@ -80,6 +84,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         mDanmuSpeedSb = findViewById(R.id.danmu_speed_sb);
         mDanmuAlphaTv = findViewById(R.id.danmu_alpha_tv);
         mDanmuAlphaSb = findViewById(R.id.danmu_alpha_sb);
+        mDanmuProjectionAlphaTv = findViewById(R.id.projection_alpha_tv);
+        mDanmuProjectionAlphaSb = findViewById(R.id.projection_alpha_sb);
         mDanmuMobileIv = findViewById(R.id.mobile_danmu_iv);
         mDanmuTopIv = findViewById(R.id.top_danmu_iv);
         mDanmuBottomIv = findViewById(R.id.bottom_danmu_iv);
@@ -137,9 +143,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     public SettingDanmuView setDanmuSpeed(int progressSpeed) {
         mDanmuSpeedSb.setMax(100);
         float calcProgressSpeed = (float) progressSpeed;
-        mDanmuSpeed = calcProgressSpeed / 40 > 2.4f
-                ? 2.4f
-                : calcProgressSpeed / 40;
+        mDanmuSpeed = Math.min(calcProgressSpeed / 40, 2.4f);
         mDanmuSpeedTv.setText(progressSpeed + "%");
         mDanmuSpeedSb.setProgress(progressSpeed);
         return this;
@@ -153,6 +157,17 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         mDanmuTextAlpha = calcProgressAlpha / 100;
         mDanmuAlphaTv.setText(progressAlpha + "%");
         mDanmuAlphaSb.setProgress(progressAlpha);
+        return this;
+    }
+
+    //初始弹幕文字透明度
+    @SuppressLint("SetTextI18n")
+    public SettingDanmuView setDanmuPAlpha(int progressAlpha) {
+        mDanmuProjectionAlphaSb.setMax(100);
+        float calcProgressAlpha = (float) progressAlpha;
+        mDanmuTextProjectionAlpha = calcProgressAlpha / 100;
+        mDanmuProjectionAlphaTv.setText(progressAlpha + "%");
+        mDanmuProjectionAlphaSb.setProgress(progressAlpha);
         return this;
     }
 
@@ -261,11 +276,31 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             }
         });
 
+        mDanmuProjectionAlphaSb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress == 0) progress = 1;
+                mDanmuProjectionAlphaTv.setText(progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (progress == 0) progress = 1;
+                settingListener.setDanmuPAlpha(progress);
+            }
+        });
+
         danmuExtraTimeEt.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
                     String extraTime = danmuExtraTimeEt.getText().toString().trim();
-                    float extraTimeLong = Float.valueOf(extraTime);
+                    float extraTimeLong = Float.parseFloat(extraTime);
                     settingListener.setExtraTime((int) (extraTimeLong * 1000));
                     danmuExtraTime = extraTimeLong;
                 } catch (Exception e) {
@@ -282,7 +317,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
                     String numText = numberInputLimitEt.getText().toString().trim();
-                    int num = Integer.valueOf(numText);
+                    int num = Integer.parseInt(numText);
                     if (num < 1) {
                         ToastUtils.showShort("同屏数量不能小于1");
                         return true;
@@ -303,7 +338,7 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 try {
                     String lineText = maxLineEt.getText().toString().trim();
-                    int num = Integer.valueOf(lineText);
+                    int num = Integer.parseInt(lineText);
                     if (num < 1) {
                         ToastUtils.showShort("滚动弹幕行数不能小于1");
                         return true;
@@ -429,6 +464,9 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
     public float getmDanmuTextAlpha() {
         return mDanmuTextAlpha;
     }
+    public float getDanmuTextPAlpha() {
+        return mDanmuTextProjectionAlpha;
+    }
 
     public float getmDanmuSpeed() {
         return mDanmuSpeed;
@@ -467,6 +505,8 @@ public class SettingDanmuView extends LinearLayout implements View.OnClickListen
         void setDanmuSpeed(int progress);
 
         void setDanmuAlpha(int progress);
+
+        void setDanmuPAlpha(int progress);
 
         void setExtraTime(int timeMs);
 

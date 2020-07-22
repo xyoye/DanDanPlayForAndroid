@@ -27,6 +27,9 @@ import com.xyoye.dandanplay.utils.interf.IBaseView;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import skin.support.SkinCompatManager;
+import skin.support.observe.SkinObservable;
+import skin.support.observe.SkinObserver;
 
 /**
  * AppCompatActivity基类
@@ -40,7 +43,7 @@ import butterknife.Unbinder;
  * <p>
  * Modified by xyoye on 2019/5/27.
  */
-public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView {
+public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, SkinObserver {
 
     private Toolbar mActionBarToolbar;
 
@@ -62,6 +65,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         initPageView();
         initPageViewListener();
         process(savedInstanceState);
+        SkinCompatManager.getInstance().addObserver(this);
     }
 
     @NonNull
@@ -135,6 +139,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         isDestroyed = true;
         super.onDestroy();
         unbind.unbind();
+        SkinCompatManager.getInstance().deleteObserver(this);
     }
 
     /**
@@ -238,6 +243,11 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     @Override
     public void initData() {
 
+    }
+
+    @Override
+    public void updateSkin(SkinObservable observable, Object o) {
+        setStatusBar();
     }
 
     /**

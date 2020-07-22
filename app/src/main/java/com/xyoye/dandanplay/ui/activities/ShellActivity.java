@@ -13,7 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
+import com.xyoye.dandanplay.utils.CommonUtils;
 
 /**
  * 用来加载指定的Fragment
@@ -24,7 +26,9 @@ public class ShellActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shell);
-
+        ImmersionBar.with(this)
+                .statusBarColorInt(CommonUtils.getResColor(R.color.colorPrimaryDark))
+                .init();
         Intent intent = getIntent();
         if (intent != null) {
             String className = intent.getStringExtra("fragment");

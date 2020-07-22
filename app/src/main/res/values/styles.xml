@@ -14,6 +14,9 @@
         </item>
         <item name="android:windowBackground">@color/layout_bg_color</item>
         <item name="preferenceTheme">@style/Theme.Preference</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.Toolbar.Navigation</item>
+        <item name="actionOverflowButtonStyle">@style/Widget.Toolbar.OverFlowButton</item>
+        <item name="actionMenuTextColor">@color/toolbar_text_color</item>
     </style>
 
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -48,6 +51,14 @@
         <item name="actionMenuTextColor">@color/toolbar_text_color</item>
         <item name="android:textColor">@color/menu_text_color</item>
         <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.Toolbar.Navigation" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="tint">@color/toolbar_text_color</item>
+    </style>
+
+    <style name="Widget.Toolbar.OverFlowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="tint">@color/toolbar_text_color</item>
     </style>
 
     <style name="WelcomeTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">

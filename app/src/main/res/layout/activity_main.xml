@@ -28,6 +28,7 @@
         android:id="@+id/navigation_view"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/item_bg_color"
         app:itemIconTint="@drawable/selector_navigation"
         app:itemTextColor="@drawable/selector_navigation"
         app:layout_constraintBottom_toBottomOf="parent"

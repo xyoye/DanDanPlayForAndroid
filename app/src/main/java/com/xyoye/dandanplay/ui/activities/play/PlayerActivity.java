@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.blankj.utilcode.util.FileUtils;
@@ -96,13 +97,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
     private OnDanmakuListener onDanmakuListener;
     //内部事件回调
     private IMediaPlayer.OnOutsideListener onOutsideListener;
-
     //系统字幕下载路径
     public String subtitleDownloadPath;
+
+    private boolean isKeepScreenOn = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //设置全屏
+        setFullScreen();
 
         //播放器类型
         if (AppConfig.getInstance().getPlayerType() == Constants.EXO_PLAYER) {
@@ -290,10 +295,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                             .where("file_path", event.getVideoPath())
                             .postExecute();
                     break;
-                //设置全屏
-                case Constants.INTENT_RESET_FULL_SCREEN:
-                    setFullScreen();
-                    break;
                 //播放失败
                 case Constants.INTENT_PLAY_FAILED:
                     CommonDialog.Builder builder = new CommonDialog
@@ -323,6 +324,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
                     if (sourceOrigin == PlayerManagerActivity.SOURCE_ONLINE_PREVIEW && thunderTaskId > 0) {
                         XLTaskHelper.getInstance().stopTask(thunderTaskId);
                         FileUtils.deleteAllInDir(DefaultConfig.cacheFolderPath);
+                    }
+                    break;
+                //视频播放开始 or 完成
+                case Constants.INTENT_PLAY_COMPLETE:
+                    if (isKeepScreenOn && extra == 1){
+                        Window window = getWindow();
+                        if (window != null){
+                            isKeepScreenOn = false;
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        }
+                    } else if (!isKeepScreenOn && extra == 0){
+                        Window window = getWindow();
+                        if (window != null){
+                            isKeepScreenOn = true;
+                            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        }
                     }
                     break;
             }
@@ -486,6 +503,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerReceiverL
 
         //开启屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        isKeepScreenOn = true;
     }
 
     /**

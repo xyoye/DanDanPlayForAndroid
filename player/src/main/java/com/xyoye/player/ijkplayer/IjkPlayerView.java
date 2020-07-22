@@ -61,6 +61,7 @@ import com.xyoye.player.danmaku.controller.IDanmakuView;
 import com.xyoye.player.danmaku.danmaku.loader.ILoader;
 import com.xyoye.player.danmaku.danmaku.loader.IllegalDataException;
 import com.xyoye.player.danmaku.danmaku.loader.android.BiliDanmakuLoader;
+import com.xyoye.player.danmaku.danmaku.model.AlphaValue;
 import com.xyoye.player.danmaku.danmaku.model.BaseDanmaku;
 import com.xyoye.player.danmaku.danmaku.model.DanmakuTimer;
 import com.xyoye.player.danmaku.danmaku.model.android.DanmakuContext;
@@ -80,9 +81,10 @@ import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkTimedText;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
+
+import static com.xyoye.player.danmaku.danmaku.model.IDisplayer.DANMAKU_STYLE_PROJECTION;
 
 /**
  * Created by xyoye on 2019/5/9.
@@ -313,6 +315,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         View.inflate(context, R.layout.layout_ijk_player_view_v2, this);
         //屏幕翻转控制
         mOrientationListener = new OrientationEventListener(mAttachActivity) {
+            @SuppressLint("SourceLockedOrientationActivity")
             @Override
             public void onOrientationChanged(int orientation) {
                 if (mIsNeverPlay) {
@@ -786,6 +789,9 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         mDanmakuContext.setScaleTextSize(mSettingDanmuView.getmDanmuTextSize());
         //弹幕文字透明度
         mDanmakuContext.setDanmakuTransparency(mSettingDanmuView.getmDanmuTextAlpha());
+        //弹幕文字投影透明度
+        float alpha = mSettingDanmuView.getDanmuTextPAlpha() / 100f * AlphaValue.MAX;
+        mDanmakuContext.setDanmakuStyle(DANMAKU_STYLE_PROJECTION, 0f, 0f, (int)alpha);
         //弹幕滚动速度
         mDanmakuContext.setScrollSpeedFactor(2.5f - mSettingDanmuView.getmDanmuSpeed());
         //是否显示滚动弹幕
@@ -880,6 +886,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         int progressSize = PlayerConfigShare.getInstance().getDanmuSize();
         int progressSpeed = PlayerConfigShare.getInstance().getDanmuSpeed();
         int progressAlpha = PlayerConfigShare.getInstance().getDanmuAlpha();
+        int progressPAlpha = PlayerConfigShare.getInstance().getDanmuPAlpha();
         int numberLimit = PlayerConfigShare.getInstance().getDanmuNumberLimit();
         int maxLine = PlayerConfigShare.getInstance().getDanmuMaxLine();
         boolean isShowMobile = PlayerConfigShare.getInstance().isShowMobileDanmu();
@@ -890,6 +897,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 .setDanmuSize(progressSize)
                 .setDanmuSpeed(progressSpeed)
                 .setDanmuAlpha(progressAlpha)
+                .setDanmuPAlpha(progressPAlpha)
                 .setDanmuNumberLimit(numberLimit)
                 .setDanmuMaxLine(maxLine)
                 .setBlockEnable(isShowMobile, isShowTop, isShowBottom)
@@ -910,15 +918,24 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                     @Override
                     public void setDanmuSpeed(int progress) {
                         float speed = (float) progress / 40;
-                        speed = speed > 2.4f ? 2.4f : speed;
+                        speed = Math.min(speed, 2.4f);
                         mDanmakuContext.setScrollSpeedFactor(2.5f - speed);
                         PlayerConfigShare.getInstance().saveDanmuSpeed(progress);
                     }
 
                     @Override
                     public void setDanmuAlpha(int progress) {
+                        //设置弹幕文字透明度
                         mDanmakuContext.setDanmakuTransparency((float) progress / 100);
                         PlayerConfigShare.getInstance().saveDanmuAlpha(progress);
+                    }
+
+                    @Override
+                    public void setDanmuPAlpha(int progress) {
+                        //设置弹幕文字描边透明度
+                        float alpha = (float) progress / 100f * AlphaValue.MAX;
+                        mDanmakuContext.setDanmakuStyle(DANMAKU_STYLE_PROJECTION, 0f, 0f, (int)alpha);
+                        PlayerConfigShare.getInstance().saveDanmuPAlpha(progress);
                     }
 
                     @Override
@@ -1006,7 +1023,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     private void initPlayerSettingView() {
         boolean allowOrientationChange = PlayerConfigShare.getInstance().isAllowOrientationChange();
         topBarView.getPlayerSettingView()
-                .setOrientationAllow(allowOrientationChange)
                 .setSettingListener(new SettingPlayerView.SettingVideoListener() {
 
                     @Override
@@ -1035,6 +1051,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
 
                     @Override
                     public void setOrientationStatus(boolean isEnable) {
+                        PlayerConfigShare.getInstance().setAllowOrientationChange(isEnable);
                         if (mOrientationListener != null) {
                             if (isEnable)
                                 mOrientationListener.enable();
@@ -1042,7 +1059,8 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                                 mOrientationListener.disable();
                         }
                     }
-                });
+                })
+                .setOrientationAllow(allowOrientationChange);
     }
 
     /**
@@ -1675,6 +1693,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
     private void _switchStatus(int status) {
         switch (status) {
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                mOutsideListener.onAction(Constants.INTENT_PLAY_COMPLETE, 0);
                 mIsIjkPlayerReady = false;
                 _pauseDanmaku();
                 if (!mIsNeverPlay) {
@@ -1682,7 +1701,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                 }
             case MediaPlayerParams.STATE_PREPARING:
                 break;
-
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
                 mIsRenderingStart = true;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
@@ -1697,7 +1715,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
                     _resumeDanmaku();   // 开启弹幕
                 }
                 break;
-
             case MediaPlayerParams.STATE_PLAYING:
                 if (mIsRenderingStart && mIsIjkPlayerReady) {
                     _resumeDanmaku();   // 开启弹幕
@@ -1709,6 +1726,7 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             case MediaPlayerParams.STATE_COMPLETED:
                 pause();
                 mIsPlayComplete = true;
+                mOutsideListener.onAction(Constants.INTENT_PLAY_COMPLETE, 1);
                 break;
         }
     }
@@ -1828,8 +1846,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
         if (danmuPostView.getVisibility() == VISIBLE && hideType != HIDE_VIEW_AUTO) {
             danmuPostView.setVisibility(GONE);
         }
-        if (mOutsideListener != null)
-            mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
     }
 
     /**
@@ -1854,8 +1870,6 @@ public class IjkPlayerView extends FrameLayout implements PlayerViewListener {
             AnimHelper.viewTranslationY(bottomBarView, bottomBarView.getHeight());
             topBarView.setTopBarVisibility(false);
             mIsShowBar = false;
-            if (mOutsideListener != null)
-                mOutsideListener.onAction(Constants.INTENT_RESET_FULL_SCREEN, 0);
         }
         //截图键与控制栏的显示与隐藏是绑定的
         if (isShow) {

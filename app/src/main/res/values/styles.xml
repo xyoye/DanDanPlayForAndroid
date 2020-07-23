@@ -57,7 +57,9 @@
         <item name="android:windowAnimationStyle">@style/ActivityAnimStyle</item>
     </style>
 
-    <style name="Dialog" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="Dialog">
+        <item name="android:windowMinWidthMajor">65%</item>
+        <item name="android:windowMinWidthMinor">95%</item>
         <item name="android:windowBackground">@color/transparent</item>
         <item name="colorPrimary">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>

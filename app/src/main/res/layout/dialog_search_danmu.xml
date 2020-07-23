@@ -47,6 +47,8 @@
                 android:id="@+id/anime_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/edit_text_text_color"
+                android:textColorHint="@color/edit_text_hint_color"
                 android:textSize="14sp"
                 android:singleLine="true"/>
         </LinearLayout>
@@ -84,6 +86,8 @@
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/episode_start_tips"
+                    android:textColor="@color/edit_text_text_color"
+                    android:textColorHint="@color/edit_text_hint_color"
                     android:gravity="center"
                     android:inputType="number"
                     android:singleLine="true"

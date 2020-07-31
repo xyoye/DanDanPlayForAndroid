@@ -99,7 +99,7 @@ public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> im
                 .doOnSubscribe(new NetworkConsumer())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CommOtherDataObserver<List<SubtitleBean>>() {
+                .subscribe(new CommOtherDataObserver<List<SubtitleBean>>(getLifecycle()) {
                     @Override
                     public void onSuccess(List<SubtitleBean> subtitleList) {
                         getView().hideLoading();
@@ -123,7 +123,7 @@ public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> im
     @Override
     public void searchZimu(String videoName, int page) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterSubtitleBean.searchSubtitle(apiSecret, videoName, page, new CommShooterDataObserver<ShooterSubtitleBean>() {
+        ShooterSubtitleBean.searchSubtitle(apiSecret, videoName, page, new CommShooterDataObserver<ShooterSubtitleBean>(getLifecycle()) {
             @Override
             public void onSuccess(ShooterSubtitleBean shooterSubtitleBean) {
                 getView().hideLoading();
@@ -158,7 +158,7 @@ public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> im
     @Override
     public void queryZimuDetail(int subtitleId) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterSubDetailBean.querySubtitleDetail(apiSecret, subtitleId, new CommShooterDataObserver<ShooterSubDetailBean>() {
+        ShooterSubDetailBean.querySubtitleDetail(apiSecret, subtitleId, new CommShooterDataObserver<ShooterSubDetailBean>(getLifecycle()) {
             @Override
             public void onSuccess(ShooterSubDetailBean detailBean) {
                 getView().hideLoading();
@@ -243,7 +243,7 @@ public class BindZimuPresenterImpl extends BaseMvpPresenterImpl<BindZimuView> im
         }
 
         getView().showLoading();
-        ShooterSubDetailBean.downloadSubtitle(downloadLink, subtitleFile.getAbsolutePath(), unzip, new CommShooterDataObserver<String>() {
+        ShooterSubDetailBean.downloadSubtitle(downloadLink, subtitleFile.getAbsolutePath(), unzip, new CommShooterDataObserver<String>(getLifecycle()) {
             @Override
             public void onSuccess(String resultFilePath) {
                 getView().hideLoading();

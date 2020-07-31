@@ -52,7 +52,7 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
     @Override
     public void updateQuota() {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterQuotaBean.getShooterQuota(apiSecret, new CommShooterDataObserver<ShooterQuotaBean>() {
+        ShooterQuotaBean.getShooterQuota(apiSecret, new CommShooterDataObserver<ShooterQuotaBean>(getLifecycle()) {
             @Override
             public void onSuccess(ShooterQuotaBean shooterQuotaBean) {
                 if (shooterQuotaBean != null && shooterQuotaBean.getUser() != null) {
@@ -72,7 +72,7 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
     @Override
     public void searchSubtitle(String text, int page) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterSubtitleBean.searchSubtitle(apiSecret, text, page, new CommShooterDataObserver<ShooterSubtitleBean>() {
+        ShooterSubtitleBean.searchSubtitle(apiSecret, text, page, new CommShooterDataObserver<ShooterSubtitleBean>(getLifecycle()) {
             @Override
             public void onSuccess(ShooterSubtitleBean shooterSubtitleBean) {
                 getView().hideLoading();
@@ -104,7 +104,7 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
     @Override
     public void querySubtitleDetail(int subtitleId) {
         String apiSecret = AppConfig.getInstance().getShooterApiSecret();
-        ShooterSubDetailBean.querySubtitleDetail(apiSecret, subtitleId, new CommShooterDataObserver<ShooterSubDetailBean>() {
+        ShooterSubDetailBean.querySubtitleDetail(apiSecret, subtitleId, new CommShooterDataObserver<ShooterSubDetailBean>(getLifecycle()) {
             @Override
             public void onSuccess(ShooterSubDetailBean detailBean) {
                 getView().hideLoading();
@@ -145,7 +145,7 @@ public class ShooterSubPresenterImpl extends BaseMvpPresenterImpl<ShooterSubView
         }
 
         getView().showLoading();
-        ShooterSubDetailBean.downloadSubtitle(downloadLink, subtitleFile.getAbsolutePath(), unzip, new CommShooterDataObserver<String>() {
+        ShooterSubDetailBean.downloadSubtitle(downloadLink, subtitleFile.getAbsolutePath(), unzip, new CommShooterDataObserver<String>(getLifecycle()) {
             @Override
             public void onSuccess(String resultFilePath) {
                 String msg;

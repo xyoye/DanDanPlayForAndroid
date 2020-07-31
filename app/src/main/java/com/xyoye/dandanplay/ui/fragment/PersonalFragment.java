@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -186,7 +187,7 @@ public class PersonalFragment extends BaseMvpFragment<PersonalFragmentPresenter>
      */
     private void switchSkin() {
         EventBus.getDefault().post(UpdateFragmentEvent.updatePlay(PlayFragment.UPDATE_DATABASE_DATA));
-        SwitchThemeAnimView.create(skinIv).setDuration(800).start();
+        SwitchThemeAnimView.create((Activity) mContext, skinIv).setDuration(800).start();
         if (isLoadedSkin()) {
             SkinCompatManager.getInstance()
                     .restoreDefaultTheme();

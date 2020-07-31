@@ -49,10 +49,6 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
     public void initView() {
         setTitle("文件扫描管理");
         fragmentList = new ArrayList<>();
-        VideoScanFragment scanFragment = VideoScanFragment.newInstance(true);
-        VideoScanFragment blockFragment = VideoScanFragment.newInstance(false);
-        fragmentList.add(scanFragment);
-        fragmentList.add(blockFragment);
 
         ScanManagerManagerActivity.OnFragmentItemCheckListener itemCheckListener = hasChecked -> {
             if (hasChecked) {
@@ -64,8 +60,12 @@ public class ScanManagerManagerActivity extends BaseMvpActivity<ScanManagerPrese
             }
         };
 
+        VideoScanFragment scanFragment = VideoScanFragment.newInstance(true);
+        VideoScanFragment blockFragment = VideoScanFragment.newInstance(false);
         scanFragment.setOnItemCheckListener(itemCheckListener);
         blockFragment.setOnItemCheckListener(itemCheckListener);
+        fragmentList.add(scanFragment);
+        fragmentList.add(blockFragment);
 
         initTabLayout();
 

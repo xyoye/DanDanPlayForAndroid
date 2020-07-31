@@ -69,7 +69,6 @@ public class DownloadManagerPresenterImpl extends BaseMvpPresenterImpl<DownloadM
                         break;
                     }
                     if (waitTime > 10) {
-                        e.onError(new RuntimeException("开启下载服务失败"));
                         break;
                     }
                     waitTime++;

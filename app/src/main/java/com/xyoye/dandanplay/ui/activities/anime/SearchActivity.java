@@ -455,7 +455,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         com.xunlei.downloadlib.parameter.TorrentInfo thunderTorrentInfo =
                 XLTaskHelper.getInstance().getTorrentInfo(torrentFilePath);
 
-        if (thunderTorrentInfo == null) {
+        if (thunderTorrentInfo == null || thunderTorrentInfo.mSubFileInfo == null) {
             ToastUtils.showShort("播放失败，无法解析播放内容");
             return;
         }

@@ -37,8 +37,7 @@ public class SwitchThemeAnimView extends View {
     private Animator.AnimatorListener mAnimatorListener;
     private ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener;
 
-    public static SwitchThemeAnimView create(View onClickView) {
-        Context context = onClickView.getContext();
+    public static SwitchThemeAnimView create(Activity activity, View onClickView) {
         int newWidth = onClickView.getWidth() / 2;
         int newHeight = onClickView.getHeight() / 2;
         //计算起点位置
@@ -47,13 +46,13 @@ public class SwitchThemeAnimView extends View {
         //起始半径
         //因为我们要避免遮挡按钮
         int radius = Math.max(newWidth, newHeight);
-        return new SwitchThemeAnimView(context, startX, startY, radius);
+        return new SwitchThemeAnimView(activity, startX, startY, radius);
     }
 
-    private SwitchThemeAnimView(Context context, float startX, float startY, int radius) {
-        super(context);
+    private SwitchThemeAnimView(Activity activity, float startX, float startY, int radius) {
+        super(activity);
         //获取activity的根视图,用来添加本View
-        mRootView = (ViewGroup) ((Activity) getContext()).getWindow().getDecorView();
+        mRootView = (ViewGroup) activity.getWindow().getDecorView();
         mStartX = startX;
         mStartY = startY;
         mStartRadius = radius;

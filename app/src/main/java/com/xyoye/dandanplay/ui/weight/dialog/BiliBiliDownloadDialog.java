@@ -352,7 +352,7 @@ public class BiliBiliDownloadDialog extends Dialog {
             }
         }
 
-        if (!BiliBiliDownloadDialog.this.isShowing()) {
+        if (BiliBiliDownloadDialog.this.isShowing()) {
             sendLogMessage("弹幕下载完成\n文件路径：\n" + path);
             handler.sendEmptyMessage(102);
         }

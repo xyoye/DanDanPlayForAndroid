@@ -51,8 +51,8 @@ public abstract class FileNameComparator<T> implements Comparator<T> {
             String text1 = o1.substring(0, index1);
             String number1 = o1.substring(index1);
 
-            String text2 = o2.substring(0, index2);
-            String number2 = o2.substring(index2);
+            String text2 = o2.substring(0, index2).trim();
+            String number2 = o2.substring(index2).trim();
             if (text1.equals(text2)) {
                 return Long.valueOf(number1).compareTo(Long.valueOf(number2));
             }

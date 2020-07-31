@@ -205,7 +205,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
     @Override
     public void downloadTorrent(String magnet, int position, boolean onlyDownload, boolean playResource) {
         getView().showDownloadTorrentLoading();
-        MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>() {
+        MagnetBean.downloadTorrent(magnet, new CommOtherDataObserver<ResponseBody>(getLifecycle()) {
             @Override
             public void onSuccess(ResponseBody responseBody) {
                 String downloadPath = getView().getDownloadFolder();

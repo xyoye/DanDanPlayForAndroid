@@ -39,7 +39,7 @@ public class ExoFFmpegPlayer extends SimpleExoPlayer implements Player.VideoComp
                 new DefaultTrackSelector(),
                 new DefaultLoadControl(),
                 null,
-                new DefaultBandwidthMeter.Builder().build(),
+                new DefaultBandwidthMeter.Builder(context).build(),
                 new AnalyticsCollector.Factory(),
                 Clock.DEFAULT,
                 Util.getLooper());
@@ -52,7 +52,7 @@ public class ExoFFmpegPlayer extends SimpleExoPlayer implements Player.VideoComp
                 trackSelector,
                 new DefaultLoadControl(),
                 null,
-                new DefaultBandwidthMeter.Builder().build(),
+                new DefaultBandwidthMeter.Builder(context).build(),
                 new AnalyticsCollector.Factory(),
                 Clock.DEFAULT,
                 Util.getLooper());

@@ -1,9 +1,10 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;

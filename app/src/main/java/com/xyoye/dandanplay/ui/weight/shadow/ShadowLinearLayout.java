@@ -2,9 +2,10 @@ package com.xyoye.dandanplay.ui.weight.shadow;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
+import androidx.annotation.ColorInt;
 
 /**
  * @author limuyang

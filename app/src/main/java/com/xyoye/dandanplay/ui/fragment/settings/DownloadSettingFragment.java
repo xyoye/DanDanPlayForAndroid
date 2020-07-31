@@ -3,17 +3,18 @@ package com.xyoye.dandanplay.ui.fragment.settings;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceDataStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.EditTextPreference;
+import androidx.preference.EditTextPreferenceDialogFragmentCompat;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDataStore;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;
@@ -40,7 +41,7 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findPreference("download_engine").setSummary(TorrentConfig.getInstance().getDownloadEngine());
-        ListPreference taskCount = (ListPreference) findPreference("task_count");
+        ListPreference taskCount = findPreference("task_count");
         taskCount.setEntryValues(taskCountArray);
         taskCount.setEntries(taskCountArray);
         taskCount.setSummary(String.valueOf(TorrentConfig.getInstance().getMaxTaskCount()));
@@ -48,7 +49,7 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
             taskCount.setSummary((String) o);
             return true;
         }));
-        EditTextPreference downloadRate = (EditTextPreference) findPreference("download_rate");
+        EditTextPreference downloadRate = findPreference("download_rate");
         downloadRate.setSummary(getDownloadRateSummary(String.valueOf(TorrentConfig.getInstance().getMaxDownloadRate() / 1000)));
         downloadRate.setOnPreferenceChangeListener(((preference, o) -> {
             downloadRate.setSummary(getDownloadRateSummary((String) o));
@@ -70,10 +71,10 @@ public class DownloadSettingFragment extends BaseSettingsFragment {
     public void onDisplayPreferenceDialog(Preference preference) {
         if (!preference.getKey().equals("download_rate")) {
             super.onDisplayPreferenceDialog(preference);
-        } else if (getFragmentManager().findFragmentByTag("android.support.v14.preference.PreferenceFragment.DIALOG") == null) {
+        } else if (getParentFragmentManager().findFragmentByTag("androidx.preference.PreferenceFragment.DIALOG") == null) {
             EditTextPreferenceDialogFragmentCompat fragmentCompat = DownloadRateFragment.newInstance(preference.getKey());
             fragmentCompat.setTargetFragment(this, 0);
-            fragmentCompat.show(getFragmentManager(), "android.support.v14.preference.PreferenceFragment.DIALOG");
+            fragmentCompat.show(getParentFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
         }
 
     }

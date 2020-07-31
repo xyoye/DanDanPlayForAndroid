@@ -1,19 +1,21 @@
 package com.xyoye.dandanplay.ui.activities.anime;
 
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.app.IApplication;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
@@ -40,7 +42,7 @@ public class TrackerActivity extends BaseMvcActivity {
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
     @BindView(R.id.toolbar)
-    android.support.v7.widget.Toolbar toolbar;
+    Toolbar toolbar;
     @BindView(R.id.tracker_rv)
     RecyclerView trackerRv;
     @BindView(R.id.add_tracker_bt)

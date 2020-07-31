@@ -1,12 +1,13 @@
 package com.xyoye.dandanplay.ui.activities.personal;
 
-import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.xyoye.dandanplay.R;

@@ -1,9 +1,10 @@
 package com.xyoye.dandanplay.ui.fragment;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.xyoye.dandanplay.R;
@@ -102,7 +103,7 @@ public class DownloadedFragment extends BaseMvpFragment<DownloadedFragmentPresen
     public void onTaskDelete(int position, String taskHash, boolean withFile) {
         //删除系统中文件
         if (withFile) {
-            FileUtils.deleteDir(taskList.get(position).getSaveDirPath());
+            FileUtils.delete(taskList.get(position).getSaveDirPath());
         }
 
         //删除数据库中信息

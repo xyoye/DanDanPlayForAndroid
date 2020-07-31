@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/item_bg_color">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/image_rl"
         android:layout_width="84dp"
         android:layout_height="56dp"
@@ -32,7 +32,7 @@
             android:textSize="12sp"
             tools:text="00:00"/>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"

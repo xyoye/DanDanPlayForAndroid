@@ -2,9 +2,9 @@ package com.xyoye.dandanplay.ui.weight.material;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.xyoye.dandanplay.R;
 
 import skin.support.content.res.SkinCompatResources;
@@ -14,7 +14,7 @@ import skin.support.widget.SkinCompatTextHelper;
 
 import static skin.support.widget.SkinCompatHelper.INVALID_ID;
 
-public class MaterialSwitch extends SwitchCompat implements SkinCompatSupportable {
+public class MaterialSwitch extends SwitchMaterial implements SkinCompatSupportable {
 
     private int trackTintId = INVALID_ID;
     private int thumbTintId = INVALID_ID;

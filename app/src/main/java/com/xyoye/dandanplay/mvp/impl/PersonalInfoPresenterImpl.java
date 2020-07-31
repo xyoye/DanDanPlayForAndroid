@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.mvp.impl;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -9,7 +10,6 @@ import com.xyoye.dandanplay.base.BaseMvpPresenterImpl;
 import com.xyoye.dandanplay.bean.PersonalBean;
 import com.xyoye.dandanplay.mvp.presenter.PersonalInfoPresenter;
 import com.xyoye.dandanplay.mvp.view.PersonalInfoView;
-import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.utils.net.CommJsonEntity;
 import com.xyoye.dandanplay.utils.net.CommJsonObserver;
 import com.xyoye.dandanplay.utils.net.NetworkConsumer;

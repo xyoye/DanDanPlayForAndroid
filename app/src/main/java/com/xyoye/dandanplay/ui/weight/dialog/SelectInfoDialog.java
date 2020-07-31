@@ -3,10 +3,11 @@ package com.xyoye.dandanplay.ui.weight.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseRvAdapter;

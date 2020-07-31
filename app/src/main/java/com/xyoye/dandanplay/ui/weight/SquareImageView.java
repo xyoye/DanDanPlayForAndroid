@@ -3,13 +3,17 @@ package com.xyoye.dandanplay.ui.weight;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
+import static android.view.View.getDefaultSize;
+
 /**
  * 正方形图片
  *
  * Created by xyoye on 2019/1/8.
  */
 
-public class SquareImageView extends android.support.v7.widget.AppCompatImageView {
+public class SquareImageView extends AppCompatImageView {
 
     public SquareImageView(Context context) {
         super(context);

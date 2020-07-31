@@ -1,6 +1,6 @@
 package com.xyoye.smb.controller;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.xyoye.smb.exception.SmbLinkException;
 import com.xyoye.smb.info.SmbFileInfo;

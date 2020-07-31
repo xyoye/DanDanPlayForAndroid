@@ -1,10 +1,11 @@
 package com.xyoye.dandanplay.mvp.impl;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LifecycleOwner;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ToastUtils;

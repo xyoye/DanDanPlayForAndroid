@@ -12,13 +12,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * Base View to manage image zoom/scrool/pinch operations
  * 
  * @author alessandro
  * 
  */
-public abstract class ImageViewTouchBase extends android.support.v7.widget.AppCompatImageView implements IDisposable {
+public abstract class ImageViewTouchBase extends AppCompatImageView implements IDisposable {
 
 	public static final String VERSION = "1.0.4";
 

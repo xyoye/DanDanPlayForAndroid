@@ -1,8 +1,6 @@
 package com.xyoye.dandanplay.utils;
 
-import android.support.annotation.NonNull;
-
-import com.blankj.utilcode.util.FileUtils;
+import androidx.annotation.NonNull;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;

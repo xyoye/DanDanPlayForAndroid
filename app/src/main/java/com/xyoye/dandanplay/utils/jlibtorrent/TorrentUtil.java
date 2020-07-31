@@ -31,7 +31,7 @@ public class TorrentUtil {
      * 删除下载任务中的文件
      */
     public static void deleteTaskFile(String saveDirPath) {
-        FileUtils.deleteDir(saveDirPath);
+        FileUtils.delete(saveDirPath);
     }
 
     /**

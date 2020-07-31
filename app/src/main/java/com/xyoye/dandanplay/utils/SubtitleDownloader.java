@@ -1,6 +1,6 @@
 package com.xyoye.dandanplay.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.ToastUtils;

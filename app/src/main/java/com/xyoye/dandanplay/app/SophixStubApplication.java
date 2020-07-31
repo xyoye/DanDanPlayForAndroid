@@ -1,8 +1,9 @@
 package com.xyoye.dandanplay.app;
 
 import android.content.Context;
-import android.support.annotation.Keep;
-import android.support.multidex.MultiDex;
+
+import androidx.annotation.Keep;
+import androidx.multidex.MultiDex;
 
 import com.taobao.sophix.SophixApplication;
 import com.taobao.sophix.SophixEntry;

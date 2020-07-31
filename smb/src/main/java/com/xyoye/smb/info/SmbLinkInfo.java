@@ -1,6 +1,6 @@
 package com.xyoye.smb.info;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by xyoye on 2019/12/20.

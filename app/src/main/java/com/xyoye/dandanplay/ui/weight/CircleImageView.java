@@ -16,6 +16,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.xyoye.dandanplay.R;
 
 /**
@@ -24,7 +26,7 @@ import com.xyoye.dandanplay.R;
  * Created by xyoye on 2018/7/1.
  */
 
-public class CircleImageView extends android.support.v7.widget.AppCompatImageView {
+public class CircleImageView extends AppCompatImageView {
 
     private static final ScaleType SCALE_TYPE = ScaleType.FIT_XY;
 

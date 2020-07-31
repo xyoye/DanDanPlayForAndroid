@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.util.AttributeSet;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.blankj.utilcode.util.ConvertUtils;
 
 /**
@@ -14,7 +16,7 @@ import com.blankj.utilcode.util.ConvertUtils;
  * Created by xyoye on 2019/1/8.
  */
 
-public class RoundImageView extends android.support.v7.widget.AppCompatImageView {
+public class RoundImageView extends AppCompatImageView {
 
     float width,height;
     private int mRadiusPx;

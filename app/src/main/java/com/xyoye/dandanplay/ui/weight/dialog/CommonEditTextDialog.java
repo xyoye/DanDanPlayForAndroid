@@ -4,14 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.StringUtils;
+import com.google.android.material.textfield.TextInputLayout;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
 import com.xyoye.dandanplay.utils.CommonUtils;

@@ -1,7 +1,7 @@
 package com.xyoye.dandanplay.utils;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.uber.autodispose.AutoDispose;
 import com.uber.autodispose.ObservableSubscribeProxy;

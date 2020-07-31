@@ -1,8 +1,9 @@
 package com.xyoye.dandanplay.utils.net;
 
 import android.app.ProgressDialog;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.JsonSyntaxException;

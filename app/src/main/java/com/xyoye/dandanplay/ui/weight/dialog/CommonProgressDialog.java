@@ -2,8 +2,9 @@ package com.xyoye.dandanplay.ui.weight.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.ui.weight.CircleProgressView;

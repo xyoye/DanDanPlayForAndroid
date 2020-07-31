@@ -1,7 +1,8 @@
 package com.xyoye.dandanplay.ui.activities.smb;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.os.Bundle;
+
+import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.ServiceUtils;

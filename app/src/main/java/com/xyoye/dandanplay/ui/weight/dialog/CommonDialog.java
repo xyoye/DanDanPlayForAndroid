@@ -5,9 +5,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.utils.CommonUtils;

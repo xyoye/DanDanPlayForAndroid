@@ -3,12 +3,14 @@ package com.xyoye.dandanplay.utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.ImageViewCompat;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.widget.ImageViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.ImageView;

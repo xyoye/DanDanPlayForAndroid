@@ -6,19 +6,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.app.SkinAppCompatDelegateImpl;
-import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.WindowManager;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.SkinAppCompatDelegateImpl;
+import androidx.appcompat.widget.Toolbar;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
@@ -27,6 +27,9 @@ import com.xyoye.dandanplay.utils.interf.IBaseView;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import skin.support.SkinCompatManager;
+import skin.support.observe.SkinObservable;
+import skin.support.observe.SkinObserver;
 
 /**
  * AppCompatActivity基类
@@ -40,7 +43,7 @@ import butterknife.Unbinder;
  * <p>
  * Modified by xyoye on 2019/5/27.
  */
-public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView {
+public abstract class BaseAppCompatActivity extends AppCompatActivity implements IBaseView, SkinObserver {
 
     private Toolbar mActionBarToolbar;
 
@@ -62,6 +65,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         initPageView();
         initPageViewListener();
         process(savedInstanceState);
+        SkinCompatManager.getInstance().addObserver(this);
     }
 
     @NonNull
@@ -135,6 +139,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
         isDestroyed = true;
         super.onDestroy();
         unbind.unbind();
+        SkinCompatManager.getInstance().deleteObserver(this);
     }
 
     /**
@@ -238,6 +243,11 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity implements
     @Override
     public void initData() {
 
+    }
+
+    @Override
+    public void updateSkin(SkinObservable observable, Object o) {
+        setStatusBar();
     }
 
     /**

@@ -8,7 +8,7 @@ android {
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
     }
     sourceSets {
@@ -41,9 +41,9 @@ dependencies {
 
     api 'org.greenrobot:eventbus:3.1.1'
     api 'com.aliyun.ams:alicloud-android-hotfix:3.2.3'
-    api 'com.blankj:utilcode:1.22.7'
-    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
-    implementation 'com.google.android.exoplayer:exoplayer:2.9.5'
+    api 'com.blankj:utilcodex:1.29.0'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.49-androidx'
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.0'
     implementation 'com.github.albfernandez:juniversalchardet:2.0.2'
 }
 

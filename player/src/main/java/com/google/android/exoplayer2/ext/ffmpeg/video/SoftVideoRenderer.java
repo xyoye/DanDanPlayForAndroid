@@ -21,9 +21,10 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.support.annotation.IntDef;
 import android.util.Log;
 import android.view.Surface;
+
+import androidx.annotation.IntDef;
 
 import com.google.android.exoplayer2.BaseRenderer;
 import com.google.android.exoplayer2.C;

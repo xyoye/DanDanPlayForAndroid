@@ -3,8 +3,9 @@ package com.xyoye.player.commom.widgets;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
+
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;

@@ -12,7 +12,7 @@ import android.os.StrictMode;
 import com.blankj.utilcode.util.Utils;
 import com.xyoye.dandanplay.ui.activities.SplashActivity;
 import com.xyoye.dandanplay.ui.activities.personal.CrashActivity;
-import com.xyoye.dandanplay.ui.weight.material.SwitchCompatViewInflater;
+import com.xyoye.dandanplay.ui.weight.material.MaterialViewInflater;
 import com.xyoye.player.commom.utils.PlayerConfigShare;
 import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.Bugly;
@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 import skin.support.SkinCompatManager;
+import skin.support.app.SkinAppCompatViewInflater;
 import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
 import skin.support.design.app.SkinMaterialViewInflater;
@@ -67,11 +68,11 @@ public class IApplication extends Application {
 
         //skins
         SkinCompatManager.withoutActivity(this)                         // 基础控件换肤初始化
-                .addInflater(new SkinMaterialViewInflater())            // material design 控件换肤初始化[可选]
+                .addInflater(new MaterialViewInflater())            // material design 控件换肤初始化[可选]
                 .addInflater(new SkinConstraintViewInflater())          // ConstraintLayout 控件换肤初始化[可选]
                 .addInflater(new SkinCardViewInflater())                // CardView v7 控件换肤初始化[可选]
-                .addInflater(new SwitchCompatViewInflater())
                 .addInflater(new SkinFlycoTabLayoutInflater())
+                .addInflater(new SkinAppCompatViewInflater())
                 .setSkinStatusBarColorEnable(true)                      // 关闭状态栏换肤，默认打开[可选]
                 .setSkinWindowBackgroundEnable(true)                    // 关闭windowBackground换肤，默认打开[可选]
                 .setSkinAllActivityEnable(true)

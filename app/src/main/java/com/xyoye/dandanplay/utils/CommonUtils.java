@@ -22,17 +22,9 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.UriUtils;
-import com.taobao.sophix.PatchStatus;
-import com.taobao.sophix.listener.PatchLoadStatusListener;
 import com.xyoye.dandanplay.app.IApplication;
-import com.xyoye.dandanplay.bean.event.PatchFixEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -304,87 +296,6 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * 处理补丁回调
-     */
-    public static PatchLoadStatusListener getPatchLoadListener() {
-        return (mode, code, serviceMsg, version) -> {
-            String msg = "";
-            List<PatchFixEvent> eventList = JsonUtils.getObjectList(SPUtils.getInstance().getString("patch_his"), PatchFixEvent.class);
-            AppConfig.getInstance().setPatchVersion(version);
-            PatchFixEvent event = new PatchFixEvent();
-            event.setVersion(version);
-            event.setTime(TimeUtils.date2String(new java.util.Date()));
-            switch (code) {
-                //加载阶段, 成功
-                case PatchStatus.CODE_LOAD_SUCCESS:
-                    msg = "加载补丁成功";
-                    break;
-                //加载阶段, 失败设备不支持
-                case PatchStatus.CODE_ERR_INBLACKLIST:
-                    msg = "加载失败，设备不支持";
-                    break;
-                //查询阶段, 没有发布新补丁
-                case PatchStatus.CODE_REQ_NOUPDATE:
-                    msg = "已是最新补丁";
-                    event.setCode(-2);
-                    break;
-                //查询阶段, 补丁不是最新的
-                case PatchStatus.CODE_REQ_NOTNEWEST:
-                    msg = "开始下载补丁";
-                    break;
-                //查询阶段, 补丁下载成功
-                case PatchStatus.CODE_DOWNLOAD_SUCCESS:
-                    msg = "补丁下载成功";
-                    break;
-                //查询阶段, 补丁文件损坏下载失败
-                case PatchStatus.CODE_DOWNLOAD_BROKEN:
-                    msg = "补丁文件损坏下载失败";
-                    break;
-                //查询阶段, 补丁解密失败
-                case PatchStatus.CODE_UNZIP_FAIL:
-                    msg = "补丁解密失败";
-                    break;
-                //预加载阶段, 需要重启
-                case PatchStatus.CODE_LOAD_RELAUNCH:
-                    msg = "加载成功，重启应用后生效";
-                    break;
-                //查询阶段, appid异常
-                case PatchStatus.CODE_REQ_APPIDERR:
-                    msg = "加载失败，appid异常";
-                    break;
-                //查询阶段, 签名异常
-                case PatchStatus.CODE_REQ_SIGNERR:
-                    msg = "加载失败，签名异常";
-                    break;
-                //查询阶段, 系统无效
-                case PatchStatus.CODE_REQ_UNAVAIABLE:
-                    msg = "加载失败，系统无效";
-                    break;
-                //查询阶段, 系统异常
-                case PatchStatus.CODE_REQ_SYSTEMERR:
-                    msg = "加载失败，系统异常";
-                    break;
-                //查询阶段, 一键清除补丁
-                case PatchStatus.CODE_REQ_CLEARPATCH:
-                    msg = "一键清除成功";
-                    break;
-                //加载阶段, 补丁格式非法
-                case PatchStatus.CODE_PATCH_INVAILD:
-                    msg = "加载失败，补丁格式非法";
-                    break;
-                default:
-                    event.setCode(code);
-                    break;
-            }
-            LogUtils.e(msg);
-            event.setMsg(msg);
-            eventList.add(event);
-            EventBus.getDefault().post(event);
-            SPUtils.getInstance().put("patch_his", JsonUtils.toJson(eventList));
-        };
     }
 
     /**

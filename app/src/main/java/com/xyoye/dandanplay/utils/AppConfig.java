@@ -224,28 +224,6 @@ public class AppConfig {
     }
 
     /**
-     * 补丁版本号
-     */
-    public int getPatchVersion() {
-        return SPUtils.getInstance().getInt(Constants.Config.PATCH_VERSION, 0);
-    }
-
-    public void setPatchVersion(int version) {
-        SPUtils.getInstance().put(Constants.Config.PATCH_VERSION, version);
-    }
-
-    /**
-     * 自动查询补丁
-     */
-    public boolean isAutoQueryPatch() {
-        return SPUtils.getInstance().getBoolean(Constants.Config.AUTO_QUERY_PATCH, true);
-    }
-
-    public void setAutoQueryPatch(boolean auto) {
-        SPUtils.getInstance().put(Constants.Config.AUTO_QUERY_PATCH, auto);
-    }
-
-    /**
      * MKV提示
      */
     public boolean isShowMkvTips() {

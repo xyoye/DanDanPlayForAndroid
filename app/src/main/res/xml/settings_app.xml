@@ -12,10 +12,6 @@
             android:icon="@drawable/ic_app_setting_version"
             android:key="version"
             android:title="当前版本" />
-        <com.xyoye.dandanplay.ui.weight.preference.LongClickPreference
-            android:key="patch"
-            android:icon="@drawable/ic_app_setting_patch"
-            android:title="补丁版本" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="其他">

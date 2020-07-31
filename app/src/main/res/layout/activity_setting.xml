@@ -126,53 +126,6 @@
                 android:layout_height="1dp"
                 android:background="@color/layout_bg_color" />
 
-            <RelativeLayout
-                android:id="@+id/patch_rl"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:id="@+id/patch_tip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:text="补丁版本："
-                    android:textColor="@color/text_gray"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/patch_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_toEndOf="@+id/patch_tip"
-                    android:text=""
-                    android:textColor="@color/text_black"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toStartOf="@+id/find_patch_iv"
-                    android:text="检查"
-                    android:textColor="@color/text_gray"
-                    android:textSize="12sp" />
-
-                <ImageView
-                    android:id="@+id/find_patch_iv"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_arrow_right_dark" />
-            </RelativeLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"

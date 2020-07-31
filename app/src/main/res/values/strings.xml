@@ -50,17 +50,6 @@
         注1：ijk播放器对MKV格式视频内容并不完全支持，可能会出现没有显示内嵌字幕的情况。\n
         注2：此提示只会出现一次。
     </string>
-
-    <string name="what_is_sophix">
-        热修复是一种允许APP在不重新发布版本的情况下修复线上的bug的技术。\n\n
-
-        主要作用：在弹弹play正式版发布后发生影响较大的bug时，后台下载补丁包进行修复。\n\n
-        下载时间：\n
-        &#160;&#160;自动模式：启动应用时\n
-        &#160;&#160;手动模式：点击检查时\n\n
-        修复时间：下一次启动应用\n
-        补丁大小：20~80k左右\n\n
-    </string>
     <string name="source_origin">以下信息由动漫花园资源网（share.dmhy.org）提供</string>
 
     <string-array name="splash_svg_data">

@@ -9,19 +9,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 
+import androidx.multidex.MultiDex;
+
 import com.blankj.utilcode.util.Utils;
+import com.tencent.bugly.Bugly;
+import com.xunlei.downloadlib.XLTaskHelper;
 import com.xyoye.dandanplay.ui.activities.SplashActivity;
 import com.xyoye.dandanplay.ui.activities.personal.CrashActivity;
 import com.xyoye.dandanplay.ui.weight.material.MaterialViewInflater;
-import com.xyoye.player.commom.utils.PlayerConfigShare;
-import com.taobao.sophix.SophixManager;
-import com.tencent.bugly.Bugly;
-import com.xunlei.downloadlib.XLTaskHelper;
-import com.xyoye.dandanplay.utils.database.DataBaseManager;
-import com.xyoye.dandanplay.utils.AppConfig;
-import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.SoUtils;
+import com.xyoye.dandanplay.utils.database.DataBaseManager;
 import com.xyoye.dandanplay.utils.net.okhttp.CookiesManager;
+import com.xyoye.player.commom.utils.PlayerConfigShare;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,6 @@ import skin.support.SkinCompatManager;
 import skin.support.app.SkinAppCompatViewInflater;
 import skin.support.app.SkinCardViewInflater;
 import skin.support.constraint.app.SkinConstraintViewInflater;
-import skin.support.design.app.SkinMaterialViewInflater;
 import skin.support.flycotablayout.app.SkinFlycoTabLayoutInflater;
 
 /**
@@ -55,6 +53,13 @@ public class IApplication extends Application {
     private static Context _context;
     private static AssetManager _asset;
     private static CookiesManager cookiesManager;
+
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -91,9 +96,6 @@ public class IApplication extends Application {
         //Bugly
         Bugly.init(getApplicationContext(), SoUtils.getInstance().getBuglyAppId(), false);
 
-        //Sophix
-        SophixManager.getInstance().setPatchLoadStatusStub(CommonUtils.getPatchLoadListener());
-
         //thunder
         XLTaskHelper.init(this);
 
@@ -102,11 +104,6 @@ public class IApplication extends Application {
 
         //播放器配置
         PlayerConfigShare.initPlayerConfigShare(this);
-
-        //检查补丁
-        if (AppConfig.getInstance().isAutoQueryPatch()){
-            SophixManager.getInstance().queryAndLoadNewPatch();
-        }
 
         startCorrectlyFlag = true;
 

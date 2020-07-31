@@ -74,8 +74,6 @@ public class Constants {
         static final String FOLDER_COLLECTIONS = "folder_collection";
         //补丁版本号
         static final String PATCH_VERSION = "patch_version";
-        //自动查询补丁模式
-        static final String AUTO_QUERY_PATCH = "auto_query_patch";
         //展示MKV提示
         static final String SHOW_MKV_TIPS = "show_mkv_tips";
         //季番排序

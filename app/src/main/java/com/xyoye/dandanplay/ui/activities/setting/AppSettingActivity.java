@@ -9,25 +9,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.taobao.sophix.SophixManager;
 import com.tencent.bugly.beta.Beta;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvpActivity;
-import com.xyoye.dandanplay.bean.event.PatchFixEvent;
 import com.xyoye.dandanplay.mvp.impl.SettingPresenterImpl;
 import com.xyoye.dandanplay.mvp.presenter.SettingPresenter;
 import com.xyoye.dandanplay.mvp.view.SettingView;
 import com.xyoye.dandanplay.ui.activities.WebViewActivity;
 import com.xyoye.dandanplay.ui.activities.personal.FeedbackActivity;
 import com.xyoye.dandanplay.ui.weight.dialog.FileManagerDialog;
-import com.xyoye.dandanplay.ui.weight.dialog.PatchHisDialog;
 import com.xyoye.dandanplay.utils.AppConfig;
 import com.xyoye.dandanplay.utils.CommonUtils;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -45,10 +39,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
     RelativeLayout versionRl;
     @BindView(R.id.about_rl)
     RelativeLayout aboutRl;
-    @BindView(R.id.patch_rl)
-    RelativeLayout patchRl;
-    @BindView(R.id.patch_tv)
-    TextView patchTv;
     @BindView(R.id.feedback_rl)
     RelativeLayout feedbackRl;
     @BindView(R.id.version_tv)
@@ -66,7 +56,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         pathTv.setText(downloadPath);
         String version = CommonUtils.getAppVersion();
         versionTv.setText(version);
-        patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
 
         boolean isClose = AppConfig.getInstance().isCloseSplashPage();
         closeSplashPageCb.setChecked(isClose);
@@ -78,12 +67,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
         versionRl.setOnClickListener(this);
         aboutRl.setOnClickListener(this);
         feedbackRl.setOnClickListener(this);
-        patchRl.setOnClickListener(this);
-
-        patchRl.setOnLongClickListener(v -> {
-            new PatchHisDialog(AppSettingActivity.this, R.style.Dialog).show();
-            return true;
-        });
 
         closeSplashPageCb.setOnCheckedChangeListener((buttonView, isChecked) ->
                 AppConfig.getInstance().setCloseSplashPage(isChecked));
@@ -112,9 +95,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
             case R.id.version_rl:
                 Beta.checkUpgrade(false, false);
                 break;
-            case R.id.patch_rl:
-                SophixManager.getInstance().queryAndLoadNewPatch();
-                break;
             case R.id.about_rl:
                 Intent intent_about = new Intent(AppSettingActivity.this, WebViewActivity.class);
                 intent_about.putExtra("title", "关于我们");
@@ -125,13 +105,6 @@ public class AppSettingActivity extends BaseMvpActivity<SettingPresenter> implem
                 launchActivity(FeedbackActivity.class);
                 break;
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPatchEvent(PatchFixEvent event) {
-        ToastUtils.showShort(event.getMsg());
-        patchTv.setText(AppConfig.getInstance().getPatchVersion() + "");
     }
 
     @Override

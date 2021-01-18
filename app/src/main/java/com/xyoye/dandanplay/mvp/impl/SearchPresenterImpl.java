@@ -94,56 +94,49 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void queryTypeList() {
-        DataBaseManager.getInstance()
-                .selectTable("anime_type")
-                .query()
-                .postExecute(new QueryAsyncResultCallback<List<AnimeTypeBean.TypesBean>>(getLifecycle()) {
+        getView().showLoading();
+        AnimeTypeBean.getAnimeType(new CommOtherDataObserver<AnimeTypeBean>(getLifecycle()) {
+            @Override
+            public void onSuccess(AnimeTypeBean animeTypeBean) {
+                getView().hideLoading();
+                if (animeTypeBean != null
+                        && animeTypeBean.getTypes() != null
+                        && animeTypeBean.getTypes().size() > 0) {
+                    getView().showAnimeTypeDialog(animeTypeBean.getTypes());
+                }
+            }
 
-                    @Override
-                    public List<AnimeTypeBean.TypesBean> onQuery(Cursor cursor) {
-                        if (cursor == null)
-                            return new ArrayList<>();
-                        List<AnimeTypeBean.TypesBean> typeList = new ArrayList<>();
-                        while (cursor.moveToNext()) {
-                            int typeId = cursor.getInt(1);
-                            String typeName = cursor.getString(2);
-                            typeList.add(new AnimeTypeBean.TypesBean(typeId, typeName));
-                        }
-                        return typeList;
-                    }
-
-                    @Override
-                    public void onResult(List<AnimeTypeBean.TypesBean> result) {
-                        getView().showAnimeTypeDialog(result);
-                    }
-                });
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                LogUtils.e(message);
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
 
     }
 
     @Override
     public void querySubGroupList() {
-        DataBaseManager.getInstance()
-                .selectTable("subgroup")
-                .query()
-                .postExecute(new QueryAsyncResultCallback<List<SubGroupBean.SubgroupsBean>>(getLifecycle()) {
-                    @Override
-                    public List<SubGroupBean.SubgroupsBean> onQuery(Cursor cursor) {
-                        if (cursor == null)
-                            return new ArrayList<>();
-                        List<SubGroupBean.SubgroupsBean> subgroupList = new ArrayList<>();
-                        while (cursor.moveToNext()) {
-                            int subgroupId = cursor.getInt(1);
-                            String subgroupName = cursor.getString(2);
-                            subgroupList.add(new SubGroupBean.SubgroupsBean(subgroupId, subgroupName));
-                        }
-                        return subgroupList;
-                    }
+        getView().showLoading();
+        SubGroupBean.getSubGroup(new CommOtherDataObserver<SubGroupBean>(getLifecycle()) {
+            @Override
+            public void onSuccess(SubGroupBean subGroupBean) {
+                getView().hideLoading();
+                if (subGroupBean != null
+                        && subGroupBean.getSubgroups() != null
+                        && subGroupBean.getSubgroups().size() > 0) {
+                    getView().showSubGroupDialog(subGroupBean.getSubgroups());
+                }
+            }
 
-                    @Override
-                    public void onResult(List<SubGroupBean.SubgroupsBean> result) {
-                        getView().showSubGroupDialog(result);
-                    }
-                });
+            @Override
+            public void onError(int errorCode, String message) {
+                getView().hideLoading();
+                LogUtils.e(message);
+                ToastUtils.showShort(message);
+            }
+        }, new NetworkConsumer());
 
     }
 
@@ -186,9 +179,11 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
     @Override
     public void search(String animeTitle, String text, int type, int subgroup) {
+        getView().showLoading();
         MagnetBean.searchMagnet(animeTitle, text, type, subgroup, new CommOtherDataObserver<MagnetBean>(getLifecycle()) {
             @Override
             public void onSuccess(MagnetBean magnetBean) {
+                getView().hideLoading();
                 if (magnetBean != null && magnetBean.getResources() != null) {
                     getView().refreshSearch(magnetBean.getResources());
                 }
@@ -196,6 +191,7 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
 
             @Override
             public void onError(int errorCode, String message) {
+                getView().hideLoading();
                 LogUtils.e(message);
                 ToastUtils.showShort(message);
             }

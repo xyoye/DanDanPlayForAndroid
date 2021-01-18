@@ -63,7 +63,7 @@ public class RetroFactory {
                     .baseUrl(resUrl)
                     .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(initNoHeaderOkHttp())
+                    .client(initNoHeaderOkHttp(true))
                     .build()
                     .create(ResRetrofitService.class);
         }
@@ -76,7 +76,7 @@ public class RetroFactory {
                     .baseUrl(downloadUrl)
                     .addConverterFactory(GsonConverterFactory.create(GsonFactory.buildGson()))
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .client(initNoHeaderOkHttp())
+                    .client(initNoHeaderOkHttp(false))
                     .build()
                     .create(TorrentRetrofitService.class);
         }
@@ -130,7 +130,7 @@ public class RetroFactory {
 
     }
 
-    private static OkHttpClient initNoHeaderOkHttp() {
+    private static OkHttpClient initNoHeaderOkHttp(boolean isRes) {
         return OkHttpEngine.getInstance()
                 .getOkHttpClient()
                 .newBuilder()
@@ -143,6 +143,24 @@ public class RetroFactory {
                         builder.header("User-Agent", "dandanplay/android " + CommonUtils.getAppVersion());
                     }
                     return chain.proceed(builder.build());
+                })
+                .addInterceptor(chain -> {
+                    Request oldRequest = chain.request();
+                    if (isRes){
+                        Request.Builder newRequest = oldRequest.newBuilder();
+                        String searchDomain = AppConfig.getInstance().getSearchDomain();
+                        HttpUrl newBaseUrl = HttpUrl.parse(searchDomain);
+                        if (newBaseUrl != null) {
+                            HttpUrl newUrl = oldRequest.url()
+                                    .newBuilder()
+                                    .scheme(newBaseUrl.scheme())
+                                    .host(newBaseUrl.host())
+                                    .port(newBaseUrl.port())
+                                    .build();
+                            return chain.proceed(newRequest.url(newUrl).build());
+                        }
+                    }
+                    return chain.proceed(oldRequest);
                 })
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();

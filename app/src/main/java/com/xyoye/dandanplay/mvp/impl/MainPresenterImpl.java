@@ -39,8 +39,8 @@ public class MainPresenterImpl extends BaseMvpPresenterImpl<MainView> implements
 
     @Override
     public void process(Bundle savedInstanceState) {
-        initAnimeType();
-        initSubGroup();
+        //initAnimeType();
+        //initSubGroup();
         DanmuFilterUtils.getInstance().updateCloudFilter();
         DanmuFilterUtils.getInstance().updateLocalFilter();
     }

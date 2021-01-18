@@ -75,7 +75,7 @@ public abstract class CommOtherDataObserver<T> implements Observer<T> {
             return "数据异常";
         } else if (e instanceof UnknownHostException) {
             LogUtils.i("error", e.toString());
-            return "网络连接中断";
+            return "访问网络主机失败";
         } else if (e instanceof SocketTimeoutException) {
             return "服务器繁忙";
         } else {

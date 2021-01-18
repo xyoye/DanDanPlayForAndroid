@@ -96,6 +96,8 @@ public class Constants {
         static final String LAST_LOGIN_TIME = "lase_login_time";
         //射手（伪）网API密钥
         static final String SHOOTER_API_SECRET = "shooter_api_secret";
+        //自定义搜索节点
+        static final String SEARCH_DOMAIN = "search_domain";
     }
 
     /**

@@ -373,4 +373,15 @@ public class AppConfig {
     public void setShooterApiSecret(String apiSecret) {
         SPUtils.getInstance().put(Constants.Config.SHOOTER_API_SECRET, apiSecret);
     }
+
+    /**
+     * 自定义搜索节点
+     */
+    public String getSearchDomain() {
+        return SPUtils.getInstance().getString(Constants.Config.SEARCH_DOMAIN, "");
+    }
+
+    public void saveSearchDomain(String domain) {
+        SPUtils.getInstance().put(Constants.Config.SEARCH_DOMAIN, domain);
+    }
 }

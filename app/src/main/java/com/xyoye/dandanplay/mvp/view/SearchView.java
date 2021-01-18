@@ -13,7 +13,7 @@ import java.util.List;
  * Created by xyoye on 2019/1/8.
  */
 
-public interface SearchView extends BaseMvpView{
+public interface SearchView extends BaseMvpView, LoadDataView{
     void refreshHistory(List<SearchHistoryBean> historyList, boolean doSearch);
 
     void refreshSearch(List<MagnetBean.ResourcesBean> searchResult);

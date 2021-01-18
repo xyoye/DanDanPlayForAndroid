@@ -40,6 +40,7 @@ import com.xyoye.dandanplay.mvp.presenter.SearchPresenter;
 import com.xyoye.dandanplay.mvp.view.SearchView;
 import com.xyoye.dandanplay.ui.activities.personal.DownloadManagerActivity;
 import com.xyoye.dandanplay.ui.activities.play.PlayerManagerActivity;
+import com.xyoye.dandanplay.ui.weight.dialog.CommonEditTextDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.SelectInfoDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentCheckDownloadDialog;
 import com.xyoye.dandanplay.ui.weight.dialog.TorrentCheckPlayDialog;
@@ -177,7 +178,7 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
         });
     }
 
-    @OnClick({R.id.return_iv, R.id.subgroup_tv, R.id.type_tv, R.id.search_iv})
+    @OnClick({R.id.return_iv, R.id.change_source_tv, R.id.subgroup_tv, R.id.type_tv, R.id.search_iv})
     public void onViewClicked(View view) {
         KeyboardUtils.hideSoftInput(searchEt);
         switch (view.getId()) {
@@ -188,6 +189,12 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                     AnimHelper.doHideAnimator(historyRl);
                     searchEt.clearFocus();
                 }
+                break;
+            case R.id.change_source_tv:
+                String searchDomain = AppConfig.getInstance().getSearchDomain();
+                new CommonEditTextDialog(this, CommonEditTextDialog.SEARCH_DOMAIN, searchDomain, data -> {
+                    AppConfig.getInstance().saveSearchDomain(data[0]);
+                }).show();
                 break;
             case R.id.subgroup_tv:
                 presenter.querySubGroupList();
@@ -547,5 +554,20 @@ public class SearchActivity extends BaseMvpActivity<SearchPresenter> implements 
                 0,
                 playTaskId,
                 lastSearchWord);
+    }
+
+    @Override
+    public void showLoading() {
+        showLoadingDialog();
+    }
+
+    @Override
+    public void hideLoading() {
+        dismissLoadingDialog();
+    }
+
+    @Override
+    public void showError(String message) {
+        ToastUtils.showShort(message);
     }
 }

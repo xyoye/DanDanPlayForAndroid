@@ -29,7 +29,7 @@ import butterknife.OnClick;
  */
 
 
-public class CommonEditTextDialog extends Dialog{
+public class CommonEditTextDialog extends Dialog {
     //串流链接
     public static final int NETWORK_LINK = 0;
     //昵称
@@ -44,6 +44,8 @@ public class CommonEditTextDialog extends Dialog{
     public static final int SAVE_SHOOTER_API_SECRET = 5;
     //搜索字幕
     public static final int SEARCH_SUBTITLE = 6;
+    //自定义搜索节点
+    public static final int SEARCH_DOMAIN = 7;
 
     @BindView(R.id.edit_layout)
     TextInputLayout inputLayout;
@@ -53,6 +55,7 @@ public class CommonEditTextDialog extends Dialog{
     TextView titleTv;
 
     private int type;
+    private String defaultText;
     private CommonEditTextListener listener;
     private CommonEditTextFullListener fullListener;
     private List<String> blockList;
@@ -66,6 +69,14 @@ public class CommonEditTextDialog extends Dialog{
     public CommonEditTextDialog(@NonNull Context context, int type, CommonEditTextListener listener) {
         super(context, R.style.Dialog);
         this.type = type;
+        this.listener = listener;
+        this.blockList = new ArrayList<>();
+    }
+
+    public CommonEditTextDialog(@NonNull Context context, int type, String defaultText, CommonEditTextListener listener) {
+        super(context, R.style.Dialog);
+        this.type = type;
+        this.defaultText = defaultText;
         this.listener = listener;
         this.blockList = new ArrayList<>();
     }
@@ -126,6 +137,12 @@ public class CommonEditTextDialog extends Dialog{
                 editText.setHint("请输入视频名称");
                 editText.setMaxLines(1);
                 break;
+            case SEARCH_DOMAIN:
+                titleTv.setText("自定义节点");
+                editText.setHint("节点链接格式: http(s)://xxx.xxx");
+                editText.setText(defaultText);
+                editText.setMaxLines(1);
+                break;
         }
     }
 
@@ -173,7 +190,7 @@ public class CommonEditTextDialog extends Dialog{
                     inputLayout.setError("昵称长度过长");
                     return;
                 }
-                if (listener != null){
+                if (listener != null) {
                     listener.onConfirm(inputData);
                 }
                 break;
@@ -242,6 +259,19 @@ public class CommonEditTextDialog extends Dialog{
                 if (StringUtils.isEmpty(inputData)) {
                     inputLayout.setErrorEnabled(true);
                     inputLayout.setError("视频名称不能为空");
+                } else if (listener != null) {
+                    listener.onConfirm(inputData);
+                    CommonEditTextDialog.this.dismiss();
+                }
+                break;
+            case SEARCH_DOMAIN:
+                if (StringUtils.isEmpty(inputData)) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("节点链接不能为空");
+                }
+                if (!inputData.toLowerCase().startsWith("http")) {
+                    inputLayout.setErrorEnabled(true);
+                    inputLayout.setError("节点链接缺少协议：http/https");
                 } else if (listener != null) {
                     listener.onConfirm(inputData);
                     CommonEditTextDialog.this.dismiss();

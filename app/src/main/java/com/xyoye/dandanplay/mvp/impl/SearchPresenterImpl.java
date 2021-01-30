@@ -206,7 +206,11 @@ public class SearchPresenterImpl extends BaseMvpPresenterImpl<SearchView> implem
             public void onSuccess(ResponseBody responseBody) {
                 String downloadPath = getView().getDownloadFolder();
                 downloadPath += Constants.DefaultConfig.torrentFolder;
-                downloadPath += "/" + magnet.substring(20) + ".torrent";
+                int indexOfLast = magnet.indexOf("&dn");
+                if (indexOfLast < 0) {
+                    indexOfLast = magnet.length();
+                }
+                downloadPath += "/" + magnet.substring(20, indexOfLast) + ".torrent";
                 FileIOUtils.writeFileFromIS(downloadPath, responseBody.byteStream());
                 getView().dismissDownloadTorrentLoading();
                 getView().downloadTorrentOver(downloadPath, position, onlyDownload, playResource);

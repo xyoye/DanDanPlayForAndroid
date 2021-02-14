@@ -6,7 +6,7 @@ ext{
             buildToolsVersion : '28.0.3',
             applicationId : "com.xyoye.dandanplay",
             versionCode : 43,
-            versionName : "3.5.5.1"
+            versionName : "3.5.5.2"
     ]
 
     dependencies = [

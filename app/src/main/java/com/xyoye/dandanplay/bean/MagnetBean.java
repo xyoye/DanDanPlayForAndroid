@@ -169,6 +169,9 @@ public class MagnetBean implements Parcelable{
         }
 
         public String getMagnet() {
+            if (Magnet != null && Magnet.length() > 60){
+                return Magnet.substring(0, 60);
+            }
             return Magnet;
         }
 

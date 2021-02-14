@@ -10,9 +10,11 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.gyf.immersionbar.ImmersionBar;
 import com.xyoye.dandanplay.R;
 import com.xyoye.dandanplay.base.BaseMvcActivity;
 import com.xyoye.dandanplay.bean.RemoteScanBean;
+import com.xyoye.dandanplay.utils.CommonUtils;
 import com.xyoye.dandanplay.utils.JsonUtils;
 import com.xyoye.dandanplay.utils.scan.view.QRCodeReaderView;
 import com.xyoye.dandanplay.utils.scan.view.ScanWindowView;
@@ -40,16 +42,15 @@ public class RemoteScanActivity extends BaseMvcActivity implements QRCodeReaderV
     }
 
     @Override
-    public void initPageView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
+    protected void setStatusBar() {
+        ImmersionBar.with(this)
+                .transparentStatusBar()
+                .fitsSystemWindows(false)
+                .init();
+    }
 
+    @Override
+    public void initPageView() {
         setTitle("扫一扫");
         qrCodeReaderView.setAutofocusInterval(2000L);
         qrCodeReaderView.setOnQRCodeReadListener(this);

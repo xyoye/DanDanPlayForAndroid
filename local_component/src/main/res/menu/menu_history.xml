@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/select_all_history_item"
+        android:title="@string/item_select_all_history"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/remove_history_item"
+        android:icon="@drawable/ic_history_remove"
+        android:title="@string/item_remove_history"
+        app:showAsAction="ifRoom" />
+</menu>

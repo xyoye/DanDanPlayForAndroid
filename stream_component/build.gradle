@@ -1,0 +1,82 @@
+if (IS_APPLICATION_RUN.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        if (IS_APPLICATION_RUN.toBoolean()) {
+            applicationId "com.xyoye.stream_component"
+        }
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("AROUTER_MODULE_NAME", project.getName())
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            if (IS_APPLICATION_RUN.toBoolean()) {
+                manifest.srcFile 'src/main/app_manifest/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
+
+    implementation project(path: ':common_component')
+    //web dav
+    implementation 'com.thegrizzlylabs.sardine-android:sardine-android:0.7'
+    //ftp
+    implementation 'commons-net:commons-net:3.7.2'
+    //smb
+    implementation 'com.hierynomus:smbj:0.10.0'
+    implementation 'com.rapid7.client:dcerpc:0.10.0'
+
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+
+    kapt rootProject.ext.dependencies["arouter-compiler"]
+}

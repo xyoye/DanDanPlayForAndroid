@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.xyoye.data_component.entity.MediaLibraryEntity" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="serverData"
+            type="MediaLibraryEntity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/address_et"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_web_dav_address"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:text="@={serverData.url}"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/display_name_et"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_display_name"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:text="@={serverData.displayName}"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/address_et" />
+
+        <TextView
+            android:id="@+id/login_mode_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_login_mode"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/login_mode_rg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/login_mode_rg" />
+
+        <RadioGroup
+            android:id="@+id/login_mode_rg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@id/login_mode_tips"
+            app:layout_constraintTop_toBottomOf="@id/display_name_et">
+
+            <RadioButton
+                android:id="@+id/account_rb"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:checked="@={!serverData.Anonymous}"
+                android:text="@string/text_account_login" />
+
+            <RadioButton
+                android:id="@+id/anonymous_rb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:checked="@={serverData.Anonymous}"
+                android:text="@string/text_anonymous_login" />
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/account_et"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_login_account"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:text="@={serverData.account}"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/login_mode_rg" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/password_et"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_login_password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="80dp"
+            android:singleLine="true"
+            android:text="@={serverData.password}"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/account_et" />
+
+        <ImageView
+            android:id="@+id/password_toggle_iv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="10dp"
+            android:padding="15dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_input_visible"
+            app:layout_constraintBottom_toBottomOf="@id/password_et"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="@id/password_et"
+            app:layout_constraintTop_toTopOf="@id/password_et" />
+
+        <TextView
+            android:id="@+id/server_status_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_test_connect"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/server_test_connect_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/server_test_connect_iv" />
+
+        <TextView
+            android:id="@+id/server_status_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/server_status_tips"
+            app:layout_constraintTop_toTopOf="@id/server_status_tips"
+            tools:text="连接成功" />
+
+        <ImageView
+            android:id="@+id/server_test_connect_iv"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/background_item_press"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_server_connect_test"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password_et" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

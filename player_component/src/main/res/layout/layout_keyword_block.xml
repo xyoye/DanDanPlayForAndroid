@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/keyword_block_ll"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:background="@color/player_item_bg_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:translationX="-300dp"
+        tools:translationX="0dp">
+
+        <TextView
+            android:id="@+id/keyword_block_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/tips_keyword_block"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/keyword_block_add_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="1"
+            android:imeOptions="actionDone"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="14sp"
+            android:theme="@style/StyleSettingEdit"
+            app:layout_constraintEnd_toStartOf="@+id/keyword_block_add_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/keyword_block_tips" />
+
+        <TextView
+            android:id="@+id/keyword_block_add_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/action_add_block_keyword"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/keyword_block_add_et"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/keyword_block_input_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/tips_support_regex"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/keyword_block_add_et" />
+
+        <com.xyoye.common_component.weight.LabelsView
+            android:id="@+id/keyword_labels_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            app:isIndicator="true"
+            app:labelBackground="@drawable/background_keyword_block"
+            app:labelTextColor="@drawable/selecter_keyword_block_color"
+            app:labelTextPaddingBottom="5dp"
+            app:labelTextPaddingLeft="10dp"
+            app:labelTextPaddingRight="10dp"
+            app:labelTextPaddingTop="5dp"
+            app:labelTextSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/keyword_block_remove_tips"
+            app:layout_constraintTop_toBottomOf="@id/keyword_block_input_tips"
+            app:lineMargin="10dp"
+            app:maxSelect="0"
+            app:selectType="MULTI"
+            app:wordMargin="10dp" />
+
+        <TextView
+            android:id="@+id/keyword_block_remove_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/tips_remove_block_keyword"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

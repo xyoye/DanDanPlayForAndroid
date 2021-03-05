@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xyoye.local_component">
+
+    <application>
+        <activity android:name=".ui.activities.bind_danmu.BindDanmuActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".ui.activities.bind_subtitle.BindSubtitleActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".ui.activities.local_media.LocalMediaActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".ui.activities.play_history.PlayHistoryActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".ui.activities.bilibili_danmu.BilibiliDanmuActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".ui.activities.shooter_subtitle.ShooterSubtitleActivity"
+            android:configChanges="orientation|screenSize" />
+    </application>
+
+</manifest>

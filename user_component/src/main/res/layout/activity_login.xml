@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.xyoye.user_component.ui.activities.login.LoginViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.user_component.ui.activities.login.LoginViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <TextView
+            android:id="@+id/user_login_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/tips_user_login"
+            android:textColor="@color/text_black"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/user_account_layout"
+            style="@style/InputEditLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:hint="@string/tips_input_account"
+            app:layout_constraintTop_toBottomOf="@+id/user_login_tips">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/user_account_et"
+                style="@style/InputEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxEms="20"
+                android:text="@={viewModel.accountField}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/user_password_layout"
+            style="@style/InputEditLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/tips_input_password"
+            app:layout_constraintTop_toBottomOf="@+id/user_account_layout"
+            app:passwordToggleDrawable="@drawable/ic_input_visible"
+            app:passwordToggleEnabled="true">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/user_password_et"
+                style="@style/InputEditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textPassword"
+                android:maxEms="20"
+                android:text="@={viewModel.passwordField}" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/register_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/action_user_register"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/forgot_tv"
+            app:layout_constraintStart_toStartOf="@id/user_password_layout"
+            app:layout_constraintTop_toBottomOf="@id/user_password_layout" />
+
+        <TextView
+            android:id="@+id/forgot_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/action_user_forgot"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/user_password_layout"
+            app:layout_constraintStart_toEndOf="@id/register_tv"
+            app:layout_constraintTop_toBottomOf="@id/user_password_layout" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/background_login_button"
+            android:onClick="@{()-> viewModel.login()}"
+            android:text="@string/action_login"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/register_tv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

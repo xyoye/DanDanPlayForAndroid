@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xyoye.user_component">
+
+    <application>
+        <activity
+            android:name=".ui.activities.login.LoginActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.register.RegisterActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.forgot.ForgotActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.user_info.UserInfoActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.setting_player.SettingPlayerActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.setting_app.SettingAppActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.scan_manager.ScanManagerActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.cache_manager.CacheManagerActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.web_view.WebViewActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.feedback.FeedbackActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.about_us.AboutUsActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.license.LicenseActivity"
+            android:configChanges="orientation|screenSize" />
+    </application>
+
+</manifest>

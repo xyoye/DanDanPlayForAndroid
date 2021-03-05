@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/params_tv"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:background="@drawable/background_setting_action_tv"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/text_white_immutable"
+        android:textSize="14sp"
+        tools:text="123"
+        tools:textColor="@color/text_black" />
+</layout>

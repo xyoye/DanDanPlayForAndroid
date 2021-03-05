@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ListPreference
+        android:icon="@drawable/ic_player_setting_video"
+        android:key="player_type"
+        android:title="播放器类型" />
+    <ListPreference
+        android:icon="@drawable/ic_player_setting_pixel"
+        android:key="pixel_format_type"
+        android:title="像素格式类型" />
+    <SwitchPreference
+        android:key="media_code_c"
+        android:title="硬解码"
+        app:icon="@drawable/ic_player_setting_codec" />
+    <SwitchPreference
+        android:key="media_code_c_h265"
+        android:title="H.265 解码"
+        app:icon="@drawable/ic_player_setting_codec_h265" />
+    <SwitchPreference
+        android:key="open_sl_es"
+        android:summary="只要播放器还有声音，就不要打开这个设置"
+        android:title="OpenSL ES"
+        app:icon="@drawable/ic_player_setting_opensl" />
+    <SwitchPreference
+        android:key="surface_renders"
+        android:summary="使用后视频渲染性能更高，但不支持截图"
+        android:title="SurfaceView"
+        app:icon="@drawable/ic_player_setting_surface" />
+</PreferenceScreen>

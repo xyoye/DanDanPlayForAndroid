@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="item_mask_color">#77000000</color>
+    <color name="search_edit_hint_color">#99f6f6f6</color>
+    <color name="search_history_bg_color">#66000000</color>
+
+    <color name="text_screen_checked_color">@color/text_theme</color>
+</resources>

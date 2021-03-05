@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.local_component.ui.activities.bilibili_danmu.BilibiliDanmuViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.local_component.ui.activities.bilibili_danmu.BilibiliDanmuViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/layout_bg_color"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <EditText
+            android:id="@+id/download_message_et"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/background_item_corner"
+            android:gravity="top"
+            android:lineSpacingMultiplier="1.1"
+            android:padding="10dp"
+            android:scrollbars="vertical"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_download_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="40dp"
+            android:contentDescription="@string/action_add_media_storage"
+            android:src="@drawable/ic_add_white"
+            app:backgroundTint="@color/float_button_bg_color"
+            app:borderWidth="0dp"
+            app:elevation="5dp"
+            app:fabCustomSize="52dp"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:maxImageSize="26dp"
+            app:rippleColor="@color/float_button_ripple_color" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

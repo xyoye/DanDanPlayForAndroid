@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_item_press">
+
+        <ImageView
+            android:id="@+id/video_type_iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toTopOf="@id/video_type_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/video_name_tv"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:src="@drawable/ic_local_storage" />
+
+        <TextView
+            android:id="@+id/video_type_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_theme"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@id/play_progress_tv"
+            app:layout_constraintEnd_toEndOf="@id/video_type_iv"
+            app:layout_constraintStart_toStartOf="@id/video_type_iv"
+            app:layout_constraintTop_toBottomOf="@id/video_type_iv"
+            tools:ignore="SmallSp"
+            tools:text="本地" />
+
+        <TextView
+            android:id="@+id/video_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="12dp"
+            android:textColor="@color/text_black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/edit_cb"
+            app:layout_constraintStart_toEndOf="@id/video_type_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="测试" />
+
+        <TextView
+            android:id="@+id/video_describe_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/video_name_tv"
+            app:layout_constraintStart_toStartOf="@id/video_name_tv"
+            app:layout_constraintTop_toBottomOf="@id/video_name_tv"
+            tools:text="[1月新番][摇曳露营 第二季][Yuru Camp S2][07][1080][mp4][BIG5][简中]" />
+
+        <TextView
+            android:id="@+id/video_url_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/video_name_tv"
+            app:layout_constraintStart_toStartOf="@id/video_name_tv"
+            app:layout_constraintTop_toBottomOf="@id/video_describe_tv"
+            tools:text="/storage/emulated/0/DanDanPlay/test.mp4" />
+
+        <TextView
+            android:id="@+id/play_progress_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/video_name_tv"
+            app:layout_constraintTop_toBottomOf="@id/video_url_tv"
+            tools:text="进度：20:20/33:00（90%）" />
+
+        <TextView
+            android:id="@+id/play_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/video_name_tv"
+            app:layout_constraintTop_toTopOf="@id/play_progress_tv"
+            tools:text="时间：2021.09.20 20:12" />
+
+        <CheckBox
+            android:id="@+id/edit_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:visibility="gone"
+            android:clickable="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/layout_bg_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/play_time_tv" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -29,6 +29,7 @@ import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragm
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.getResColor
+import com.xyoye.common_component.extension.isDark
 import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.utils.dp2px
@@ -98,7 +99,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             if (calcOffset > 0) {
                 ImmersionBar.with(this)
                     .transparentBar()
-                    .statusBarDarkFont(true)
+                    .statusBarDarkFont(!isDark)
                     .init()
             } else {
                 ImmersionBar.with(this)

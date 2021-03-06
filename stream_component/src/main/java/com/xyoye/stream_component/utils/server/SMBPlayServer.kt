@@ -7,8 +7,9 @@ import com.xyoye.stream_component.utils.RangeUtils
 import fi.iki.elonen.NanoHTTPD
 import java.io.IOException
 import java.io.InputStream
+import kotlin.random.Random
 
-class SMBPlayServer private constructor() : NanoHTTPD(PORT) {
+class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
 
     private var sourcePath: String? = null
     private var sourceContentType: String? = null
@@ -22,8 +23,8 @@ class SMBPlayServer private constructor() : NanoHTTPD(PORT) {
     }
 
     companion object {
-        //随便定义的端口
-        private const val PORT = 13522
+        //随机端口
+        private fun randomPort() = Random.nextInt(20000, 30000)
 
         @JvmStatic
         fun getInstance() = Holder.instance

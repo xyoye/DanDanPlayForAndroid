@@ -118,7 +118,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
 
     private fun getBackIconColor(percent: Float): Int {
         //颜色由白->蓝变化
-        val startColor = getResColor(R.color.text_white)
+        val startColor = getResColor(R.color.text_white_immutable)
         val endColor = getResColor(R.color.text_theme)
 
         val startRed = Color.red(startColor)

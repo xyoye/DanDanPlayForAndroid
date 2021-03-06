@@ -17,7 +17,7 @@
 
             <solid android:color="@color/item_bg_color" />
 
-            <stroke android:width="0.8dp" android:color="@color/layout_bg_color" />
+            <stroke android:width="0.8dp" android:color="@color/item_border_color" />
 
         </shape>
     </item>

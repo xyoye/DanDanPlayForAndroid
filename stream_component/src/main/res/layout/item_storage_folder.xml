@@ -73,10 +73,10 @@
             tools:text="123M" />
 
         <View
+            style="@style/DividerStyle"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="10dp"
-            android:background="@color/layout_bg_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/file_cover_iv" />

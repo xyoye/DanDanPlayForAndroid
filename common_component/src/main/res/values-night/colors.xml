@@ -11,6 +11,8 @@
     <color name="layout_bg_color">#212121</color>
     <!-- 普通item背景色 -->
     <color name="item_bg_color">#303030</color>
+    <!-- 普通item边界线颜色 -->
+    <color name="item_border_color">#10ffffff</color>
     <!-- 搜索输入框颜色 -->
     <color name="search_edit_text_bg_color">#303030</color>
 </resources>

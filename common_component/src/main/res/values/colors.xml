@@ -14,6 +14,8 @@
     <color name="item_bg_color">#ffffff</color>
     <!-- 搜索输入框颜色 -->
     <color name="search_edit_text_bg_color">#4ea9f4</color>
+    <!-- 普通item边界线颜色 -->
+    <color name="item_border_color">#08000000</color>
 
     <!-- 以下颜色不随深色模式改变 -->
     <color name="colorAccent">#2095f4</color>

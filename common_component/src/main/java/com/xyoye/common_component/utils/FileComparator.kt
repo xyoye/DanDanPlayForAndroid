@@ -36,9 +36,9 @@ class FileComparator<T>(
         //文字相同
         if(str1 == str2)
             return 0
-        //字符串都是数字，转换为Long比较
+        //字符串都是数字，转换为BigInteger比较
         if (str1.isDigitsOnly() && str2.isDigitsOnly()){
-            return str1.toLong().compareTo(str2.toLong())
+            return str1.toBigInteger().compareTo(str2.toBigInteger())
         }
         //提取中间差异部分
         val diff = getDiffText(str1, str2)

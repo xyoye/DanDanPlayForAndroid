@@ -295,14 +295,7 @@ class FTPFileViewModel : BaseViewModel() {
             val fileList = fileLiveData.value ?: return@withContext null
 
             val danmuFTPFile = fileList.find {
-                //文件名相同
-                val ftpFileName = getFileNameNoExtension(it.name) + "."
-                if (ftpFileName == videoFileName) {
-                    //且是支持的字幕格式
-                    val extension = getFileExtension(it.name)
-                    return@find supportSubtitleExtension.contains(extension)
-                }
-                return@find false
+                SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
             } ?: return@withContext null
 
             val subtitleFileName = danmuFTPFile.name.trim().replace(" ", "_")

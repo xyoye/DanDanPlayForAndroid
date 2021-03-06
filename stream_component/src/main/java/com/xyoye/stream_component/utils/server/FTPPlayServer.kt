@@ -4,8 +4,9 @@ import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getFileExtension
 import fi.iki.elonen.NanoHTTPD
 import java.io.InputStream
+import kotlin.random.Random
 
-class FTPPlayServer private constructor() : NanoHTTPD(PORT) {
+class FTPPlayServer private constructor() : NanoHTTPD(randomPort()) {
 
     private var sourceInputStream: InputStream? = null
     private var sourceContentType: String? = null
@@ -16,8 +17,8 @@ class FTPPlayServer private constructor() : NanoHTTPD(PORT) {
     }
 
     companion object {
-        //随便定义的端口
-        private const val PORT = 13521
+        //随机端口
+        private fun randomPort() = Random.nextInt(30000, 40000)
 
         @JvmStatic
         fun getInstance() = Holder.instance

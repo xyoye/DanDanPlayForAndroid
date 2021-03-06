@@ -325,14 +325,7 @@ class SmbFileViewModel : BaseViewModel() {
             val fileList = fileLiveData.value ?: return@withContext null
 
             val danmuSmbFile = fileList.find {
-                //文件名相同
-                val smbFileName = getFileNameNoExtension(it.name) + "."
-                if (smbFileName == videoFileName) {
-                    //且是支持的字幕格式
-                    val extension = getFileExtension(it.name)
-                    return@find supportSubtitleExtension.contains(extension)
-                }
-                return@find false
+                SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
             } ?: return@withContext null
 
             val subtitleInputStream = SMBJManager.getInstance().getInputStream(

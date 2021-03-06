@@ -12,7 +12,7 @@ import com.xyoye.local_component.databinding.DialogShooterSecretBinding
  * Created by xyoye on 2021/2/24.
  */
 
-class ShooterSecretDialog : BaseBottomDialog<DialogShooterSecretBinding>() {
+class ShooterSecretDialog : BaseBottomDialog<DialogShooterSecretBinding>(true) {
 
     override fun getChildLayoutId() = R.layout.dialog_shooter_secret
 

@@ -99,8 +99,8 @@ object SubtitleUtils {
                 //遍历文件夹
                 directory.listFiles()?.forEach {
                     //同名字幕的文件
-                    isSameNameSubtitle(it, targetVideoName)?.let { subtitlePath ->
-                        possibleList.add(subtitlePath)
+                    if (isSameNameSubtitle(it.absolutePath, targetVideoName)){
+                        possibleList.add(it.absolutePath)
                     }
                 }
             }
@@ -124,15 +124,18 @@ object SubtitleUtils {
         return null
     }
 
-    private fun isSameNameSubtitle(childFile: File, targetVideoName: String): String? {
+    fun isSameNameSubtitle(subtitlePath: String, targetVideoName: String): Boolean {
+        val subtitleName = getFileNameNoExtension(subtitlePath) + "."
+        val videoName = getFileNameNoExtension(targetVideoName) + "."
+
         //字幕文件名与视频名相同
-        if (childFile.name.startsWith(targetVideoName)) {
-            val extension: String = getFileExtension(childFile.name)
+        if (subtitleName.startsWith(videoName)) {
+            val extension: String = getFileExtension(subtitlePath)
             //支持的字幕格式
-            supportSubtitleExtension
-                .find { it.equals(extension, true) }
-                ?.let { return childFile.absolutePath }
+            return supportSubtitleExtension.find {
+                it.equals(extension, true)
+            } != null
         }
-        return null
+        return false
     }
 }

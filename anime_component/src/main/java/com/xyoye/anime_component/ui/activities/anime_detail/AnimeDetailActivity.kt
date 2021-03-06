@@ -94,6 +94,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
                 Color.blue(titleTextColor)
             )
             dataBinding.toolbar.setTitleTextColor(titleColor)
+            dataBinding.followTv.background?.alpha = 255 - alpha
 
             //状态栏文字颜色
             if (calcOffset > 0) {

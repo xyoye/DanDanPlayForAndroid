@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme">#2095f4</color>
+
+    <color name="text_black">#353535</color>
+    <color name="text_white">#ffffff</color>
+
+    <!-- 状态栏颜色 -->
+    <color name="status_bar_color">#ffffff</color>
+
+    <!-- 普通layout背景色 -->
+    <color name="layout_bg_color">#f3f3f3</color>
+    <!-- 普通item背景色 -->
+    <color name="item_bg_color">#ffffff</color>
+    <!-- 搜索输入框颜色 -->
+    <color name="search_edit_text_bg_color">#4ea9f4</color>
+
+    <!-- 以下颜色不随深色模式改变 -->
+    <color name="colorAccent">#2095f4</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="red">#EA5757</color>
+    <color name="blue">#5DABF3</color>
+    <color name="orange">#F5A623</color>
+    <color name="pink">#fb7299</color>
+    <color name="gray">#999999</color>
+    <color name="gray_light">#cccccc</color>
+    <color name="division">#f3f3f3</color>
+    <color name="division_dark">#e3e3e3</color>
+
+    <color name="text_white_immutable">#ffffff</color>
+    <color name="text_gray">#999999</color>
+    <color name="text_orange">#f89957</color>
+    <color name="text_theme">#2095f4</color>
+    <color name="text_blue">#2095f4</color>
+    <color name="text_blue_light">#82bcf3</color>
+    <color name="text_pink">#fb7299</color>
+    <color name="text_red">#EA5757</color>
+    <color name="text_yellow">#FFE39920</color>
+    <color name="text_gray_alpha">#99f6f6f6</color>
+    <color name="text_gray_light">#c5c2c3</color>
+
+    <color name="warning_color">#FF9800</color>
+    <color name="error_color">#F44336</color>
+    <color name="success_color">#8BC34A</color>
+    <color name="info_color">#2095f4</color>
+    <color name="delete_color">#8BC34A</color>
+    <color name="toast_dark_color">#2F3032</color>
+
+    <color name="mask_black">#77000000</color>
+    <color name="mask_black_light">#2a000000</color>
+    <color name="mask_dialog">#b0000000</color>
+
+    <color name="indicator_checked_color">#2095f4</color>
+    <color name="indicator_uncheck_color">#999999</color>
+
+    <color name="gray_10">#F5F5F5</color>
+    <color name="gray_20">#EEEEEE</color>
+    <color name="gray_30">#E0E0E0</color>
+    <color name="gray_40">#BDBDBD</color>
+    <color name="gray_50">#9E9E9E</color>
+    <color name="gray_60">#757575</color>
+    <color name="gray_70">#616161</color>
+    <color name="gray_80">#424242</color>
+    <color name="gray_90">#212121</color>
+
+    <array name="text_colors">
+        <item>#ffffff</item>
+        <item>#9E9E9E</item>
+        <item>#795548</item>
+        <item>#FF9800</item>
+        <item>#FFEB3B</item>
+        <item>#8BC34A</item>
+        <item>#009688</item>
+        <item>#03A9F4</item>
+        <item>#3F51B5</item>
+        <item>#9C27B0</item>
+        <item>#F44336</item>
+        <item>#607D8B</item>
+        <item>#000000</item>
+    </array>
+
+    <array name="danmu_colors">
+        <item>#F44336</item>
+        <item>#fb7299</item>
+        <item>#FF9800</item>
+        <item>#FFEB3B</item>
+        <item>#8BC34A</item>
+        <item>#ffffff</item>
+        <item>#009688</item>
+        <item>#2095F4</item>
+        <item>#005996</item>
+        <item>#3F51B5</item>
+        <item>#9C27B0</item>
+    </array>
+</resources>

@@ -1,0 +1,85 @@
+<resources>
+    <string name="app_name">player_component</string>
+    <string name="cant_parse_url">无法解析播放地址</string>
+    <string name="video_record">记忆上次播放到</string>
+    <string name="video_skip">继续播放</string>
+    <string name="time_separator">/</string>
+    <string name="send_danmu">发射弹幕</string>
+    <string name="test_default_system_time">12:00</string>
+
+    <string name="text_setting_player">播放器设置</string>
+    <string name="text_orientation_changeable">开启屏幕翻转</string>
+    <string name="text_video_scale_type">视频比例</string>
+    <string name="text_video_speed">播放速度</string>
+    <string name="text_audio_stream">音频流</string>
+
+    <string name="text_danmu_setting">弹幕设置</string>
+    <string name="text_source_path_tips">路径：</string>
+    <string name="text_source_change">换源</string>
+    <string name="text_danmu_size_tips">文字大小</string>
+    <string name="text_danmu_speed_tips">弹幕速度</string>
+    <string name="text_danmu_alpha_tips">文字透明度</string>
+    <string name="text_danmu_project_alpha_tips">文字描边宽度</string>
+    <string name="text_danmu_offset_tips">时间调节</string>
+    <string name="text_danmu_offset_reduce">—</string>
+    <string name="hint_danmu_offset">请输入偏移时间</string>
+    <string name="text_danmu_offset_add">+</string>
+    <string name="text_danmu_block">弹幕类型屏蔽</string>
+    <string name="text_danmu_type_mobile">滚动弹幕</string>
+    <string name="text_danmu_type_bottom">底部弹幕</string>
+    <string name="text_danmu_type_top">顶部弹幕</string>
+    <string name="text_danmu_line_limit">滚动弹幕行数</string>
+    <string name="text_danmu_line_unlimited">无限制</string>
+    <string name="hint_danmu_line_limit">行数</string>
+    <string name="text_danmu_screen_count">弹幕同屏数量</string>
+    <string name="text_danmu_screen_count_unlimited">无限制</string>
+    <string name="text_danmu_screen_count_auto">自动</string>
+    <string name="hit_danmu_screen_count">数量</string>
+    <string name="text_danmu_cloud_block">弹幕云屏蔽</string>
+    <string name="text_danmu_keyword_block">关键字屏蔽</string>
+
+    <string name="text_setting_subtitle">字幕设置</string>
+    <string name="text_subtitle_stream">字幕流</string>
+    <string name="text_subtitle_track_add">添加</string>
+    <string name="text_subtitle_size_tips">文字大小</string>
+    <string name="text_subtitle_color_tips">文字颜色</string>
+    <string name="text_subtitle_stroke_size_tips">描边宽度</string>
+    <string name="text_subtitle_stroke_color_tips">描边颜色</string>
+    <string name="text_subtitle_offset_tips">时间调节</string>
+    <string name="text_subtitle_offset_reduce">—</string>
+    <string name="hint_subtitle_offset">请输入偏移时间</string>
+    <string name="text_subtitle_offset_add">+</string>
+
+    <string name="exo_track_selection_title_video">视频</string>
+    <string name="exo_track_selection_title_audio">音频</string>
+    <string name="exo_track_selection_title_text">文字</string>
+    <string name="exo_track_selection_none">无</string>
+    <string name="exo_track_selection_auto">自动</string>
+    <string name="exo_track_unknown">未知</string>
+    <string name="exo_track_resolution">%1$d × %2$d</string>
+    <string name="exo_track_mono">单声道</string>
+    <string name="exo_track_stereo">立体声</string>
+    <string name="exo_track_surround">环绕声</string>
+    <string name="exo_track_surround_5_point_1">5.1 环绕声</string>
+    <string name="exo_track_surround_7_point_1">7.1 环绕声</string>
+    <string name="exo_track_role_alternate">替用轨</string>
+    <string name="exo_track_role_supplementary">补充轨</string>
+    <string name="exo_track_role_commentary">旁白</string>
+    <string name="exo_track_role_closed_captions">字幕</string>
+    <string name="exo_track_bitrate">%1$.2f Mbps</string>
+    <string name="exo_item_list">%1$s，%2$s</string>
+    <string name="action_add_block_keyword">添加</string>
+    <string name="tips_remove_block_keyword">长按可移除关键字</string>
+    <string name="tips_keyword_block">关键字屏蔽</string>
+    <string name="tips_support_regex">支持正则表达式, 例：regex=^[1–9]d*$</string>
+    <string name="tips_danmu_text_size">弹幕字号</string>
+    <string name="tips_danmu_location">弹幕位置</string>
+    <string name="tips_danmu_color">弹幕颜色</string>
+    <string name="hint_send_danmu">发个友善的弹幕见证当下</string>
+    <string name="tips_last_play_position">记忆上次播放到</string>
+    <string name="action_skip_position">继续播放</string>
+    <string name="action_exit_player">退出播放</string>
+    <string name="tips_danmu_manager">弹幕管理</string>
+    <string name="tips_danmu_keyword_block">关键字屏蔽</string>
+    <string name="action_manager_danmu_block">管理</string>
+</resources>

@@ -1,0 +1,19 @@
+<resources>
+
+    <style name="AnimeDetailTheme" parent="AppTheme">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">false</item>
+        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+    </style>
+
+    <style name="CardViewStyle">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@color/item_bg_color</item>
+        <item name="cardCornerRadius">3dp</item>
+        <item name="cardElevation">1dp</item>
+    </style>
+
+    <style name="Toolbar_AnimeDetail" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+</resources>

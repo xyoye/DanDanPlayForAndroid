@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:background="@drawable/background_item_press"
+        app:cardCornerRadius="3dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/cover_iv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/anime_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:singleLine="true"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/cover_iv" />
+
+            <com.xyoye.common_component.weight.SlantedTextView
+                android:id="@+id/follow_tag_view"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:slantedBackgroundColor="@color/text_theme"
+                app:slantedLength="24dp"
+                app:slantedMode="left"
+                app:slantedText="已关注"
+                app:slantedTextColor="@color/text_white"
+                app:slantedTextSize="10sp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

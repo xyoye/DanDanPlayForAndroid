@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/player_top_ll"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_gravity="top"
+        android:background="@color/player_item_bg_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:translationY="-45dp"
+        tools:translationY="0dp">
+
+        <ImageView
+            android:id="@+id/back_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_video_action_item"
+            android:padding="10dp"
+            android:src="@mipmap/ic_return_back" />
+
+        <com.xyoye.player_component.widgets.MarqueeTextView
+            android:id="@+id/video_title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            tools:text="标题" />
+
+        <RelativeLayout
+            android:layout_width="36dp"
+            android:layout_height="15dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_battery" />
+
+            <ProgressBar
+                android:id="@+id/battery_pb"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="27dp"
+                android:layout_height="13dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="1dp"
+                android:max="100"
+                android:progressDrawable="@drawable/background_battery_progress"
+                tools:progress="50" />
+
+            <TextView
+                android:id="@+id/battery_tv"
+                android:layout_width="27dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="3dp"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="7sp"
+                tools:ignore="SmallSp"
+                tools:text="50%" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/system_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/test_default_system_time"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/subtitle_settings_iv"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/ic_subtitle_setting" />
+
+        <TextView
+            android:id="@+id/danmu_settings_tv"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="弹"
+            android:textColor="@drawable/ic_danmu_setting"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/player_settings_iv"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:src="@drawable/ic_player_setting" />
+    </LinearLayout>
+</layout>

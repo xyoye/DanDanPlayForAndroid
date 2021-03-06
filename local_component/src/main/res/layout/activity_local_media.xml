@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.xyoye.local_component.ui.activities.local_media.LocalMediaViewModel" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.local_component.ui.activities.local_media.LocalMediaViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <LinearLayout
+            android:id="@+id/path_ll"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <TextView
+                android:id="@+id/root_path_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:onClick="@{()->viewModel.listRoot()}"
+                android:text="@string/text_root_path"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/ic_file_manager_arrow" />
+
+            <TextView
+                android:id="@+id/folder_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="start"
+                android:gravity="end|center_vertical"
+                android:singleLine="true"
+                android:text="@{viewModel.currentFolderName}"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                android:visibility="@{viewModel.inRootFolder ? View.GONE : View.VISIBLE}"
+                tools:text="folder" />
+        </LinearLayout>
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/path_ll">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/media_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fast_play_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="40dp"
+                android:contentDescription="@string/action_play_last_video"
+                android:src="@drawable/ic_video_play"
+                app:backgroundTint="@color/float_button_bg_color"
+                app:borderWidth="0dp"
+                app:elevation="5dp"
+                app:fabCustomSize="52dp"
+                app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+                app:maxImageSize="26dp"
+                app:pressedTranslationZ="2dp"
+                app:rippleColor="@color/float_button_ripple_color" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,104 @@
+<resources>
+    <string name="app_name">user_component</string>
+    <string name="text_copyright_cover">Author Iconfont-温萱茉</string>
+    <string name="tips_user_login">帐号登录</string>
+    <string name="tips_input_account">帐号</string>
+    <string name="tips_input_password">密码</string>
+    <string name="action_user_register">新用户注册</string>
+    <string name="action_user_forgot">忘记帐号/密码</string>
+    <string name="action_login">登录</string>
+    <string name="tips_user_register">帐号注册</string>
+    <string name="tips_input_email">邮箱</string>
+    <string name="tips_input_screen_name">昵称</string>
+    <string name="action_register">注册</string>
+    <string name="tips_reset_password">*请填写注册时填写的帐号、邮箱，若信息正确，新的随机密码将发送至邮箱，此功能每2分钟可使用一次</string>
+    <string name="tips_retrieve_account">*请填写注册时填写的邮箱，若邮箱正确，帐号信息将发送至邮箱，此功能每10分钟可使用一次</string>
+    <string name="tips_user_follow_anime">我的追番</string>
+    <string name="tips_user_cloud_histroy">播放历史</string>
+    <string name="text_default_count">--</string>
+    <string name="test_new_password">新密码</string>
+    <string name="test_old_password">原密码</string>
+    <string name="tips_account_info">帐号信息</string>
+    <string name="tips_account">账号:</string>
+    <string name="tips_screen_name">昵称:</string>
+    <string name="text_edit_info">修改</string>
+    <string name="tips_password">密码</string>
+    <string name="tips_security_info">安全信息</string>
+    <string name="action_exit_login">退出登录</string>
+    <string name="tips_login">登录帐号</string>
+    <string name="action_player_setting">播放器设置</string>
+    <string name="action_scan_manager">扫描目录管理</string>
+    <string name="action_bilibili_danmu_download">BiliBili弹幕下载</string>
+    <string name="action_shooter_subtitle_download">射手(伪)字幕下载</string>
+    <string name="action_app_setting">应用设置</string>
+    <string name="action_cache_manager">缓存目录管理</string>
+    <string name="text_system_cache">系统缓存</string>
+    <string name="text_file_cache">文件缓存</string>
+    <string name="text_player_cache">视频播放缓存</string>
+    <string name="text_screen_shot_cache">视频截图缓存</string>
+    <string name="text_other_cache">其它缓存</string>
+    <string name="tips_extend_folder">扫描视频数据时，APP将额外扫描以下文件夹</string>
+    <string name="tips_filter_folder">扫描视频数据时，APP将隐藏已屏蔽的文件夹</string>
+    <string name="action_add_extend_folder">添加文件夹</string>
+    <string name="action_select_url">选择Url</string>
+    <string name="text_qq">155452509</string>
+    <string name="text_email">xyoye1997@outlook.com</string>
+    <string name="tips_common_question">常见问题反馈：</string>
+    <string name="tips_feedback_channels">反馈联系方式：</string>
+    <string name="tips_qq">Q Q:</string>
+    <string name="action_copy_qq">复制</string>
+    <string name="tips_email">邮箱:</string>
+    <string name="action_send_email">发邮件</string>
+    <string name="tips_other_channels">其它:</string>
+    <string name="tips_github_issues">GitHub Issues</string>
+    <string name="action_edit_issues">编辑</string>
+    <string name="text_app_name">弹弹play 概念版</string>
+    <string name="text_github_project_name">Github：DanDanPlayForAndroid</string>
+    <string name="text_official_address">官网：www.dandanplay.com</string>
+
+    <integer-array name="cover">
+        <item>@drawable/ic_bailitusu</item>
+        <item>@drawable/ic_baoqingtian</item>
+        <item>@drawable/ic_baiqian</item>
+        <item>@drawable/ic_baisuzhen</item>
+        <item>@drawable/ic_dongfangbubai</item>
+        <item>@drawable/ic_huawuque</item>
+        <item>@drawable/ic_lindaiyu</item>
+        <item>@drawable/ic_linshiyin</item>
+        <item>@drawable/ic_lixunhuan</item>
+        <item>@drawable/ic_meichangsu</item>
+        <item>@drawable/ic_longkui</item>
+        <item>@drawable/ic_niexiaoqian</item>
+        <item>@drawable/ic_ouyangshaogong</item>
+        <item>@drawable/ic_tangseng</item>
+        <item>@drawable/ic_nihuang</item>
+        <item>@drawable/ic_zhenhuan</item>
+        <item>@drawable/ic_xiaopingjing</item>
+        <item>@drawable/ic_zhanzhao</item>
+        <item>@drawable/ic_ziwei</item>
+        <item>@drawable/ic_zixuan</item>
+    </integer-array>
+
+    <string-array name="cover_name">
+        <item>百里屠苏</item>
+        <item>包青天</item>
+        <item>白浅</item>
+        <item>白素贞</item>
+        <item>东方不败</item>
+        <item>花无缺</item>
+        <item>林黛玉</item>
+        <item>林诗音</item>
+        <item>李寻欢</item>
+        <item>梅长苏</item>
+        <item>龙葵</item>
+        <item>聂小倩</item>
+        <item>欧阳少恭</item>
+        <item>唐僧</item>
+        <item>霓凰</item>
+        <item>甄嬛</item>
+        <item>萧平旌</item>
+        <item>展昭</item>
+        <item>紫薇</item>
+        <item>紫萱</item>
+    </string-array>
+</resources>

@@ -1,5 +1,0 @@
-<lint>
-    <issue id="InvalidPackage">
-        <ignore path="**/javapoet*.jar"/>
-    </issue>
-</lint>

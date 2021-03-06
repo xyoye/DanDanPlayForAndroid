@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">anime_component</string>
+    <string name="text_expandable_open">[展开]</string>
+    <string name="text_anime_rate_tips">分</string>
+    <string name="anime_episodes_tips">剧集列表</string>
+    <string name="anime_detail_more_tips">更多推荐</string>
+    <string name="anime_detail_recommend_tips">相关推荐</string>
+
+    <string name="subgroup">字幕组</string>
+    <string name="source_type">分类</string>
+    <string name="magnet_search_hint">搜索：番剧+空格+集数</string>
+
+    <string name="copyright_resource">以上信息由动漫花园资源网（share.dmhy.org）提供</string>
+    <string name="asc">正序</string>
+    <string name="anime_status">状态</string>
+    <string name="anime_rating">评分</string>
+    <string name="anime_type">类型</string>
+    <string name="anime_info">番剧信息</string>
+    <string name="anime_intro">番剧简介</string>
+    <string name="anime_recommend">相关推荐</string>
+    <string name="anime_recommend_more">更多推荐</string>
+    <string name="anime_no_follow">追番</string>
+    <string name="search_anime_hint">搜索: 番剧名称</string>
+    <string name="search_magnet_hint">搜索: 番剧+空格+集数</string>
+    <string name="sort_tips">排序:</string>
+    <string name="season_tips">季度:</string>
+    <string name="year_tips">年份:</string>
+    <string name="search">搜索</string>
+    <string name="tips_magnet_type">分类：</string>
+    <string name="tips_magnet_subgroup">字幕组：</string>
+    <string name="text_domain">节点</string>
+    <string name="action_search">找番剧</string>
+    <string name="action_season_anime">季度番剧</string>
+    <string name="hint_search_domain_format">节点链接格式: http(s)://xxx.xxx</string>
+    <string name="question_why_need_domain">Q：为什么需要搜索节点？</string>
+    <string name="answer_why_need_domain">A：弹弹play不提供任何番剧资源的搜索服务，如果需要相关功能，请通过节点从第三方服务获取搜索内容</string>
+    <string name="question_where_get_domain">Q：如何获取获取第三方资源搜索服务节点？</string>
+    <string name="answer_where_get_domain">A：弹弹play不提供节点，请从自行从网络上搜索相关节点</string>
+    <string name="action_find_domain">查找第三方资源搜索服务节点</string>
+</resources>

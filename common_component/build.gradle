@@ -1,0 +1,101 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("Boolean", "IS_DEBUG_MODE", "${IS_DEBUG_MODE.toBoolean()}")
+        }
+
+        debug {
+            buildConfigField("Boolean", "IS_DEBUG_MODE", "${IS_DEBUG_MODE.toBoolean()}")
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+
+    api project(":data_component")
+
+    api rootProject.ext.dependencies["core-ktx"]
+    api rootProject.ext.dependencies["kotlin-stdlib-jdk7"]
+    api rootProject.ext.dependencies["kotlinx-coroutines-core"]
+    api rootProject.ext.dependencies["kotlinx-coroutines-android"]
+    api rootProject.ext.dependencies["lifecycle-viewmodel-ktx"]
+    api rootProject.ext.dependencies["lifecycle-runtime-ktx"]
+    api rootProject.ext.dependencies["room-ktx"]
+
+    api rootProject.ext.dependencies["appcompat"]
+    api rootProject.ext.dependencies["constraintlayout"]
+    api rootProject.ext.dependencies["recyclerview"]
+    api rootProject.ext.dependencies["material"]
+    api rootProject.ext.dependencies["swiperefreshlayout"]
+    api rootProject.ext.dependencies["multidex"]
+    api rootProject.ext.dependencies["room"]
+    api rootProject.ext.dependencies["palette"]
+    api rootProject.ext.dependencies["paging"]
+    api rootProject.ext.dependencies["startup"]
+    api rootProject.ext.dependencies["preference"]
+
+    api rootProject.ext.dependencies["arouter-api"]
+
+    api rootProject.ext.dependencies["retrofit"]
+    implementation rootProject.ext.dependencies["converter-gson"]
+    implementation rootProject.ext.dependencies["mmkv"]
+
+    api rootProject.ext.dependencies["immersionbar"]
+
+    api 'com.github.bumptech.glide:glide:4.11.0'
+    api 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'com.tencent.bugly:crashreport_upgrade:1.5.0'
+    implementation 'com.tencent.bugly:nativecrashreport:3.8.0'
+
+    api(name: 'sevenzipjbinding4Android', ext: 'aar')
+
+    implementation files('libs/mmkv-annotation.jar')
+
+    kapt files('libs/mmkv-compiler.jar')
+    kapt rootProject.ext.dependencies["room-compiler"]
+}

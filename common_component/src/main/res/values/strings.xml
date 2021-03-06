@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_dialog_config">确定</string>
+    <string name="text_dialog_cancel">取消</string>
+    <string name="title_common_dialog">提示</string>
+    <string name="confirm_dialog">确定</string>
+    <string name="cancel_dialog">取消</string>
+
+    <string name="text_root_path">根目录</string>
+    <string name="text_empty_data">暂无数据</string>
+    <string name="check_not_show_again">不再显示</string>
+    <string name="tips_loading">加载中...</string>
+
+    <item name="labels_key_data" type="id"/>
+    <item name="labels_key_position" type="id"/>
+</resources>

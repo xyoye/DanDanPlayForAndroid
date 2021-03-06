@@ -1,0 +1,24 @@
+<resources>
+    <!-- 截图对话框 -->
+    <style name="StyleScreenShotDialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="colorPrimary">@color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowSoftInputMode">adjustPan</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_zoom_in</item>
+        <item name="android:windowExitAnimation">@anim/dialog_zoom_out</item>
+    </style>
+
+    <!-- 播放器中EditText样式-->
+    <style name="StyleSettingEdit" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+</resources>

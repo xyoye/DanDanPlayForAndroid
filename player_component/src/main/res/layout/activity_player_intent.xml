@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.xyoye.player_component.ui.activities.player_intent.PlayerIntentViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.player_component.ui.activities.player_intent.PlayerIntentViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/player_bg_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/error_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/cant_parse_url"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="@{viewModel.isParseError() ? View.VISIBLE : View.GONE }" />
+
+        <TextView
+            android:id="@+id/exit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_action_checked"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="@string/action_exit_player"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            android:visibility="@{viewModel.isParseError() ? View.VISIBLE : View.GONE }" />
+
+    </LinearLayout>
+</layout>

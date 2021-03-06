@@ -1,56 +1,10 @@
 <resources>
     <string name="app_name">弹弹play 概念版</string>
 
-    <string name="anime_detail_not_login_hint">请登录后再进行此操作</string>
-    <string name="anima_episode_tips_string">剧集列表</string>
-    <string name="menu_favorite_string">关注</string>
-    <string name="folder_icon_resouces">Folder Icon</string>
-    <string name="load_danmaku">加载弹幕</string>
-    <string name="tip_downloading">下载中…</string>
-    <string name="login_button_tip">登录 / 注册</string>
-    <string name="logout_tip">退出登录</string>
-    <string name="page_info_username_tip">账号：</string>
-    <string name="modify_tip">修改</string>
-    <string name="nickname_tip">昵称：</string>
-    <string name="password_tip">密码</string>
+	<string name="text_main_toolbar_item">新增媒体库</string>
 
-    <string name="what_is_tracker">
-        BitTorrent tracker（中文可称：BT服务器、tracker服务器等）是帮助BitTorrent协议在节点与节点之间做连接的服务器，对BT下载起到客户端协调和调控的重要作用。\n\n
+    <string name="official_website">www.dandanplay.com</string>
 
-        BitTorrent客户端下载一开始就要连接到tracker，从tracker获得其他客户端IP地址后，才能连接到其他客户端下载。在传输过程中，也会一直与tracker通信，上传自己的信息，获取其它客户端的信息。\n\n
-
-        长按添加按钮可将tracker恢复为弹弹提供的默认tracker。\n\n
-
-        from zh.wikipedia.org
-    </string>
-
-    <string name="about_download_torrent">
-        下载速度慢原因：\n
-        &#160;&#160;1、种子资源不行，需要找其他资源下载\n
-        &#160;&#160;2、tracker不足，你可以到tracker管理页面了解添加tracker\n\n
-        种子资源不属弹弹所有，所以并不保证资源的完整性和有效性。\n\n
-
-        注：长按下载项可对其进行管理
-    </string>
-
-    <string name="about_download_subtitle">
-        获取API密钥需登录射手网，在用户面板取得\nhttps://secure.assrt.net/user/logon.xml\n\n
-
-        密钥为使用者所有，本应用仅保存密钥于本地，不会以其它方式获取或公开密钥\n\n
-
-        本应用使用的是射手（伪）网（https://assrt.net）提供的开源字幕API
-
-    </string>
-
-    <string name="mkv_tips">
-        检测到视频格式为MVK，建议到播放器设置中修改设置\n\n
-        方案一：使用ijk播放器，设置像素格式为YV12或OpenGL ES2\n
-        方案二：使用exo播放器，切换播放器即可\n\n
-
-        注1：ijk播放器对MKV格式视频内容并不完全支持，可能会出现没有显示内嵌字幕的情况。\n
-        注2：此提示只会出现一次。
-    </string>
-    <string name="source_origin">以下信息由动漫花园资源网（share.dmhy.org）提供</string>
 
     <string-array name="splash_svg_data">
         <item>

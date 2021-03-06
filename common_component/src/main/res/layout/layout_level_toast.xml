@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/color_toast_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:background="@drawable/background_toast"
+        android:backgroundTint="@color/warning_color"
+        android:minHeight="80dp">
+
+        <ImageView
+            android:id="@+id/toast_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/background_toast"
+            android:padding="8dp"
+            android:src="@drawable/ic_toast_warning" />
+
+        <LinearLayout
+            android:id="@+id/toast_content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toEndOf="@id/toast_iv"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/toast_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:text="警告" />
+
+            <TextView
+                android:id="@+id/toast_content_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAlignment="textStart"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="测试提示内容测试内容测试内容测试内容测试" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.xyoye.anime_component.ui.fragment.anime_episode.AnimeEpisodeFragmentViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.anime_component.ui.fragment.anime_episode.AnimeEpisodeFragmentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/title_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/episode_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@{viewModel.episodeCountField}"
+                android:textColor="@color/text_theme"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/sort_cl"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/sort_cl"
+                tools:text="共13集" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/sort_cl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_item_press"
+                android:onClick="@{() -> viewModel.changeSort()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/sort_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/asc"
+                    android:textColor="@color/text_gray"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/sort_iv"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_centerVertical="true"
+                    android:paddingStart="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="9dp"
+                    android:src="@drawable/ic_change_sort"
+                    app:layout_constraintStart_toEndOf="@id/sort_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/episode_rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_cl" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

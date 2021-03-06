@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="com.xyoye.user_component.ui.activities.license.LicenseViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.user_component.ui.activities.license.LicenseViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/license_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</layout>

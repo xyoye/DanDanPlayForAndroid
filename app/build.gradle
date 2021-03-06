@@ -1,26 +1,24 @@
 apply plugin: 'com.android.application'
-
-def keyPropertiesFile = rootProject.file("keystore.properties")
-def keyProperties = new Properties()
-if (keyPropertiesFile.exists()) {
-    keyProperties.load(new FileInputStream(keyPropertiesFile))
-}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
-        applicationId rootProject.ext.android.applicationId
+        applicationId "com.xyoye.dandanplay"
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
-        javaCompileOptions {
-            annotationProcessorOptions {
-                includeCompileClasspath = true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("AROUTER_MODULE_NAME", project.getName())
             }
         }
         ndk {
@@ -28,141 +26,73 @@ android {
         }
     }
 
-    signingConfigs {
-        debug {
-            storeFile keyProperties.containsKey("KEY_LOCATION")
-                    ? file(keyProperties['KEY_LOCATION'])
-                    : file("../dandanplay.jks")
-            storePassword keyProperties.containsKey("KEYSTORE_PASS")
-                    ? keyProperties['KEYSTORE_PASS']
-                    : System.getenv("KEYSTORE_PASS")
-            keyAlias keyProperties.containsKey("ALIAS_NAME")
-                    ? keyProperties['ALIAS_NAME']
-                    : System.getenv("ALIAS_NAME")
-            keyPassword keyProperties.containsKey("ALIAS_PASS")
-                    ? keyProperties['ALIAS_PASS']
-                    : System.getenv("ALIAS_PASS")
-        }
-
-        release {
-            storeFile keyProperties.containsKey("KEY_LOCATION")
-                    ? file(keyProperties['KEY_LOCATION'])
-                    : file("../dandanplay.jks")
-            storePassword keyProperties.containsKey("KEYSTORE_PASS")
-                    ? keyProperties['KEYSTORE_PASS']
-                    : System.getenv("KEYSTORE_PASS")
-            keyAlias keyProperties.containsKey("ALIAS_NAME")
-                    ? keyProperties['ALIAS_NAME']
-                    : System.getenv("ALIAS_NAME")
-            keyPassword keyProperties.containsKey("ALIAS_PASS")
-                    ? keyProperties['ALIAS_PASS']
-                    : System.getenv("ALIAS_PASS")
-        }
-    }
-
-    sourceSets {
-        main {
-            res.srcDirs = ['src/main/res', 'src/main/res-night']
-        }
-    }
-
-    repositories {
-        flatDir { dirs 'libs' }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
-    compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
+    signingConfigs {
+        debug {
+            def propertiesFile = rootProject.file("keystore.properties")
+            if (!propertiesFile.exists()){
+                propertiesFile = rootProject.file("debug.properties")
+            }
+            if (propertiesFile.exists()){
+                def debugProperties = new Properties()
+                debugProperties.load(new FileInputStream(propertiesFile))
+
+                storeFile file(debugProperties['KEY_LOCATION'])
+                storePassword debugProperties['KEYSTORE_PASS']
+                keyAlias debugProperties['ALIAS_NAME']
+                keyPassword debugProperties['ALIAS_PASS']
+            }
+        }
+
+        release {
+            storeFile file("../dandanplay.jks")
+            storePassword System.getenv("KEYSTORE_PASS")
+            keyAlias System.getenv("ALIAS_NAME")
+            keyPassword System.getenv("ALIAS_PASS")
+        }
     }
 
-    lintOptions {
-        lintConfig file("lint.xml")
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-    configurations {
-        all {
-            exclude module: 'httpclient'
-            exclude module: 'commons-logging'
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
+    repositories {
+        flatDir {
+            dirs project(':download_component').file('libs')
         }
     }
 }
 
-def skin_support_version = "4.0.5"
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':player')
-    implementation project(':smb')
-    implementation(name: 'thunder', ext: 'aar')
-    implementation(name: 'sevenzipjbinding4Android', ext: 'aar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
 
-    implementation rootProject.ext.dependencies["appcompat-v7"]
-    implementation rootProject.ext.dependencies["appcompat-v4"]
-    implementation rootProject.ext.dependencies["design"]
-    implementation rootProject.ext.dependencies["cardview"]
-    implementation rootProject.ext.dependencies["junit"]
-    implementation rootProject.ext.dependencies["constraint-layout"]
-    implementation rootProject.ext.dependencies["preference"]
-    implementation rootProject.ext.dependencies["legacy"]
-    implementation rootProject.ext.dependencies["activity"]
-    implementation rootProject.ext.dependencies["fragment"]
-    implementation rootProject.ext.dependencies["core"]
-    implementation rootProject.ext.dependencies["viewpager"]
-    implementation rootProject.ext.dependencies["viewpager2"]
-    androidTestImplementation rootProject.ext.dependencies["runner"]
-    androidTestImplementation rootProject.ext.dependencies["espresso-core"]
+    kapt rootProject.ext.dependencies["arouter-compiler"]
 
-    implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'
-    implementation 'com.tencent.bugly:nativecrashreport:3.7.1'
-    implementation 'androidx.multidex:multidex:2.0.0'
-
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
-    implementation 'com.squareup.okio:okio:1.15.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.13'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-
-    implementation 'org.nanohttpd:nanohttpd:2.3.1'
-    implementation 'org.jsoup:jsoup:1.11.2'
-    implementation 'com.youth.banner:banner:1.4.10'
-    implementation 'com.contrarywind:Android-PickerView:4.1.6'
-    implementation 'com.google.zxing:core:3.2.1'
-    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
-    implementation 'cat.ereza:customactivityoncrash:2.3.0'
-
-    implementation 'com.github.junrar:junrar:4.0.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-
-    implementation "com.frostwire:jlibtorrent:1.2.0.16"
-    implementation "com.frostwire:jlibtorrent-android-arm:1.2.0.16"
-
-    //skins-support 基础控件支持
-    implementation "skin.support:skin-support:$skin_support_version"
-    implementation "skin.support:skin-support-appcompat:$skin_support_version"
-    implementation "skin.support:skin-support-design:$skin_support_version"
-    implementation "skin.support:skin-support-cardview:$skin_support_version"
-    implementation "skin.support:skin-support-constraint-layout:$skin_support_version"
-    implementation 'skin.support:flycotablayout:2.1.2.2'
-
-    //状态栏
-    implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
-
-    //rx自动解除订阅
-    implementation 'com.uber.autodispose:autodispose:1.0.0-RC3'
-    implementation 'com.uber.autodispose:autodispose-android-archcomponents:1.0.0-RC3'
-
-    implementation 'com.jakewharton:butterknife:10.0.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
-
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+    implementation project(path: ':common_component')
+    if (!IS_APPLICATION_RUN.toBoolean()){
+        implementation project(path: ':download_component')
+        implementation project(path: ':player_component')
+        implementation project(path: ':anime_component')
+        implementation project(path: ':user_component')
+        implementation project(path: ':local_component')
+        implementation project(path: ':stream_component')
+    }
 }

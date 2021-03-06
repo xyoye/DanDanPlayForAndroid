@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="本地视频加载策略">
+
+        <SwitchPreference
+            android:key="auto_load_local_danmu"
+            android:summary="未指定弹幕时，如果【本地同名弹幕】存在，则自动加载"
+            android:title="自动加载本地弹幕"
+            app:icon="@drawable/ic_player_setting_danmu_load" />
+
+        <SwitchPreference
+            android:key="auto_load_network_danmu"
+            android:summary="未指定弹幕时，如果【网络弹幕】匹配存在，则自动加载"
+            android:title="自动加载网络弹幕"
+            app:icon="@drawable/ic_player_setting_danmu_load" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="网络视频加载策略【FTP、WebDav、SMB】">
+
+        <SwitchPreference
+            android:key="auto_load_danmu_network_storage"
+            android:summary="如果【同文件内同名弹幕】存在，则自动加载"
+            android:title="自动加载同名弹幕"
+            app:icon="@drawable/ic_player_setting_danmu_load" />
+
+        <SwitchPreference
+            android:key="auto_match_danmu_network_storage"
+            android:summary="无同名弹幕时，如果【网络弹幕】匹配存在，则自动加载"
+            android:title="自动加载网络弹幕（仅支持SMB）"
+            app:icon="@drawable/ic_player_setting_danmu_load" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="其它">
+        <SwitchPreference
+            android:key="show_dialog_before_play"
+            android:summary="外部来源包括：FTP、WebDav、SMB、串流、磁链及第三方APP"
+            android:title="【外部视频】展示选择弹幕弹窗"
+            app:icon="@drawable/ic_player_setting_chain_dialog" />
+
+        <SwitchPreference
+            android:key="auto_launch_danmu_before_play"
+            android:title="【外部视频】自动进入选择弹幕" />
+
+        <SwitchPreference
+            android:key="danmu_cloud_block"
+            android:summary="根据弹弹云端数据，屏蔽弹幕"
+            android:title="弹幕云屏蔽"
+            app:icon="@drawable/ic_player_setting_danmu_block" />
+
+        <SwitchPreference
+            android:key="danmu_debug"
+            android:summary="显示弹幕FPS数据"
+            android:title="弹幕调试工具"
+            app:icon="@drawable/ic_player_setting_danmu_debug" />
+    </PreferenceCategory>
+</PreferenceScreen>

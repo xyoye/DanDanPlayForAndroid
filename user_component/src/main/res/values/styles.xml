@@ -1,0 +1,25 @@
+<resources>
+
+    <style name="InputEditTextTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/gray</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="UserInfoToolbarTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/text_red</item>
+    </style>
+
+    <style name="InputEditTextStyle">
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:theme">@style/InputEditTextTheme</item>
+    </style>
+
+    <style name="InputEditLayoutStyle">
+        <item name="android:layout_marginStart">30dp</item>
+        <item name="android:layout_marginEnd">30dp</item>
+        <item name="errorEnabled">true</item>
+        <item name="errorTextColor">@color/text_red</item>
+    </style>
+</resources>

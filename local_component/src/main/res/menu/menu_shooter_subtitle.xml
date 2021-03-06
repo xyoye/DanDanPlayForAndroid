@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_shooter_setting"
+        android:icon="@drawable/ic_shooter_setting"
+        android:title="@string/text_shooter_setting"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/item_search_subtitle"
+        android:icon="@drawable/ic_danmu_search"
+        android:title="@string/text_search_subtitle"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/keyword_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_keyword_block"
+    android:maxLength="8"
+    android:paddingStart="5dp"
+    android:paddingTop="3dp"
+    android:paddingEnd="5dp"
+    android:paddingBottom="3dp"
+    android:textColor="@color/text_white"
+    android:textSize="14sp"
+    tools:text="测试" />

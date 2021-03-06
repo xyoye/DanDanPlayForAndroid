@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.effective.android.panel.view.PanelSwitchLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.effective.android.panel.view.content.LinearContentContainer
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:edit_view="@id/danmu_input_et">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/player_item_bg_color"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+
+                <ImageView
+                    android:id="@+id/font_edit_iv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_font_edit" />
+
+                <EditText
+                    android:id="@+id/danmu_input_et"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_danmu_input"
+                    android:hint="@string/hint_send_danmu"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/text_black"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/send_danmu_iv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="14dp"
+                    android:src="@drawable/ic_send_danmu" />
+            </LinearLayout>
+
+        </com.effective.android.panel.view.content.LinearContentContainer>
+
+        <com.effective.android.panel.view.panel.PanelContainer
+            android:id="@+id/panel_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/player_item_bg_color">
+
+            <com.effective.android.panel.view.panel.PanelView
+                android:id="@+id/danmu_font_panel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:panel_layout="@layout/layout_danmu_font"
+                app:panel_trigger="@id/font_edit_iv" />
+
+        </com.effective.android.panel.view.panel.PanelContainer>
+
+    </com.effective.android.panel.view.PanelSwitchLayout>
+
+</layout>

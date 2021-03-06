@@ -1,0 +1,19 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/input_et"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/background_dialog_edit"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:maxLines="1"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:singleLine="true"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_gray"
+        android:textSize="14sp" />
+
+</layout>

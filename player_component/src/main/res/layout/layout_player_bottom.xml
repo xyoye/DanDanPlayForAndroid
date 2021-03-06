@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/player_bottom_ll"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_gravity="bottom"
+        android:background="@color/player_item_bg_color"
+        android:orientation="vertical"
+        android:translationY="64dp"
+        tools:translationY="0dp">
+
+        <SeekBar
+            android:id="@+id/play_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/player_item_bg_color"
+            android:max="100"
+            android:maxHeight="4dp"
+            android:minHeight="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:progressDrawable="@drawable/background_seek_progress"
+            android:thumb="@drawable/ic_player_seek_ball"
+            app:layout_constraintBottom_toTopOf="@id/bottom_info_ll" />
+
+        <LinearLayout
+            android:id="@+id/bottom_info_ll"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/play_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_video_action_item"
+                android:padding="10dp"
+                android:src="@drawable/ic_play_bt" />
+
+            <TextView
+                android:id="@+id/current_position_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                tools:text="00:00" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:text="@string/time_separator"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/duration_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                tools:text="00:00" />
+
+            <TextView
+                android:id="@+id/send_danmu_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_send_danmu_bt"
+                android:gravity="center"
+                android:padding="7dp"
+                android:text="@string/send_danmu"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/danmu_control_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="3dp"
+                android:background="@drawable/background_video_action_item"
+                android:padding="5dp"
+                android:src="@drawable/ic_danmaku_control" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

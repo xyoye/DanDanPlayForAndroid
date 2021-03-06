@@ -1,0 +1,86 @@
+if (IS_APPLICATION_RUN.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        if (IS_APPLICATION_RUN.toBoolean()) {
+            applicationId "com.xyoye.player_component"
+        }
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("AROUTER_MODULE_NAME", project.getName())
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            if (IS_APPLICATION_RUN.toBoolean()) {
+                manifest.srcFile 'src/main/app_manifest/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        dataBinding = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation rootProject.ext.dependencies["junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_junit"]
+    androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
+
+    kapt rootProject.ext.dependencies["arouter-compiler"]
+
+    implementation project(path: ':common_component')
+
+    implementation 'com.github.albfernandez:juniversalchardet:2.0.2'
+    implementation 'com.effective.android:panelSwitchHelper-androidx:1.3.13'
+
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+    implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
+
+    implementation rootProject.ext.dependencies["exoplayer"]
+    implementation rootProject.ext.dependencies["exoplayer-core"]
+    implementation rootProject.ext.dependencies["exoplayer-dash"]
+    implementation rootProject.ext.dependencies["exoplayer-hls"]
+    implementation rootProject.ext.dependencies["exoplayer-smoothstraming"]
+    implementation rootProject.ext.dependencies["exoplayer-rtmp"]
+}

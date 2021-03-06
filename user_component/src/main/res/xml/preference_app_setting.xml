@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="应用">
+        <Preference
+            android:key="app_version"
+            android:title="当前版本"
+            app:icon="@drawable/ic_app_setting_app_version" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="设置">
+        <SwitchPreference
+            android:key="hide_file"
+            android:summary="在选择文件时，显示系统隐藏文件"
+            android:title="显示隐藏文件"
+            app:icon="@drawable/ic_app_setting_hide_file" />
+
+        <SwitchPreference
+            android:key="splash_page"
+            android:title="展示APP启动页"
+            app:icon="@drawable/ic_app_setting_splash" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="其它">
+        <Preference
+            android:key="license"
+            android:title="开源许可协议"
+            app:icon="@drawable/ic_app_setting_license" />
+        <Preference
+            android:key="about_us"
+            android:title="关于我们"
+            app:icon="@drawable/ic_app_setting_about_us" />
+        <Preference
+            android:key="feedback"
+            android:title="意见反馈"
+            app:icon="@drawable/ic_app_setting_feedback" />
+    </PreferenceCategory>
+</PreferenceScreen>

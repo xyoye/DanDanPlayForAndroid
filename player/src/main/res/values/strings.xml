@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">player</string>
-    <string name="video_record">记忆上次播放到</string>
-    <string name="video_skip">继续播放</string>
-
-    <item name="tag_key_data" type="id"/>
-    <item name="tag_key_position" type="id"/>
-</resources>

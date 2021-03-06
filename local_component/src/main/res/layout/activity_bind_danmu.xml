@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.local_component.ui.activities.bind_danmu.BindDanmuViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.local_component.ui.activities.bind_danmu.BindDanmuViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/layout_bg_color">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/danmu_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

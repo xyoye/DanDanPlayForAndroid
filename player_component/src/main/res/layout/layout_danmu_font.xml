@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/danmu_font_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:background="@color/player_item_bg_color">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_danmu_text_size"
+            android:textColor="@color/text_white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/medium_danmu_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_danmu_input_option_medium_textsize" />
+
+        <ImageView
+            android:id="@+id/small_danmu_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_danmu_input_option_small_textsize" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_danmu_location"
+            android:textColor="@color/text_white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/scroll_danmu_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_danmu_input_option_rl_type" />
+
+        <ImageView
+            android:id="@+id/top_danmu_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_danmu_input_option_top_type" />
+
+        <ImageView
+            android:id="@+id/bottom_danmu_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_danmu_input_option_bottom_type" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tips_danmu_color"
+            android:textColor="@color/text_white"
+            android:textSize="14sp" />
+
+        <com.xyoye.common_component.weight.ColorSeekBar
+            android:id="@+id/danmu_color_seek_bar"
+            android:layout_width="195dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            app:barHeight="10dp"
+            app:barRadius="0dp"
+            app:colorSeeds="@array/danmu_colors"
+            app:defaultPosition="50"
+            app:maxPosition="100"
+            app:thumbHeight="20dp" />
+    </LinearLayout>
+
+</LinearLayout>

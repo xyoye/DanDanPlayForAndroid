@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragmentViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragmentViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/item_bg_color"
+        android:scrollbars="none">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/recommend_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/anime_recommend"
+                android:textColor="@color/text_theme"
+                android:textSize="16sp"
+                android:visibility="@{viewModel.hideRecommendFiled ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommend_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:visibility="@{viewModel.hideRecommendFiled ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recommend_tips"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/recommend_more_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/anime_recommend_more"
+                android:textColor="@color/text_theme"
+                android:textSize="16sp"
+                android:visibility="@{viewModel.hideRecommendMoreFiled ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recommend_rv" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommend_more_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:visibility="@{viewModel.hideRecommendMoreFiled ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recommend_more_tips"
+                app:layout_constraintVertical_bias="0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.xyoye.anime_component.ui.fragment.search_anime.SearchAnimeFragmentViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.anime_component.ui.fragment.search_anime.SearchAnimeFragmentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/type_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/item_bg_color"
+            android:paddingTop="5dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/type_tv"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@{viewModel.checkedAnimeType}"
+                android:textColor="@{viewModel.isCheckedType() ? @color/text_theme : @color/text_black}"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/anime_type_rv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/type_expand_iv"
+                app:layout_constraintStart_toEndOf="@id/type_tv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/type_expand_iv"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{() -> viewModel.toggleExpand()}"
+                android:padding="5dp"
+                android:rotation="@{viewModel.isTypeExpanded() ? 90 : 270}"
+                android:src="@drawable/ic_arrow_right_dark"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sort_cl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/item_bg_color"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            app:layout_constraintTop_toBottomOf="@+id/type_cl">
+
+            <TextView
+                android:id="@+id/sort_tips"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/sort_tips"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sort_rv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/sort_tips"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/anime_rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/item_bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sort_cl" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/history_cl"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/item_bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/history_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="12dp"
+                android:text="搜索历史"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/history_clear_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingStart="12dp"
+                android:paddingTop="11dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="11dp"
+                android:src="@drawable/ic_delete_history"
+                app:layout_constraintBottom_toBottomOf="@id/history_tips"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/history_tips" />
+
+            <com.xyoye.common_component.weight.LabelsView
+                android:id="@+id/history_labels_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                app:labelBackground="@drawable/background_history_labels"
+                app:labelTextColor="@drawable/background_history_text"
+                app:labelTextPaddingBottom="5dp"
+                app:labelTextPaddingLeft="10dp"
+                app:labelTextPaddingRight="10dp"
+                app:labelTextPaddingTop="5dp"
+                app:labelTextSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/history_tips"
+                app:lineMargin="10dp"
+                app:maxSelect="0"
+                app:selectType="MULTI"
+                app:wordMargin="10dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

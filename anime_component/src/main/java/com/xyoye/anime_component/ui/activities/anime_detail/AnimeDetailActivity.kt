@@ -1,9 +1,9 @@
 package com.xyoye.anime_component.ui.activities.anime_detail
 
 import android.graphics.Bitmap
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -79,8 +79,9 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             val offsetPercent = calcOffset / calcRange
 
             //返回图标颜色
+            val color = getBackIconColor(offsetPercent)
             val colorFilter =
-                BlendModeColorFilter(getBackIconColor(offsetPercent), BlendMode.SRC_IN)
+                    BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
             dataBinding.toolbar.navigationIcon?.colorFilter = colorFilter
 
             //标题颜色

@@ -250,16 +250,8 @@ class WebDavFileViewModel : BaseViewModel() {
             //遍历当前目录
             val subtitleDavSource =
                 fileList.find {
-                    //文件名相同
-                    val fileName = getFileNameNoExtension(it.displayName) + "."
-                    if (fileName == videoFileName) {
-                        //且是支持的字幕格式
-                        val extension = getFileExtension(it.displayName)
-                        return@find supportSubtitleExtension.contains(extension)
-                    }
-                    return@find false
+                    SubtitleUtils.isSameNameSubtitle(it.displayName, videoFileName)
                 } ?: return@withContext null
-
             //下载文件
             val url = addressUrl + subtitleDavSource.href.toASCIIString()
             try {

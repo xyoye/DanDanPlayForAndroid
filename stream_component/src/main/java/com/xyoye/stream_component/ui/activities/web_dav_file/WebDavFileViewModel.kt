@@ -220,18 +220,18 @@ class WebDavFileViewModel : BaseViewModel() {
     private suspend fun findAndDownloadDanmu(davResource: DavResource, header: Map<String, String>): String? {
         return withContext(Dispatchers.IO) {
             //目标文件名
-            val targetFileName = getFileNameNoExtension(davResource.displayName) + ".xml"
+            val targetFileName = getFileNameNoExtension(davResource.name) + ".xml"
             val fileList = fileLiveData.value ?: return@withContext null
             //遍历当前目录
             val danmuDavSource =
-                fileList.find { it.displayName == targetFileName } ?: return@withContext null
+                fileList.find { it.name == targetFileName } ?: return@withContext null
 
             //下载文件
             val url = addressUrl + danmuDavSource.href.toASCIIString()
             try {
                 val responseBody = Retrofit.extService.downloadResource(url, header)
                 return@withContext DanmuUtils.saveDanmu(
-                    danmuDavSource.displayName,
+                    danmuDavSource.name,
                     responseBody.byteStream()
                 )
             } catch (e: Exception) {
@@ -245,19 +245,19 @@ class WebDavFileViewModel : BaseViewModel() {
     private suspend fun findAndDownloadSubtitle(davResource: DavResource, header: Map<String, String>): String? {
         return withContext(Dispatchers.IO) {
             //视频文件名
-            val videoFileName = getFileNameNoExtension(davResource.displayName) + "."
+            val videoFileName = getFileNameNoExtension(davResource.name) + "."
             val fileList = fileLiveData.value ?: return@withContext null
             //遍历当前目录
             val subtitleDavSource =
                 fileList.find {
-                    SubtitleUtils.isSameNameSubtitle(it.displayName, videoFileName)
+                    SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
                 } ?: return@withContext null
             //下载文件
             val url = addressUrl + subtitleDavSource.href.toASCIIString()
             try {
                 val responseBody = Retrofit.extService.downloadResource(url, header)
                 return@withContext SubtitleUtils.saveSubtitle(
-                    subtitleDavSource.displayName,
+                    subtitleDavSource.name,
                     responseBody.byteStream()
                 )
             } catch (e: Exception) {
@@ -281,7 +281,7 @@ class WebDavFileViewModel : BaseViewModel() {
             if (hash.isNullOrEmpty()){
                 return@withContext null
             }
-            return@withContext DanmuUtils.matchDanmuSilence(viewModelScope, davResource.displayName, hash)
+            return@withContext DanmuUtils.matchDanmuSilence(viewModelScope, davResource.name, hash)
         }
     }
 }

@@ -37,16 +37,15 @@
 ## 应用截图
 
 <div>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/storage_list.jpg" width="230px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_list.jpg" width="230px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/search.jpg" width="230px">
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/anime_detail.jpg" width="230px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/storage_list.jpg" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_list.jpg" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/search.jpg" width="200px">
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/anime_detail.jpg" width="200px">
 </div>
 
-
 <div>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_1.jpg" width="475px"/>
-	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_2.jpg" width="475px"/>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_1.jpg" width="400px"/>
+	<img src="https://github.com/xyoye/ImageRepository/blob/master/DanDanPlayer/4.0/video_2.jpg" width="400px"/>
 </div>
 
 

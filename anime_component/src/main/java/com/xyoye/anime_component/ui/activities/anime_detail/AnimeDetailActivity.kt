@@ -29,6 +29,7 @@ import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragm
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.getResColor
+import com.xyoye.common_component.extension.isNightMode
 import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.utils.dp2px
@@ -94,19 +95,15 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
                 Color.blue(titleTextColor)
             )
             dataBinding.toolbar.setTitleTextColor(titleColor)
+            dataBinding.followTv.background?.alpha = 255 - alpha
 
             //状态栏文字颜色
-            if (calcOffset > 0) {
-                ImmersionBar.with(this)
+            //tips: MIUI深色模式下状态栏字体颜色不受此控制
+            val isDarkFont = calcOffset > 0 && !isNightMode()
+            ImmersionBar.with(this)
                     .transparentBar()
-                    .statusBarDarkFont(true)
+                    .statusBarDarkFont(isDarkFont)
                     .init()
-            } else {
-                ImmersionBar.with(this)
-                    .transparentBar()
-                    .statusBarDarkFont(false)
-                    .init()
-            }
         })
 
         dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)
@@ -119,7 +116,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
 
     private fun getBackIconColor(percent: Float): Int {
         //颜色由白->蓝变化
-        val startColor = getResColor(R.color.text_white)
+        val startColor = getResColor(R.color.text_white_immutable)
         val endColor = getResColor(R.color.text_theme)
 
         val startRed = Color.red(startColor)

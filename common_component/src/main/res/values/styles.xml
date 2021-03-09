@@ -54,4 +54,9 @@
         <item name="android:windowEnterAnimation">@anim/anime_dialog_enter</item>
         <item name="android:windowExitAnimation">@anim/anime_dialog_exit</item>
     </style>
+
+    <style name="DividerStyle" >
+        <item name="android:background">@color/item_border_color</item>
+    </style>
+
 </resources>

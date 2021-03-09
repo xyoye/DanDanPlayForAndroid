@@ -29,7 +29,7 @@ import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragm
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.getResColor
-import com.xyoye.common_component.extension.isDark
+import com.xyoye.common_component.extension.isNightMode
 import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.utils.dp2px
@@ -98,17 +98,12 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             dataBinding.followTv.background?.alpha = 255 - alpha
 
             //状态栏文字颜色
-            if (calcOffset > 0) {
-                ImmersionBar.with(this)
+            //tips: MIUI深色模式下状态栏字体颜色不受此控制
+            val isDarkFont = calcOffset > 0 && !isNightMode()
+            ImmersionBar.with(this)
                     .transparentBar()
-                    .statusBarDarkFont(!isDark)
+                    .statusBarDarkFont(isDarkFont)
                     .init()
-            } else {
-                ImmersionBar.with(this)
-                    .transparentBar()
-                    .statusBarDarkFont(false)
-                    .init()
-            }
         })
 
         dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)

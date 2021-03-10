@@ -52,8 +52,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         //默认显示媒体库页面
         //标题
         title = "媒体库"
-        //底部导航栏设置选中
-        dataBinding.navigationView.selectedItemId = R.id.navigation_media
         //隐藏所有已添加的fragment，防止如旋转屏幕后导致的屏幕错乱
         supportFragmentManager.findAndHideFragment(
             TAG_FRAGMENT_HOME,
@@ -62,6 +60,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         )
         //切换到媒体库页面
         switchFragment(TAG_FRAGMENT_MEDIA)
+        //底部导航栏设置选中
+        dataBinding.navigationView.post {
+            dataBinding.navigationView.selectedItemId = R.id.navigation_media
+        }
 
         //设置底部导航栏事件
         dataBinding.navigationView.setOnNavigationItemSelectedListener {

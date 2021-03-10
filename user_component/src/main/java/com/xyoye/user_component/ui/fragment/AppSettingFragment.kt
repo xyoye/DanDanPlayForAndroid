@@ -2,9 +2,7 @@ package com.xyoye.user_component.ui.fragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.preference.Preference
-import androidx.preference.PreferenceDataStore
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
@@ -28,6 +26,15 @@ class AppSettingFragment : PreferenceFragmentCompat() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        findPreference<Preference>("dark_mode")?.apply {
+            setOnPreferenceClickListener {
+                ARouter.getInstance()
+                    .build(RouteTable.User.SwitchTheme)
+                    .navigation()
+                return@setOnPreferenceClickListener true
+            }
+        }
+
         findPreference<Preference>("app_version")?.apply {
             summary = AppUtils.getVersionName()
             setOnPreferenceClickListener {

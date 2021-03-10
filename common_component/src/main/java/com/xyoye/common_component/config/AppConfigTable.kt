@@ -1,5 +1,6 @@
 package com.xyoye.common_component.config
 
+import androidx.appcompat.app.AppCompatDelegate
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -28,4 +29,8 @@ object AppConfigTable {
     @MMKVFiled
     //最后一次更新云屏蔽信息的时间
     var cloudBlockUpdateTime: Long = 0
+
+    @MMKVFiled
+    //深色模式状态
+    var darkMode: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 }

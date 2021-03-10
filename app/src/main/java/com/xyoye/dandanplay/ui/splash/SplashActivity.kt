@@ -6,6 +6,7 @@ import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
+import androidx.appcompat.app.AppCompatDelegate
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseAppCompatActivity
 import com.xyoye.common_component.config.AppConfig
@@ -33,6 +34,9 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>(){
             addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER)
         }
+
+        val mode = AppConfig.getDarkMode()
+        AppCompatDelegate.setDefaultNightMode(mode)
 
         if (!AppConfig.isShowSplashAnimation()){
             launchActivity()

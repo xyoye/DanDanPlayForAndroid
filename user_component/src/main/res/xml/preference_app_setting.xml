@@ -20,6 +20,11 @@
             android:key="splash_page"
             android:title="展示APP启动页"
             app:icon="@drawable/ic_app_setting_splash" />
+
+        <Preference
+            android:key="dark_mode"
+            android:title="深色模式"
+            app:icon="@drawable/ic_dark_mode_system" />
     </PreferenceCategory>
 
 

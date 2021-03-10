@@ -27,6 +27,8 @@ class SettingAppActivity : BaseActivity<SettingAppViewModel, ActivitySettingAppB
         title = "应用设置"
 
         val fragment = AppSettingFragment.newInstance()
-        supportFragmentManager.addFragment(R.id.fragment_container, fragment, "AppSettingFragment")
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment, "AppSettingFragment")
+                .commit()
     }
 }

@@ -39,6 +39,9 @@
         <activity
             android:name="com.xyoye.user_component.ui.activities.license.LicenseActivity"
             android:configChanges="orientation|screenSize" />
+        <activity
+            android:name="com.xyoye.user_component.ui.activities.switch_themes.SwitchThemesActivity"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

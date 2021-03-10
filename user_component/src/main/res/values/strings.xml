@@ -55,6 +55,12 @@
     <string name="text_app_name">弹弹play 概念版</string>
     <string name="text_github_project_name">Github：DanDanPlayForAndroid</string>
     <string name="text_official_address">官网：www.dandanplay.com</string>
+    <string name="action_save_theme">完成</string>
+    <string name="text_theme_follow_system">跟随系统</string>
+    <string name="tips_theme_follow_system">开启后，将跟随系统打开或关闭深色模式</string>
+    <string name="tips_theme_manual_switch">手动选择</string>
+    <string name="text_theme_normal_mode">普通模式</string>
+    <string name="text_theme_dark_mode">深色模式</string>
 
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>

@@ -57,11 +57,12 @@ class AnimeDetailViewModel : BaseViewModel() {
         if (UserConfig.isUserLoggedIn()) {
             httpRequest<CommonJsonData>(viewModelScope) {
                 api {
+                    val animeId = animeIdField.get()!!
                     if (isFollowed) {
-                        Retrofit.service.unFollow(animeIdField.toString())
+                        Retrofit.service.unFollow(animeId)
                     } else {
                         val map = HashMap<String, String>()
-                        map["animeId"] = animeIdField.toString()
+                        map["animeId"] = animeId
                         map["favoriteStatus"] = "favorited"
                         map["rating"] = "0"
                         Retrofit.service.follow(map)

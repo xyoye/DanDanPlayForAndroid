@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Point
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.view.WindowManager
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -15,18 +14,6 @@ import androidx.core.content.ContextCompat
 /**
  * Created by xyoye on 2020/9/29.
  */
-
-fun Context.getResColor(@ColorRes colorRes: Int): Int {
-    return ContextCompat.getColor(this, colorRes)
-}
-
-fun Context.getResDrawable(@DrawableRes drawableRes: Int): Drawable? {
-    return ContextCompat.getDrawable(this, drawableRes)
-}
-
-fun Context.getResString(@StringRes id: Int): String {
-    return resources.getString(id)
-}
 
 fun Context.isNightMode(): Boolean {
     val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -45,12 +32,4 @@ fun Context.getScreenWidth(): Int {
     val point = Point()
     wm.defaultDisplay.getRealSize(point)
     return point.x
-}
-
-fun AppCompatActivity.getResColor(@ColorRes colorRes: Int): Int {
-    return ContextCompat.getColor(this, colorRes)
-}
-
-fun AppCompatActivity.getResDrawable(@DrawableRes drawableRes: Int): Drawable? {
-    return ContextCompat.getDrawable(this, drawableRes)
 }

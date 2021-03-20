@@ -9,9 +9,9 @@ import com.xyoye.anime_component.databinding.ActivityAnimeTagBinding
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.getResColor
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
@@ -58,7 +58,7 @@ class AnimeTagActivity : BaseActivity<AnimeTagViewModel, ActivityAnimeTagBinding
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    getResColor(R.color.item_bg_color)
+                    R.color.item_bg_color.toResColor()
                 )
             )
         }

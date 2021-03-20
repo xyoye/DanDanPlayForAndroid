@@ -146,7 +146,7 @@ class SearchAnimeFragment :
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    mAttachActivity.getResColor(R.color.item_bg_color)
+                    R.color.item_bg_color.toResColor()
                 )
             )
         }

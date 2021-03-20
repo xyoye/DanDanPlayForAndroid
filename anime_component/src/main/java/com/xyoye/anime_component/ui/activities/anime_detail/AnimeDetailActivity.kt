@@ -28,10 +28,7 @@ import com.xyoye.anime_component.ui.fragment.anime_intro.AnimeIntroFragment
 import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragment
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.getResColor
-import com.xyoye.common_component.extension.isNightMode
-import com.xyoye.common_component.extension.setGlideImage
-import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiData
@@ -87,7 +84,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
 
             //标题颜色
             val alpha = (255 * offsetPercent).toInt()
-            val titleTextColor = getResColor(R.color.text_theme)
+            val titleTextColor = R.color.text_theme.toResColor()
             val titleColor = Color.argb(
                 alpha,
                 Color.red(titleTextColor),
@@ -116,8 +113,8 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
 
     private fun getBackIconColor(percent: Float): Int {
         //颜色由白->蓝变化
-        val startColor = getResColor(R.color.text_white_immutable)
-        val endColor = getResColor(R.color.text_theme)
+        val startColor = R.color.text_white_immutable.toResColor()
+        val endColor = R.color.text_theme.toResColor()
 
         val startRed = Color.red(startColor)
         val startGreen = Color.green(startColor)

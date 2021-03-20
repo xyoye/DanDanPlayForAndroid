@@ -8,5 +8,5 @@ import androidx.annotation.ColorRes
  */
 
 fun TextView.setTextColorRes(@ColorRes colorRes: Int){
-    setTextColor(context.getResColor(colorRes))
+    setTextColor(colorRes.toResColor())
 }

@@ -12,7 +12,7 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.getResString
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.AppUtils
 import com.xyoye.common_component.weight.ToastCenter
@@ -39,7 +39,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         initRv()
 
         dataBinding.copyQqTv.setOnClickListener {
-            val magnetLink = getResString(R.string.text_qq)
+            val magnetLink = R.string.text_qq.toResString()
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText("data", magnetLink)
             clipboard.setPrimaryClip(clipData)
@@ -47,7 +47,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         }
 
         dataBinding.sendMainTv.setOnClickListener {
-            val email = getResString(R.string.text_email)
+            val email = R.string.text_email.toResString()
             val androidVersion = "Android ${Build.VERSION.RELEASE}"
             val phoneVersion = Build.MODEL
             val appVersion = AppUtils.getVersionName()

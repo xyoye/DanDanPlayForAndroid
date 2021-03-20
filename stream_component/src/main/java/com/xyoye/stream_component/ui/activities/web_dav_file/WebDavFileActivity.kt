@@ -93,7 +93,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
             }
 
             val dividerSize = dp2px(16)
-            val divider = getResDrawable(R.drawable.ic_file_manager_arrow)
+            val divider = R.drawable.ic_file_manager_arrow.toResDrawable()
             if (divider != null) {
                 addItemDecoration(FilePathItemDecoration(divider, dividerSize))
             }

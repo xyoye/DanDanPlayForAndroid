@@ -18,9 +18,9 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.getResColor
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
@@ -111,7 +111,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    getResColor(R.color.item_bg_color)
+                    R.color.item_bg_color.toResColor()
                 )
             )
         }

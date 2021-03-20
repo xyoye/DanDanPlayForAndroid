@@ -310,10 +310,10 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         } else {
             R.drawable.ic_play_history
         }
-        val coverDrawable = getResDrawable(coverId)
+        val coverDrawable = coverId.toResDrawable()
         if (isInvalid) {
             coverDrawable?.colorFilter = PorterDuffColorFilter(
-                getResColor(R.color.red),
+                R.color.red.toResColor(),
                 PorterDuff.Mode.SRC_ATOP
             )
         }

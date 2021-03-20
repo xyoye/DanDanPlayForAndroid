@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogBaseBottomDialogBinding
-import com.xyoye.common_component.extension.getResDrawable
+import com.xyoye.common_component.extension.toResDrawable
 import com.xyoye.common_component.utils.DialogFragmentHelper
 
 
@@ -69,7 +69,7 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
 
                 setGravity(Gravity.BOTTOM)
                 setWindowAnimations(R.style.BaseBottomDialogStyle)
-                setBackgroundDrawable(context.getResDrawable(R.drawable.background_bottom_dialog))
+                setBackgroundDrawable(R.drawable.background_bottom_dialog.toResDrawable())
             }
 
             setContentView(rootViewBinding.root)

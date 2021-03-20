@@ -127,7 +127,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    getResColor(R.color.item_bg_color)
+                    R.color.item_bg_color.toResColor()
                 )
             )
         }

@@ -16,7 +16,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.getResColor
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
@@ -57,7 +57,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
         //进度条
         progressView = WebViewProgress(this).apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(4))
-            setColor(getResColor(R.color.text_blue))
+            setColor(R.color.text_blue.toResColor())
             setProgress(10)
         }
 

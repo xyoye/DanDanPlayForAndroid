@@ -89,8 +89,6 @@
 
 plugin目录下有MVVMTemplate-xx.jar，此插件用于快速生成符合项目的MVVM文件（Activity/Fragment、ViewModel、layout），可通过Android Studio安装此插件。使用及更多说明见[MVVMTemplate](https://github.com/xyoye/MVVMTemplate)项目。
 
-注：MVMM Fragment生成存在bug，可手动调整生成的代码。由于我的IDEA授权过期，后面条件允许再修复更新
-
 ### 2. MMKV注解
 
 项目中使用MMKV实现key-value

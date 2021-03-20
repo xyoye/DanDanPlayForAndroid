@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ScanWindowView">
+
+        <attr name="window_size" format="dimension" />
+        <attr name="window_margin_top" format="dimension" />
+
+        <attr name="frame_color" format="color"/>
+        <attr name="frame_width" format="dimension"/>
+        <attr name="frame_radius" format="dimension"/>
+
+        <attr name="animator_color" format="color"/>
+        <attr name="animator_duration" format="integer"/>
+
+    </declare-styleable>
+
+
+</resources>

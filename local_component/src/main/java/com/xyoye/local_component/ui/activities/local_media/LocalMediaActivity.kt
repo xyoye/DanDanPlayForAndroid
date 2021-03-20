@@ -64,10 +64,6 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             dataBinding.refreshLayout.isEnabled = it
         }
 
-        viewModel.lastPlayLiveData.observe(this) {
-            //do nothing
-        }
-
         viewModel.refreshLiveData.observe(this) { isSuccess ->
             if (dataBinding.refreshLayout.isRefreshing) {
                 dataBinding.refreshLayout.isRefreshing = false

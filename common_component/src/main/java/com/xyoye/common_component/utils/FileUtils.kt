@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.os.Build
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.extension.isValid
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -94,7 +95,7 @@ fun getFolderName(folderPath: String): String {
 fun isFileExist(filePath: String?): Boolean {
     if (filePath.isNullOrEmpty())
         return false
-    if (File(filePath).exists())
+    if (File(filePath).isValid())
         return true
 
     if (Build.VERSION.SDK_INT >= 29) {

@@ -8,6 +8,8 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.deduplication
+import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
@@ -16,6 +18,7 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.data.SubtitleThunderData
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.SubtitleHashUtils
@@ -28,8 +31,13 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class LocalMediaViewModel : BaseViewModel() {
+    //当前是否在根目录
     val inRootFolder = ObservableBoolean()
+
+    //当前打开的目录名
     val currentFolderName = ObservableField<String>()
+
+    //当前目录路径
     private val currentFolderPath = ObservableField<String>()
 
     val refreshLiveData = MutableLiveData<Boolean>()
@@ -39,25 +47,30 @@ class LocalMediaViewModel : BaseViewModel() {
 
     val playVideoLiveData = MutableLiveData<PlayParams>()
 
+    //临时的文件夹文件live data
     private var folderFileLiveData: LiveData<MutableList<VideoEntity>>? = null
 
-    val lastPlayLiveData =
-        DatabaseManager.instance.getPlayHistoryDao().gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
+    //最近一次播放的视频记录
+    private var lastPlayHistory: PlayHistoryEntity? = null
 
     fun fastPlay() {
-        //播放最后一次播放的视频
-        lastPlayLiveData.value?.let { entity ->
-            playVideoLiveData.postValue(
-                PlayParams(
-                    entity.url,
-                    entity.videoName,
-                    entity.danmuPath,
-                    entity.subtitlePath,
-                    entity.videoPosition,
-                    entity.episodeId,
-                    entity.mediaType
-                )
-            )
+        viewModelScope.launch {
+            //查询并播放最后一次播放的视频
+            lastPlayHistory = DatabaseManager.instance
+                    .getPlayHistoryDao()
+                    .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
+                    ?.also { entity ->
+                        val playParams = PlayParams(
+                                entity.url,
+                                entity.videoName,
+                                entity.danmuPath,
+                                entity.subtitlePath,
+                                entity.videoPosition,
+                                entity.episodeId,
+                                entity.mediaType
+                        )
+                        playVideoLiveData.postValue(playParams)
+                    }
         }
     }
 
@@ -71,15 +84,17 @@ class LocalMediaViewModel : BaseViewModel() {
                 val folderData = DatabaseManager.instance.getVideoDao().getFolderByFilter()
 
                 //是否为最后一次播放的文件所在文件夹
-                lastPlayLiveData.value?.apply {
-                    val folderPath = getDirPath(url)
-                    folderData.find { it.folderPath == folderPath }?.isLastPlay = true
+                lastPlayHistory?.apply {
+                    folderData.find {
+                        it.folderPath == getDirPath(url)
+                    }?.isLastPlay = true
                 }
 
                 folderData.sortWith(FileComparator(
-                    value = { getFolderName(it.folderPath) },
-                    isDirectory = { true }
+                        value = { getFolderName(it.folderPath) },
+                        isDirectory = { true }
                 ))
+
                 folderLiveData.postValue(folderData)
                 refreshLiveData.postValue(true)
             } else {
@@ -103,10 +118,11 @@ class LocalMediaViewModel : BaseViewModel() {
                 if (!inRootFolder.get()) {
 
                     //是否为最后一次播放的文件
-                    lastPlayLiveData.value?.apply {
+                    lastPlayHistory?.apply {
                         videoData.find { it.filePath == url }?.isLastPlay = true
                     }
 
+                    //视频按文件名排序
                     videoData.sortWith(FileComparator(
                         value = { getFileName(it.filePath) },
                         isDirectory = { false }
@@ -236,6 +252,9 @@ class LocalMediaViewModel : BaseViewModel() {
                 systemVideos.addAll(extendVideos)
             }
 
+            //移除系统视频中无效的视频
+            clearInvalidVideo(systemVideos)
+
             if (systemVideos.isEmpty())
                 return@async false
 
@@ -254,7 +273,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 var isDeleted = true
                 //在系统数据中未找到数据库数据，说明视频已被删除
                 val iterator = systemVideos.iterator()
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     if (iterator.next().filePath == databaseVideo.filePath) {
                         //数据库文件能在系统数据中找到，未被删除
                         isDeleted = false
@@ -382,20 +401,29 @@ class LocalMediaViewModel : BaseViewModel() {
         }.await()
     }
 
-    private suspend fun checkSourceExist(videoEntity: VideoEntity){
-        if (!videoEntity.danmuPath.isNullOrEmpty()){
-            if (!isFileExist(videoEntity.danmuPath)){
-                DatabaseManager.instance.getVideoDao().updateDanmu(
+    private suspend fun checkSourceExist(videoEntity: VideoEntity) {
+        if (videoEntity.danmuPath.toFile().isInvalid()) {
+            DatabaseManager.instance.getVideoDao().updateDanmu(
                     videoEntity.filePath, null, 0
-                )
-            }
+            )
         }
 
-        if (!videoEntity.subtitlePath.isNullOrEmpty()){
-            if (!isFileExist(videoEntity.subtitlePath)){
-                DatabaseManager.instance.getVideoDao().updateSubtitle(
+        if (videoEntity.subtitlePath.toFile().isInvalid()) {
+            DatabaseManager.instance.getVideoDao().updateSubtitle(
                     videoEntity.filePath, null
-                )
+            )
+        }
+    }
+
+    /**
+     * 清除已删除的文件
+     */
+    private fun clearInvalidVideo(entities: MutableList<VideoEntity>) {
+        val iterator = entities.iterator()
+        while (iterator.hasNext()) {
+            val filePath = iterator.next().filePath
+            if (filePath.toFile().isInvalid()) {
+                iterator.remove()
             }
         }
     }

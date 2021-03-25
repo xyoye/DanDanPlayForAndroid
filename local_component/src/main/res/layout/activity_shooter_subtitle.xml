@@ -30,9 +30,15 @@
             android:text="@string/tips_api_limit"
             android:textSize="12sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/subtitle_rv"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/subtitle_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 </layout>

@@ -2,6 +2,8 @@ package com.xyoye.local_component.ui.activities.bind_subtitle
 
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -34,11 +36,9 @@ import com.xyoye.local_component.databinding.ItemSubtitleSearchSourceBinding
 import com.xyoye.local_component.databinding.ItemSubtitleSourceBinding
 import com.xyoye.local_component.ui.dialog.SubtitleDetailDialog
 import com.xyoye.local_component.ui.dialog.SubtitleFileListDialog
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 @Route(path = RouteTable.Local.BindSubtitle)
 class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSubtitleBinding>() {
 
@@ -65,6 +65,13 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
             return
 
         initObserver()
+
+        dataBinding.refreshLayout.apply {
+            setOnRefreshListener {
+                subtitleSearchAdapter.refresh()
+            }
+            isEnabled = false
+        }
 
         dataBinding.subtitleRv.apply {
             layoutManager = vertical()
@@ -109,6 +116,12 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
             }
         }
 
+        lifecycleScope.launch {
+            subtitleSearchAdapter.loadStateFlow.collectLatest {
+                dataBinding.refreshLayout.isRefreshing = it.refresh is LoadState.Loading
+            }
+        }
+
         viewModel.matchSubtitleSource(videoPath!!)
     }
 
@@ -127,15 +140,6 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
         }
 
         viewModel.searchSubtitleLiveData.observe(this) {
-            if (dataBinding.subtitleRv.adapter !is ConcatAdapter) {
-                //查询字幕前，将Adapter设置为分页Adapter
-                dataBinding.subtitleRv.adapter = subtitleSearchAdapter.run {
-                    //添加底部加载视图
-                    withLoadStateFooter(
-                        PagingFooterAdapter { this.retry() }
-                    )
-                }
-            }
             subtitleSearchAdapter.submitPagingData(lifecycle, it)
         }
 
@@ -176,32 +180,19 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
                 if (shooterSecret.isNullOrEmpty()) {
                     showSecretDialog()
                 } else {
-                    CommonEditDialog(
-                        EditBean(
-                            "搜索字幕",
-                            "视频名称不能为空",
-                            "视频名"
-                        )
-                    ) {
-                        showLoading()
-                        dataBinding.subtitleRv.adapter = subtitleSearchAdapter
-                        viewModel.searchSubtitleChannel.offer(it)
-                    }.show(this)
+                    showSearchDialog()
                 }
             }
             R.id.item_local_subtitle -> {
-                FileManagerDialog(
-                    FileManagerAction.ACTION_SELECT_SUBTITLE
-                ) {
-                    viewModel.bindLocalSubtitle(videoPath!!, it)
-                    ToastCenter.showSuccess("绑定字幕成功！")
-                    finish()
-                }.show(this)
+                showFileManagerDialog()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * 密钥输入弹窗
+     */
     private fun showSecretDialog() {
         CommonDialog.Builder().run {
             content = "密钥为空无法搜索\n\n请到 个人中心->射手(伪)字幕下载 中设置API密钥"
@@ -213,6 +204,40 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
             }
             addNegative()
             build()
+        }.show(this)
+    }
+
+    /**
+     * 字幕搜索弹窗
+     */
+    private fun showSearchDialog() {
+        val editBean = EditBean(
+            "搜索字幕",
+            "视频名称不能为空",
+            "视频名"
+        )
+
+        CommonEditDialog(editBean) {
+            if (dataBinding.subtitleRv.adapter !is ConcatAdapter) {
+                dataBinding.subtitleRv.adapter = subtitleSearchAdapter.withLoadStateFooter(
+                    PagingFooterAdapter { subtitleSearchAdapter.retry() }
+                )
+                dataBinding.refreshLayout.isEnabled = true
+            }
+            viewModel.searchSubtitle(it)
+        }.show(this)
+    }
+
+    /**
+     * 本地文件弹窗
+     */
+    private fun showFileManagerDialog() {
+        FileManagerDialog(
+            FileManagerAction.ACTION_SELECT_SUBTITLE
+        ) {
+            viewModel.bindLocalSubtitle(videoPath!!, it)
+            ToastCenter.showSuccess("绑定字幕成功！")
+            finish()
         }.show(this)
     }
 }

@@ -1,44 +1,32 @@
 package com.xyoye.local_component.ui.activities.bind_subtitle
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.*
+import com.xyoye.local_component.utils.SearchSubtitleRepository
 import com.xyoye.local_component.utils.SubtitleHashUtils
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 class BindSubtitleViewModel : BaseViewModel() {
+
+    private val searchSubtitleRepository = SearchSubtitleRepository(viewModelScope)
 
     val sourceLiveData = MutableLiveData<MutableList<SubtitleMatchData>>()
     val bindResultLiveData = MutableLiveData<Boolean>()
     val unzipResultLiveData = MutableLiveData<String>()
     val searchSubDetailLiveData = MutableLiveData<SubDetailData>()
-    val searchSubtitleChannel = ConflatedBroadcastChannel<String>()
 
-    val searchSubtitleLiveData = searchSubtitleChannel.asFlow()
-        //避免快速请求
-        .debounce(200)
-        .flatMapLatest { searchSubtitle(it) }
-        .asLiveData()
+    val searchSubtitleLiveData = searchSubtitleRepository.subtitleLiveData
 
     /**
      * 匹配字幕
@@ -174,7 +162,7 @@ class BindSubtitleViewModel : BaseViewModel() {
             api {
                 val responseBody = Retrofit.extService.downloadResource(downloadUrl)
                 val subtitlePath = SubtitleUtils.saveSubtitle(fileName, responseBody.byteStream())
-                if (subtitlePath != null){
+                if (subtitlePath != null) {
                     bindLocalSubtitle(videoPath, subtitlePath)
                     true
                 } else {
@@ -206,30 +194,8 @@ class BindSubtitleViewModel : BaseViewModel() {
     /**
      * 搜索字幕
      */
-    private fun searchSubtitle(videoName: String): Flow<PagingData<SubtitleSearchData>> {
-        return Pager(PagingConfig(15, 15), 1) {
-            object : PagingSource<Int, SubtitleSearchData>() {
-                override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SubtitleSearchData> {
-                    val page = params.key ?: return LoadResult.Page(mutableListOf(), null, null)
-                    return try {
-                        val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
-                        val subData =
-                            Retrofit.extService.searchSubtitle(shooterSecret, videoName, page)
-                        hideLoading()
-                        LoadResult.Page(sub2SubtitleSearchData(subData), null, page + 1)
-                    } catch (e: Exception) {
-                        hideLoading()
-                        //处理509异常
-                        if (e is HttpException && e.code() == 509) {
-                            val limitError = RequestError(509, "请求频率过高")
-                            LoadResult.Error(limitError)
-                        } else {
-                            LoadResult.Error(RequestErrorHandler(e).handlerError())
-                        }
-                    }
-                }
-            }
-        }.flow.cachedIn(viewModelScope)
+    fun searchSubtitle(videoName: String) {
+        searchSubtitleRepository.search(videoName)
     }
 
     /**
@@ -278,30 +244,6 @@ class BindSubtitleViewModel : BaseViewModel() {
             onError { showNetworkError(it) }
 
             onComplete { hideLoading() }
-        }
-    }
-
-    /**
-     * 搜索字幕转显示数据类型
-     */
-    private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSearchData> {
-        return mutableListOf<SubtitleSearchData>().apply {
-            val subList = subData?.sub?.subs
-            if (subList?.size ?: 0 > 0) {
-                for (subDetailData in subList!!) {
-                    val subtitleName =
-                        if (subDetailData.native_name.isNullOrEmpty()) subDetailData.videoname else subDetailData.native_name
-                    add(
-                        SubtitleSearchData(
-                            subDetailData.id,
-                            subtitleName,
-                            subDetailData.upload_time,
-                            subDetailData.subtype,
-                            subDetailData.lang?.desc
-                        )
-                    )
-                }
-            }
         }
     }
 }

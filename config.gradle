@@ -3,6 +3,7 @@ ext {
     def RETROFIT_VERSION = "2.9.0"
     def IMMERSION_BAR_VERSION = "3.0.0"
     def EXOPLAYER_VERSION = "2.12.1"
+    def MO_SHI_VERSION = "1.11.0"
 
     android = [
             compileSdkVersion: 29,
@@ -43,7 +44,9 @@ ext {
             "material"                  : "com.google.android.material:material:1.1.0",
 
             "retrofit"                  : "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION",
-            "converter-moshi"            : "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION",
+            "converter-moshi"           : "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION",
+            "moshi"                     : "com.squareup.moshi:moshi:$MO_SHI_VERSION",
+            "moshi-kotlin"              : "com.squareup.moshi:moshi-kotlin-codegen:$MO_SHI_VERSION",
 
             "arouter-api"               : "com.alibaba:arouter-api:1.5.0",
             "arouter-compiler"          : "com.alibaba:arouter-compiler:1.2.2",

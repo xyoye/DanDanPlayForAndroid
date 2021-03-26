@@ -1,5 +1,7 @@
 package com.xyoye.data_component.data
 
+import com.squareup.moshi.JsonClass
+
 /**
  * Created by xyoye on 2020/11/30.
  */
@@ -17,6 +19,7 @@ data class SubtitleThunderData(
  * svote : 3457
  * roffset : 5426795912
  */
+@JsonClass(generateAdapter = true)
 data class ThunderData(
     val scid: String?,
     val sname: String?,

@@ -1,6 +1,7 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,12 +9,14 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class MagnetResourceData(
     var HasMore: Boolean = false,
     var Resources: MutableList<MagnetData>? = null
 ) : Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class MagnetData(
     var Title: String? = null,
     var TypeId: Int = -1,

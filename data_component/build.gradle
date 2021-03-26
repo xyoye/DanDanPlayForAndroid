@@ -43,4 +43,7 @@ dependencies {
     implementation rootProject.ext.dependencies["core-ktx"]
     implementation rootProject.ext.dependencies["kotlin-stdlib-jdk7"]
     implementation rootProject.ext.dependencies["room"]
+
+    api rootProject.ext.dependencies["moshi"]
+    kapt rootProject.ext.dependencies["moshi-kotlin"]
 }

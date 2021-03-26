@@ -1,6 +1,7 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,12 +9,14 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class DanmuSearchData(
     val hasMore: Boolean,
     val animes: MutableList<DanmuAnimeData>?
 ) : CommonJsonData()
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class DanmuAnimeData(
     val animeId: Int,
     val animeTitle: String?,
@@ -22,6 +25,7 @@ data class DanmuAnimeData(
 ) : Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class DanmuEpisodeData(
     val episodeId: Int,
     val episodeTitle: String?

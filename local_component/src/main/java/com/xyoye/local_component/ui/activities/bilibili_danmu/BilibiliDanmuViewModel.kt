@@ -8,8 +8,8 @@ import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.PathHelper
-import com.xyoye.data_component.bean.BungumiCidBean
-import com.xyoye.data_component.bean.VideoCidBean
+import com.xyoye.data_component.data.CidBungumiData
+import com.xyoye.data_component.data.CidVideoBean
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -135,7 +135,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
                         jsonText = jsonText.substring(18)
                         jsonText = jsonText.substring(0, jsonText.length - 10)
                         val cidBean =
-                            JsonHelper.parseJson<VideoCidBean>(jsonText) ?: return@async null
+                            JsonHelper.parseJson<CidVideoBean>(jsonText) ?: return@async null
                         //只需要标题和cid
                         return@async Pair(cidBean.videoData.cid, cidBean.videoData.title)
                     }
@@ -160,7 +160,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
                         jsonText = jsonText.substring(18)
                         jsonText = jsonText.substring(0, jsonText.length - 10)
                         val cidBean =
-                            JsonHelper.parseJson<BungumiCidBean>(jsonText) ?: return@async null
+                            JsonHelper.parseJson<CidBungumiData>(jsonText) ?: return@async null
                         //只需要标题和cid
                         val cidList = mutableListOf<Long>()
                         cidBean.epList.forEach {

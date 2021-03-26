@@ -1,6 +1,7 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,11 +9,13 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class AnimeDetailData(
     var bangumi: BangumiData? = null
 ) : CommonJsonData(), Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class BangumiData(
     var type: String? = null,
     var typeDescription: String? = null,
@@ -38,6 +41,7 @@ data class BangumiData(
 ) : Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class EpisodeData(
     var episodeId: Int,
     var episodeTitle: String? = null,
@@ -46,6 +50,7 @@ data class EpisodeData(
 ) : Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class TagData(
     var id: Int, var name: String
 ) : Parcelable

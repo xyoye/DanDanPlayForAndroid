@@ -1,6 +1,7 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,11 +9,13 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class CloudHistoryListData(
     val playHistoryAnimes: MutableList<CloudHistoryData> = mutableListOf()
 ): CommonJsonData(), Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class CloudHistoryData(
     val animeId: Int,
     val animeTitle: String?,
@@ -24,6 +27,7 @@ data class CloudHistoryData(
 ): Parcelable
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class CloudHistoryEpisodeData(
     val episodeId: Int,
     val episodeTitle: String?,

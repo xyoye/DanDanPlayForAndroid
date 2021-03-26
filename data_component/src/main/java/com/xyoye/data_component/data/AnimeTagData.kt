@@ -1,6 +1,7 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -8,6 +9,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class AnimeTagData(
     val animes: MutableList<AnimeData> = mutableListOf()
 ): Parcelable

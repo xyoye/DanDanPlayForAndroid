@@ -1,5 +1,6 @@
 package com.xyoye.data_component.data
 
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -7,6 +8,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class LoginData(
     val userName: String?,
     val token: String?,

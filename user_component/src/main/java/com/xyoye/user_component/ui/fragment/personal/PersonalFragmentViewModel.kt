@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.data_component.bean.UserRelationBean
 import com.xyoye.data_component.data.CloudHistoryListData
 import com.xyoye.data_component.data.FollowAnimeData
 

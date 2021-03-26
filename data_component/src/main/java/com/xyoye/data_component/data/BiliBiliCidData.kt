@@ -11,5 +11,5 @@ data class BiliBiliCidData(
 
 data class CidData(
     val title: String?,
-    val cid: Int
+    val cid: Long
 )

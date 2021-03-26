@@ -8,7 +8,7 @@ import com.xyoye.common_component.network.service.RetrofitService
 import com.xyoye.common_component.network.service.TorrentRetrofitService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -35,28 +35,28 @@ class Retrofit private constructor() {
 
     init {
         retrofitService = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .client(getOkHttpClient(needAuth = true))
             .baseUrl(baseUrl)
             .build()
             .create(RetrofitService::class.java)
 
         resRetrofitService = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .client(getOkHttpClient(needAuth = false, resDomain = true))
             .baseUrl(resUrl)
             .build()
             .create(ResRetrofitService::class.java)
 
         extRetrofitService = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .client(getOkHttpClient())
             .baseUrl(shooterUrl)
             .build()
             .create(ExtRetrofitService::class.java)
 
         torrentRetrofitService = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .client(getOkHttpClient())
             .baseUrl(torrentUrl)
             .build()

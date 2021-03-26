@@ -2,12 +2,14 @@ package com.xyoye.local_component.ui.activities.bilibili_danmu
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonParser
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.data_component.bean.BungumiCidBean
+import com.xyoye.data_component.bean.VideoCidBean
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -16,6 +18,7 @@ import org.jsoup.Jsoup
 import java.io.File
 import java.io.InputStream
 import java.util.*
+import java.util.regex.Pattern
 import java.util.zip.Inflater
 import java.util.zip.InflaterInputStream
 
@@ -79,7 +82,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
                         continue
                     }
                     downloadMessage += "获取弹幕内容成功  "
-                    val fileName = "$index.xml"
+                    val fileName = "${index + 1}.xml"
                     val danmuPath = DanmuUtils.saveDanmu(fileName, cidInfo.second, xmlContent)
                     if (danmuPath == null) {
                         downloadMessage += "保存弹幕失败"
@@ -118,51 +121,54 @@ class BilibiliDanmuViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun getVideoCid(url: String): Pair<Int, String>? {
-        return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
+    private suspend fun getVideoCid(url: String): Pair<Long, String>? {
+        return viewModelScope.async(Dispatchers.IO) {
 
             try {
                 val htmlElement = Jsoup.connect(url).timeout(10 * 1000).get().toString()
-                val start = htmlElement.indexOf("INITIAL_STATE__=") + 16
-                val end = htmlElement.indexOf(";(function()")
-                val jsonText = htmlElement.substring(start, end)
-                //获取标题
-                val jsonObject = JsonParser.parseString(jsonText).asJsonObject
-                val videoInfo = jsonObject.get("videoData").asJsonObject
-                val videoTitle = videoInfo.get("title").asString
-                //获取cid
-                val cidInfo = videoInfo.get("pages").asJsonArray
-                val cidObject = cidInfo.get(0).asJsonObject
-                val cid = cidObject.get("cid").asInt
-                return@async Pair(cid, videoTitle)
-            } catch (t: Throwable) {
-                sendDownloadMessage("错误：${t.message}")
-                t.printStackTrace()
-            }
-            null
-        }.await()
-    }
-
-    private suspend fun getBungumiCid(url: String): Pair<MutableList<Int>, String>? {
-        return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-            try {
-                val htmlElement = Jsoup.connect(url).timeout(10 * 1000).get().toString()
-                val start = htmlElement.indexOf("INITIAL_STATE__=") + 16
-                val end = htmlElement.indexOf(";(function()")
-                val jsonText = htmlElement.substring(start, end)
-                //获取标题
-                val animeInfo = JsonParser.parseString(jsonText).asJsonObject
-                val animeTitleInfo = animeInfo["mediaInfo"].asJsonObject
-                val animeTitle = animeTitleInfo["title"].asString
-                //获取cid集合
-                val cidListArray = animeInfo["epList"].asJsonArray
-                val cidList = mutableListOf<Int>()
-                for (i in 0 until cidListArray.size()) {
-                    val cidInfo = cidListArray[i].asJsonObject
-                    val cid = cidInfo["cid"].asInt
-                    cidList.add(cid)
+                //匹配java script里的json数据
+                val pattern = Pattern.compile("(__INITIAL_STATE__=).*(;\\(function)")
+                val matcher = pattern.matcher(htmlElement)
+                if (matcher.find()) {
+                    var jsonText = matcher.group(0) ?: return@async null
+                    if (jsonText.isNotEmpty()) {
+                        jsonText = jsonText.substring(18)
+                        jsonText = jsonText.substring(0, jsonText.length - 10)
+                        val cidBean =
+                            JsonHelper.parseJson<VideoCidBean>(jsonText) ?: return@async null
+                        //只需要标题和cid
+                        return@async Pair(cidBean.videoData.cid, cidBean.videoData.title)
+                    }
                 }
-                return@async Pair(cidList, animeTitle)
+            } catch (t: Throwable) {
+                sendDownloadMessage("错误：${t.message}")
+                t.printStackTrace()
+            }
+            null
+        }.await()
+    }
+
+    private suspend fun getBungumiCid(url: String): Pair<MutableList<Long>, String>? {
+        return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
+            try {
+                val htmlElement = Jsoup.connect(url).timeout(10 * 1000).get().toString()
+                val pattern = Pattern.compile("(__INITIAL_STATE__=).*(;\\(function)")
+                val matcher = pattern.matcher(htmlElement)
+                if (matcher.find()) {
+                    var jsonText = matcher.group(0) ?: return@async null
+                    if (jsonText.isNotEmpty()) {
+                        jsonText = jsonText.substring(18)
+                        jsonText = jsonText.substring(0, jsonText.length - 10)
+                        val cidBean =
+                            JsonHelper.parseJson<BungumiCidBean>(jsonText) ?: return@async null
+                        //只需要标题和cid
+                        val cidList = mutableListOf<Long>()
+                        cidBean.epList.forEach {
+                            cidList.add(it.cid)
+                        }
+                        return@async Pair(cidList, cidBean.mediaInfo.title)
+                    }
+                }
             } catch (t: Throwable) {
                 sendDownloadMessage("错误：${t.message}")
                 t.printStackTrace()
@@ -172,7 +178,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
     }
 
-    private suspend fun getCodeCid(isAvCode: Boolean, value: String): Pair<Int, String>? {
+    private suspend fun getCodeCid(isAvCode: Boolean, value: String): Pair<Long, String>? {
         return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
             val key = if (isAvCode) "aid" else "bvid"
             val apiUrl = "https://api.bilibili.com/x/web-interface/view?$key=$value"
@@ -190,7 +196,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
         }.await()
     }
 
-    private suspend fun getXmlContentByCid(cid: Int): String? {
+    private suspend fun getXmlContentByCid(cid: Long): String? {
         return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
             val url = "http://comment.bilibili.com/$cid.xml"
             val header = mapOf(Pair("Accept-Encoding", "gzip,deflate"))

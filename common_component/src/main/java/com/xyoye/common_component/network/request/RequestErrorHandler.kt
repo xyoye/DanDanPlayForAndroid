@@ -1,7 +1,7 @@
 package com.xyoye.common_component.network.request
 
 import android.util.MalformedJsonException
-import com.google.gson.JsonParseException
+import com.squareup.moshi.JsonDataException
 import com.xyoye.data_component.data.CommonJsonData
 import org.json.JSONException
 import retrofit2.HttpException
@@ -49,9 +49,9 @@ class RequestErrorHandler(private val e: java.lang.Exception) {
                 "证书验证失败"
             )
 
-            is JsonParseException -> RequestError(
+            is JsonDataException -> RequestError(
                 1005,
-                "解析响应数据错误"
+                "响应数据类型匹配失败"
             )
             is JSONException -> RequestError(
                 1006,

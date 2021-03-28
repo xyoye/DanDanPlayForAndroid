@@ -99,15 +99,30 @@
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/display_name_et" />
 
-        <ImageView
-            android:id="@+id/scan_iv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+        <LinearLayout
+            android:id="@+id/scan_ll"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:layout_marginTop="10dp"
-            android:src="@drawable/ic_remote_scan"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/background_button_corner"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/secret_et" />
+            app:layout_constraintTop_toBottomOf="@+id/secret_et">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_remote_scan" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/action_remote_scan"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/server_status_tips"
@@ -140,6 +155,6 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_server_connect_test"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scan_iv" />
+            app:layout_constraintTop_toBottomOf="@+id/scan_ll" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

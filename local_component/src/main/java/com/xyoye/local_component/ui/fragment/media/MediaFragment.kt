@@ -75,6 +75,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                             libraryUrlTv.text = when (data.mediaType) {
                                 MediaType.STREAM_LINK,
                                 MediaType.MAGNET_LINK,
+                                MediaType.REMOTE_STORAGE,
                                 MediaType.SMB_SERVER -> data.describe
                                 else -> data.url
                             }
@@ -99,6 +100,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 if (data.mediaType == MediaType.WEBDAV_SERVER
                                     || data.mediaType == MediaType.FTP_SERVER
                                     || data.mediaType == MediaType.SMB_SERVER
+                                    || data.mediaType == MediaType.REMOTE_STORAGE
                                 ) {
                                     showEditStorageDialog(data)
                                 }
@@ -132,7 +134,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 SheetActionBean(
                     ACTION_ADD_REMOTE_LIBRARY,
                     "远程媒体库",
-                    R.drawable.ic_webdav_storage
+                    R.drawable.ic_remote_storage
                 )
             ),
             SheetActionType.VERTICAL,
@@ -185,6 +187,9 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .withParcelable("smbData", data)
                     .navigation()
             }
+            MediaType.REMOTE_STORAGE -> {
+                // TODO: 2021/3/28 远程连接文件列表
+            }
         }
     }
 
@@ -209,6 +214,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     MediaType.WEBDAV_SERVER -> RouteTable.Stream.WebDavLogin
                     MediaType.FTP_SERVER -> RouteTable.Stream.FTPLogin
                     MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
+                    MediaType.REMOTE_STORAGE -> RouteTable.Stream.RemoteLogin
                     else -> throw IllegalArgumentException()
                 }
                 ARouter.getInstance()

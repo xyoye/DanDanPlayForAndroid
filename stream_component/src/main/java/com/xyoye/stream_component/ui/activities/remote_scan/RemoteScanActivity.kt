@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.widget.FrameLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.gyf.immersionbar.ImmersionBar
@@ -126,14 +127,30 @@ class RemoteScanActivity : BaseActivity<RemoteScanViewModel, ActivityRemoteScanB
         //仅存在一个IP
         if (remoteScanBean.ip.size == 1) {
             remoteScanBean.selectedIP = remoteScanBean.ip[0]
-            val intent = Intent()
-            intent.putExtra("scan_data", remoteScanBean)
-            setResult(RESULT_OK, intent)
-            finish()
+            returnScanResult(remoteScanBean)
             return
         }
 
         //多个IP，选择其中一个
+        AlertDialog.Builder(this)
+            .setTitle("请选择合适的IP地址")
+            .setItems(remoteScanBean.ip.toTypedArray()) { dialog, which ->
+                dialog.dismiss()
+                remoteScanBean.selectedIP = remoteScanBean.ip[which]
+                returnScanResult(remoteScanBean)
+            }.setNegativeButton("取消") { dialog, _ ->
+                dialog.dismiss()
+                remoteView.resumeContinuouslyScan()
+            }.setCancelable(false)
+            .create()
+            .show()
+    }
+
+    private fun returnScanResult(remoteScanBean: RemoteScanData) {
+        val intent = Intent()
+        intent.putExtra("scan_data", remoteScanBean)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     private fun getScanRect(): Rect {

@@ -21,4 +21,5 @@
     <string name="text_smb_version">SMB版本：</string>
     <string name="text_smb_v2">SMB 2</string>
     <string name="text_smb_v1">SMB 1</string>
+    <string name="action_remote_scan">扫码快捷录入</string>
 </resources>

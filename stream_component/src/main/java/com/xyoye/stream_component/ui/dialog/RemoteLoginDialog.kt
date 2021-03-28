@@ -24,6 +24,8 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
     private lateinit var remoteData: MediaLibraryEntity
     private var tokenRequired = false
 
+    private lateinit var binding: DialogRemoteLoginBinding
+
     constructor() : super()
 
     constructor(
@@ -43,7 +45,7 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
             0,
             "",
             "",
-            MediaType.SMB_SERVER,
+            MediaType.REMOTE_STORAGE,
             port = 80
         )
     }
@@ -51,12 +53,13 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
     override fun getChildLayoutId() = R.layout.dialog_remote_login
 
     override fun initView(binding: DialogRemoteLoginBinding) {
+        this.binding = binding
         val isEditStorage = originalStorage != null
 
         setTitle(if (isEditStorage) "编辑远程连接帐号" else "添加远程连接帐号")
         binding.remoteData = remoteData
 
-        binding.scanIv.setOnClickListener {
+        binding.scanLl.setOnClickListener {
             scanQRCode.invoke()
         }
 
@@ -95,6 +98,7 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
         remoteData.port = remoteScanData.port
         remoteData.displayName = remoteScanData.machineName ?: ""
         tokenRequired = remoteScanData.tokenRequired
+        binding.remoteData = remoteData
     }
 
     private fun checkParams(remoteData: MediaLibraryEntity): Boolean {

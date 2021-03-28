@@ -92,7 +92,7 @@ class Retrofit private constructor() {
         }
         //远程连接
         if (isRemote) {
-            builder.addInterceptor(RemoteInterceptor.getInstance())
+            builder.addInterceptor(RemoteInterceptor())
         }
         //自定义的资源节点
         if (resDomain) {

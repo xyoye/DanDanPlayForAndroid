@@ -188,7 +188,10 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .navigation()
             }
             MediaType.REMOTE_STORAGE -> {
-                // TODO: 2021/3/28 远程连接文件列表
+                ARouter.getInstance()
+                    .build(RouteTable.Stream.RemoteFile)
+                    .withParcelable("remoteData", data)
+                    .navigation()
             }
         }
     }

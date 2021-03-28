@@ -3,6 +3,4 @@
     <!-- 悬浮按钮颜色 -->
     <color name="float_button_bg_color">#2095f4</color>
     <color name="float_button_ripple_color">#1166ac</color>
-
-    <color name="video_duration_text_color">#ffffff</color>
 </resources>

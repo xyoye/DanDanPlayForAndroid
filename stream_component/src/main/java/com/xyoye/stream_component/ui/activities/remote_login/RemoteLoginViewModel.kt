@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.helper.RemoteInterceptor
 import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import kotlinx.coroutines.launch
@@ -18,8 +18,8 @@ class RemoteLoginViewModel : BaseViewModel() {
     fun testConnect(remoteData: MediaLibraryEntity) {
         val remoteUrl = "http://${remoteData.url}:${remoteData.port}/"
         val remoteToken = remoteData.remoteSecret
-        RemoteInterceptor.getInstance().remoteUrl = remoteUrl
-        RemoteInterceptor.getInstance().remoteToken = remoteToken
+        RemoteHelper.getInstance().remoteUrl = remoteUrl
+        RemoteHelper.getInstance().remoteToken = remoteToken
 
         httpRequest<ResponseBody>(viewModelScope) {
 

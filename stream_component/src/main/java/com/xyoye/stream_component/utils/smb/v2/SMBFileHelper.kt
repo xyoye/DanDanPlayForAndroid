@@ -23,9 +23,9 @@ object SMBFileHelper {
         val childPath = getShareChildPath(share, filePath)
         return share.openDirectory(
             childPath,
-            EnumSet.of(AccessMask.GENERIC_READ),
-            null,
-            SMB2ShareAccess.ALL,
+            EnumSet.of(AccessMask.FILE_LIST_DIRECTORY),
+            setOf(FileAttributes.FILE_ATTRIBUTE_DIRECTORY),
+            setOf(SMB2ShareAccess.FILE_SHARE_READ),
             SMB2CreateDisposition.FILE_OPEN,
             null
         )

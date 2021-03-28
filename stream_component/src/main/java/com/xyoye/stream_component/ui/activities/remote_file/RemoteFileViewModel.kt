@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
@@ -17,11 +18,13 @@ import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RemoteFileViewModel : BaseViewModel() {
     //当前是否在根目录
-    val inRootFolder = ObservableBoolean()
+    val inRootFolder = ObservableBoolean(true)
 
     //当前打开的目录名
     val currentFolderName = ObservableField<String>()
@@ -71,7 +74,7 @@ class RemoteFileViewModel : BaseViewModel() {
                 val errorMsg = if (it.code == 401) {
                     "连接失败：密钥验证失败"
                 } else {
-                    "连接失败：${it.message}"
+                    "连接失败：${it.msg}"
                 }
 
                 ToastCenter.showWarning(errorMsg)
@@ -111,21 +114,40 @@ class RemoteFileViewModel : BaseViewModel() {
     }
 
     fun listFolder(folderName: String) {
-        inRootFolder.set(false)
-        refreshEnableLiveData.postValue(false)
-        currentFolderName.set(folderName)
+        viewModelScope.launch {
+            inRootFolder.set(false)
+            refreshEnableLiveData.postValue(false)
+            currentFolderName.set(folderName)
 
-        //按文件名排序
-        val videoList = storage[folderName] ?: mutableListOf()
-        videoList.sortWith(FileComparator(
-            value = { it.EpisodeTitle ?: it.Name },
-            isDirectory = { false }
-        ))
-        videoLiveData.postValue(videoList)
+            //按文件名排序
+            val videoList = storage[folderName] ?: mutableListOf()
+            videoList.sortWith(FileComparator(
+                value = { it.EpisodeTitle ?: it.Name },
+                isDirectory = { false }
+            ))
+
+            //绑定历史记录中的弹幕、字幕
+            videoList.forEach {
+                val videoUrl = RemoteHelper.getInstance().buildVideoUrl(it.Hash)
+                val history = DatabaseManager.instance.getPlayHistoryDao()
+                    .getPlayHistory(videoUrl, MediaType.REMOTE_STORAGE)
+                if (history.size > 0) {
+                    if (!history[0].danmuPath.isNullOrEmpty()) {
+                        it.danmuPath = history[0].danmuPath
+                    }
+                    if (!history[0].subtitlePath.isNullOrEmpty()) {
+                        it.subtitlePath = history[0].subtitlePath
+                    }
+                }
+            }
+
+            videoLiveData.postValue(videoList)
+        }
     }
 
     fun openVideo(videoData: RemoteVideoData) {
         viewModelScope.launch {
+            showLoading()
             val videoUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Hash)
             val playParams = PlayParams(
                 videoUrl,
@@ -160,52 +182,46 @@ class RemoteFileViewModel : BaseViewModel() {
                 DDLog.i("remote subtitle -----> download")
             }
 
+            hideLoading()
             playVideoLiveData.postValue(playParams)
         }
     }
 
     private suspend fun findAndDownloadDanmu(videoData: RemoteVideoData): String? {
-        return null
-//        return withContext(Dispatchers.IO) {
-//            //目标文件名
-//            val targetFileName = getFileNameNoExtension(fileName) + ".xml"
-//            val fileList = fileLiveData.value ?: return@withContext null
-//
-//            val danmuFTPFile = fileList.find { it.name == targetFileName }
-//                ?: return@withContext null
-//
-//            val danmuFileName = fileName.trim().replace(" ", "_")
-//            val danmuFile = File(PathHelper.getDanmuDirectory(), danmuFileName)
-//
-//            val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, danmuFile)
-//            if (copySuccess){
-//                return@withContext danmuFile.absolutePath
-//            } else {
-//                return@withContext null
-//            }
-//        }
+        return withContext(Dispatchers.IO) {
+
+            try {
+                val danmuResponseBody = Retrofit.remoteService.downloadDanmu(videoData.Hash)
+                val videoName = videoData.EpisodeTitle ?: videoData.Name
+                val danmuFileName = getFileNameNoExtension(videoName) + ".xml"
+                return@withContext DanmuUtils.saveDanmu(
+                    danmuFileName,
+                    danmuResponseBody.byteStream()
+                )
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            null
+        }
     }
 
     private suspend fun findAndDownloadSubtitle(videoData: RemoteVideoData): String? {
-        return null
-//        return withContext(Dispatchers.IO) {
-//            //视频文件名
-//            val videoFileName = getFileNameNoExtension(fileName) + "."
-//            val fileList = fileLiveData.value ?: return@withContext null
-//
-//            val danmuFTPFile = fileList.find {
-//                SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
-//            } ?: return@withContext null
-//
-//            val subtitleFileName = danmuFTPFile.name.trim().replace(" ", "_")
-//            val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName)
-//
-//            val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, subtitleFile)
-//            if (copySuccess){
-//                return@withContext subtitleFile.absolutePath
-//            } else {
-//                return@withContext null
-//            }
-//        }
+        return withContext(Dispatchers.IO) {
+            try {
+                val subtitleData = Retrofit.remoteService.searchSubtitle(videoData.Id)
+                if (subtitleData.subtitles.isNotEmpty()) {
+                    val subtitleName = subtitleData.subtitles[0].fileName
+                    val subtitleResponseBody =
+                        Retrofit.remoteService.downloadSubtitle(videoData.Id, subtitleName)
+                    return@withContext SubtitleUtils.saveSubtitle(
+                        subtitleName,
+                        subtitleResponseBody.byteStream()
+                    )
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            null
+        }
     }
 }

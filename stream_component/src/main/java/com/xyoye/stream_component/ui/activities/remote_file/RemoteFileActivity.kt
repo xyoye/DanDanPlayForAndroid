@@ -1,6 +1,7 @@
 package com.xyoye.stream_component.ui.activities.remote_file
 
 import android.view.KeyEvent
+import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -11,6 +12,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.utils.formatDuration
+import com.xyoye.common_component.utils.isFileExist
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.data.remote.RemoteVideoData
@@ -118,7 +120,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
 
                 addItem<Any, ItemRemoteVideoBinding>(R.layout.item_remote_video) {
                     checkType { data, _ -> data is RemoteVideoData }
-                    initView { data, _, _ ->
+                    initView { data, position, _ ->
                         data as RemoteVideoData
                         itemBinding.run {
                             val videoName = data.EpisodeTitle ?: data.Name
@@ -126,6 +128,9 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                             durationTv.text = formatDuration(data.Duration * 1000)
                             val coverUrl = RemoteHelper.getInstance().buildImageUrl(data.Hash)
                             coverIv.setGlideImage(coverUrl, 5)
+
+                            danmuTipsTv.isVisible = isFileExist(data.danmuPath)
+                            subtitleTipsTv.isVisible = isFileExist(data.subtitlePath)
 
                             itemLayout.setOnClickListener {
                                 viewModel.openVideo(data)

@@ -19,5 +19,8 @@ data class RemoteVideoData(
     val IsStandalone: Boolean,
     val Name: String,
     val Path: String,
-    val Size: Long
+    val Size: Long,
+
+    var danmuPath: String?,
+    var subtitlePath: String?
 )

@@ -14,6 +14,7 @@
     <string name="text_ftp_passive_mode">被动连接</string>
     <string name="text_ftp_active_mode">主动连接</string>
     <string name="text_ftp_connect_mode">连接模式</string>
+    <string name="hint_remote_secret">API密钥</string>
     <string name="action_toggle_file_hidden">显示隐藏文件</string>
     <string name="hint_smb_address">IP地址</string>
     <string name="hint_smb_path">共享目录（可空）</string>

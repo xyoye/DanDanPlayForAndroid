@@ -7,7 +7,7 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.requestPermissions
+import com.xyoye.common_component.extension.obtainPermissions
 import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
@@ -35,6 +35,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         private const val ACTION_ADD_FTP_LIBRARY = 1
         private const val ACTION_ADD_SMB_LIBRARY = 2
         private const val ACTION_ADD_WEBDAV_LIBRARY = 3
+        private const val ACTION_ADD_REMOTE_LIBRARY = 4
 
 
         private const val ACTION_EDIT_STORAGE = 11
@@ -82,7 +83,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                             )
                             itemLayout.setOnClickListener {
 
-                                requestPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {
+                                obtainPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {
                                     resultCallback = {
                                         if (this is PermissionResult.PermissionGranted) {
                                             launchMediaStorage(data)
@@ -127,6 +128,11 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     ACTION_ADD_WEBDAV_LIBRARY,
                     "WebDav媒体库",
                     R.drawable.ic_webdav_storage
+                ),
+                SheetActionBean(
+                    ACTION_ADD_REMOTE_LIBRARY,
+                    "远程媒体库",
+                    R.drawable.ic_webdav_storage
                 )
             ),
             SheetActionType.VERTICAL,
@@ -136,8 +142,10 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 ACTION_ADD_WEBDAV_LIBRARY -> RouteTable.Stream.WebDavLogin
                 ACTION_ADD_FTP_LIBRARY -> RouteTable.Stream.FTPLogin
                 ACTION_ADD_SMB_LIBRARY -> RouteTable.Stream.SmbLogin
+                ACTION_ADD_REMOTE_LIBRARY -> RouteTable.Stream.RemoteLogin
                 else -> throw IllegalArgumentException()
             }
+
             ARouter.getInstance()
                 .build(routePath)
                 .navigation()

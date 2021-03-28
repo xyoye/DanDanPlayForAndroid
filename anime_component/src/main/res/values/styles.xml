@@ -12,8 +12,4 @@
         <item name="cardCornerRadius">3dp</item>
         <item name="cardElevation">1dp</item>
     </style>
-
-    <style name="Toolbar_AnimeDetail" parent="@style/Widget.AppCompat.Toolbar">
-        <item name="colorControlNormal">@color/white</item>
-    </style>
 </resources>

@@ -12,7 +12,7 @@ import com.xyoye.common_component.permission.PermissionRequest
 /**
  * AppCompatActivity 请求权限的扩展函数
  */
-inline fun AppCompatActivity.requestPermissions(
+inline fun AppCompatActivity.obtainPermissions(
     vararg permissions: String,
     crossinline requestBlock: PermissionRequest.() -> Unit
 ) {
@@ -32,7 +32,7 @@ inline fun AppCompatActivity.requestPermissions(
 /**
  * Fragment 请求权限的扩展函数
  */
-inline fun Fragment.requestPermissions(
+inline fun Fragment.obtainPermissions(
     vararg permissions: String,
     crossinline requestBlock: PermissionRequest.() -> Unit
 ) {

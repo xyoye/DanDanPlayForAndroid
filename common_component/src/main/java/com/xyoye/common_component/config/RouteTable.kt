@@ -64,5 +64,7 @@ object RouteTable {
         const val FTPFile = "/stream/ftp_file"
         const val SmbLogin = "/stream/smb_login"
         const val SmbFile = "/stream/smb_file"
+        const val RemoteLogin = "/stream/remote_login"
+        const val RemoteScan = "/stream/remote_scan"
     }
 }

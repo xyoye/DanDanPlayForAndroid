@@ -15,12 +15,22 @@
             android:name=".ui.activities.smb_login.SmbLoginActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme" />
-        <activity android:name=".ui.activities.web_dav_file.WebDavFileActivity"
-            android:configChanges="orientation|screenSize"/>
-        <activity android:name=".ui.activities.ftp_file.FTPFileActivity"
-            android:configChanges="orientation|screenSize"/>
-        <activity android:name=".ui.activities.smb_file.SmbFileActivity"
-            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".ui.activities.remote_login.RemoteLoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/DialogActivityTheme" />
+        <activity
+            android:name=".ui.activities.web_dav_file.WebDavFileActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.ftp_file.FTPFileActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.smb_file.SmbFileActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.remote_scan.RemoteScanActivity"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

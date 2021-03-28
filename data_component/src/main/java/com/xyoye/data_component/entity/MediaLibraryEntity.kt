@@ -55,5 +55,8 @@ data class MediaLibraryEntity(
     var smbV2: Boolean = true,
 
     @ColumnInfo(name = "smb_share_path")
-    var smbSharePath: String? = null
+    var smbSharePath: String? = null,
+
+    @ColumnInfo(name = "remote_secret")
+    var remoteSecret: String? = null
 ) : Parcelable

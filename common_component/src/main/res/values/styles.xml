@@ -59,4 +59,8 @@
         <item name="android:background">@color/item_border_color</item>
     </style>
 
+    <style name="Toolbar_Action_White" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="colorControlNormal">@color/text_white_immutable</item>
+    </style>
+
 </resources>

@@ -17,7 +17,9 @@ enum class MediaType(val value: String) {
 
     WEBDAV_SERVER("webdav_server"),
 
-    SMB_SERVER("smb_server");
+    SMB_SERVER("smb_server"),
+
+    REMOTE_STORAGE("remote_storage");
 
     companion object {
         fun fromValue(value: String): MediaType {
@@ -28,6 +30,7 @@ enum class MediaType(val value: String) {
                 "ftp_server" -> FTP_SERVER
                 "webdav_server" -> WEBDAV_SERVER
                 "smb_server" -> SMB_SERVER
+                "remote_storage" -> REMOTE_STORAGE
                 else -> OTHER_STORAGE
             }
         }

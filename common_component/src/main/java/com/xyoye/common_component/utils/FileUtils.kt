@@ -17,10 +17,10 @@ import java.io.IOException
 /**
  * 获取父文件夹路径
  */
-fun getDirPath(filePath: String): String {
+fun getDirPath(filePath: String, separator: String = File.separator): String {
     if (filePath.isEmpty())
         return ""
-    val lastSep = filePath.lastIndexOf(File.separator)
+    val lastSep = filePath.lastIndexOf(separator)
     return if (lastSep == -1) "" else filePath.substring(0, lastSep)
 }
 
@@ -66,22 +66,21 @@ fun getFileNameNoExtension(filePath: String?): String {
 /**
  * 通过路径获取父文件夹名
  */
-fun getParentFolderName(filePath: String): String {
-    return getFolderName(getDirPath(filePath))
+fun getParentFolderName(filePath: String, separator: String = File.separator): String {
+    return getFolderName(getDirPath(filePath, separator), separator)
 }
-
 /**
  * 通过路径获取文件夹名
  */
-fun getFolderName(folderPath: String): String {
+fun getFolderName(folderPath: String, separator: String = File.separator): String {
     var tempFolderPath = folderPath
 
     if (tempFolderPath.isEmpty()) return ""
 
-    while (tempFolderPath.endsWith("/"))
+    while (tempFolderPath.endsWith(separator))
         tempFolderPath = tempFolderPath.substring(0, tempFolderPath.length - 1)
 
-    val index = tempFolderPath.lastIndexOf("/")
+    val index = tempFolderPath.lastIndexOf(separator)
     return if (index > 0 && index + 1 < tempFolderPath.length) {
         tempFolderPath.substring(index + 1)
     } else {

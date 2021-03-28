@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">local_component</string>
-    <string name="tips_bound_danmu">弹</string>
-    <string name="tips_bound_subtitle">字</string>
     <string name="text_search_danmu">搜索弹幕</string>
     <string name="text_local_danmu">本地弹幕</string>
     <string name="text_search_subtitle">搜索字幕</string>

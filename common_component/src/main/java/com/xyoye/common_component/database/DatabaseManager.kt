@@ -17,6 +17,12 @@ class DatabaseManager private constructor() {
     //"ALTER TABLE magnet_screen ADD COLUMN screen_id INTEGER NOT NULL"
 
     companion object {
+        val MIGRATION_1_2 = object : Migration(1, 2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE media_library ADD COLUMN remote_secret TEXT")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -28,6 +34,6 @@ class DatabaseManager private constructor() {
         BaseApplication.getAppContext(),
         DatabaseInfo::class.java,
         "rood_db"
-    ).build()
+    ).addMigrations(MIGRATION_1_2).build()
 
 }

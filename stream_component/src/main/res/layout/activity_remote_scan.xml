@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.stream_component.ui.activities.remote_scan.RemoteScanViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.stream_component.ui.activities.remote_scan.RemoteScanViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/scan_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.xyoye.stream_component.ui.weight.ScanWindowView
+            android:id="@+id/scan_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/scan_background_color" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/transparent"
+            android:theme="@style/Toolbar_Action_White"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

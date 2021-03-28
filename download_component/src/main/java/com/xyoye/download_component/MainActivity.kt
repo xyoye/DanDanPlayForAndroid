@@ -9,7 +9,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.isNightMode
-import com.xyoye.common_component.extension.requestPermissions
+import com.xyoye.common_component.extension.obtainPermissions
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.enums.FileManagerAction
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             .statusBarDarkFont(!isNightMode())
             .init()
 
-        requestPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {}
+        obtainPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {}
 
         findViewById<Button>(R.id.launch_download_manager_bt).setOnClickListener {
             ARouter.getInstance()

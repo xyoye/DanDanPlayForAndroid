@@ -24,7 +24,8 @@ class PlayHistoryViewModel : BaseViewModel() {
                 MediaType.OTHER_STORAGE,
                 MediaType.FTP_SERVER,
                 MediaType.SMB_SERVER,
-                MediaType.WEBDAV_SERVER
+                MediaType.WEBDAV_SERVER,
+                MediaType.REMOTE_STORAGE
             )
             DatabaseManager.instance.getPlayHistoryDao().getMultipleMediaType(mediaTypes)
         } else {

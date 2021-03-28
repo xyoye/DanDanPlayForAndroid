@@ -56,8 +56,8 @@
             app:autoSizeMinTextSize="12sp"
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/danmu_tips_tv"
-            app:layout_constraintEnd_toStartOf="@+id/more_action_iv"
             app:layout_constraintStart_toEndOf="@+id/cover_iv"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
@@ -104,19 +104,9 @@
             tools:ignore="SmallSp"
             tools:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/more_action_iv"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
-            android:background="@drawable/background_item_press"
-            android:src="@drawable/ic_more_video_action"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <View
-            android:id="@+id/divider_view"
             style="@style/DividerStyle"
+            android:id="@+id/divider_view"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="10dp"

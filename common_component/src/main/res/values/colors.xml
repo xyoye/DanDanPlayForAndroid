@@ -43,6 +43,7 @@
     <color name="text_orange">#f89957</color>
     <color name="text_theme">#2095f4</color>
     <color name="text_blue">#2095f4</color>
+    <color name="text_blue_dark">#096dbe</color>
     <color name="text_blue_light">#82bcf3</color>
     <color name="text_pink">#fb7299</color>
     <color name="text_red">#EA5757</color>

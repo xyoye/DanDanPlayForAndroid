@@ -17,6 +17,7 @@ object MediaTypeUtil {
             MediaType.FTP_SERVER -> R.drawable.ic_ftp_storage
             MediaType.WEBDAV_SERVER -> R.drawable.ic_webdav_storage
             MediaType.SMB_SERVER -> R.drawable.ic_smb_storage
+            MediaType.REMOTE_STORAGE -> R.drawable.ic_remote_storage
             MediaType.OTHER_STORAGE -> R.drawable.ic_play_history
         }
     }
@@ -29,6 +30,7 @@ object MediaTypeUtil {
             MediaType.FTP_SERVER -> "FTP"
             MediaType.WEBDAV_SERVER -> "Dav"
             MediaType.SMB_SERVER -> "SMB"
+            MediaType.REMOTE_STORAGE -> "远程"
             MediaType.OTHER_STORAGE -> "其它"
         }
     }

@@ -6,12 +6,28 @@
         <attr name="window_size" format="dimension" />
         <attr name="window_margin_top" format="dimension" />
 
-        <attr name="frame_color" format="color"/>
-        <attr name="frame_width" format="dimension"/>
-        <attr name="frame_radius" format="dimension"/>
+        <attr name="frame_color" format="color" />
+        <attr name="frame_width" format="dimension" />
+        <attr name="frame_radius" format="dimension" />
 
-        <attr name="animator_color" format="color"/>
-        <attr name="animator_duration" format="integer"/>
+        <attr name="animator_color" format="color" />
+        <attr name="animator_duration" format="integer" />
+
+    </declare-styleable>
+
+    <declare-styleable name="RemoteControlView">
+
+        <attr name="control_mode" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="left" value="2" />
+            <enum name="right" value="3" />
+            <enum name="center" value="4" />
+        </attr>
+
+        <attr name="control_color" format="color"/>
+        <attr name="control_pressed_color" format="color"/>
+        <attr name="center_stroke_color" format="color"/>
 
     </declare-styleable>
 

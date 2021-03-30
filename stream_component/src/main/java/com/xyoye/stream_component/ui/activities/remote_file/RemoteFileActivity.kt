@@ -1,6 +1,8 @@
 package com.xyoye.stream_component.ui.activities.remote_file
 
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -83,6 +85,20 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         viewModel.openStorage(remoteData!!)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_remote, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.item_remote_control) {
+            ARouter.getInstance()
+                .build(RouteTable.Stream.RemoteControl)
+                .navigation()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!viewModel.inRootFolder.get()) {
@@ -120,7 +136,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
 
                 addItem<Any, ItemRemoteVideoBinding>(R.layout.item_remote_video) {
                     checkType { data, _ -> data is RemoteVideoData }
-                    initView { data, position, _ ->
+                    initView { data, _, _ ->
                         data as RemoteVideoData
                         itemBinding.run {
                             val videoName = data.EpisodeTitle ?: data.Name

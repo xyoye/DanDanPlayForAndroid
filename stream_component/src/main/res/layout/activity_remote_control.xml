@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.stream_component.ui.activities.remote_control.RemoteControlViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.stream_component.ui.activities.remote_control.RemoteControlViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/layout_bg_color">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/ic_smart_tv"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="30dp"
+            app:layout_constraintDimensionRatio="160:91"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <ImageView
+                android:id="@+id/volume_iv"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_volume"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@{viewModel.volume}"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/volume_iv"
+                app:layout_constraintStart_toEndOf="@id/volume_iv"
+                app:layout_constraintTop_toTopOf="@id/volume_iv" />
+
+            <TextView
+                android:id="@+id/video_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:maxLines="3"
+                android:text="@{viewModel.videoTitle}"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/episode_title_tv"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/episode_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:maxLines="3"
+                android:text="@{viewModel.episodeTitle}"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/video_title_tv" />
+
+            <ProgressBar
+                android:id="@+id/remote_progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:progress="@{viewModel.position}"
+                android:progressDrawable="@drawable/background_remote_progress_bar"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="@{viewModel.progress}"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@id/remote_progress_bar"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="@{viewModel.duration}"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@id/remote_progress_bar"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/remote_control_switch_view"
+            android:layout_width="220dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            app:cardCornerRadius="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/remote_previous_bt"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_remote_button_left"
+                    android:onClick="@{() -> viewModel.previousVideo()}"
+                    android:src="@drawable/ic_remote_previous" />
+
+                <ImageButton
+                    android:id="@+id/remote_next_bt"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/background_remote_button_right"
+                    android:onClick="@{() -> viewModel.nextVideo()}"
+                    android:src="@drawable/ic_remote_next" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/remote_control_view"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_marginBottom="40dp"
+            app:cardCornerRadius="220dp"
+            app:layout_constraintBottom_toTopOf="@id/remote_control_switch_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/control_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.xyoye.stream_component.ui.weight.RemoteControlView
+                    android:id="@+id/control_top_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp"
+                    android:onClick="@{() -> viewModel.volumeAdd()}"
+                    android:paddingTop="21dp"
+                    android:paddingBottom="41dp"
+                    android:src="@drawable/ic_volume_add"
+                    app:control_color="@color/item_bg_color"
+                    app:control_mode="top"
+                    app:control_pressed_color="@color/layout_bg_color"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.xyoye.stream_component.ui.weight.RemoteControlView
+                    android:id="@+id/control_bottom_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="85dp"
+                    android:onClick="@{() -> viewModel.volumeReduce()}"
+                    android:paddingTop="41dp"
+                    android:paddingBottom="21dp"
+                    android:src="@drawable/ic_volume_reduce"
+                    app:control_color="@color/item_bg_color"
+                    app:control_mode="bottom"
+                    app:control_pressed_color="@color/layout_bg_color"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <com.xyoye.stream_component.ui.weight.RemoteControlView
+                    android:id="@+id/control_right_iv"
+                    android:layout_width="85dp"
+                    android:layout_height="match_parent"
+                    android:onClick="@{() -> viewModel.fastBack()}"
+                    android:paddingStart="21dp"
+                    android:paddingEnd="41dp"
+                    android:src="@drawable/ic_fast_back"
+                    app:control_color="@color/item_bg_color"
+                    app:control_mode="left"
+                    app:control_pressed_color="@color/layout_bg_color"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.xyoye.stream_component.ui.weight.RemoteControlView
+                    android:id="@+id/control_left_iv"
+                    android:layout_width="85dp"
+                    android:layout_height="match_parent"
+                    android:onClick="@{() -> viewModel.fastForward()}"
+                    android:paddingStart="41dp"
+                    android:paddingEnd="21dp"
+                    android:src="@drawable/ic_fast_forward"
+                    app:control_color="@color/item_bg_color"
+                    app:control_mode="right"
+                    app:control_pressed_color="@color/layout_bg_color"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <com.xyoye.stream_component.ui.weight.RemoteControlView
+                    android:id="@+id/control_center_iv"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:onClick="@{() -> viewModel.toggleStatus()}"
+                    android:padding="22dp"
+                    android:src="@drawable/ic_remote_pause"
+                    app:center_stroke_color="@color/item_border_color"
+                    app:control_color="@color/layout_bg_color"
+                    app:control_mode="center"
+                    app:control_pressed_color="@color/item_bg_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

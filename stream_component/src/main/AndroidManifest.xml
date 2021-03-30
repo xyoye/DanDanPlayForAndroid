@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xyoye.stream_component">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application>
         <activity
             android:name=".ui.activities.web_dav_login.WebDavLoginActivity"
@@ -24,6 +26,9 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.remote_file.RemoteFileActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.remote_control.RemoteControlActivity"
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.web_dav_file.WebDavFileActivity"

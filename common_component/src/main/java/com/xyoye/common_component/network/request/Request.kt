@@ -52,6 +52,10 @@ class Request<T> {
                     onSuccess?.invoke(result)
                 }
             } catch (e: Exception) {
+                //忽略页面退出的提示
+                if (e is CancellationException){
+                    return@launch
+                }
                 onError?.invoke(
                     RequestErrorHandler(e).handlerError()
                 )

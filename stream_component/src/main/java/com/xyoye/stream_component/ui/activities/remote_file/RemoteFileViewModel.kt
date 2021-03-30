@@ -108,7 +108,9 @@ class RemoteFileViewModel : BaseViewModel() {
             isDirectory = { true }
         ))
         //独立文件放在最开头
-        folderList.add(0, FolderBean("其它", singleFileSize))
+        if (singleFileSize > 0) {
+            folderList.add(0, FolderBean("其它", singleFileSize))
+        }
 
         folderLiveData.postValue(folderList)
     }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -16,168 +15,96 @@
             type="MediaLibraryEntity" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/address_et"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center_vertical"
-            android:hint="@string/hint_ftp_address"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:singleLine="true"
-            android:text="@={serverData.ftpAddress}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/port_et"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/port_et"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center"
-            android:hint="@string/hint_ftp_port"
-            android:inputType="number"
-            android:maxLength="5"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:singleLine="true"
-            android:text="@={BindingConverter.intToString(serverData.port)}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/address_et"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/display_name_et"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center_vertical"
-            android:hint="@string/hint_display_name"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:singleLine="true"
-            android:text="@={serverData.displayName}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/encoding_et"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address_et" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/encoding_et"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center"
-            android:hint="@string/hint_ftp_encoding"
-            android:maxLines="1"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:singleLine="true"
-            android:text="@={serverData.ftpEncoding}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/display_name_et"
-            app:layout_constraintTop_toTopOf="@id/display_name_et" />
-
-        <TextView
-            android:id="@+id/connect_mode_tips"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_ftp_connect_mode"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/connect_mode_rg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/connect_mode_rg" />
+            android:orientation="horizontal">
 
-        <RadioGroup
-            android:id="@+id/connect_mode_rg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@id/login_mode_tips"
-            app:layout_constraintTop_toBottomOf="@id/display_name_et">
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/address_et"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_ftp_address"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:text="@={serverData.ftpAddress}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
 
-            <RadioButton
-                android:id="@+id/passive_rb"
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/port_et"
                 android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:checked="@={!serverData.ActiveFTP}"
-                android:text="@string/text_ftp_passive_mode" />
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center"
+                android:hint="@string/hint_ftp_port"
+                android:inputType="number"
+                android:maxLength="5"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:text="@={BindingConverter.intToString(serverData.port)}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-            <RadioButton
-                android:id="@+id/active_rb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:checked="@={serverData.ActiveFTP}"
-                android:text="@string/text_ftp_active_mode" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/login_mode_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tips_login_mode"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/login_mode_rg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/login_mode_rg" />
-
-        <RadioGroup
-            android:id="@+id/login_mode_rg"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toEndOf="@id/login_mode_tips"
-            app:layout_constraintTop_toBottomOf="@id/connect_mode_rg">
+            android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/account_rb"
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/display_name_et"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_display_name"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:text="@={serverData.displayName}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/encoding_et"
                 android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:checked="@={!serverData.Anonymous}"
-                android:text="@string/text_account_login" />
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center"
+                android:hint="@string/hint_ftp_encoding"
+                android:maxLines="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
+                android:text="@={serverData.ftpEncoding}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
 
-            <RadioButton
-                android:id="@+id/anonymous_rb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:checked="@={serverData.Anonymous}"
-                android:text="@string/text_anonymous_login" />
-        </RadioGroup>
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/account_et"
@@ -194,72 +121,152 @@
             android:text="@={serverData.account}"
             android:textColor="@color/text_black"
             android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/login_mode_rg" />
+            android:textSize="14sp" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/password_et"
+        <FrameLayout
+            android:id="@+id/password_fl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/password_et"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_login_password"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="80dp"
+                android:singleLine="true"
+                android:text="@={serverData.password}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/password_toggle_iv"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="10dp"
+                android:padding="15dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_input_visible" />
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center_vertical"
-            android:hint="@string/hint_login_password"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="80dp"
-            android:singleLine="true"
-            android:text="@={serverData.password}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/account_et" />
+            android:background="@drawable/background_border_gray">
 
-        <ImageView
-            android:id="@+id/password_toggle_iv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="10dp"
-            android:padding="15dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_input_visible"
-            app:layout_constraintBottom_toBottomOf="@id/password_et"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@id/password_et"
-            app:layout_constraintTop_toTopOf="@id/password_et" />
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_border_gray"
+                android:gravity="center"
+                android:text="@string/tips_login_mode"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/server_status_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tips_test_connect"
-            android:textColor="@color/text_black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/server_test_connect_iv"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/server_test_connect_iv" />
+            <TextView
+                android:id="@+id/account_tv"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_button_corner_state"
+                android:gravity="center"
+                android:text="@string/text_account_login"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/server_status_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:textColor="@color/text_theme"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/server_status_tips"
-            app:layout_constraintTop_toTopOf="@id/server_status_tips"
-            tools:text="连接成功" />
+            <TextView
+                android:id="@+id/anonymous_tv"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/background_button_corner_state"
+                android:gravity="center"
+                android:text="@string/text_anonymous_login"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+        </FrameLayout>
 
-        <ImageView
-            android:id="@+id/server_test_connect_iv"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/background_item_press"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_server_connect_test"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password_et" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_border_gray">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_border_gray"
+                android:gravity="center"
+                android:text="@string/text_ftp_connect_mode"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/passive_tv"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_button_corner_state"
+                android:gravity="center"
+                android:text="@string/text_ftp_passive_mode"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/active_tv"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/background_button_corner_state"
+                android:gravity="center"
+                android:text="@string/text_ftp_active_mode"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_border_gray">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/background_border_gray"
+                android:gravity="center"
+                android:text="@string/tips_test_connect"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/server_status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/text_theme"
+                android:textSize="14sp"
+                tools:text="连接成功" />
+
+            <TextView
+                android:id="@+id/server_test_connect_tv"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="@drawable/background_button_corner_gray"
+                android:gravity="center"
+                android:text="@string/action_test_server"
+                android:textColor="@color/text_black"
+                android:textSize="14sp" />
+        </FrameLayout>
+    </LinearLayout>
 </layout>

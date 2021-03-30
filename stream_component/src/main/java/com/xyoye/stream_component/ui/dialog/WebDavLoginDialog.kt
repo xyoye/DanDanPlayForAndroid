@@ -23,6 +23,8 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
     private lateinit var testConnect: (MediaLibraryEntity) -> Unit
     private lateinit var testConnectResult: MutableLiveData<Boolean>
 
+    private lateinit var binding: DialogWebDavLoginBinding
+
     constructor() : super()
     constructor(
         originalStorage: MediaLibraryEntity?,
@@ -39,6 +41,7 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
     override fun getChildLayoutId() = R.layout.dialog_web_dav_login
 
     override fun initView(binding: DialogWebDavLoginBinding) {
+        this.binding = binding
         val isEditStorage = originalStorage != null
 
         setTitle(if (isEditStorage) "编辑WebDav帐号" else "添加WebDav帐号")
@@ -49,9 +52,10 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
             "",
             MediaType.WEBDAV_SERVER
         )
+        setAnonymous(serverData.isAnonymous)
         binding.serverData = serverData
 
-        binding.serverTestConnectIv.setOnClickListener {
+        binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(serverData)) {
                 testConnect.invoke(serverData)
             }
@@ -67,14 +71,14 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
             }
         })
 
-        binding.loginModeRg.setOnCheckedChangeListener { _, checkedId ->
-            val isAnonymous = checkedId == R.id.anonymous_rb
-            binding.accountEt.isGone = isAnonymous
-            binding.passwordEt.isGone = isAnonymous
-            if (isAnonymous) {
-                binding.accountEt.setText("")
-                binding.passwordEt.setText("")
-            }
+        binding.anonymousTv.setOnClickListener {
+            serverData.isAnonymous = true
+            setAnonymous(true)
+        }
+
+        binding.accountTv.setOnClickListener {
+            serverData.isAnonymous = false
+            setAnonymous(false)
         }
 
         binding.passwordToggleIv.setOnClickListener {
@@ -128,5 +132,26 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
             }
         }
         return true
+    }
+
+    private fun setAnonymous(isAnonymous: Boolean) {
+        binding.anonymousTv.isSelected = isAnonymous
+        binding.anonymousTv.setTextColorRes(
+            if (isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountTv.isSelected = !isAnonymous
+        binding.accountTv.setTextColorRes(
+            if (!isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountEt.isGone = isAnonymous
+        binding.passwordEt.isGone = isAnonymous
+        binding.passwordFl.isGone = isAnonymous
+
+        if (isAnonymous) {
+            binding.accountEt.setText("")
+            binding.passwordEt.setText("")
+        }
     }
 }

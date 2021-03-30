@@ -3,7 +3,6 @@ package com.xyoye.stream_component.ui.dialog
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.weight.ToastCenter
@@ -24,6 +23,8 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
     private lateinit var testConnect: (MediaLibraryEntity) -> Unit
     private lateinit var testConnectResult: MutableLiveData<Boolean>
 
+    private lateinit var binding: DialogFtpLoginBinding
+
     constructor() : super()
 
     constructor(
@@ -41,6 +42,7 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
     override fun getChildLayoutId() = R.layout.dialog_ftp_login
 
     override fun initView(binding: DialogFtpLoginBinding) {
+        this.binding = binding
         val isEditStorage = originalStorage != null
 
         setTitle(if (isEditStorage) "编辑FTP帐号" else "添加FTP帐号")
@@ -59,14 +61,13 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
 
         //编辑模式下，选中匿名
         if (isEditStorage && originalStorage!!.isAnonymous) {
-            binding.loginModeRg.check(R.id.anonymous_rb)
-            binding.accountEt.isVisible = false
-            binding.accountEt.setText("")
-            binding.passwordEt.isVisible = false
-            binding.passwordEt.setText("")
+            setAnonymous(true)
+        } else {
+            setAnonymous(serverData.isAnonymous)
         }
+        setActive(serverData.isActiveFTP)
 
-        binding.serverTestConnectIv.setOnClickListener {
+        binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(serverData)) {
                 testConnect.invoke(serverData)
             }
@@ -82,14 +83,24 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
             }
         })
 
-        binding.loginModeRg.setOnCheckedChangeListener { _, checkedId ->
-            val isAnonymous = checkedId == R.id.anonymous_rb
-            binding.accountEt.isGone = isAnonymous
-            binding.passwordEt.isGone = isAnonymous
-            if (isAnonymous) {
-                binding.accountEt.setText("")
-                binding.passwordEt.setText("")
-            }
+        binding.anonymousTv.setOnClickListener {
+            serverData.isAnonymous = true
+            setAnonymous(true)
+        }
+
+        binding.accountTv.setOnClickListener {
+            serverData.isAnonymous = false
+            setAnonymous(false)
+        }
+
+        binding.activeTv.setOnClickListener {
+            serverData.isActiveFTP = true
+            setActive(true)
+        }
+
+        binding.passiveTv.setOnClickListener {
+            serverData.isActiveFTP = false
+            setActive(false)
         }
 
         binding.passwordToggleIv.setOnClickListener {
@@ -145,5 +156,38 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
             }
         }
         return true
+    }
+
+    private fun setAnonymous(isAnonymous: Boolean) {
+        binding.anonymousTv.isSelected = isAnonymous
+        binding.anonymousTv.setTextColorRes(
+            if (isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountTv.isSelected = !isAnonymous
+        binding.accountTv.setTextColorRes(
+            if (!isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountEt.isGone = isAnonymous
+        binding.passwordEt.isGone = isAnonymous
+        binding.passwordFl.isGone = isAnonymous
+
+        if (isAnonymous) {
+            binding.accountEt.setText("")
+            binding.passwordEt.setText("")
+        }
+    }
+
+    private fun setActive(isActive: Boolean) {
+        binding.activeTv.isSelected = isActive
+        binding.activeTv.setTextColorRes(
+            if (isActive) R.color.text_white else R.color.text_black
+        )
+
+        binding.passiveTv.isSelected = !isActive
+        binding.passiveTv.setTextColorRes(
+            if (!isActive) R.color.text_white else R.color.text_black
+        )
     }
 }

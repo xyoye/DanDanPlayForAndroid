@@ -22,6 +22,8 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
     private lateinit var testConnect: (MediaLibraryEntity) -> Unit
     private lateinit var testConnectResult: MutableLiveData<Boolean>
 
+    private lateinit var binding: DialogSmbLoginBinding
+
     constructor() : super()
 
     constructor(
@@ -39,6 +41,7 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
     override fun getChildLayoutId() = R.layout.dialog_smb_login
 
     override fun initView(binding: DialogSmbLoginBinding) {
+        this.binding = binding
         val isEditStorage = originalStorage != null
 
         setTitle(if (isEditStorage) "编辑SMB帐号" else "添加SMB帐号")
@@ -49,9 +52,11 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
             "",
             MediaType.SMB_SERVER
         )
+        setSmbV2(serverData.smbV2)
+        setAnonymous(serverData.isAnonymous)
         binding.serverData = serverData
 
-        binding.serverTestConnectIv.setOnClickListener {
+        binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(serverData)) {
                 testConnect.invoke(serverData)
             }
@@ -67,14 +72,24 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
             }
         })
 
-        binding.loginModeRg.setOnCheckedChangeListener { _, checkedId ->
-            val isAnonymous = checkedId == R.id.anonymous_rb
-            binding.accountEt.isGone = isAnonymous
-            binding.passwordEt.isGone = isAnonymous
-            if (isAnonymous) {
-                binding.accountEt.setText("")
-                binding.passwordEt.setText("")
-            }
+        binding.anonymousTv.setOnClickListener {
+            serverData.isAnonymous = true
+            setAnonymous(true)
+        }
+
+        binding.accountTv.setOnClickListener {
+            serverData.isAnonymous = false
+            setAnonymous(false)
+        }
+
+        binding.smbV2Tv.setOnClickListener {
+            serverData.smbV2 = true
+            setSmbV2(true)
+        }
+
+        binding.smbV1Tv.setOnClickListener {
+            serverData.smbV2 = false
+            setSmbV2(false)
         }
 
         binding.passwordToggleIv.setOnClickListener {
@@ -120,5 +135,43 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
             }
         }
         return true
+    }
+
+    private fun setAnonymous(isAnonymous: Boolean) {
+        binding.anonymousTv.isSelected = isAnonymous
+        binding.anonymousTv.setTextColorRes(
+            if (isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountTv.isSelected = !isAnonymous
+        binding.accountTv.setTextColorRes(
+            if (!isAnonymous) R.color.text_white else R.color.text_black
+        )
+
+        binding.accountEt.isGone = isAnonymous
+        binding.passwordEt.isGone = isAnonymous
+        binding.passwordFl.isGone = isAnonymous
+
+        if (isAnonymous) {
+            binding.accountEt.setText("")
+            binding.passwordEt.setText("")
+        }
+    }
+
+    private fun setSmbV2(isSmbV2: Boolean) {
+        binding.smbV2Tv.isSelected = isSmbV2
+        binding.smbV2Tv.setTextColorRes(
+            if (isSmbV2) R.color.text_white else R.color.text_black
+        )
+
+        binding.smbV1Tv.post {
+            binding.smbV1Tv.isClickable = false
+            binding.smbV1Tv.setTextColorRes(R.color.text_gray)
+        }
+        //暂不支持SMB V1
+//        binding.smbV1Tv.isSelected = !isSmbV2
+//        binding.smbV1Tv.setTextColorRes(
+//            if (!isSmbV2) R.color.text_white else R.color.text_black
+//        )
     }
 }

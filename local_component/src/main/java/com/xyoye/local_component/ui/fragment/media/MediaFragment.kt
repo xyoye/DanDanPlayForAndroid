@@ -123,7 +123,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 ),
                 SheetActionBean(
                     ACTION_ADD_SMB_LIBRARY,
-                    "局域网（SMB）媒体库",
+                    "SMB媒体库",
                     R.drawable.ic_smb_storage
                 ),
                 SheetActionBean(

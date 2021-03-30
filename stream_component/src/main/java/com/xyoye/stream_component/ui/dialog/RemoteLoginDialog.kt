@@ -63,7 +63,7 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
             scanQRCode.invoke()
         }
 
-        binding.serverTestConnectIv.setOnClickListener {
+        binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(remoteData)) {
                 testConnect.invoke(remoteData)
             }

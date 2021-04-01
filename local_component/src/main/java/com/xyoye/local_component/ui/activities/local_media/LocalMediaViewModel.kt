@@ -50,27 +50,21 @@ class LocalMediaViewModel : BaseViewModel() {
     //临时的文件夹文件live data
     private var folderFileLiveData: LiveData<MutableList<VideoEntity>>? = null
 
-    //最近一次播放的视频记录
-    private var lastPlayHistory: PlayHistoryEntity? = null
-
     fun fastPlay() {
         viewModelScope.launch {
             //查询并播放最后一次播放的视频
-            lastPlayHistory = DatabaseManager.instance
-                    .getPlayHistoryDao()
-                    .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
-                    ?.also { entity ->
-                        val playParams = PlayParams(
-                                entity.url,
-                                entity.videoName,
-                                entity.danmuPath,
-                                entity.subtitlePath,
-                                entity.videoPosition,
-                                entity.episodeId,
-                                entity.mediaType
-                        )
-                        playVideoLiveData.postValue(playParams)
-                    }
+            queryLastPlayHistory()?.also { entity ->
+                val playParams = PlayParams(
+                    entity.url,
+                    entity.videoName,
+                    entity.danmuPath,
+                    entity.subtitlePath,
+                    entity.videoPosition,
+                    entity.episodeId,
+                    entity.mediaType
+                )
+                playVideoLiveData.postValue(playParams)
+            }
         }
     }
 
@@ -84,15 +78,15 @@ class LocalMediaViewModel : BaseViewModel() {
                 val folderData = DatabaseManager.instance.getVideoDao().getFolderByFilter()
 
                 //是否为最后一次播放的文件所在文件夹
-                lastPlayHistory?.apply {
+                queryLastPlayHistory()?.apply {
                     folderData.find {
                         it.folderPath == getDirPath(url)
                     }?.isLastPlay = true
                 }
 
                 folderData.sortWith(FileComparator(
-                        value = { getFolderName(it.folderPath) },
-                        isDirectory = { true }
+                    value = { getFolderName(it.folderPath) },
+                    isDirectory = { true }
                 ))
 
                 folderLiveData.postValue(folderData)
@@ -114,6 +108,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 fileLiveData.removeSource(it)
             }
             folderFileLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
+            val lastPlayHistory = queryLastPlayHistory()
             fileLiveData.addSource(folderFileLiveData!!) { videoData ->
                 if (!inRootFolder.get()) {
 
@@ -234,7 +229,7 @@ class LocalMediaViewModel : BaseViewModel() {
     }
 
     private suspend fun refreshSystemVideo(): Boolean {
-        return viewModelScope.async (Dispatchers.IO) {
+        return viewModelScope.async(Dispatchers.IO) {
             //1.从系统中读出所有视频数据
             val systemVideos = MediaResolver.queryVideo()
 
@@ -244,7 +239,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 val extendVideos = MediaUtils.scanVideoFile(it.folderPath)
 
                 //对扩展目录扫描出的视频去重
-                extendVideos.iterator().deduplication(systemVideos){ extend, system ->
+                extendVideos.iterator().deduplication(systemVideos) { extend, system ->
                     system.filePath == extend.filePath
                 }
 
@@ -319,7 +314,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 val autoLoadNetworkDanmu = DanmuConfig.isAutoLoadNetworkDanmu()
                 if (!loadedDanmu && autoLoadNetworkDanmu) {
                     val fileHash = IOUtils.getFileHash(data.filePath)
-                    if (!fileHash.isNullOrEmpty()){
+                    if (!fileHash.isNullOrEmpty()) {
                         DanmuUtils.matchDanmuSilence(viewModelScope, data.filePath, fileHash)?.let {
                             playParams.danmuPath = it.first
                             playParams.episodeId = it.second
@@ -404,13 +399,13 @@ class LocalMediaViewModel : BaseViewModel() {
     private suspend fun checkSourceExist(videoEntity: VideoEntity) {
         if (videoEntity.danmuPath.toFile().isInvalid()) {
             DatabaseManager.instance.getVideoDao().updateDanmu(
-                    videoEntity.filePath, null, 0
+                videoEntity.filePath, null, 0
             )
         }
 
         if (videoEntity.subtitlePath.toFile().isInvalid()) {
             DatabaseManager.instance.getVideoDao().updateSubtitle(
-                    videoEntity.filePath, null
+                videoEntity.filePath, null
             )
         }
     }
@@ -426,5 +421,14 @@ class LocalMediaViewModel : BaseViewModel() {
                 iterator.remove()
             }
         }
+    }
+
+    /**
+     * 查询最近一次播放的视频记录
+     */
+    private suspend fun queryLastPlayHistory(): PlayHistoryEntity? {
+        return DatabaseManager.instance
+            .getPlayHistoryDao()
+            .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
     }
 }

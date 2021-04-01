@@ -62,7 +62,9 @@ class StreamLinkDialog : BaseBottomDialog<DialogStreamLinkBinding> {
     }
 
     override fun dismiss() {
-        hideKeyboard(binding.linkInputEt)
+        if (this::binding.isInitialized){
+            hideKeyboard(binding.linkInputEt)
+        }
         super.dismiss()
     }
 }

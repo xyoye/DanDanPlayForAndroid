@@ -121,7 +121,9 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
     }
 
     override fun dismiss() {
-        hideKeyboard(binding.animeNameEt)
+        if (this::binding.isInitialized){
+            hideKeyboard(binding.animeNameEt)
+        }
         super.dismiss()
     }
 }

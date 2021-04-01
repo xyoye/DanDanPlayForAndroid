@@ -50,7 +50,9 @@ class MagnetPlayDialog : BaseBottomDialog<DialogMagnetPlayBinding> {
     }
 
     override fun dismiss() {
-        hideKeyboard(binding.magnetInputEt)
+        if (this::binding.isInitialized){
+            hideKeyboard(binding.magnetInputEt)
+        }
         super.dismiss()
     }
 

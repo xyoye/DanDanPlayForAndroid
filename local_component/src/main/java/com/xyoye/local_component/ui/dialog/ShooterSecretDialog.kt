@@ -1,8 +1,7 @@
 package com.xyoye.local_component.ui.dialog
 
-import android.content.Intent
-import android.net.Uri
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.startUrlActivity
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.local_component.R
@@ -34,9 +33,7 @@ class ShooterSecretDialog : BaseBottomDialog<DialogShooterSecretBinding>(true) {
         }
 
         binding.loginShooterTv.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://secure.assrt.net/user/logon.xml")
-            startActivity(intent)
+            requireContext().startUrlActivity("https://secure.assrt.net/user/logon.xml")
         }
     }
 }

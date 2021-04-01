@@ -1,10 +1,9 @@
 package com.xyoye.user_component.ui.activities.about_us
 
-import android.content.Intent
-import android.net.Uri
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.startUrlActivity
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivityAboutUsBinding
@@ -30,15 +29,11 @@ class AboutUsActivity : BaseActivity<AboutUsViewModel, ActivityAboutUsBinding>()
         dataBinding.appDescribeTv.text = describe
 
         dataBinding.officialAddressTv.setOnClickListener {
-            val uri = Uri.parse("https://dandanplay.com")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
+            startUrlActivity("https://dandanplay.com")
         }
 
         dataBinding.sourceAddressTv.setOnClickListener {
-            val uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
+            startUrlActivity("https://github.com/xyoye/DanDanPlayForAndroid")
         }
     }
 }

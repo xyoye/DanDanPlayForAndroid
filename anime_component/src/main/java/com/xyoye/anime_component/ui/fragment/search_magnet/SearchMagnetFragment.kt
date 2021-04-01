@@ -1,8 +1,5 @@
 package com.xyoye.anime_component.ui.fragment.search_magnet
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.launcher.ARouter
@@ -20,6 +17,7 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.addToClipboard
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.vertical
@@ -230,21 +228,16 @@ class SearchMagnetFragment :
                         .navigation()
                 }
                 ACTION_COPY_MAGNET -> {
-                    val clipboard =
-                        mAttachActivity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clipData = ClipData.newPlainText("data", magnetLink)
-                    clipboard.setPrimaryClip(clipData)
+                    magnetLink.addToClipboard()
                     ToastCenter.showSuccess("磁链已复制！")
                 }
                 ACTION_COPY_MAGNET_CONTENT -> {
-                    if (data.Magnet.isNullOrEmpty()) {
+                    val magnet = data.Magnet
+                    if (magnet.isNullOrEmpty()) {
                         ToastCenter.showError("磁链信息为空，无法复制")
                         return@BottomActionDialog true
                     }
-                    val clipboard =
-                        mAttachActivity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clipData = ClipData.newPlainText("data", data.Magnet)
-                    clipboard.setPrimaryClip(clipData)
+                    magnet.addToClipboard()
                     ToastCenter.showSuccess("磁链信息已复制！")
                 }
             }

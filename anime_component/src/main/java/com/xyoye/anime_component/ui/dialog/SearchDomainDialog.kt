@@ -1,10 +1,9 @@
 package com.xyoye.anime_component.ui.dialog
 
-import android.content.Intent
-import android.net.Uri
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.DialogSearchDomainBinding
 import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.extension.startUrlActivity
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 
@@ -16,9 +15,9 @@ class SearchDomainDialog : BaseBottomDialog<DialogSearchDomainBinding> {
 
     private var domainCallback: ((String) -> Unit)? = null
 
-    constructor(): super()
+    constructor() : super()
 
-    constructor(callback: (String) -> Unit): super(true){
+    constructor(callback: (String) -> Unit) : super(true) {
         domainCallback = callback
     }
 
@@ -32,9 +31,7 @@ class SearchDomainDialog : BaseBottomDialog<DialogSearchDomainBinding> {
         binding.searchDomainEt.setText(domainLink)
 
         binding.findDomainTv.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://github.com/kansaer/dandanplay-apiNode")
-            startActivity(intent)
+            requireContext().startUrlActivity("https://github.com/kansaer/dandanplay-apiNode")
         }
 
         setNegativeListener { dismiss() }

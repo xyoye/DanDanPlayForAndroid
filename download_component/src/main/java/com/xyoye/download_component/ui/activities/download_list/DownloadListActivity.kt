@@ -1,8 +1,5 @@
 package com.xyoye.download_component.ui.activities.download_list
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -10,6 +7,7 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.addToClipboard
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.formatFileSize
@@ -187,10 +185,7 @@ class DownloadListActivity : BaseActivity<DownloadListViewModel, ActivityDownloa
     }
 
     private fun copyMagnetLink(infoHash: String) {
-        val magnetLink = "magnet:?xt=urn:btih:$infoHash"
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("data", magnetLink)
-        clipboard.setPrimaryClip(clipData)
+        "magnet:?xt=urn:btih:$infoHash".addToClipboard()
         ToastCenter.showSuccess("磁链已复制！")
     }
 

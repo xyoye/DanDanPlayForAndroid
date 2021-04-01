@@ -1,10 +1,6 @@
 package com.xyoye.user_component.ui.activities.feedback
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.xyoye.common_component.adapter.addItem
@@ -12,6 +8,8 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.addToClipboard
+import com.xyoye.common_component.extension.startUrlActivity
 import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.AppUtils
@@ -39,10 +37,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         initRv()
 
         dataBinding.copyQqTv.setOnClickListener {
-            val magnetLink = R.string.text_qq.toResString()
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clipData = ClipData.newPlainText("data", magnetLink)
-            clipboard.setPrimaryClip(clipData)
+            R.string.text_qq.toResString().addToClipboard()
             ToastCenter.showSuccess("QQ已复制！")
         }
 
@@ -62,9 +57,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         }
 
         dataBinding.editIssuesTv.setOnClickListener {
-            val uri = Uri.parse("https://github.com/xyoye/DanDanPlayForAndroid/issues")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
+            startUrlActivity("https://github.com/xyoye/DanDanPlayForAndroid/issues")
         }
     }
 

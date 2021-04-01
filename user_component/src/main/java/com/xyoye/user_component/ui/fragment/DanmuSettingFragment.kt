@@ -42,6 +42,7 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
             return when (key) {
                 "auto_load_local_danmu" -> DanmuConfig.isAutoLoadLocalDanmu()
                 "auto_load_network_danmu" -> DanmuConfig.isAutoLoadNetworkDanmu()
+                "danmu_update_in_choreographer" -> DanmuConfig.isDanmuUpdateInChoreographer()
                 "show_dialog_before_play" -> DanmuConfig.isShowDialogBeforePlay()
                 "auto_launch_danmu_before_play" -> DanmuConfig.isAutoLaunchDanmuBeforePlay()
                 "auto_load_danmu_network_storage" -> DanmuConfig.isAutoLoadDanmuNetworkStorage()
@@ -56,6 +57,7 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
             when (key) {
                 "auto_load_local_danmu" -> DanmuConfig.putAutoLoadLocalDanmu(value)
                 "auto_load_network_danmu" -> DanmuConfig.putAutoLoadNetworkDanmu(value)
+                "danmu_update_in_choreographer" -> DanmuConfig.putDanmuUpdateInChoreographer(value)
                 "show_dialog_before_play" -> DanmuConfig.putShowDialogBeforePlay(value)
                 "auto_launch_danmu_before_play" -> DanmuConfig.putAutoLaunchDanmuBeforePlay(value)
                 "auto_load_danmu_network_storage" -> DanmuConfig.putAutoLoadDanmuNetworkStorage(value)

@@ -180,6 +180,10 @@ class DanmuView(
         overlappingPair[BaseDanmaku.TYPE_FIX_TOP] = true
         overlappingPair[BaseDanmaku.TYPE_FIX_BOTTOM] = true
 
+        //弹幕更新方式, 0:Choreographer, 1:new Thread, 2:DrawHandler
+        val danmuUpdateMethod: Byte =
+            if (PlayerInitializer.Danmu.updateInChoreographer) 0 else 2
+
         mDanmakuContext.apply {
             //合并重复弹幕
             isDuplicateMergingEnabled = true
@@ -188,7 +192,7 @@ class DanmuView(
             //设置禁止重叠
             mDanmakuContext.preventOverlapping(overlappingPair)
             //使用DrawHandler驱动刷新，避免在高刷新率时时间轴错位
-            updateMethod = 2
+            updateMethod = danmuUpdateMethod
             //添加关键字过滤器
             registerFilter(mKeywordFilter)
             //添加正则过滤器
@@ -265,7 +269,7 @@ class DanmuView(
 
     fun addBlackList(isRegex: Boolean, vararg keyword: String) {
         keyword.forEach {
-            if (isRegex){
+            if (isRegex) {
                 mRegexFilter.addRegex(it)
             } else {
                 mKeywordFilter.addKeyword(it)
@@ -275,7 +279,7 @@ class DanmuView(
     }
 
     fun removeBlackList(isRegex: Boolean, keyword: String) {
-        if (isRegex){
+        if (isRegex) {
             mRegexFilter.removeRegex(keyword)
         } else {
             mKeywordFilter.removeKeyword(keyword)
@@ -322,7 +326,7 @@ class DanmuView(
         addDanmaku(danmaku)
     }
 
-    private fun notifyFilterChanged(){
+    private fun notifyFilterChanged() {
         //该方法内部会调用弹幕刷新，能达到相应效果
         mDanmakuContext.addUserHashBlackList()
     }

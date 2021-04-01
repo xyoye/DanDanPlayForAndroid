@@ -26,6 +26,7 @@ allprojects {
 
         flatDir {
             dirs project(':common_component').file('libs')
+            dirs project(':player_component').file('libs')
         }
     }
 }

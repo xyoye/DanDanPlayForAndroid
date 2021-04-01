@@ -70,6 +70,10 @@ object DanmuConfigTable {
     @MMKVFiled
     const val autoMatchDanmuNetworkStorage = true
 
+    //根据屏幕刷新率绘制弹幕
+    @MMKVFiled
+    const val danmuUpdateInChoreographer = true
+
     //【外部视频】展示选择弹幕弹窗
     @MMKVFiled
     const val showDialogBeforePlay = true

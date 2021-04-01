@@ -36,6 +36,12 @@
 
     <PreferenceCategory android:title="其它">
         <SwitchPreference
+            android:key="danmu_update_in_choreographer"
+            android:summary="开启后可根据屏幕刷新率自适应的绘制弹幕，观感更佳"
+            android:title="弹幕适配高刷新率屏幕"
+            app:icon="@drawable/ic_player_setting_draw_mothed" />
+
+        <SwitchPreference
             android:key="show_dialog_before_play"
             android:summary="外部来源包括：FTP、WebDav、SMB、串流、磁链及第三方APP"
             android:title="【外部视频】展示选择弹幕弹窗"

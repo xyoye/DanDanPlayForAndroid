@@ -74,7 +74,7 @@ dependencies {
     implementation 'com.github.albfernandez:juniversalchardet:2.0.2'
     implementation 'com.effective.android:panelSwitchHelper-androidx:1.3.13'
 
-    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+    implementation(name: 'DanmakuFlameMaster', ext: 'aar')
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
 
     implementation rootProject.ext.dependencies["exoplayer"]

@@ -40,6 +40,7 @@ object PlayerInitializer {
         var maxLine = -1
         var maxNum = 0
         var cloudBlock = false
+        var updateInChoreographer = true
     }
 
     object Subtitle {

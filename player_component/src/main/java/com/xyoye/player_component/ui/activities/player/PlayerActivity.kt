@@ -237,6 +237,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.Danmu.maxLine = DanmuConfig.getDanmuMaxLine()
         PlayerInitializer.Danmu.maxNum = DanmuConfig.getDanmuMaxCount()
         PlayerInitializer.Danmu.cloudBlock = DanmuConfig.isCloudDanmuBlock()
+        PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
 
         //字幕配置
         PlayerInitializer.Subtitle.textSize = (40f * SubtitleConfig.getTextSize() / 100f).toInt()

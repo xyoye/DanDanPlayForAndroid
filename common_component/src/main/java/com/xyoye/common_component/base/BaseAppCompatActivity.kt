@@ -56,7 +56,9 @@ abstract class BaseAppCompatActivity<V : ViewDataBinding> : AppCompatActivity() 
     open fun showLoading(msg: String = "") {
         hideLoading()
         loadingReference = WeakReference(BaseLoadingDialog(this, msg))
-        loadingReference!!.get()?.show()
+        if (!isFinishing){
+            loadingReference!!.get()?.show()
+        }
     }
 
     open fun hideLoading() {

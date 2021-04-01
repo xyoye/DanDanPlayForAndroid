@@ -97,7 +97,7 @@ object IOUtils {
                 totalLength += readLength
             }
             hash = buffer2Hex(messageDigest.digest())
-        } catch (e: IOException) {
+        } catch (e: Throwable) {
             e.printStackTrace()
         } finally {
             if (close){

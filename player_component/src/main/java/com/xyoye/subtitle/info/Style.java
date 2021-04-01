@@ -109,7 +109,7 @@ public class Style {
 						value.substring(2, 3) +
 						"ff";
 			}
-		} else if (format.equalsIgnoreCase("&HAABBGGRR")){
+		} else if (format.equalsIgnoreCase("&HAABBGGRR") && value.length() > 8){
 			//hex format from ASS
 			StringBuilder sb = new StringBuilder();
 			sb.append(value.substring(8));

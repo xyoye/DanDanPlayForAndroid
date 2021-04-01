@@ -1,5 +1,7 @@
 package com.xyoye.subtitle.format;
 
+import android.text.TextUtils;
+
 import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;
@@ -64,7 +66,9 @@ public class FormatSRT implements TimedTextFileFormat {
 		tto.fileName = file.getName();
 
 		String line = br.readLine();
-		line = line.replace("\uFEFF", ""); //remove BOM character
+		if (line != null){
+			line = line.replace("\uFEFF", ""); //remove BOM character
+		}
 		int lineCounter = 0;
 		try {
 			while(line!=null){

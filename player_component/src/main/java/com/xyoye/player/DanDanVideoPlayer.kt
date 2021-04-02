@@ -165,6 +165,7 @@ class DanDanVideoPlayer(
     override fun setSpeed(speed: Float) {
         if (isInPlayState()) {
             mVideoPlayer.setSpeed(speed)
+            mVideoController?.setSpeed(speed)
         }
     }
 

@@ -176,6 +176,10 @@ class VideoController(
         subtitleSettingView.setSubtitlePath(url)
     }
 
+    fun setSpeed(speed: Float){
+        danmuView.setSpeed(speed)
+    }
+
     fun setLastPosition(position: Long) {
         skipPositionView.setSkipPosition(position)
     }

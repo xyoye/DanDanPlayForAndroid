@@ -328,6 +328,10 @@ class DanmuView(
         addDanmaku(danmaku)
     }
 
+    fun setSpeed(speed: Float){
+        mDanmakuContext.setSpeed(speed)
+    }
+
     private fun notifyFilterChanged() {
         //该方法内部会调用弹幕刷新，能达到相应效果
         mDanmakuContext.addUserHashBlackList()

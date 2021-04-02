@@ -79,6 +79,10 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             Pair(
                 "4、扫描不到视频",
                 "尝试在扫描设置中单独添加该视频，或将该视频文件夹加入扫描目录列表。\n\n视频扫描为了保证体验流畅，采取的视频收集方式是获取系统内部的视频，所以某些视频可能不能及时扫描或无法扫描"
+            ),
+            Pair(
+                "5、弹幕倍速相关",
+                "目前弹幕倍速仅支持ExoPlayer内核，且倍速大于1的情况"
             )
         )
 

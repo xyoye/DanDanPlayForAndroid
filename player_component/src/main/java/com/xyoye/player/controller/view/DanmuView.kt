@@ -74,11 +74,13 @@ class DanmuView(
             }
 
             override fun prepared() {
-                isDanmuLoaded = true
-                if (mControlWrapper.isPlaying()) {
-                    val position =
-                        mControlWrapper.getCurrentPosition() + PlayerInitializer.Danmu.offsetPosition
-                    start(position)
+                post {
+                    isDanmuLoaded = true
+                    if (mControlWrapper.isPlaying()) {
+                        val position =
+                            mControlWrapper.getCurrentPosition() + PlayerInitializer.Danmu.offsetPosition
+                        start(position)
+                    }
                 }
             }
 

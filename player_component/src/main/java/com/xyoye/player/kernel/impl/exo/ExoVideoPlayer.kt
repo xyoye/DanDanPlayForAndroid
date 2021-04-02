@@ -23,6 +23,7 @@ import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.TrackHelper
 import com.xyoye.subtitle.MixedSubtitle
 import com.xyoye.subtitle.SubtitleType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -136,7 +137,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
         exoplayer.apply {
             removeVideoListener(this@ExoVideoPlayer)
             removeListener(this@ExoVideoPlayer)
-            GlobalScope.launch { release() }
+            GlobalScope.launch(Dispatchers.Main) { release() }
         }
 
         mIsPreparing = false

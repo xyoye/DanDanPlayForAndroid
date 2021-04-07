@@ -23,6 +23,13 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP INDEX IF EXISTS 'index_media_library_url'")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_media_library_url_media_type ON media_library(url, media_type)")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -34,6 +41,6 @@ class DatabaseManager private constructor() {
         BaseApplication.getAppContext(),
         DatabaseInfo::class.java,
         "rood_db"
-    ).addMigrations(MIGRATION_1_2).build()
+    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
 
 }

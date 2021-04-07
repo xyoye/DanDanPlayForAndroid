@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
-@Entity(tableName = "media_library", indices = [Index(value = arrayOf("url"), unique = true)])
+@Entity(tableName = "media_library", indices = [Index(value = arrayOf("url", "media_type"), unique = true)])
 @TypeConverters(BooleanConverter::class, MediaTypeConverter::class)
 data class MediaLibraryEntity(
     @PrimaryKey(autoGenerate = true)

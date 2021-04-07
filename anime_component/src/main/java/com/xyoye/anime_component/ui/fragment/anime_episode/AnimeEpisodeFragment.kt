@@ -128,7 +128,13 @@ class AnimeEpisodeFragment :
         val pattern = Pattern.compile("第(\\d+)话")
         val matcher = pattern.matcher(episodeText)
         if (matcher.find()) {
-            return matcher.group().run { substring(1, length - 1) }
+            return matcher.group().run {
+                var episode = substring(1, length - 1)
+                if (episode.length == 1){
+                    episode = "0$episode"
+                }
+                episode
+            }
         }
         return ""
     }

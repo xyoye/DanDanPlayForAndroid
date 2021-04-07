@@ -9,7 +9,7 @@ import retrofit2.http.*
 
 interface RetrofitService {
     @GET("api/v2/bangumi/shin")
-    suspend fun getWeeklyAnime(): BangumiAnimeData
+    suspend fun getWeeklyAnime(@Query("filterAdultContent") filterAdultContent: Boolean = true): BangumiAnimeData
 
     @GET("api/v2/homepage/banner")
     suspend fun getBanners(): BannerData

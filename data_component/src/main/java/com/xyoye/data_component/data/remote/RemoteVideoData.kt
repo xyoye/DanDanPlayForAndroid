@@ -10,16 +10,13 @@ import com.squareup.moshi.JsonClass
 data class RemoteVideoData(
     val AnimeId: Int,
     val AnimeTitle: String?,
-    val Created: String,
-    val Duration: Long,
-    val EpisodeId: Int,
+    val Duration: Long?,
     val EpisodeTitle: String?,
     val Hash: String,
     val Id: String,
     val IsStandalone: Boolean,
     val Name: String,
     val Path: String,
-    val Size: Long,
 
     var danmuPath: String?,
     var subtitlePath: String?

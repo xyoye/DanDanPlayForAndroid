@@ -3,6 +3,7 @@ package com.xyoye.stream_component.ui.activities.remote_file
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -141,7 +142,10 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                         itemBinding.run {
                             val videoName = data.EpisodeTitle ?: data.Name
                             titleTv.setAutoSizeText(videoName)
-                            durationTv.text = formatDuration(data.Duration * 1000)
+                            durationTv.isGone = data.Duration == null
+                            if (data.Duration != null){
+                                durationTv.text = formatDuration(data.Duration!! * 1000)
+                            }
                             val coverUrl = RemoteHelper.getInstance().buildImageUrl(data.Hash)
                             coverIv.setGlideImage(coverUrl, 5)
 

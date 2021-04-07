@@ -1,9 +1,13 @@
 package com.xyoye.common_component.utils
 
+import android.content.Context
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.R
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.util.*
+
 
 /**
  * Created by xyoye on 2020/11/26.
@@ -43,6 +47,12 @@ fun isTorrentFile(filePath: String): Boolean {
 }
 
 object MediaUtils {
+
+    fun queryVideoTitle(context: Context, fileUri: Uri?):String?{
+        if (fileUri == null) return null
+        val documentFile = DocumentFile.fromSingleUri(context, fileUri) ?: return null
+        return documentFile.name
+    }
 
     fun getMediaTypeCover(filePath: String): Int{
         return when{

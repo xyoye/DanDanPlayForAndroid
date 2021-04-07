@@ -6,6 +6,7 @@ import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
@@ -42,15 +43,19 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             finish()
         }
 
-        val playUri = intent.data?.toString()
-        if (playUri.isNullOrEmpty()) {
+        val videoUri = intent.data
+        val videoUriText = videoUri?.toString()
+        if (videoUriText.isNullOrEmpty()) {
             viewModel.isParseError.set(true)
             return
         }
 
+        val videoTitle = MediaUtils.queryVideoTitle(this, videoUri)
+            ?: getFileName(videoUriText)
+
         playParams = PlayParams(
-            playUri,
-            getFileName(playUri),
+            videoUriText,
+            videoTitle,
             null,
             null,
             0,
@@ -67,7 +72,7 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
 
                 ARouter.getInstance()
                     .build(RouteTable.Local.BindDanmu)
-                    .withString("videoName", getFileName(playUri))
+                    .withString("videoName", videoTitle)
                     .navigation(
                         this@PlayerIntentActivity,
                         REQUEST_CODE_BIND_DANMU

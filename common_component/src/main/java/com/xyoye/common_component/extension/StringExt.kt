@@ -5,6 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import com.xyoye.common_component.base.app.BaseApplication
 import java.io.File
+import java.net.URLDecoder
+import java.nio.charset.Charset
 
 /**
  * Created by xyoye on 2021/3/20.
@@ -21,4 +23,10 @@ fun String.addToClipboard(){
         .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     val clipData = ClipData.newPlainText("data", this)
     clipboard.setPrimaryClip(clipData)
+}
+
+fun String?.decodeUrl(charset: Charset = Charsets.UTF_8): String?{
+    if (isNullOrEmpty())
+        return this
+    return URLDecoder.decode(this, charset.name())
 }

@@ -1,6 +1,7 @@
 package com.xyoye.local_component.ui.dialog
 
 import androidx.core.view.isGone
+import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.utils.KeywordHelper
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
@@ -45,7 +46,7 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
             binding.fileNameTips.isGone = false
             binding.fileNameTv.isGone = false
             binding.fileNameTv.setTextIsSelectable(true)
-            binding.fileNameTv.text = videoName
+            binding.fileNameTv.text = videoName.decodeUrl()
         }
 
         binding.episodeRb.setOnClickListener {

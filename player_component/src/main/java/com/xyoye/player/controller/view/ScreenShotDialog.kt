@@ -11,16 +11,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
-import com.xyoye.common_component.utils.IOUtils
-import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.player.utils.getShotImageName
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.DialogScreenShotBinding
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 
 
 /**
@@ -51,8 +46,9 @@ class ScreenShotDialog(private val mContext: Context, private val bitmap: Bitmap
         }
 
         dialogBinding.shotSaveBt.setOnClickListener {
-            if (saveShotImage(bitmap)) {
-                ToastCenter.showOriginalToast("保存截图成功")
+            val (isSuccess, dirType) = MediaUtils.saveScreenShot(mContext, bitmap)
+            if (isSuccess) {
+                ToastCenter.showOriginalToast("$dirType: 保存截图成功")
             } else {
                 ToastCenter.showOriginalToast("保存截图失败")
             }
@@ -84,26 +80,5 @@ class ScreenShotDialog(private val mContext: Context, private val bitmap: Bitmap
                 .hideBar(BarHide.FLAG_HIDE_STATUS_BAR)
                 .init()
         }
-    }
-
-    private fun saveShotImage(bitmap: Bitmap): Boolean {
-        var isSuccess = false
-        var fileOutputStream: FileOutputStream? = null
-        try {
-            val saveFile = File(PathHelper.getScreenShotDirectory(), getShotImageName())
-            if (saveFile.exists())
-                saveFile.delete()
-            saveFile.createNewFile()
-
-            fileOutputStream = FileOutputStream(saveFile)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
-            fileOutputStream.flush()
-            isSuccess = true
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            IOUtils.closeIO(fileOutputStream)
-        }
-        return isSuccess
     }
 }

@@ -84,7 +84,10 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                             )
                             itemLayout.setOnClickListener {
 
-                                obtainPermissions(Manifest.permission.READ_EXTERNAL_STORAGE) {
+                                obtainPermissions(
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) {
                                     resultCallback = {
                                         if (this is PermissionResult.PermissionGranted) {
                                             launchMediaStorage(data)

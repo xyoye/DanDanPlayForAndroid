@@ -87,9 +87,9 @@ class SettingPlayerView(
 
         initRv()
 
-        TrackHelper.audioTrackData.observe(context as LifecycleOwner, Observer {
+        TrackHelper.audioTrackData.observe(context as LifecycleOwner) {
             viewBinding.audioTrackRv.setData(it)
-        })
+        }
     }
 
     override fun getSettingViewType() = SettingViewType.PLAYER_SETTING

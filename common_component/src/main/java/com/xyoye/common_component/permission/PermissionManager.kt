@@ -19,8 +19,7 @@ class PermissionManager : Fragment() {
         fun requestPermissions(
             activityOrFragment: Any,
             requestCode: Int,
-            handleRationale: Boolean,
-            callback: PermissionResult.() -> Unit,
+            permissionResult: PermissionResult,
             vararg permissions: String
         ) {
             //获取 fragment manager
@@ -34,20 +33,20 @@ class PermissionManager : Fragment() {
             if (fragment != null) {
                 //将请求码与回调加入map，并请求权限
                 (fragment as PermissionManager).also {
-                    it.callbackMap[requestCode] = callback
+                    it.callbackMap[requestCode] = permissionResult
                 }.considerRequestPermission(
                     requestCode,
-                    handleRationale,
+                    permissionResult.isRationale(),
                     *permissions
                 )
             } else {
                 //创建fragment，将请求码与回调加入map，并请求权限
                 PermissionManager().run {
                     fragmentManager.beginTransaction().add(this, FRAGMENT_TAG).commitNow()
-                    callbackMap[requestCode] = callback
+                    callbackMap[requestCode] = permissionResult
                     considerRequestPermission(
                         requestCode,
-                        handleRationale,
+                        permissionResult.isRationale(),
                         *permissions
                     )
                 }
@@ -55,7 +54,7 @@ class PermissionManager : Fragment() {
         }
     }
 
-    private val callbackMap = mutableMapOf<Int, PermissionResult.() -> Unit>()
+    private val callbackMap = mutableMapOf<Int, PermissionResult>()
     private val rationalRequest = mutableMapOf<Int, Boolean>()
 
     override fun onAttach(context: Context) {
@@ -100,12 +99,11 @@ class PermissionManager : Fragment() {
 
         when {
             //未授权为空，则权限请求成功
-            notGranted.isEmpty() ->
-                onPermissionResult(PermissionResult.PermissionGranted(requestCode))
+            notGranted.isEmpty() -> granted(requestCode)
             //处理 第一次拒绝的情况，返回
             handleRationale and notGranted.any { shouldShowRequestPermissionRationale(it) } -> {
                 rationalRequest[requestCode] = true
-                onPermissionResult(PermissionResult.PermissionRationale(requestCode))
+                rationale(requestCode)
             }
             //正式请求权限
             else -> {
@@ -124,7 +122,7 @@ class PermissionManager : Fragment() {
     ) {
         if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
             //所有权限请求成功
-            onPermissionResult(PermissionResult.PermissionGranted(requestCode))
+            granted(requestCode)
         } else {
             //存在拒绝的权限
             val deniedPermissions = mutableListOf<DeniedPermission>()
@@ -139,20 +137,23 @@ class PermissionManager : Fragment() {
                     )
                 }
             }
-            onPermissionResult(
-                PermissionResult.PermissionDenied(
-                    requestCode,
-                    deniedPermissions
-                )
-            )
+            denied(requestCode, deniedPermissions)
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    private fun onPermissionResult(permissionResult: PermissionResult) {
-        callbackMap[permissionResult.requestCode]?.let {
-            permissionResult.it()
-        }
-        callbackMap.remove(permissionResult.requestCode)
+    private fun granted(requestCode: Int){
+        callbackMap[requestCode]?.invokeGranted(requestCode)
+        callbackMap.remove(requestCode)
+    }
+
+    private fun denied(requestCode: Int, deniedPermissions : MutableList<DeniedPermission>){
+        callbackMap[requestCode]?.invokeDenied(requestCode, deniedPermissions)
+        callbackMap.remove(requestCode)
+    }
+
+    private fun rationale(requestCode: Int){
+        callbackMap[requestCode]?.invokeRationale(requestCode)
+        callbackMap.remove(requestCode)
     }
 }

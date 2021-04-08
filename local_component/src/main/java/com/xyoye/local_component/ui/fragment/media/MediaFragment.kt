@@ -7,11 +7,10 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.obtainPermissions
+import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
-import com.xyoye.common_component.permission.PermissionResult
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -83,18 +82,15 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 MediaTypeUtil.getCover(data.mediaType)
                             )
                             itemLayout.setOnClickListener {
-
-                                obtainPermissions(
+                                requestPermissions(
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                                 ) {
-                                    resultCallback = {
-                                        if (this is PermissionResult.PermissionGranted) {
-                                            launchMediaStorage(data)
-                                        }
-                                        if (this is PermissionResult.PermissionDenied) {
-                                            ToastCenter.showError("获取文件读取权限失败，无法打开媒体库")
-                                        }
+                                    onGranted {
+                                        launchMediaStorage(data)
+                                    }
+                                    onDenied { _, _ ->
+                                        ToastCenter.showError("获取文件读取权限失败，无法打开媒体库")
                                     }
                                 }
 

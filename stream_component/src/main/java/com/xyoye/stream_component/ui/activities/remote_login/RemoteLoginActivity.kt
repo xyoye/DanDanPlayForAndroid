@@ -7,9 +7,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.obtainPermissions
-import com.xyoye.common_component.permission.PermissionResult
-import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.stream_component.BR
@@ -67,17 +65,6 @@ class RemoteLoginActivity : BaseActivity<RemoteLoginViewModel, ActivityRemoteLog
     }
 
     private fun launchScanActivity() {
-        obtainPermissions(Manifest.permission.CAMERA) {
-            resultCallback = {
-                if (this is PermissionResult.PermissionGranted) {
-                    ARouter.getInstance()
-                        .build(RouteTable.Stream.RemoteScan)
-                        .navigation(this@RemoteLoginActivity, REQUEST_CODE_REMOTE_SCAN)
-                }
-                if (this is PermissionResult.PermissionDenied) {
-                    ToastCenter.showError("获取相机权限失败，无法进行扫码")
-                }
-            }
-        }
+        requestPermissions(Manifest.permission.CAMERA, Manifest.permission.VIBRATE) {}
     }
 }

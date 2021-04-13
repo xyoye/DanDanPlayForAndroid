@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Selecti
 import com.google.android.exoplayer2.ui.TrackNameProvider
 import com.google.android.exoplayer2.util.MimeTypes
 import com.xyoye.data_component.bean.VideoTrackBean
+import org.videolan.libvlc.MediaPlayer
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
 
 
@@ -110,6 +111,24 @@ object TrackHelper {
         subtitleTrackData.postValue(subtitleData)
     }
 
+    fun initVLCTrack(
+        audioTracks: Array<MediaPlayer.TrackDescription>?,
+        subtitleTracks: Array<MediaPlayer.TrackDescription>?
+    ) {
+        val audioData = mutableListOf<VideoTrackBean>()
+        audioTracks?.forEach {
+            audioData.add(VideoTrackBean(it.name, true, it.id, false))
+        }
+
+        val subtitleData = mutableListOf<VideoTrackBean>()
+        subtitleTracks?.forEach {
+            subtitleData.add(VideoTrackBean(it.name, false, it.id, false))
+        }
+
+        audioTrackData.postValue(audioData)
+        subtitleTrackData.postValue(subtitleData)
+    }
+
     fun selectExoTrack(trackSelector: TrackSelector, videoTrackBean: VideoTrackBean?) {
         if (trackSelector !is DefaultTrackSelector) {
             return
@@ -118,9 +137,9 @@ object TrackHelper {
         val trackInfo = trackSelector.currentMappedTrackInfo ?: return
 
         //只有字幕流才会被设置为空，设置为空时，关闭当前流
-        if (videoTrackBean == null){
-            for (renderIndex in 0 until trackInfo.rendererCount){
-                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT){
+        if (videoTrackBean == null) {
+            for (renderIndex in 0 until trackInfo.rendererCount) {
+                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
                     val parametersBuilder = trackSelector.parameters.buildUpon().apply {
                         setRendererDisabled(renderIndex, true)
                     }
@@ -139,5 +158,17 @@ object TrackHelper {
         }
 
         trackSelector.setParameters(parametersBuilder)
+    }
+
+    fun selectVLCTrack(isAudio: Boolean, trackId: Int){
+        if (isAudio){
+            val audioTracks = audioTrackData.value ?: return
+            audioTracks.forEach { it.isChecked = it.trackId == trackId }
+            audioTrackData.postValue(audioTracks)
+        } else {
+            val subtitleTracks = subtitleTrackData.value ?: return
+            subtitleTracks.forEach { it.isChecked = it.trackId == trackId }
+            subtitleTrackData.postValue(subtitleTracks)
+        }
     }
 }

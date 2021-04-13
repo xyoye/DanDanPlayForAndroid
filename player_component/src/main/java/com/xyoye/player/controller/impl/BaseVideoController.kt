@@ -61,6 +61,7 @@ abstract class BaseVideoController(
                 postDelayed(this, ((1000 - position % 1000) / mControlWrapper.getSpeed()).toLong())
             } else {
                 mIsStartProgress = false
+                postDelayed(this, 1000L)
             }
         }
     }

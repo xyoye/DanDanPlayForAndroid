@@ -262,11 +262,12 @@ class DanDanVideoPlayer(
             this@DanDanVideoPlayer.removeView(getView())
             release()
         }
-        mRenderView = SurfaceFactory.getFactory(PlayerInitializer.surfaceType)
-            .createRenderView(context)
+        mRenderView = SurfaceFactory.getFactory(
+            PlayerInitializer.playerType, PlayerInitializer.surfaceType
+        ).createRenderView(context)
             .apply {
-                attachPlayer(mVideoPlayer)
                 this@DanDanVideoPlayer.addView(getView(), 0, mDefaultLayoutParams)
+                attachPlayer(mVideoPlayer)
             }
 
         setExtraOption()

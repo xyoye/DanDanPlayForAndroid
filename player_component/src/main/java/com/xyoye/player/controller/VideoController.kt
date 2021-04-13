@@ -3,7 +3,6 @@ package com.xyoye.player.controller
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil

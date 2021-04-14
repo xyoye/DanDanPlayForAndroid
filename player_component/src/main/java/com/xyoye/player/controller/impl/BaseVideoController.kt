@@ -40,15 +40,6 @@ abstract class BaseVideoController(
     //播放失败回调
     protected var mPlayErrorBlock: (() -> Unit)? = null
 
-    //播放退出回调
-    protected var mPlayExitBlock: (() -> Unit)? = null
-
-    //选择字幕回调
-    protected var mSubtitleBlock: (() -> Unit)? = null
-
-    //选择弹幕回调
-    protected var mDanmuBlock: (() -> Unit)? = null
-
     //隐藏视图Runnable
     protected val mFadeOut = Runnable { hideController() }
 
@@ -70,7 +61,7 @@ abstract class BaseVideoController(
 
     @CallSuper
     fun setMediaPlayer(mediaPlayer: InterVideoPlayer) {
-        mControlWrapper = ControlWrapper(mediaPlayer, this)
+        mControlWrapper = ControlWrapper(mediaPlayer, this, getDanmuController())
         for (entry in mControlComponents.entries) {
             entry.key.attach(mControlWrapper)
         }
@@ -78,7 +69,7 @@ abstract class BaseVideoController(
         mOrientationHelper.enable()
     }
 
-    override fun addControlComponent(
+    final override fun addControlComponent(
         vararg controllerViews: InterControllerView,
         isIndependent: Boolean
     ) {
@@ -309,4 +300,6 @@ abstract class BaseVideoController(
         }
         onProgressChanged(duration, position)
     }
+
+    abstract fun getDanmuController(): InterDanmuController
 }

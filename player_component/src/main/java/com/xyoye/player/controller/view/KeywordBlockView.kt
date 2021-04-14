@@ -27,7 +27,6 @@ import com.xyoye.player_component.databinding.LayoutKeywordBlockBinding
 @SuppressLint("ClickableViewAccessibility")
 class KeywordBlockView(
     context: Context,
-    private val danmuView: DanmuView,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), InterSettingView {
@@ -53,7 +52,7 @@ class KeywordBlockView(
 
             keywordLabelsView.setOnLabelLongClickListener { _, data, _ ->
                 if (data is DanmuBlockEntity) {
-                    danmuView.removeBlackList(data.isRegex, data.keyword)
+                    mControlWrapper.removeBlackList(data.isRegex, data.keyword)
                     removeKeyword?.invoke(data.id)
                 }
                 return@setOnLabelLongClickListener true
@@ -81,7 +80,7 @@ class KeywordBlockView(
                 }
 
                 keywordBlockAddEt.setText("")
-                danmuView.addBlackList(isRegex, newKeyword)
+                mControlWrapper.addBlackList(isRegex, newKeyword)
                 addKeyword?.invoke(newKeyword, isRegex)
             }
         }
@@ -160,8 +159,8 @@ class KeywordBlockView(
                     keywordList.add(entity.keyword)
                 }
             }
-            danmuView.addBlackList(false, *keywordList.toTypedArray())
-            danmuView.addBlackList(true, *regexList.toTypedArray())
+            mControlWrapper.addBlackList(false, *keywordList.toTypedArray())
+            mControlWrapper.addBlackList(true, *regexList.toTypedArray())
         }
     }
 }

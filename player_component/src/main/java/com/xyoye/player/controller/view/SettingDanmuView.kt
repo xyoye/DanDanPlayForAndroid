@@ -27,7 +27,6 @@ import com.xyoye.player_component.databinding.LayoutSettingDanmuBinding
 
 class SettingDanmuView(
     context: Context,
-    private val danmuView: DanmuView,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
@@ -58,7 +57,7 @@ class SettingDanmuView(
 
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
-            viewBinding.danmuSourceTv.text = danmuView.mUrl
+            viewBinding.danmuSourceTv.text = mControlWrapper.getDanmuUrl()
             ViewCompat.animate(viewBinding.playerSettingNsv).translationX(0f).setDuration(500)
                 .start()
         } else {
@@ -142,7 +141,7 @@ class SettingDanmuView(
 
                 DanmuConfig.putDanmuSize(progress)
                 PlayerInitializer.Danmu.size = progress
-                danmuView.updateDanmuSize()
+                mControlWrapper.updateDanmuSize()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -159,7 +158,7 @@ class SettingDanmuView(
 
                 DanmuConfig.putDanmuSpeed(progress)
                 PlayerInitializer.Danmu.speed = progress
-                danmuView.updateDanmuSpeed()
+                mControlWrapper.updateDanmuSpeed()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -176,7 +175,7 @@ class SettingDanmuView(
 
                 DanmuConfig.putDanmuAlpha(progress)
                 PlayerInitializer.Danmu.alpha = progress
-                danmuView.updateDanmuAlpha()
+                mControlWrapper.updateDanmuAlpha()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -193,7 +192,7 @@ class SettingDanmuView(
 
                 DanmuConfig.putDanmuStoke(progress)
                 PlayerInitializer.Danmu.stoke = progress
-                danmuView.updateDanmuStoke()
+                mControlWrapper.updateDanmuStoke()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -204,7 +203,7 @@ class SettingDanmuView(
 
         viewBinding.switchDanmuTv.setOnClickListener {
             onSettingVisibilityChanged(false)
-            mControlWrapper.switchDanmuSource()
+            mControlWrapper.changeDanmuSource()
         }
 
         viewBinding.danmuExtraTimeReduce.setOnClickListener {
@@ -212,7 +211,7 @@ class SettingDanmuView(
             viewBinding.danmuOffsetTimeLl.requestFocus()
             PlayerInitializer.Danmu.offsetPosition -= 500
             updateOffsetEt()
-            danmuView.updateOffsetTime()
+            mControlWrapper.updateOffsetTime()
         }
 
         viewBinding.danmuExtraTimeAdd.setOnClickListener {
@@ -220,7 +219,7 @@ class SettingDanmuView(
             viewBinding.danmuOffsetTimeLl.requestFocus()
             PlayerInitializer.Danmu.offsetPosition += 500
             updateOffsetEt()
-            danmuView.updateOffsetTime()
+            mControlWrapper.updateOffsetTime()
         }
 
         viewBinding.danmuExtraTimeEt.setOnEditorActionListener { _, actionId, _ ->
@@ -233,7 +232,7 @@ class SettingDanmuView(
 
                 PlayerInitializer.Danmu.offsetPosition = (newOffsetSecond * 1000).toLong()
                 updateOffsetEt()
-                danmuView.updateOffsetTime()
+                mControlWrapper.updateOffsetTime()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -244,7 +243,7 @@ class SettingDanmuView(
             viewBinding.mobileDanmuIv.isSelected = !newState
             PlayerInitializer.Danmu.mobileDanmu = newState
             DanmuConfig.putShowMobileDanmu(newState)
-            danmuView.updateMobileDanmuState()
+            mControlWrapper.updateMobileDanmuState()
         }
 
         viewBinding.topDanmuIv.setOnClickListener {
@@ -252,7 +251,7 @@ class SettingDanmuView(
             viewBinding.topDanmuIv.isSelected = !newState
             PlayerInitializer.Danmu.topDanmu = newState
             DanmuConfig.putShowTopDanmu(newState)
-            danmuView.updateTopDanmuState()
+            mControlWrapper.updateTopDanmuState()
         }
 
         viewBinding.bottomDanmuIv.setOnClickListener {
@@ -260,7 +259,7 @@ class SettingDanmuView(
             viewBinding.bottomDanmuIv.isSelected = !newState
             PlayerInitializer.Danmu.bottomDanmu = newState
             DanmuConfig.putShowBottomDanmu(newState)
-            danmuView.updateBottomDanmuState()
+            mControlWrapper.updateBottomDanmuState()
         }
 
         viewBinding.maxLineTv.setOnClickListener {
@@ -269,7 +268,7 @@ class SettingDanmuView(
             PlayerInitializer.Danmu.maxLine = -1
             DanmuConfig.putDanmuMaxLine(-1)
             updateMaxDanmuLine()
-            danmuView.updateMaxLine()
+            mControlWrapper.updateMaxLine()
         }
 
         viewBinding.maxLineEt.setOnEditorActionListener { _, actionId, _ ->
@@ -285,7 +284,7 @@ class SettingDanmuView(
                 PlayerInitializer.Danmu.maxLine = newMaxLine
                 DanmuConfig.putDanmuMaxLine(newMaxLine)
                 updateMaxDanmuLine()
-                danmuView.updateMaxLine()
+                mControlWrapper.updateMaxLine()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -297,7 +296,7 @@ class SettingDanmuView(
             PlayerInitializer.Danmu.maxNum = 0
             DanmuConfig.putDanmuMaxCount(0)
             updateMaxDanmuNum()
-            danmuView.updateMaxScreenNum()
+            mControlWrapper.updateMaxScreenNum()
         }
 
         viewBinding.numberAutoLimitTv.setOnClickListener {
@@ -306,7 +305,7 @@ class SettingDanmuView(
             PlayerInitializer.Danmu.maxNum = -1
             DanmuConfig.putDanmuMaxCount(-1)
             updateMaxDanmuNum()
-            danmuView.updateMaxScreenNum()
+            mControlWrapper.updateMaxScreenNum()
         }
 
         viewBinding.numberInputLimitEt.setOnEditorActionListener { _, actionId, _ ->
@@ -321,7 +320,7 @@ class SettingDanmuView(
                 PlayerInitializer.Danmu.maxNum = newMaxNum
                 DanmuConfig.putDanmuMaxCount(newMaxNum)
                 updateMaxDanmuNum()
-                danmuView.updateMaxScreenNum()
+                mControlWrapper.updateMaxScreenNum()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false

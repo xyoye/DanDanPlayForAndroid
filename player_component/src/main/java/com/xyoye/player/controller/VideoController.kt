@@ -29,7 +29,8 @@ class VideoController(
     defStyleAttr: Int = 0
 ) : GestureVideoController(context, attrs, defStyleAttr) {
 
-    private val danmuView = DanmuView(context)
+    private val mDanmuController = DanmuController(context)
+
     private val subtitleTextView = SubtitleTextView(context)
     private val subtitleImageView = SubtitleImageView(context)
     private val playerTopView = PlayerTopView(context)
@@ -37,12 +38,11 @@ class VideoController(
     private val gestureView = PlayerGestureView(context)
 
     private val playerSettingView = SettingPlayerView(context)
-    private val danmuSettingView = SettingDanmuView(context, danmuView)
+    private val danmuSettingView = SettingDanmuView(context)
     private val subtitleSettingView =
         SettingSubtitleView(context, subtitleTextView, subtitleImageView)
-    private val switchSourceView =
-        SwitchSourceView(context, subtitleTextView, danmuView)
-    private val keywordBlockView = KeywordBlockView(context, danmuView)
+    private val switchSourceView = SwitchSourceView(context, subtitleTextView)
+    private val keywordBlockView = KeywordBlockView(context)
 
     private val skipPositionView = SkipPositionView(context)
     private val loadingView = LoadingView(context)
@@ -55,7 +55,7 @@ class VideoController(
     )
 
     init {
-        addControlComponent(danmuView)
+        addControlComponent(mDanmuController.getView())
         addControlComponent(subtitleTextView)
         addControlComponent(subtitleImageView)
         addControlComponent(playerTopView)
@@ -90,6 +90,8 @@ class VideoController(
         updateShotVisible(!isLocked)
     }
 
+    override fun getDanmuController() = mDanmuController
+
     override fun onVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
             controllerBinding.playerLockIv.isVisible = true
@@ -107,12 +109,8 @@ class VideoController(
         updateShotVisible(isVisible)
     }
 
-    override fun toggleDanmuVisible() {
-        danmuView.toggleVis()
-    }
-
     override fun seekTo(timeMs: Long) {
-        danmuView.seekTo(timeMs, mControlWrapper.isPlaying())
+        mDanmuController.seekTo(timeMs, mControlWrapper.isPlaying())
     }
 
     override fun switchSubtitleSource() {
@@ -120,17 +118,9 @@ class VideoController(
         mControlWrapper.showSettingView(SettingViewType.SWITCH_SOURCE)
     }
 
-    override fun switchDanmuSource() {
+    override fun changeDanmuSource() {
         switchSourceView.setSwitchType(isSwitchSubtitle = false)
         mControlWrapper.showSettingView(SettingViewType.SWITCH_SOURCE)
-    }
-
-    override fun allowSendDanmu(): Boolean {
-        return danmuView.allowSendDanmu()
-    }
-
-    override fun addDanmuToView(danmuBean: SendDanmuBean) {
-        danmuView.addDanmuToView(danmuBean)
     }
 
     override fun onBackPressed(): Boolean {
@@ -166,17 +156,13 @@ class VideoController(
     }
 
     fun setDanmuPath(url: String?) {
-        danmuView.loadDanmu(url)
+        mDanmuController.setDanmuPath(url)
     }
 
     fun setSubtitlePath(url: String?) {
         if (url.isNullOrEmpty())
             return
         subtitleSettingView.setSubtitlePath(url)
-    }
-
-    fun setSpeed(speed: Float){
-        danmuView.setSpeed(speed)
     }
 
     fun setLastPosition(position: Long) {
@@ -219,7 +205,7 @@ class VideoController(
         remove: ((id: Int) -> Unit),
         queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
     ) {
-        danmuView.setCloudBlockLiveData(cloudBlock)
+        mDanmuController.setCloudBlockLiveData(cloudBlock)
         keywordBlockView.setDatabaseBlock(add, remove, queryAll)
     }
 }

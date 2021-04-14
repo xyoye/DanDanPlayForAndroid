@@ -5,6 +5,7 @@ import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.player.controller.interfaces.InterDanmuController
 import com.xyoye.player.controller.interfaces.InterVideoController
 import com.xyoye.player.controller.interfaces.InterVideoPlayer
 
@@ -14,8 +15,9 @@ import com.xyoye.player.controller.interfaces.InterVideoPlayer
 
 class ControlWrapper(
     private val mVideoPlayer: InterVideoPlayer,
-    private val mController: InterVideoController
-) : InterVideoPlayer, InterVideoController {
+    private val mController: InterVideoController,
+    private val mDanmuController: InterDanmuController
+) : InterVideoPlayer, InterVideoController, InterDanmuController {
 
     override fun start() {
         mVideoPlayer.start()
@@ -56,6 +58,7 @@ class ControlWrapper(
 
     override fun setSpeed(speed: Float) {
         mVideoPlayer.setSpeed(speed)
+        mDanmuController.setSpeed(speed)
     }
 
     override fun getSpeed() = mVideoPlayer.getSpeed()
@@ -134,24 +137,80 @@ class ControlWrapper(
         mController.showSettingView(viewType)
     }
 
-    override fun toggleDanmuVisible() {
-        mController.toggleDanmuVisible()
-    }
-
     override fun switchSubtitleSource() {
         mController.switchSubtitleSource()
     }
 
-    override fun switchDanmuSource() {
-        mController.switchDanmuSource()
+    override fun changeDanmuSource() {
+        mController.changeDanmuSource()
+    }
+
+    override fun getDanmuUrl(): String? {
+        return mDanmuController.getDanmuUrl()
+    }
+
+    override fun updateDanmuSize() {
+        mDanmuController.updateDanmuSize()
+    }
+
+    override fun updateDanmuSpeed() {
+        mDanmuController.updateDanmuSpeed()
+    }
+
+    override fun updateDanmuAlpha() {
+        mDanmuController.updateDanmuAlpha()
+    }
+
+    override fun updateDanmuStoke() {
+        mDanmuController.updateDanmuStoke()
+    }
+
+    override fun updateOffsetTime() {
+        mDanmuController.updateOffsetTime()
+    }
+
+    override fun updateMobileDanmuState() {
+        mDanmuController.updateMobileDanmuState()
+    }
+
+    override fun updateTopDanmuState() {
+        mDanmuController.updateTopDanmuState()
+    }
+
+    override fun updateBottomDanmuState() {
+        mDanmuController.updateBottomDanmuState()
+    }
+
+    override fun updateMaxLine() {
+        mDanmuController.updateMaxLine()
+    }
+
+    override fun updateMaxScreenNum() {
+        mDanmuController.updateMaxScreenNum()
+    }
+
+    override fun toggleDanmuVisible() {
+        mDanmuController.toggleDanmuVisible()
+    }
+
+    override fun onDanmuSourceChanged(filePath: String) {
+        mDanmuController.onDanmuSourceChanged(filePath)
     }
 
     override fun allowSendDanmu(): Boolean {
-        return mController.allowSendDanmu()
+        return mDanmuController.allowSendDanmu()
     }
 
     override fun addDanmuToView(danmuBean: SendDanmuBean) {
-        mController.addDanmuToView(danmuBean)
+        mDanmuController.addDanmuToView(danmuBean)
+    }
+
+    override fun addBlackList(isRegex: Boolean, vararg keyword: String) {
+        mDanmuController.addBlackList(isRegex, *keyword)
+    }
+
+    override fun removeBlackList(isRegex: Boolean, keyword: String) {
+        mDanmuController.removeBlackList(isRegex, keyword)
     }
 
     /**

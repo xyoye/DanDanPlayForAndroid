@@ -1,6 +1,5 @@
 package com.xyoye.player.controller.interfaces
 
-import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.SettingViewType
 
 /**
@@ -35,15 +34,9 @@ interface InterVideoController {
 
     fun showSettingView(viewType: SettingViewType)
 
-    fun toggleDanmuVisible()
-
     fun seekTo(timeMs: Long)
 
     fun switchSubtitleSource()
 
-    fun switchDanmuSource()
-
-    fun allowSendDanmu(): Boolean
-
-    fun addDanmuToView(danmuBean: SendDanmuBean)
+    fun changeDanmuSource()
 }

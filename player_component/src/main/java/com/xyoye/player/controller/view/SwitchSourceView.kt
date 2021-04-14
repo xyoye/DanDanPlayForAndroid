@@ -37,7 +37,6 @@ import java.io.File
 class SwitchSourceView(
     context: Context,
     private val subtitleTextView: SubtitleTextView,
-    private val danmuView: DanmuView,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
@@ -341,8 +340,7 @@ class SwitchSourceView(
             subtitleTextView.setSubtitlePath(data.filePath, playWhenReady = true)
         } else {
             DDLog.i("切换弹幕源")
-            danmuView.release()
-            danmuView.loadDanmu(data.filePath)
+            mControlWrapper.onDanmuSourceChanged(data.filePath)
         }
         bindSourceObserver?.invoke(data.filePath, isSwitchSubtitle)
     }

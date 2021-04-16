@@ -18,7 +18,8 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
 
         val playerData = mapOf(
             Pair("IJK Player", PlayerType.TYPE_IJK_PLAYER.value.toString()),
-            Pair("EXO Player", PlayerType.TYPE_EXO_PLAYER.value.toString())
+            Pair("EXO Player", PlayerType.TYPE_EXO_PLAYER.value.toString()),
+            Pair("VLC Player", PlayerType.TYPE_VLC_PLAYER.value.toString())
         )
 
         val pixelData = mapOf(

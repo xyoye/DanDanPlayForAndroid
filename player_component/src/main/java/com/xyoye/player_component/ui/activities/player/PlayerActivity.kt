@@ -139,7 +139,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(params.videoTitle)
             setDanmuPath(params.danmuPath)
-            setSubtitlePath(params.subtitlePath)
             setLastPosition(params.currentPosition)
             //播放错误
             observerPlayError {
@@ -181,12 +180,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
-        //设置本地视频文件的父文件夹，用于选取弹、字幕
-        if (params.mediaType == MediaType.LOCAL_STORAGE) {
-            File(params.videoPath).parentFile?.absolutePath?.let {
-                videoController.setVideoFolder(it)
-            }
-        }
+        videoController.setSubtitlePath(params.subtitlePath)
     }
 
     private fun registerReceiver() {
@@ -245,6 +239,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
+
+        //设置本地视频文件的父文件夹，用于选取弹、字幕
+        if (playParams!!.mediaType == MediaType.LOCAL_STORAGE) {
+            File(playParams!!.videoPath).parentFile?.absolutePath?.let {
+                PlayerInitializer.selectSourceDirectory = it
+            }
+        }
     }
 
     private fun showPlayErrorDialog() {

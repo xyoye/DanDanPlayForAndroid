@@ -15,10 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
-import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.controller.VideoController
-import com.xyoye.player.controller.interfaces.InterVideoPlayer
+import com.xyoye.player.wrapper.InterVideoPlayer
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.facoty.PlayerFactory
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -166,15 +165,6 @@ class DanDanVideoPlayer(
     override fun setSpeed(speed: Float) {
         if (isInPlayState()) {
             mVideoPlayer.setSpeed(speed)
-
-            //IJK内核倍速无法按预期加速，导致弹幕倍速会出现偏移，因此禁用
-            //倍速小于1的情况下，弹幕没有按预期减速，因此禁用
-            //目前仅允许使用EXO内核，且倍速大于1时，开启弹幕倍速
-            if (PlayerInitializer.playerType == PlayerType.TYPE_EXO_PLAYER
-                && speed >= 1f
-            ) {
-                mVideoController?.setSpeed(speed)
-            }
         }
     }
 
@@ -187,10 +177,6 @@ class DanDanVideoPlayer(
 
     override fun getTcpSpeed() = mVideoPlayer.getTcpSpeed()
 
-    override fun setMirrorRotation(enable: Boolean) {
-        mRenderView?.getView()?.scaleX = if (enable) -1f else 1f
-    }
-
     override fun doScreenShot(): Bitmap? {
         return mRenderView?.doScreenShot()
     }
@@ -199,6 +185,10 @@ class DanDanVideoPlayer(
 
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
         mVideoPlayer.selectTrack(select, deselect)
+    }
+
+    override fun interceptSubtitle(subtitlePath: String): Boolean {
+        return mVideoPlayer.interceptSubtitle(subtitlePath)
     }
 
     override fun onVideoSizeChange(width: Int, height: Int) {
@@ -248,6 +238,10 @@ class DanDanVideoPlayer(
         mVideoController?.updateSubtitle(subtitle)
     }
 
+    override fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
+        mVideoController?.updateTrack(isAudio, trackData)
+    }
+
     private fun initPlayer() {
         mAudioFocusHelper.enable = PlayerInitializer.isEnableAudioFocus
         //初始化播放器
@@ -262,11 +256,12 @@ class DanDanVideoPlayer(
             this@DanDanVideoPlayer.removeView(getView())
             release()
         }
-        mRenderView = SurfaceFactory.getFactory(PlayerInitializer.surfaceType)
-            .createRenderView(context)
+        mRenderView = SurfaceFactory.getFactory(
+            PlayerInitializer.playerType, PlayerInitializer.surfaceType
+        ).createRenderView(context)
             .apply {
-                attachPlayer(mVideoPlayer)
                 this@DanDanVideoPlayer.addView(getView(), 0, mDefaultLayoutParams)
+                attachPlayer(mVideoPlayer)
             }
 
         setExtraOption()

@@ -1,12 +1,13 @@
 package com.xyoye.player.utils
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.exoplayer2.ui.TrackNameProvider
 import com.google.android.exoplayer2.util.MimeTypes
 import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.player.kernel.inter.VideoPlayerEventListener
+import org.videolan.libvlc.MediaPlayer
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
 
 
@@ -14,31 +15,29 @@ import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
  * Created by xyoye on 2020/11/16.
  */
 
-object TrackHelper {
-
-    val audioTrackData = MutableLiveData<MutableList<VideoTrackBean>>()
-    val subtitleTrackData = MutableLiveData<MutableList<VideoTrackBean>>()
+class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
+    private val audioTrackData = mutableListOf<VideoTrackBean>()
+    private val subtitleTrackData = mutableListOf<VideoTrackBean>()
 
     fun initIjkTrack(
         trackInfo: Array<IjkTrackInfo>,
         audioId: Int,
         subtitleId: Int
     ) {
-        val audioData = mutableListOf<VideoTrackBean>()
-        val subtitleData = mutableListOf<VideoTrackBean>()
+        audioTrackData.clear()
+        subtitleTrackData.clear()
 
         for ((index, info) in trackInfo.withIndex()) {
             if (info.trackType == IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO) {
                 val trackName =
-                    "#${audioData.size + 1}：${info.title}[${info.language}, ${info.codecName}]"
-                audioData.add(VideoTrackBean(trackName, true, index, index == audioId))
+                    "#${audioTrackData.size + 1}：${info.title}[${info.language}, ${info.codecName}]"
+                audioTrackData.add(VideoTrackBean(trackName, true, index, index == audioId))
             } else if (info.trackType == IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {
-                subtitleData.add(VideoTrackBean(info.title, false, index, index == subtitleId))
+                subtitleTrackData.add(VideoTrackBean(info.title, false, index, index == subtitleId))
             }
         }
-        audioTrackData.postValue(audioData)
-        subtitleTrackData.postValue(subtitleData)
-
+        mPlayerEventListener.updateTrack(true, audioTrackData)
+        mPlayerEventListener.updateTrack(false, subtitleTrackData)
     }
 
     fun initExoTrack(
@@ -46,9 +45,6 @@ object TrackHelper {
         trackSelections: TrackSelectionArray,
         trackNameProvider: TrackNameProvider
     ) {
-        val audioData = mutableListOf<VideoTrackBean>()
-        val subtitleData = mutableListOf<VideoTrackBean>()
-
         if (trackSelector !is MappingTrackSelector) {
             return
         }
@@ -67,6 +63,8 @@ object TrackHelper {
             }
         }
 
+        audioTrackData.clear()
+        subtitleTrackData.clear()
         for (groupArrayIndex in 0 until trackInfo.rendererCount) {
             val groupArray = trackInfo.getTrackGroups(groupArrayIndex)
             for (groupIndex in 0 until groupArray.length) {
@@ -79,7 +77,7 @@ object TrackHelper {
 
                     if (MimeTypes.isAudio(mineType)) {
                         val isChecked = selectedAudioId == format.id
-                        audioData.add(
+                        audioTrackData.add(
                             VideoTrackBean(
                                 trackName,
                                 true,
@@ -91,7 +89,7 @@ object TrackHelper {
                         )
                     } else if (MimeTypes.isText(mineType)) {
                         val isChecked = selectedSubtitleId == format.id
-                        subtitleData.add(
+                        subtitleTrackData.add(
                             VideoTrackBean(
                                 trackName,
                                 false,
@@ -106,8 +104,26 @@ object TrackHelper {
             }
         }
 
-        audioTrackData.postValue(audioData)
-        subtitleTrackData.postValue(subtitleData)
+        mPlayerEventListener.updateTrack(true, audioTrackData)
+        mPlayerEventListener.updateTrack(false, subtitleTrackData)
+    }
+
+    fun initVLCTrack(
+        audioTracks: Array<MediaPlayer.TrackDescription>?,
+        subtitleTracks: Array<MediaPlayer.TrackDescription>?
+    ) {
+        audioTrackData.clear()
+        subtitleTrackData.clear()
+        audioTracks?.forEach {
+            audioTrackData.add(VideoTrackBean(it.name, true, it.id, false))
+        }
+
+        subtitleTracks?.forEach {
+            subtitleTrackData.add(VideoTrackBean(it.name, false, it.id, false))
+        }
+
+        mPlayerEventListener.updateTrack(true, audioTrackData)
+        mPlayerEventListener.updateTrack(false, subtitleTrackData)
     }
 
     fun selectExoTrack(trackSelector: TrackSelector, videoTrackBean: VideoTrackBean?) {
@@ -118,9 +134,9 @@ object TrackHelper {
         val trackInfo = trackSelector.currentMappedTrackInfo ?: return
 
         //只有字幕流才会被设置为空，设置为空时，关闭当前流
-        if (videoTrackBean == null){
-            for (renderIndex in 0 until trackInfo.rendererCount){
-                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT){
+        if (videoTrackBean == null) {
+            for (renderIndex in 0 until trackInfo.rendererCount) {
+                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
                     val parametersBuilder = trackSelector.parameters.buildUpon().apply {
                         setRendererDisabled(renderIndex, true)
                     }
@@ -139,5 +155,15 @@ object TrackHelper {
         }
 
         trackSelector.setParameters(parametersBuilder)
+    }
+
+    fun selectVLCTrack(isAudio: Boolean, trackId: Int) {
+        if (isAudio) {
+            audioTrackData.forEach { it.isChecked = it.trackId == trackId }
+            mPlayerEventListener.updateTrack(true, audioTrackData)
+        } else {
+            subtitleTrackData.forEach { it.isChecked = it.trackId == trackId }
+            mPlayerEventListener.updateTrack(false, subtitleTrackData)
+        }
     }
 }

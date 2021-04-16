@@ -10,7 +10,6 @@ import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
-import com.xyoye.player.utils.TrackHelper
 import com.xyoye.player.utils.VideoLog
 import com.xyoye.subtitle.MixedSubtitle
 import com.xyoye.subtitle.SubtitleType
@@ -238,7 +237,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     mMediaPlayer.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO)
                 val selectedSubtitleId =
                     mMediaPlayer.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT)
-                TrackHelper.initIjkTrack(
+                mTrackHelper.initIjkTrack(
                     mMediaPlayer.trackInfo,
                     selectedAudioId,
                     selectedSubtitleId
@@ -277,7 +276,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             }
 
             //设置视频信息输出监听
-            setOnInfoListener { mp, what, extra ->
+            setOnInfoListener { _, what, extra ->
                 mPlayerEventListener.onInfo(what, extra)
                 VideoLog.d("$TAG--listener--onInfo--> STATE_INFO: what: $what, extra: $extra")
                 true

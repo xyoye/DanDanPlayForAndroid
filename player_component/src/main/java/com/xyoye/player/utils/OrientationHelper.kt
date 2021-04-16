@@ -3,7 +3,6 @@ package com.xyoye.player.utils
 import android.content.Context
 import android.os.SystemClock
 import android.view.OrientationEventListener
-import com.xyoye.player.controller.interfaces.OnOrientationChangeListener
 
 /**
  * Created by xyoye on 2020/11/2.
@@ -22,5 +21,9 @@ class OrientationHelper(context: Context) : OrientationEventListener(context) {
 
         mOnOrientationChangeListener?.onOrientationChanged(orientation)
         mLastChangeTimeMs = currentTimeMs
+    }
+
+    interface OnOrientationChangeListener {
+        fun onOrientationChanged(orientation: Int)
     }
 }

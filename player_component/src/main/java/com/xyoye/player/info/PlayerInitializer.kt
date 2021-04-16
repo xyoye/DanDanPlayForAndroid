@@ -20,6 +20,8 @@ object PlayerInitializer {
     var surfaceType = SurfaceType.VIEW_TEXTURE
     var screenScale = VideoScreenScale.SCREEN_SCALE_DEFAULT
 
+    var selectSourceDirectory: String? = null
+
     object IJKPlayer {
         var isMediaCodeCEnabled = false
         var isMediaCodeCH265Enabled = false

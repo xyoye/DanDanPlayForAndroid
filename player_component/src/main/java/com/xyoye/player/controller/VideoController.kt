@@ -10,11 +10,12 @@ import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.impl.GestureVideoController
-import com.xyoye.player.controller.interfaces.BatteryObserver
-import com.xyoye.player.controller.view.*
+import com.xyoye.player.controller.setting.SettingController
+import com.xyoye.player.controller.subtitle.SubtitleController
+import com.xyoye.player.controller.video.*
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.subtitle.MixedSubtitle
@@ -28,22 +29,18 @@ class VideoController(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : GestureVideoController(context, attrs, defStyleAttr) {
+    //弹幕视图控制器
+    private val mDanmuController = DanmuController(context)
 
-    private val danmuView = DanmuView(context)
-    private val subtitleTextView = SubtitleTextView(context)
-    private val subtitleImageView = SubtitleImageView(context)
+    //字幕视图控制器
+    private val mSubtitleController = SubtitleController(context)
+
+    //设置视图控制器
+    private val mSettingController = SettingController(context)
+
     private val playerTopView = PlayerTopView(context)
     private val playerBotView = PlayerBottomView(context)
     private val gestureView = PlayerGestureView(context)
-
-    private val playerSettingView = SettingPlayerView(context)
-    private val danmuSettingView = SettingDanmuView(context, danmuView)
-    private val subtitleSettingView =
-        SettingSubtitleView(context, subtitleTextView, subtitleImageView)
-    private val switchSourceView =
-        SwitchSourceView(context, subtitleTextView, danmuView)
-    private val keywordBlockView = KeywordBlockView(context, danmuView)
-
     private val skipPositionView = SkipPositionView(context)
     private val loadingView = LoadingView(context)
 
@@ -55,19 +52,14 @@ class VideoController(
     )
 
     init {
-        addControlComponent(danmuView)
-        addControlComponent(subtitleTextView)
-        addControlComponent(subtitleImageView)
+        addControlComponent(mDanmuController.getView())
+        addControlComponent(*mSubtitleController.getViews())
+        addControlComponent(gestureView)
         addControlComponent(playerTopView)
         addControlComponent(playerBotView)
-        addControlComponent(gestureView)
-        addControlComponent(playerSettingView)
-        addControlComponent(danmuSettingView)
-        addControlComponent(subtitleSettingView)
-        addControlComponent(switchSourceView)
-        addControlComponent(keywordBlockView)
         addControlComponent(skipPositionView)
         addControlComponent(loadingView)
+        addControlComponent(*mSettingController.getViews())
 
         controllerBinding.playerLockIv.setOnClickListener {
             mControlWrapper.toggleLockState()
@@ -84,6 +76,12 @@ class VideoController(
             ScreenShotDialog(context, shotBitmap).show()
         }
     }
+
+    override fun getDanmuController() = mDanmuController
+
+    override fun getSubtitleController() = mSubtitleController
+
+    override fun getSettingController() = mSettingController
 
     override fun onLockStateChanged(isLocked: Boolean) {
         controllerBinding.playerLockIv.isSelected = isLocked
@@ -107,32 +105,6 @@ class VideoController(
         updateShotVisible(isVisible)
     }
 
-    override fun toggleDanmuVisible() {
-        danmuView.toggleVis()
-    }
-
-    override fun seekTo(timeMs: Long) {
-        danmuView.seekTo(timeMs, mControlWrapper.isPlaying())
-    }
-
-    override fun switchSubtitleSource() {
-        switchSourceView.setSwitchType(isSwitchSubtitle = true)
-        mControlWrapper.showSettingView(SettingViewType.SWITCH_SOURCE)
-    }
-
-    override fun switchDanmuSource() {
-        switchSourceView.setSwitchType(isSwitchSubtitle = false)
-        mControlWrapper.showSettingView(SettingViewType.SWITCH_SOURCE)
-    }
-
-    override fun allowSendDanmu(): Boolean {
-        return danmuView.allowSendDanmu()
-    }
-
-    override fun addDanmuToView(danmuBean: SendDanmuBean) {
-        danmuView.addDanmuToView(danmuBean)
-    }
-
     override fun onBackPressed(): Boolean {
         if (isLocked()) {
             showController()
@@ -145,6 +117,97 @@ class VideoController(
 
     }
 
+    /**
+     * 设置视频标题
+     */
+    fun setVideoTitle(title: String?) {
+        playerTopView.setVideoTitle(title)
+    }
+
+    /**
+     * 设置初始弹幕路径
+     */
+    fun setDanmuPath(url: String?) {
+        mDanmuController.setDanmuPath(url)
+    }
+
+    /**
+     * 设置初始字幕路径
+     */
+    fun setSubtitlePath(url: String?) {
+        if (url.isNullOrEmpty())
+            return
+        mControlWrapper.setSubtitlePath(url)
+    }
+
+    /**
+     * 设置上次播放位置
+     */
+    fun setLastPosition(position: Long) {
+        skipPositionView.setSkipPosition(position)
+    }
+
+    /**
+     * 设置电量
+     */
+    fun setBatteryChanged(percent: Int) {
+        playerTopView.setBatteryChange(percent)
+    }
+
+    /**
+     * 播放错误回调
+     */
+    fun observerPlayError(block: () -> Unit) {
+        mPlayErrorBlock = block
+    }
+
+    /**
+     * 退出播放回调
+     */
+    fun observerPlayExit(block: () -> Unit) {
+        playerTopView.setExitObserver(block)
+    }
+
+    /**
+     * 资源绑定回调
+     */
+    fun observerBindSource(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
+        mSettingController.setBindSourceObserver(block)
+    }
+
+    /**
+     * 发送弹幕回调
+     */
+    fun observerSendDanmu(block: (danmuData: SendDanmuBean) -> Unit) {
+        playerBotView.setSendDanmuBlock(block)
+    }
+
+    /**
+     * 弹幕屏蔽回调
+     */
+    fun observerDanmuBlock(
+        cloudBlock: LiveData<MutableList<DanmuBlockEntity>>? = null,
+        add: ((keyword: String, isRegex: Boolean) -> Unit),
+        remove: ((id: Int) -> Unit),
+        queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
+    ) {
+        mDanmuController.setCloudBlockLiveData(cloudBlock)
+        mSettingController.setDatabaseBlock(add, remove, queryAll)
+    }
+
+    /**
+     * 更新字幕内容
+     *
+     * 由播放器调用
+     */
+    fun updateSubtitle(subtitle: MixedSubtitle) {
+        mSubtitleController.updateSubtitle(subtitle)
+    }
+
+    fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
+        mSettingController.updateTrack(isAudio, trackData)
+    }
+
     private fun updateShotVisible(isVisible: Boolean) {
         if (isVisible) {
             controllerBinding.playerShotIv.isVisible = true
@@ -155,71 +218,5 @@ class VideoController(
             ViewCompat.animate(controllerBinding.playerShotIv).translationX(translateX)
                 .setDuration(300).start()
         }
-    }
-
-    fun setVideoTitle(title: String?) {
-        playerTopView.setVideoTitle(title)
-    }
-
-    fun setVideoFolder(folderPath: String?) {
-        switchSourceView.setDefaultFolder(folderPath)
-    }
-
-    fun setDanmuPath(url: String?) {
-        danmuView.loadDanmu(url)
-    }
-
-    fun setSubtitlePath(url: String?) {
-        if (url.isNullOrEmpty())
-            return
-        subtitleSettingView.setSubtitlePath(url)
-    }
-
-    fun setSpeed(speed: Float){
-        danmuView.setSpeed(speed)
-    }
-
-    fun setLastPosition(position: Long) {
-        skipPositionView.setSkipPosition(position)
-    }
-
-    fun updateSubtitle(subtitle: MixedSubtitle) {
-        subtitleSettingView.updateSubtitle(subtitle)
-    }
-
-    fun setBatteryChanged(percent: Int) {
-        for (component in mControlComponents) {
-            val view = component.key
-            if (view is BatteryObserver) {
-                view.onBatteryChange(percent)
-                break
-            }
-        }
-    }
-
-    fun observerPlayError(block: () -> Unit) {
-        mPlayErrorBlock = block
-    }
-
-    fun observerPlayExit(block: () -> Unit) {
-        playerTopView.setExitObserver(block)
-    }
-
-    fun observerBindSource(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
-        switchSourceView.setBindSourceObserver(block)
-    }
-
-    fun observerSendDanmu(block: (danmuData: SendDanmuBean) -> Unit) {
-        playerBotView.setSendDanmuBlock(block)
-    }
-
-    fun observerDanmuBlock(
-        cloudBlock: LiveData<MutableList<DanmuBlockEntity>>? = null,
-        add: ((keyword: String, isRegex: Boolean) -> Unit),
-        remove: ((id: Int) -> Unit),
-        queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
-    ) {
-        danmuView.setCloudBlockLiveData(cloudBlock)
-        keywordBlockView.setDatabaseBlock(add, remove, queryAll)
     }
 }

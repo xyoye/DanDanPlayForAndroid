@@ -30,3 +30,5 @@ fun String?.decodeUrl(charset: Charset = Charsets.UTF_8): String?{
         return this
     return URLDecoder.decode(this, charset.name())
 }
+
+fun String.formatFileName() = trim().replace("[*>/:\\\\?<|]".toRegex(), "_")

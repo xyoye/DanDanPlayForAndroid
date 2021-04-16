@@ -180,13 +180,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setUrl(params.videoPath, params.header)
             start()
         }
-
-        //设置本地视频文件的父文件夹，用于选取弹、字幕
-        if (params.mediaType == MediaType.LOCAL_STORAGE) {
-            File(params.videoPath).parentFile?.absolutePath?.let {
-                videoController.setVideoFolder(it)
-            }
-        }
     }
 
     private fun registerReceiver() {
@@ -245,6 +238,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
+
+        //设置本地视频文件的父文件夹，用于选取弹、字幕
+        if (playParams!!.mediaType == MediaType.LOCAL_STORAGE) {
+            File(playParams!!.videoPath).parentFile?.absolutePath?.let {
+                PlayerInitializer.selectSourceDirectory = it
+            }
+        }
     }
 
     private fun showPlayErrorDialog() {

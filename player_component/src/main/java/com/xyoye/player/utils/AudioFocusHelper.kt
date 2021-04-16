@@ -3,7 +3,7 @@ package com.xyoye.player.utils
 import android.graphics.PointF
 import android.media.AudioManager
 import androidx.lifecycle.LifecycleCoroutineScope
-import com.xyoye.player.controller.interfaces.InterVideoPlayer
+import com.xyoye.player.wrapper.InterVideoPlayer
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 

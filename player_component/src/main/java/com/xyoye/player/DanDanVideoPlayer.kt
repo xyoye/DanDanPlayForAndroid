@@ -17,7 +17,7 @@ import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.controller.VideoController
-import com.xyoye.player.controller.interfaces.InterVideoPlayer
+import com.xyoye.player.wrapper.InterVideoPlayer
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.facoty.PlayerFactory
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -176,10 +176,6 @@ class DanDanVideoPlayer(
     }
 
     override fun getTcpSpeed() = mVideoPlayer.getTcpSpeed()
-
-    override fun setMirrorRotation(enable: Boolean) {
-        mRenderView?.getView()?.scaleX = if (enable) -1f else 1f
-    }
 
     override fun doScreenShot(): Bitmap? {
         return mRenderView?.doScreenShot()

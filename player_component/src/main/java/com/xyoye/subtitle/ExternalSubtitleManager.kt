@@ -17,6 +17,8 @@ import kotlin.math.min
 
 /**
  * Created by xyoye on 2020/12/14.
+ *
+ * 外挂字幕控制器
  */
 
 class ExternalSubtitleManager {

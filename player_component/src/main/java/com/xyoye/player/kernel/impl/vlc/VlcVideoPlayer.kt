@@ -166,6 +166,11 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         mMediaPlayer.videoScale = scale
     }
 
+    override fun interceptSubtitle(subtitlePath: String): Boolean {
+        mMediaPlayer.addSlave(IMedia.Slave.Type.Subtitle, subtitlePath, true)
+        return true
+    }
+
     private fun initVLCEventListener() {
         mMediaPlayer.setEventListener {
             VlcEventLog.log(it.type)
@@ -195,11 +200,6 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.EncounteredError -> stop()
                 //时长输出
                 MediaPlayer.Event.LengthChanged -> {
-                    //此消息早于ESSelected，因此在这里初始化流信息
-                    mTrackHelper.initVLCTrack(
-                        mMediaPlayer.audioTracks,
-                        mMediaPlayer.spuTracks
-                    )
                     progress.duration = it.lengthChanged
                 }
                 //进度改变
@@ -227,6 +227,13 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     if (isAudio || isSubtitle) {
                         mTrackHelper.selectVLCTrack(isAudio, it.esChangedID)
                     }
+                }
+                //流添加
+                MediaPlayer.Event.ESAdded -> {
+                    mTrackHelper.initVLCTrack(
+                        mMediaPlayer.audioTracks,
+                        mMediaPlayer.spuTracks
+                    )
                 }
             }
         }

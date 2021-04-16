@@ -56,8 +56,6 @@ class SettingSubtitleView(
         initSettingView()
 
         initSettingListener()
-
-        subtitleTrackList.add(TrackUtils.getEmptyTrack())
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -108,6 +106,9 @@ class SettingSubtitleView(
     override fun isSettingShowing() = viewBinding.subtitleSettingNsv.translationX == 0f
 
     fun updateSubtitleTrack(trackData: MutableList<VideoTrackBean>) {
+        subtitleTrackList.clear()
+        subtitleTrackList.add(TrackUtils.getEmptyTrack())
+
         var hasExSubtitleSelected = false
         val iterator = subtitleTrackList.iterator()
         while (iterator.hasNext()) {

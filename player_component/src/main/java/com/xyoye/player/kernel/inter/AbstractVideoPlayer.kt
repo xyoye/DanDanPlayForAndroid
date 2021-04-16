@@ -130,4 +130,9 @@ abstract class AbstractVideoPlayer {
      * 获取网络加载速度
      */
     abstract fun getTcpSpeed(): Long
+
+    /**
+     * 是否由播放器处理外挂弹幕
+     */
+    open fun interceptSubtitle(subtitlePath: String) = false
 }

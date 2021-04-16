@@ -85,6 +85,8 @@ class ControlWrapper(
         mVideoPlayer.selectTrack(select, deselect)
     }
 
+    override fun interceptSubtitle(subtitlePath: String) = mVideoPlayer.interceptSubtitle(subtitlePath)
+
     /**
      * ------------------Video Controller----------------------
      */
@@ -226,6 +228,10 @@ class ControlWrapper(
     }
 
     override fun setSubtitlePath(subtitlePath: String, playWhenReady: Boolean) {
+        //是否由播放器处理外挂字幕
+        if (interceptSubtitle(subtitlePath))
+            return
+        //由字幕控件处理外挂字幕
         mSubtitleController.setSubtitlePath(subtitlePath, playWhenReady)
     }
 

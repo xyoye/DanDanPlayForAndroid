@@ -137,7 +137,7 @@ class VideoController(
     fun setSubtitlePath(url: String?) {
         if (url.isNullOrEmpty())
             return
-        mSubtitleController.setSubtitlePath(url)
+        mControlWrapper.setSubtitlePath(url)
     }
 
     /**

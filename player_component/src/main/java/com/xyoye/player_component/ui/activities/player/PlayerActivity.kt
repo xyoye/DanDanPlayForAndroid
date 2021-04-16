@@ -139,7 +139,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(params.videoTitle)
             setDanmuPath(params.danmuPath)
-            setSubtitlePath(params.subtitlePath)
             setLastPosition(params.currentPosition)
             //播放错误
             observerPlayError {
@@ -180,6 +179,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setUrl(params.videoPath, params.header)
             start()
         }
+
+        videoController.setSubtitlePath(params.subtitlePath)
     }
 
     private fun registerReceiver() {

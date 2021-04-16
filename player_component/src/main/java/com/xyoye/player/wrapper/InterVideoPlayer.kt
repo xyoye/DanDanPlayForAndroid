@@ -106,4 +106,9 @@ interface InterVideoPlayer {
      *  选中字幕流或音频流
      */
     fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?)
+
+    /**
+     *  是否由播放器处理外挂弹幕
+     */
+    fun interceptSubtitle(subtitlePath: String): Boolean
 }

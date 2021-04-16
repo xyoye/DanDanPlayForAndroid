@@ -187,6 +187,10 @@ class DanDanVideoPlayer(
         mVideoPlayer.selectTrack(select, deselect)
     }
 
+    override fun interceptSubtitle(subtitlePath: String): Boolean {
+        return mVideoPlayer.interceptSubtitle(subtitlePath)
+    }
+
     override fun onVideoSizeChange(width: Int, height: Int) {
         mVideoSize = Point(width, height)
         mRenderView?.setScaleType(mScreenScale)

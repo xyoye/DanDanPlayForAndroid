@@ -6,7 +6,7 @@ import android.view.Surface
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
-import com.xyoye.player.utils.TrackHelper
+import com.xyoye.player.utils.VlcEventLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -125,7 +125,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        if (select != null && isPlayerAvailable()){
+        if (select != null && isPlayerAvailable()) {
             if (select.isAudio) {
                 mMediaPlayer.audioTrack = select.trackId
             } else {
@@ -168,7 +168,9 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     private fun initVLCEventListener() {
         mMediaPlayer.setEventListener {
+            VlcEventLog.log(it.type)
             when (it.type) {
+                //缓冲
                 MediaPlayer.Event.Buffering -> {
                     if (it.buffering == 100f) {
                         mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_BUFFERING_END, 0)
@@ -176,17 +178,31 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                         mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_BUFFERING_START, 0)
                     }
                 }
+                //打开中
                 MediaPlayer.Event.Opening -> {
                     mPlayerEventListener.onInfo(
                         PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
                         0
                     )
                 }
+                //播放中
                 MediaPlayer.Event.Playing -> playbackState = PlaybackStateCompat.STATE_PLAYING
+                //已暂停
                 MediaPlayer.Event.Paused -> playbackState = PlaybackStateCompat.STATE_PAUSED
+                //是否可跳转
                 MediaPlayer.Event.SeekableChanged -> seekable = it.seekable
+                //播放错误
                 MediaPlayer.Event.EncounteredError -> stop()
-                MediaPlayer.Event.LengthChanged -> progress.duration = it.lengthChanged
+                //时长输出
+                MediaPlayer.Event.LengthChanged -> {
+                    //此消息早于ESSelected，因此在这里初始化流信息
+                    mTrackHelper.initVLCTrack(
+                        mMediaPlayer.audioTracks,
+                        mMediaPlayer.spuTracks
+                    )
+                    progress.duration = it.lengthChanged
+                }
+                //进度改变
                 MediaPlayer.Event.TimeChanged -> {
                     val currentTime = it.timeChanged
                     if (abs(currentTime - lastTime) > 950L) {
@@ -194,23 +210,22 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                         lastTime = currentTime
                     }
                 }
+                //视频输出
                 MediaPlayer.Event.Vout -> {
-                    TrackHelper.initVLCTrack(
-                        mMediaPlayer.audioTracks,
-                        mMediaPlayer.spuTracks
-                    )
                     if (it.voutCount > 0) {
                         mMediaPlayer.updateVideoSurfaces()
                     }
                 }
+                //播放完成
                 MediaPlayer.Event.EndReached -> {
                     mPlayerEventListener.onCompletion()
                 }
+                //流选中
                 MediaPlayer.Event.ESSelected -> {
-                    if (it.esChangedType == IMedia.Track.Type.Audio) {
-                        TrackHelper.selectVLCTrack(true, mMediaPlayer.audioTrack)
-                    } else if (it.esChangedType == IMedia.Track.Type.Text) {
-                        TrackHelper.selectVLCTrack(false, mMediaPlayer.spuTrack)
+                    val isAudio = it.esChangedType == IMedia.Track.Type.Audio
+                    val isSubtitle = it.esChangedType == IMedia.Track.Type.Text
+                    if (isAudio || isSubtitle) {
+                        mTrackHelper.selectVLCTrack(isAudio, it.esChangedID)
                     }
                 }
             }

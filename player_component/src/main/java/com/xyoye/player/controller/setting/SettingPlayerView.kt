@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
@@ -22,9 +21,8 @@ import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.info.PlayerInitializer
-import com.xyoye.player.utils.TrackHelper
+import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemSettingVideoParamsBinding
 import com.xyoye.player_component.databinding.ItemVideoTrackBinding
@@ -59,6 +57,8 @@ class SettingPlayerView(
         VideoSpeedBean(2.0f, "2.0")
     )
 
+    private val audioTrackData = mutableListOf<VideoTrackBean>()
+
     private lateinit var mControlWrapper: ControlWrapper
 
     private val viewBinding = DataBindingUtil.inflate<LayoutSettingPlayerBinding>(
@@ -84,10 +84,6 @@ class SettingPlayerView(
         }
 
         initRv()
-
-        TrackHelper.audioTrackData.observe(context as LifecycleOwner) {
-            viewBinding.audioTrackRv.setData(it)
-        }
     }
 
     override fun getSettingViewType() = SettingViewType.PLAYER_SETTING
@@ -230,28 +226,34 @@ class SettingPlayerView(
         }
     }
 
-    private fun selectTrack(position: Int) {
-        val audioData = TrackHelper.audioTrackData.value ?: return
+    fun updateAudioTrack(trackData: MutableList<VideoTrackBean>) {
+        audioTrackData.clear()
+        audioTrackData.addAll(trackData)
+        viewBinding.audioTrackRv.setData(audioTrackData)
+    }
 
-        if (position > audioData.size)
+    private fun selectTrack(position: Int) {
+
+        if (position > audioTrackData.size)
             return
 
         var deselect: VideoTrackBean? = null
-        for ((index, data) in audioData.withIndex()) {
+        for ((index, data) in audioTrackData.withIndex()) {
             if (data.isChecked) {
                 //再次选中当前已选中音频流，跳过
                 if (index == position)
                     return
                 deselect = data
                 data.isChecked = false
+                viewBinding.audioTrackRv.adapter?.notifyItemChanged(index)
                 break
             }
         }
 
         //直接更新UI
-        audioData[position].isChecked = true
-        TrackHelper.audioTrackData.postValue(audioData)
+        audioTrackData[position].isChecked = true
+        viewBinding.audioTrackRv.adapter?.notifyItemChanged(position)
 
-        mControlWrapper.selectTrack(audioData[position], deselect)
+        mControlWrapper.selectTrack(audioTrackData[position], deselect)
     }
 }

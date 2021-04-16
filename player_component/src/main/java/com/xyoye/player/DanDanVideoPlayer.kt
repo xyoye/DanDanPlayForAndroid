@@ -234,6 +234,10 @@ class DanDanVideoPlayer(
         mVideoController?.updateSubtitle(subtitle)
     }
 
+    override fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
+        mVideoController?.updateTrack(isAudio, trackData)
+    }
+
     private fun initPlayer() {
         mAudioFocusHelper.enable = PlayerInitializer.isEnableAudioFocus
         //初始化播放器

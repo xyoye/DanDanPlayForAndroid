@@ -2,6 +2,7 @@ package com.xyoye.player.kernel.inter
 
 import android.view.Surface
 import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.player.utils.TrackHelper
 
 /**
  * Created by xyoye on 2020/10/29.
@@ -11,12 +12,14 @@ abstract class AbstractVideoPlayer {
 
     //播放器事件回调
     protected lateinit var mPlayerEventListener: VideoPlayerEventListener
+    protected lateinit var mTrackHelper: TrackHelper
 
     /**
      * 设置播放器回调
      */
     fun setPlayerEventListener(playerEventListener: VideoPlayerEventListener) {
         mPlayerEventListener = playerEventListener
+        mTrackHelper = TrackHelper(mPlayerEventListener)
     }
 
     /**

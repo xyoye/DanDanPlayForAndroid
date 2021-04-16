@@ -2,6 +2,7 @@ package com.xyoye.player.controller.setting
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.InterSettingController
@@ -64,5 +65,13 @@ class SettingController(context: Context) : InterSettingController {
 
     fun setBindSourceObserver(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
         switchSourceView.setBindSourceObserver(block)
+    }
+
+    fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
+        if (isAudio){
+            playerSettingView.updateAudioTrack(trackData)
+        } else {
+            subtitleSettingView.updateSubtitleTrack(trackData)
+        }
     }
 }

@@ -20,7 +20,6 @@ import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
-import com.xyoye.player.utils.TrackHelper
 import com.xyoye.subtitle.MixedSubtitle
 import com.xyoye.subtitle.SubtitleType
 import kotlinx.coroutines.Dispatchers
@@ -168,7 +167,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
     }
 
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        TrackHelper.selectExoTrack(mTrackSelector, select)
+        mTrackHelper.selectExoTrack(mTrackSelector, select)
     }
 
     override fun isPlaying(): Boolean {
@@ -260,7 +259,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
     ) {
         subtitleType = SubtitleType.UN_KNOW
         val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
-        TrackHelper.initExoTrack(mTrackSelector, trackSelections, trackNameProvider)
+        mTrackHelper.initExoTrack(mTrackSelector, trackSelections, trackNameProvider)
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {

@@ -10,8 +10,6 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
@@ -24,7 +22,6 @@ import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
-import com.xyoye.player.utils.TrackHelper
 import com.xyoye.player.utils.TrackUtils
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
@@ -61,39 +58,6 @@ class SettingSubtitleView(
         initSettingListener()
 
         subtitleTrackList.add(TrackUtils.getEmptyTrack())
-
-        TrackHelper.subtitleTrackData.observe(context as LifecycleOwner, Observer { it ->
-            var hasExSubtitleSelected = false
-            val iterator = subtitleTrackList.iterator()
-            while (iterator.hasNext()) {
-                val track = iterator.next()
-                if (!track.isExTrack) {
-                    iterator.remove()
-                } else if (track.isChecked) {
-                    hasExSubtitleSelected = true
-                }
-            }
-
-            val innerSelectedTrack = it.find { it.isChecked }
-            //有外挂字幕已选中 且 有内置字幕选中，取消内置字幕的选中
-            if (hasExSubtitleSelected && innerSelectedTrack != null) {
-                mControlWrapper.selectTrack(null, null)
-                return@Observer
-            }
-
-            //有内置字幕被选中，开启内置字幕显示
-            if (innerSelectedTrack != null) {
-                mControlWrapper.showInnerTextSubtitle()
-                mControlWrapper.setImageSubtitleEnable(true)
-            }
-
-            if (it.size > 0) {
-                subtitleTrackList.addAll(1, it)
-            } else if (subtitleTrackList.size == 1) {
-                subtitleTrackList[0].isChecked = true
-            }
-            viewBinding.subtitleTrackRv.adapter?.notifyDataSetChanged()
-        })
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -142,6 +106,39 @@ class SettingSubtitleView(
     }
 
     override fun isSettingShowing() = viewBinding.subtitleSettingNsv.translationX == 0f
+
+    fun updateSubtitleTrack(trackData: MutableList<VideoTrackBean>) {
+        var hasExSubtitleSelected = false
+        val iterator = subtitleTrackList.iterator()
+        while (iterator.hasNext()) {
+            val track = iterator.next()
+            if (!track.isExTrack) {
+                iterator.remove()
+            } else if (track.isChecked) {
+                hasExSubtitleSelected = true
+            }
+        }
+
+        val innerSelectedTrack = trackData.find { it.isChecked }
+        //有外挂字幕已选中 且 有内置字幕选中，取消内置字幕的选中
+        if (hasExSubtitleSelected && innerSelectedTrack != null) {
+            mControlWrapper.selectTrack(null, null)
+            return
+        }
+
+        //有内置字幕被选中，开启内置字幕显示
+        if (innerSelectedTrack != null) {
+            mControlWrapper.showInnerTextSubtitle()
+            mControlWrapper.setImageSubtitleEnable(true)
+        }
+
+        if (trackData.size > 0) {
+            subtitleTrackList.addAll(1, trackData)
+        } else if (subtitleTrackList.size == 1) {
+            subtitleTrackList[0].isChecked = true
+        }
+        viewBinding.subtitleTrackRv.adapter?.notifyDataSetChanged()
+    }
 
     private fun initSettingView() {
         //文字大小
@@ -358,7 +355,7 @@ class SettingSubtitleView(
         }
     }
 
-    private fun onSubtitleLoaded(sourceUrl: String, isLoaded: Boolean){
+    private fun onSubtitleLoaded(sourceUrl: String, isLoaded: Boolean) {
         //添加显示外挂字幕前，移除之前所有外挂字幕
         val iterator = subtitleTrackList.iterator()
         while (iterator.hasNext()) {

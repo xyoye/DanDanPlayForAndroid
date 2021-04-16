@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.player.controller.impl.GestureVideoController
 import com.xyoye.player.controller.setting.SettingController
@@ -201,6 +202,10 @@ class VideoController(
      */
     fun updateSubtitle(subtitle: MixedSubtitle) {
         mSubtitleController.updateSubtitle(subtitle)
+    }
+
+    fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
+        mSettingController.updateTrack(isAudio, trackData)
     }
 
     private fun updateShotVisible(isVisible: Boolean) {

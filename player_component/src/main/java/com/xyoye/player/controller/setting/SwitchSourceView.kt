@@ -137,7 +137,7 @@ class SwitchSourceView(
                         itemBinding.apply {
                             dirNameTv.text = data.name
                             dirNameTv.setTextColorRes(
-                                if (data.isOpened) R.color.text_black else R.color.text_gray
+                                if (data.isOpened) R.color.text_white_immutable else R.color.text_gray
                             )
                             dirNameTv.setOnClickListener {
                                 openTargetDirectory(data.path)
@@ -309,7 +309,7 @@ class SwitchSourceView(
 
     private fun setRootPathState(isSelected: Boolean) {
         viewBinding.rootPathTv.setTextColorRes(
-            if (isSelected) R.color.text_black else R.color.text_gray
+            if (isSelected) R.color.text_white_immutable else R.color.text_gray
         )
     }
 

@@ -6,6 +6,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -277,7 +278,7 @@ class FTPFileViewModel : BaseViewModel() {
                     ?: return@withContext null
 
             val danmuFileName = fileName.trim().replace(" ", "_")
-            val danmuFile = File(PathHelper.getDanmuDirectory(), danmuFileName)
+            val danmuFile = File(PathHelper.getDanmuDirectory(), danmuFileName.formatFileName())
 
             val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, danmuFile)
             if (copySuccess){
@@ -299,7 +300,7 @@ class FTPFileViewModel : BaseViewModel() {
             } ?: return@withContext null
 
             val subtitleFileName = danmuFTPFile.name.trim().replace(" ", "_")
-            val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName)
+            val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName.formatFileName())
 
             val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, subtitleFile)
             if (copySuccess){

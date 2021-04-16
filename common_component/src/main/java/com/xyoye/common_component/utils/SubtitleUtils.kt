@@ -1,5 +1,6 @@
 package com.xyoye.common_component.utils
 
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.seven_zip.SevenZipUtils
 import java.io.*
 
@@ -14,7 +15,7 @@ object SubtitleUtils {
         fileName: String,
         inputStream: InputStream
     ): String? {
-        val subtitleFileName = fileName.trim().replace(" ", "_")
+        val subtitleFileName = fileName.formatFileName()
         val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName)
         if (subtitleFile.exists()) {
             subtitleFile.delete()
@@ -46,7 +47,7 @@ object SubtitleUtils {
         callback: (destDirPath: String) -> Unit
     ) {
         //创建压缩文件
-        val zipFile = File(PathHelper.getSubtitleDirectory(), fileName)
+        val zipFile = File(PathHelper.getSubtitleDirectory(), fileName.formatFileName())
         if (zipFile.exists()) {
             zipFile.delete()
         }

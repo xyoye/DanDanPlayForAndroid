@@ -1,5 +1,6 @@
 package com.xyoye.common_component.utils
 
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +19,7 @@ import javax.xml.transform.stream.StreamResult
 object DanmuUtils {
 
     fun saveDanmu(fileName: String, inputStream: InputStream): String? {
-        val danmuFileName = fileName.trim().replace(" ", "_")
-        val danmuFile = File(PathHelper.getDanmuDirectory(), danmuFileName)
+        val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
         if (danmuFile.exists()) {
             danmuFile.delete()
         }
@@ -53,8 +53,7 @@ object DanmuUtils {
             danmuDir.mkdirs()
         }
 
-        val danmuFileName = fileName.trim().replace(" ", "_")
-        val danmuFile = File(danmuDir, danmuFileName)
+        val danmuFile = File(danmuDir, fileName.formatFileName())
         if (danmuFile.exists()) {
             danmuFile.delete()
         }
@@ -86,7 +85,7 @@ object DanmuUtils {
         if (!danmuDir.exists()) {
             danmuDir.mkdirs()
         }
-        val danmuFile = File(danmuDir, fileName)
+        val danmuFile = File(danmuDir, fileName.formatFileName())
         if (danmuFile.exists())
             danmuFile.delete()
         danmuFile.createNewFile()

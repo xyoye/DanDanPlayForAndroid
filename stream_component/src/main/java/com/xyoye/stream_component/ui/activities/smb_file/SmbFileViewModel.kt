@@ -143,7 +143,7 @@ class SmbFileViewModel : BaseViewModel() {
                 //启动本地服务处理InputStream
                 SMBPlayServer.getInstance().start()
                 val playUrl = SMBPlayServer.getInstance().getInputStreamUrl(
-                    filePath, fileSize
+                    fileName, filePath, fileSize
                 ) {
                     //获取文件流
                     SMBJManager.getInstance().getInputStream(it)

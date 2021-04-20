@@ -57,6 +57,7 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
     }
 
     fun getInputStreamUrl(
+        fileName: String,
         filePath: String,
         fileLength: Long,
         streamBlock: (filePath: String) -> InputStream
@@ -65,7 +66,7 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
         sourceContentType = getContentType(filePath)
         sourceLength = fileLength
         inputStreamBlock = streamBlock
-        return "http://127.0.0.1:$listeningPort/${getFileName(sourcePath)}"
+        return "http://127.0.0.1:$listeningPort/$fileName"
     }
 
     fun closeIO() {

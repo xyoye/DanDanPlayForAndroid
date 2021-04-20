@@ -1,6 +1,7 @@
 package com.xyoye.player.kernel.impl.vlc
 
 import android.content.Context
+import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
 import com.xyoye.data_component.bean.VideoTrackBean
@@ -49,7 +50,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             return
         }
 
-        mMedia = Media(libVlc, path)
+        mMedia = Media(libVlc, Uri.parse(path))
         progress.duration = mMedia.duration
         mMediaPlayer.media = mMedia
         mMedia.release()
@@ -197,7 +198,10 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 //是否可跳转
                 MediaPlayer.Event.SeekableChanged -> seekable = it.seekable
                 //播放错误
-                MediaPlayer.Event.EncounteredError -> stop()
+                MediaPlayer.Event.EncounteredError -> {
+                    stop()
+                    mPlayerEventListener.onError()
+                }
                 //时长输出
                 MediaPlayer.Event.LengthChanged -> {
                     progress.duration = it.lengthChanged

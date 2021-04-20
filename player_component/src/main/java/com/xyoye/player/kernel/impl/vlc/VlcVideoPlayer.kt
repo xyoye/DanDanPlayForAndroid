@@ -7,6 +7,7 @@ import android.view.Surface
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
+import com.xyoye.player.utils.VideoLog
 import com.xyoye.player.utils.VlcEventLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,6 +17,7 @@ import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.libvlc.util.VLCVideoLayout
+import java.io.File
 import kotlin.math.abs
 
 /**
@@ -25,6 +27,8 @@ import kotlin.math.abs
 class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     companion object {
+        private val TAG = VlcVideoPlayer::class.java.simpleName
+
         @Volatile
         var playbackState = PlaybackStateCompat.STATE_NONE
             private set
@@ -37,6 +41,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     private val progress = Progress()
     private var lastTime = 0L
     private var seekable = true
+    private var isBufferEnd = false
 
     override fun initPlayer() {
         setOptions()
@@ -50,7 +55,14 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             return
         }
 
-        mMedia = Media(libVlc, Uri.parse(path))
+        val videoUri = when {
+            path.startsWith("/") ||
+                    path.startsWith("content:") ||
+                    path.startsWith("file:") -> Uri.fromFile(File(path))
+            else -> Uri.parse(path)
+        }
+
+        mMedia = Media(libVlc, videoUri)
         progress.duration = mMedia.duration
         mMediaPlayer.media = mMedia
         mMedia.release()
@@ -136,7 +148,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun isPlaying(): Boolean {
-        return mMediaPlayer.isPlaying
+        return mMediaPlayer.isPlaying && isBufferEnd
     }
 
     override fun getCurrentPosition(): Long {
@@ -174,14 +186,17 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     private fun initVLCEventListener() {
         mMediaPlayer.setEventListener {
-            VlcEventLog.log(it.type)
+            VlcEventLog.log(it)
             when (it.type) {
                 //缓冲
                 MediaPlayer.Event.Buffering -> {
+                    isBufferEnd = it.buffering == 100f
                     if (it.buffering == 100f) {
                         mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_BUFFERING_END, 0)
+                        VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_BUFFERING_END")
                     } else {
                         mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_BUFFERING_START, 0)
+                        VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_BUFFERING_START")
                     }
                 }
                 //打开中
@@ -190,6 +205,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                         PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
                         0
                     )
+                    VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_VIDEO_RENDERING_START")
                 }
                 //播放中
                 MediaPlayer.Event.Playing -> playbackState = PlaybackStateCompat.STATE_PLAYING
@@ -201,6 +217,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.EncounteredError -> {
                     stop()
                     mPlayerEventListener.onError()
+                    VideoLog.d("$TAG--listener--onInfo--> onError")
                 }
                 //时长输出
                 MediaPlayer.Event.LengthChanged -> {
@@ -223,6 +240,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 //播放完成
                 MediaPlayer.Event.EndReached -> {
                     mPlayerEventListener.onCompletion()
+                    VideoLog.d("$TAG--listener--onInfo--> onCompletion")
                 }
                 //流选中
                 MediaPlayer.Event.ESSelected -> {

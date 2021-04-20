@@ -1,6 +1,7 @@
 package com.xyoye.player.utils
 
 import com.xyoye.common_component.utils.DDLog
+import org.videolan.libvlc.MediaPlayer
 import java.util.*
 
 /**
@@ -8,6 +9,8 @@ import java.util.*
  */
 
 object VlcEventLog {
+    private const val TAG = "VLC EVENT"
+
     private val eventType = HashMap<Int, String>()
 
     init {
@@ -30,7 +33,13 @@ object VlcEventLog {
         eventType[0x116] = "ESSelected"
     }
 
-    fun log(type: Int){
-        DDLog.i("VLC EVENT", eventType[type] ?: "Unknown")
+    fun log(event: MediaPlayer.Event) {
+        when (event.type) {
+            MediaPlayer.Event.Buffering -> DDLog.i(
+                TAG,
+                eventType[event.type] + ":" + event.buffering
+            )
+            else -> DDLog.i(TAG, eventType[event.type] ?: "Unknown")
+        }
     }
 }

@@ -1,11 +1,13 @@
 package com.xyoye.local_component.ui.dialog
 
 import androidx.core.view.isVisible
+import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.utils.StreamHeaderUtil
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
+import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogStreamLinkBinding
 
@@ -51,6 +53,13 @@ class StreamLinkDialog : BaseBottomDialog<DialogStreamLinkBinding> {
 
         binding.linkInputEt.hint = "https://"
         binding.linkInputEt.postDelayed({ showKeyboard(binding.linkInputEt) }, 200)
+
+        //VLC内核不支持手动添加请求头
+        if (PlayerConfig.getUsePlayerType() == PlayerType.TYPE_VLC_PLAYER.value){
+            val checkBoxText = getString(R.string.text_advanced_link) + "（VLC不支持）"
+            binding.advancedCb.text = checkBoxText
+            binding.advancedCb.isEnabled = false
+        }
 
         binding.advancedCb.setOnCheckedChangeListener { _, isChecked ->
             binding.headerInputEt.isVisible = isChecked

@@ -1,4 +1,3 @@
-
 package com.xyoye.player.controller.setting
 
 import android.content.Context

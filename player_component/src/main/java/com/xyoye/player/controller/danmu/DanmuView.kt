@@ -1,4 +1,4 @@
-package com.xyoye.player.controller.video
+package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import android.graphics.Color
@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.utils.DDLog
 import master.flame.danmaku.controller.DrawHandler
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
@@ -22,6 +21,7 @@ import com.xyoye.danmaku.filter.RegexFilter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.info.PlayerInitializer
 import java.io.File

@@ -6,7 +6,6 @@ import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.player.wrapper.InterDanmuController
-import com.xyoye.player.controller.video.DanmuView
 import com.xyoye.player.info.PlayerInitializer
 
 /**

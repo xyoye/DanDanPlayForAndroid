@@ -13,7 +13,7 @@ import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.player.controller.danmu.DanmuController
-import com.xyoye.player.controller.impl.GestureVideoController
+import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*

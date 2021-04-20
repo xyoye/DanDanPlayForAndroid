@@ -1,4 +1,4 @@
-package com.xyoye.player.controller.impl
+package com.xyoye.player.controller.base
 
 import android.app.Activity
 import android.content.Context

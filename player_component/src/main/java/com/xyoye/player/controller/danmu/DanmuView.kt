@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.config.DanmuConfig
+import com.xyoye.common_component.utils.DDLog
 import master.flame.danmaku.controller.DrawHandler
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import master.flame.danmaku.danmaku.model.DanmakuTimer
@@ -103,6 +104,16 @@ class DanmuView(
                 release()
             }
             PlayState.STATE_PLAYING -> {
+                if (isPrepared && isPaused) {
+                    resume()
+                }
+            }
+            PlayState.STATE_BUFFERING_PAUSED -> {
+                if (isPrepared){
+                    pause()
+                }
+            }
+            PlayState.STATE_BUFFERING_PLAYING -> {
                 if (isPrepared && isPaused) {
                     resume()
                 }

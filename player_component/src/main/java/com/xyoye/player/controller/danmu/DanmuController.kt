@@ -1,4 +1,4 @@
-package com.xyoye.player.controller
+package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import androidx.lifecycle.LiveData

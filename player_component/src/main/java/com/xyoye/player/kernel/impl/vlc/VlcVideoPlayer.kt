@@ -5,6 +5,9 @@ import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
 import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.enums.SurfaceType
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.VideoLog
@@ -63,6 +66,19 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         }
 
         mMedia = Media(libVlc, videoUri)
+
+        //是否开启硬件加速
+        if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DISABLE){
+            mMedia.setHWDecoderEnabled(false, false)
+        } else if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DECODING ||
+                PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_FULL){
+            mMedia.setHWDecoderEnabled(true, true)
+            if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DECODING){
+                mMedia.addOption(":no-mediacodec-dr")
+                mMedia.addOption(":no-omxil-dr")
+            }
+        } /* else automatic: use default options */
+
         progress.duration = mMedia.duration
         mMediaPlayer.media = mMedia
         mMedia.release()
@@ -131,10 +147,11 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun setOptions() {
-        val vlcArguments = arrayListOf<String>()
-        vlcArguments.add("-vvv")
-
-        libVlc = LibVLC(mContext, vlcArguments)
+        val options = arrayListOf<String>()
+        options.add("-vvv")
+        options.add("--android-display-chroma")
+        options.add(PlayerInitializer.Player.vlcPixelFormat.value)
+        libVlc = LibVLC(mContext, options)
     }
 
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
@@ -172,7 +189,8 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     fun attachRenderView(vlcVideoLayout: VLCVideoLayout) {
-        mMediaPlayer.attachViews(vlcVideoLayout, null, true, false)
+        val isTextureView = PlayerInitializer.surfaceType == SurfaceType.VIEW_TEXTURE
+        mMediaPlayer.attachViews(vlcVideoLayout, null, true, isTextureView)
     }
 
     fun setScale(scale: MediaPlayer.ScaleType) {

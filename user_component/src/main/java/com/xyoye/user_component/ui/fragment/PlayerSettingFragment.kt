@@ -6,6 +6,8 @@ import androidx.preference.*
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
 import com.xyoye.user_component.R
 
 /**
@@ -31,11 +33,29 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
             Pair("OpenGL ES2", PixelFormat.PIXEL_OPEN_GL_ES2.value)
         )
 
+        val vlcPixelData = mapOf(
+            Pair("RGB 16-bit", VLCPixelFormat.PIXEL_RGB_16.value),
+            Pair("RGB 32-bit", VLCPixelFormat.PIXEL_RGB_32.value),
+            Pair("YUV", VLCPixelFormat.PIXEL_YUV.value)
+        )
+
+        val vlcHWDecode = mapOf(
+            Pair("自动", VLCHWDecode.HW_ACCELERATION_AUTO.value.toString()),
+            Pair("禁用", VLCHWDecode.HW_ACCELERATION_DISABLE.value.toString()),
+            Pair("解码加速", VLCHWDecode.HW_ACCELERATION_DECODING.value.toString()),
+            Pair("完全加速", VLCHWDecode.HW_ACCELERATION_FULL.value.toString())
+        )
+
         val ijkPreference = arrayOf(
             "media_code_c",
             "media_code_c_h265",
             "open_sl_es",
             "pixel_format_type"
+        )
+
+        val vlcPreference = arrayOf(
+            "vlc_pixel_format_type",
+            "vlc_hardware_acceleration"
         )
     }
 
@@ -54,21 +74,13 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 playerData.forEach {
                     if (it.value == newValue) {
                         summary = it.key
-
-                        ijkPreference.forEach { key ->
-                            findPreference<Preference>(key)?.isVisible =
-                                newValue == PlayerType.TYPE_IJK_PLAYER.value.toString()
-                        }
+                        updateVisible(newValue)
                     }
                 }
                 return@setOnPreferenceChangeListener true
             }
 
-            //初始化IJK配置的显示
-            ijkPreference.forEach { key ->
-                findPreference<Preference>(key)?.isVisible =
-                    value == PlayerType.TYPE_IJK_PLAYER.value.toString()
-            }
+            updateVisible(value)
         }
 
         //像素格式
@@ -86,15 +98,43 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
             }
         }
 
+        //VLC像素格式
+        findPreference<ListPreference>("vlc_pixel_format_type")?.apply {
+            entries = vlcPixelData.keys.toTypedArray()
+            entryValues = vlcPixelData.values.toTypedArray()
+        }
+
+        //VLC硬件加速
+        findPreference<ListPreference>("vlc_hardware_acceleration")?.apply {
+            entries = vlcHWDecode.keys.toTypedArray()
+            entryValues = vlcHWDecode.values.toTypedArray()
+        }
+
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun updateVisible(playerType: String){
+        //初始化IJK配置的显示
+        ijkPreference.forEach { key ->
+            findPreference<Preference>(key)?.isVisible =
+                playerType == PlayerType.TYPE_IJK_PLAYER.value.toString()
+        }
+
+        //初始化VLC配置的显示
+        vlcPreference.forEach { key ->
+            findPreference<Preference>(key)?.isVisible =
+                playerType == PlayerType.TYPE_VLC_PLAYER.value.toString()
+        }
     }
 
     inner class PlayerSettingDataStore : PreferenceDataStore() {
 
         override fun getString(key: String?, defValue: String?): String? {
             return when (key) {
-                "pixel_format_type" -> PlayerConfig.getUsePixelFormat()
                 "player_type" -> PlayerConfig.getUsePlayerType().toString()
+                "pixel_format_type" -> PlayerConfig.getUsePixelFormat()
+                "vlc_pixel_format_type" -> PlayerConfig.getUseVLCPixelFormat()
+                "vlc_hardware_acceleration" -> PlayerConfig.getUseVLCHWDecoder().toString()
                 else -> super.getString(key, defValue)
             }
         }
@@ -102,8 +142,10 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
         override fun putString(key: String?, value: String?) {
             if (value != null) {
                 when (key) {
-                    "pixel_format_type" -> PlayerConfig.putUsePixelFormat(value)
                     "player_type" -> PlayerConfig.putUsePlayerType(value.toInt())
+                    "pixel_format_type" -> PlayerConfig.putUsePixelFormat(value)
+                    "vlc_pixel_format_type" -> PlayerConfig.putUseVLCPixelFormat(value)
+                    "vlc_hardware_acceleration" -> PlayerConfig.putUseVLCHWDecoder(value.toInt())
                     else -> super.putString(key, value)
                 }
             } else {

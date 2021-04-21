@@ -9,9 +9,19 @@
         android:icon="@drawable/ic_player_setting_pixel"
         android:key="pixel_format_type"
         android:title="像素格式类型" />
+    <ListPreference
+        android:icon="@drawable/ic_player_setting_pixel"
+        android:key="vlc_pixel_format_type"
+        android:summary="RGB 16位：性能更佳但画质较差\nRGB 32位：默认像素格式\nYUV：性能最佳但部分设备不支持"
+        android:title="像素格式类型" />
     <SwitchPreference
         android:key="media_code_c"
         android:title="硬解码"
+        app:icon="@drawable/ic_player_setting_codec" />
+    <ListPreference
+        android:key="vlc_hardware_acceleration"
+        android:title="硬件加速"
+        android:summary="禁用：稳定性更高\n解码：可能提升性能\n完全：可能进一步提升性能"
         app:icon="@drawable/ic_player_setting_codec" />
     <SwitchPreference
         android:key="media_code_c_h265"

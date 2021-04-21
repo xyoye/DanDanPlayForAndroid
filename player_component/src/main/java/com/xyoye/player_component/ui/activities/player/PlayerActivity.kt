@@ -22,10 +22,7 @@ import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
-import com.xyoye.data_component.enums.MediaType
-import com.xyoye.data_component.enums.PixelFormat
-import com.xyoye.data_component.enums.PlayerType
-import com.xyoye.data_component.enums.SurfaceType
+import com.xyoye.data_component.enums.*
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.BR
@@ -208,17 +205,23 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         //播放器类型
         PlayerInitializer.playerType = PlayerType.valueOf(PlayerConfig.getUsePlayerType())
         //IJKPlayer像素格式
-        PlayerInitializer.IJKPlayer.pixelFormat =
+        PlayerInitializer.Player.pixelFormat =
             PixelFormat.valueOf(PlayerConfig.getUsePixelFormat())
         //IJKPlayer硬解码
-        PlayerInitializer.IJKPlayer.isMediaCodeCEnabled = PlayerConfig.isUseMediaCodeC()
+        PlayerInitializer.Player.isMediaCodeCEnabled = PlayerConfig.isUseMediaCodeC()
         //IJKPlayer H265硬解码
-        PlayerInitializer.IJKPlayer.isMediaCodeCH265Enabled = PlayerConfig.isUseMediaCodeCH265()
+        PlayerInitializer.Player.isMediaCodeCH265Enabled = PlayerConfig.isUseMediaCodeCH265()
         //IJKPlayer OpenSlEs
-        PlayerInitializer.IJKPlayer.isOpenSLESEnabled = PlayerConfig.isUseOpenSlEs()
+        PlayerInitializer.Player.isOpenSLESEnabled = PlayerConfig.isUseOpenSlEs()
         //是否使用SurfaceView
         PlayerInitializer.surfaceType =
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
+
+        //VLCPlayer像素格式
+        PlayerInitializer.Player.vlcPixelFormat =
+            VLCPixelFormat.valueOf(PlayerConfig.getUseVLCPixelFormat())
+        PlayerInitializer.Player.vlcHWDecode =
+            VLCHWDecode.valueOf(PlayerConfig.getUseVLCHWDecoder())
 
         //弹幕配置
         PlayerInitializer.Danmu.size = DanmuConfig.getDanmuSize()

@@ -143,7 +143,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         mMediaPlayer.apply {
             setAudioStreamType(AudioManager.STREAM_MUSIC)
             //硬解码
-            if (PlayerInitializer.IJKPlayer.isMediaCodeCEnabled) {
+            if (PlayerInitializer.Player.isMediaCodeCEnabled) {
                 setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
                 setOption(
                     IjkMediaPlayer.OPT_CATEGORY_PLAYER,
@@ -164,19 +164,19 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             }
 
             //h265硬解码
-            if (PlayerInitializer.IJKPlayer.isMediaCodeCH265Enabled) {
+            if (PlayerInitializer.Player.isMediaCodeCH265Enabled) {
                 setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 1)
             } else {
                 setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-hevc", 0)
             }
 
-            if (PlayerInitializer.IJKPlayer.isOpenSLESEnabled) {
+            if (PlayerInitializer.Player.isOpenSLESEnabled) {
                 setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
             } else {
                 setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 0)
             }
 
-            var pixelFormat = PlayerInitializer.IJKPlayer.pixelFormat.value
+            var pixelFormat = PlayerInitializer.Player.pixelFormat.value
             pixelFormat = if (pixelFormat.isEmpty()) PixelFormat.PIXEL_RGB888.value else pixelFormat
             //像素格式（设置为空无字幕输出）
             setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", pixelFormat)

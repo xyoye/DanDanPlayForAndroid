@@ -2,6 +2,8 @@ package com.xyoye.common_component.config
 
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -34,4 +36,12 @@ object PlayerConfigTable {
     //使用播放器像素格式
     @MMKVFiled
     val usePixelFormat = PixelFormat.PIXEL_AUTO.value
+
+    //VLC内核像素格式
+    @MMKVFiled
+    val useVLCPixelFormat = VLCPixelFormat.PIXEL_RGB_32.value
+
+    //VLC内核硬件加速
+    @MMKVFiled
+    val useVLCHWDecoder = VLCHWDecode.HW_ACCELERATION_AUTO.value
 }

@@ -1,10 +1,7 @@
 package com.xyoye.player.info
 
 import android.graphics.Color
-import com.xyoye.data_component.enums.PixelFormat
-import com.xyoye.data_component.enums.PlayerType
-import com.xyoye.data_component.enums.SurfaceType
-import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.data_component.enums.*
 
 /**
  * Created by xyoye on 2020/10/29.
@@ -22,11 +19,13 @@ object PlayerInitializer {
 
     var selectSourceDirectory: String? = null
 
-    object IJKPlayer {
+    object Player {
         var isMediaCodeCEnabled = false
         var isMediaCodeCH265Enabled = false
         var isOpenSLESEnabled = false
         var pixelFormat = PixelFormat.PIXEL_AUTO
+        var vlcPixelFormat = VLCPixelFormat.PIXEL_RGB_32
+        var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
     }
 
     object Danmu {

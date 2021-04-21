@@ -6,7 +6,6 @@ import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.UriUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.dialog.CommonDialog

@@ -109,7 +109,7 @@ class PlayerInterceptorActivity : BaseActivity<PlayerInterceptorViewModel, Activ
                 openPlayer(playParams!!)
             }
             addNoShowAgain {
-                DanmuConfig.putShowDialogBeforePlay(it)
+                DanmuConfig.putShowDialogBeforePlay(!it)
             }
         }.build().show(this)
     }

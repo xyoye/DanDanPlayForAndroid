@@ -69,9 +69,10 @@ open class CommonDialog : BaseBottomDialog<DialogCommonBinding> {
             return this
         }
 
-        open fun addNoShowAgain(listener: (Boolean) -> Unit) {
+        open fun addNoShowAgain(listener: (Boolean) -> Unit): Builder {
             noShowAgain = true
             noShowAgainListener = listener
+            return this
         }
 
         fun build(): CommonDialog =

@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.xyoye.dandanplay">
 
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
     <application
         android:name="com.xyoye.dandanplay.app.IApplication"
+        android:banner="@mipmap/ic_launcher"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"

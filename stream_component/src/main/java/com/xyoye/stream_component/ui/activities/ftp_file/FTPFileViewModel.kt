@@ -135,7 +135,7 @@ class FTPFileViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val playServer = FTPPlayServer.getInstance()
-                playServer.start()
+                if (!playServer.isAlive) playServer.start()
 
                 //获取播放Url，此时未设置播放资源
                 val playUrl = playServer.getInputStreamUrl(fileName)

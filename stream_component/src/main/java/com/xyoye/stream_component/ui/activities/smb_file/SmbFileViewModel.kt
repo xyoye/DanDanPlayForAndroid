@@ -142,8 +142,10 @@ class SmbFileViewModel : BaseViewModel() {
                 //获取视频文件流前，关闭之前的文件流
                 SMBJManager.getInstance().closeStream()
                 //启动本地服务处理InputStream
-                SMBPlayServer.getInstance().start()
-                val playUrl = SMBPlayServer.getInstance().getInputStreamUrl(
+                val playServer = SMBPlayServer.getInstance()
+                if (!playServer.isAlive) playServer.start()
+
+                val playUrl = playServer.getInputStreamUrl(
                     fileName, filePath, fileSize
                 ) {
                     //获取文件流

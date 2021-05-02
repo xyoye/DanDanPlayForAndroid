@@ -6,7 +6,7 @@
         <activity
             android:name=".ui.activities.player.PlayerActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <activity android:name=".ui.activities.player_interceptor.PlayerInterceptorActivity"
             android:configChanges="orientation|screenSize"

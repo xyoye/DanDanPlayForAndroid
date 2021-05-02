@@ -8,6 +8,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
@@ -153,7 +154,7 @@ class RemoteFileViewModel : BaseViewModel() {
             val videoUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Hash)
             val playParams = PlayParams(
                 videoUrl,
-                videoData.EpisodeTitle ?: videoData.Name,
+                (videoData.EpisodeTitle ?: videoData.Name).formatFileName(),
                 null,
                 null,
                 0,

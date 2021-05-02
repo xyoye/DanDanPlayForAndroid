@@ -234,7 +234,7 @@ class FTPFileViewModel : BaseViewModel() {
     private suspend fun buildPlayParams(playUrl: String, fileName: String): PlayParams {
         val playParams = PlayParams(
                 playUrl,
-                fileName,
+                fileName.formatFileName(),
                 null,
                 null,
                 0,
@@ -277,8 +277,7 @@ class FTPFileViewModel : BaseViewModel() {
             val danmuFTPFile = fileList.find { it.name == targetFileName }
                     ?: return@withContext null
 
-            val danmuFileName = fileName.trim().replace(" ", "_")
-            val danmuFile = File(PathHelper.getDanmuDirectory(), danmuFileName.formatFileName())
+            val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
 
             val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, danmuFile)
             if (copySuccess){
@@ -299,8 +298,7 @@ class FTPFileViewModel : BaseViewModel() {
                 SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
             } ?: return@withContext null
 
-            val subtitleFileName = danmuFTPFile.name.trim().replace(" ", "_")
-            val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName.formatFileName())
+            val subtitleFile = File(PathHelper.getSubtitleDirectory(), danmuFTPFile.name.formatFileName())
 
             val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, subtitleFile)
             if (copySuccess){

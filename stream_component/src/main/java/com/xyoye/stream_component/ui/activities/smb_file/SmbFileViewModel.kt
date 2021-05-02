@@ -6,6 +6,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -251,7 +252,7 @@ class SmbFileViewModel : BaseViewModel() {
     ): PlayParams {
         val playParams = PlayParams(
             playUrl,
-            fileName,
+            fileName.formatFileName(),
             null,
             null,
             0,

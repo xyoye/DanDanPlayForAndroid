@@ -8,6 +8,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.utils.*
@@ -109,7 +110,7 @@ class WebDavFileViewModel : BaseViewModel() {
 
         val playParams = PlayParams(
             url,
-            getFileName(davResource.name),
+            getFileName(davResource.name).formatFileName(),
             null,
             null,
             0,

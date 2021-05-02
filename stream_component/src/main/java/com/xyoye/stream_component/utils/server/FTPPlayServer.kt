@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.utils.server
 
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getFileExtension
 import fi.iki.elonen.NanoHTTPD
@@ -37,7 +38,7 @@ class FTPPlayServer private constructor() : NanoHTTPD(randomPort()) {
     }
 
     fun getInputStreamUrl(name: String): String {
-        return "http://127.0.0.1:$listeningPort/$name"
+        return "http://127.0.0.1:$listeningPort/${name.formatFileName()}"
     }
 
     fun setPlaySource(

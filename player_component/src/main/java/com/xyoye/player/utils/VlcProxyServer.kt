@@ -52,7 +52,7 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
     fun getInputStreamUrl(url: String, headers: Map<String, String>): String {
         this.url = url
         this.headers = headers
-        val fileName = getFileName(url).formatFileName().replace(" ", "_")
+        val fileName = getFileName(url).formatFileName()
         return "http://127.0.0.1:$listeningPort/$fileName"
     }
 

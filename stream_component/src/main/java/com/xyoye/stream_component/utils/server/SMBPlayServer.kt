@@ -1,8 +1,8 @@
 package com.xyoye.stream_component.utils.server
 
+import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getFileExtension
-import com.xyoye.common_component.utils.getFileName
 import com.xyoye.stream_component.utils.RangeUtils
 import fi.iki.elonen.NanoHTTPD
 import java.io.IOException
@@ -66,7 +66,7 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
         sourceContentType = getContentType(filePath)
         sourceLength = fileLength
         inputStreamBlock = streamBlock
-        return "http://127.0.0.1:$listeningPort/$fileName"
+        return "http://127.0.0.1:$listeningPort/$/${fileName.formatFileName()}"
     }
 
     fun closeIO() {

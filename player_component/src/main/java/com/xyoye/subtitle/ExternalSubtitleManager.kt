@@ -45,7 +45,8 @@ class ExternalSubtitleManager {
                 return@Callback true
             }
 
-            val curPosition = output.getCurrentPosition() + offsetTimeMs
+            //字幕提前500ms出现，以减少延迟感
+            val curPosition = output.getCurrentPosition() + offsetTimeMs + 500L
             output.onSubtitleOutput(findSubtitle(curPosition))
             handler.apply {
                 sendMessageDelayed(obtainMessage(UPDATE_SUBTITLE_MSG), UPDATE_SUBTITLE_INTERVAL_MS)

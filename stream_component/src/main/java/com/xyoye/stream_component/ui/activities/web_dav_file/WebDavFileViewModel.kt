@@ -16,6 +16,7 @@ import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import com.xyoye.stream_component.utils.WebDavOkHttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,7 +39,7 @@ class WebDavFileViewModel : BaseViewModel() {
     private lateinit var sardine: OkHttpSardine
 
     fun listStorageRoot(serverData: MediaLibraryEntity) {
-        sardine = OkHttpSardine()
+        sardine = OkHttpSardine(WebDavOkHttpClient.client)
 
         if (!serverData.account.isNullOrEmpty()) {
             val account = serverData.account!!

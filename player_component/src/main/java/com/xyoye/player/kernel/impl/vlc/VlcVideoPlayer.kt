@@ -12,6 +12,7 @@ import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.VideoLog
 import com.xyoye.player.utils.VlcEventLog
+import com.xyoye.player.utils.VlcProxyServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -58,11 +59,21 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             return
         }
 
-        val videoUri = when {
+        var videoUri = when {
             path.startsWith("/") ||
                     path.startsWith("content:") ||
                     path.startsWith("file:") -> Uri.fromFile(File(path))
             else -> Uri.parse(path)
+        }
+
+        //VLC播放器通过代理服务实现请求头设置
+        if (headers != null) {
+            val proxyServer = VlcProxyServer.getInstance()
+            if (!proxyServer.isAlive) {
+                proxyServer.start()
+            }
+            val proxyUrl = proxyServer.getInputStreamUrl(path, headers)
+            videoUri = Uri.parse(proxyUrl)
         }
 
         mMedia = Media(libVlc, videoUri)

@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils
+package com.xyoye.common_component.network.helper
 
 import android.annotation.SuppressLint
 import okhttp3.OkHttpClient
@@ -13,7 +13,7 @@ import javax.net.ssl.X509TrustManager
  * 忽略证书验证的OkHttpClient
  */
 
-object WebDavOkHttpClient {
+object UnsafeOkHttpClient {
 
     private val unSafeTrustManager = object : X509TrustManager {
         @SuppressLint("TrustAllX509TrustManager")
@@ -37,8 +37,9 @@ object WebDavOkHttpClient {
         sslContext.init(null, arrayOf(unSafeTrustManager), null)
     }
 
-    val client = OkHttpClient.Builder()
+    val client: OkHttpClient = OkHttpClient.Builder()
         .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
         .hostnameVerifier { _, _ -> true }
+        .addInterceptor(LoggerInterceptor().webDav("TestWebDav"))
         .build()
 }

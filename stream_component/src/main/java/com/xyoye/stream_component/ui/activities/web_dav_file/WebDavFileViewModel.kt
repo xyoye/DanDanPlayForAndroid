@@ -9,6 +9,7 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -16,7 +17,6 @@ import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
-import com.xyoye.stream_component.utils.WebDavOkHttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +39,7 @@ class WebDavFileViewModel : BaseViewModel() {
     private lateinit var sardine: OkHttpSardine
 
     fun listStorageRoot(serverData: MediaLibraryEntity) {
-        sardine = OkHttpSardine(WebDavOkHttpClient.client)
+        sardine = OkHttpSardine(UnsafeOkHttpClient.client)
 
         if (!serverData.account.isNullOrEmpty()) {
             val account = serverData.account!!

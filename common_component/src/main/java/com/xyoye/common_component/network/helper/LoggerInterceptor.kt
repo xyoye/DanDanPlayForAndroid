@@ -195,6 +195,13 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
         return this
     }
 
+    fun webDav(tag: String = "WebDav") : LoggerInterceptor{
+        printLevel = Level.BODY
+        colorLevel = java.util.logging.Level.WARNING
+        logger = Logger.getLogger(tag)
+        return this
+    }
+
     companion object {
         private val UTF8 = Charset.forName("UTF-8")
         var tookMs: Long = 0

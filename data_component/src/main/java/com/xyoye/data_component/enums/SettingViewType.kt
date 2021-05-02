@@ -13,5 +13,7 @@ enum class SettingViewType {
 
     SWITCH_SOURCE,
 
-    KEYWORD_BLOCK
+    KEYWORD_BLOCK,
+
+    SCREEN_SHOT
 }

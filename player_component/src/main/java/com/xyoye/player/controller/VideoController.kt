@@ -8,12 +8,12 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.dp2px
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import com.xyoye.player.controller.danmu.DanmuController
+import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.base.GestureVideoController
+import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*
@@ -67,14 +67,7 @@ class VideoController(
         }
 
         controllerBinding.playerShotIv.setOnClickListener {
-            val shotBitmap = mControlWrapper.doScreenShot()
-            if (shotBitmap == null) {
-                ToastCenter.showOriginalToast("当前渲染器不支持截屏")
-                return@setOnClickListener
-            }
-            mControlWrapper.pause()
-            mControlWrapper.hideController()
-            ScreenShotDialog(context, shotBitmap).show()
+            mControlWrapper.showSettingView(SettingViewType.SCREEN_SHOT)
         }
     }
 

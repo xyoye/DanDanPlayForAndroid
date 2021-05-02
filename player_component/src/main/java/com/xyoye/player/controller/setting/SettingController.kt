@@ -18,13 +18,15 @@ class SettingController(context: Context) : InterSettingController {
     private val subtitleSettingView = SettingSubtitleView(context)
     private val switchSourceView = SwitchSourceView(context)
     private val keywordBlockView = KeywordBlockView(context)
+    private val screenShotView = ScreenShotView(context)
 
     private val settingViews : Array<InterSettingView> = arrayOf(
         playerSettingView,
         danmuSettingView,
         subtitleSettingView,
         switchSourceView,
-        keywordBlockView
+        keywordBlockView,
+        screenShotView
     )
 
     override fun switchSource(isSwitchSubtitle: Boolean) {

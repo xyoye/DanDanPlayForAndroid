@@ -18,6 +18,7 @@ import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import com.xyoye.stream_component.utils.WebDavHashUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -146,16 +147,15 @@ class WebDavFileViewModel : BaseViewModel() {
             }
 
             //是否自动匹配视频网络弹幕
-            //webdav不支持，因为获取到前16M的MD5值异常，无法匹配到弹幕
-//            val autoMatchDanmuNetworkStorage = DanmuConfig.isAutoMatchDanmuNetworkStorage()
-//            if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
-//                //根据hash匹配弹幕
-//                matchAndDownloadDanmu(davResource, header)?.let {
-//                    playParams.danmuPath = it.first
-//                    playParams.episodeId = it.second
-//                    DDLog.i("dav danmu -----> match download")
-//                }
-//            }
+            val autoMatchDanmuNetworkStorage = DanmuConfig.isAutoMatchDanmuNetworkStorage()
+            if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
+                //根据hash匹配弹幕
+                matchAndDownloadDanmu(davResource, header)?.let {
+                    playParams.danmuPath = it.first
+                    playParams.episodeId = it.second
+                    DDLog.i("dav danmu -----> match download")
+                }
+            }
 
             hideLoading()
             openVideoLiveData.postValue(playParams)
@@ -274,9 +274,10 @@ class WebDavFileViewModel : BaseViewModel() {
             val url = addressUrl + davResource.href.toASCIIString()
             var hash: String? = null
             try {
-                //header["Range"] = "bytes=0-${16 * 1024 * 1024}"
+                //目标长度为前16M，17是容错
+                header["range"] = "bytes=0-${17 * 1024 * 1024}"
                 val responseBody = Retrofit.extService.downloadResource(url, header)
-                hash = IOUtils.getStreamHash(responseBody.byteStream())
+                hash = WebDavHashUtils.getWebDavHash(responseBody.byteStream())
             } catch (e: Exception) {
                 e.printStackTrace()
             }

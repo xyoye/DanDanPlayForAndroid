@@ -29,7 +29,7 @@
         <SwitchPreference
             android:key="auto_match_danmu_network_storage"
             android:summary="无同名弹幕时，如果【网络弹幕】匹配存在，则自动加载"
-            android:title="自动加载网络弹幕（不支持FTP）"
+            android:title="自动加载网络弹幕"
             app:icon="@drawable/ic_player_setting_danmu_load" />
 
     </PreferenceCategory>

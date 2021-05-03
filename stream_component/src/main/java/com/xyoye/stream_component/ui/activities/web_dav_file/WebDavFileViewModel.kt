@@ -17,8 +17,8 @@ import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
-import com.xyoye.stream_component.utils.WebDavHashUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -277,7 +277,7 @@ class WebDavFileViewModel : BaseViewModel() {
                 //目标长度为前16M，17是容错
                 header["range"] = "bytes=0-${17 * 1024 * 1024}"
                 val responseBody = Retrofit.extService.downloadResource(url, header)
-                hash = WebDavHashUtils.getWebDavHash(responseBody.byteStream())
+                hash = FileHashUtils.getHash(responseBody.byteStream())
             } catch (e: Exception) {
                 e.printStackTrace()
             }

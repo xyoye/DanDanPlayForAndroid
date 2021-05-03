@@ -13,6 +13,7 @@ import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
 import com.xyoye.stream_component.utils.server.SMBPlayServer
 import com.xyoye.stream_component.utils.smb.SMBException
@@ -291,7 +292,7 @@ class SmbFileViewModel : BaseViewModel() {
         if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
             //获取视频文件hash
             val stream = SMBJManager.getInstance().getInputStream(filePath)
-            val fileHash = IOUtils.getStreamHash(stream)
+            val fileHash = FileHashUtils.getHash(stream)
             if (!fileHash.isNullOrEmpty()) {
                 //根据hash匹配弹幕
                 DanmuUtils.matchDanmuSilence(viewModelScope, filePath, fileHash)?.let {

@@ -78,34 +78,6 @@ object IOUtils {
         return hash
     }
 
-    /**
-     * 通过数据流获取文件hash值
-     */
-    fun getStreamHash(inputStream: InputStream?, close: Boolean = true): String? {
-        if (inputStream == null)
-            return null
-
-        var hash: String? = null
-        try {
-            val data = ByteArray(1024 * 1024)
-            var readLength = inputStream.read(data)
-            var totalLength = readLength
-
-            while (readLength > 0 && totalLength <= 16 * 1024 * 1024){
-                messageDigest.update(data)
-                readLength = inputStream.read(data)
-                totalLength += readLength
-            }
-            hash = buffer2Hex(messageDigest.digest())
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        } finally {
-            if (close){
-                closeIO(inputStream)
-            }
-        }
-        return hash
-    }
 
     /**
      * 获取文件夹大小

@@ -13,6 +13,7 @@ import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
 import com.xyoye.stream_component.utils.ftp.FTPException
 import com.xyoye.stream_component.utils.ftp.FTPManager
@@ -141,7 +142,6 @@ class FTPFileViewModel : BaseViewModel() {
                 val playUrl = playServer.getInputStreamUrl(fileName)
                 //设置播放参数，弹幕、字幕等
                 val playParams = buildPlayParams(playUrl, fileName)
-
                 //获取文件流
                 val inputStream = FTPManager.getInstance().getInputStream(currentDirPath, fileName)
                 //传入播放资源到服务器
@@ -263,6 +263,23 @@ class FTPFileViewModel : BaseViewModel() {
             //自动匹配同文件夹内同名字幕
             playParams.subtitlePath = findAndDownloadSubtitle(fileName)
             DDLog.i("ftp subtitle -----> download")
+        }
+
+        //是否自动匹配视频网络弹幕
+        val autoMatchDanmuNetworkStorage = DanmuConfig.isAutoMatchDanmuNetworkStorage()
+        if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
+            //获取视频文件hash
+            val stream = FTPManager.getInstance().getInputStream(getOpenedDirPath(), fileName)
+            val fileHash = FileHashUtils.getHash(stream)
+            FTPManager.getInstance().disconnect()
+            if (!fileHash.isNullOrEmpty()) {
+                //根据hash匹配弹幕
+                DanmuUtils.matchDanmuSilence(viewModelScope, fileName, fileHash)?.let {
+                    playParams.danmuPath = it.first
+                    playParams.episodeId = it.second
+                    DDLog.i("ftp danmu -----> match download")
+                }
+            }
         }
 
         return playParams

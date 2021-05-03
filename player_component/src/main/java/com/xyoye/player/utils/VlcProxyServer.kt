@@ -1,10 +1,10 @@
 package com.xyoye.player.utils
 
-import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.utils.getFileName
 import fi.iki.elonen.NanoHTTPD
 import okhttp3.Request
+import java.net.URLEncoder
 import kotlin.random.Random
 
 /**
@@ -28,8 +28,34 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
     }
 
     override fun serve(session: IHTTPSession?): Response {
-        session?: return super.serve(session)
+        session ?: return super.serve(session)
 
+        val proxyResponse = getProxyResponse(session)
+        val response = newFixedLengthResponse(
+            Response.Status.lookup(proxyResponse.code()),
+            proxyResponse.header("Content-Type"),
+            proxyResponse.body()?.byteStream(),
+            proxyResponse.body()?.contentLength() ?: 0
+        )
+        val headers = proxyResponse.headers()
+
+        for (index in 0 until headers.size()) {
+            val key = headers.name(index)
+            val value = headers.value(index)
+            response.addHeader(key, value)
+        }
+
+        return response
+    }
+
+    fun getInputStreamUrl(url: String, headers: Map<String, String>): String {
+        this.url = url
+        this.headers = headers
+        val encodeFileName = URLEncoder.encode(getFileName(url), "utf-8")
+        return  "http://127.0.0.1:$listeningPort/$encodeFileName"
+    }
+
+    private fun getProxyResponse(session: IHTTPSession): okhttp3.Response {
         val requestBuilder = Request.Builder()
         headers.forEach {
             requestBuilder.header(it.key, it.value)
@@ -40,20 +66,7 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
         val request = requestBuilder.url(url).build()
 
         val call = UnsafeOkHttpClient.client.newCall(request)
-        val response = call.execute()
-        return newFixedLengthResponse(
-            Response.Status.PARTIAL_CONTENT,
-            response.header("mimeType"),
-            response.body()?.byteStream(),
-            response.body()?.contentLength() ?: 0
-        )
-    }
-
-    fun getInputStreamUrl(url: String, headers: Map<String, String>): String {
-        this.url = url
-        this.headers = headers
-        val fileName = getFileName(url).formatFileName()
-        return "http://127.0.0.1:$listeningPort/$fileName"
+        return call.execute()
     }
 
 }

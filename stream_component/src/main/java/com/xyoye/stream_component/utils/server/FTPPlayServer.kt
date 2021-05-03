@@ -1,10 +1,10 @@
 package com.xyoye.stream_component.utils.server
 
-import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getFileExtension
 import fi.iki.elonen.NanoHTTPD
 import java.io.InputStream
+import java.net.URLEncoder
 import kotlin.random.Random
 
 class FTPPlayServer private constructor() : NanoHTTPD(randomPort()) {
@@ -38,7 +38,8 @@ class FTPPlayServer private constructor() : NanoHTTPD(randomPort()) {
     }
 
     fun getInputStreamUrl(name: String): String {
-        return "http://127.0.0.1:$listeningPort/${name.formatFileName()}"
+        val encodeFileName = URLEncoder.encode(name, "utf-8")
+        return  "http://127.0.0.1:$listeningPort/$encodeFileName"
     }
 
     fun setPlaySource(

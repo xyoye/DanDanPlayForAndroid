@@ -40,6 +40,5 @@ object UnsafeOkHttpClient {
     val client: OkHttpClient = OkHttpClient.Builder()
         .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
         .hostnameVerifier { _, _ -> true }
-        .addInterceptor(LoggerInterceptor().webDav("TestWebDav"))
         .build()
 }

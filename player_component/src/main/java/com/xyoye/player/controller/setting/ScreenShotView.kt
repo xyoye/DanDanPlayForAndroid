@@ -79,7 +79,7 @@ class ScreenShotView(
             val shotBitmap = controlWrapper.doScreenShot()
             if (shotBitmap == null) {
                 ToastCenter.showOriginalToast("当前渲染器不支持截屏")
-                onVisibilityChanged(false)
+                onSettingVisibilityChanged(false)
                 return
             }
             bitmap = shotBitmap

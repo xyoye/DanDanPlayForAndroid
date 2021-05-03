@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayerType
-import com.xyoye.player.wrapper.InterDanmuController
 import com.xyoye.player.info.PlayerInitializer
+import com.xyoye.player.wrapper.InterDanmuController
 
 /**
  * Created by xyoye on 2021/4/14.
@@ -88,8 +88,7 @@ class DanmuController(context: Context) : InterDanmuController {
     override fun setSpeed(speed: Float) {
         //IJK内核倍速无法按预期加速，导致弹幕倍速会出现偏移，因此禁用
         //倍速小于1的情况下，弹幕没有按预期减速，因此禁用
-        //目前仅允许使用EXO内核，且倍速大于1时，开启弹幕倍速
-        if (PlayerInitializer.playerType == PlayerType.TYPE_EXO_PLAYER
+        if (PlayerInitializer.playerType != PlayerType.TYPE_IJK_PLAYER
             && speed >= 1f
         ) {
             danmuView.setSpeed(speed)

@@ -67,22 +67,51 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_video_speed"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/video_speed_rv"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_video_speed"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/reset_speed_tv"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toStartOf="@+id/video_speed_tv"
+                    android:gravity="center"
+                    android:text="@string/text_reset_video_speed"
+                    android:textColor="@color/text_blue"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/video_speed_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="14sp"
+                    tools:text="1.0" />
+            </RelativeLayout>
+
+            <SeekBar
+                android:id="@+id/video_speed_sb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp" />
+                android:layout_marginEnd="10dp"
+                android:max="100" />
 
             <TextView
                 android:layout_width="wrap_content"

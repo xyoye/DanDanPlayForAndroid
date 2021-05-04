@@ -6,7 +6,9 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -16,7 +18,6 @@ import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.bean.VideoScaleBean
-import com.xyoye.data_component.bean.VideoSpeedBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
@@ -27,6 +28,7 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemSettingVideoParamsBinding
 import com.xyoye.player_component.databinding.ItemVideoTrackBinding
 import com.xyoye.player_component.databinding.LayoutSettingPlayerBinding
+import kotlin.math.max
 
 /**
  * Created by xyoye on 2020/11/14.
@@ -46,15 +48,6 @@ class SettingPlayerView(
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_ORIGINAL, "原始"),
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_MATCH_PARENT, "填充"),
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_CENTER_CROP, "裁剪")
-    )
-
-    private val mVideoSpeedData = mutableListOf(
-        VideoSpeedBean(0.5f, "0.5"),
-        VideoSpeedBean(0.75f, "0.75"),
-        VideoSpeedBean(1f, "1.0"),
-        VideoSpeedBean(1.25f, "1.25"),
-        VideoSpeedBean(1.5f, "1.5"),
-        VideoSpeedBean(2.0f, "2.0")
     )
 
     private val audioTrackData = mutableListOf<VideoTrackBean>()
@@ -84,6 +77,8 @@ class SettingPlayerView(
         }
 
         initRv()
+
+        initVideoSpeed()
     }
 
     override fun getSettingViewType() = SettingViewType.PLAYER_SETTING
@@ -166,44 +161,6 @@ class SettingPlayerView(
             }
         }
 
-        viewBinding.videoSpeedRv.apply {
-            layoutManager = grid(6)
-
-            adapter = buildAdapter<VideoSpeedBean> {
-                initData(mVideoSpeedData)
-
-                addItem<VideoSpeedBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
-                    initView { data, position, _ ->
-                        itemBinding.apply {
-                            paramsTv.text = data.speedName
-                            paramsTv.isSelected = data.isChecked
-                            paramsTv.setOnClickListener {
-                                if (!this@SettingPlayerView::mControlWrapper.isInitialized)
-                                    return@setOnClickListener
-
-                                if (data.isChecked) {
-                                    mControlWrapper.setSpeed(1.0f)
-                                    data.isChecked = false
-                                    notifyItemChanged(position)
-                                    return@setOnClickListener
-                                }
-
-                                for ((index, bean) in mVideoSpeedData.withIndex()) {
-                                    if (bean.isChecked) {
-                                        bean.isChecked = false
-                                        notifyItemChanged(index)
-                                    }
-                                }
-                                mControlWrapper.setSpeed(data.speedValue)
-                                data.isChecked = true
-                                notifyItemChanged(position)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         viewBinding.audioTrackRv.apply {
             layoutManager = vertical()
 
@@ -223,6 +180,43 @@ class SettingPlayerView(
                     }
                 }
             }
+        }
+    }
+
+    private fun initVideoSpeed() {
+        viewBinding.videoSpeedSb.apply {
+            max = 100
+            progress = 25
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    var speed = 4.0f * progress / 100f
+                    speed = max(0.25f, speed)
+
+                    viewBinding.resetSpeedTv.isGone = speed == 1.0f
+
+                    val progressText = "$speed"
+                    viewBinding.videoSpeedTv.text = progressText
+                    mControlWrapper.setSpeed(speed)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                }
+
+            })
+        }
+
+        viewBinding.videoSpeedTv.text = "1.0"
+        viewBinding.resetSpeedTv.setOnClickListener {
+            viewBinding.videoSpeedSb.progress = 25
         }
     }
 

@@ -33,4 +33,20 @@ object AppConfigTable {
     @MMKVFiled
     //深色模式状态
     var darkMode: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+
+    @MMKVFiled
+    //常用目录1
+    var commonlyFolder1: String? = null
+
+    @MMKVFiled
+    //常用目录2
+    var commonlyFolder2: String? = null
+
+    @MMKVFiled
+    //上次打开目录
+    var lastOpenFolder : String? = null
+
+    @MMKVFiled
+    //上次打开目录开关
+    var lastOpenFolderEnable : Boolean = true
 }

@@ -145,6 +145,12 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
                 .navigation()
         }
 
+        dataBinding.commonlyManagerLl.setOnClickListener {
+            ARouter.getInstance()
+                .build(RouteTable.User.CommonManager)
+                .navigation()
+        }
+
         dataBinding.bilibiliDanmuLl.setOnClickListener {
             ARouter.getInstance()
                 .build(RouteTable.Local.BiliBiliDanmu)

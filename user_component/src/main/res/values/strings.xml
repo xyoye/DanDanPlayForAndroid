@@ -61,6 +61,11 @@
     <string name="tips_theme_manual_switch">手动选择</string>
     <string name="text_theme_normal_mode">普通模式</string>
     <string name="text_theme_dark_mode">深色模式</string>
+    <string name="tips_commonly_folder_1">常用目录 1</string>
+    <string name="tips_commonly_folder_2">常用目录 2</string>
+    <string name="tips_last_choose_folder">上次选择目录</string>
+    <string name="tips_current_open_folder">本次打开目录</string>
+    <string name="action_commonly_folder_manager">常用目录管理</string>
 
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>

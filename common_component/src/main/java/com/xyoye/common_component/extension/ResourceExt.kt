@@ -1,7 +1,11 @@
 package com.xyoye.common_component.extension
 
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
 
 /**
@@ -18,4 +22,8 @@ fun Int.toResDrawable(): Drawable?{
 
 fun Int.toResString(): String{
     return BaseApplication.getAppContext().resources.getString(this)
+}
+
+fun rippleDrawable(@ColorRes rippleColorId: Int = R.color.gray_40): Drawable{
+    return RippleDrawable(ColorStateList.valueOf(rippleColorId.toResColor()), null, null)
 }

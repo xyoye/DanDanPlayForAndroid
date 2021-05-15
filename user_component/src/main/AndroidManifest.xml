@@ -28,6 +28,9 @@
             android:name="com.xyoye.user_component.ui.activities.cache_manager.CacheManagerActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:name="com.xyoye.user_component.ui.activities.commonly_folder.CommonlyFolderActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
             android:name="com.xyoye.user_component.ui.activities.web_view.WebViewActivity"
             android:configChanges="orientation|screenSize" />
         <activity

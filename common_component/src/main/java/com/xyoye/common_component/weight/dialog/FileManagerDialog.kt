@@ -55,7 +55,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
             setPadding(paddingLeft, 0, paddingRight, paddingBottom)
         }
 
-        val initialPath = defaultFolderPath ?: AppConfig.getCachePath()!!
+        defaultFolderPath = defaultFolderPath ?: AppConfig.getCachePath()!!
 
         setTitle(
             when (action) {
@@ -73,6 +73,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
 
         setPositiveListener {
             dismiss()
+            AppConfig.putLastOpenFolder(currentDirPath)
             listener.invoke(currentDirPath)
         }
 
@@ -80,9 +81,46 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
             openTargetDirectory(mRootPath)
         }
 
+        initTag()
+
         initRv()
 
-        openTargetDirectory(initialPath)
+        openTargetDirectory(defaultFolderPath!!)
+    }
+
+    private fun initTag() {
+        val commonlyFolder1 = AppConfig.getCommonlyFolder1()
+        if (commonlyFolder1?.isNotEmpty() == true) {
+            val folder1Drawable = R.drawable.ic_tag.toResDrawable()
+            folder1Drawable?.setTint(R.color.colorAccent.toResColor())
+            addLeftAction(folder1Drawable, 8).setOnClickListener {
+                openTargetDirectory(commonlyFolder1)
+            }
+        }
+
+        val commonlyFolder2 = AppConfig.getCommonlyFolder2()
+        if (commonlyFolder2?.isNotEmpty() == true) {
+            val folder2Drawable = R.drawable.ic_tag.toResDrawable()
+            folder2Drawable?.setTint(R.color.orange.toResColor())
+            addLeftAction(folder2Drawable, 8).setOnClickListener {
+                openTargetDirectory(commonlyFolder2)
+            }
+        }
+
+        val defaultDrawable = R.drawable.ic_tag.toResDrawable()
+        defaultDrawable?.setTint(R.color.gray.toResColor())
+        addRightAction(defaultDrawable, 8, "本次打开目录").setOnClickListener {
+            openTargetDirectory(defaultFolderPath!!)
+        }
+
+        val lastOpenFolderPath = AppConfig.getLastOpenFolder()
+        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true){
+            val lastOpenDrawable = R.drawable.ic_tag.toResDrawable()
+            lastOpenDrawable?.setTint(R.color.black.toResColor())
+            addRightAction(lastOpenDrawable, 8, "上次打开目录").setOnClickListener {
+                openTargetDirectory(lastOpenFolderPath)
+            }
+        }
     }
 
     private fun initRv() {
@@ -131,6 +169,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
                                     }
                                     else -> {
                                         dismiss()
+                                        AppConfig.putLastOpenFolder(currentDirPath)
                                         listener.invoke(data.filePath)
                                     }
                                 }

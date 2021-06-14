@@ -119,8 +119,8 @@ class ControlWrapper(
         mController.hideController()
     }
 
-    override fun showController() {
-        mController.showController()
+    override fun showController(ignoreShowing: Boolean) {
+        mController.showController(ignoreShowing)
     }
 
     override fun destroy() {

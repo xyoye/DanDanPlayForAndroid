@@ -74,6 +74,7 @@ class PlayerTopView(
 
             ViewCompat.animate(viewBinding.playerTopLl).translationY(0f).setDuration(300).start()
         } else {
+            viewBinding.videoTitleTv.requestFocus()
             ViewCompat.animate(viewBinding.playerTopLl).translationY(mHideTranslateY)
                 .setDuration(300).start()
         }

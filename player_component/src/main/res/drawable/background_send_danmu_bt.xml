@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="#cc333333"/>
-    <corners android:radius="5dp"/>
-</shape>
+    <item android:drawable="@drawable/background_video_action_item_focused_color" android:state_focused="true" />
+
+    <item>
+        <shape>
+
+            <solid android:color="#cc333333" />
+            <corners android:radius="5dp" />
+        </shape>
+    </item>
+</selector>

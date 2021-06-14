@@ -91,6 +91,7 @@ class SettingSubtitleView(
 
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
+            viewBinding.tvCloseSubtitle.requestFocus()
             ViewCompat.animate(viewBinding.subtitleSettingNsv)
                 .translationX(0f)
                 .setDuration(500)

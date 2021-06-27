@@ -3,6 +3,7 @@ package com.xyoye.player.controller
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -84,10 +85,16 @@ class VideoController(
 
     override fun onVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
+            if (isLocked()) {
+                controllerBinding.playerLockIv.postDelayed({
+                    controllerBinding.playerLockIv.requestFocus()
+                }, 100)
+            }
             controllerBinding.playerLockIv.isVisible = true
             ViewCompat.animate(controllerBinding.playerLockIv).translationX(0f).setDuration(300)
                 .start()
         } else {
+            playerTopView.findViewById<TextView>(R.id.video_title_tv).requestFocus()
             val translateX = dp2px(60).toFloat()
             ViewCompat.animate(controllerBinding.playerLockIv).translationX(-translateX)
                 .setDuration(300).start()
@@ -102,6 +109,14 @@ class VideoController(
     override fun onBackPressed(): Boolean {
         if (isLocked()) {
             showController()
+            return true
+        }
+        if(isControllerShowing()) {
+            mControlWrapper.hideController()
+            return true
+        }
+        if (mControlWrapper.isSettingViewShowing()) {
+            mControlWrapper.hideSettingView()
             return true
         }
         return super.onBackPressed()

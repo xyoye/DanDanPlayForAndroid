@@ -24,14 +24,18 @@ abstract class TvVideoController(
             KeyEvent.KEYCODE_DPAD_RIGHT -> onActionRight()
             else -> false
         }
-        return if (intercept){
-            return true
+        return if (intercept) {
+            true
         } else {
             super.onKeyDown(keyCode, event)
         }
     }
 
     private fun onActionCenter(): Boolean {
+        if (isLocked()) {
+            showController(true)
+            return true
+        }
         if (mControlWrapper.isSettingViewShowing()) {
             return false
         }
@@ -63,7 +67,7 @@ abstract class TvVideoController(
         if (mControlWrapper.isSettingViewShowing()) {
             return false
         }
-        if (isControllerShowing()) {
+        if (isLocked() || isControllerShowing()) {
             showController(true)
             return false
         }
@@ -75,7 +79,7 @@ abstract class TvVideoController(
         if (mControlWrapper.isSettingViewShowing()) {
             return false
         }
-        if (isControllerShowing()) {
+        if (isLocked() || isControllerShowing()) {
             showController(true)
             return false
         }

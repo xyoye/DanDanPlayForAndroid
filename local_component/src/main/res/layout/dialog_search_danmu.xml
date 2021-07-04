@@ -114,6 +114,27 @@
         </RadioGroup>
 
         <TextView
+            android:id="@+id/keyword_history_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/tips_danmu_history_keyword"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/history_keyword_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/background_search_keyword"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:textColor="@color/text_black"
+            android:textIsSelectable="true"
+            android:textSize="14sp" />
+
+        <TextView
             android:id="@+id/keyword_labels_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

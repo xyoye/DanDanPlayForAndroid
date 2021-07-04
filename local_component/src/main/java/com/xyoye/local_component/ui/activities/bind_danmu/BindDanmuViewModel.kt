@@ -3,6 +3,7 @@ package com.xyoye.local_component.ui.activities.bind_danmu
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
@@ -71,7 +72,12 @@ class BindDanmuViewModel : BaseViewModel() {
 
     fun searchDanmuSource(animeName: String, episodeId: String) {
         httpRequest<MutableList<DanmuMatchDetailData>>(viewModelScope) {
-            onStart { showLoading() }
+            onStart {
+                showLoading()
+
+                val searchKeyword = animeName + "_" + episodeId
+                AppConfig.putLastSearchDanmuKeyword(searchKeyword)
+            }
 
             api {
                 val fakeMatchData = mutableListOf<DanmuMatchDetailData>()

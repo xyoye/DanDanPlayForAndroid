@@ -1,6 +1,7 @@
 package com.xyoye.local_component.ui.dialog
 
 import androidx.core.view.isGone
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.utils.KeywordHelper
 import com.xyoye.common_component.utils.hideKeyboard
@@ -41,6 +42,8 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
         setTitle("搜索弹幕")
 
         initKeyword()
+
+        initHistoryKeyword()
 
         if (!videoName.isNullOrEmpty()) {
             binding.fileNameTips.isGone = false
@@ -121,8 +124,27 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
         }
     }
 
+    private fun initHistoryKeyword() {
+        val searchHistoryKeyword = AppConfig.getLastSearchDanmuKeyword()
+        if (searchHistoryKeyword.isNullOrEmpty()) {
+            binding.historyKeywordTv.text = "暂无"
+        } else {
+            val splitIndex = searchHistoryKeyword.lastIndexOf("_")
+            if (splitIndex > -1) {
+                val animeName = searchHistoryKeyword.substring(0, splitIndex)
+                val episodeId = searchHistoryKeyword.substring(splitIndex + 1)
+                val displayText = "$animeName $episodeId"
+                binding.historyKeywordTv.text = displayText
+                binding.historyKeywordTv.setOnClickListener {
+                    listener.invoke(animeName, episodeId)
+                    dismiss()
+                }
+            }
+        }
+    }
+
     override fun dismiss() {
-        if (this::binding.isInitialized){
+        if (this::binding.isInitialized) {
             hideKeyboard(binding.animeNameEt)
         }
         super.dismiss()

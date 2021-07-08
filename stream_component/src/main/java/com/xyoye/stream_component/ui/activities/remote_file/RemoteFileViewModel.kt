@@ -51,6 +51,9 @@ class RemoteFileViewModel : BaseViewModel() {
 
             api {
                 val videoData = Retrofit.remoteService.openStorage()
+
+                // TODO: 2021/7/9 转换为树形数据（RemoteFileHelper），并使用Fragment按层级展示数据
+
                 storage.clear()
                 videoData.forEach {
                     if (it.IsStandalone) {

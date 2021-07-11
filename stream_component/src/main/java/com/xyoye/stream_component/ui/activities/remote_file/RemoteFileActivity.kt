@@ -140,18 +140,17 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         return when {
             pathBean != null -> {
                 while (fragmentStack.isNotEmpty()) {
-                    val fragment = fragmentStack.pop()
-                    val tag = fragment.tag
-                    if (pathBean.path == tag) {
-                        fragmentStack.push(fragment)
-                        break
-                    } else {
-                        supportFragmentManager.removeFragment(fragment, true)
-                        val index = pathList.indexOfLast { it.path == tag }
+                    val fragment = fragmentStack.peek()
+                    if (pathBean.path != fragment.tag) {
+                        val index = pathList.indexOfLast { it.path == fragment.tag }
                         if (index >= 0) {
                             pathList.removeAt(index)
                             pathAdapter.notifyItemRemoved(index)
                         }
+                        supportFragmentManager.removeFragment(fragment, true)
+                        fragmentStack.pop()
+                    } else {
+                        break
                     }
                 }
                 true

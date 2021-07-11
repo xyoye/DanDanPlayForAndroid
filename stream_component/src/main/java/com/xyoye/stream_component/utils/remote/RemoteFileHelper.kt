@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.utils.remote
 
+import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.data_component.data.remote.RemoteVideoData
 
 /**
@@ -68,6 +69,15 @@ object RemoteFileHelper {
                 treeList.add(videoBean)
             }
         }
+
+        treeList.sortWith(FileComparator(
+            value = {
+                it.Name
+            },
+            isDirectory = {
+                it.isFolder
+            }
+        ))
 
         return treeList
     }

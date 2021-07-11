@@ -1,11 +1,14 @@
 package com.xyoye.data_component.data.remote
 
+import android.os.Parcelable
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by xyoye on 2021/3/28.
  */
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class RemoteVideoData(
     val AnimeId: Int = 0,
@@ -24,4 +27,4 @@ data class RemoteVideoData(
 
     var danmuPath: String? = null,
     var subtitlePath: String? = null
-)
+) : Parcelable

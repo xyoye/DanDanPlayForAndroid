@@ -1,43 +1,29 @@
 package com.xyoye.stream_component.ui.activities.remote_file
 
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.PlayHistoryUtils
+import com.xyoye.stream_component.utils.remote.RemoteFileHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RemoteFileViewModel : BaseViewModel() {
-    //当前是否在根目录
-    val inRootFolder = ObservableBoolean(true)
 
-    //当前打开的目录名
-    val currentFolderName = ObservableField<String>()
-
-    val refreshLiveData = MutableLiveData<Boolean>()
-    val folderLiveData = MutableLiveData<MutableList<FolderBean>>()
-    val videoLiveData = MutableLiveData<MutableList<RemoteVideoData>>()
-    val refreshEnableLiveData = MutableLiveData<Boolean>()
     val playVideoLiveData = MutableLiveData<PlayParams>()
-
-    //远程媒体库所有文件数据
-    private val storage = hashMapOf<String, MutableList<RemoteVideoData>>()
+    val folderLiveData = MutableLiveData<MutableList<RemoteVideoData>>()
 
     fun openStorage(remoteData: MediaLibraryEntity) {
         val remoteUrl = "http://${remoteData.url}:${remoteData.port}/"
@@ -45,33 +31,19 @@ class RemoteFileViewModel : BaseViewModel() {
         RemoteHelper.getInstance().remoteUrl = remoteUrl
         RemoteHelper.getInstance().remoteToken = remoteToken
 
-        httpRequest<Any>(viewModelScope) {
+        httpRequest<MutableList<RemoteVideoData>>(viewModelScope) {
 
-            onStart { refreshLiveData.postValue(true) }
+            onStart {
+                showLoading()
+            }
 
             api {
                 val videoData = Retrofit.remoteService.openStorage()
-
-                // TODO: 2021/7/9 转换为树形数据（RemoteFileHelper），并使用Fragment按层级展示数据
-
-                storage.clear()
-                videoData.forEach {
-                    if (it.IsStandalone) {
-                        val videoList = storage["其它"] ?: mutableListOf()
-                        videoList.add(it)
-                        storage["其它"] = videoList
-                        return@forEach
-                    }
-
-                    val folderName = getParentFolderName(it.Path, "\\")
-                    val videoList = storage[folderName] ?: mutableListOf()
-                    videoList.add(it)
-                    storage[folderName] = videoList
-                }
+                RemoteFileHelper.convertTreeData(videoData)
             }
 
             onSuccess {
-                listRoot()
+                folderLiveData.postValue(it)
             }
 
             onError {
@@ -84,70 +56,9 @@ class RemoteFileViewModel : BaseViewModel() {
                 ToastCenter.showWarning(errorMsg)
             }
 
-            onComplete { refreshLiveData.postValue(false) }
-        }
-    }
-
-    fun listRoot() {
-        inRootFolder.set(true)
-        refreshEnableLiveData.postValue(true)
-
-        val folderList = mutableListOf<FolderBean>()
-
-        var singleFileSize = 0
-
-        storage.entries.forEach {
-            if (it.key == "其它") {
-                singleFileSize = it.value.size
-            } else {
-                folderList.add(
-                    FolderBean(it.key, it.value.size)
-                )
+            onComplete {
+                hideLoading()
             }
-        }
-
-        //按文件名排序
-        folderList.sortWith(FileComparator(
-            value = { it.folderPath },
-            isDirectory = { true }
-        ))
-        //独立文件放在最开头
-        if (singleFileSize > 0) {
-            folderList.add(0, FolderBean("其它", singleFileSize))
-        }
-
-        folderLiveData.postValue(folderList)
-    }
-
-    fun listFolder(folderName: String) {
-        viewModelScope.launch {
-            inRootFolder.set(false)
-            refreshEnableLiveData.postValue(false)
-            currentFolderName.set(folderName)
-
-            //按文件名排序
-            val videoList = storage[folderName] ?: mutableListOf()
-            videoList.sortWith(FileComparator(
-                value = { it.EpisodeTitle ?: it.Name },
-                isDirectory = { false }
-            ))
-
-            //绑定历史记录中的弹幕、字幕
-            videoList.forEach {
-                val videoUrl = RemoteHelper.getInstance().buildVideoUrl(it.Hash)
-                val history = DatabaseManager.instance.getPlayHistoryDao()
-                    .getPlayHistory(videoUrl, MediaType.REMOTE_STORAGE)
-                if (history.size > 0) {
-                    if (!history[0].danmuPath.isNullOrEmpty()) {
-                        it.danmuPath = history[0].danmuPath
-                    }
-                    if (!history[0].subtitlePath.isNullOrEmpty()) {
-                        it.subtitlePath = history[0].subtitlePath
-                    }
-                }
-            }
-
-            videoLiveData.postValue(videoList)
         }
     }
 

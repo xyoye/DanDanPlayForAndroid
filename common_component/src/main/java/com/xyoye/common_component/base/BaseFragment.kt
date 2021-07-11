@@ -40,7 +40,7 @@ abstract class BaseFragment<VM : BaseViewModel, V : ViewDataBinding> : BaseAppFr
     }
 
     open fun observeLoadingDialog() {
-        viewModel.loadingObserver.observe(mAttachActivity, {
+        viewModel.loadingObserver.observe(viewLifecycleOwner, {
             when(it.first){
                 Loading.SHOW_LOADING -> showLoading()
                 Loading.SHOW_LOADING_MSG -> showLoading(it.second!!)

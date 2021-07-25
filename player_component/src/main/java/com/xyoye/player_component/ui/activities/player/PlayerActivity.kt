@@ -40,8 +40,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     //电量广播
     private lateinit var batteryReceiver: BatteryBroadcastReceiver
+
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
+
     //耳机广播
     private lateinit var headsetReceiver: HeadsetBroadcastReceiver
 
@@ -148,7 +150,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //绑定资源
             observerBindSource { sourcePath, isSubtitle ->
-                if (isSubtitle){
+                if (isSubtitle) {
                     params.subtitlePath = sourcePath
                 } else {
                     params.danmuPath = sourcePath
@@ -162,7 +164,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             //弹幕屏蔽
             observerDanmuBlock(
                 cloudBlock = viewModel.cloudDanmuBlockLiveData,
-                add = {keyword, isRegex -> viewModel.addDanmuBlock(keyword, isRegex) },
+                add = { keyword, isRegex -> viewModel.addDanmuBlock(keyword, isRegex) },
                 remove = { id -> viewModel.removeDanmuBlock(id) },
                 queryAll = { viewModel.localDanmuBlockLiveData }
             )
@@ -173,7 +175,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setProgressObserver { position, duration ->
                 viewModel.addPlayHistory(params, position, duration)
             }
-            setUrl(params.videoPath, params.header)
+            val header = if (params.extra?.isNotEmpty() == true) params.extra else null
+            setUrl(params.videoPath, header)
             start()
         }
 

@@ -43,18 +43,14 @@ data class PlayHistoryEntity(
     @ColumnInfo(name = "subtitle_path")
     var subtitlePath: String? = null,
 
-    @ColumnInfo(name = "stream_header")
-    var header: String? = null,
-
-    @ColumnInfo(name = "torrent_path")
-    var torrentPath: String? = null,
-
-    @ColumnInfo(name = "torrent_file_index")
-    var torrentFileIndex: Int = -1,
-
-    @ColumnInfo(name = "torrent_title")
-    var torrentTitle: String? = null
+    @ColumnInfo(name = "extra")
+    var extra: String?
 ) {
     @Ignore
     var checked: Boolean = false
+
+    @Ignore
+    private var extraMap: Map<String, String>? = null
+
+    fun getUnInitMap() = extraMap
 }

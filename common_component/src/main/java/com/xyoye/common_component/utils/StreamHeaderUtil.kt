@@ -37,21 +37,14 @@ object StreamHeaderUtil {
         return header
     }
 
-    fun header2String(header: Map<String, String>?): String? {
-        if (header == null)
+    fun getHttpHeader(extra: Map<String, String>?): Map<String, String>? {
+        if (extra == null)
             return null
 
-        val headerStr = StringBuilder()
-        header.entries.forEach {
-            headerStr.append(it.key)
-                .append(":")
-                .append(it.value)
-                .append(";")
-        }
-
-        if (headerStr.isNotEmpty()) {
-            return headerStr.substring(0, headerStr.length - 1)
-        }
-        return null
+        return extra.filter {
+            it.key.startsWith("http_")
+        }.map {
+            Pair(it.key.substring(5), it.value)
+        }.toMap()
     }
 }

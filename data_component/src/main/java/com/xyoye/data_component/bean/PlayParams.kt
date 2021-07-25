@@ -17,8 +17,5 @@ data class PlayParams(
     var currentPosition: Long,
     var episodeId: Int,
     var mediaType: MediaType,
-    var header: Map<String, String>? = null,
-    var torrentPath: String? = null,
-    var torrentFileIndex: Int = -1,
-    var torrentTitle: String? = null
+    var extra: Map<String, String>? = null
 ) : Parcelable

@@ -38,6 +38,20 @@ object JsonHelper {
         return emptyList()
     }
 
+    fun parseJsonMap(jsonStr: String): Map<String, String> {
+        try {
+            val type = Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+            val adapter = MO_SHI.adapter<Map<String, String>>(type)
+            return adapter.fromJson(jsonStr) ?: emptyMap()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: JsonDataException) {
+            e.printStackTrace()
+        }
+
+        return emptyMap()
+    }
+
     inline fun <reified T> toJson(t: T): String? {
         try {
             val adapter = MO_SHI.adapter(T::class.java)

@@ -20,7 +20,6 @@ import java.net.URLDecoder
 import java.util.concurrent.atomic.AtomicInteger
 
 class PlaySelectionViewModel : BaseViewModel() {
-    private val taskIdList = mutableListOf<Long>()
     private val atomicInteger = AtomicInteger(0)
 
     val torrentDownloadLiveData = MutableLiveData<String>()
@@ -86,7 +85,7 @@ class PlaySelectionViewModel : BaseViewModel() {
         }
     }
 
-    fun prepareTorrentPlay(torrentPath: String, playIndex: Int): String? {
+    fun prepareTorrentPlay(torrentPath: String, playIndex: Int): Pair<Long, String?> {
         val playCacheDir = PathHelper.getPlayCacheDirectory()
 
 
@@ -123,31 +122,19 @@ class PlaySelectionViewModel : BaseViewModel() {
             XLTaskHelper.getInstance().startTask(playTaskParam, selectIndexSet, deSelectIndexSet)
         if (playTaskId == -1L) {
             ToastCenter.showError("启动播放任务失败，请重试")
-            return null
+            return Pair(playTaskId, null)
         }
-        //加入下载任务集合，用于停止及删除任务
-        taskIdList.add(playTaskId)
 
         val fileName = torrentInfo.mSubFileInfo[playIndex].mFileName
         val filePath = "${playTaskParam.mFilePath}/$fileName"
         val playUrl = XLTaskLocalUrl()
         XLDownloadManager.getInstance().getLocalUrl(filePath, playUrl)
 
-        return playUrl.mStrUrl
-    }
-
-    fun removePlayTask() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val playCacheDir = PathHelper.getPlayCacheDirectory()
-            taskIdList.forEach {
-                XLTaskHelper.getInstance().stopTask(it)
-                XLTaskHelper.getInstance().deleteTask(it, playCacheDir.absolutePath)
-            }
-            playCacheDir.delete()
-        }
+        return Pair(playTaskId, playUrl.mStrUrl)
     }
 
     fun playWithHistory(
+        taskId: Long,
         playUrl: String,
         torrentPath: String,
         torrentFileIndex: Int,
@@ -173,6 +160,7 @@ class PlaySelectionViewModel : BaseViewModel() {
                 historyEntity?.episodeId ?: 0,
                 MediaType.MAGNET_LINK
             ).apply {
+                setPlayTaskId(taskId)
                 setTorrentTitle(torrentTitle)
                 setTorrentPath(torrentPath)
                 setTorrentFileIndex(torrentFileIndex)

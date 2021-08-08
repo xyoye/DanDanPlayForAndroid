@@ -36,8 +36,16 @@ data class PlayParams(
         getExtraMap()["http_header"] = headerJson ?: ""
     }
 
+    fun setPlayTaskId(taskId: Long) {
+        getExtraMap()["torrent_task_id"] = taskId.toString()
+    }
+
     fun getHttpHeaderJson(): String {
         return getExtraMap()["http_header"] ?: ""
+    }
+
+    fun getPlayTaskId() : Long{
+        return getExtraMap()["torrent_task_id"]?.toLongOrNull() ?: -1L
     }
 
     private fun getExtraMap(): HashMap<String, String> {

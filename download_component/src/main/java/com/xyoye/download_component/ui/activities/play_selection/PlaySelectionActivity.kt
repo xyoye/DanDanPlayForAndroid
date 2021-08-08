@@ -1,6 +1,5 @@
 package com.xyoye.download_component.ui.activities.play_selection
 
-import android.content.Intent
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -13,14 +12,11 @@ import com.xyoye.download_component.BR
 import com.xyoye.download_component.R
 import com.xyoye.download_component.databinding.ActivityPlaySelectionBinding
 import com.xyoye.download_component.ui.dialog.PlaySelectionDialog
+import com.xyoye.download_component.utils.PlayTaskManager
 import java.net.URLDecoder
 
 @Route(path = RouteTable.Download.PlaySelection)
 class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlaySelectionBinding>() {
-
-    companion object {
-        private const val PLAY_REQUEST_CODE = 1001
-    }
 
     @Autowired
     @JvmField
@@ -50,6 +46,8 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
         ARouter.getInstance().inject(this)
         title = ""
 
+        initTaskManager()
+
         if (torrentPath.isNullOrEmpty() && magnetLink.isNullOrEmpty()) {
             finish()
             return
@@ -70,40 +68,34 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .withParcelable("playParams", it)
-                .navigation(this, PLAY_REQUEST_CODE)
-        }
-    }
+                .navigation()
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == PLAY_REQUEST_CODE) {
-            viewModel.removePlayTask()
             finish()
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun showPlaySelectionDialog(torrentPath: String) {
         if (torrentFileIndex != -1) {
-            val playUrl = viewModel.prepareTorrentPlay(torrentPath, torrentFileIndex)
-            if (playUrl == null) {
+            val (taskId, playUrl) = viewModel.prepareTorrentPlay(torrentPath, torrentFileIndex)
+            if (playUrl.isNullOrEmpty()) {
                 finish()
                 return
             }
-            viewModel.playWithHistory(playUrl, torrentPath, torrentFileIndex, torrentTitle)
+            viewModel.playWithHistory(taskId, playUrl, torrentPath, torrentFileIndex, torrentTitle)
             return
         }
 
         PlaySelectionDialog(torrentPath) { selectIndex ->
-            val playUrl = viewModel.prepareTorrentPlay(torrentPath, selectIndex)
-            if (playUrl == null) {
+            val (taskId, playUrl) = viewModel.prepareTorrentPlay(torrentPath, selectIndex)
+            if (playUrl.isNullOrEmpty()) {
                 finish()
                 return@PlaySelectionDialog
             }
-            play(playUrl, torrentPath, selectIndex)
+            play(taskId, playUrl, torrentPath, selectIndex)
         }.show(this)
     }
 
-    private fun play(playUrl: String, torrentPath: String, torrentFileIndex: Int) {
+    private fun play(taskId: Long, playUrl: String, torrentPath: String, torrentFileIndex: Int) {
         var decodedUrl = URLDecoder.decode(playUrl, "utf-8")
         decodedUrl = URLDecoder.decode(decodedUrl, "utf-8")
         val videoTitle = getFileName(decodedUrl)
@@ -117,6 +109,7 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             0,
             MediaType.MAGNET_LINK
         ).apply {
+            setPlayTaskId(taskId)
             setTorrentTitle(torrentTitle)
             setTorrentPath(torrentPath)
             setTorrentFileIndex(torrentFileIndex)
@@ -126,6 +119,12 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             .build(RouteTable.Player.Player)
             .withParcelable("playParams", playParams)
             .withString("searchKeyword", torrentTitle)
-            .navigation(this, PLAY_REQUEST_CODE)
+            .navigation()
+
+        finish()
+    }
+
+    private fun initTaskManager() {
+        PlayTaskManager.init()
     }
 }

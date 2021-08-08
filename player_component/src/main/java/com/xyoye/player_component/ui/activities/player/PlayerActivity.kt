@@ -1,6 +1,5 @@
 package com.xyoye.player_component.ui.activities.player
 
-import android.app.Activity
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
@@ -12,6 +11,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
+import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.config.RouteTable
@@ -86,6 +86,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun onDestroy() {
+        beforePlayExit()
         dataBinding.danDanPlayer.release()
         unregisterReceiver()
         super.onDestroy()
@@ -95,7 +96,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (dataBinding.danDanPlayer.onBackPressed()) {
             return
         }
-        setResult(Activity.RESULT_OK)
         finish()
     }
 
@@ -146,7 +146,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //退出播放
             observerPlayExit {
-                setResult(Activity.RESULT_OK)
                 finish()
             }
             //绑定资源
@@ -274,5 +273,14 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             .create()
             .show()
+    }
+
+    private fun beforePlayExit() {
+        if (playParams == null)
+            return
+
+        if (playParams!!.mediaType == MediaType.MAGNET_LINK) {
+            PlayTaskBridge.sendTaskRemoveMsg(playParams!!.getPlayTaskId())
+        }
     }
 }

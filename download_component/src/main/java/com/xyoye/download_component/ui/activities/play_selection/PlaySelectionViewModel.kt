@@ -7,7 +7,8 @@ import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.extension.extraMap
+import com.xyoye.common_component.extension.torrentFileIndex
+import com.xyoye.common_component.extension.torrentPath
 import com.xyoye.common_component.utils.MagnetUtils
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.getFileName
@@ -160,15 +161,8 @@ class PlaySelectionViewModel : BaseViewModel() {
             val historyEntity = DatabaseManager.instance.getPlayHistoryDao()
                 .findMagnetPlay(MediaType.MAGNET_LINK)
                 .find {
-                    val entityFileIndex = it.extraMap()["torrent_file_index"]?.toIntOrNull() ?: 0
-                    it.extraMap()["torrent_path"] == torrentPath && entityFileIndex == torrentFileIndex
+                    it.torrentPath() == torrentPath && it.torrentFileIndex() == torrentFileIndex
                 }
-
-            val extra = mapOf(
-                Pair("torrent_path", torrentPath),
-                Pair("torrent_file_index", torrentFileIndex.toString()),
-                Pair("torrent_title", torrentTitle ?: "")
-            )
 
             val playParams = PlayParams(
                 playUrl,
@@ -177,9 +171,12 @@ class PlaySelectionViewModel : BaseViewModel() {
                 historyEntity?.subtitlePath,
                 historyEntity?.videoPosition ?: 0,
                 historyEntity?.episodeId ?: 0,
-                MediaType.MAGNET_LINK,
-                extra
-            )
+                MediaType.MAGNET_LINK
+            ).apply {
+                setTorrentTitle(torrentTitle)
+                setTorrentPath(torrentPath)
+                setTorrentFileIndex(torrentFileIndex)
+            }
 
             playLiveData.postValue(playParams)
         }

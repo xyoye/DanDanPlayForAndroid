@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.extension.extraMap
+import com.xyoye.common_component.extension.torrentPath
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.platform.AndroidPlatform
@@ -87,7 +87,7 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
                 searchResult.Resources?.forEach { magnetData ->
                     val hash = MagnetUtils.getMagnetHash(magnetData.Magnet)
                     magnetHistory
-                        .find { it.extraMap()["torrent_path"] == "$torrentDirPath/$hash.torrent" }
+                        .find { it.torrentPath() == "$torrentDirPath/$hash.torrent" }
                         ?.let { history ->
                             magnetData.position = history.videoPosition
                             magnetData.duration = history.videoDuration

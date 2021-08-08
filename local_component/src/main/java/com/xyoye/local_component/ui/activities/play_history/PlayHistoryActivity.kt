@@ -157,7 +157,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                                 videoTypeTv.setTextColorRes(R.color.text_theme)
                             }
 
-                            val torrentTitle = data.extraMap()["torrent_title"]
+                            val torrentTitle = data.torrentTitle()
                             videoDescribeTv.isVisible =
                                 data.mediaType == MediaType.MAGNET_LINK && !torrentTitle.isNullOrEmpty()
                             videoDescribeTv.text = torrentTitle
@@ -165,9 +165,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                             videoTypeIv.setImageDrawable(getMediaCover(data.mediaType, isInvalid))
                             videoNameTv.text = data.videoName
 
-                            val torrentPath = data.extraMap()["torrent_path"]
                             videoUrlTv.text = if (data.mediaType == MediaType.MAGNET_LINK)
-                                getFileName(torrentPath)
+                                getFileName(data.torrentPath())
                             else
                                 data.url
 
@@ -227,7 +226,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         StreamLinkDialog { link, header ->
             playParams.videoPath = link
             playParams.videoTitle = getFileName(link)
-            playParams.extra = header
+            playParams.setHttpHeader(JsonHelper.toJson(header))
 
             //串流播放
             ARouter.getInstance()
@@ -261,12 +260,9 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         if (entity.mediaType == MediaType.MAGNET_LINK) {
             ARouter.getInstance()
                 .build(RouteTable.Download.PlaySelection)
-                .withString("torrentPath", entity.extraMap()["torrent_path"])
-                .withString("torrentTitle", entity.extraMap()["torrent_title"])
-                .withInt(
-                    "torrentFileIndex",
-                    entity.extraMap()["torrent_file_index"]?.toIntOrNull() ?: 0
-                )
+                .withString("torrentPath", entity.torrentPath())
+                .withString("torrentTitle", entity.torrentTitle())
+                .withInt("torrentFileIndex", entity.torrentFileIndex())
                 .navigation()
             return
         }
@@ -279,9 +275,11 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
             entity.subtitlePath,
             entity.videoPosition,
             entity.episodeId,
-            entity.mediaType,
-            entity.extraMap()
-        )
+            entity.mediaType
+        ).apply {
+            setHttpHeader(entity.getHttpHeader())
+        }
+
         ARouter.getInstance()
             .build(RouteTable.Player.Player)
             .withParcelable("playParams", playParams)
@@ -289,8 +287,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     private fun isHistoryInvalid(entity: PlayHistoryEntity): Boolean {
-        val fileIndex = entity.extraMap()["torrent_file_index"]?.toIntOrNull() ?: -1
-        val filePath = entity.extraMap()["torrent_path"]
+        val fileIndex = entity.torrentFileIndex()
+        val filePath = entity.torrentPath()
 
         return when (entity.mediaType) {
             MediaType.MAGNET_LINK -> {

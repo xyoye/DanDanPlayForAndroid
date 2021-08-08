@@ -4,7 +4,7 @@ import android.provider.MediaStore
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.extension.extraMap
+import com.xyoye.common_component.extension.torrentPath
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
@@ -69,8 +69,7 @@ class MediaViewModel : BaseViewModel() {
 
             //磁链播放首条记录
             DatabaseManager.instance.getPlayHistoryDao().gitLastPlay(MediaType.MAGNET_LINK)?.apply {
-                val torrentPath = extraMap()["torrent_path"]
-                magnetEntity.describe = getFileName(torrentPath)
+                magnetEntity.describe = getFileName(torrentPath())
             }
 
             //串流播放首条记录

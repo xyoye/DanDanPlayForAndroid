@@ -17,5 +17,33 @@ data class PlayParams(
     var currentPosition: Long,
     var episodeId: Int,
     var mediaType: MediaType,
-    var extra: Map<String, String>? = null
-) : Parcelable
+    var extra: HashMap<String, String>? = null
+) : Parcelable {
+
+    fun setTorrentPath(torrentPath: String) {
+        getExtraMap()["torrent_path"] = torrentPath
+    }
+
+    fun setTorrentFileIndex(fileIndex: Int) {
+        getExtraMap()["torrent_file_index"] = fileIndex.toString()
+    }
+
+    fun setTorrentTitle(torrentTitle: String?) {
+        getExtraMap()["torrent_title"] = torrentTitle ?: ""
+    }
+
+    fun setHttpHeader(headerJson: String?) {
+        getExtraMap()["http_header"] = headerJson ?: ""
+    }
+
+    fun getHttpHeaderJson(): String {
+        return getExtraMap()["http_header"] ?: ""
+    }
+
+    private fun getExtraMap(): HashMap<String, String> {
+        if (extra == null)
+            extra = hashMapOf()
+
+        return extra!!
+    }
+}

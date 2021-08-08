@@ -51,7 +51,7 @@ class PlayerViewModel : BaseViewModel() {
                     playParams.danmuPath,
                     playParams.episodeId,
                     playParams.subtitlePath,
-                    JsonHelper.toJson(playParams.extra ?: "")
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 )
             } else {
                 history[0].apply {
@@ -61,7 +61,7 @@ class PlayerViewModel : BaseViewModel() {
                     danmuPath = playParams.danmuPath
                     episodeId = playParams.episodeId
                     subtitlePath = playParams.subtitlePath
-                    JsonHelper.toJson(playParams.extra ?: "")
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 }
             }
 

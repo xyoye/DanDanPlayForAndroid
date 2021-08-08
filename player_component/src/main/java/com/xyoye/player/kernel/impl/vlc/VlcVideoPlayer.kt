@@ -67,7 +67,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         }
 
         //VLC播放器通过代理服务实现请求头设置
-        if (headers != null) {
+        if (headers?.isNotEmpty() == true) {
             val proxyServer = VlcProxyServer.getInstance()
             if (!proxyServer.isAlive) {
                 proxyServer.start()

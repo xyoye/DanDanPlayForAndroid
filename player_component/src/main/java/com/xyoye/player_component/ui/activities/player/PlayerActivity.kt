@@ -20,6 +20,7 @@ import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
 import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.enums.*
@@ -175,7 +176,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setProgressObserver { position, duration ->
                 viewModel.addPlayHistory(params, position, duration)
             }
-            val header = if (params.extra?.isNotEmpty() == true) params.extra else null
+            val headerJson = params.getHttpHeaderJson()
+            val header = JsonHelper.parseJsonMap(headerJson)
             setUrl(params.videoPath, header)
             start()
         }

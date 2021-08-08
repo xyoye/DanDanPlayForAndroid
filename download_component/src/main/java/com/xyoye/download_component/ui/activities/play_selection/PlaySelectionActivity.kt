@@ -108,12 +108,6 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
         decodedUrl = URLDecoder.decode(decodedUrl, "utf-8")
         val videoTitle = getFileName(decodedUrl)
 
-        val extra = mapOf(
-            Pair("torrent_path", torrentPath),
-            Pair("torrent_file_index", torrentFileIndex.toString()),
-            Pair("torrent_title", torrentTitle ?: "")
-        )
-
         val playParams = PlayParams(
             playUrl,
             videoTitle,
@@ -121,9 +115,12 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             null,
             0,
             0,
-            MediaType.MAGNET_LINK,
-            extra
-        )
+            MediaType.MAGNET_LINK
+        ).apply {
+            setTorrentTitle(torrentTitle)
+            setTorrentPath(torrentPath)
+            setTorrentFileIndex(torrentFileIndex)
+        }
 
         ARouter.getInstance()
             .build(RouteTable.Player.Player)

@@ -182,6 +182,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         videoController.setSubtitlePath(params.subtitlePath)
+
+        if (params.mediaType == MediaType.MAGNET_LINK) {
+            //注册任务刷新
+            videoController.observeTaskRefresh {
+                PlayTaskBridge.sendTaskRefreshMsg(params.getPlayTaskId())
+            }
+        }
     }
 
     private fun registerReceiver() {

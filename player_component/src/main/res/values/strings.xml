@@ -83,4 +83,7 @@
     <string name="tips_danmu_keyword_block">关键字屏蔽</string>
     <string name="action_manager_danmu_block">管理</string>
     <string name="text_reset_video_speed">重置</string>
+
+    <string name="action_task_refresh">任务刷新</string>
+    <string name="action_danmu_switch">弹幕开关</string>
 </resources>

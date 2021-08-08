@@ -42,7 +42,7 @@ object FileHashUtils {
             }
             outputStream.flush()
             return getStreamHash(FileInputStream(cacheFile))
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             return null
         } finally {

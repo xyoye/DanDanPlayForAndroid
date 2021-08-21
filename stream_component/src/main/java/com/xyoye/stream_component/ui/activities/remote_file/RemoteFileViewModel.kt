@@ -65,7 +65,7 @@ class RemoteFileViewModel : BaseViewModel() {
     fun openVideo(videoData: RemoteVideoData) {
         viewModelScope.launch {
             showLoading()
-            val videoUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Hash)
+            val videoUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Id)
             val playParams = PlayParams(
                 videoUrl,
                 (videoData.EpisodeTitle ?: videoData.Name).formatFileName(),

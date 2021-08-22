@@ -18,18 +18,18 @@ class RemoteHelper private constructor() {
         val instance = RemoteHelper()
     }
 
-    fun buildImageUrl(hash: String): String {
-        var imageUrl = remoteUrl + "api/v1/image/$hash"
+    fun buildImageUrl(id: String): String {
+        var imageUrl = remoteUrl + "api/v1/image/id/$id"
         if (!remoteToken.isNullOrEmpty()) {
-            imageUrl += "&token=$remoteToken"
+            imageUrl += "?token=$remoteToken"
         }
         return imageUrl
     }
 
-    fun buildVideoUrl(hash: String): String {
-        var videoUrl = remoteUrl + "api/v1/stream/$hash"
+    fun buildVideoUrl(id: String): String {
+        var videoUrl = remoteUrl + "api/v1/stream/id/$id"
         if (!remoteToken.isNullOrEmpty()) {
-            videoUrl += "&token=$remoteToken"
+            videoUrl += "?token=$remoteToken"
         }
         return videoUrl
     }

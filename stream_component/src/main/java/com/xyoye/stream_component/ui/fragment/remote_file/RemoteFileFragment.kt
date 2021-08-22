@@ -96,7 +96,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                             if (data.Duration != null) {
                                 durationTv.text = formatDuration(data.Duration!! * 1000)
                             }
-                            val coverUrl = RemoteHelper.getInstance().buildImageUrl(data.Hash)
+                            val coverUrl = RemoteHelper.getInstance().buildImageUrl(data.Id)
                             coverIv.setGlideImage(coverUrl, 5)
 
                             danmuTipsTv.isVisible = isFileExist(data.danmuPath)

@@ -1,12 +1,10 @@
 package com.xyoye.download_component.utils
 
-import com.xunlei.downloadlib.XLDownloadManager
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.utils.PathHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -17,6 +15,8 @@ object PlayTaskManager {
 
     private var isInitialed = false
 
+    private var isPaused = false
+
     fun init() {
         if (isInitialed)
             return
@@ -25,10 +25,6 @@ object PlayTaskManager {
 
         PlayTaskBridge.taskRemoveLiveData.observeForever {
             onPlayTaskRemove(it)
-        }
-
-        PlayTaskBridge.taskRefreshLiveData.observeForever {
-            onPlayTaskRefresh(it)
         }
     }
 
@@ -40,13 +36,5 @@ object PlayTaskManager {
             playCacheDir.delete()
         }
 
-    }
-
-    private fun onPlayTaskRefresh(taskId: Long) {
-        GlobalScope.launch(Dispatchers.IO) {
-            XLDownloadManager.getInstance().stopTask(taskId)
-            delay(1000L)
-            XLDownloadManager.getInstance().startTask(taskId)
-        }
     }
 }

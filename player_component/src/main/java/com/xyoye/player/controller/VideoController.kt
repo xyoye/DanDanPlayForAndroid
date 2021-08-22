@@ -177,13 +177,6 @@ class VideoController(
     }
 
     /**
-     * 任务刷新回调
-     */
-    fun observeTaskRefresh(block: () -> Unit) {
-        playerBotView.setTaskRefreshBlock(block)
-    }
-
-    /**
      * 弹幕屏蔽回调
      */
     fun observerDanmuBlock(

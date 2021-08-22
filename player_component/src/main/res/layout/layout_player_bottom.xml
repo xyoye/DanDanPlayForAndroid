@@ -89,34 +89,6 @@
                 android:textSize="16sp" />
 
             <LinearLayout
-                android:id="@+id/task_refresh_ll"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/background_video_action_item"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_task_refresh" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/action_task_refresh"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="10sp"
-                    tools:ignore="SmallSp" />
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/danmu_control_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

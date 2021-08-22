@@ -9,17 +9,10 @@ import androidx.lifecycle.MutableLiveData
 object PlayTaskBridge {
 
     val taskRemoveLiveData = MutableLiveData<Long>()
-    val taskRefreshLiveData = MutableLiveData<Long>()
 
     fun sendTaskRemoveMsg(taskId: Long?) {
         if (taskId == -1L)
             return
         taskRemoveLiveData.postValue(taskId)
-    }
-
-    fun sendTaskRefreshMsg(taskId: Long?) {
-        if (taskId == -1L)
-            return
-        taskRefreshLiveData.postValue(taskId)
     }
 }

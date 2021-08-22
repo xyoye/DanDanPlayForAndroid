@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.utils.dp2px
@@ -36,7 +35,6 @@ class PlayerBottomView(
     private lateinit var mControlWrapper: ControlWrapper
 
     private var sendDanmuBlock: ((SendDanmuBean) -> Unit)? = null
-    private var refreshTaskBlock: (() -> Unit)? = null
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerBottomBinding>(
         LayoutInflater.from(context),
@@ -54,10 +52,6 @@ class PlayerBottomView(
         viewBinding.danmuControlLl.setOnClickListener {
             mControlWrapper.toggleDanmuVisible()
             viewBinding.danmuControlIv.isSelected = !viewBinding.danmuControlIv.isSelected
-        }
-
-        viewBinding.taskRefreshLl.setOnClickListener {
-            refreshTaskBlock?.invoke()
         }
 
         viewBinding.sendDanmuTv.setOnClickListener {
@@ -185,10 +179,5 @@ class PlayerBottomView(
 
     fun setSendDanmuBlock(block: (SendDanmuBean) -> Unit) {
         sendDanmuBlock = block
-    }
-
-    fun setTaskRefreshBlock(block: () -> Unit){
-        viewBinding.taskRefreshLl.isVisible = true
-        refreshTaskBlock = block
     }
 }

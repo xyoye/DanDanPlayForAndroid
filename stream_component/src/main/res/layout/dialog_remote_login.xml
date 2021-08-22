@@ -8,6 +8,8 @@
 
         <import type="com.xyoye.common_component.weight.binding.BindingConverter" />
 
+        <import type="com.xyoye.common_component.weight.binding.BindingEncode" />
+
         <import type="android.view.View" />
 
         <variable
@@ -93,7 +95,7 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:singleLine="true"
-            android:text="@={remoteData.remoteSecret}"
+            android:text="@={BindingEncode.stringDecode(remoteData.remoteSecret)}"
             android:textColor="@color/text_black"
             android:textColorHint="@color/text_gray"
             android:textSize="14sp" />

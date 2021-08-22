@@ -10,11 +10,14 @@ import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.FastClickFilter
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
+import com.xyoye.data_component.bean.DanmuSearchBean
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.data.DanmuMatchDetailData
 import com.xyoye.data_component.enums.FileManagerAction
@@ -112,6 +115,14 @@ class BindDanmuActivity : BaseActivity<BindDanmuViewModel, ActivityBindDanmuBind
                 viewModel.searchDanmuSource(animeName, episodeId)
             }.show(this)
         }
+
+
+        val lastDanmuSearchJson = AppConfig.getLastSearchDanmuJson()
+        if (lastDanmuSearchJson.isNullOrEmpty())
+            return
+        val lastSearchBean = JsonHelper
+            .parseJson<DanmuSearchBean>(lastDanmuSearchJson) ?: return
+        viewModel.searchDanmuSource(lastSearchBean.animeName, lastSearchBean.episodeId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

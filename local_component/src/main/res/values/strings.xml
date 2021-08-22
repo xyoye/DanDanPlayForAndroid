@@ -38,7 +38,7 @@
     <string name="text_default_format_danmu">默认</string>
     <string name="text_simplified_format_danmu">简体</string>
     <string name="text_traditional_format_danmu">繁体</string>
-    <string name="tips_danmu_history_keyword">1.上次搜索</string>
-    <string name="tips_danmu_search_keyword">2.关键字</string>
-    <string name="tips_danmu_search_file_name">3.文件名（长按可复制）</string>
+    <string name="tips_danmu_history_keyword">上次搜索</string>
+    <string name="tips_danmu_search_keyword">关键字</string>
+    <string name="tips_danmu_search_file_name">文件名（长按可复制）</string>
 </resources>

@@ -9,6 +9,7 @@ import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.bean.DanmuSearchBean
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.data.DanmuData
 import com.xyoye.data_component.data.DanmuMatchData
@@ -75,8 +76,10 @@ class BindDanmuViewModel : BaseViewModel() {
             onStart {
                 showLoading()
 
-                val searchKeyword = animeName + "_" + episodeId
-                AppConfig.putLastSearchDanmuKeyword(searchKeyword)
+                val searchBean = DanmuSearchBean(episodeId, animeName)
+                JsonHelper.toJson(searchBean)?.let {
+                    AppConfig.putLastSearchDanmuJson(it)
+                }
             }
 
             api {
@@ -158,7 +161,8 @@ class BindDanmuViewModel : BaseViewModel() {
                 //保存弹幕
                 val folderName = videoPath?.run { getParentFolderName(videoPath) }
                 //视频路径存在（即本地视频），将弹幕文件重命名为视频文件名，否则按弹幕标题命名
-                val fileName = if (videoPath == null) danmuFileName else "${getFileExtension(videoPath)}.xml"
+                val fileName =
+                    if (videoPath == null) danmuFileName else "${getFileExtension(videoPath)}.xml"
                 val danmuPath = DanmuUtils.saveDanmu(allDanmuData, folderName, fileName)
 
                 if (danmuPath.isNullOrEmpty()) {
@@ -172,7 +176,7 @@ class BindDanmuViewModel : BaseViewModel() {
                     }
                 }
 
-                if (danmuPath != null){
+                if (danmuPath != null) {
                     return@api Pair(danmuPath, episodeId)
                 } else {
                     return@api null

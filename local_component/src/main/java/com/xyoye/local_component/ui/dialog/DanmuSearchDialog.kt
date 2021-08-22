@@ -1,13 +1,16 @@
 package com.xyoye.local_component.ui.dialog
 
-import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.decodeUrl
+import com.xyoye.common_component.extension.toResString
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.KeywordHelper
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
+import com.xyoye.data_component.bean.DanmuSearchBean
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogSearchDanmuBinding
 
@@ -18,6 +21,7 @@ import com.xyoye.local_component.databinding.DialogSearchDanmuBinding
 class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
     private var searchKeyword: String? = null
     private var videoName: String? = null
+    private var tipsIndex = 1
     private lateinit var listener: (animeName: String, episodeId: String) -> Unit
 
     constructor() : super()
@@ -41,13 +45,16 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
 
         setTitle("搜索弹幕")
 
-        initKeyword()
-
         initHistoryKeyword()
 
+        initKeyword()
+
         if (!videoName.isNullOrEmpty()) {
-            binding.fileNameTips.isGone = false
-            binding.fileNameTv.isGone = false
+            val tips = "$tipsIndex." + R.string.tips_danmu_search_file_name.toResString()
+            binding.fileNameTips.text = tips
+
+            binding.fileNameTips.isVisible = true
+            binding.fileNameTv.isVisible = true
             binding.fileNameTv.setTextIsSelectable(true)
             binding.fileNameTv.text = videoName.decodeUrl()
         }
@@ -112,8 +119,12 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
             return
         }
 
-        binding.keywordLabelsView.isGone = false
-        binding.keywordLabelsTips.isGone = false
+        val tips = "$tipsIndex." + R.string.tips_danmu_search_keyword.toResString()
+        binding.keywordLabelsTips.text = tips
+        tipsIndex++
+
+        binding.keywordLabelsView.isVisible = true
+        binding.keywordLabelsTips.isVisible = true
         binding.keywordLabelsView.setLabels(keywordList)
         binding.keywordLabelsView.setOnLabelClickListener { _, data, _ ->
             if (!binding.animeNameEt.text.isNullOrEmpty()) {
@@ -125,21 +136,25 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
     }
 
     private fun initHistoryKeyword() {
-        val searchHistoryKeyword = AppConfig.getLastSearchDanmuKeyword()
-        if (searchHistoryKeyword.isNullOrEmpty()) {
-            binding.historyKeywordTv.text = "暂无"
-        } else {
-            val splitIndex = searchHistoryKeyword.lastIndexOf("_")
-            if (splitIndex > -1) {
-                val animeName = searchHistoryKeyword.substring(0, splitIndex)
-                val episodeId = searchHistoryKeyword.substring(splitIndex + 1)
-                val displayText = "$animeName $episodeId"
-                binding.historyKeywordTv.text = displayText
-                binding.historyKeywordTv.setOnClickListener {
-                    listener.invoke(animeName, episodeId)
-                    dismiss()
-                }
-            }
+        val lastDanmuSearchJson = AppConfig.getLastSearchDanmuJson()
+        if (lastDanmuSearchJson.isNullOrEmpty())
+            return
+
+        val lastSearchBean = JsonHelper
+            .parseJson<DanmuSearchBean>(lastDanmuSearchJson) ?: return
+
+        val tips = "$tipsIndex." + R.string.tips_danmu_history_keyword.toResString()
+        binding.keywordHistoryTips.text = tips
+        tipsIndex++
+
+        val displayText = "${lastSearchBean.animeName} ${lastSearchBean.episodeId}"
+        binding.historyKeywordTv.text = displayText
+
+        binding.keywordHistoryTips.isVisible = true
+        binding.historyKeywordTv.isVisible = true
+        binding.historyKeywordTv.setOnClickListener {
+            listener.invoke(lastSearchBean.animeName, lastSearchBean.episodeId)
+            dismiss()
         }
     }
 

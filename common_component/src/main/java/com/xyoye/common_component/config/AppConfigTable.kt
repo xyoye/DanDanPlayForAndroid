@@ -52,5 +52,5 @@ object AppConfigTable {
 
     @MMKVFiled
     //上次搜索弹幕记录
-    var lastSearchDanmuKeyword: String? = null
+    var lastSearchDanmuJson: String? = null
 }

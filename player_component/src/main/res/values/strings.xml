@@ -39,6 +39,7 @@
     <string name="text_danmu_keyword_block">关键字屏蔽</string>
 
     <string name="text_setting_subtitle">字幕设置</string>
+    <string name="text_subtitle_close">关闭</string>
     <string name="text_subtitle_stream">字幕流</string>
     <string name="text_subtitle_track_add">添加</string>
     <string name="text_subtitle_size_tips">文字大小</string>

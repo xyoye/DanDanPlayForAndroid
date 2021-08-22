@@ -100,7 +100,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return dataBinding.danDanPlayer.onKeyDown(keyCode) or super.onKeyDown(keyCode, event)
+        return dataBinding.danDanPlayer.onKeyDown(keyCode, event) or super.onKeyDown(keyCode, event)
     }
 
     override fun onScreenLocked() {

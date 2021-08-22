@@ -17,7 +17,6 @@ import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.controller.VideoController
-import com.xyoye.player.wrapper.InterVideoPlayer
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.facoty.PlayerFactory
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -26,6 +25,7 @@ import com.xyoye.player.surface.InterSurfaceView
 import com.xyoye.player.surface.SurfaceFactory
 import com.xyoye.player.utils.AudioFocusHelper
 import com.xyoye.player.utils.PlayerConstant
+import com.xyoye.player.wrapper.InterVideoPlayer
 import com.xyoye.subtitle.MixedSubtitle
 
 /**
@@ -331,7 +331,7 @@ class DanDanVideoPlayer(
         return mVideoController?.onBackPressed() ?: false
     }
 
-    fun onKeyDown(keyCode: Int): Boolean {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 mVideoController?.onVolumeKeyDown(true)
@@ -341,7 +341,7 @@ class DanDanVideoPlayer(
                 mVideoController?.onVolumeKeyDown(false)
                 return true
             }
-            else -> false
+            else -> mVideoController?.onKeyDown(keyCode, event) ?: false
         }
     }
 

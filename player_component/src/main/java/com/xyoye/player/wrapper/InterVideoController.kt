@@ -51,7 +51,7 @@ interface InterVideoController {
     /**
      * 显示控制器视图
      */
-    fun showController()
+    fun showController(ignoreShowing: Boolean = false)
 
     /**
      * 播放器销毁，预留方法

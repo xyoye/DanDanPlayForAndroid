@@ -7,23 +7,23 @@ import android.util.AttributeSet
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.config.DanmuConfig
-import master.flame.danmaku.controller.DrawHandler
-import master.flame.danmaku.danmaku.model.BaseDanmaku
-import master.flame.danmaku.danmaku.model.DanmakuTimer
-import master.flame.danmaku.danmaku.model.IDisplayer.DANMAKU_STYLE_STROKEN
-import master.flame.danmaku.danmaku.model.android.DanmakuContext
-import master.flame.danmaku.ui.widget.DanmakuView
-import com.xyoye.danmaku.BiliDanmakuParser
-import com.xyoye.danmaku.BiliDanmakuLoader
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.danmaku.BiliDanmakuLoader
+import com.xyoye.danmaku.BiliDanmakuParser
 import com.xyoye.danmaku.filter.KeywordFilter
 import com.xyoye.danmaku.filter.RegexFilter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterControllerView
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.info.PlayerInitializer
+import com.xyoye.player.wrapper.ControlWrapper
+import master.flame.danmaku.controller.DrawHandler
+import master.flame.danmaku.danmaku.model.BaseDanmaku
+import master.flame.danmaku.danmaku.model.DanmakuTimer
+import master.flame.danmaku.danmaku.model.IDisplayer.DANMAKU_STYLE_STROKEN
+import master.flame.danmaku.danmaku.model.android.DanmakuContext
+import master.flame.danmaku.ui.widget.DanmakuView
 import java.io.File
 import kotlin.math.max
 
@@ -114,7 +114,7 @@ class DanmuView(
                 }
             }
             PlayState.STATE_BUFFERING_PLAYING -> {
-                if (isPrepared && isPaused) {
+                if (isPrepared && isPaused && mControlWrapper.isPlaying()) {
                     resume()
                 }
             }
@@ -150,8 +150,8 @@ class DanmuView(
         super.resume()
     }
 
-    fun seekTo(timeMs: Long, skip: Boolean) {
-        if (skip) {
+    fun seekTo(timeMs: Long, isPlaying: Boolean) {
+        if (isPlaying) {
             seekTo(timeMs)
         } else {
             mSeekPosition = timeMs

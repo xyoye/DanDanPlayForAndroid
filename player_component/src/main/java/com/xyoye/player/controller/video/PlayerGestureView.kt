@@ -10,9 +10,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.ViewPropertyAnimatorListenerAdapter
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.utils.formatDuration
 import com.xyoye.player.wrapper.ControlWrapper
-import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerGestureBinding
 
@@ -84,8 +84,9 @@ class PlayerGestureView(
             formatDuration(newPosition)
 
         val updateSecond: Int = ((newPosition - currentPosition) / 1000f).toInt()
+        val updateSecondText = if (updateSecond > 0) "+$updateSecond" else updateSecond.toString()
 
-        val updateText = "$newPositionFormat/$durationFormat\n${updateSecond}秒"
+        val updateText = "$newPositionFormat/$durationFormat\n${updateSecondText}秒"
         viewBinding.positionTv.text = updateText
     }
 

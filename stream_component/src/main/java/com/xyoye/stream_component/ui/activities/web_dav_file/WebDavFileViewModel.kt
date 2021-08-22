@@ -107,7 +107,7 @@ class WebDavFileViewModel : BaseViewModel() {
 
     fun buildPlayParams(davResource: DavResource) {
         val url = addressUrl + davResource.href.toASCIIString()
-        val header = hashMapOf(Pair("Authorization", credentials))
+        val header = mapOf(Pair("Authorization", credentials))
 
         val playParams = PlayParams(
             url,
@@ -116,16 +116,17 @@ class WebDavFileViewModel : BaseViewModel() {
             null,
             0,
             0,
-            MediaType.WEBDAV_SERVER,
-            header
-        )
+            MediaType.WEBDAV_SERVER
+        ).apply {
+            setHttpHeader(JsonHelper.toJson(header))
+        }
 
         showLoading()
         viewModelScope.launch {
             //从播放历史查看是否已绑定弹幕
             val historyEntity = PlayHistoryUtils.getPlayHistory(url, MediaType.WEBDAV_SERVER)
 
-            if (historyEntity?.danmuPath != null){
+            if (historyEntity?.danmuPath != null) {
                 //从播放记录读取弹幕
                 playParams.danmuPath = historyEntity.danmuPath
                 playParams.episodeId = historyEntity.episodeId
@@ -136,11 +137,11 @@ class WebDavFileViewModel : BaseViewModel() {
                 DDLog.i("ftp danmu -----> download")
             }
 
-            if (historyEntity?.subtitlePath != null){
+            if (historyEntity?.subtitlePath != null) {
                 //从播放记录读取字幕
                 playParams.subtitlePath = historyEntity.subtitlePath
                 DDLog.i("ftp subtitle -----> database")
-            } else if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()){
+            } else if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()) {
                 //自动匹配同文件夹内同名字幕
                 playParams.subtitlePath = findAndDownloadSubtitle(davResource, header)
                 DDLog.i("ftp subtitle -----> download")
@@ -219,7 +220,10 @@ class WebDavFileViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun findAndDownloadDanmu(davResource: DavResource, header: Map<String, String>): String? {
+    private suspend fun findAndDownloadDanmu(
+        davResource: DavResource,
+        header: Map<String, String>
+    ): String? {
         return withContext(Dispatchers.IO) {
             //目标文件名
             val targetFileName = getFileNameNoExtension(davResource.name) + ".xml"
@@ -244,7 +248,10 @@ class WebDavFileViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun findAndDownloadSubtitle(davResource: DavResource, header: Map<String, String>): String? {
+    private suspend fun findAndDownloadSubtitle(
+        davResource: DavResource,
+        header: Map<String, String>
+    ): String? {
         return withContext(Dispatchers.IO) {
             //视频文件名
             val videoFileName = getFileNameNoExtension(davResource.name) + "."
@@ -269,19 +276,23 @@ class WebDavFileViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun matchAndDownloadDanmu(davResource: DavResource, header: HashMap<String, String>): Pair<String, Int>?{
-        return withContext(Dispatchers.IO){
+    private suspend fun matchAndDownloadDanmu(
+        davResource: DavResource,
+        header: Map<String, String>
+    ): Pair<String, Int>? {
+        return withContext(Dispatchers.IO) {
             val url = addressUrl + davResource.href.toASCIIString()
             var hash: String? = null
             try {
                 //目标长度为前16M，17是容错
-                header["range"] = "bytes=0-${17 * 1024 * 1024}"
+                val httpHelper = HashMap(header)
+                httpHelper["range"] = "bytes=0-${17 * 1024 * 1024}"
                 val responseBody = Retrofit.extService.downloadResource(url, header)
                 hash = FileHashUtils.getHash(responseBody.byteStream())
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            if (hash.isNullOrEmpty()){
+            if (hash.isNullOrEmpty()) {
                 return@withContext null
             }
             return@withContext DanmuUtils.matchDanmuSilence(viewModelScope, davResource.name, hash)

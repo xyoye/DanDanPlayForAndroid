@@ -88,16 +88,32 @@
                 android:textColor="@color/text_white_immutable"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/danmu_control_iv"
+            <LinearLayout
+                android:id="@+id/danmu_control_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/background_video_action_item"
-                android:padding="5dp"
-                android:src="@drawable/ic_danmaku_control" />
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/danmu_control_iv"
+                    android:layout_width="24dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_danmaku_control" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/action_danmu_switch"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

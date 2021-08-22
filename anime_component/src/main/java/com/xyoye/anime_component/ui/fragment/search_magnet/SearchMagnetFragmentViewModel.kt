@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.torrentPath
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.platform.AndroidPlatform
@@ -23,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.util.*
 
 class SearchMagnetFragmentViewModel : BaseViewModel() {
 
@@ -87,7 +87,7 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
                 searchResult.Resources?.forEach { magnetData ->
                     val hash = MagnetUtils.getMagnetHash(magnetData.Magnet)
                     magnetHistory
-                        .find { it.torrentPath == "$torrentDirPath/$hash.torrent" }
+                        .find { it.torrentPath() == "$torrentDirPath/$hash.torrent" }
                         ?.let { history ->
                             magnetData.position = history.videoPosition
                             magnetData.duration = history.videoDuration

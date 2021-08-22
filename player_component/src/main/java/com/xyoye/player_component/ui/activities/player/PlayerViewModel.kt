@@ -1,14 +1,13 @@
 package com.xyoye.player_component.ui.activities.player
 
 import androidx.lifecycle.viewModelScope
-import master.flame.danmaku.danmaku.model.BaseDanmaku
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.StreamHeaderUtil
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.PlayParams
@@ -20,6 +19,7 @@ import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
 import java.util.*
 import java.util.regex.Pattern
@@ -51,10 +51,7 @@ class PlayerViewModel : BaseViewModel() {
                     playParams.danmuPath,
                     playParams.episodeId,
                     playParams.subtitlePath,
-                    StreamHeaderUtil.header2String(playParams.header),
-                    playParams.torrentPath,
-                    playParams.torrentFileIndex,
-                    playParams.torrentTitle
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 )
             } else {
                 history[0].apply {
@@ -64,10 +61,7 @@ class PlayerViewModel : BaseViewModel() {
                     danmuPath = playParams.danmuPath
                     episodeId = playParams.episodeId
                     subtitlePath = playParams.subtitlePath
-                    header = StreamHeaderUtil.header2String(playParams.header)
-                    torrentPath = playParams.torrentPath
-                    torrentFileIndex = playParams.torrentFileIndex
-                    torrentTitle = playParams.torrentTitle
+                    JsonHelper.toJson(playParams.extra?.toMap())
                 }
             }
 

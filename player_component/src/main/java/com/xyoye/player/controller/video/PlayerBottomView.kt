@@ -14,8 +14,8 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.utils.formatDuration
+import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerBottomBinding
 
@@ -34,7 +34,7 @@ class PlayerBottomView(
     private var mIsDragging = false
     private lateinit var mControlWrapper: ControlWrapper
 
-    private var sendDanmuBlock : ((SendDanmuBean) -> Unit)? = null
+    private var sendDanmuBlock: ((SendDanmuBean) -> Unit)? = null
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerBottomBinding>(
         LayoutInflater.from(context),
@@ -49,18 +49,18 @@ class PlayerBottomView(
             mControlWrapper.togglePlay()
         }
 
-        viewBinding.danmuControlIv.setOnClickListener {
+        viewBinding.danmuControlLl.setOnClickListener {
             mControlWrapper.toggleDanmuVisible()
             viewBinding.danmuControlIv.isSelected = !viewBinding.danmuControlIv.isSelected
         }
 
         viewBinding.sendDanmuTv.setOnClickListener {
-            if (!UserConfig.isUserLoggedIn()){
+            if (!UserConfig.isUserLoggedIn()) {
                 ToastCenter.showOriginalToast("请登录后再执行此操作")
                 return@setOnClickListener
             }
 
-            if (!mControlWrapper.allowSendDanmu()){
+            if (!mControlWrapper.allowSendDanmu()) {
                 ToastCenter.showOriginalToast("当前弹幕不支持发送弹幕")
                 return@setOnClickListener
             }
@@ -177,7 +177,7 @@ class PlayerBottomView(
         mControlWrapper.startFadeOut()
     }
 
-    fun setSendDanmuBlock(block: (SendDanmuBean) -> Unit){
+    fun setSendDanmuBlock(block: (SendDanmuBean) -> Unit) {
         sendDanmuBlock = block
     }
 }

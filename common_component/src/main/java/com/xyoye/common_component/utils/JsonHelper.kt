@@ -14,6 +14,9 @@ object JsonHelper {
     val MO_SHI: Moshi = Moshi.Builder().build()
 
     inline fun <reified T> parseJson(jsonStr: String): T? {
+        if (jsonStr.isEmpty())
+            return null
+
         try {
             val jsonAdapter = MO_SHI.adapter(T::class.java)
             return jsonAdapter.fromJson(jsonStr)
@@ -26,6 +29,9 @@ object JsonHelper {
     }
 
     inline fun <reified T> parseJsonList(jsonStr: String): List<T> {
+        if (jsonStr.isEmpty())
+            return emptyList()
+
         try {
             val type = Types.newParameterizedType(List::class.java, T::class.java)
             val adapter = MO_SHI.adapter<List<T>>(type)
@@ -38,7 +44,27 @@ object JsonHelper {
         return emptyList()
     }
 
-    inline fun <reified T> toJson(t: T): String? {
+    fun parseJsonMap(jsonStr: String): Map<String, String> {
+        if (jsonStr.isEmpty())
+            return emptyMap()
+
+        try {
+            val type =
+                Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
+            val adapter = MO_SHI.adapter<Map<String, String>>(type)
+            return adapter.fromJson(jsonStr) ?: emptyMap()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: JsonDataException) {
+            e.printStackTrace()
+        }
+
+        return emptyMap()
+    }
+
+    inline fun <reified T> toJson(t: T?): String? {
+        t ?: return null
+
         try {
             val adapter = MO_SHI.adapter(T::class.java)
             return adapter.toJson(t)

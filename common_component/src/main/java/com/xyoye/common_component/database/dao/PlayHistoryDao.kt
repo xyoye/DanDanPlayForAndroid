@@ -28,13 +28,9 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitLastPlay(vararg mediaTypes: MediaType): PlayHistoryEntity?
 
-    @Query("SELECT * FROM play_history WHERE media_type = (:mediaType) AND torrent_path = (:torrentPath) AND torrent_file_index = (:fileIndex) LIMIT 1")
+    @Query("SELECT * FROM play_history WHERE media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun findMagnetPlay(
-        mediaType: MediaType,
-        torrentPath: String,
-        fileIndex: Int
-    ): PlayHistoryEntity?
+    suspend fun findMagnetPlay(mediaType: MediaType): MutableList<PlayHistoryEntity>
 
     @Query("SELECT * FROM play_history WHERE media_type = (:mediaTypes) ORDER BY play_time DESC LIMIT 1")
     @TypeConverters(MediaTypeConverter::class)

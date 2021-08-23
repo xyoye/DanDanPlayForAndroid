@@ -152,9 +152,9 @@ class DanmuView(
 
     fun seekTo(timeMs: Long, isPlaying: Boolean) {
         if (isPlaying) {
-            seekTo(timeMs)
+            seekTo(timeMs + PlayerInitializer.Danmu.offsetPosition)
         } else {
-            mSeekPosition = timeMs
+            mSeekPosition = timeMs + PlayerInitializer.Danmu.offsetPosition
         }
     }
 
@@ -260,8 +260,7 @@ class DanmuView(
     }
 
     fun updateOffsetTime() {
-        val newPosition = currentTime + PlayerInitializer.Danmu.offsetPosition
-        seekTo(newPosition, mControlWrapper.isPlaying())
+        seekTo(currentTime, mControlWrapper.isPlaying())
     }
 
     fun updateMaxLine() {

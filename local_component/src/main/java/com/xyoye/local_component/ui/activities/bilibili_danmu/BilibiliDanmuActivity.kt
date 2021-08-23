@@ -18,8 +18,9 @@ import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
 class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilibiliDanmuBinding>() {
     companion object {
         private const val DOWNLOAD_BY_LINK = 1
-        private const val DOWNLOAD_BY_AV_CODE = 2
-        private const val DOWNLOAD_BY_BV_CODE = 3
+        private const val DOWNLOAD_BY_URL = 2
+        private const val DOWNLOAD_BY_AV_CODE = 3
+        private const val DOWNLOAD_BY_BV_CODE = 4
 
         private const val REQUEST_CODE_SELECT_URL = 1001
     }
@@ -69,6 +70,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
         BottomActionDialog(
             mutableListOf(
                 SheetActionBean(DOWNLOAD_BY_LINK, "选取链接下载", R.drawable.ic_select_link),
+                SheetActionBean(DOWNLOAD_BY_URL, "输入链接下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_AV_CODE, "输入av号下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_BV_CODE, "输入bv号下载", R.drawable.ic_input_code)
             ), SheetActionType.VERTICAL, "下载弹幕"
@@ -81,31 +83,29 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                         .withBoolean("isSelectMode", true)
                         .navigation(this, REQUEST_CODE_SELECT_URL)
                 }
-                DOWNLOAD_BY_AV_CODE -> {
-                    showInputDialog(true)
-                }
-                DOWNLOAD_BY_BV_CODE -> {
-                    showInputDialog(false)
-                }
-                else -> throw IllegalArgumentException()
+                else -> showInputDialog(it)
             }
             return@BottomActionDialog true
         }.show(this)
     }
 
-    private fun showInputDialog(isAvCode: Boolean) {
-        val word = if (isAvCode) "AV" else "BV"
-        val hint = if (isAvCode) "纯数字AV号" else "完整BV号"
+    private fun showInputDialog(action: Int) {
+        val (title, wranning, hint) = when (action) {
+            DOWNLOAD_BY_URL -> Triple("输入链接下载", "链接不能为空", "番剧链接")
+            DOWNLOAD_BY_AV_CODE -> Triple("输入AV号下载", "AV号不能为空", "纯数字AV号")
+            DOWNLOAD_BY_BV_CODE -> Triple("输入BV号下载", "BV号不能为空", "完整BV号")
+            else -> return
+        }
 
         CommonEditDialog(
-            EditBean(
-                "输入${word}号下载",
-                "${word}号不能为空",
-                hint
-            ),
-            inputOnlyDigit = isAvCode
+            EditBean(title, wranning, hint),
+            inputOnlyDigit = action == DOWNLOAD_BY_AV_CODE
         ) {
-            viewModel.downloadByCode(it, isAvCode)
+            when (action) {
+                DOWNLOAD_BY_URL -> viewModel.downloadByUrl(it)
+                DOWNLOAD_BY_AV_CODE -> viewModel.downloadByCode(it, true)
+                DOWNLOAD_BY_BV_CODE -> viewModel.downloadByCode(it, false)
+            }
         }.show(this)
     }
 }

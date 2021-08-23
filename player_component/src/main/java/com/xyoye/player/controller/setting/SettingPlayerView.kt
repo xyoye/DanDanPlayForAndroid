@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
+import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
@@ -98,6 +99,9 @@ class SettingPlayerView(
 
     override fun attach(controlWrapper: ControlWrapper) {
         mControlWrapper = controlWrapper
+        viewBinding.videoSpeedSb.postDelayed({
+            viewBinding.videoSpeedSb.progress = PlayerInitializer.Player.videoSpeed
+        }, 200)
     }
 
     override fun getView() = this
@@ -193,6 +197,9 @@ class SettingPlayerView(
                     progress: Int,
                     fromUser: Boolean
                 ) {
+                    PlayerConfig.putVideoSpeed(progress)
+                    PlayerInitializer.Player.videoSpeed = progress
+
                     var speed = 4.0f * progress / 100f
                     speed = max(0.25f, speed)
 

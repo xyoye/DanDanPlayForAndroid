@@ -21,11 +21,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:text="@string/text_setting_subtitle"
                 android:textColor="@color/text_white_immutable"
-                android:textSize="16sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"/>
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -256,7 +256,6 @@
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
                         android:gravity="center"
                         android:hint="@string/hint_subtitle_offset"
                         android:imeOptions="actionDone"
@@ -267,6 +266,15 @@
                         android:textSize="14sp"
                         android:theme="@style/StyleSettingEdit"
                         tools:text="0.0" />
+
+                    <TextView
+                        android:id="@+id/subtitle_extra_time_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="S"
+                        android:textColor="@color/text_white_immutable"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/subtitle_extra_time_add"

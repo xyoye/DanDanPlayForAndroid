@@ -220,6 +220,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         //是否使用SurfaceView
         PlayerInitializer.surfaceType =
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
+        //视频速度
+        PlayerInitializer.Player.videoSpeed = PlayerConfig.getVideoSpeed()
 
         //VLCPlayer像素格式
         PlayerInitializer.Player.vlcPixelFormat =

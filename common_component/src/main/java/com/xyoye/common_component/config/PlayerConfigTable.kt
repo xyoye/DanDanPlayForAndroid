@@ -44,4 +44,8 @@ object PlayerConfigTable {
     //VLC内核硬件加速
     @MMKVFiled
     val useVLCHWDecoder = VLCHWDecode.HW_ACCELERATION_AUTO.value
+
+    //视频倍速
+    @MMKVFiled
+    val videoSpeed = 25
 }

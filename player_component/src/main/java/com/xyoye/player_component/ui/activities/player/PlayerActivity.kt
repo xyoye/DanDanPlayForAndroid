@@ -258,23 +258,35 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun showPlayErrorDialog() {
-        AlertDialog.Builder(this@PlayerActivity)
+        val isMagnetSource = playParams?.mediaType == MediaType.MAGNET_LINK
+
+        val tips = if (isMagnetSource) {
+            val taskLog = PlayTaskBridge.getTaskLog(playParams?.getPlayTaskId())
+            "播放失败，资源已失效或暂时无法访问，请尝试切换资源$taskLog"
+        } else {
+            "播放失败，请尝试更改播放器设置，或者切换其它播放内核"
+        }
+
+        val builder = AlertDialog.Builder(this@PlayerActivity)
             .setTitle("错误")
             .setCancelable(false)
-            .setMessage("播放失败，请尝试更改播放器设置，或者切换其它播放内核")
-            .setPositiveButton("播放器设置") { dialog, _ ->
+            .setMessage(tips)
+            .setNegativeButton("退出播放") { dialog, _ ->
+                dialog.dismiss()
+                this@PlayerActivity.finish()
+            }
+
+        if (isMagnetSource.not()) {
+            builder.setPositiveButton("播放器设置") { dialog, _ ->
                 dialog.dismiss()
                 ARouter.getInstance()
                     .build(RouteTable.User.SettingPlayer)
                     .navigation()
                 this@PlayerActivity.finish()
             }
-            .setNegativeButton("退出播放") { dialog, _ ->
-                dialog.dismiss()
-                this@PlayerActivity.finish()
-            }
-            .create()
-            .show()
+        }
+
+        builder.create().show()
     }
 
     private fun beforePlayExit() {

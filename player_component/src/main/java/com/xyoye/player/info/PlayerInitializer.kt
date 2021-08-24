@@ -13,7 +13,7 @@ object PlayerInitializer {
     var isOrientationEnabled = true
     var isEnableAudioFocus = true
     var isLooping = false
-    var playerType = PlayerType.TYPE_IJK_PLAYER
+    var playerType = PlayerType.TYPE_VLC_PLAYER
     var surfaceType = SurfaceType.VIEW_TEXTURE
     var screenScale = VideoScreenScale.SCREEN_SCALE_DEFAULT
 

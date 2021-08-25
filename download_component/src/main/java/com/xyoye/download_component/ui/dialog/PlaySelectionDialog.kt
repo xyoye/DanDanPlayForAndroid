@@ -89,7 +89,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
         }
 
         val torrentInfo = XLTaskHelper.getInstance().getTorrentInfo(filePath)
-        if (torrentInfo?.mSubFileInfo == null) {
+        if (torrentInfo?.mSubFileInfo.isNullOrEmpty()) {
             dismiss()
             mOwnerActivity?.finish()
             ToastCenter.showError("解析种子文件失败")

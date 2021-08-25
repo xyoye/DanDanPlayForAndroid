@@ -12,12 +12,14 @@ object BindingEncode {
 
     @InverseMethod("stringDecode")
     @JvmStatic
-    fun stringEncode(value: String): String {
+    fun stringEncode(value: String?): String {
+        value ?: return ""
         return URLEncoder.encode(value, Charsets.UTF_8.name())
     }
 
     @JvmStatic
-    fun stringDecode(value: String): String {
+    fun stringDecode(value: String?): String {
+        value ?: return ""
         return URLDecoder.decode(value, Charsets.UTF_8.name())
     }
 }

@@ -42,8 +42,8 @@ object FileHashUtils {
             }
             outputStream.flush()
             return getStreamHash(FileInputStream(cacheFile))
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (t: Throwable) {
+            t.printStackTrace()
             return null
         } finally {
             IOUtils.closeIO(inputStream)

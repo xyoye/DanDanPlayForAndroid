@@ -162,7 +162,7 @@ class BindDanmuViewModel : BaseViewModel() {
                 val folderName = videoPath?.run { getParentFolderName(videoPath) }
                 //视频路径存在（即本地视频），将弹幕文件重命名为视频文件名，否则按弹幕标题命名
                 val fileName =
-                    if (videoPath == null) danmuFileName else "${getFileExtension(videoPath)}.xml"
+                    if (videoPath == null) danmuFileName else "${getFileNameNoExtension(videoPath)}.xml"
                 val danmuPath = DanmuUtils.saveDanmu(allDanmuData, folderName, fileName)
 
                 if (danmuPath.isNullOrEmpty()) {

@@ -24,4 +24,8 @@
     <string name="action_remote_scan">扫码快捷录入</string>
     <string name="action_remote_control">遥控器</string>
     <string name="action_test_server">测试</string>
+
+    <string name="tips_parse_mode">数据解析</string>
+    <string name="strict_parse_mode">严格模式</string>
+    <string name="normal_parse_mode">宽松模式</string>
 </resources>

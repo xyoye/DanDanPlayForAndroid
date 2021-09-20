@@ -69,7 +69,9 @@ dependencies {
 
     implementation project(path: ':common_component')
     //web dav
-    implementation 'com.thegrizzlylabs.sardine-android:sardine-android:0.7'
+    implementation ('com.thegrizzlylabs.sardine-android:sardine-android:0.8') {
+        exclude module: 'simple-xml'
+    }
     //ftp
     implementation 'commons-net:commons-net:3.7.2'
     //smb

@@ -53,6 +53,7 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
             MediaType.WEBDAV_SERVER
         )
         setAnonymous(serverData.isAnonymous)
+        setParseMode(serverData.webDavStrict)
         binding.serverData = serverData
 
         binding.serverTestConnectTv.setOnClickListener {
@@ -70,6 +71,16 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
                 binding.serverStatusTv.setTextColorRes(R.color.text_red)
             }
         })
+
+        binding.strictParseTv.setOnClickListener {
+            serverData.webDavStrict = true
+            setParseMode(true)
+        }
+
+        binding.normalParseTv.setOnClickListener {
+            serverData.webDavStrict = false
+            setParseMode(false)
+        }
 
         binding.anonymousTv.setOnClickListener {
             serverData.isAnonymous = true
@@ -153,5 +164,17 @@ class WebDavLoginDialog : BaseBottomDialog<DialogWebDavLoginBinding> {
             binding.accountEt.setText("")
             binding.passwordEt.setText("")
         }
+    }
+
+    private fun setParseMode(isStrict: Boolean) {
+        binding.strictParseTv.isSelected = isStrict
+        binding.strictParseTv.setTextColorRes(
+            if (isStrict) R.color.text_white else R.color.text_black
+        )
+
+        binding.normalParseTv.isSelected = isStrict.not()
+        binding.normalParseTv.setTextColorRes(
+            if (isStrict.not()) R.color.text_white else R.color.text_black
+        )
     }
 }

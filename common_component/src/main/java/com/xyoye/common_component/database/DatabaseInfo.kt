@@ -20,7 +20,7 @@ import com.xyoye.data_component.entity.*
         DanmuBlockEntity::class,
         ExtendFolderEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class DatabaseInfo : RoomDatabase() {

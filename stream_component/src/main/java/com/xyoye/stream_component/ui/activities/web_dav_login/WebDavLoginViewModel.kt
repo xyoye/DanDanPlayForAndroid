@@ -7,7 +7,8 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.stream_component.utils.web_dav.DavClientFactory
+import com.xyoye.sardine.impl.OkHttpSardine
+import com.xyoye.sardine.util.SardineConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,10 +20,9 @@ class WebDavLoginViewModel : BaseViewModel() {
     fun testConnect(serverData: MediaLibraryEntity) {
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
-            val sardine = DavClientFactory.getInstance(
-                UnsafeOkHttpClient.client,
-                serverData.webDavStrict
-            )
+            SardineConfig.isXmlStrictMode = serverData.webDavStrict
+
+            val sardine = OkHttpSardine(UnsafeOkHttpClient.client)
             if (!serverData.account.isNullOrEmpty()) {
                 sardine.setCredentials(serverData.account, serverData.password)
             }

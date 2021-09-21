@@ -2,8 +2,6 @@ package com.xyoye.stream_component.ui.activities.web_dav_file
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.thegrizzlylabs.sardineandroid.DavResource
-import com.thegrizzlylabs.sardineandroid.impl.OkHttpSardine
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
@@ -17,9 +15,11 @@ import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.sardine.DavResource
+import com.xyoye.sardine.impl.OkHttpSardine
+import com.xyoye.sardine.util.SardineConfig
 import com.xyoye.stream_component.utils.FileHashUtils
 import com.xyoye.stream_component.utils.PlayHistoryUtils
-import com.xyoye.stream_component.utils.web_dav.DavClientFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,11 +42,9 @@ class WebDavFileViewModel : BaseViewModel() {
     private lateinit var sardine: OkHttpSardine
 
     fun listStorageRoot(serverData: MediaLibraryEntity) {
-        sardine = DavClientFactory.getInstance(
-            UnsafeOkHttpClient.client,
-            serverData.webDavStrict
-        )
+        SardineConfig.isXmlStrictMode = serverData.webDavStrict
 
+        sardine = OkHttpSardine(UnsafeOkHttpClient.client)
         if (!serverData.account.isNullOrEmpty()) {
             val account = serverData.account!!
             val password = serverData.password!!

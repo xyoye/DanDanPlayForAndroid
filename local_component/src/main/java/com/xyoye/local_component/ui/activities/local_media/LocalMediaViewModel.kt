@@ -22,10 +22,7 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.SubtitleHashUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -33,6 +30,9 @@ import kotlin.collections.HashMap
 class LocalMediaViewModel : BaseViewModel() {
     //当前是否在根目录
     val inRootFolder = ObservableBoolean()
+
+    //当前是否为搜索状态
+    val inSearchState = ObservableBoolean()
 
     //当前打开的目录名
     val currentFolderName = ObservableField<String>()
@@ -47,8 +47,10 @@ class LocalMediaViewModel : BaseViewModel() {
 
     val playVideoLiveData = MutableLiveData<PlayParams>()
 
-    //临时的文件夹文件live data
-    private var folderFileLiveData: LiveData<MutableList<VideoEntity>>? = null
+    private var searchJob: Job? = null
+
+    //直接关联数据库的live data
+    private var databaseVideoLiveData: LiveData<MutableList<VideoEntity>>? = null
 
     fun fastPlay() {
         viewModelScope.launch {
@@ -70,6 +72,7 @@ class LocalMediaViewModel : BaseViewModel() {
 
     fun listRoot() {
         inRootFolder.set(true)
+        inSearchState.set(false)
         refreshEnableLiveData.postValue(true)
 
         viewModelScope.launch {
@@ -99,32 +102,51 @@ class LocalMediaViewModel : BaseViewModel() {
 
     fun listFolder(folderName: String, folderPath: String) {
         inRootFolder.set(false)
+        inSearchState.set(false)
         refreshEnableLiveData.postValue(false)
         currentFolderName.set(folderName)
         currentFolderPath.set(folderPath)
 
         viewModelScope.launch {
-            folderFileLiveData?.let {
+            databaseVideoLiveData?.let {
                 fileLiveData.removeSource(it)
             }
-            folderFileLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
-            val lastPlayHistory = queryLastPlayHistory()
-            fileLiveData.addSource(folderFileLiveData!!) { videoData ->
-                if (!inRootFolder.get()) {
+            databaseVideoLiveData = DatabaseManager.instance.getVideoDao().getVideoInFolder(folderPath)
+            updateFolderFileLiveData()
+        }
+    }
 
-                    //是否为最后一次播放的文件
-                    lastPlayHistory?.apply {
-                        videoData.find { it.filePath == url }?.isLastPlay = true
-                    }
+    fun exitSearchVideo() {
+        inSearchState.set(false)
+        if (inRootFolder.get()) {
+            folderLiveData.postValue(folderLiveData.value)
+        } else {
+            val folderName = currentFolderName.get()!!
+            val folderPath = currentFolderPath.get()!!
+            listFolder(folderName, folderPath)
+        }
+    }
 
-                    //视频按文件名排序
-                    videoData.sortWith(FileComparator(
-                        value = { getFileName(it.filePath) },
-                        isDirectory = { false }
-                    ))
-                    fileLiveData.postValue(videoData)
-                }
+    fun searchVideo(keyword: String) {
+        inSearchState.set(true)
+        refreshEnableLiveData.postValue(false)
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            databaseVideoLiveData?.let {
+                fileLiveData.removeSource(it)
             }
+
+            val searchWord = "%$keyword%"
+            databaseVideoLiveData = if (inRootFolder.get()) {
+                DatabaseManager.instance.getVideoDao().searchVideo(searchWord)
+            } else {
+                DatabaseManager.instance.getVideoDao().searchVideoInFolder(
+                    searchWord,
+                    currentFolderPath.get()
+                )
+            }
+            updateFolderFileLiveData(inRootFolder.get())
         }
     }
 
@@ -225,6 +247,27 @@ class LocalMediaViewModel : BaseViewModel() {
         viewModelScope.launch {
             DatabaseManager.instance.getVideoDao()
                 .updateSubtitle(filePath, null)
+        }
+    }
+
+    private suspend fun updateFolderFileLiveData(updateInRootPath: Boolean = false) {
+        databaseVideoLiveData ?: return
+
+        val lastPlayHistory = queryLastPlayHistory()
+        fileLiveData.addSource(databaseVideoLiveData!!) { videoData ->
+            if (updateInRootPath || inRootFolder.get().not()) {
+                //是否为最后一次播放的文件
+                lastPlayHistory?.apply {
+                    videoData.find { it.filePath == url }?.isLastPlay = true
+                }
+
+                //视频按文件名排序
+                videoData.sortWith(FileComparator(
+                    value = { getFileName(it.filePath) },
+                    isDirectory = { false }
+                ))
+                fileLiveData.postValue(videoData)
+            }
         }
     }
 

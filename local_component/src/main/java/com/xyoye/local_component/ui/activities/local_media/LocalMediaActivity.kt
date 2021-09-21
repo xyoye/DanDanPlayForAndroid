@@ -1,9 +1,13 @@
 package com.xyoye.local_component.ui.activities.local_media
 
-import android.view.KeyEvent
+import android.text.TextUtils
+import android.view.*
+import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
@@ -24,13 +28,16 @@ import com.xyoye.local_component.databinding.ItemMediaVideoBinding
 
 @Route(path = RouteTable.Local.LocalMediaStorage)
 class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaBinding>() {
+
+    private var mSearchView: SearchView? = null
+    private var mSearchEt: SearchView.SearchAutoComplete? = null
+
     companion object {
         private const val ACTION_BIND_DANMU_AUTO = 1
         private const val ACTION_BIND_DANMU_MANUAL = 2
         private const val ACTION_BIND_SUBTITLE = 3
         private const val ACTION_UNBIND_DANMU = 4
         private const val ACTION_UNBIND_SUBTITLE = 5
-        private const val ACTION_SHARE_TV = 6
     }
 
     override fun initViewModel() =
@@ -48,54 +55,39 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
         initRv()
 
-        dataBinding.fastPlayBt.setOnClickListener {
-            viewModel.fastPlay()
-        }
-
-        viewModel.fileLiveData.observe(this) {
-            dataBinding.mediaRv.setData(it)
-        }
-
-        viewModel.folderLiveData.observe(this) {
-            dataBinding.mediaRv.setData(it)
-        }
-
-        viewModel.refreshEnableLiveData.observe(this) {
-            dataBinding.refreshLayout.isEnabled = it
-        }
-
-        viewModel.refreshLiveData.observe(this) { isSuccess ->
-            if (dataBinding.refreshLayout.isRefreshing) {
-                dataBinding.refreshLayout.isRefreshing = false
-            }
-            if (!isSuccess) {
-                ToastCenter.showError("未找到视频文件")
-            }
-        }
-
-        viewModel.playVideoLiveData.observe(this) {
-            ARouter.getInstance()
-                .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
-                .navigation()
-        }
+        initListener()
 
         dataBinding.refreshLayout.setColorSchemeResources(R.color.text_theme)
-        dataBinding.refreshLayout.setOnRefreshListener {
-            viewModel.listRoot()
-        }
         dataBinding.refreshLayout.isRefreshing = true
         viewModel.listRoot()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!viewModel.inRootFolder.get()) {
-                viewModel.listRoot()
-                return true
-            }
+        return if (keyCode == KeyEvent.KEYCODE_BACK && interceptBack())
+            true
+        else
+            super.onKeyDown(keyCode, event)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_local_media, menu)
+
+        mSearchView = menu.findItem(R.id.item_search_file)?.actionView as SearchView
+        mSearchView?.apply {
+            onActionViewExpanded()
+            isIconified = true
+            imeOptions = EditorInfo.IME_ACTION_SEARCH
+
+            findViewById<View>(R.id.search_plate).background = null
+            findViewById<View>(R.id.submit_area).background = null
+
+            mSearchEt = findViewById(R.id.search_src_text)
+            mSearchEt?.textSize = 16f
         }
-        return super.onKeyDown(keyCode, event)
+
+        initSearchListener()
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun initRv() {
@@ -104,6 +96,12 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             layoutManager = vertical()
 
             adapter = buildAdapter<Any> {
+                addEmptyView(R.layout.layout_empty) {
+                    initEmptyView {
+                        itemBinding.emptyTv.text = "找不到相关视频"
+                    }
+                }
+
                 addItem<Any, ItemMediaFolderBinding>(R.layout.item_media_folder) {
                     checkType { data, _ -> data is FolderBean }
                     initView { data, _, _ ->
@@ -118,6 +116,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                             val fileCount = "${data.fileCount}视频"
                             fileCountTv.text = fileCount
                             itemLayout.setOnClickListener {
+                                mSearchView?.clearFocus()
                                 viewModel.listFolder(folderName, data.folderPath)
                             }
                         }
@@ -142,12 +141,15 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                             subtitleTipsTv.isVisible = isFileExist(data.subtitlePath)
 
                             itemLayout.setOnClickListener {
+                                mSearchView?.clearFocus()
                                 viewModel.checkPlayParams(data)
                             }
                             moreActionIv.setOnClickListener {
+                                mSearchView?.clearFocus()
                                 showVideoManagerDialog(data)
                             }
                             itemLayout.setOnLongClickListener {
+                                mSearchView?.clearFocus()
                                 showVideoManagerDialog(data)
                                 true
                             }
@@ -156,6 +158,68 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                 }
             }
         }
+    }
+
+    private fun initListener() {
+        dataBinding.fastPlayBt.setOnClickListener {
+            viewModel.fastPlay()
+        }
+
+        dataBinding.refreshLayout.setOnRefreshListener {
+            viewModel.listRoot()
+        }
+
+        mToolbar?.setNavigationOnClickListener {
+            if (interceptBack().not()) finish()
+        }
+
+        viewModel.fileLiveData.observe(this) {
+            updateExtViewVisible(viewModel.inSearchState.get().not())
+            dataBinding.mediaRv.setData(it)
+        }
+
+        viewModel.folderLiveData.observe(this) {
+            updateExtViewVisible(true)
+            dataBinding.mediaRv.setData(it)
+        }
+
+        viewModel.refreshEnableLiveData.observe(this) {
+            dataBinding.refreshLayout.isEnabled = it
+        }
+
+        viewModel.refreshLiveData.observe(this) { isSuccess ->
+            if (dataBinding.refreshLayout.isRefreshing) {
+                dataBinding.refreshLayout.isRefreshing = false
+            }
+            if (!isSuccess) {
+                ToastCenter.showError("未找到视频文件")
+            }
+        }
+
+        viewModel.playVideoLiveData.observe(this) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
+                .withParcelable("playParams", it)
+                .navigation()
+        }
+    }
+
+    private fun initSearchListener() {
+        mSearchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                mSearchView?.clearFocus()
+                return false
+            }
+
+            override fun onQueryTextChange(keyword: String): Boolean {
+                if (TextUtils.isEmpty(keyword)) {
+                    viewModel.exitSearchVideo()
+                } else {
+                    viewModel.searchVideo(keyword)
+                }
+                return false
+            }
+        })
     }
 
     private fun showVideoManagerDialog(data: VideoEntity) {
@@ -218,5 +282,25 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             }
             return@BottomActionDialog true
         }.show(this)
+    }
+
+    private fun updateExtViewVisible(visible: Boolean) {
+        dataBinding.pathLl.isVisible = visible
+        dataBinding.fastPlayBt.isVisible = visible
+    }
+
+    private fun interceptBack(): Boolean {
+        if (mSearchEt?.isShown == true) {
+            mSearchEt?.setText("")
+            mSearchView?.isIconified = true
+            return true
+        }
+
+        if (!viewModel.inRootFolder.get()) {
+            viewModel.listRoot()
+            return true
+        }
+
+        return false
     }
 }

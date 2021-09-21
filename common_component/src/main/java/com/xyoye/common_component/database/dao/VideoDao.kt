@@ -1,7 +1,10 @@
 package com.xyoye.common_component.database.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.VideoEntity
 
@@ -33,6 +36,12 @@ interface VideoDao {
 
     @Query("SELECT folder_path,COUNT(*) AS file_count,filter FROM video WHERE filter = (:isFilter) GROUP BY folder_path")
     suspend fun getFolderByFilter(isFilter: Boolean = false): MutableList<FolderBean>
+
+    @Query("SELECT * FROM video WHERE filter = 0 AND file_path LIKE (:keyword)")
+    fun searchVideo(keyword: String): LiveData<MutableList<VideoEntity>>
+
+    @Query("SELECT * FROM video WHERE filter = 0 AND folder_path = (:folderPath) AND file_path LIKE (:keyword)")
+    fun searchVideoInFolder(keyword: String, folderPath: String?): LiveData<MutableList<VideoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: VideoEntity)

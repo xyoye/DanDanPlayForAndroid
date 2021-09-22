@@ -1,0 +1,19 @@
+name: gitee-sync
+on: push
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v2
+        
+      - name: sync github -> gitee
+        uses: Yikun/hub-mirror-action@master
+        with:
+          src: 'github/xyoye'
+          dst: 'gitee/xyoye'
+          dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+          dst_token:  ${{ secrets.GITEE_TOKEN }}
+          static_list: 'DanDanPlayForAndroid'
+          force_update: true

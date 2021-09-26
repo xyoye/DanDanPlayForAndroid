@@ -17,7 +17,12 @@ class FileComparator<T>(
     private val desc: Boolean = false
 ) : Comparator<T> {
 
-    override fun compare(o1: T, o2: T): Int {
+    override fun compare(o1: T?, o2: T?): Int {
+        if (o1 == null)
+            return -1
+        if (o2 == null)
+            return 1
+
         val isDirectory1 = isDirectory.invoke(o1)
         val isDirectory2 = isDirectory.invoke(o2)
 

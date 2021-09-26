@@ -1,0 +1,87 @@
+name: package release
+
+# 提交带Tag时，构建正式包
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  package:
+    name: Generate Release APK
+    runs-on: ubuntu-latest
+    steps:
+      # 1.拉取代码
+      - name: checkout source code
+        uses: actions/checkout@v2
+
+      # 2.配置JDK
+      - name: set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      # 3.获取签名密钥
+      - name: decrypt key
+        run: |
+          gpg --quiet --batch --yes --decrypt \
+          --passphrase=${{ secrets.KEY_PASSPHRASE }} \
+          --output gradle/assemble/dandanplay.jks gradle/assemble/dandanplay.jks.gpg
+
+      # 4.构建Release包
+      - name: assemb release
+        env:
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+          ALIAS_NAME: ${{ secrets.ALIAS_NAME }}
+          ALIAS_PASS: ${{ secrets.ALIAS_PASS }}
+        run: chmod +x gradlew &&./gradlew clean assembleRelease --stacktrace
+
+      # 5.获取APK文件名及路径
+      - name: apk file info
+        id: apk_file_info
+        run: |
+          APK_PATH=`find . -name '*.apk' | grep release`
+          echo ::set-output name=apk_path::$APK_PATH
+          APK_NAME=`basename $APK_PATH`
+          echo ::set-output name=apk_name::$APK_NAME
+
+      # 6.获取APK版本信息
+      - name: get apk info
+        id: apk_version_info
+        if: steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: JantHsueh/get-apk-info-action@1.0
+        with:
+          apkPath: ${{ steps.apk_file_info.outputs.apk_path }}
+
+      # 7.提取当前版本更新日志
+      - name: get update log
+        id: update_log
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: change/dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}.txt
+
+      # 8.根据当前APK版本号，创建正式版Tag
+      - name: create github release
+        id: create_github_release
+        if: steps.apk_version_info.outputs.versionNum
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}
+          draft: false
+          prerelease: false
+          body: |
+            ${{ steps.update_log.outputs.content }}
+
+      # 9.上传正式包到Github Release的Asset中
+      - name: upload release asset
+        if: steps.create_github_release.outputs.upload_url && steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.create_github_release.outputs.upload_url}}
+          asset_path: ${{steps.apk_file_info.outputs.apk_path}}
+          asset_name: ${{steps.apk_file_info.outputs.apk_name}}
+          asset_content_type: application/vnd.android.package-archive

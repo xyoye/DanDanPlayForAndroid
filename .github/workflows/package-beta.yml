@@ -1,0 +1,99 @@
+name: package beta
+
+# 主分支提交代码时，构建最新测试包
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  package:
+    name: Generate Beta APK
+    runs-on: ubuntu-latest
+    steps:
+      # 1.拉取代码
+      - name: checkout source code
+        uses: actions/checkout@v2
+
+      # 2.配置JDK
+      - name: set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      # 3.获取签名密钥
+      - name: decrypt key
+        run: |
+          gpg --quiet --batch --yes --decrypt \
+          --passphrase=${{ secrets.KEY_PASSPHRASE }} \
+          --output gradle/assemble/dandanplay.jks gradle/assemble/dandanplay.jks.gpg
+
+      # 4.构建Beta包
+      - name: assemb beta
+        env:
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+          ALIAS_NAME: ${{ secrets.ALIAS_NAME }}
+          ALIAS_PASS: ${{ secrets.ALIAS_PASS }}
+        run: chmod +x gradlew &&./gradlew clean assembleBeta --stacktrace
+
+      # 5.获取APK文件名及路径
+      - name: apk file info
+        id: apk_file_info
+        run: |
+          APK_PATH=`find . -name '*.apk' | grep beta`
+          echo ::set-output name=apk_path::$APK_PATH
+          APK_NAME=`basename $APK_PATH`
+          echo ::set-output name=apk_name::$APK_NAME
+
+      # 6.检查测试版Tag是否已存在
+      - name: check tag exist
+        if: steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: jimschubert/query-tag-action@v1
+        id: check_tag_exist
+        with:
+          include: '*-beta'
+        continue-on-error: true
+
+      # 7.如果测试版Tag已存在，删除
+      - name: delete old tag
+        if: steps.check_tag_exist.outputs.tag
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          delete_release: true
+          tag_name: ${{ steps.check_tag_exist.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 8.获取APK版本信息
+      - name: apk version info
+        id: apk_version_info
+        if: steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: JantHsueh/get-apk-info-action@1.0
+        with:
+          apkPath: ${{ steps.apk_file_info.outputs.apk_path }}
+
+      # 9.根据当前APK版本号，创建测试版Tag
+      - name: create github release
+        id: create_github_release
+        if: steps.apk_version_info.outputs.versionNum
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}-beta
+          draft: false
+          prerelease: true
+          body: |
+            最新测试包，与主分支代码同步
+
+      # 10.上传测试包到Github Release的Asset中
+      - name: upload release asset
+        if: steps.create_github_release.outputs.upload_url && steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.create_github_release.outputs.upload_url}}
+          asset_path: ${{steps.apk_file_info.outputs.apk_path}}
+          asset_name: ${{steps.apk_file_info.outputs.apk_name}}
+          asset_content_type: application/vnd.android.package-archive

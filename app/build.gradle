@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
+apply from: '../gradle/assemble/assemble.gradle'
+
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -23,39 +25,6 @@ android {
         }
         ndk {
             abiFilters 'armeabi-v7a'
-        }
-    }
-
-    signingConfigs {
-        debug {
-            def propertiesFile = rootProject.file("keystore.properties")
-            if (!propertiesFile.exists()){
-                propertiesFile = rootProject.file("debug.properties")
-            }
-            if (propertiesFile.exists()){
-                def debugProperties = new Properties()
-                debugProperties.load(new FileInputStream(propertiesFile))
-
-                storeFile file(debugProperties['KEY_LOCATION'])
-                storePassword debugProperties['KEYSTORE_PASS']
-                keyAlias debugProperties['ALIAS_NAME']
-                keyPassword debugProperties['ALIAS_PASS']
-            }
-        }
-
-        release {
-            storeFile file("../dandanplay.jks")
-            storePassword System.getenv("KEYSTORE_PASS")
-            keyAlias System.getenv("ALIAS_NAME")
-            keyPassword System.getenv("ALIAS_PASS")
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 

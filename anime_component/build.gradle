@@ -33,6 +33,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        debug.initWith(release)
+
+        beta.initWith(release)
     }
 
     sourceSets {

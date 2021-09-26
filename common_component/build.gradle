@@ -23,9 +23,9 @@ android {
             buildConfigField("Boolean", "IS_DEBUG_MODE", "${IS_DEBUG_MODE.toBoolean()}")
         }
 
-        debug {
-            buildConfigField("Boolean", "IS_DEBUG_MODE", "${IS_DEBUG_MODE.toBoolean()}")
-        }
+        debug.initWith(release)
+
+        beta.initWith(release)
     }
 
     sourceSets {

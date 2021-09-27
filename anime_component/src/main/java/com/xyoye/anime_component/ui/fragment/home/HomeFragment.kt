@@ -54,7 +54,7 @@ class HomeFragment : BaseFragment<HomeFragmentViewModel, FragmentHomeBinding>() 
     private fun initViewModelObserve() {
         viewModel.bannersLiveData.observe(this) {
             dataBinding.banner.apply {
-                adapter = HomeBannerAdapter(it.banners)
+                setAdapter(HomeBannerAdapter(it.banners))
                 indicator = CircleIndicator(mAttachActivity)
                 setIndicatorGravity(IndicatorConfig.Direction.RIGHT)
                 setIndicatorMargins(

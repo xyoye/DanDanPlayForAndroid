@@ -64,10 +64,6 @@ android {
     buildFeatures {
         dataBinding = true
     }
-
-    repositories {
-        flatDir { dirs 'libs' }
-    }
 }
 
 dependencies {
@@ -80,8 +76,7 @@ dependencies {
 
     implementation files('libs/jlibtorrent-1.2.11.0.jar')
     implementation files('libs/jlibtorrent-android-arm-1.2.11.0.jar')
-
-    implementation(name: 'thunder', ext: 'aar')
+    implementation files('libs/thunder.aar')
 
     kapt rootProject.ext.dependencies["arouter-compiler"]
 }

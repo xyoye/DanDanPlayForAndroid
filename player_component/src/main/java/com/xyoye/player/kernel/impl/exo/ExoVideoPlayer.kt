@@ -262,7 +262,8 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
         mTrackHelper.initExoTrack(mTrackSelector, trackSelections, trackNameProvider)
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    override fun onPlayerError(error: PlaybackException) {
+        super.onPlayerError(error)
         mPlayerEventListener.onError(error)
     }
 

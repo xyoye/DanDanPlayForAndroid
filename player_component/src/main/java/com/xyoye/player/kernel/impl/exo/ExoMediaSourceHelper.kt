@@ -4,7 +4,6 @@ import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -21,6 +20,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.PathHelper
+import java.util.*
 
 /**
  * Created by xyoye on 2020/10/30.
@@ -30,21 +30,18 @@ object ExoMediaSourceHelper {
 
     private lateinit var mCache: Cache
 
-    private val mContext = BaseApplication.getAppContext()
-    private val mUserAgent: String
-    private val mHttpDataSourceFactory: DefaultHttpDataSourceFactory
-
-    init {
-        mUserAgent = Util.getUserAgent(mContext, mContext.applicationInfo.name)
-        mHttpDataSourceFactory = DefaultHttpDataSourceFactory(
-            mUserAgent,
-            null,
-            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-            //http->https重定向支持
-            true
-        )
-    }
+    private val mUserAgent: String = Util.getUserAgent(
+        BaseApplication.getAppContext(),
+        BaseApplication.getAppContext().applicationInfo.name
+    )
+    private val mHttpDataSourceFactory = DefaultHttpDataSourceFactory(
+        mUserAgent,
+        null,
+        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
+        //http->https重定向支持
+        true
+    )
 
     fun getMediaSource(uri: String): MediaSource {
         return getMediaSource(uri, null, false)
@@ -62,17 +59,18 @@ object ExoMediaSourceHelper {
         val contentUri = Uri.parse(uri)
         val mediaItem = MediaItem.fromUri(contentUri)
 
-        if ("rtmp" == contentUri.scheme) {
-            return ProgressiveMediaSource.Factory(RtmpDataSourceFactory())
-                .createMediaSource(mediaItem)
-        }
+        // TODO: 2021/9/26 RTMP-2.15.1扩展不在MavenCentral
+//        if ("rtmp" == contentUri.scheme) {
+//            return ProgressiveMediaSource.Factory(RtmpDataSourceFactory())
+//                .createMediaSource(mediaItem)
+//        }
 
         headers?.let { setHeaders(it) }
 
         val dataSourceFactory = if (isCache)
             getCacheDataSourceFactory()
         else
-            DefaultDataSourceFactory(mContext, mHttpDataSourceFactory)
+            DefaultDataSourceFactory(BaseApplication.getAppContext(), mHttpDataSourceFactory)
 
         return when (inferContentType(uri)) {
             C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
@@ -94,7 +92,7 @@ object ExoMediaSourceHelper {
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             .setUpstreamDataSourceFactory(
                 DefaultDataSourceFactory(
-                    mContext,
+                    BaseApplication.getAppContext(),
                     mHttpDataSourceFactory
                 )
             )
@@ -103,13 +101,13 @@ object ExoMediaSourceHelper {
     private fun newCache(): Cache {
         return SimpleCache(
             PathHelper.getExoCacheDirectory(),
-            LeastRecentlyUsedCacheEvictor(512 * 1024 * 1024),
-            ExoDatabaseProvider(mContext)
+            LeastRecentlyUsedCacheEvictor(512L * 1024 * 1024),
+            ExoDatabaseProvider(BaseApplication.getAppContext())
         )
     }
 
     private fun inferContentType(fileName: String): Int {
-        val name = Util.toLowerInvariant(fileName)
+        val name = fileName.lowercase(Locale.getDefault())
         return when {
             name.contains(".mpd") -> {
                 C.TYPE_DASH

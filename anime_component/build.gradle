@@ -74,5 +74,5 @@ dependencies {
 
     implementation project(path: ':common_component')
 
-    implementation 'com.youth.banner:banner:2.1.0'
+    implementation 'io.github.youth5201314:banner:2.2.2'
 }

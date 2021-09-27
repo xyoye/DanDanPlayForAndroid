@@ -40,12 +40,6 @@ android {
     buildFeatures {
         dataBinding = true
     }
-
-    repositories {
-        flatDir {
-            dirs project(':download_component').file('libs')
-        }
-    }
 }
 
 dependencies {

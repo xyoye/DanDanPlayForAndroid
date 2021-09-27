@@ -54,14 +54,15 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
         var selectedAudioId = ""
         var selectedSubtitleId = ""
 
-        for (selection: TrackSelection? in trackSelections.all) {
-            if (selection == null) continue
-            if (MimeTypes.isAudio(selection.selectedFormat.sampleMimeType)) {
-                selectedAudioId = selection.selectedFormat.id ?: ""
-            } else if (MimeTypes.isText(selection.selectedFormat.sampleMimeType)) {
-                selectedSubtitleId = selection.selectedFormat.id ?: ""
-            }
-        }
+        // TODO: 2021/9/26 Track相关API已变更
+//        for (selection: TrackSelection? in trackSelections.all) {
+//            if (selection == null) continue
+//            if (MimeTypes.isAudio(selection.selectedFormat.sampleMimeType)) {
+//                selectedAudioId = selection.selectedFormat.id ?: ""
+//            } else if (MimeTypes.isText(selection.selectedFormat.sampleMimeType)) {
+//                selectedSubtitleId = selection.selectedFormat.id ?: ""
+//            }
+//        }
 
         audioTrackData.clear()
         subtitleTrackData.clear()

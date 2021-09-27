@@ -6,9 +6,15 @@
 
 ## 下载
 
-安卓平台: 1.[历史版本](https://github.com/xyoye/DanDanPlayForAndroid/releases)，2.[酷安应用市场](https://www.coolapk.com/apk/com.xyoye.dandanplay)
+安卓平台: 
 
-其他平台: [弹弹play官网](http://www.dandanplay.com)
+[1.正式版本](https://github.com/xyoye/DanDanPlayForAndroid/releases)
+
+[2.最新测试版本](https://github.com/xyoye/DanDanPlayForAndroid/releases)
+
+其他平台: 
+
+[弹弹play官网](http://www.dandanplay.com)
 
 # 一、 应用介绍
 

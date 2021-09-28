@@ -50,19 +50,7 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
         }
 
         val trackInfo = trackSelector.currentMappedTrackInfo ?: return
-
-        var selectedAudioId = ""
-        var selectedSubtitleId = ""
-
-        // TODO: 2021/9/26 Track相关API已变更
-//        for (selection: TrackSelection? in trackSelections.all) {
-//            if (selection == null) continue
-//            if (MimeTypes.isAudio(selection.selectedFormat.sampleMimeType)) {
-//                selectedAudioId = selection.selectedFormat.id ?: ""
-//            } else if (MimeTypes.isText(selection.selectedFormat.sampleMimeType)) {
-//                selectedSubtitleId = selection.selectedFormat.id ?: ""
-//            }
-//        }
+        val (selectedAudioId, selectedSubtitleId) = getExoSelectedTrack(trackSelections)
 
         audioTrackData.clear()
         subtitleTrackData.clear()
@@ -166,5 +154,27 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
             subtitleTrackData.forEach { it.isChecked = it.trackId == trackId }
             mPlayerEventListener.updateTrack(false, subtitleTrackData)
         }
+    }
+
+    private fun getExoSelectedTrack(trackSelections: TrackSelectionArray) : Pair<String?, String?>{
+        var selectedAudioId: String? = null
+        var selectedSubtitleId: String? = null
+
+        for (selection: TrackSelection? in trackSelections.all) {
+            if (selection == null) continue
+            for (trackIndex in 0 until selection.length()) {
+                val format = selection.getFormat(trackIndex)
+                if (MimeTypes.isAudio(format.sampleMimeType)) {
+                    selectedAudioId = format.id
+                } else if (MimeTypes.isText(format.sampleMimeType)) {
+                    selectedSubtitleId = format.id
+                }
+                val isContinue = selectedAudioId.isNullOrEmpty() || selectedSubtitleId.isNullOrEmpty()
+                if (isContinue.not()) {
+                    return Pair(selectedAudioId, selectedSubtitleId)
+                }
+            }
+        }
+        return Pair(selectedAudioId, selectedSubtitleId)
     }
 }

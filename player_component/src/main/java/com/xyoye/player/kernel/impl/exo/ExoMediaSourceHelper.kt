@@ -4,6 +4,7 @@ import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -12,7 +13,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.Cache
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
@@ -34,14 +34,9 @@ object ExoMediaSourceHelper {
         BaseApplication.getAppContext(),
         BaseApplication.getAppContext().applicationInfo.name
     )
-    private val mHttpDataSourceFactory = DefaultHttpDataSourceFactory(
-        mUserAgent,
-        null,
-        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-        //http->https重定向支持
-        true
-    )
+    private val mHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+        .setUserAgent(mUserAgent)
+        .setAllowCrossProtocolRedirects(true)
 
     fun getMediaSource(uri: String): MediaSource {
         return getMediaSource(uri, null, false)
@@ -59,11 +54,10 @@ object ExoMediaSourceHelper {
         val contentUri = Uri.parse(uri)
         val mediaItem = MediaItem.fromUri(contentUri)
 
-        // TODO: 2021/9/26 RTMP-2.15.1扩展不在MavenCentral
-//        if ("rtmp" == contentUri.scheme) {
-//            return ProgressiveMediaSource.Factory(RtmpDataSourceFactory())
-//                .createMediaSource(mediaItem)
-//        }
+        if ("rtmp" == contentUri.scheme) {
+            return ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
+                .createMediaSource(mediaItem)
+        }
 
         headers?.let { setHeaders(it) }
 
@@ -125,16 +119,10 @@ object ExoMediaSourceHelper {
     }
 
     private fun setHeaders(headers: Map<String, String>) {
-        for (entry in headers.entries) {
-            if (entry.key == "User-Agent") {
-                mHttpDataSourceFactory.javaClass.getDeclaredField("userAgent").apply {
-                    isAccessible = true
-                    set(mHttpDataSourceFactory, entry.value)
-                }
-            } else {
-                mHttpDataSourceFactory.defaultRequestProperties.set(entry.key, entry.value)
-            }
+        headers.entries.find { it.key == "User-Agent" }?.let {
+            mHttpDataSourceFactory.setUserAgent(it.value)
         }
+        mHttpDataSourceFactory.setDefaultRequestProperties(headers)
     }
 
     fun setCache(cache: Cache) {

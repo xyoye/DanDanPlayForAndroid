@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsCollector
 import com.google.android.exoplayer2.ext.FfmpegRenderersFactory
 import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
@@ -15,7 +16,6 @@ import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
-import com.google.android.exoplayer2.video.VideoListener
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -30,8 +30,7 @@ import kotlinx.coroutines.launch
  * Created by xyoye on 2020/10/29.
  */
 
-class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), VideoListener,
-    Player.EventListener {
+class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Player.Listener {
     private lateinit var exoplayer: SimpleExoPlayer
     private lateinit var mMediaSource: MediaSource
 
@@ -100,7 +99,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
             return
         }
         if (this::mSpeedPlaybackParameters.isInitialized) {
-            exoplayer.setPlaybackParameters(mSpeedPlaybackParameters)
+            exoplayer.playbackParameters = mSpeedPlaybackParameters
         }
 
         mIsPreparing = true
@@ -122,10 +121,8 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
     }
 
     override fun reset() {
-        exoplayer.apply {
-            stop(true)
-            setVideoSurface(null)
-        }
+        exoplayer.stop()
+        exoplayer.setVideoSurface(null)
         mIsPreparing = false
         mIsBuffering = false
         mLastReportedPlaybackState = Player.STATE_IDLE
@@ -134,9 +131,10 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
 
     override fun release() {
         exoplayer.apply {
-            removeVideoListener(this@ExoVideoPlayer)
             removeListener(this@ExoVideoPlayer)
-            GlobalScope.launch(Dispatchers.Main) { release() }
+            GlobalScope.launch(Dispatchers.Main) {
+                release()
+            }
         }
 
         mIsPreparing = false
@@ -151,7 +149,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
 
     override fun setSpeed(speed: Float) {
         mSpeedPlaybackParameters = PlaybackParameters(speed)
-        exoplayer.setPlaybackParameters(mSpeedPlaybackParameters)
+        exoplayer.playbackParameters = mSpeedPlaybackParameters
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
@@ -267,6 +265,44 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
         mPlayerEventListener.onError(error)
     }
 
+    override fun onCues(cues: MutableList<Cue>) {
+        super.onCues(cues)
+        if (subtitleType == SubtitleType.UN_KNOW && cues.size == 0)
+            return
+
+        //字幕类型仅在第一次输出时初始化
+        if (subtitleType == SubtitleType.UN_KNOW) {
+            subtitleType = if (cues[0].bitmap != null)
+                SubtitleType.BITMAP
+            else
+                SubtitleType.TEXT
+        }
+
+        if (subtitleType == SubtitleType.BITMAP) {
+            //以图片输出字幕
+            mPlayerEventListener.onSubtitleTextOutput(
+                MixedSubtitle(
+                    SubtitleType.BITMAP,
+                    null,
+                    cues
+                )
+            )
+        } else {
+            //以文字输出字幕
+            val textBuilder = StringBuilder()
+            for (cue in cues) {
+                textBuilder.append(cue.text).append("\n")
+            }
+            val subtitleText = if (textBuilder.isNotEmpty())
+                textBuilder.substring(0, textBuilder.length - 1)
+            else
+                textBuilder.toString()
+            mPlayerEventListener.onSubtitleTextOutput(
+                MixedSubtitle(SubtitleType.TEXT, subtitleText)
+            )
+        }
+    }
+
     private fun initListener() {
         mMediaSourceEventListener = object : MediaSourceEventListener {
             override fun onLoadStarted(
@@ -279,46 +315,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Vid
                 mPlayerEventListener.onPrepared()
             }
         }
-        exoplayer.addTextOutput {
-            if (subtitleType == SubtitleType.UN_KNOW && it.size == 0)
-                return@addTextOutput
-
-            //字幕类型仅在第一次输出时初始化
-            if (subtitleType == SubtitleType.UN_KNOW) {
-                subtitleType = if (it[0].bitmap != null)
-                    SubtitleType.BITMAP
-                else
-                    SubtitleType.TEXT
-            }
-
-            if (subtitleType == SubtitleType.BITMAP) {
-                //以图片输出字幕
-                mPlayerEventListener.onSubtitleTextOutput(
-                    MixedSubtitle(
-                        SubtitleType.BITMAP,
-                        null,
-                        it
-                    )
-                )
-            } else {
-                //以文字输出字幕
-                val textBuilder = StringBuilder()
-                for (cue in it) {
-                    textBuilder.append(cue.text).append("\n")
-                }
-                val subtitleText = if (textBuilder.isNotEmpty())
-                    textBuilder.substring(0, textBuilder.length - 1)
-                else
-                    textBuilder.toString()
-                mPlayerEventListener.onSubtitleTextOutput(
-                    MixedSubtitle(SubtitleType.TEXT, subtitleText)
-                )
-            }
-
-
-        }
         exoplayer.addListener(this)
-        exoplayer.addVideoListener(this)
     }
 
     fun setTrackSelector(trackSelector: TrackSelector) {

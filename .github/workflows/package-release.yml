@@ -85,3 +85,20 @@ jobs:
           asset_path: ${{steps.apk_file_info.outputs.apk_path}}
           asset_name: ${{steps.apk_file_info.outputs.apk_name}}
           asset_content_type: application/vnd.android.package-archive
+
+      # 10.推送打包消息到钉钉
+      - name: push package message
+        if: steps.create_github_release.outputs.upload_url && steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        uses: ghostoy/dingtalk-action@master
+        with:
+          webhook: ${{ secrets.DINGTALK_WEBHOOK}}
+          secret: ${{ secrets.DINGTALK_SECRET }}
+          msgtype: text
+          content: |
+            {
+              "content": "打包版本：v${{ steps.apk_version_info.outputs.versionNum }}\n下载链接：https://github.com/${{ github.repository }}/releases/download/dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}/${{ steps.apk_file_info.outputs.apk_name }}"
+            }
+          at: |
+            {
+              "isAtAll": true
+            }

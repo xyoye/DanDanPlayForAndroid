@@ -9,7 +9,6 @@ import com.xyoye.common_component.utils.*
 import com.xyoye.data_component.enums.CacheType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class CacheManagerViewModel : BaseViewModel() {
@@ -61,36 +60,34 @@ class CacheManagerViewModel : BaseViewModel() {
     }
 
     fun confirmClearCache(type: CacheType) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                when (type) {
-                    CacheType.SYSTEM_CACHE -> clearCacheDirectory(systemCacheDir)
-                    CacheType.DANMU_CACHE -> clearCacheDirectory(danmuDirectory)
-                    CacheType.SUBTITLE_CACHE -> clearCacheDirectory(subtitleDirectory)
-                    CacheType.PLAY_CACHE -> {
-                        clearCacheDirectory(playCacheDirectory)
-                        clearCacheDirectory(exoCacheDirectory)
-                    }
-                    CacheType.SCREEN_SHOT_CACHE -> clearCacheDirectory(screenShotDirectory)
-                    CacheType.OTHER_CACHE -> {
-                        val cacheDir = arrayOf(
-                            danmuDirectory.absolutePath,
-                            subtitleDirectory.absolutePath,
-                            playCacheDirectory.absolutePath,
-                            exoCacheDirectory.absolutePath,
-                            screenShotDirectory.absolutePath
-                        )
-                        exoCacheDirectory.listFiles()?.forEach {
-                            if (it.absolutePath !in cacheDir) {
-                                clearCacheDirectory(it)
-                            }
+        viewModelScope.launch(Dispatchers.IO) {
+            when (type) {
+                CacheType.SYSTEM_CACHE -> clearCacheDirectory(systemCacheDir)
+                CacheType.DANMU_CACHE -> clearCacheDirectory(danmuDirectory)
+                CacheType.SUBTITLE_CACHE -> clearCacheDirectory(subtitleDirectory)
+                CacheType.PLAY_CACHE -> {
+                    clearCacheDirectory(playCacheDirectory)
+                    clearCacheDirectory(exoCacheDirectory)
+                }
+                CacheType.SCREEN_SHOT_CACHE -> clearCacheDirectory(screenShotDirectory)
+                CacheType.OTHER_CACHE -> {
+                    val cacheDir = arrayOf(
+                        danmuDirectory.absolutePath,
+                        subtitleDirectory.absolutePath,
+                        playCacheDirectory.absolutePath,
+                        exoCacheDirectory.absolutePath,
+                        screenShotDirectory.absolutePath
+                    )
+                    exoCacheDirectory.listFiles()?.forEach {
+                        if (it.absolutePath !in cacheDir) {
+                            clearCacheDirectory(it)
                         }
                     }
-                    else -> {
-                    }
                 }
-                getCacheSize()
+                else -> {
+                }
             }
+            getCacheSize()
         }
     }
 

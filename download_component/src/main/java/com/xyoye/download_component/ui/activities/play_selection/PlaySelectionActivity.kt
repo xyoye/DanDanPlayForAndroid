@@ -64,6 +64,10 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             finish()
         }
 
+        viewModel.preparePlayLiveData.observe(this) {
+            play(it.taskId, it.playUrl, it.torrentPath, it.selectIndex)
+        }
+
         viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
@@ -76,22 +80,12 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
 
     private fun showPlaySelectionDialog(torrentPath: String) {
         if (torrentFileIndex != -1) {
-            val (taskId, playUrl) = viewModel.prepareTorrentPlay(torrentPath, torrentFileIndex)
-            if (playUrl.isNullOrEmpty()) {
-                finish()
-                return
-            }
-            viewModel.playWithHistory(taskId, playUrl, torrentPath, torrentFileIndex, torrentTitle)
+            viewModel.playWithHistory(torrentPath, torrentFileIndex, torrentTitle)
             return
         }
 
         PlaySelectionDialog(torrentPath) { selectIndex ->
-            val (taskId, playUrl) = viewModel.prepareTorrentPlay(torrentPath, selectIndex)
-            if (playUrl.isNullOrEmpty()) {
-                finish()
-                return@PlaySelectionDialog
-            }
-            play(taskId, playUrl, torrentPath, selectIndex)
+            viewModel.prepareTorrentPlay(torrentPath, selectIndex)
         }.show(this)
     }
 

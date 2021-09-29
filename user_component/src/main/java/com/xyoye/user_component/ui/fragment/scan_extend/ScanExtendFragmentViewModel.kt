@@ -7,6 +7,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.ExtendFolderEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ScanExtendFragmentViewModel : BaseViewModel() {
@@ -34,7 +35,7 @@ class ScanExtendFragmentViewModel : BaseViewModel() {
     }
 
     fun addExtendFolder(folderPath: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             showLoading()
 
             val extendVideos = MediaUtils.scanVideoFile(folderPath)

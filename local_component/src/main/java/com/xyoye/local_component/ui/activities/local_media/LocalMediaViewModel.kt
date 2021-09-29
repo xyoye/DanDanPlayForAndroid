@@ -75,7 +75,7 @@ class LocalMediaViewModel : BaseViewModel() {
         inSearchState.set(false)
         refreshEnableLiveData.postValue(true)
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val refreshSuccess = refreshSystemVideo()
             if (refreshSuccess) {
                 val folderData = DatabaseManager.instance.getVideoDao().getFolderByFilter()
@@ -151,46 +151,43 @@ class LocalMediaViewModel : BaseViewModel() {
     }
 
     fun matchDanmu(filePath: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             showLoading()
             try {
-                withContext(Dispatchers.IO) {
+                //提取视频信息
+                val params = HashMap<String, String>()
 
-                    //提取视频信息
-                    val params = HashMap<String, String>()
+                params["fileName"] = getFileName(filePath)
+                params["fileHash"] = IOUtils.getFileHash(filePath) ?: ""
+                params["fileSize"] = File(filePath).length().toString()
+                params["videoDuration"] = "0"
+                params["matchMode"] = "hashOnly"
 
-                    params["fileName"] = getFileName(filePath)
-                    params["fileHash"] = IOUtils.getFileHash(filePath) ?: ""
-                    params["fileSize"] = File(filePath).length().toString()
-                    params["videoDuration"] = "0"
-                    params["matchMode"] = "hashOnly"
+                //匹配弹幕
+                val danmuMatchData = Retrofit.service.matchDanmu(params)
 
-                    //匹配弹幕
-                    val danmuMatchData = Retrofit.service.matchDanmu(params)
+                //只存在一个匹配的弹幕
+                if (danmuMatchData.isMatched && danmuMatchData.matches!!.size == 1) {
+                    val episodeId = danmuMatchData.matches!![0].episodeId
+                    val danmuData = Retrofit.service.getDanmuContent(episodeId.toString(), true)
 
-                    //只存在一个匹配的弹幕
-                    if (danmuMatchData.isMatched && danmuMatchData.matches!!.size == 1) {
-                        val episodeId = danmuMatchData.matches!![0].episodeId
-                        val danmuData = Retrofit.service.getDanmuContent(episodeId.toString(), true)
+                    val folderName = getParentFolderName(filePath)
+                    val fileNameNotExt = getFileNameNoExtension(filePath)
+                    //保存弹幕
+                    val danmuPath =
+                        DanmuUtils.saveDanmu(danmuData, folderName, "$fileNameNotExt.xml")
 
-                        val folderName = getParentFolderName(filePath)
-                        val fileNameNotExt = getFileNameNoExtension(filePath)
-                        //保存弹幕
-                        val danmuPath =
-                            DanmuUtils.saveDanmu(danmuData, folderName, "$fileNameNotExt.xml")
-
-                        if (danmuPath.isNullOrEmpty()) {
-                            ToastCenter.showError("保存弹幕失败")
-                        } else {
-                            //刷新数据库
-                            DatabaseManager.instance
-                                .getVideoDao()
-                                .updateDanmu(filePath, danmuPath, episodeId)
-                            ToastCenter.showSuccess("匹配弹幕成功！")
-                        }
+                    if (danmuPath.isNullOrEmpty()) {
+                        ToastCenter.showError("保存弹幕失败")
                     } else {
-                        ToastCenter.showError("未匹配到相关弹幕")
+                        //刷新数据库
+                        DatabaseManager.instance
+                            .getVideoDao()
+                            .updateDanmu(filePath, danmuPath, episodeId)
+                        ToastCenter.showSuccess("匹配弹幕成功！")
                     }
+                } else {
+                    ToastCenter.showError("未匹配到相关弹幕")
                 }
             } catch (e: Exception) {
                 val error = RequestErrorHandler(e).handlerError()

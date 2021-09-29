@@ -11,7 +11,6 @@ import com.xyoye.data_component.data.remote.RemotePlayInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
 
@@ -37,20 +36,17 @@ class RemoteControlViewModel : BaseViewModel() {
      * 获取当前播放的视频信息
      */
     fun getPlayInfo() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                //当前页面未退出前，死循环获取当前正在播放的视频信息
-                while (true) {
-                    try {
-                        val playInfo = Retrofit.remoteService.getPlayInfo()
-                        updatePlayInfo(playInfo)
-                    } catch (t: Throwable) {
-                        t.printStackTrace()
-                    }
-                    //每次间隔1s
-                    delay(1000L)
+        viewModelScope.launch(Dispatchers.IO) {
+            //当前页面未退出前，死循环获取当前正在播放的视频信息
+            while (true) {
+                try {
+                    val playInfo = Retrofit.remoteService.getPlayInfo()
+                    updatePlayInfo(playInfo)
+                } catch (t: Throwable) {
+                    t.printStackTrace()
                 }
-
+                //每次间隔1s
+                delay(1000L)
             }
         }
     }

@@ -14,6 +14,7 @@ import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.PlayParams
+import com.xyoye.data_component.bean.TorrentPlaySelectionBean
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.*
 import java.net.URLDecoder
@@ -25,6 +26,7 @@ class PlaySelectionViewModel : BaseViewModel() {
     val torrentDownloadLiveData = MutableLiveData<String>()
     val dismissLiveData = MutableLiveData<Boolean>()
     val playLiveData = MutableLiveData<PlayParams>()
+    val preparePlayLiveData = MutableLiveData<TorrentPlaySelectionBean>()
 
     fun downloadTorrentFile(magnetLink: String) {
         val hash = MagnetUtils.getMagnetHash(magnetLink)
@@ -85,62 +87,36 @@ class PlaySelectionViewModel : BaseViewModel() {
         }
     }
 
-    fun prepareTorrentPlay(torrentPath: String, playIndex: Int): Pair<Long, String?> {
-        val playCacheDir = PathHelper.getPlayCacheDirectory()
-
-
-        val playTaskParam = BtTaskParam().apply {
-            setCreateMode(1)
-            setFilePath(playCacheDir.absolutePath)
-            setMaxConcurrent(1)
-            setSeqId(atomicInteger.incrementAndGet())
-            setTorrentPath(torrentPath)
-        }
-
-        //已选中索引
-        val selectIndexSet = BtIndexSet(1)
-        selectIndexSet.mIndexSet[0] = playIndex
-
-        //未选中索引
-        val torrentInfo = XLTaskHelper.getInstance().getTorrentInfo(torrentPath)
-        val deSelectIndexSet: BtIndexSet
-        if (torrentInfo.mFileCount > 1) {
-            deSelectIndexSet = BtIndexSet(torrentInfo.mFileCount - 1)
-            var deSelectIndex = 0
-            torrentInfo.mSubFileInfo.forEach {
-                if (it.mFileIndex != playIndex) {
-                    deSelectIndexSet.mIndexSet[deSelectIndex] = it.mFileIndex
-                    deSelectIndex++
-                }
+    fun prepareTorrentPlay(torrentPath: String, playIndex: Int) {
+        viewModelScope.launch {
+            val (taskId, playUrl) = createTorrentTask(torrentPath, playIndex)
+            if (playUrl.isNullOrEmpty()) {
+                dismissLiveData.postValue(true)
+                return@launch
             }
-        } else {
-            deSelectIndexSet = BtIndexSet(0)
+            preparePlayLiveData.postValue(
+                TorrentPlaySelectionBean(
+                    taskId,
+                    playUrl,
+                    playIndex,
+                    torrentPath
+                )
+            )
         }
-
-        //启动下载任务
-        val playTaskId =
-            XLTaskHelper.getInstance().startTask(playTaskParam, selectIndexSet, deSelectIndexSet)
-        if (playTaskId == -1L) {
-            ToastCenter.showError("启动播放任务失败，请重试")
-            return Pair(playTaskId, null)
-        }
-
-        val fileName = torrentInfo.mSubFileInfo[playIndex].mFileName
-        val filePath = "${playTaskParam.mFilePath}/$fileName"
-        val playUrl = XLTaskLocalUrl()
-        XLDownloadManager.getInstance().getLocalUrl(filePath, playUrl)
-
-        return Pair(playTaskId, playUrl.mStrUrl)
     }
 
     fun playWithHistory(
-        taskId: Long,
-        playUrl: String,
         torrentPath: String,
         torrentFileIndex: Int,
         torrentTitle: String?
     ) {
         viewModelScope.launch(Dispatchers.IO) {
+            val (taskId, playUrl) = createTorrentTask(torrentPath, torrentFileIndex)
+            if (playUrl.isNullOrEmpty()) {
+                dismissLiveData.postValue(true)
+                return@launch
+            }
+
             var decodedUrl = URLDecoder.decode(playUrl, "utf-8")
             decodedUrl = URLDecoder.decode(decodedUrl, "utf-8")
             val videoTitle = getFileName(decodedUrl)
@@ -167,6 +143,59 @@ class PlaySelectionViewModel : BaseViewModel() {
             }
 
             playLiveData.postValue(playParams)
+        }
+    }
+
+    private suspend fun createTorrentTask(
+        torrentPath: String,
+        playIndex: Int
+    ): Pair<Long, String?> {
+        return withContext(Dispatchers.IO) {
+            val playCacheDir = PathHelper.getPlayCacheDirectory()
+
+            val playTaskParam = BtTaskParam().apply {
+                setCreateMode(1)
+                setFilePath(playCacheDir.absolutePath)
+                setMaxConcurrent(1)
+                setSeqId(atomicInteger.incrementAndGet())
+                setTorrentPath(torrentPath)
+            }
+
+            //已选中索引
+            val selectIndexSet = BtIndexSet(1)
+            selectIndexSet.mIndexSet[0] = playIndex
+
+            //未选中索引
+            val torrentInfo = XLTaskHelper.getInstance().getTorrentInfo(torrentPath)
+            val deSelectIndexSet: BtIndexSet
+            if (torrentInfo.mFileCount > 1) {
+                deSelectIndexSet = BtIndexSet(torrentInfo.mFileCount - 1)
+                var deSelectIndex = 0
+                torrentInfo.mSubFileInfo.forEach {
+                    if (it.mFileIndex != playIndex) {
+                        deSelectIndexSet.mIndexSet[deSelectIndex] = it.mFileIndex
+                        deSelectIndex++
+                    }
+                }
+            } else {
+                deSelectIndexSet = BtIndexSet(0)
+            }
+
+            //启动下载任务
+            val playTaskId =
+                XLTaskHelper.getInstance()
+                    .startTask(playTaskParam, selectIndexSet, deSelectIndexSet)
+            if (playTaskId == -1L) {
+                ToastCenter.showError("启动播放任务失败，请重试")
+                return@withContext Pair(playTaskId, null)
+            }
+
+            val fileName = torrentInfo.mSubFileInfo[playIndex].mFileName
+            val filePath = "${playTaskParam.mFilePath}/$fileName"
+            val playUrl = XLTaskLocalUrl()
+            XLDownloadManager.getInstance().getLocalUrl(filePath, playUrl)
+
+            return@withContext Pair(playTaskId, playUrl.mStrUrl)
         }
     }
 }

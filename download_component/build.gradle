@@ -75,8 +75,5 @@ dependencies {
     implementation project(path: ':common_component')
     implementation project(path: ':repository:thunder')
 
-    implementation files('libs/jlibtorrent-1.2.11.0.jar')
-    implementation files('libs/jlibtorrent-android-arm-1.2.11.0.jar')
-
     kapt rootProject.ext.dependencies["arouter-compiler"]
 }

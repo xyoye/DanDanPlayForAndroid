@@ -6,7 +6,6 @@ apply from: '../gradle/assemble/assemble.gradle'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
-    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
         applicationId "com.xyoye.dandanplay"

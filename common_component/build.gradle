@@ -56,7 +56,9 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
-    api project(":data_component")
+    api project(':data_component')
+    api project(':repository:seven_zip')
+    api project(':repository:immersion_bar')
 
     api rootProject.ext.dependencies["core-ktx"]
     api rootProject.ext.dependencies["kotlin-stdlib-jdk7"]
@@ -89,9 +91,6 @@ dependencies {
 
     implementation 'com.tencent.bugly:crashreport_upgrade:1.5.0'
     implementation 'com.tencent.bugly:nativecrashreport:3.8.0'
-
-    api files('libs/sevenzipjbinding4Android.aar')
-    api files('libs/immersionbar.aar')
 
     implementation files('libs/mmkv-annotation.jar')
 

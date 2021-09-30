@@ -74,11 +74,10 @@ dependencies {
     kapt rootProject.ext.dependencies["arouter-compiler"]
 
     implementation project(path: ':common_component')
+    implementation project(path: ':repository:panel_switch')
+    implementation project(path: ':repository:danmaku')
 
     implementation 'com.github.albfernandez:juniversalchardet:2.0.2'
-
-    implementation files('libs/panelSwitchHelper-androidx.aar')
-    implementation files('libs/DanmakuFlameMaster.aar')
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.21'
 
     implementation rootProject.ext.dependencies["exoplayer"]

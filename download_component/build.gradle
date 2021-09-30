@@ -73,10 +73,10 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
 
     implementation project(path: ':common_component')
+    implementation project(path: ':repository:thunder')
 
     implementation files('libs/jlibtorrent-1.2.11.0.jar')
     implementation files('libs/jlibtorrent-android-arm-1.2.11.0.jar')
-    implementation files('libs/thunder.aar')
 
     kapt rootProject.ext.dependencies["arouter-compiler"]
 }

@@ -127,6 +127,7 @@ class WebDavFileViewModel : BaseViewModel() {
         viewModelScope.launch {
             //从播放历史查看是否已绑定弹幕
             val historyEntity = PlayHistoryUtils.getPlayHistory(url, MediaType.WEBDAV_SERVER)
+            playParams.currentPosition = historyEntity?.videoPosition ?: 0
 
             if (historyEntity?.danmuPath != null) {
                 //从播放记录读取弹幕

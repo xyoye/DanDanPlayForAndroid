@@ -20,6 +20,9 @@ interface VideoDao {
     @Query("SELECT * FROM video WHERE folder_path = (:folderPath)")
     fun getVideoInFolder(folderPath: String): LiveData<MutableList<VideoEntity>>
 
+    @Query("SELECT * FROM video WHERE folder_path = (SELECT folder_path FROM video WHERE file_path = (:filePath))")
+    suspend fun getFolderVideoByFilePath(filePath: String): MutableList<VideoEntity>
+
     @Query("SELECT * FROM video WHERE folder_path = (:folderPath)")
     suspend fun getVideoInFolderSuspend(folderPath: String): MutableList<VideoEntity>
 
@@ -27,11 +30,13 @@ interface VideoDao {
     //FROM file AS old
     //Left JOIN (SELECT folder,filter FROM file WHERE filter = '1' GROUP BY folder) AS new ON new.folder = old.folder
     //GROUP BY old.folder
-    @Query("SELECT video.folder_path,COUNT(*) AS file_count, filter_table.filter " +
-            "FROM video " +
-            "LEFT JOIN ( SELECT folder_path, filter FROM video WHERE filter = (:isFilter) GROUP BY folder_path) AS filter_table " +
-            "ON filter_table.folder_path = video.folder_path " +
-            "GROUP BY video.folder_path")
+    @Query(
+        "SELECT video.folder_path,COUNT(*) AS file_count, filter_table.filter " +
+                "FROM video " +
+                "LEFT JOIN ( SELECT folder_path, filter FROM video WHERE filter = (:isFilter) GROUP BY folder_path) AS filter_table " +
+                "ON filter_table.folder_path = video.folder_path " +
+                "GROUP BY video.folder_path"
+    )
     fun getAllFolder(isFilter: Boolean = true): LiveData<MutableList<FolderBean>>
 
     @Query("SELECT folder_path,COUNT(*) AS file_count,filter FROM video WHERE filter = (:isFilter) GROUP BY folder_path")
@@ -41,7 +46,10 @@ interface VideoDao {
     fun searchVideo(keyword: String): LiveData<MutableList<VideoEntity>>
 
     @Query("SELECT * FROM video WHERE filter = 0 AND folder_path = (:folderPath) AND file_path LIKE (:keyword)")
-    fun searchVideoInFolder(keyword: String, folderPath: String?): LiveData<MutableList<VideoEntity>>
+    fun searchVideoInFolder(
+        keyword: String,
+        folderPath: String?
+    ): LiveData<MutableList<VideoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: VideoEntity)

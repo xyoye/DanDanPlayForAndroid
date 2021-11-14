@@ -18,6 +18,7 @@ import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*
+import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.subtitle.MixedSubtitle
@@ -189,6 +190,13 @@ class VideoController(
      */
     fun observerSendDanmu(block: (danmuData: SendDanmuBean) -> Unit) {
         playerBotView.setSendDanmuBlock(block)
+    }
+
+    /**
+     * 观察资源切换动作
+     */
+    fun observerSourceAction(sourceListener: PlaySourceListener) {
+        playerBotView.setSourceListener(sourceListener)
     }
 
     /**

@@ -46,7 +46,7 @@
                 android:nextFocusRight="@+id/send_danmu_tv"
                 android:nextFocusUp="@+id/player_lock_iv"
                 android:nextFocusDown="@+id/send_danmu_tv"
-                android:padding="10dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_play_bt" />
 
             <TextView
@@ -90,13 +90,41 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:nextFocusLeft="@+id/play_iv"
-                android:nextFocusRight="@+id/danmu_control_ll"
+                android:nextFocusRight="@+id/iv_previous_source"
                 android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/danmu_control_ll"
+                android:nextFocusDown="@+id/iv_previous_source"
                 android:padding="7dp"
                 android:text="@string/send_danmu"
                 android:textColor="@color/text_white_immutable"
                 android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/iv_previous_source"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_video_action_item"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/send_danmu_tv"
+                android:nextFocusRight="@+id/iv_next_source"
+                android:nextFocusUp="@+id/player_lock_iv"
+                android:nextFocusDown="@+id/iv_next_source"
+                android:padding="10dp"
+                android:src="@drawable/ic_video_previous" />
+
+            <ImageView
+                android:id="@+id/iv_next_source"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_video_action_item"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/iv_previous_source"
+                android:nextFocusRight="@+id/danmu_control_ll"
+                android:nextFocusUp="@+id/player_lock_iv"
+                android:nextFocusDown="@+id/danmu_control_ll"
+                android:padding="10dp"
+                android:src="@drawable/ic_video_next" />
 
             <LinearLayout
                 android:id="@+id/danmu_control_ll"
@@ -106,7 +134,7 @@
                 android:layout_marginEnd="3dp"
                 android:background="@drawable/background_video_action_item"
                 android:focusable="true"
-                android:nextFocusLeft="@+id/send_danmu_tv"
+                android:nextFocusLeft="@+id/iv_next_source"
                 android:nextFocusRight="@+id/back_iv"
                 android:nextFocusUp="@+id/player_lock_iv"
                 android:nextFocusDown="@+id/back_iv"

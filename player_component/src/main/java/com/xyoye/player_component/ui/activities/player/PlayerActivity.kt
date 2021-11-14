@@ -5,7 +5,7 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.KeyEvent
 import androidx.appcompat.app.AlertDialog
-import com.alibaba.android.arouter.facade.annotation.Autowired
+import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
@@ -20,24 +20,26 @@ import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
 import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
-import com.xyoye.common_component.utils.JsonHelper
+import com.xyoye.common_component.source.MediaSource
+import com.xyoye.common_component.source.MediaSourceManager
+import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
-import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.enums.*
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
+import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
-    PlayerReceiverListener {
-
-    @Autowired
-    @JvmField
-    var playParams: PlayParams? = null
+    PlayerReceiverListener, PlaySourceListener {
 
     //电量广播
     private lateinit var batteryReceiver: BatteryBroadcastReceiver
@@ -48,7 +50,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     //耳机广播
     private lateinit var headsetReceiver: HeadsetBroadcastReceiver
 
-    private val videoController by lazy { VideoController(this) }
+    private lateinit var videoController: VideoController
+
+    private var mediaSource: MediaSource? = null
 
     override fun initViewModel() =
         ViewModelInit(
@@ -68,16 +72,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     override fun initView() {
         ARouter.getInstance().inject(this)
 
-        if (!checkPlayParams())
-            return
-
         registerReceiver()
 
         initListener()
 
         initPlayerConfig()
 
-        initPlayer(playParams!!)
+        applyPlaySource(MediaSourceManager.getInstance().getSource())
     }
 
     override fun onPause() {
@@ -115,8 +116,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         dataBinding.danDanPlayer.pause()
     }
 
-    private fun checkPlayParams(): Boolean {
-        if (playParams == null || playParams?.videoPath.isNullOrEmpty()) {
+    private fun checkPlayParams(source: MediaSource?): Boolean {
+        if (source == null || source.getVideoUrl().isEmpty()) {
             CommonDialog.Builder().run {
                 content = "解析播放参数失败"
                 addPositive("退出重试") {
@@ -135,11 +136,29 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     }
 
-    private fun initPlayer(params: PlayParams) {
+    private fun applyPlaySource(newSource: MediaSource?) {
+        dataBinding.danDanPlayer.pause()
+        dataBinding.danDanPlayer.release()
+
+        mediaSource = newSource
+        if (checkPlayParams(mediaSource).not()) {
+            return
+        }
+        initPlayer(mediaSource!!)
+        afterInitPlayer()
+    }
+
+    private fun initPlayer(source: MediaSource) {
+        videoController = VideoController(this)
+        dataBinding.danDanPlayer.setController(videoController)
+
         videoController.apply {
-            setVideoTitle(params.videoTitle)
-            setDanmuPath(params.danmuPath)
-            setLastPosition(params.currentPosition)
+            setVideoTitle(source.getVideoTitle())
+            setDanmuPath(source.getDanmuPath())
+            setSubtitlePath(source.getSubtitlePath())
+            setLastPosition(source.getCurrentPosition())
+            //资源切换
+            observerSourceAction(this@PlayerActivity)
             //播放错误
             observerPlayError {
                 showPlayErrorDialog()
@@ -151,15 +170,15 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             //绑定资源
             observerBindSource { sourcePath, isSubtitle ->
                 if (isSubtitle) {
-                    params.subtitlePath = sourcePath
+                    mediaSource?.setSubtitlePath(sourcePath)
                 } else {
-                    params.danmuPath = sourcePath
+                    mediaSource?.setDanmuPath(sourcePath)
                 }
-                viewModel.bindSource(sourcePath, params.videoPath, isSubtitle)
+                viewModel.bindSource(sourcePath, source.getVideoUrl(), isSubtitle)
             }
             //发送弹幕
             observerSendDanmu {
-                viewModel.sendDanmu(params, it)
+                viewModel.sendDanmu(source.getEpisodeId(), source.getDanmuPath(), it)
             }
             //弹幕屏蔽
             observerDanmuBlock(
@@ -171,17 +190,23 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         dataBinding.danDanPlayer.apply {
-            setController(videoController)
             setProgressObserver { position, duration ->
-                viewModel.addPlayHistory(params, position, duration)
+                viewModel.addPlayHistory(mediaSource, position, duration)
             }
-            val headerJson = params.getHttpHeaderJson()
-            val header = JsonHelper.parseJsonMap(headerJson)
-            setUrl(params.videoPath, header)
+            setMediaSource(source)
             start()
         }
+    }
 
-        videoController.setSubtitlePath(params.subtitlePath)
+    private fun afterInitPlayer() {
+        mediaSource ?: return
+
+        //设置本地视频文件的父文件夹，用于选取弹、字幕
+        if (mediaSource!!.getMediaType() == MediaType.LOCAL_STORAGE) {
+            File(mediaSource!!.getVideoUrl()).parentFile?.absolutePath?.let {
+                PlayerInitializer.selectSourceDirectory = it
+            }
+        }
     }
 
     private fun registerReceiver() {
@@ -248,20 +273,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
-
-        //设置本地视频文件的父文件夹，用于选取弹、字幕
-        if (playParams!!.mediaType == MediaType.LOCAL_STORAGE) {
-            File(playParams!!.videoPath).parentFile?.absolutePath?.let {
-                PlayerInitializer.selectSourceDirectory = it
-            }
-        }
     }
 
     private fun showPlayErrorDialog() {
-        val isMagnetSource = playParams?.mediaType == MediaType.MAGNET_LINK
+        val source = mediaSource
 
-        val tips = if (isMagnetSource) {
-            val taskLog = PlayTaskBridge.getTaskLog(playParams?.getPlayTaskId())
+        val tips = if (source is TorrentMediaSource) {
+            val taskLog = PlayTaskBridge.getTaskLog(source.getPlayTaskId())
             "播放失败，资源已失效或暂时无法访问，请尝试切换资源$taskLog"
         } else {
             "播放失败，请尝试更改播放器设置，或者切换其它播放内核"
@@ -276,7 +294,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 this@PlayerActivity.finish()
             }
 
-        if (isMagnetSource.not()) {
+        if (source is TorrentMediaSource) {
             builder.setPositiveButton("播放器设置") { dialog, _ ->
                 dialog.dismiss()
                 ARouter.getInstance()
@@ -290,11 +308,43 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun beforePlayExit() {
-        if (playParams == null)
-            return
+        val source = mediaSource ?: return
+        if (source is TorrentMediaSource) {
+            PlayTaskBridge.sendTaskRemoveMsg(source.getPlayTaskId())
+        }
+    }
 
-        if (playParams!!.mediaType == MediaType.MAGNET_LINK) {
-            PlayTaskBridge.sendTaskRemoveMsg(playParams!!.getPlayTaskId())
+    override fun hasNextSource(): Boolean {
+        return mediaSource?.hasNextSource() ?: false
+    }
+
+    override fun hasPreviousSource(): Boolean {
+        return mediaSource?.hasPreviousSource() ?: false
+    }
+
+    override fun nextSource() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val source = mediaSource?.nextSource()
+            if (source == null) {
+                ToastCenter.showOriginalToast("下一个播放资源不存在")
+                return@launch
+            }
+            withContext(Dispatchers.Main) {
+                applyPlaySource(source)
+            }
+        }
+    }
+
+    override fun previousSource() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val source = mediaSource?.previousSource()
+            if (source == null) {
+                ToastCenter.showOriginalToast("上一个播放资源不存在")
+                return@launch
+            }
+            withContext(Dispatchers.Main) {
+                applyPlaySource(source)
+            }
         }
     }
 }

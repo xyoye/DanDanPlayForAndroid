@@ -5,12 +5,11 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.source.MediaSource
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.JsonHelper
-import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.data.SendDanmuData
 import com.xyoye.data_component.entity.DanmuBlockEntity
@@ -29,41 +28,39 @@ class PlayerViewModel : BaseViewModel() {
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)
 
-    fun addPlayHistory(playParams: PlayParams, position: Long, duration: Long) {
+    fun addPlayHistory(source: MediaSource?, position: Long, duration: Long) {
+        source ?: return
+
         GlobalScope.launch(context = Dispatchers.IO) {
-            var videoUrl = playParams.videoPath
-            if (playParams.mediaType == MediaType.MAGNET_LINK) {
+            var videoUrl = source.getVideoUrl()
+            if (source.getMediaType() == MediaType.MAGNET_LINK) {
                 videoUrl = getMagnetRealUrl(videoUrl)
             }
 
             val history = DatabaseManager.instance.getPlayHistoryDao()
-                .getPlayHistory(videoUrl, playParams.mediaType)
+                .getPlayHistory(videoUrl, source.getMediaType())
 
-            val historyEntity = if (history.size == 0) {
-                PlayHistoryEntity(
-                    0,
-                    playParams.videoTitle ?: getFileName(videoUrl),
-                    videoUrl,
-                    playParams.mediaType,
-                    position,
-                    duration,
-                    Date(),
-                    playParams.danmuPath,
-                    playParams.episodeId,
-                    playParams.subtitlePath,
-                    JsonHelper.toJson(playParams.extra?.toMap())
-                )
-            } else {
-                history[0].apply {
-                    videoPosition = position
-                    videoDuration = duration
-                    playTime = Date()
-                    danmuPath = playParams.danmuPath
-                    episodeId = playParams.episodeId
-                    subtitlePath = playParams.subtitlePath
-                    JsonHelper.toJson(playParams.extra?.toMap())
-                }
-            }
+            val historyEntity = history?.apply {
+                videoPosition = position
+                videoDuration = duration
+                playTime = Date()
+                danmuPath = source.getDanmuPath()
+                episodeId = source.getEpisodeId()
+                subtitlePath = source.getSubtitlePath()
+                JsonHelper.toJson(source.getHttpHeader())
+            } ?: PlayHistoryEntity(
+                0,
+                source.getVideoTitle(),
+                videoUrl,
+                source.getMediaType(),
+                position,
+                duration,
+                Date(),
+                source.getDanmuPath(),
+                source.getEpisodeId(),
+                source.getSubtitlePath(),
+                JsonHelper.toJson(source.getHttpHeader())
+            )
 
             DatabaseManager.instance.getPlayHistoryDao()
                 .insert(historyEntity)
@@ -98,12 +95,12 @@ class PlayerViewModel : BaseViewModel() {
         }
     }
 
-    fun sendDanmu(playParams: PlayParams, sendDanmuBean: SendDanmuBean) {
-        if (playParams.episodeId > 0) {
-            sendDanmuToServer(sendDanmuBean, playParams.episodeId)
+    fun sendDanmu(episodeId: Int, danmuPath: String?, sendDanmuBean: SendDanmuBean) {
+        if (episodeId > 0) {
+            sendDanmuToServer(sendDanmuBean, episodeId)
         }
-        if (playParams.danmuPath != null) {
-            writeDanmuToFile(sendDanmuBean, playParams.danmuPath!!)
+        if (danmuPath != null) {
+            writeDanmuToFile(sendDanmuBean, danmuPath)
         }
     }
 

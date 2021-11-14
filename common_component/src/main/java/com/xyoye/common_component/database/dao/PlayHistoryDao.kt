@@ -42,7 +42,7 @@ interface PlayHistoryDao {
 
     @Query("SELECT * FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun getPlayHistory(url: String, mediaType: MediaType): MutableList<PlayHistoryEntity>
+    suspend fun getPlayHistory(url: String, mediaType: MediaType): PlayHistoryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)
@@ -62,4 +62,8 @@ interface PlayHistoryDao {
     @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun updateSubtitle(url: String, mediaType: MediaType, subtitlePath: String?)
+
+    @Query("SELECT video_position FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun getPlayHistoryPosition(url: String, mediaType: MediaType): Long?
 }

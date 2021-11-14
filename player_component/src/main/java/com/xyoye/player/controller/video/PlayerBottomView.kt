@@ -7,13 +7,18 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.config.UserConfig
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player.utils.formatDuration
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
@@ -35,6 +40,8 @@ class PlayerBottomView(
     private lateinit var mControlWrapper: ControlWrapper
 
     private var sendDanmuBlock: ((SendDanmuBean) -> Unit)? = null
+
+    private var sourceListener: PlaySourceListener? = null
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerBottomBinding>(
         LayoutInflater.from(context),
@@ -74,6 +81,14 @@ class PlayerBottomView(
                 //添加弹幕到文件和服务器
                 sendDanmuBlock?.invoke(it)
             }.show()
+        }
+
+        viewBinding.ivNextSource.setOnClickListener {
+            sourceListener?.nextSource()
+        }
+
+        viewBinding.ivPreviousSource.setOnClickListener {
+            sourceListener?.previousSource()
         }
 
         viewBinding.playSeekBar.setOnSeekBarChangeListener(this)
@@ -179,5 +194,34 @@ class PlayerBottomView(
 
     fun setSendDanmuBlock(block: (SendDanmuBean) -> Unit) {
         sendDanmuBlock = block
+    }
+
+    fun setSourceListener(sourceListener: PlaySourceListener) {
+        this.sourceListener = sourceListener
+        updateSourceAction()
+    }
+
+    private fun updateSourceAction() {
+        val hasNextSource = sourceListener?.hasNextSource() ?: false
+        if (hasNextSource.not()) {
+            val nextIcon = R.drawable.ic_video_next.toResDrawable()?.apply {
+                colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    R.color.gray.toResColor(), BlendModeCompat.SRC_IN
+                )
+            }
+            viewBinding.ivNextSource.isEnabled = false
+            viewBinding.ivNextSource.setImageDrawable(nextIcon)
+        }
+
+        val hasPreviousSource = sourceListener?.hasPreviousSource() ?: false
+        if (hasPreviousSource.not()) {
+            val previousIcon = R.drawable.ic_video_previous.toResDrawable()?.apply {
+                colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    R.color.gray.toResColor(), BlendModeCompat.SRC_IN
+                )
+            }
+            viewBinding.ivPreviousSource.isEnabled = false
+            viewBinding.ivPreviousSource.setImageDrawable(previousIcon)
+        }
     }
 }

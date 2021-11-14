@@ -7,13 +7,13 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.utils.SubtitleHashUtils
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.*
 import com.xyoye.local_component.utils.SearchSubtitleRepository
-import com.xyoye.local_component.utils.SubtitleHashUtils
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

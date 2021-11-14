@@ -1,7 +1,11 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.utils.seven_zip.SevenZipUtils
+import com.xyoye.data_component.data.SubtitleThunderData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.*
 
 
@@ -10,6 +14,40 @@ import java.io.*
  */
 
 object SubtitleUtils {
+
+    suspend fun matchSubtitleSilence(filePath: String): String? {
+        return withContext(Dispatchers.IO) {
+            val videoHash = SubtitleHashUtils.getThunderHash(filePath)
+            if (videoHash != null) {
+                //从迅雷匹配字幕
+                val thunderUrl = "http://sub.xmp.sandai.net:8000/subxl/$videoHash.json"
+                var subtitleData: SubtitleThunderData? = null
+                try {
+                    subtitleData = Retrofit.extService.matchThunderSubtitle(thunderUrl)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                //字幕内容存在
+                subtitleData?.sublist?.let {
+                    val subtitleName = it[0].sname
+                    val subtitleUrl = it[0].surl
+                    if (subtitleName != null && subtitleUrl != null) {
+                        try {
+                            //下载保存字幕
+                            val responseBody = Retrofit.extService.downloadResource(subtitleUrl)
+                            return@withContext saveSubtitle(
+                                subtitleName,
+                                responseBody.byteStream()
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+            return@withContext null
+        }
+    }
 
     fun saveSubtitle(
         fileName: String,

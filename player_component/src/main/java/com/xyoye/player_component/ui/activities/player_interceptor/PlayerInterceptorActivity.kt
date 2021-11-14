@@ -9,6 +9,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.source.MediaSourceManager
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.PlayParams
@@ -49,6 +50,14 @@ class PlayerInterceptorActivity : BaseActivity<PlayerInterceptorViewModel, Activ
 
     override fun initView() {
         ARouter.getInstance().inject(this)
+
+        if (MediaSourceManager.getInstance().getSource() != null) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.PlayerCenter)
+                .navigation()
+            finish()
+            return
+        }
 
         if (playParams == null){
             ToastCenter.showError("播放参数错误，无法播放视频")

@@ -298,7 +298,7 @@ class WebDavFileViewModel : BaseViewModel() {
             if (hash.isNullOrEmpty()) {
                 return@withContext null
             }
-            return@withContext DanmuUtils.matchDanmuSilence(viewModelScope, davResource.name, hash)
+            return@withContext DanmuUtils.matchDanmuSilence(davResource.name, hash)
         }
     }
 }

@@ -3,9 +3,8 @@ package com.xyoye.common_component.utils
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.data.DanmuData
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.xml.sax.helpers.AttributesImpl
 import java.io.*
 import javax.xml.transform.OutputKeys
@@ -258,8 +257,8 @@ object DanmuUtils {
     /**
      * 静默匹配弹幕
      */
-    suspend fun matchDanmuSilence(scope: CoroutineScope, filePath: String, fileHash: String): Pair<String, Int>? {
-        return scope.async(Dispatchers.IO) {
+    suspend fun matchDanmuSilence(filePath: String, fileHash: String): Pair<String, Int>? {
+        return withContext(Dispatchers.IO) {
             try {
                 //提取视频信息
                 val params = HashMap<String, String>()
@@ -283,15 +282,15 @@ object DanmuUtils {
                     //保存弹幕, 返回路径
                     val danmuPath = saveDanmu(danmuData, folderName, "$fileNameNotExt.xml")
                     if (danmuPath != null) {
-                        return@async Pair(danmuPath, episodeId)
+                        return@withContext Pair(danmuPath, episodeId)
                     }
                 }
-                return@async null
+                return@withContext null
             } catch (e: Exception) {
                 DDLog.e("自动匹配弹幕失败", e)
-                return@async null
+                return@withContext null
             }
-        }.await()
+        }
     }
 
     private fun isSameNameDanmu(childFile: File, targetVideoName: String): String? {

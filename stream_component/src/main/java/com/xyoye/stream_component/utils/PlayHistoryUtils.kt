@@ -14,14 +14,8 @@ object PlayHistoryUtils {
 
     suspend fun getPlayHistory(url: String, mediaType: MediaType): PlayHistoryEntity? {
         return withContext(Dispatchers.IO) {
-            val historyList = DatabaseManager.instance.getPlayHistoryDao()
+            return@withContext DatabaseManager.instance.getPlayHistoryDao()
                     .getPlayHistory(url, mediaType)
-
-            if (historyList.size == 1) {
-                return@withContext historyList[0]
-            } else {
-                null
-            }
         }
     }
 

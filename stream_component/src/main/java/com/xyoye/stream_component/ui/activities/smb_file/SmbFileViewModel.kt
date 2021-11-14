@@ -295,7 +295,7 @@ class SmbFileViewModel : BaseViewModel() {
             val fileHash = FileHashUtils.getHash(stream)
             if (!fileHash.isNullOrEmpty()) {
                 //根据hash匹配弹幕
-                DanmuUtils.matchDanmuSilence(viewModelScope, filePath, fileHash)?.let {
+                DanmuUtils.matchDanmuSilence(filePath, fileHash)?.let {
                     playParams.danmuPath = it.first
                     playParams.episodeId = it.second
                     DDLog.i("smb danmu -----> match download")

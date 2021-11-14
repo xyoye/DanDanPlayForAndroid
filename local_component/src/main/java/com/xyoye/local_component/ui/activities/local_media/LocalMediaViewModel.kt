@@ -13,15 +13,15 @@ import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
+import com.xyoye.common_component.source.MediaSourceManager
+import com.xyoye.common_component.source.media.LocalMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.PlayParams
-import com.xyoye.data_component.data.SubtitleThunderData
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.local_component.utils.SubtitleHashUtils
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
@@ -46,6 +46,7 @@ class LocalMediaViewModel : BaseViewModel() {
     val fileLiveData = MediatorLiveData<MutableList<VideoEntity>>()
 
     val playVideoLiveData = MutableLiveData<PlayParams>()
+    val playLiveData = MutableLiveData<Any>()
 
     private var searchJob: Job? = null
 
@@ -197,6 +198,24 @@ class LocalMediaViewModel : BaseViewModel() {
         }
     }
 
+    fun playItem(itemPosition: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
+            val playSource = LocalMediaSource.build(
+                itemPosition,
+                fileLiveData.value
+            )
+            hideLoading()
+
+            if (playSource == null) {
+                ToastCenter.showError("播放失败，找不到播放资源")
+                return@launch
+            }
+            MediaSourceManager.getInstance().setSource(playSource)
+            playLiveData.postValue(Any())
+        }
+    }
+
     fun checkPlayParams(data: VideoEntity) {
         viewModelScope.launch {
             val playParams = PlayParams(
@@ -212,9 +231,7 @@ class LocalMediaViewModel : BaseViewModel() {
             //读取上次播放位置
             val playHistory = DatabaseManager.instance.getPlayHistoryDao()
                 .getPlayHistory(data.filePath, MediaType.LOCAL_STORAGE)
-            if (playHistory.size > 0) {
-                playParams.currentPosition = playHistory.first().videoPosition
-            }
+            playParams.currentPosition = playHistory?.videoPosition ?: 0
 
             //更新最后一次播放的Item
             val updateFileData = fileLiveData.value?.onEach {
@@ -355,7 +372,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 if (!loadedDanmu && autoLoadNetworkDanmu) {
                     val fileHash = IOUtils.getFileHash(data.filePath)
                     if (!fileHash.isNullOrEmpty()) {
-                        DanmuUtils.matchDanmuSilence(viewModelScope, data.filePath, fileHash)?.let {
+                        DanmuUtils.matchDanmuSilence(data.filePath, fileHash)?.let {
                             playParams.danmuPath = it.first
                             playParams.episodeId = it.second
                             loadedDanmu = true
@@ -384,7 +401,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 //自动加载网络字幕
                 val autoLoadNetworkSubtitle = SubtitleConfig.isAutoLoadNetworkSubtitle()
                 if (!loadedSubtitle && autoLoadNetworkSubtitle) {
-                    matchSubtitleSilence(data.filePath)?.let {
+                    SubtitleUtils.matchSubtitleSilence(data.filePath)?.let {
                         playParams.subtitlePath = it
                         loadedSubtitle = true
                     }
@@ -400,40 +417,6 @@ class LocalMediaViewModel : BaseViewModel() {
             hideLoading()
             playVideoLiveData.postValue(playParams)
         }
-    }
-
-    private suspend fun matchSubtitleSilence(filePath: String): String? {
-        return viewModelScope.async(Dispatchers.IO) {
-            val videoHash = SubtitleHashUtils.getThunderHash(filePath)
-            if (videoHash != null) {
-                //从迅雷匹配字幕
-                val thunderUrl = "http://sub.xmp.sandai.net:8000/subxl/$videoHash.json"
-                var subtitleData: SubtitleThunderData? = null
-                try {
-                    subtitleData = Retrofit.extService.matchThunderSubtitle(thunderUrl)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                //字幕内容存在
-                subtitleData?.sublist?.let {
-                    val subtitleName = it[0].sname
-                    val subtitleUrl = it[0].surl
-                    if (subtitleName != null && subtitleUrl != null) {
-                        try {
-                            //下载保存字幕
-                            val responseBody = Retrofit.extService.downloadResource(subtitleUrl)
-                            return@async SubtitleUtils.saveSubtitle(
-                                subtitleName,
-                                responseBody.byteStream()
-                            )
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            }
-            null
-        }.await()
     }
 
     private suspend fun checkSourceExist(videoEntity: VideoEntity) {

@@ -21,6 +21,7 @@ import com.xyoye.player.controller.video.*
 import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
+import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.subtitle.MixedSubtitle
 
 /**
@@ -158,10 +159,10 @@ class VideoController(
     }
 
     /**
-     * 设置电量
+     * 设置电量数据
      */
-    fun setBatteryChanged(percent: Int) {
-        playerTopView.setBatteryChange(percent)
+    fun setBatteryHelper(helper: BatteryHelper) {
+        playerTopView.setBatteryHelper(helper)
     }
 
     /**

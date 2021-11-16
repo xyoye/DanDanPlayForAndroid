@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -46,40 +47,24 @@
             android:textSize="16sp"
             tools:text="标题" />
 
-        <RelativeLayout
-            android:layout_width="36dp"
-            android:layout_height="15dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_battery" />
-
-            <ProgressBar
-                android:id="@+id/battery_pb"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="27dp"
-                android:layout_height="13dp"
-                android:layout_marginStart="3dp"
-                android:layout_marginTop="1dp"
-                android:max="100"
-                android:progressDrawable="@drawable/background_battery_progress"
-                tools:progress="50" />
-
-            <TextView
-                android:id="@+id/battery_tv"
-                android:layout_width="27dp"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="3dp"
-                android:gravity="center"
-                android:textColor="#fff"
-                android:textSize="7sp"
-                tools:ignore="SmallSp"
-                tools:text="50%" />
-
-        </RelativeLayout>
+        <com.xyoye.player_component.widgets.BatteryView
+            android:id="@+id/battery_view"
+            android:layout_width="35dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/white"
+            android:textSize="8sp"
+            app:header_height="10dp"
+            app:header_width="2dp"
+            app:inner_color="#99ffffff"
+            app:inner_margin="1dp"
+            app:inner_radius="1dp"
+            app:outer_color="@color/white"
+            app:outer_radius="2dp"
+            app:outer_stroke="1dp"
+            tools:ignore="SmallSp"
+            tools:progress="100" />
 
         <TextView
             android:id="@+id/system_time_tv"
@@ -94,7 +79,7 @@
         <ImageView
             android:id="@+id/subtitle_settings_iv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/back_iv"
@@ -107,7 +92,7 @@
         <TextView
             android:id="@+id/danmu_settings_tv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:gravity="center"
@@ -124,7 +109,7 @@
         <ImageView
             android:id="@+id/player_settings_iv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/danmu_settings_tv"

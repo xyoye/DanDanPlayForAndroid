@@ -16,7 +16,6 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
 import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
@@ -32,6 +31,7 @@ import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
+import com.xyoye.player_component.utils.BatteryHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,9 +40,6 @@ import java.io.File
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     PlayerReceiverListener, PlaySourceListener {
-
-    //电量广播
-    private lateinit var batteryReceiver: BatteryBroadcastReceiver
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
@@ -53,6 +50,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     private lateinit var videoController: VideoController
 
     private var mediaSource: MediaSource? = null
+
+    //电量管理
+    private var batteryHelper = BatteryHelper(this)
 
     override fun initViewModel() =
         ViewModelInit(
@@ -108,10 +108,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     }
 
-    override fun onBatteryChanged(status: Int, progress: Int) {
-        videoController.setBatteryChanged(progress)
-    }
-
     override fun onHeadsetRemoved() {
         dataBinding.danDanPlayer.pause()
     }
@@ -157,6 +153,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setDanmuPath(source.getDanmuPath())
             setSubtitlePath(source.getSubtitlePath())
             setLastPosition(source.getCurrentPosition())
+            setBatteryHelper(batteryHelper)
             //资源切换
             observerSourceAction(this@PlayerActivity)
             //播放错误
@@ -210,18 +207,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun registerReceiver() {
-        batteryReceiver = BatteryBroadcastReceiver(this)
         screenLockReceiver = ScreenBroadcastReceiver(this)
         headsetReceiver = HeadsetBroadcastReceiver(this)
-        registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         registerReceiver(screenLockReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
         registerReceiver(headsetReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
     private fun unregisterReceiver() {
-        if (this::batteryReceiver.isInitialized) {
-            unregisterReceiver(batteryReceiver)
-        }
         if (this::screenLockReceiver.isInitialized) {
             unregisterReceiver(screenLockReceiver)
         }

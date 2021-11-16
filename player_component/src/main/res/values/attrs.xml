@@ -3,4 +3,19 @@
     <declare-styleable name="SkipTipView">
         <attr name="skip_subtitle" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="BatteryView">
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="android:progress" />
+        <attr name="header_width" format="dimension" />
+        <attr name="header_height" format="dimension" />
+        <attr name="header_radius" format="dimension" />
+        <attr name="outer_radius" format="dimension" />
+        <attr name="outer_stroke" format="dimension" />
+        <attr name="outer_color" format="color" />
+        <attr name="inner_radius" format="dimension" />
+        <attr name="inner_margin" format="dimension" />
+        <attr name="inner_color" format="color" />
+    </declare-styleable>
 </resources>

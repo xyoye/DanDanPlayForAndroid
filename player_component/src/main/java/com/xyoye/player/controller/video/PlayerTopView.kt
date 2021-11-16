@@ -13,6 +13,7 @@ import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerTopBinding
+import com.xyoye.player_component.utils.BatteryHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,7 +37,7 @@ class PlayerTopView(
         true
     )
 
-    private var playExitObserver : (()->Unit)? = null
+    private var playExitObserver: (() -> Unit)? = null
 
     private lateinit var mControlWrapper: ControlWrapper
 
@@ -97,17 +98,15 @@ class PlayerTopView(
 
     }
 
-    fun setBatteryChange(percent: Int) {
-        viewBinding.batteryPb.progress = percent
-        val batteryText = "$percent%"
-        viewBinding.batteryTv.text = batteryText
+    fun setBatteryHelper(helper: BatteryHelper) {
+        helper.bindBatteryView(viewBinding.batteryView)
     }
 
     fun setVideoTitle(title: String?) {
         viewBinding.videoTitleTv.text = title
     }
 
-    fun setExitObserver(block: ()->Unit){
+    fun setExitObserver(block: () -> Unit) {
         playExitObserver = block
     }
 }

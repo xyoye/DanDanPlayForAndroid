@@ -151,7 +151,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setDanmuPath(source.getDanmuPath())
-            setSubtitlePath(source.getSubtitlePath())
             setLastPosition(source.getCurrentPosition())
             setBatteryHelper(batteryHelper)
             //资源切换
@@ -193,6 +192,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setMediaSource(source)
             start()
         }
+
+        // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行 
+        videoController.setSubtitlePath(source.getSubtitlePath())
     }
 
     private fun afterInitPlayer() {

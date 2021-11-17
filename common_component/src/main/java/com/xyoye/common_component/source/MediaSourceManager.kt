@@ -15,11 +15,11 @@ class MediaSourceManager private constructor() {
         val instance = MediaSourceManager()
     }
 
-    private var playSource: MediaSource? = null
+    private var mediaSource: MediaSource? = null
 
     fun setSource(source: MediaSource) {
-        playSource = source
+        mediaSource = source
     }
 
-    fun getSource() = playSource
+    fun getSource() = mediaSource
 }

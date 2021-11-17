@@ -71,14 +71,6 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
 
     implementation project(path: ':common_component')
-    //web dav
-    implementation files('libs/sardine-1.0.1.jar')
-    implementation files('libs/simple-xml-2.7.1.jar')
-    //ftp
-    implementation 'commons-net:commons-net:3.7.2'
-    //smb
-    implementation 'com.hierynomus:smbj:0.10.0'
-    implementation 'com.rapid7.client:dcerpc:0.10.0'
 
     implementation 'com.huawei.hms:scan:1.3.1.300'
 

@@ -10,7 +10,7 @@ import com.xyoye.common_component.source.inter.VideoSource
 
 abstract class MediaSource(
     private val index: Int,
-    private val playGroup: List<*>
+    private val videoSources: List<*>
 ) : VideoSource, ExtraSource, GroupSource {
 
     override fun getGroupIndex(): Int {
@@ -18,15 +18,15 @@ abstract class MediaSource(
     }
 
     override fun getGroupSize(): Int {
-        return playGroup.size
+        return videoSources.size
     }
 
     override fun hasNextSource(): Boolean {
-        return index + 1 in playGroup.indices
+        return index + 1 in videoSources.indices
     }
 
     override fun hasPreviousSource(): Boolean {
-        return index - 1 in playGroup.indices
+        return index - 1 in videoSources.indices
     }
 
     override suspend fun nextSource(): MediaSource? {

@@ -54,10 +54,9 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         viewModel.fileLiveData.observe(this) {
             dataBinding.fileRv.setData(it)
         }
-        viewModel.openVideoLiveData.observe(this) {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
                 .navigation()
         }
         viewModel.listStorageRoot(webDavData!!)
@@ -121,7 +120,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
                                         viewModel.openDirectory(data.path)
                                     }
                                     else -> {
-                                        openVideo(data)
+                                        viewModel.playItem(data)
                                     }
                                 }
                             }
@@ -129,14 +128,6 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
                     }
                 }
             }
-        }
-    }
-
-    private fun openVideo(data: DavResource) {
-        if (isVideoFile(data.name)) {
-            viewModel.buildPlayParams(data)
-        } else {
-            ToastCenter.showWarning("不支持的视频文件格式")
         }
     }
 }

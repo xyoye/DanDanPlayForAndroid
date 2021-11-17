@@ -13,8 +13,8 @@ import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.stream_component.utils.FileHashUtils
-import com.xyoye.stream_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.FileHashUtils
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.stream_component.utils.server.SMBPlayServer
 import com.xyoye.stream_component.utils.smb.SMBException
 import com.xyoye.stream_component.utils.smb.SMBFile

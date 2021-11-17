@@ -1,8 +1,5 @@
-package com.xyoye.stream_component.utils
+package com.xyoye.common_component.utils
 
-import com.xyoye.common_component.utils.IOUtils
-import com.xyoye.common_component.utils.PathHelper
-import com.xyoye.common_component.utils.buffer2Hex
 import java.io.*
 import java.security.MessageDigest
 

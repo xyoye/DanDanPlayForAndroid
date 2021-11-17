@@ -14,7 +14,7 @@ import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.stream_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.stream_component.utils.remote.RemoteFileHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

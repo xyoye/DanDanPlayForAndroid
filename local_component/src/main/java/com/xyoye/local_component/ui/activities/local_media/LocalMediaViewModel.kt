@@ -405,14 +405,14 @@ class LocalMediaViewModel : BaseViewModel() {
      */
     private suspend fun playIndexFromList(index: Int, list: List<VideoEntity>?) {
         showLoading()
-        val playSource = LocalMediaSource.build(index, list)
+        val mediaSource = LocalMediaSource.build(index, list)
         hideLoading()
 
-        if (playSource == null) {
+        if (mediaSource == null) {
             ToastCenter.showError("播放失败，找不到播放资源")
             return
         }
-        MediaSourceManager.getInstance().setSource(playSource)
+        MediaSourceManager.getInstance().setSource(mediaSource)
         playLiveData.postValue(Any())
     }
 

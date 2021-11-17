@@ -88,6 +88,15 @@ dependencies {
     api 'com.github.bumptech.glide:glide:4.11.0'
     api 'org.nanohttpd:nanohttpd:2.3.1'
 
+    //web dav
+    api files('libs/sardine-1.0.1.jar')
+    api files('libs/simple-xml-2.7.1.jar')
+    //ftp
+    api 'commons-net:commons-net:3.7.2'
+    //smb
+    api 'com.hierynomus:smbj:0.10.0'
+    api 'com.rapid7.client:dcerpc:0.10.0'
+
     implementation 'com.tencent.bugly:crashreport_upgrade:1.5.0'
     implementation 'com.tencent.bugly:nativecrashreport:3.8.0'
 

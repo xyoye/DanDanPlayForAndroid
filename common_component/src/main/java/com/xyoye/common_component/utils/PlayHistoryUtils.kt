@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils
+package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.data_component.entity.PlayHistoryEntity

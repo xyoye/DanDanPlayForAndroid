@@ -1,12 +1,12 @@
 package com.xyoye.common_component.source.inter
 
-import com.xyoye.common_component.source.MediaSource
-
 /**
  * Created by xyoye on 2021/11/14.
+ *
+ * 组资源，实现资源间切换
  */
 
-interface GroupSource {
+interface GroupSource: VideoSource {
     fun getGroupIndex(): Int
 
     fun getGroupSize(): Int
@@ -15,9 +15,9 @@ interface GroupSource {
 
     fun hasPreviousSource(): Boolean
 
-    suspend fun indexSource(index: Int): MediaSource?
+    suspend fun indexSource(index: Int): GroupSource?
 
-    suspend fun nextSource(): MediaSource?
+    suspend fun nextSource(): GroupSource?
 
-    suspend fun previousSource(): MediaSource?
+    suspend fun previousSource(): GroupSource?
 }

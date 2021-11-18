@@ -1,8 +1,9 @@
 package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.source.MediaSource
 import com.xyoye.common_component.source.helper.WebDavMediaSourceHelper
+import com.xyoye.common_component.source.inter.ExtraSource
+import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
@@ -22,7 +23,7 @@ class WebDavMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : MediaSource(index, videoSources) {
+) : GroupVideoSource(index, videoSources), ExtraSource {
 
     companion object {
 
@@ -117,7 +118,7 @@ class WebDavMediaSource private constructor(
         return authHeader
     }
 
-    override suspend fun indexSource(index: Int): MediaSource? {
+    override suspend fun indexSource(index: Int): GroupSource? {
         if (index in videoSources.indices)
             return build(rootPath, authHeader, index, videoSources, extSources)
         return null

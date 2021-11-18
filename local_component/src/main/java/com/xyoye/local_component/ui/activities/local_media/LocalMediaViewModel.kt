@@ -11,7 +11,7 @@ import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
-import com.xyoye.common_component.source.MediaSourceManager
+import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.LocalMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
@@ -412,7 +412,7 @@ class LocalMediaViewModel : BaseViewModel() {
             ToastCenter.showError("播放失败，找不到播放资源")
             return
         }
-        MediaSourceManager.getInstance().setSource(mediaSource)
+        VideoSourceManager.getInstance().setSource(mediaSource)
         playLiveData.postValue(Any())
     }
 

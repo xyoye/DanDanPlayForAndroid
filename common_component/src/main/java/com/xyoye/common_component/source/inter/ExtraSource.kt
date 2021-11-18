@@ -2,6 +2,8 @@ package com.xyoye.common_component.source.inter
 
 /**
  * Created by xyoye on 2021/11/14.
+ *
+ * 扩展资源，弹幕+字幕
  */
 
 interface ExtraSource {
@@ -16,6 +18,4 @@ interface ExtraSource {
     fun getSubtitlePath(): String?
 
     fun setSubtitlePath(path: String)
-
-    fun getHttpHeader(): Map<String, String>?
 }

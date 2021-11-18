@@ -4,6 +4,8 @@ import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2021/11/14.
+ *
+ * 视频资源
  */
 
 interface VideoSource {
@@ -16,4 +18,6 @@ interface VideoSource {
     fun indexTitle(index: Int): String
 
     fun getMediaType(): MediaType
+
+    fun getHttpHeader(): Map<String, String>?
 }

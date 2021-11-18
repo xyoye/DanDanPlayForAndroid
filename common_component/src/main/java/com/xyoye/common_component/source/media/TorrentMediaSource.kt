@@ -1,13 +1,17 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.source.MediaSource
+import com.xyoye.common_component.source.inter.ExtraSource
+import com.xyoye.common_component.source.inter.GroupSource
+import com.xyoye.common_component.source.inter.VideoSource
 import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2021/11/14.
  */
 
-class TorrentMediaSource: MediaSource(0, emptyList<Any>()) {
+class TorrentMediaSource(
+
+): GroupVideoSource(0, emptyList<Any>()), ExtraSource {
     override fun getVideoUrl(): String {
         TODO("Not yet implemented")
     }
@@ -56,7 +60,7 @@ class TorrentMediaSource: MediaSource(0, emptyList<Any>()) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun indexSource(index: Int): MediaSource? {
+    override suspend fun indexSource(index: Int): GroupSource? {
         TODO("Not yet implemented")
     }
 

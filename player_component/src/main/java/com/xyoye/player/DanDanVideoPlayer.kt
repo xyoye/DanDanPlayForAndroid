@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.xyoye.common_component.source.MediaSource
+import com.xyoye.common_component.source.inter.VideoSource
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -63,7 +63,7 @@ class DanDanVideoPlayer(
     private lateinit var mVideoPlayer: AbstractVideoPlayer
 
     //播放资源
-    private lateinit var mediaSource: MediaSource
+    private lateinit var videoSource: VideoSource
 
     //当前音量
     private var mCurrentVolume = PointF(0f, 0f)
@@ -270,8 +270,8 @@ class DanDanVideoPlayer(
     }
 
     private fun startPrepare(): Boolean {
-        return if (mediaSource.getVideoUrl().isNotEmpty()) {
-            mVideoPlayer.setDataSource(mediaSource.getVideoUrl(), mediaSource.getHttpHeader())
+        return if (videoSource.getVideoUrl().isNotEmpty()) {
+            mVideoPlayer.setDataSource(videoSource.getVideoUrl(), videoSource.getHttpHeader())
             mVideoPlayer.prepareAsync()
             setPlayState(PlayState.STATE_PREPARING)
             true
@@ -343,8 +343,8 @@ class DanDanVideoPlayer(
         }
     }
 
-    fun setMediaSource(source: MediaSource) {
-        mediaSource = source
+    fun setVideoSource(source: VideoSource) {
+        videoSource = source
     }
 
     fun setController(controller: VideoController?) {

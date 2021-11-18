@@ -1,17 +1,15 @@
-package com.xyoye.common_component.source
+package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.GroupSource
-import com.xyoye.common_component.source.inter.VideoSource
 
 /**
  * Created by xyoye on 2021/11/14.
  */
 
-abstract class MediaSource(
+abstract class GroupVideoSource(
     private val index: Int,
     private val videoSources: List<*>
-) : VideoSource, ExtraSource, GroupSource {
+) : GroupSource {
 
     override fun getGroupIndex(): Int {
         return index
@@ -29,11 +27,11 @@ abstract class MediaSource(
         return index - 1 in videoSources.indices
     }
 
-    override suspend fun nextSource(): MediaSource? {
+    override suspend fun nextSource(): GroupSource? {
         return indexSource(index + 1)
     }
 
-    override suspend fun previousSource(): MediaSource? {
+    override suspend fun previousSource(): GroupSource? {
         return indexSource(index - 1)
     }
 }

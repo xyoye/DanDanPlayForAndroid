@@ -8,6 +8,7 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatFileSize
 import com.xyoye.common_component.utils.isVideoFile
@@ -40,17 +41,10 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
     override fun getChildLayoutId() = R.layout.dialog_play_selection
 
     override fun initView(binding: DialogPlaySelectionBinding) {
-
-        val torrentInfo = getTorrentInfo(filePath) ?: return
-
-        torrentFileList.addAll(torrentInfo.mSubFileInfo.toMutableList())
-        torrentFileList.sortWith { o1, o2 -> o2.mFileSize.compareTo(o1.mFileSize) }
-        val defaultChecked = torrentFileList.size == 1
-        torrentFileList.forEach { it.checked = defaultChecked }
-
         setTitle("选择播放文件")
 
-        initRv(binding, torrentFileList)
+        initTorrentData()
+        initRv(binding)
 
         setNegativeListener {
             dismiss()
@@ -99,10 +93,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
         return torrentInfo
     }
 
-    private fun initRv(
-        binding: DialogPlaySelectionBinding,
-        torrentFileList: MutableList<TorrentFileInfo>
-    ) {
+    private fun initRv(binding: DialogPlaySelectionBinding) {
         fileInfoAdapter = buildAdapter {
             initData(torrentFileList)
 
@@ -129,6 +120,33 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
             adapter = fileInfoAdapter
 
             addItemDecoration(ItemDecorationSpace(0, dp2px(8)))
+        }
+    }
+
+    private fun initTorrentData() {
+        val torrentInfo = getTorrentInfo(filePath) ?: return
+        val torrentInfoFiles = torrentInfo.mSubFileInfo
+            .filter {
+                isVideoFile(it.mFileName)
+            }.sortedWith(FileComparator<TorrentFileInfo>(
+                value = { it.mFileName },
+                isDirectory = { false }
+            ))
+        torrentFileList.addAll(torrentInfoFiles)
+
+        if (torrentFileList.isEmpty()) {
+            dismiss()
+            mOwnerActivity?.finish()
+            ToastCenter.showError("当前资源内无可播放的视频文件")
+            return
+        }
+
+        //仅有一个资源，默认选中后关闭弹窗
+        if (torrentFileList.size == 1) {
+            selectCallback.invoke(torrentFileList[0].mFileIndex)
+            dismiss()
+        } else {
+            torrentFileList.forEach { it.checked = false }
         }
     }
 

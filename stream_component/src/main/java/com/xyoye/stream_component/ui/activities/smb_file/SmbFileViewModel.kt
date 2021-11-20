@@ -4,32 +4,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.source.VideoSourceManager
+import com.xyoye.common_component.source.media.SmbMediaSource
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.server.SMBPlayServer
+import com.xyoye.common_component.utils.smb.SMBException
+import com.xyoye.common_component.utils.smb.SMBFile
+import com.xyoye.common_component.utils.smb.v2.SMBJManager
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
-import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.data_component.enums.MediaType
-import com.xyoye.common_component.utils.FileHashUtils
-import com.xyoye.common_component.utils.PlayHistoryUtils
-import com.xyoye.stream_component.utils.server.SMBPlayServer
-import com.xyoye.stream_component.utils.smb.SMBException
-import com.xyoye.stream_component.utils.smb.SMBFile
-import com.xyoye.stream_component.utils.smb.v2.SMBJManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SmbFileViewModel : BaseViewModel() {
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<SMBFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
-    val playVideoLiveData = MutableLiveData<PlayParams>()
+    val playLiveData = MutableLiveData<Any>()
 
     private var openedDirectoryList = mutableListOf<String>()
 
@@ -128,41 +122,41 @@ class SmbFileViewModel : BaseViewModel() {
     /**
      * 打开视频文件
      */
-    fun openVideoFile(fileName: String, fileSize: Long) {
-        //仅支持视频文件
-        if (!isVideoFile(fileName)) {
-            ToastCenter.showWarning("不支持的视频文件格式")
-            return
-        }
-
-        showLoading()
-        val currentDirPath = getOpenedDirPath()
-        val filePath = "$currentDirPath\\$fileName"
+    fun openVideoFile(smbFile: SMBFile) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                //获取视频文件流前，关闭之前的文件流
-                SMBJManager.getInstance().closeStream()
-                //启动本地服务处理InputStream
                 val playServer = SMBPlayServer.getInstance()
                 if (!playServer.isAlive) playServer.start()
-
-                val playUrl = playServer.getInputStreamUrl(
-                    fileName, filePath, fileSize
-                ) {
-                    //获取文件流
-                    SMBJManager.getInstance().getInputStream(it)
-                }
-
-                val playParams = buildPlayParams(playUrl, filePath, fileName)
-                hideLoading()
-                playVideoLiveData.postValue(playParams)
-            } catch (e: SMBException) {
-                e.printStackTrace()
-
-                hideLoading()
-                ToastCenter.showError("打开视频文件失败")
+            } catch (e: Exception) {
+                ToastCenter.showError("启动Smb播放服务失败，请重试\n${e.message}")
                 return@launch
             }
+
+            val videoSources = fileLiveData.value
+                ?.filter { isVideoFile(it.name) }
+            val index = videoSources?.indexOf(smbFile)
+                ?: -1
+            if (videoSources.isNullOrEmpty() || index < 0) {
+                ToastCenter.showError("播放失败，不支持播放的资源")
+                return@launch
+            }
+
+            //同文件夹内的弹幕和字幕资源
+            val extSources = fileLiveData.value
+                ?.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
+                ?: emptyList()
+
+            showLoading()
+            val mediaSource =
+                SmbMediaSource.build(index, videoSources, extSources, getOpenedDirPath())
+            hideLoading()
+
+            if (mediaSource == null) {
+                ToastCenter.showError("播放失败，找不到播放资源")
+                return@launch
+            }
+            VideoSourceManager.getInstance().setSource(mediaSource)
+            playLiveData.postValue(Any())
         }
     }
 
@@ -197,18 +191,13 @@ class SmbFileViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val fileList = SMBJManager.getInstance().listFiles(path)
-                fileList.sortWith(FileComparator(
-                    value = { it.name },
-                    isDirectory = { it.isDirectory }
-                ))
-                if (showHiddenFile) {
-                    fileLiveData.postValue(fileList)
-                } else {
-                    fileLiveData.postValue(fileList.filter {
-                        //过滤以.开头的文件
-                        !it.name.startsWith(".")
-                    }.toMutableList())
-                }
+                    .filter { !showHiddenFile || !it.name.startsWith(".") }
+                    .sortedWith(FileComparator(
+                        value = { it.name },
+                        isDirectory = { it.isDirectory }
+                    ))
+                    .toMutableList()
+                fileLiveData.postValue(fileList)
                 hideLoading()
             } catch (e: SMBException) {
                 fileLiveData.postValue(mutableListOf())
@@ -246,96 +235,5 @@ class SmbFileViewModel : BaseViewModel() {
             dirPath.append("\\").append(name)
         }
         return dirPath.toString()
-    }
-
-    private suspend fun buildPlayParams(
-        playUrl: String,
-        filePath: String,
-        fileName: String
-    ): PlayParams {
-        val playParams = PlayParams(
-            playUrl,
-            fileName.formatFileName(),
-            null,
-            null,
-            0,
-            0,
-            MediaType.SMB_SERVER
-        )
-
-        val historyEntity = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.SMB_SERVER)
-        playParams.currentPosition = historyEntity?.videoPosition ?: 0
-
-        if (historyEntity?.danmuPath != null){
-            //从播放记录读取弹幕
-            playParams.danmuPath = historyEntity.danmuPath
-            playParams.episodeId = historyEntity.episodeId
-            DDLog.i("smb danmu -----> database")
-        } else if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
-            //自动匹配同文件夹内同名弹幕
-            playParams.danmuPath = findAndDownloadDanmu(fileName)
-            DDLog.i("smb danmu -----> download")
-        }
-
-        if (historyEntity?.subtitlePath != null){
-            //从播放记录读取字幕
-            playParams.subtitlePath = historyEntity.subtitlePath
-            DDLog.i("smb subtitle -----> database")
-        } else if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()){
-            //自动匹配同文件夹内同名字幕
-            playParams.subtitlePath = findAndDownloadSubtitle(fileName)
-            DDLog.i("smb subtitle -----> download")
-        }
-
-        //是否自动匹配视频网络弹幕
-        val autoMatchDanmuNetworkStorage = DanmuConfig.isAutoMatchDanmuNetworkStorage()
-        if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
-            //获取视频文件hash
-            val stream = SMBJManager.getInstance().getInputStream(filePath)
-            val fileHash = FileHashUtils.getHash(stream)
-            if (!fileHash.isNullOrEmpty()) {
-                //根据hash匹配弹幕
-                DanmuUtils.matchDanmuSilence(filePath, fileHash)?.let {
-                    playParams.danmuPath = it.first
-                    playParams.episodeId = it.second
-                    DDLog.i("smb danmu -----> match download")
-                }
-            }
-        }
-
-        return playParams
-    }
-
-    private suspend fun findAndDownloadDanmu(fileName: String): String? {
-        return withContext(Dispatchers.IO) {
-            //目标文件名
-            val targetFileName = getFileNameNoExtension(fileName) + ".xml"
-            val fileList = fileLiveData.value ?: return@withContext null
-
-            val danmuSmbFile = fileList.find { it.name == targetFileName }
-                ?: return@withContext null
-
-            val danmuInputStream = SMBJManager.getInstance().getInputStream(
-                "${getOpenedDirPath()}\\${danmuSmbFile.name}"
-            )
-            return@withContext DanmuUtils.saveDanmu(danmuSmbFile.name, danmuInputStream)
-        }
-    }
-
-    private suspend fun findAndDownloadSubtitle(fileName: String): String? {
-        return withContext(Dispatchers.IO) {
-            //视频文件名
-            val videoFileName = getFileNameNoExtension(fileName) + "."
-            val fileList = fileLiveData.value ?: return@withContext null
-
-            val danmuSmbFile = fileList.find {
-                SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
-            } ?: return@withContext null
-
-            val subtitleInputStream = SMBJManager.getInstance().getInputStream(
-                "${getOpenedDirPath()}\\${danmuSmbFile.name}"
-            )
-            return@withContext SubtitleUtils.saveSubtitle(danmuSmbFile.name, subtitleInputStream)
-        }
     }
 }

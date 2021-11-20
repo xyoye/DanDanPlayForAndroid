@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.smb.v2
+package com.xyoye.common_component.utils.smb.v2
 
 import com.hierynomus.smbj.SMBClient
 import com.hierynomus.smbj.auth.AuthenticationContext
@@ -9,10 +9,10 @@ import com.rapid7.client.dcerpc.mssrvs.ServerService
 import com.rapid7.client.dcerpc.transport.SMBTransportFactories
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.smb.SMBException
+import com.xyoye.common_component.utils.smb.SMBFile
+import com.xyoye.common_component.utils.smb.SmbManager
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.stream_component.utils.smb.SMBException
-import com.xyoye.stream_component.utils.smb.SMBFile
-import com.xyoye.stream_component.utils.smb.SmbManager
 import java.io.InputStream
 
 

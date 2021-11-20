@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.server
+package com.xyoye.common_component.utils.server
 
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getFileExtension

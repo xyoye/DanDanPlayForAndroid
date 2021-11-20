@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.smb
+package com.xyoye.common_component.utils.smb
 
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import java.io.InputStream

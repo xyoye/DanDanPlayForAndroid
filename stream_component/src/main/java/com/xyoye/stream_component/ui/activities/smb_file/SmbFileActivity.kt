@@ -14,6 +14,7 @@ import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatFileSize
+import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -22,7 +23,6 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbFileBinding
 import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
-import com.xyoye.stream_component.utils.smb.SMBFile
 
 @Route(path = RouteTable.Stream.SmbFile)
 class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>() {
@@ -144,7 +144,7 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
                                 if (data.isDirectory) {
                                     viewModel.openChildDirectory(data.name)
                                 } else {
-                                    viewModel.openVideoFile(data.name, data.size)
+                                    viewModel.openVideoFile(data)
                                 }
                             }
                         }
@@ -163,10 +163,9 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
             dataBinding.fileRv.setData(it)
         }
 
-        viewModel.playVideoLiveData.observe(this) {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
                 .navigation(this, PLAY_REQUEST_CODE)
         }
     }

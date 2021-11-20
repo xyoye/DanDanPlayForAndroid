@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.smb
+package com.xyoye.common_component.utils.smb
 
 /**
  * Created by xyoye on 2021/2/3.

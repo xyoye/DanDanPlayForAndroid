@@ -1,8 +1,9 @@
-package com.xyoye.stream_component.utils.server
+package com.xyoye.common_component.utils.server
 
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.RangeUtils
 import com.xyoye.common_component.utils.getFileExtension
-import com.xyoye.stream_component.utils.RangeUtils
+import com.xyoye.common_component.utils.getFileName
 import fi.iki.elonen.NanoHTTPD
 import java.io.IOException
 import java.io.InputStream
@@ -57,7 +58,6 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
     }
 
     fun getInputStreamUrl(
-        fileName: String,
         filePath: String,
         fileLength: Long,
         streamBlock: (filePath: String) -> InputStream
@@ -67,7 +67,7 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
         sourceLength = fileLength
         inputStreamBlock = streamBlock
 
-        val encodeFileName = URLEncoder.encode(fileName, "utf-8")
+        val encodeFileName = URLEncoder.encode(getFileName(filePath), "utf-8")
         return  "http://127.0.0.1:$listeningPort/$encodeFileName"
     }
 

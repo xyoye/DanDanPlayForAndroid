@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils
+package com.xyoye.common_component.utils
 
 object RangeUtils {
 

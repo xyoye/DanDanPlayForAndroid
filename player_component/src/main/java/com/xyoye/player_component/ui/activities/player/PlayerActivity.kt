@@ -344,7 +344,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             val source = videoSource
             var previousSource: VideoSource? = null
             if (source is GroupSource) {
-                previousSource = source.nextSource()
+                previousSource = source.previousSource()
             }
             if (previousSource == null) {
                 ToastCenter.showOriginalToast("上一个播放资源不存在")

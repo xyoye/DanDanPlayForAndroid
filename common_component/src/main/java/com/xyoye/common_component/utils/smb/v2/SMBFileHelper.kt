@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.smb.v2
+package com.xyoye.common_component.utils.smb.v2
 
 import com.hierynomus.msdtyp.AccessMask
 import com.hierynomus.msfscc.FileAttributes

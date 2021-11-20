@@ -108,7 +108,7 @@ class WebDavFileViewModel : BaseViewModel() {
             val index = videoSources?.indexOf(davResource)
                 ?: -1
             if (videoSources.isNullOrEmpty() || index < 0) {
-                ToastCenter.showError("播放失败，找不到播放资源")
+                ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
             }
 

@@ -1,4 +1,4 @@
-//package com.xyoye.stream_component.utils.smb
+//package com.xyoye.common_component.utils.smb
 //
 //import com.xyoye.common_component.utils.DDLog
 //import com.xyoye.data_component.entity.MediaLibraryEntity

@@ -16,10 +16,11 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.source.VideoSourceManager
+import com.xyoye.common_component.source.media.StreamMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
-import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.FileManagerAction
 import com.xyoye.data_component.enums.MediaType
@@ -84,6 +85,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 showMagnetDialog()
             }
         }
+
+        observerPlay()
 
         //初始化数据源
         viewModel.initHistoryType(mediaType)
@@ -189,7 +192,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                                     ToastCenter.showError("记录已失效，无法播放")
                                     return@setOnClickListener
                                 }
-                                play(data)
+                                viewModel.openHistory(data)
                             }
 
                             itemLayout.setOnLongClickListener {
@@ -206,26 +209,21 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         }
     }
 
-    private fun showStreamDialog() {
-        val playParams = PlayParams(
-            "",
-            "",
-            null,
-            null,
-            0,
-            0,
-            mediaType
-        )
-
-        StreamLinkDialog { link, header ->
-            playParams.videoPath = link
-            playParams.videoTitle = getFileName(link)
-            playParams.setHttpHeader(JsonHelper.toJson(header))
-
-            //串流播放
+    private fun observerPlay() {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
-                .withParcelable("playParams", playParams)
+                .navigation()
+        }
+    }
+
+    private fun showStreamDialog() {
+        StreamLinkDialog { link, header ->
+            VideoSourceManager.getInstance().setSource(
+                StreamMediaSource(link, header)
+            )
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
                 .navigation()
         }.show(this)
     }
@@ -247,36 +245,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                     .navigation()
             }.show(this)
         }).show(this)
-    }
-
-    private fun play(entity: PlayHistoryEntity) {
-        //磁链直接播放
-        if (entity.mediaType == MediaType.MAGNET_LINK) {
-            ARouter.getInstance()
-                .build(RouteTable.Download.PlaySelection)
-                .withString("torrentPath", entity.torrentPath)
-                .withInt("torrentIndex", entity.torrentIndex)
-                .navigation()
-            return
-        }
-
-        //普通记录直接播放
-        val playParams = PlayParams(
-            entity.url,
-            entity.videoName,
-            entity.danmuPath,
-            entity.subtitlePath,
-            entity.videoPosition,
-            entity.episodeId,
-            entity.mediaType
-        ).apply {
-            setHttpHeader(entity.httpHeader)
-        }
-
-        ARouter.getInstance()
-            .build(RouteTable.Player.Player)
-            .withParcelable("playParams", playParams)
-            .navigation()
     }
 
     private fun isHistoryInvalid(entity: PlayHistoryEntity): Boolean {

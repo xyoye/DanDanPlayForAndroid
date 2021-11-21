@@ -15,6 +15,8 @@ interface GroupSource: VideoSource {
 
     fun hasPreviousSource(): Boolean
 
+    fun indexTitle(index: Int): String
+
     suspend fun indexSource(index: Int): GroupSource?
 
     suspend fun nextSource(): GroupSource?

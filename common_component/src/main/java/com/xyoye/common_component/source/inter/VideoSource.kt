@@ -15,8 +15,6 @@ interface VideoSource {
 
     fun getCurrentPosition(): Long
 
-    fun indexTitle(index: Int): String
-
     fun getMediaType(): MediaType
 
     fun getHttpHeader(): Map<String, String>?

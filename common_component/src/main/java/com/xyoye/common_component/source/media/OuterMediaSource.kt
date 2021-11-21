@@ -14,13 +14,15 @@ import com.xyoye.data_component.enums.MediaType
  */
 
 class OuterMediaSource private constructor(
-    private val videoUri: Uri,
+    videoUri: Uri,
     private val videoUrl: String,
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?,
 ) : VideoSource, ExtraSource {
+    private val videoTitle = UriUtils.queryVideoTitle(BaseApplication.getAppContext(), videoUri)
+        ?: getFileName(videoUrl)
 
     companion object {
         fun build(
@@ -70,8 +72,7 @@ class OuterMediaSource private constructor(
     }
 
     override fun getVideoTitle(): String {
-        return UriUtils.queryVideoTitle(BaseApplication.getAppContext(), videoUri)
-            ?: getFileName(videoUrl)
+        return videoTitle
     }
 
     override fun getCurrentPosition(): Long {

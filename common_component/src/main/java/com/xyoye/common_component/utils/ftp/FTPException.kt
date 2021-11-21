@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.ftp
+package com.xyoye.common_component.utils.ftp
 
 /**
  * Created by xyoye on 2021/1/29.

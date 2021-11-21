@@ -4,31 +4,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.source.VideoSourceManager
+import com.xyoye.common_component.source.media.FTPMediaSource
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.ftp.FTPException
+import com.xyoye.common_component.utils.ftp.FTPManager
 import com.xyoye.common_component.utils.server.FTPPlayServer
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
-import com.xyoye.data_component.bean.PlayParams
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.data_component.enums.MediaType
-import com.xyoye.stream_component.utils.ftp.FTPException
-import com.xyoye.stream_component.utils.ftp.FTPManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.apache.commons.net.ftp.FTPFile
-import java.io.File
 
 class FTPFileViewModel : BaseViewModel() {
     private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<FTPFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
-    val playVideoLiveData = MutableLiveData<PlayParams>()
+    val playLiveData = MutableLiveData<Any>()
 
     private var openedDirectoryList = mutableListOf<String>()
 
@@ -38,13 +33,13 @@ class FTPFileViewModel : BaseViewModel() {
     fun initFtp(serverData: MediaLibraryEntity) {
         showLoading()
         FTPManager.getInstance().initConfig(
-                serverData.ftpAddress,
-                serverData.port,
-                serverData.account,
-                serverData.password,
-                serverData.ftpEncoding,
-                serverData.isActiveFTP,
-                serverData.isAnonymous
+            serverData.ftpAddress,
+            serverData.port,
+            serverData.account,
+            serverData.password,
+            serverData.ftpEncoding,
+            serverData.isActiveFTP,
+            serverData.isAnonymous
         )
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -128,32 +123,41 @@ class FTPFileViewModel : BaseViewModel() {
     /**
      * 打开视频文件
      */
-    fun openVideoFile(fileName: String, fileSize: Long) {
-        showLoading()
-        val currentDirPath = getOpenedDirPath()
+    fun openVideoFile(ftpFile: FTPFile) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val playServer = FTPPlayServer.getInstance()
                 if (!playServer.isAlive) playServer.start()
-
-                //获取播放Url，此时未设置播放资源
-                val playUrl = playServer.getInputStreamUrl(fileName)
-                //设置播放参数，弹幕、字幕等
-                val playParams = buildPlayParams(playUrl, fileName)
-                //获取文件流
-                val inputStream = FTPManager.getInstance().getInputStream(currentDirPath, fileName)
-                //传入播放资源到服务器
-                playServer.setPlaySource(fileName, fileSize, inputStream)
-
-                hideLoading()
-                playVideoLiveData.postValue(playParams)
-            } catch (e: FTPException) {
-                e.printStackTrace()
-
-                hideLoading()
-                ToastCenter.showError("打开视频文件失败")
+            } catch (e: Exception) {
+                ToastCenter.showError("启动FTP播放服务失败，请重试\n${e.message}")
                 return@launch
             }
+
+            val videoSources = fileLiveData.value
+                ?.filter { isVideoFile(it.name) }
+            val index = videoSources?.indexOf(ftpFile)
+                ?: -1
+            if (videoSources.isNullOrEmpty() || index < 0) {
+                ToastCenter.showError("播放失败，不支持播放的资源")
+                return@launch
+            }
+
+            //同文件夹内的弹幕和字幕资源
+            val extSources = fileLiveData.value
+                ?.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
+                ?: emptyList()
+
+            showLoading()
+            val mediaSource =
+                FTPMediaSource.build(index, videoSources, extSources, getOpenedDirPath())
+            hideLoading()
+
+            if (mediaSource == null) {
+                ToastCenter.showError("播放失败，找不到播放资源")
+                return@launch
+            }
+            VideoSourceManager.getInstance().setSource(mediaSource)
+            playLiveData.postValue(Any())
         }
     }
 
@@ -180,8 +184,8 @@ class FTPFileViewModel : BaseViewModel() {
             try {
                 val fileList = FTPManager.getInstance().listFiles(path)
                 fileList.sortWith(FileComparator(
-                        value = { it.name },
-                        isDirectory = { it.isDirectory }
+                    value = { it.name },
+                    isDirectory = { it.isDirectory }
                 ))
                 if (showHiddenFile) {
                     fileLiveData.postValue(fileList)
@@ -227,101 +231,5 @@ class FTPFileViewModel : BaseViewModel() {
             }
         }
         return dirPath.toString()
-    }
-
-    private suspend fun buildPlayParams(playUrl: String, fileName: String): PlayParams {
-        val playParams = PlayParams(
-                playUrl,
-                fileName.formatFileName(),
-                null,
-                null,
-                0,
-                0,
-                MediaType.FTP_SERVER
-        )
-
-        val historyEntity = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.FTP_SERVER)
-        playParams.currentPosition = historyEntity?.videoPosition ?: 0
-
-        if (historyEntity?.danmuPath != null){
-            //从播放记录读取弹幕
-            playParams.danmuPath = historyEntity.danmuPath
-            playParams.episodeId = historyEntity.episodeId
-            DDLog.i("ftp danmu -----> database")
-        } else if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
-            //自动匹配同文件夹内同名弹幕
-            playParams.danmuPath = findAndDownloadDanmu(fileName)
-            DDLog.i("ftp danmu -----> download")
-        }
-
-        if (historyEntity?.subtitlePath != null){
-            //从播放记录读取字幕
-            playParams.subtitlePath = historyEntity.subtitlePath
-            DDLog.i("ftp subtitle -----> database")
-        } else if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()){
-            //自动匹配同文件夹内同名字幕
-            playParams.subtitlePath = findAndDownloadSubtitle(fileName)
-            DDLog.i("ftp subtitle -----> download")
-        }
-
-        //是否自动匹配视频网络弹幕
-        val autoMatchDanmuNetworkStorage = DanmuConfig.isAutoMatchDanmuNetworkStorage()
-        if (playParams.danmuPath.isNullOrEmpty() && autoMatchDanmuNetworkStorage) {
-            //获取视频文件hash
-            val stream = FTPManager.getInstance().getInputStream(getOpenedDirPath(), fileName)
-            val fileHash = FileHashUtils.getHash(stream)
-            FTPManager.getInstance().disconnect()
-            if (!fileHash.isNullOrEmpty()) {
-                //根据hash匹配弹幕
-                DanmuUtils.matchDanmuSilence(fileName, fileHash)?.let {
-                    playParams.danmuPath = it.first
-                    playParams.episodeId = it.second
-                    DDLog.i("ftp danmu -----> match download")
-                }
-            }
-        }
-
-        return playParams
-    }
-
-    private suspend fun findAndDownloadDanmu(fileName: String): String? {
-        return withContext(Dispatchers.IO) {
-            //目标文件名
-            val targetFileName = getFileNameNoExtension(fileName) + ".xml"
-            val fileList = fileLiveData.value ?: return@withContext null
-
-            val danmuFTPFile = fileList.find { it.name == targetFileName }
-                    ?: return@withContext null
-
-            val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
-
-            val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, danmuFile)
-            if (copySuccess){
-                return@withContext danmuFile.absolutePath
-            } else {
-                return@withContext null
-            }
-        }
-    }
-
-    private suspend fun findAndDownloadSubtitle(fileName: String): String? {
-        return withContext(Dispatchers.IO) {
-            //视频文件名
-            val videoFileName = getFileNameNoExtension(fileName) + "."
-            val fileList = fileLiveData.value ?: return@withContext null
-
-            val danmuFTPFile = fileList.find {
-                SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
-            } ?: return@withContext null
-
-            val subtitleFile = File(PathHelper.getSubtitleDirectory(), danmuFTPFile.name.formatFileName())
-
-            val copySuccess = FTPManager.getInstance().copyFtpFile(getOpenedDirPath(), danmuFTPFile.name, subtitleFile)
-            if (copySuccess){
-                return@withContext subtitleFile.absolutePath
-            } else {
-                return@withContext null
-            }
-        }
     }
 }

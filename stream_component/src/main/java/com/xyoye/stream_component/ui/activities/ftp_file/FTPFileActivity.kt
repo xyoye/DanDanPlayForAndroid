@@ -163,10 +163,9 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             dataBinding.fileRv.setData(it)
         }
 
-        viewModel.playVideoLiveData.observe(this) {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
                 .navigation(this, PLAY_REQUEST_CODE)
         }
     }
@@ -180,7 +179,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
 
         val showTips = AppConfig.isShowFTPVideoTips()
         if (!showTips){
-            viewModel.openVideoFile(ftpFile.name, ftpFile.size)
+            viewModel.openVideoFile(ftpFile)
             return
         }
 
@@ -189,7 +188,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             addNegative()
             addPositive{
                 it.dismiss()
-                viewModel.openVideoFile(ftpFile.name, ftpFile.size)
+                viewModel.openVideoFile(ftpFile)
             }
             addNoShowAgain { AppConfig.putShowFTPVideoTips(!it) }
             build()

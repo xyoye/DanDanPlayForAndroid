@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.utils.ftp
+package com.xyoye.common_component.utils.ftp
 
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.IOUtils

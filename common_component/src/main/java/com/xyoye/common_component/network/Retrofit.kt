@@ -3,6 +3,7 @@ package com.xyoye.common_component.network
 import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.network.helper.*
 import com.xyoye.common_component.network.service.*
+import com.xyoye.common_component.utils.JsonHelper
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -33,37 +34,39 @@ class Retrofit private constructor() {
     private var torrentRetrofitService: TorrentRetrofitService
     private var remoteRetrofitService: RemoteService
 
+    private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
+
     init {
         retrofitService = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient(needAuth = true))
             .baseUrl(baseUrl)
             .build()
             .create(RetrofitService::class.java)
 
         resRetrofitService = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient(needAuth = false, resDomain = true))
             .baseUrl(resUrl)
             .build()
             .create(ResRetrofitService::class.java)
 
         extRetrofitService = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient())
             .baseUrl(shooterUrl)
             .build()
             .create(ExtRetrofitService::class.java)
 
         torrentRetrofitService = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient())
             .baseUrl(torrentUrl)
             .build()
             .create(TorrentRetrofitService::class.java)
 
         remoteRetrofitService = Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient(needAuth = false, resDomain = false, isRemote = true))
             .baseUrl(remoteUrl)
             .build()

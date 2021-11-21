@@ -11,7 +11,9 @@ import java.io.IOException
 
 object JsonHelper {
 
-    val MO_SHI: Moshi = Moshi.Builder().build()
+    val MO_SHI: Moshi = Moshi.Builder()
+        .add(NullToEmptyStringAdapter)
+        .build()
 
     inline fun <reified T> parseJson(jsonStr: String): T? {
         if (jsonStr.isEmpty())

@@ -3,7 +3,7 @@ package com.xyoye.stream_component.ui.activities.ftp_file
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.FTPMediaSource
 import com.xyoye.common_component.utils.*
@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import org.apache.commons.net.ftp.FTPFile
 
 class FTPFileViewModel : BaseViewModel() {
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<FTPFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
@@ -187,14 +186,8 @@ class FTPFileViewModel : BaseViewModel() {
                     value = { it.name },
                     isDirectory = { it.isDirectory }
                 ))
-                if (showHiddenFile) {
-                    fileLiveData.postValue(fileList)
-                } else {
-                    fileLiveData.postValue(fileList.filter {
-                        //过滤以.开头的文件
-                        !it.name.startsWith(".")
-                    }.toMutableList())
-                }
+
+                fileLiveData.postValue(fileList.filterHideFile { it.name })
                 hideLoading()
             } catch (e: FTPException) {
                 fileLiveData.postValue(mutableListOf())

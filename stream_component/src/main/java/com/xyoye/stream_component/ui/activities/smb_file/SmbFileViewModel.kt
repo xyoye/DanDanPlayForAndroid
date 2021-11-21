@@ -3,7 +3,7 @@ package com.xyoye.stream_component.ui.activities.smb_file
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.SmbMediaSource
 import com.xyoye.common_component.utils.*
@@ -19,7 +19,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class SmbFileViewModel : BaseViewModel() {
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
 
     val fileLiveData = MutableLiveData<MutableList<SMBFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
@@ -191,7 +190,7 @@ class SmbFileViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val fileList = SMBJManager.getInstance().listFiles(path)
-                    .filter { !showHiddenFile || !it.name.startsWith(".") }
+                    .filterHideFile { it.name }
                     .sortedWith(FileComparator(
                         value = { it.name },
                         isDirectory = { it.isDirectory }

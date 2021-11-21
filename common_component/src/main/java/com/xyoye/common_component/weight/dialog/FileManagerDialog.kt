@@ -41,7 +41,6 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
     private lateinit var binding: DialogFileManagerBinding
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
     private var currentDirPath = mRootPath
 
     private val mPathData = arrayListOf<FilePathBean>()
@@ -114,7 +113,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
         }
 
         val lastOpenFolderPath = AppConfig.getLastOpenFolder()
-        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true){
+        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
             val lastOpenDrawable = R.drawable.ic_tag.toResDrawable()
             lastOpenDrawable?.setTint(R.color.black.toResColor())
             addRightAction(lastOpenDrawable, 8, "上次打开目录").setOnClickListener {
@@ -336,13 +335,8 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
     }
 
     private fun setFileData(fileList: MutableList<FileManagerBean>) {
-        if (showHiddenFile) {
-            binding.fileRv.setData(fileList)
-        } else {
-            binding.fileRv.setData(fileList.filter {
-                //过滤以.开头的文件
-                !it.fileName.startsWith(".")
-            }.toMutableList())
-        }
+        binding.fileRv.setData(
+            fileList.filterHideFile { it.fileName }
+        )
     }
 }

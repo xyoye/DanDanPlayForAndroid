@@ -128,7 +128,7 @@ class CacheManagerViewModel : BaseViewModel() {
         screenShotDirectoryName.set("文件夹名称：${PathHelper.PATH_SCREEN_SHOT}")
 
         val otherCacheSize = externalCacheSize - danmuDirectorySize - subtitleDirectorySize -
-                playCacheDirectorySize - exoCacheDirectorySize - screenShotDirectorySize
+                playCacheDirectorySize - screenShotDirectorySize
         otherCacheSizeText.set(formatFileSize(otherCacheSize))
     }
 

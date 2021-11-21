@@ -23,8 +23,8 @@ import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player.info.PlayerInitializer
+import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutSwitchSourceBinding
 import java.io.File
@@ -42,7 +42,6 @@ class SwitchSourceView(
     private val mHideTranslateX = -dp2px(300).toFloat()
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
-    private val showHiddenFile = AppConfig.isShowHiddenFile()
     private var currentDirPath = mRootPath
     private var isSwitchSubtitle = false
     private var bindSourceObserver: ((sourcePath: String, isSubtitle: Boolean) -> Unit)? = null
@@ -318,14 +317,9 @@ class SwitchSourceView(
     }
 
     private fun setFileData(fileList: MutableList<FileManagerBean>) {
-        if (showHiddenFile) {
-            viewBinding.fileRv.setData(fileList)
-        } else {
-            viewBinding.fileRv.setData(fileList.filter {
-                //过滤以.开头的文件
-                !it.fileName.startsWith(".")
-            }.toMutableList())
-        }
+        viewBinding.fileRv.setData(
+            fileList.filterHideFile { it.fileName }
+        )
     }
 
     private fun selectSourceFile(data: FileManagerBean) {

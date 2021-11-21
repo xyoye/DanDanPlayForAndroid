@@ -128,10 +128,9 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
             listFolder("根目录", "/", it)
         }
 
-        viewModel.playVideoLiveData.observe(this) {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
-                .withParcelable("playParams", it)
                 .navigation()
         }
     }
@@ -180,7 +179,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         supportFragmentManager.addFragment(R.id.container, childFragment, path, true)
     }
 
-    fun openVideo(videoData: RemoteVideoData) {
-        viewModel.openVideo(videoData)
+    fun openVideo(data: RemoteVideoData, videoList: List<RemoteVideoData>) {
+        viewModel.playIndexFromList(data, videoList)
     }
 }

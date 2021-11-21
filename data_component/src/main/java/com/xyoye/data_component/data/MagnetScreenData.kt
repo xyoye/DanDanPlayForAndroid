@@ -2,6 +2,7 @@ package com.xyoye.data_component.data
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
+import com.xyoye.data_component.helper.NullToEmptyString
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -12,5 +13,6 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class MagnetScreenData(
     val Id: Int = -1,
+    @NullToEmptyString
     val Name: String = ""
 ) : Parcelable

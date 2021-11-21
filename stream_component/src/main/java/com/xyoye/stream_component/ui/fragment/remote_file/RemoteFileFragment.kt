@@ -36,6 +36,8 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
         }
     }
 
+    private var mFileData = mutableListOf<RemoteVideoData>()
+
     override fun initViewModel() =
         ViewModelInit(
             BR.viewModel,
@@ -51,16 +53,17 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
         }
         arguments?.clear()
 
-        initRv(fileData)
+        mFileData.addAll(fileData)
+        initRv()
     }
-    private fun initRv(fileList: ArrayList<RemoteVideoData>) {
+    private fun initRv() {
 
         dataBinding.mediaRv.apply {
 
             layoutManager = vertical()
 
             adapter = buildAdapter<RemoteVideoData> {
-                initData(fileList)
+                initData(mFileData)
 
                 addItem<RemoteVideoData, ItemRemoteFolderBinding>(R.layout.item_remote_folder) {
                     checkType { data, _ -> data.isFolder }
@@ -90,8 +93,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                     checkType { data, _ -> data.isFolder.not() }
                     initView { data, _, _ ->
                         itemBinding.run {
-                            val videoName = data.EpisodeTitle ?: data.Name
-                            titleTv.setAutoSizeText(videoName)
+                            titleTv.setAutoSizeText(data.getEpisodeName())
                             durationTv.isGone = data.Duration == null
                             if (data.Duration != null) {
                                 durationTv.text = formatDuration(data.Duration!! * 1000)
@@ -104,7 +106,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
 
                             itemLayout.setOnClickListener {
                                 if (mAttachActivity is RemoteFileActivity) {
-                                    (mAttachActivity as RemoteFileActivity).openVideo(data)
+                                    (mAttachActivity as RemoteFileActivity).openVideo(data, mFileData)
                                 }
                             }
                         }

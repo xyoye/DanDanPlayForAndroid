@@ -2,6 +2,7 @@ package com.xyoye.data_component.data.remote
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
+import com.xyoye.data_component.helper.NullToEmptyString
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -12,19 +13,34 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class RemoteVideoData(
     val AnimeId: Int = 0,
-    val AnimeTitle: String? = null,
+    @NullToEmptyString
+    val AnimeTitle: String = "",
     val Duration: Long? = 0,
-    val EpisodeTitle: String? = null,
+    @NullToEmptyString
+    val EpisodeTitle: String = "",
+    @NullToEmptyString
     val Hash: String = "",
+    @NullToEmptyString
     val Id: String = "",
     val IsStandalone: Boolean = false,
+    @NullToEmptyString
     val Name: String = "",
+    @NullToEmptyString
     val Path: String = "",
 
+    @NullToEmptyString
     var absolutePath: String = "",
     var isFolder: Boolean = false,
     var childData: MutableList<RemoteVideoData> = mutableListOf(),
 
     var danmuPath: String? = null,
     var subtitlePath: String? = null
-) : Parcelable
+) : Parcelable {
+
+    fun getEpisodeName(): String{
+        return if (EpisodeTitle.isEmpty())
+            Name
+        else
+            EpisodeTitle
+    }
+}

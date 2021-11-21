@@ -63,7 +63,7 @@ class TorrentMediaSource private constructor(
     }
 
     override fun indexTitle(index: Int): String {
-        return videoSources[index].mFileName
+        return videoSources.getOrNull(index)?.mFileName ?: ""
     }
 
     override fun getMediaType(): MediaType {

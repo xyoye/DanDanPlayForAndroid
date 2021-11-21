@@ -69,6 +69,13 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE play_history ADD COLUMN torrent_path TEXT")
+                database.execSQL("ALTER TABLE play_history ADD COLUMN torrent_index INTEGER NOT NULL DEFAULT -1")
+                database.execSQL("ALTER TABLE play_history ADD COLUMN http_header TEXT")
+            }
+        }
 
         val instance = DatabaseManager.holder.database
     }
@@ -81,6 +88,12 @@ class DatabaseManager private constructor() {
         BaseApplication.getAppContext(),
         DatabaseInfo::class.java,
         "rood_db"
-    ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
+    ).addMigrations(
+        MIGRATION_1_2,
+        MIGRATION_2_3,
+        MIGRATION_3_4,
+        MIGRATION_4_5,
+        MIGRATION_5_6
+    ).build()
 
 }

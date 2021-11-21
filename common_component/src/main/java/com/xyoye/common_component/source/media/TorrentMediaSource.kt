@@ -105,4 +105,12 @@ class TorrentMediaSource private constructor(
     fun getPlayTaskId(): Long {
         return ThunderManager.getInstance().getTaskId(torrentPath)
     }
+
+    fun getTorrentPath(): String {
+        return torrentPath
+    }
+
+    fun getTorrentIndex(): Int {
+        return index
+    }
 }

@@ -20,15 +20,11 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
 
     @Autowired
     @JvmField
-    var torrentTitle: String? = ""
-
-    @Autowired
-    @JvmField
     var magnetLink: String? = ""
 
     @Autowired
     @JvmField
-    var torrentFileIndex: Int = -1
+    var torrentIndex: Int = -1
 
     override fun initViewModel() =
         ViewModelInit(
@@ -70,8 +66,8 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
     }
 
     private fun showPlaySelectionDialog(torrentPath: String) {
-        if (torrentFileIndex != -1) {
-            viewModel.playWithHistory(torrentPath, torrentFileIndex, torrentTitle)
+        if (torrentIndex != -1) {
+            viewModel.torrentPlay(torrentPath, torrentIndex)
             return
         }
 

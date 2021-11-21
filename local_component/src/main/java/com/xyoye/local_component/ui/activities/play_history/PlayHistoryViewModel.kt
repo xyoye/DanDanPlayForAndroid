@@ -19,15 +19,7 @@ class PlayHistoryViewModel : BaseViewModel() {
 
     fun initHistoryType(mediaType: MediaType) {
         playHistoryLiveData = if (mediaType == MediaType.OTHER_STORAGE) {
-            val mediaTypes = arrayOf(
-                MediaType.LOCAL_STORAGE,
-                MediaType.OTHER_STORAGE,
-                MediaType.FTP_SERVER,
-                MediaType.SMB_SERVER,
-                MediaType.WEBDAV_SERVER,
-                MediaType.REMOTE_STORAGE
-            )
-            DatabaseManager.instance.getPlayHistoryDao().getMultipleMediaType(mediaTypes)
+            DatabaseManager.instance.getPlayHistoryDao().getAll()
         } else {
             DatabaseManager.instance.getPlayHistoryDao().getSingleMediaType(mediaType)
         }

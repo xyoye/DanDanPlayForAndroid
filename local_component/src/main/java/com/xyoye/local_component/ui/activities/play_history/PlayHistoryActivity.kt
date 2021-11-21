@@ -147,7 +147,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 addItem<PlayHistoryEntity, ItemPlayHistoryBinding>(R.layout.item_play_history) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            //磁链是否失效
                             val isInvalid = isHistoryInvalid(data)
                             if (isInvalid) {
                                 videoTypeTv.text = "失效"
@@ -157,16 +156,11 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                                 videoTypeTv.setTextColorRes(R.color.text_theme)
                             }
 
-                            val torrentTitle = data.torrentTitle()
-                            videoDescribeTv.isVisible =
-                                data.mediaType == MediaType.MAGNET_LINK && !torrentTitle.isNullOrEmpty()
-                            videoDescribeTv.text = torrentTitle
-
                             videoTypeIv.setImageDrawable(getMediaCover(data.mediaType, isInvalid))
                             videoNameTv.text = data.videoName
 
                             videoUrlTv.text = if (data.mediaType == MediaType.MAGNET_LINK)
-                                getFileName(data.torrentPath())
+                                getFileName(data.torrentPath)
                             else
                                 data.url
 
@@ -260,9 +254,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         if (entity.mediaType == MediaType.MAGNET_LINK) {
             ARouter.getInstance()
                 .build(RouteTable.Download.PlaySelection)
-                .withString("torrentPath", entity.torrentPath())
-                .withString("torrentTitle", entity.torrentTitle())
-                .withInt("torrentFileIndex", entity.torrentFileIndex())
+                .withString("torrentPath", entity.torrentPath)
+                .withInt("torrentIndex", entity.torrentIndex)
                 .navigation()
             return
         }
@@ -277,7 +270,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
             entity.episodeId,
             entity.mediaType
         ).apply {
-            setHttpHeader(entity.getHttpHeader())
+            setHttpHeader(entity.httpHeader)
         }
 
         ARouter.getInstance()
@@ -287,16 +280,14 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     private fun isHistoryInvalid(entity: PlayHistoryEntity): Boolean {
-        val fileIndex = entity.torrentFileIndex()
-        val filePath = entity.torrentPath()
-
         return when (entity.mediaType) {
             MediaType.MAGNET_LINK -> {
+                val torrentPath = entity.torrentPath
                 //磁链种子文件丢失
-                if (filePath.isNullOrEmpty() || fileIndex == -1) {
+                if (torrentPath.isNullOrEmpty() || entity.torrentIndex == -1) {
                     return true
                 }
-                val torrentFile = File(filePath)
+                val torrentFile = File(torrentPath)
                 return !torrentFile.exists()
             }
             MediaType.SMB_SERVER,
@@ -311,12 +302,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     private fun getMediaCover(itemMediaType: MediaType, isInvalid: Boolean): Drawable? {
-        val coverId = if (mediaType == MediaType.OTHER_STORAGE) {
-            MediaTypeUtil.getCover(itemMediaType)
-        } else {
-            R.drawable.ic_play_history
-        }
-        val coverDrawable = coverId.toResDrawable()
+        val coverDrawable = MediaTypeUtil.getCover(itemMediaType).toResDrawable()
         if (isInvalid) {
             coverDrawable?.colorFilter = PorterDuffColorFilter(
                 R.color.red.toResColor(),

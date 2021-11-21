@@ -224,7 +224,6 @@ class SearchMagnetFragment :
                     ARouter.getInstance()
                         .build(RouteTable.Download.PlaySelection)
                         .withString("magnetLink", magnetLink)
-                        .withString("torrentTitle", data.Title)
                         .navigation()
                 }
                 ACTION_COPY_MAGNET -> {

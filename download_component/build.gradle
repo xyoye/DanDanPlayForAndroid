@@ -72,7 +72,6 @@ dependencies {
     androidTestImplementation rootProject.ext.dependencies["test_espresso-core"]
 
     implementation project(path: ':common_component')
-    implementation project(path: ':repository:thunder')
 
     kapt rootProject.ext.dependencies["arouter-compiler"]
 }

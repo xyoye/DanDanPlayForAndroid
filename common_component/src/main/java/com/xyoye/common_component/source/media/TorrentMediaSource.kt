@@ -1,70 +1,108 @@
 package com.xyoye.common_component.source.media
 
+import com.xunlei.downloadlib.parameter.TorrentFileInfo
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.GroupSource
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2021/11/14.
  */
 
-class TorrentMediaSource(
+class TorrentMediaSource private constructor(
+    private val index: Int,
+    private val videoSources: List<TorrentFileInfo>,
+    private val playUrl: String,
+    private val torrentPath: String,
+    private var currentPosition: Long,
+    private var danmuPath: String?,
+    private var episodeId: Int,
+    private var subtitlePath: String?
+) : GroupVideoSource(index, videoSources), ExtraSource {
 
-): GroupVideoSource(0, emptyList<Any>()), ExtraSource {
+    companion object {
+        suspend fun build(
+            index: Int,
+            torrentPath: String,
+        ): TorrentMediaSource? {
+            val (playUrl, torrentFileInfoList) = ThunderManager.getInstance().torrent2PlayUrl(
+                torrentPath,
+                PathHelper.getPlayCacheDirectory(),
+                index
+            )
+            if (playUrl.isNullOrEmpty())
+                return null
+
+            val history = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.MAGNET_LINK)
+            return TorrentMediaSource(
+                index,
+                torrentFileInfoList,
+                playUrl,
+                torrentPath,
+                history?.videoPosition ?: 0,
+                history?.danmuPath,
+                history?.episodeId ?: 0,
+                history?.subtitlePath
+            )
+        }
+    }
+
     override fun getVideoUrl(): String {
-        TODO("Not yet implemented")
+        return playUrl
     }
 
     override fun getVideoTitle(): String {
-        TODO("Not yet implemented")
+        return videoSources[index].mFileName
     }
 
     override fun getCurrentPosition(): Long {
-        TODO("Not yet implemented")
+        return currentPosition
     }
 
     override fun indexTitle(index: Int): String {
-        TODO("Not yet implemented")
+        return videoSources[index].mFileName
     }
 
     override fun getMediaType(): MediaType {
-        TODO("Not yet implemented")
+        return MediaType.MAGNET_LINK
     }
 
     override fun getDanmuPath(): String? {
-        TODO("Not yet implemented")
+        return danmuPath
     }
 
     override fun setDanmuPath(path: String) {
-        TODO("Not yet implemented")
+        danmuPath = path
     }
 
     override fun getEpisodeId(): Int {
-        TODO("Not yet implemented")
+        return episodeId
     }
 
     override fun setEpisodeId(id: Int) {
-        TODO("Not yet implemented")
+        episodeId = id
     }
 
     override fun getSubtitlePath(): String? {
-        TODO("Not yet implemented")
+        return subtitlePath
     }
 
     override fun setSubtitlePath(path: String) {
-        TODO("Not yet implemented")
+        subtitlePath = path
     }
 
     override fun getHttpHeader(): Map<String, String>? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override suspend fun indexSource(index: Int): GroupSource? {
-        TODO("Not yet implemented")
+        return build(index, torrentPath)
     }
 
     fun getPlayTaskId(): Long {
-        TODO("Not yet implemented")
+        return ThunderManager.getInstance().getTaskId(torrentPath)
     }
 }

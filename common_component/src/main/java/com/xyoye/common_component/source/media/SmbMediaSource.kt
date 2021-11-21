@@ -13,7 +13,7 @@ import com.xyoye.data_component.enums.MediaType
 /**
  * Created by xyoye on 2021/11/18
  */
-class SmbMediaSource(
+class SmbMediaSource private constructor(
     private val index: Int,
     private val videoSources: List<SMBFile>,
     private val extSources: List<SMBFile>,

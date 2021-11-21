@@ -15,14 +15,12 @@ import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.data.SendDanmuData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
-import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
 import java.util.*
-import java.util.regex.Pattern
 
 class PlayerViewModel : BaseViewModel() {
 
@@ -33,14 +31,6 @@ class PlayerViewModel : BaseViewModel() {
         source ?: return
 
         GlobalScope.launch(context = Dispatchers.IO) {
-            var videoUrl = source.getVideoUrl()
-            if (source.getMediaType() == MediaType.MAGNET_LINK) {
-                videoUrl = getMagnetRealUrl(videoUrl)
-            }
-
-            val history = DatabaseManager.instance.getPlayHistoryDao()
-                .getPlayHistory(videoUrl, source.getMediaType())
-
             var sourceDanmuPath : String? = null
             var sourceEpisodeId = 0
             var sourceSubtitlePath: String? = null
@@ -49,19 +39,10 @@ class PlayerViewModel : BaseViewModel() {
                 sourceEpisodeId = source.getEpisodeId()
                 sourceSubtitlePath = source.getSubtitlePath()
             }
-
-            val historyEntity = history?.apply {
-                videoPosition = position
-                videoDuration = duration
-                playTime = Date()
-                danmuPath = sourceDanmuPath
-                episodeId = sourceEpisodeId
-                subtitlePath = sourceSubtitlePath
-                JsonHelper.toJson(source.getHttpHeader())
-            } ?: PlayHistoryEntity(
+            val history = PlayHistoryEntity(
                 0,
                 source.getVideoTitle(),
-                videoUrl,
+                source.getVideoUrl(),
                 source.getMediaType(),
                 position,
                 duration,
@@ -73,7 +54,7 @@ class PlayerViewModel : BaseViewModel() {
             )
 
             DatabaseManager.instance.getPlayHistoryDao()
-                .insert(historyEntity)
+                .insert(history)
         }
     }
 
@@ -163,20 +144,5 @@ class PlayerViewModel : BaseViewModel() {
         val danmuText = "<d p=\"$time,$mode,25,$color,$unixTime,0,0,0\">${sendDanmuBean.text}</d>"
 
         DanmuUtils.appendDanmu(danmuPath, danmuText)
-    }
-
-    /**
-     * 获取播放磁链的真实链接
-     */
-    private fun getMagnetRealUrl(videoUrl: String): String {
-        val regex = "http://127.0.0.1:+\\d+/"
-        val patterns = Pattern.compile(regex)
-        val matcher = patterns.matcher(videoUrl)
-        if (matcher.find()) {
-            matcher.group(0)?.let {
-                return videoUrl.substring(it.length)
-            }
-        }
-        return videoUrl
     }
 }

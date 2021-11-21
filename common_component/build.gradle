@@ -58,6 +58,7 @@ dependencies {
     api project(':data_component')
     api project(':repository:seven_zip')
     api project(':repository:immersion_bar')
+    api project(path: ':repository:thunder')
 
     api rootProject.ext.dependencies["core-ktx"]
     api rootProject.ext.dependencies["kotlin-stdlib-jdk7"]

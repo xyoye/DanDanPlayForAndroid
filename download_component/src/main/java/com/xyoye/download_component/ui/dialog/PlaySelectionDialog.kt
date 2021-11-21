@@ -61,7 +61,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
                 ToastCenter.showError("不支持的视频文件格式")
                 return@setPositiveListener
             }
-            selectCallback.invoke(checkedFile.mFileIndex)
+            selectCallback.invoke(torrentFileList.indexOf(checkedFile))
             dismiss()
         }
     }
@@ -143,7 +143,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
 
         //仅有一个资源，默认选中后关闭弹窗
         if (torrentFileList.size == 1) {
-            selectCallback.invoke(torrentFileList[0].mFileIndex)
+            selectCallback.invoke(0)
             dismiss()
         } else {
             torrentFileList.forEach { it.checked = false }

@@ -25,10 +25,14 @@ fun String.addToClipboard(){
     clipboard.setPrimaryClip(clipData)
 }
 
-fun String?.decodeUrl(charset: Charset = Charsets.UTF_8): String?{
+fun String.decodeUrl(charset: Charset = Charsets.UTF_8): String{
     if (isNullOrEmpty())
         return this
-    return URLDecoder.decode(this, charset.name())
+    return try {
+        URLDecoder.decode(this, charset.name())
+    } catch (e: Exception){
+        this
+    }
 }
 
 fun String.formatFileName() = trim().replace("[*>/:\\\\?<|]".toRegex(), "_").replace(" ", "_")

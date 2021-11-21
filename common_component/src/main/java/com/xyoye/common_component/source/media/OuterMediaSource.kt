@@ -1,10 +1,7 @@
 package com.xyoye.common_component.source.media
 
-import android.net.Uri
-import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.VideoSource
-import com.xyoye.common_component.utils.UriUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
@@ -14,26 +11,21 @@ import com.xyoye.data_component.enums.MediaType
  */
 
 class OuterMediaSource private constructor(
-    videoUri: Uri,
     private val videoUrl: String,
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?,
 ) : VideoSource, ExtraSource {
-    private val videoTitle = UriUtils.queryVideoTitle(BaseApplication.getAppContext(), videoUri)
-        ?: getFileName(videoUrl)
 
     companion object {
         fun build(
-            videoUri: Uri,
             videoUrl: String,
             historyEntity: PlayHistoryEntity?,
             danmuPath: String?,
             episodeId: Int,
         ): OuterMediaSource {
             return OuterMediaSource(
-                videoUri,
                 videoUrl,
                 historyEntity?.videoPosition ?: 0L,
                 danmuPath,
@@ -72,7 +64,7 @@ class OuterMediaSource private constructor(
     }
 
     override fun getVideoTitle(): String {
-        return videoTitle
+        return getFileName(videoUrl)
     }
 
     override fun getCurrentPosition(): Long {

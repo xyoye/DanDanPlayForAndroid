@@ -8,8 +8,10 @@ import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.media.OuterMediaSource
+import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.UriUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -53,10 +55,12 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             return
         }
         videoUri = intentData
-        videoUrl = intentData.toString()
+        videoUrl = MediaUtils.getPathFromURI(videoUri)
         if (videoUrl.isEmpty()) {
-            viewModel.isParseError.set(true)
-            return
+            videoUrl = intentData.toString()
+        } else if (videoUrl.startsWith("file://")) {
+            videoUrl = videoUrl.decodeUrl().substring(7)
+            viewModel.addUnrecognizedFile(videoUrl)
         }
 
         observeHistory()
@@ -119,7 +123,6 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
         history: PlayHistoryEntity? = null
     ) {
         val videoSource = OuterMediaSource.build(
-            videoUri,
             videoUrl,
             history,
             danmuPath,

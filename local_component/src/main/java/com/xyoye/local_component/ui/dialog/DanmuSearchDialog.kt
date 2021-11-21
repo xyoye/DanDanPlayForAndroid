@@ -56,7 +56,7 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
             binding.fileNameTips.isVisible = true
             binding.fileNameTv.isVisible = true
             binding.fileNameTv.setTextIsSelectable(true)
-            binding.fileNameTv.text = videoName.decodeUrl()
+            binding.fileNameTv.text = videoName?.decodeUrl()
         }
 
         binding.episodeRb.setOnClickListener {

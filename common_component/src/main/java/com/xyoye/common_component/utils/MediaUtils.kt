@@ -3,11 +3,14 @@ package com.xyoye.common_component.utils
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.xyoye.common_component.R
+import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
@@ -89,7 +92,7 @@ object MediaUtils {
             pictureDetails
         ) ?: return Pair(first = false, second = "")
 
-        if (saveImage(resolver, pictureUri, bitmap)){
+        if (saveImage(resolver, pictureUri, bitmap)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 pictureDetails.clear()
                 pictureDetails.put(MediaStore.Images.Media.IS_PENDING, 0)
@@ -100,7 +103,7 @@ object MediaUtils {
 
         //保存到公共录失败，尝试保存到私有目录
         val pictureFile = File(PathHelper.PATH_SCREEN_SHOT, getShotImageName())
-        return if (saveImage(pictureFile, bitmap)){
+        return if (saveImage(pictureFile, bitmap)) {
             Pair(first = true, second = "私有目录")
         } else {
             Pair(first = false, second = "")
@@ -140,6 +143,38 @@ object MediaUtils {
             }
         }
         return videoEntities
+    }
+
+    /**
+     * 获取Uri对应文件的真实路径
+     */
+    fun getPathFromURI(contentUri: Uri): String {
+        var cursor: Cursor? = null
+        try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = BaseApplication.getAppContext().contentResolver.query(
+                contentUri,
+                proj,
+                null,
+                null,
+                null
+            )
+            if (cursor == null || cursor.count == 0)
+                return ""
+            val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            return Uri.fromFile(File(cursor.getString(columnIndex))).toString()
+        } catch (e: IllegalArgumentException) {
+            return ""
+        } catch (e: SecurityException) {
+            return ""
+        } catch (e: SQLiteException) {
+            return ""
+        } catch (e: NullPointerException) {
+            return ""
+        } finally {
+            if (cursor != null && !cursor.isClosed) cursor.close()
+        }
     }
 
     private fun getShotImageName(): String {

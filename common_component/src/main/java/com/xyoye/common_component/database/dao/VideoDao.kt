@@ -45,6 +45,9 @@ interface VideoDao {
     @Query("SELECT * FROM video WHERE filter = 0 AND file_path LIKE (:keyword)")
     fun searchVideo(keyword: String): LiveData<MutableList<VideoEntity>>
 
+    @Query("SELECT * FROM video WHERE file_path = (:filePath)")
+    suspend fun findVideoByPath(filePath: String): VideoEntity?
+
     @Query("SELECT * FROM video WHERE filter = 0 AND folder_path = (:folderPath) AND file_path LIKE (:keyword)")
     fun searchVideoInFolder(
         keyword: String,

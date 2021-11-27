@@ -4,7 +4,7 @@
     <string name="video_record">记忆上次播放到</string>
     <string name="video_skip">继续播放</string>
     <string name="time_separator">/</string>
-    <string name="send_danmu">发射弹幕</string>
+    <string name="send_danmu">发弹幕</string>
     <string name="test_default_system_time">12:00</string>
 
     <string name="text_setting_player">播放器设置</string>
@@ -84,7 +84,5 @@
     <string name="tips_danmu_keyword_block">关键字屏蔽</string>
     <string name="action_manager_danmu_block">管理</string>
     <string name="text_reset_video_speed">重置</string>
-
-    <string name="action_task_refresh">任务刷新</string>
-    <string name="action_danmu_switch">弹幕开关</string>
+    <string name="select_video_source">选集</string>
 </resources>

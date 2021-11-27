@@ -3,161 +3,166 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player_bottom_ll"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/player_item_bg_color"
-        android:orientation="vertical"
-        android:translationY="64dp"
-        tools:translationY="0dp">
+        android:background="@color/player_item_bg_color">
+
+        <TextView
+            android:id="@+id/current_position_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/play_seek_bar"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="00:00" />
 
         <SeekBar
             android:id="@+id/play_seek_bar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="20dp"
+            android:layout_marginHorizontal="80dp"
+            android:focusable="false"
             android:max="100"
             android:maxHeight="4dp"
-            android:focusable="false"
             android:minHeight="4dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingHorizontal="10dp"
             android:progressDrawable="@drawable/background_seek_progress"
             android:thumb="@drawable/ic_player_seek_ball"
-            app:layout_constraintBottom_toTopOf="@id/bottom_info_ll" />
+            app:layout_constraintBottom_toBottomOf="@id/current_position_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/current_position_tv" />
 
-        <LinearLayout
-            android:id="@+id/bottom_info_ll"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/duration_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="40dp"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/current_position_tv"
+            app:layout_constraintStart_toEndOf="@id/play_seek_bar"
+            app:layout_constraintTop_toTopOf="@id/current_position_tv"
+            tools:text="00:00" />
 
-            <ImageView
-                android:id="@+id/play_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/background_video_action_item"
-                android:focusable="true"
-                android:nextFocusLeft="@+id/player_shot_iv"
-                android:nextFocusRight="@+id/send_danmu_tv"
-                android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/send_danmu_tv"
-                android:padding="8dp"
-                android:src="@drawable/ic_play_bt" />
+        <ImageView
+            android:id="@+id/play_iv"
+            android:layout_width="60dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_video_action_item"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/player_shot_iv"
+            android:nextFocusRight="@+id/send_danmu_tv"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/send_danmu_tv"
+            android:padding="2dp"
+            android:src="@drawable/ic_play_bt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/play_seek_bar"
+            app:layout_constraintTop_toBottomOf="@id/current_position_tv" />
 
-            <TextView
-                android:id="@+id/current_position_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="16sp"
-                tools:text="00:00" />
+        <ImageView
+            android:id="@+id/iv_previous_source"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:background="@drawable/background_video_action_item"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/send_danmu_tv"
+            android:nextFocusRight="@+id/iv_next_source"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/iv_next_source"
+            android:padding="10dp"
+            android:src="@drawable/ic_video_previous"
+            app:layout_constraintBottom_toBottomOf="@id/play_iv"
+            app:layout_constraintStart_toEndOf="@+id/play_iv"
+            app:layout_constraintTop_toTopOf="@id/play_iv" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:text="@string/time_separator"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/iv_next_source"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:background="@drawable/background_video_action_item"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/iv_previous_source"
+            android:nextFocusRight="@+id/danmu_control_ll"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/danmu_control_ll"
+            android:padding="10dp"
+            android:src="@drawable/ic_video_next"
+            app:layout_constraintBottom_toBottomOf="@id/play_iv"
+            app:layout_constraintStart_toEndOf="@id/iv_previous_source"
+            app:layout_constraintTop_toTopOf="@id/play_iv" />
 
-            <TextView
-                android:id="@+id/duration_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="16sp"
-                tools:text="00:00" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/video_list_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_send_danmu_bt"
+            android:drawablePadding="3dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@+id/play_iv"
+            android:nextFocusRight="@+id/iv_previous_source"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/iv_previous_source"
+            android:padding="7dp"
+            android:text="@string/select_video_source"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="12sp"
+            app:drawableStartCompat="@drawable/ic_video_list"
+            app:layout_constraintBottom_toBottomOf="@id/play_iv"
+            app:layout_constraintStart_toEndOf="@id/iv_next_source"
+            app:layout_constraintTop_toTopOf="@id/play_iv" />
 
-            <TextView
-                android:id="@+id/send_danmu_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_send_danmu_bt"
-                android:focusable="true"
-                android:gravity="center"
-                android:nextFocusLeft="@+id/play_iv"
-                android:nextFocusRight="@+id/iv_previous_source"
-                android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/iv_previous_source"
-                android:padding="7dp"
-                android:text="@string/send_danmu"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="16sp" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/send_danmu_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_send_danmu_bt"
+            android:drawablePadding="3dp"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@+id/play_iv"
+            android:nextFocusRight="@+id/iv_previous_source"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/iv_previous_source"
+            android:padding="7dp"
+            android:text="@string/send_danmu"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="12sp"
+            app:drawableStartCompat="@drawable/ic_send_damu"
+            app:layout_constraintBottom_toBottomOf="@id/play_iv"
+            app:layout_constraintStart_toEndOf="@id/video_list_iv"
+            app:layout_constraintTop_toTopOf="@id/play_iv" />
 
-            <ImageView
-                android:id="@+id/iv_previous_source"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/background_video_action_item"
-                android:focusable="true"
-                android:nextFocusLeft="@+id/send_danmu_tv"
-                android:nextFocusRight="@+id/iv_next_source"
-                android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/iv_next_source"
-                android:padding="10dp"
-                android:src="@drawable/ic_video_previous" />
+        <ImageView
+            android:id="@+id/danmu_control_iv"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:nextFocusLeft="@+id/iv_next_source"
+            android:nextFocusRight="@+id/back_iv"
+            android:nextFocusUp="@+id/player_lock_iv"
+            android:nextFocusDown="@+id/back_iv"
+            android:src="@drawable/ic_danmaku_control"
+            app:layout_constraintBottom_toBottomOf="@id/play_iv"
+            app:layout_constraintStart_toEndOf="@id/play_seek_bar"
+            app:layout_constraintTop_toTopOf="@id/play_iv" />
 
-            <ImageView
-                android:id="@+id/iv_next_source"
-                android:layout_width="40dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/background_video_action_item"
-                android:focusable="true"
-                android:nextFocusLeft="@+id/iv_previous_source"
-                android:nextFocusRight="@+id/danmu_control_ll"
-                android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/danmu_control_ll"
-                android:padding="10dp"
-                android:src="@drawable/ic_video_next" />
-
-            <LinearLayout
-                android:id="@+id/danmu_control_ll"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="3dp"
-                android:background="@drawable/background_video_action_item"
-                android:focusable="true"
-                android:nextFocusLeft="@+id/iv_next_source"
-                android:nextFocusRight="@+id/back_iv"
-                android:nextFocusUp="@+id/player_lock_iv"
-                android:nextFocusDown="@+id/back_iv"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/danmu_control_iv"
-                    android:layout_width="24dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_danmaku_control" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/action_danmu_switch"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="10sp"
-                    tools:ignore="SmallSp" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

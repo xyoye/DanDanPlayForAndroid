@@ -14,7 +14,6 @@ import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResDrawable
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
@@ -33,8 +32,6 @@ class PlayerBottomView(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InterControllerView, OnSeekBarChangeListener {
-
-    private val mHideTranslateY = dp2px(65).toFloat()
 
     private var mIsDragging = false
     private lateinit var mControlWrapper: ControlWrapper
@@ -56,7 +53,7 @@ class PlayerBottomView(
             mControlWrapper.togglePlay()
         }
 
-        viewBinding.danmuControlLl.setOnClickListener {
+        viewBinding.danmuControlIv.setOnClickListener {
             mControlWrapper.toggleDanmuVisible()
             viewBinding.danmuControlIv.isSelected = !viewBinding.danmuControlIv.isSelected
         }
@@ -92,6 +89,12 @@ class PlayerBottomView(
         }
 
         viewBinding.playSeekBar.setOnSeekBarChangeListener(this)
+
+        post {
+            viewBinding.playerBottomLl.apply {
+                translationY = height.toFloat()
+            }
+        }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -104,7 +107,8 @@ class PlayerBottomView(
         if (isVisible) {
             ViewCompat.animate(viewBinding.playerBottomLl).translationY(0f).setDuration(300).start()
         } else {
-            ViewCompat.animate(viewBinding.playerBottomLl).translationY(mHideTranslateY)
+            val height = viewBinding.playerBottomLl.height.toFloat()
+            ViewCompat.animate(viewBinding.playerBottomLl).translationY(height)
                 .setDuration(300)
                 .start()
         }
@@ -206,7 +210,7 @@ class PlayerBottomView(
         if (hasNextSource.not()) {
             val nextIcon = R.drawable.ic_video_next.toResDrawable()?.apply {
                 colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                    R.color.gray.toResColor(), BlendModeCompat.SRC_IN
+                    R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
                 )
             }
             viewBinding.ivNextSource.isEnabled = false
@@ -217,7 +221,7 @@ class PlayerBottomView(
         if (hasPreviousSource.not()) {
             val previousIcon = R.drawable.ic_video_previous.toResDrawable()?.apply {
                 colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                    R.color.gray.toResColor(), BlendModeCompat.SRC_IN
+                    R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
                 )
             }
             viewBinding.ivPreviousSource.isEnabled = false

@@ -18,8 +18,4 @@ interface GroupSource: VideoSource {
     fun indexTitle(index: Int): String
 
     suspend fun indexSource(index: Int): GroupSource?
-
-    suspend fun nextSource(): GroupSource?
-
-    suspend fun previousSource(): GroupSource?
 }

@@ -15,5 +15,7 @@ enum class SettingViewType {
 
     KEYWORD_BLOCK,
 
-    SCREEN_SHOT
+    SCREEN_SHOT,
+
+    SWITCH_VIDEO_SOURCE
 }

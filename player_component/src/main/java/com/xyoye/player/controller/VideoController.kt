@@ -112,7 +112,7 @@ class VideoController(
             showController()
             return true
         }
-        if(isControllerShowing()) {
+        if (isControllerShowing()) {
             mControlWrapper.hideController()
             return true
         }
@@ -193,17 +193,11 @@ class VideoController(
     }
 
     /**
-     * 切换上一个资源回调
+     * 切换视频资源回调
      */
-    fun observerPreviousVideoSource(block: () -> Unit) {
-        playerBotView.setPreviousVideoSourceBlock(block)
-    }
-
-    /**
-     * 切换下一个资源回调
-     */
-    fun observerNextVideoSource(block: () -> Unit) {
-        playerBotView.setNextVideoSourceBlock(block)
+    fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {
+        playerBotView.setSwitchVideoSourceBlock(block)
+        mSettingController.setSwitchVideoSourceBlock(block)
     }
 
     /**

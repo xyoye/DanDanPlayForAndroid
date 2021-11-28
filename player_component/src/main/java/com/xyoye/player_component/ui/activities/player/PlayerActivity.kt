@@ -198,11 +198,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         if (source is GroupSource) {
-            videoController.observerNextVideoSource {
-                switchNextVideoSource()
-            }
-            videoController.observerPreviousVideoSource {
-                switchPreviousVideoSource()
+            videoController.setSwitchVideoSourceBlock {
+                switchVideoSource(it)
             }
         }
     }
@@ -318,42 +315,22 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    private fun switchNextVideoSource() {
+    private fun switchVideoSource(index: Int) {
         showLoading()
         dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
             val source = videoSource
-            var nextSource: VideoSource? = null
+            var targetSource: VideoSource? = null
             if (source is GroupSource) {
-                nextSource = source.nextSource()
+                targetSource = source.indexSource(index)
             }
-            if (nextSource == null) {
-                ToastCenter.showOriginalToast("下一个播放资源不存在")
+            if (targetSource == null) {
+                ToastCenter.showOriginalToast("播放资源不存在")
                 return@launch
             }
             withContext(Dispatchers.Main) {
                 hideLoading()
-                applyPlaySource(nextSource)
-            }
-        }
-    }
-
-    private fun switchPreviousVideoSource() {
-        showLoading()
-        dataBinding.danDanPlayer.pause()
-        lifecycleScope.launch(Dispatchers.IO) {
-            val source = videoSource
-            var previousSource: VideoSource? = null
-            if (source is GroupSource) {
-                previousSource = source.previousSource()
-            }
-            if (previousSource == null) {
-                ToastCenter.showOriginalToast("上一个播放资源不存在")
-                return@launch
-            }
-            withContext(Dispatchers.Main) {
-                hideLoading()
-                applyPlaySource(previousSource)
+                applyPlaySource(targetSource)
             }
         }
     }

@@ -17,6 +17,7 @@ class SettingController(context: Context) : InterSettingController {
     private val danmuSettingView = SettingDanmuView(context)
     private val subtitleSettingView = SettingSubtitleView(context)
     private val switchSourceView = SwitchSourceView(context)
+    private val switchVideoSourceView = SwitchVideoSourceView(context)
     private val keywordBlockView = KeywordBlockView(context)
     private val screenShotView = ScreenShotView(context)
 
@@ -25,6 +26,7 @@ class SettingController(context: Context) : InterSettingController {
         danmuSettingView,
         subtitleSettingView,
         switchSourceView,
+        switchVideoSourceView,
         keywordBlockView,
         screenShotView
     )
@@ -67,6 +69,10 @@ class SettingController(context: Context) : InterSettingController {
 
     fun setBindSourceObserver(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
         switchSourceView.setBindSourceObserver(block)
+    }
+
+    fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {
+        switchVideoSourceView.setSwitchVideoSourceBlock(block)
     }
 
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {

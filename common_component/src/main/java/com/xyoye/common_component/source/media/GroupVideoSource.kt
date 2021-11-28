@@ -26,12 +26,4 @@ abstract class GroupVideoSource(
     override fun hasPreviousSource(): Boolean {
         return index - 1 in videoSources.indices
     }
-
-    override suspend fun nextSource(): GroupSource? {
-        return indexSource(index + 1)
-    }
-
-    override suspend fun previousSource(): GroupSource? {
-        return indexSource(index - 1)
-    }
 }

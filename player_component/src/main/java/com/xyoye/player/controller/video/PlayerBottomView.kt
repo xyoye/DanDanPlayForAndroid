@@ -19,6 +19,7 @@ import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.utils.formatDuration
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
@@ -39,9 +40,7 @@ class PlayerBottomView(
 
     private var sendDanmuBlock: ((SendDanmuBean) -> Unit)? = null
 
-    private var nextVideoSourceBlock: (() -> Unit)? = null
-
-    private var previousVideoSourceBlock: (() -> Unit)? = null
+    private var switchVideoSourceBlock: ((Int) -> Unit)? = null
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerBottomBinding>(
         LayoutInflater.from(context),
@@ -84,11 +83,21 @@ class PlayerBottomView(
         }
 
         viewBinding.ivNextSource.setOnClickListener {
-            nextVideoSourceBlock?.invoke()
+            val videoSource = mControlWrapper.getVideoSource()
+            if (videoSource is GroupSource && videoSource.hasNextSource()) {
+                switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() + 1)
+            }
         }
 
         viewBinding.ivPreviousSource.setOnClickListener {
-            previousVideoSourceBlock?.invoke()
+            val videoSource = mControlWrapper.getVideoSource()
+            if (videoSource is GroupSource && videoSource.hasPreviousSource()) {
+                switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() - 1)
+            }
+        }
+
+        viewBinding.videoListIv.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.SWITCH_VIDEO_SOURCE)
         }
 
         viewBinding.playSeekBar.setOnSeekBarChangeListener(this)
@@ -199,12 +208,8 @@ class PlayerBottomView(
         sendDanmuBlock = block
     }
 
-    fun setPreviousVideoSourceBlock(block: () -> Unit) {
-        previousVideoSourceBlock = block
-    }
-
-    fun setNextVideoSourceBlock(block: () -> Unit) {
-        nextVideoSourceBlock = block
+    fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {
+        switchVideoSourceBlock = block
     }
 
     private fun updateSourceAction() {
@@ -212,11 +217,13 @@ class PlayerBottomView(
         val isGroupSource = videoSource is GroupSource
         viewBinding.ivNextSource.isVisible = isGroupSource
         viewBinding.ivPreviousSource.isVisible = isGroupSource
+        viewBinding.videoListIv.isVisible = isGroupSource
 
         if (videoSource !is GroupSource) {
             return
         }
 
+        //上一个视频资源是否可用
         val hasNextSource = videoSource.hasNextSource()
         viewBinding.ivNextSource.isEnabled = hasNextSource
         val nextIcon = R.drawable.ic_video_next.toResDrawable()
@@ -227,6 +234,7 @@ class PlayerBottomView(
         }
         viewBinding.ivNextSource.setImageDrawable(nextIcon)
 
+        //下一个视频资源是否可用
         val hasPreviousSource = videoSource.hasPreviousSource()
         viewBinding.ivPreviousSource.isEnabled = hasPreviousSource
         val previousIcon = R.drawable.ic_video_previous.toResDrawable()

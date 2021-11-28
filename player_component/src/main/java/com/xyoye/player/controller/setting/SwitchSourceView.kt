@@ -15,7 +15,6 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
-import com.xyoye.common_component.databinding.ItemFileManagerPlayerBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
@@ -26,6 +25,7 @@ import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
+import com.xyoye.player_component.databinding.ItemFileManagerPlayerBinding
 import com.xyoye.player_component.databinding.LayoutSwitchSourceBinding
 import java.io.File
 

@@ -115,15 +115,14 @@ class BatteryView @JvmOverloads constructor(
         val outerStrokeInset = mOuterStroke / 2f
 
         //调整电池外壳大小
-        mOuterRect.right = width.toFloat()
-        mOuterRect.bottom = height.toFloat()
-        mOuterRect.inset(outerStrokeInset, outerStrokeInset)
+        mOuterRect.right = width.toFloat() - outerStrokeInset
+        mOuterRect.bottom = height.toFloat() - outerStrokeInset
 
         //调整电池内容大小
-        mInnerRect.right = width - outerStrokeInset - mInnerMargin
+        mInnerRect.right = width - mOuterStroke - mInnerMargin
         mInnerRect.left = mInnerRect.right
-        mInnerRect.bottom = height - outerStrokeInset - mInnerMargin
-        mInnerWidth = width - mOuterStroke - (mInnerWidth * 2) - mHeaderWidth
+        mInnerRect.bottom = height - mOuterStroke - mInnerMargin
+        mInnerWidth = width - mOuterStroke - (mInnerMargin * 2) - mHeaderWidth
         mInnerLeftOffset = mHeaderWidth + outerStrokeInset + mInnerMargin
 
         //更新进度

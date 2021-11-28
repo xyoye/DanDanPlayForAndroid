@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.ControlWrapper
@@ -27,7 +26,6 @@ class PlayerTopView(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InterControllerView {
 
-    private val mHideTranslateY = -dp2px(46).toFloat()
     private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerTopBinding>(
@@ -76,7 +74,8 @@ class PlayerTopView(
             ViewCompat.animate(viewBinding.playerTopLl).translationY(0f).setDuration(300).start()
         } else {
             viewBinding.videoTitleTv.requestFocus()
-            ViewCompat.animate(viewBinding.playerTopLl).translationY(mHideTranslateY)
+            val height = viewBinding.playerTopLl.height.toFloat()
+            ViewCompat.animate(viewBinding.playerTopLl).translationY(-height)
                 .setDuration(300).start()
         }
     }

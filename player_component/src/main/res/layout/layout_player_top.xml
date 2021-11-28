@@ -3,21 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player_top_ll"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:layout_gravity="top"
+        android:layout_height="50dp"
         android:background="@color/player_item_bg_color"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:translationY="-45dp"
+        android:focusable="false"
+        android:translationY="-50dp"
         tools:translationY="0dp">
 
         <ImageView
             android:id="@+id/back_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/danmu_control_iv"
@@ -25,7 +24,9 @@
             android:nextFocusUp="@+id/danmu_control_iv"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="10dp"
-            android:src="@mipmap/ic_return_back" />
+            android:src="@mipmap/ic_return_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.xyoye.player_component.widgets.MarqueeTextView
             android:id="@+id/video_title_tv"
@@ -45,6 +46,10 @@
             android:singleLine="true"
             android:textColor="@color/text_white_immutable"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@id/battery_view"
+            app:layout_constraintStart_toEndOf="@id/back_iv"
+            app:layout_constraintTop_toTopOf="@id/back_iv"
             tools:text="标题" />
 
         <com.xyoye.player_component.widgets.BatteryView
@@ -53,15 +58,19 @@
             android:layout_height="15dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:focusable="false"
             android:textColor="@color/white"
             android:textSize="8sp"
-            app:header_height="10dp"
+            app:header_height="9dp"
             app:header_width="2dp"
             app:inner_color="#99ffffff"
-            app:inner_margin="1dp"
-            app:inner_radius="1dp"
+            app:inner_margin="0.5dp"
+            app:inner_radius="2dp"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@id/system_time_tv"
+            app:layout_constraintTop_toTopOf="@id/back_iv"
             app:outer_color="@color/white"
-            app:outer_radius="2dp"
+            app:outer_radius="3dp"
             app:outer_stroke="1dp"
             tools:ignore="SmallSp"
             tools:progress="100" />
@@ -72,14 +81,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:focusable="false"
             android:text="@string/test_default_system_time"
             android:textColor="@color/text_white_immutable"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@id/subtitle_settings_iv"
+            app:layout_constraintTop_toTopOf="@id/back_iv" />
 
         <ImageView
             android:id="@+id/subtitle_settings_iv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/back_iv"
@@ -87,12 +100,15 @@
             android:nextFocusUp="@+id/back_iv"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="12dp"
-            android:src="@drawable/ic_subtitle_setting" />
+            android:src="@drawable/ic_subtitle_setting"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@id/danmu_settings_tv"
+            app:layout_constraintTop_toTopOf="@id/back_iv" />
 
         <TextView
             android:id="@+id/danmu_settings_tv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:gravity="center"
@@ -102,14 +118,18 @@
             android:nextFocusDown="@+id/player_lock_iv"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="弹"
+            android:text="@string/dan"
             android:textColor="@drawable/ic_danmu_setting"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@id/player_settings_iv"
+            app:layout_constraintTop_toTopOf="@id/back_iv" />
 
         <ImageView
             android:id="@+id/player_settings_iv"
             android:layout_width="@dimen/settings_btn_width"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginEnd="20dp"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/danmu_settings_tv"
@@ -117,6 +137,9 @@
             android:nextFocusUp="@+id/danmu_settings_tv"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="12dp"
-            android:src="@drawable/ic_player_setting" />
-    </LinearLayout>
+            android:src="@drawable/ic_player_setting"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/back_iv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

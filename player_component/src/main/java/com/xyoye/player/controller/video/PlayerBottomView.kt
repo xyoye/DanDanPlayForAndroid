@@ -90,11 +90,6 @@ class PlayerBottomView(
 
         viewBinding.playSeekBar.setOnSeekBarChangeListener(this)
 
-        post {
-            viewBinding.playerBottomLl.apply {
-                translationY = height.toFloat()
-            }
-        }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {

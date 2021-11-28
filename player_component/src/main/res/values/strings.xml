@@ -85,4 +85,5 @@
     <string name="action_manager_danmu_block">管理</string>
     <string name="text_reset_video_speed">重置</string>
     <string name="select_video_source">选集</string>
+    <string name="dan">弹</string>
 </resources>

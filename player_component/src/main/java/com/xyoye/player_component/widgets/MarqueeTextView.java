@@ -25,7 +25,7 @@ public class MarqueeTextView extends AppCompatTextView {
     }
 
     @Override
-    public boolean isFocused() {
+    public boolean isSelected() {
         return true;
     }
 }

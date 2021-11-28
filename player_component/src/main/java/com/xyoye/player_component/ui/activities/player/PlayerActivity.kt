@@ -29,7 +29,6 @@ import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.enums.*
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
-import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
@@ -41,7 +40,7 @@ import java.io.File
 
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
-    PlayerReceiverListener, PlaySourceListener {
+    PlayerReceiverListener {
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
@@ -154,8 +153,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())
             setBatteryHelper(batteryHelper)
-            //资源切换
-            observerSourceAction(this@PlayerActivity)
             //播放错误
             observerPlayError {
                 showPlayErrorDialog()
@@ -197,6 +194,15 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             //发送弹幕
             videoController.observerSendDanmu {
                 viewModel.sendDanmu(source.getEpisodeId(), source.getDanmuPath(), it)
+            }
+        }
+
+        if (source is GroupSource) {
+            videoController.observerNextVideoSource {
+                switchNextVideoSource()
+            }
+            videoController.observerPreviousVideoSource {
+                switchPreviousVideoSource()
             }
         }
     }
@@ -312,17 +318,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    override fun hasNextSource(): Boolean {
-        val source = videoSource ?: return false
-        return source is GroupSource && source.hasNextSource()
-    }
-
-    override fun hasPreviousSource(): Boolean {
-        val source = videoSource ?: return false
-        return source is GroupSource && source.hasPreviousSource()
-    }
-
-    override fun nextSource() {
+    private fun switchNextVideoSource() {
         showLoading()
         dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
@@ -342,7 +338,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    override fun previousSource() {
+    private fun switchPreviousVideoSource() {
         showLoading()
         dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {

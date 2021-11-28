@@ -18,7 +18,6 @@ import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*
-import com.xyoye.player.utils.PlaySourceListener
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
@@ -194,10 +193,17 @@ class VideoController(
     }
 
     /**
-     * 观察资源切换动作
+     * 切换上一个资源回调
      */
-    fun observerSourceAction(sourceListener: PlaySourceListener) {
-        playerBotView.setSourceListener(sourceListener)
+    fun observerPreviousVideoSource(block: () -> Unit) {
+        playerBotView.setPreviousVideoSourceBlock(block)
+    }
+
+    /**
+     * 切换下一个资源回调
+     */
+    fun observerNextVideoSource(block: () -> Unit) {
+        playerBotView.setNextVideoSourceBlock(block)
     }
 
     /**

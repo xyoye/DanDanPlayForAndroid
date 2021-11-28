@@ -117,6 +117,10 @@ class DanDanVideoPlayer(
         }
     }
 
+    override fun getVideoSource(): VideoSource {
+        return videoSource
+    }
+
     override fun getDuration(): Long {
         if (isInPlayState())
             return mVideoPlayer.getDuration()

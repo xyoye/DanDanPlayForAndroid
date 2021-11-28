@@ -35,6 +35,8 @@ class ControlWrapper(
         mVideoPlayer.pause()
     }
 
+    override fun getVideoSource() = mVideoPlayer.getVideoSource()
+
     override fun getDuration() = mVideoPlayer.getDuration()
 
     override fun getCurrentPosition() = mVideoPlayer.getCurrentPosition()

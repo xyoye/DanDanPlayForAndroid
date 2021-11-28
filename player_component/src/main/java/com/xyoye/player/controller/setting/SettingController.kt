@@ -55,6 +55,10 @@ class SettingController(context: Context) : InterSettingController {
         }
     }
 
+    override fun settingRelease() {
+
+    }
+
     fun getViews(): Array<InterSettingView> {
         return settingViews
     }

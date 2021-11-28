@@ -102,4 +102,6 @@ interface InterDanmuController {
      * 弹幕进度跳转
      */
     fun seekTo(timeMs: Long, isPlaying: Boolean)
+
+    fun danmuRelease()
 }

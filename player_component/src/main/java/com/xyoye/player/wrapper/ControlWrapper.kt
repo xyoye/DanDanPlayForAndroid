@@ -157,6 +157,10 @@ class ControlWrapper(
         mDanmuController.updateOffsetTime()
     }
 
+    override fun danmuRelease() {
+        mDanmuController.danmuRelease()
+    }
+
     override fun updateMobileDanmuState() {
         mDanmuController.updateMobileDanmuState()
     }
@@ -253,6 +257,10 @@ class ControlWrapper(
         mSubtitleController.updateStrokeColor()
     }
 
+    override fun subtitleRelease() {
+        mSubtitleController.subtitleRelease()
+    }
+
     /**
      * ------------------Setting Controller----------------------
      */
@@ -273,6 +281,10 @@ class ControlWrapper(
         if (!isLocked()) {
             mSettingController.showSettingView(viewType)
         }
+    }
+
+    override fun settingRelease() {
+        mSettingController.settingRelease()
     }
 
     /**

@@ -60,4 +60,6 @@ interface InterSubtitleController {
      * 更新字幕偏移时间
      */
     fun updateOffsetTime()
+
+    fun subtitleRelease()
 }

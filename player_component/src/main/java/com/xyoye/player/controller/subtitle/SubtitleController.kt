@@ -64,6 +64,11 @@ class SubtitleController(context: Context) : InterSubtitleController {
         subtitleTextView.updateOffsetTime()
     }
 
+    override fun subtitleRelease() {
+        subtitleImageView.release()
+        subtitleTextView.release()
+    }
+
     fun getViews(): Array<InterControllerView> {
         return subtitleViews
     }

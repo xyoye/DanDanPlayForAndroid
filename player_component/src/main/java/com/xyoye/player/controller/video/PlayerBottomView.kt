@@ -112,7 +112,6 @@ class PlayerBottomView(
 
     override fun onVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
-            updateSourceAction()
             ViewCompat.animate(viewBinding.playerBottomLl).translationY(0f).setDuration(300).start()
         } else {
             val height = viewBinding.playerBottomLl.height.toFloat()
@@ -128,8 +127,12 @@ class PlayerBottomView(
                 viewBinding.playSeekBar.progress = 0
                 viewBinding.playSeekBar.secondaryProgress = 0
             }
+            PlayState.STATE_PREPARING -> {
+                updateSourceAction()
+                viewBinding.playIv.isSelected = false
+                mControlWrapper.startProgress()
+            }
             PlayState.STATE_START_ABORT,
-            PlayState.STATE_PREPARING,
             PlayState.STATE_PREPARED,
             PlayState.STATE_PAUSED,
             PlayState.STATE_ERROR -> {

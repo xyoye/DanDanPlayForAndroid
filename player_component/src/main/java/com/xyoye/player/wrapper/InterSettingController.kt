@@ -27,4 +27,6 @@ interface InterSettingController {
      * 隐藏所有面板设置类视图
      */
     fun hideSettingView()
+
+    fun settingRelease()
 }

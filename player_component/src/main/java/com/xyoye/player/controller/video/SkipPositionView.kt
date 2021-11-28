@@ -2,17 +2,20 @@ package com.xyoye.player.controller.video
 
 import android.content.Context
 import android.graphics.Point
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutSkipPositionBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by xyoye on 2021/2/22.
@@ -25,6 +28,8 @@ class SkipPositionView(
 ) : LinearLayout(context, attrs, defStyleAttr), InterControllerView {
     private lateinit var mControlWrapper: ControlWrapper
 
+    private val attachLifecycle = (context as LifecycleOwner)
+
     private val viewBinding = DataBindingUtil.inflate<LayoutSkipPositionBinding>(
         LayoutInflater.from(context),
         R.layout.layout_skip_position,
@@ -32,21 +37,13 @@ class SkipPositionView(
         true
     )
 
-    private val hideViewRunnable = {
-        toggleVisible(false)
-    }
+    private val mDefaultTimeOutMs = 10 * 1000L
 
-    private var isShowed = false
     private var skipPosition = 0L
 
-    init {
-        post {
-            //默认隐藏
-            viewBinding.skipPositionLl.apply {
-                translationX = -width.toFloat()
-            }
-        }
+    private var hideSkipJob: Job? = null
 
+    init {
         viewBinding.skipCancelIv.setOnClickListener {
             toggleVisible(false)
         }
@@ -68,17 +65,18 @@ class SkipPositionView(
     }
 
     override fun onPlayStateChanged(playState: PlayState) {
-        if (playState == PlayState.STATE_PLAYING && !isShowed && skipPosition > 0) {
-            isShowed = true
-            post { toggleVisible(true) }
-            //10秒后隐藏
-            postDelayed(hideViewRunnable, 10 * 1000)
+        if (playState == PlayState.STATE_PLAYING && skipPosition > 0) {
+            toggleVisible(true)
+            hideSkipJob?.cancel()
+            hideSkipJob = attachLifecycle.lifecycleScope.launch {
+                delay(mDefaultTimeOutMs)
+                toggleVisible(false)
+            }
         }
 
         //退出播放前移除延迟
         if (playState == PlayState.STATE_IDLE) {
-            val mainHandle: Handler? = handler
-            mainHandle?.removeMessages(0)
+            hideSkipJob?.cancel()
         }
     }
 
@@ -87,7 +85,7 @@ class SkipPositionView(
     }
 
     override fun onLockStateChanged(isLocked: Boolean) {
-        toggleVisible(false)
+        toggleVisible(true)
     }
 
     override fun onVideoSizeChanged(videoSize: Point) {
@@ -101,20 +99,14 @@ class SkipPositionView(
 
     private fun toggleVisible(isVisible: Boolean) {
         if (isVisible) {
-            if (viewBinding.skipPositionLl.translationX != 0f) {
-                ViewCompat.animate(viewBinding.skipPositionLl)
-                    .translationX(0f)
-                    .setDuration(300)
-                    .start()
-            }
+            viewBinding.skipPositionLl.transitionToEnd()
         } else {
-            if (viewBinding.skipPositionLl.translationX == 0f) {
-                removeCallbacks(hideViewRunnable)
-                ViewCompat.animate(viewBinding.skipPositionLl)
-                    .translationX(-viewBinding.skipPositionLl.width.toFloat())
-                    .setDuration(300)
-                    .start()
-            }
+            viewBinding.skipPositionLl.transitionToStart()
         }
+    }
+
+    fun release() {
+        viewBinding.skipPositionLl.setProgress(0f, 0f)
+        hideSkipJob?.cancel()
     }
 }

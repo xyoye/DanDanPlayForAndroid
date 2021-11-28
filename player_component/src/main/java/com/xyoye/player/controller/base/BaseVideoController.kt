@@ -10,11 +10,13 @@ import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.OrientationHelper
 import com.xyoye.player.wrapper.*
+import kotlinx.coroutines.*
 
 /**
  * Created by xyoye on 2020/11/2.
@@ -40,7 +42,7 @@ abstract class BaseVideoController(
     protected var mPlayErrorBlock: (() -> Unit)? = null
 
     //隐藏视图Runnable
-    protected val mFadeOut = Runnable { hideController() }
+    protected var mHideControllerJob: Job? = null
 
     //刷新进度Runnable
     protected var mUpdateProgress: Runnable = object : Runnable {
@@ -135,12 +137,17 @@ abstract class BaseVideoController(
     override fun isControllerShowing() = mIsShowing
 
     override fun startFadeOut() {
-        stopFadeOut()
-        postDelayed(mFadeOut, mDefaultTimeOutMs)
+        mHideControllerJob?.cancel()
+        mHideControllerJob = attachLifecycle.lifecycleScope.launch {
+            delay(mDefaultTimeOutMs)
+            withContext(Dispatchers.Main) {
+                hideController()
+            }
+        }
     }
 
     override fun stopFadeOut() {
-        removeCallbacks(mFadeOut)
+        mHideControllerJob?.cancel()
     }
 
     override fun setLocked(locked: Boolean) {
@@ -237,16 +244,16 @@ abstract class BaseVideoController(
 
     open fun isWrapperInitialized() = ::mControlWrapper.isInitialized
 
+    open fun release() {
+        getDanmuController().danmuRelease()
+        getSubtitleController().subtitleRelease()
+        getSettingController().settingRelease()
+    }
+
     @CallSuper
     protected fun onPlayStateChanged(playState: PlayState) {
         when (playState) {
-            PlayState.STATE_IDLE -> {
-                mIsLocked = false
-                mIsShowing = false
-                removeAllControlComponent()
-            }
             PlayState.STATE_ERROR -> {
-                mIsShowing = false
                 mPlayErrorBlock?.invoke()
             }
             else -> {

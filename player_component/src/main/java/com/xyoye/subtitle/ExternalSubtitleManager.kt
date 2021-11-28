@@ -73,7 +73,7 @@ class ExternalSubtitleManager {
                 parserSource(subtitlePath)
             }.await()
 
-            if (mTimedTextObject != null && playWhenReady){
+            if (mTimedTextObject != null && playWhenReady) {
                 start()
             }
             onSubtitleLoaded?.invoke(subtitlePath, mTimedTextObject != null)
@@ -93,6 +93,12 @@ class ExternalSubtitleManager {
 
     fun stop() {
         mRunning = false
+    }
+
+    fun release() {
+        stop()
+        mTimedTextObject = null
+        handler.removeMessages(UPDATE_SUBTITLE_MSG)
     }
 
     fun setOffset(offsetMs: Long) {

@@ -49,7 +49,6 @@ class DanmuView(
     private lateinit var mControlWrapper: ControlWrapper
 
     private val mDanmakuContext = DanmakuContext.create()
-    private val mDanmakuParser = BiliDanmakuParser()
     private val mDanmakuLoader = BiliDanmakuLoader.instance()
     private val mKeywordFilter = KeywordFilter()
     private val mRegexFilter = RegexFilter()
@@ -150,6 +149,12 @@ class DanmuView(
         super.resume()
     }
 
+    override fun release() {
+        super.release()
+        clear()
+        clearDanmakusOnScreen()
+    }
+
     fun seekTo(timeMs: Long, isPlaying: Boolean) {
         if (isPlaying) {
             seekTo(timeMs + PlayerInitializer.Danmu.offsetPosition)
@@ -168,8 +173,9 @@ class DanmuView(
         mUrl = url
         mDanmakuLoader.load(url)
         if (mDanmakuLoader.dataSource != null) {
-            mDanmakuParser.load(mDanmakuLoader.dataSource)
-            prepare(mDanmakuParser, mDanmakuContext)
+            val danmakuParser = BiliDanmakuParser()
+            danmakuParser.load(mDanmakuLoader.dataSource)
+            prepare(danmakuParser, mDanmakuContext)
             isDanmuLoaded = false
         } else {
             ToastCenter.showOriginalToast("弹幕加载失败")

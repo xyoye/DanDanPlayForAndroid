@@ -84,4 +84,9 @@ class SubtitleImageView(
             subtitleView.setCues(cues)
         }
     }
+
+    fun release() {
+        lastCues = null
+        mSubtitleEnable = false
+    }
 }

@@ -123,6 +123,11 @@ class VideoController(
         return super.onBackPressed()
     }
 
+    override fun release() {
+        super.release()
+        skipPositionView.release()
+    }
+
     override fun destroy() {
 
     }

@@ -99,6 +99,10 @@ class DanmuController(context: Context) : InterDanmuController {
         danmuView.seekTo(timeMs, isPlaying)
     }
 
+    override fun danmuRelease() {
+        danmuView.release()
+    }
+
     fun setDanmuPath(url: String?) {
         danmuView.loadDanmu(url)
     }

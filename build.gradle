@@ -7,8 +7,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        //TODO: 2021/9/28 仅用于尚未迁移的ExoPlayer-Rtmp扩展，注意检查更新
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.2'
@@ -24,8 +22,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/'}
-        //TODO: 2021/9/28 仅用于尚未迁移的ExoPlayer-Rtmp扩展，注意检查更新
-        jcenter()
     }
 }
 

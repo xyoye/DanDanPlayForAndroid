@@ -4,9 +4,6 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
 import com.xyoye.player_component.R
@@ -16,9 +13,7 @@ import com.xyoye.player_component.widgets.BatteryView
  * Created by xyoye on 2021/11/16.
  */
 
-class BatteryHelper(
-    private val activity: AppCompatActivity
-) : LifecycleEventObserver {
+class BatteryHelper {
 
     private val batteryReceiver = BatteryBroadcastReceiver(
         battery = { onBatterChanged(it) },
@@ -29,14 +24,6 @@ class BatteryHelper(
     private var mBattery = 0
 
     private var batteryLowColor = R.color.text_red.toResColor()
-
-    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-        if (event == Lifecycle.Event.ON_CREATE) {
-            registerReceiver()
-        } else if (event == Lifecycle.Event.ON_DESTROY) {
-            unregisterReceiver()
-        }
-    }
 
     private fun onBatterChanged(battery: Int) {
         mBattery = battery
@@ -93,23 +80,22 @@ class BatteryHelper(
         }
     }
 
-    private fun registerReceiver() {
+    fun registerReceiver(activity: AppCompatActivity) {
         activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_POWER_CONNECTED))
         activity.registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_POWER_DISCONNECTED))
     }
 
-    private fun unregisterReceiver() {
+    fun unregisterReceiver(activity: AppCompatActivity) {
         activity.unregisterReceiver(batteryReceiver)
     }
 
     fun bindBatteryView(batteryView: BatteryView) {
-        if (this.batteryView == null) {
-            //只执行一次
-            batteryView.post {
-                activity.lifecycle.addObserver(this)
-            }
-        }
         this.batteryView = batteryView
+    }
+
+    fun release() {
+        this.batteryAnimator?.cancel()
+        this.batteryView = null
     }
 }

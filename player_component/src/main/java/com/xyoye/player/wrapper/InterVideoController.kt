@@ -1,5 +1,7 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.player.utils.MessageTime
+
 /**
  * Created by xyoye on 2020/11/1.
  *
@@ -22,6 +24,11 @@ interface InterVideoController {
      * 控制器视图是否正在显示
      */
     fun isControllerShowing(): Boolean
+
+    /**
+     * 提示消息
+     */
+    fun showMessage(text: String, time: MessageTime)
 
     /**
      * 设置播放器是否锁定

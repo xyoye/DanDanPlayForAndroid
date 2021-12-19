@@ -251,7 +251,7 @@ abstract class BaseVideoController(
     }
 
     @CallSuper
-    protected fun onPlayStateChanged(playState: PlayState) {
+    open fun onPlayStateChanged(playState: PlayState) {
         when (playState) {
             PlayState.STATE_ERROR -> {
                 mPlayErrorBlock?.invoke()

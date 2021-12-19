@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
-        android:focusable="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:focusable="true">
 
         <ImageView
             android:id="@+id/player_lock_iv"
@@ -42,6 +42,15 @@
             android:translationX="60dp"
             android:visibility="gone"
             tools:visibility="visible" />
+
+        <com.xyoye.player.controller.video.MessageContainer
+            android:id="@+id/message_container"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="75dp"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical" />
 
     </FrameLayout>
 </layout>

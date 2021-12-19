@@ -6,6 +6,7 @@ buildscript {
     ext.kotlin_coroutines = '1.4.2'
     repositories {
         google()
+        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -20,6 +21,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        jcenter()
         mavenCentral()
         maven { url 'https://developer.huawei.com/repo/'}
     }

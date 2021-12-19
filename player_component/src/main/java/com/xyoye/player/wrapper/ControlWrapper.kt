@@ -5,6 +5,7 @@ import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.player.utils.MessageTime
 
 /**
  * Created by xyoye on 2020/11/1.
@@ -102,6 +103,10 @@ class ControlWrapper(
     }
 
     override fun isControllerShowing() = mController.isControllerShowing()
+
+    override fun showMessage(text: String, time: MessageTime) {
+        mController.showMessage(text, time)
+    }
 
     override fun setLocked(locked: Boolean) {
         mController.setLocked(locked)

@@ -9,15 +9,18 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*
+import com.xyoye.player.utils.MessageTime
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
@@ -44,8 +47,9 @@ class VideoController(
     private val playerTopView = PlayerTopView(context)
     private val playerBotView = PlayerBottomView(context)
     private val gestureView = PlayerGestureView(context)
-    private val skipPositionView = SkipPositionView(context)
     private val loadingView = LoadingView(context)
+
+    private var lastPlayPosition = 0L
 
     private val controllerBinding = DataBindingUtil.inflate<LayoutPlayerControllerBinding>(
         LayoutInflater.from(context),
@@ -60,7 +64,6 @@ class VideoController(
         addControlComponent(gestureView)
         addControlComponent(playerTopView)
         addControlComponent(playerBotView)
-        addControlComponent(skipPositionView)
         addControlComponent(loadingView)
         addControlComponent(*mSettingController.getViews())
 
@@ -78,6 +81,10 @@ class VideoController(
     override fun getSubtitleController() = mSubtitleController
 
     override fun getSettingController() = mSettingController
+
+    override fun showMessage(text: String, time: MessageTime) {
+        controllerBinding.messageContainer.showMessage(text, time)
+    }
 
     override fun onLockStateChanged(isLocked: Boolean) {
         controllerBinding.playerLockIv.isSelected = isLocked
@@ -107,6 +114,13 @@ class VideoController(
         updateShotVisible(isVisible)
     }
 
+    override fun onPlayStateChanged(playState: PlayState) {
+        super.onPlayStateChanged(playState)
+        if (playState == PlayState.STATE_PLAYING) {
+            considerSeekToLastPlay()
+        }
+    }
+
     override fun onBackPressed(): Boolean {
         if (isLocked()) {
             showController()
@@ -125,7 +139,8 @@ class VideoController(
 
     override fun release() {
         super.release()
-        skipPositionView.release()
+        lastPlayPosition = 0
+        controllerBinding.messageContainer.clearMessage()
     }
 
     override fun destroy() {
@@ -159,7 +174,7 @@ class VideoController(
      * 设置上次播放位置
      */
     fun setLastPosition(position: Long) {
-        skipPositionView.setSkipPosition(position)
+        lastPlayPosition = position
     }
 
     /**
@@ -241,5 +256,13 @@ class VideoController(
             ViewCompat.animate(controllerBinding.playerShotIv).translationX(translateX)
                 .setDuration(300).start()
         }
+    }
+
+    private fun considerSeekToLastPlay() {
+        if (lastPlayPosition <= 0)
+            return
+        mControlWrapper.seekTo(lastPlayPosition)
+        showMessage("已为你定位至：${formatDuration(lastPlayPosition)}", MessageTime.TIPS)
+        lastPlayPosition = 0
     }
 }

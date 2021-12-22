@@ -91,7 +91,7 @@ object Dependencies {
             "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlin_coroutines}"
     }
 
-    object Squareup {
+    object Square {
         const val leakcanary = "com.squareup.leakcanary:leakcanary-android:2.6"
         const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
         const val retrofit_moshi = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"

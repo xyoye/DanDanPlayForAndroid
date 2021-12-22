@@ -22,8 +22,8 @@ dependencies {
     implementation(Dependencies.AndroidX.room)
 
     api(Dependencies.Alibaba.arouter_api)
-    api(Dependencies.Squareup.moshi)
+    api(Dependencies.Square.moshi)
 
-    kapt(Dependencies.Squareup.moshi_codegen)
+    kapt(Dependencies.Square.moshi_codegen)
     kapt(Dependencies.Alibaba.arouter_compiler)
 }

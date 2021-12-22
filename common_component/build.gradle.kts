@@ -29,7 +29,7 @@ kapt {
 }
 
 dependencies {
-    debugImplementation(Dependencies.Squareup.leakcanary)
+    debugImplementation(Dependencies.Square.leakcanary)
 
     api(project(":data_component"))
     api(project(":repository:seven_zip"))
@@ -65,8 +65,8 @@ dependencies {
     api(Dependencies.Tencent.bugly)
     api(Dependencies.Tencent.bugly_native)
 
-    api(Dependencies.Squareup.retrofit)
-    implementation(Dependencies.Squareup.retrofit_moshi)
+    api(Dependencies.Square.retrofit)
+    implementation(Dependencies.Square.retrofit_moshi)
 
     api(Dependencies.Github.glide)
     api(Dependencies.Github.nano_http)

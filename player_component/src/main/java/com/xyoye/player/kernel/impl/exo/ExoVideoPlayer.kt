@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
+import com.google.android.exoplayer2.video.VideoSize
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
  */
 
 class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Player.Listener {
-    private lateinit var exoplayer: SimpleExoPlayer
+    private lateinit var exoplayer: ExoPlayer
     private lateinit var mMediaSource: MediaSource
 
     private lateinit var mRenderersFactory: RenderersFactory
@@ -58,11 +59,11 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             mLoadControl = DefaultLoadControl()
         }
 
-        exoplayer = SimpleExoPlayer.Builder(
+        exoplayer = ExoPlayer.Builder(
             mContext,
             mRenderersFactory,
-            mTrackSelector,
             DefaultMediaSourceFactory(mContext),
+            mTrackSelector,
             mLoadControl,
             DefaultBandwidthMeter.getSingletonInstance(mContext),
             AnalyticsCollector(Clock.DEFAULT)
@@ -195,17 +196,12 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     //not support
     override fun getTcpSpeed(): Long = 0L
 
-    override fun onVideoSizeChanged(
-        width: Int,
-        height: Int,
-        unappliedRotationDegrees: Int,
-        pixelWidthHeightRatio: Float
-    ) {
-        mPlayerEventListener.onVideoSizeChange(width, height)
-        if (unappliedRotationDegrees > 0) {
+    override fun onVideoSizeChanged(videoSize: VideoSize) {
+        mPlayerEventListener.onVideoSizeChange(videoSize.width, videoSize.height)
+        if (videoSize.unappliedRotationDegrees > 0) {
             mPlayerEventListener.onInfo(
                 PlayerConstant.MEDIA_INFO_VIDEO_ROTATION_CHANGED,
-                unappliedRotationDegrees
+                videoSize.unappliedRotationDegrees
             )
         }
     }

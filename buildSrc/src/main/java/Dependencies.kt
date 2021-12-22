@@ -6,7 +6,7 @@ object Dependencies {
         const val room = "2.3.0"
         const val retrofit = "2.9.0"
         const val moshi = "1.12.0"
-        const val exoplayer = "2.15.1"
+        const val exoplayer = "2.16.1"
         const val lifecycle = "2.2.0"
         const val navigation = "2.3.0"
     }
@@ -20,7 +20,7 @@ object Dependencies {
         const val junit_ext = "androidx.test.ext:junit:1.1.1"
         const val espresso = "androidx.test.espresso:espresso-core:3.2.0"
 
-        const val core = "androidx.core:core-ktx:1.3.1"
+        const val core = "androidx.core:core-ktx:1.7.0"
         const val lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
         const val lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
 

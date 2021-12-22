@@ -8,6 +8,25 @@ plugins {
 
 applicationSetup()
 
+android {
+    compileSdk = Versions.compileSdkVersion
+    defaultConfig {
+        applicationId = Versions.applicationId
+        minSdk = Versions.minSdkVersion
+        targetSdk = Versions.targetSdkVersion
+        targetSdk = Versions.targetSdkVersion
+        versionCode = Versions.versionCode
+        versionName = Versions.versionName
+        multiDexEnabled = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
+        }
+    }
+}
+
 kapt {
     arguments {
         arg("AROUTER_MODULE_NAME", project.name)

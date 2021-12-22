@@ -18,16 +18,16 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     private lateinit var mVideoPlayer: AbstractVideoPlayer
 
     private val mSurfaceCallback = object : SurfaceHolder.Callback {
-        override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
 
         }
 
-        override fun surfaceDestroyed(holder: SurfaceHolder?) {
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
 
         }
 
-        override fun surfaceCreated(holder: SurfaceHolder?) {
-            if (this@RenderSurfaceView::mVideoPlayer.isInitialized && holder != null) {
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            if (this@RenderSurfaceView::mVideoPlayer.isInitialized) {
                 mVideoPlayer.setSurface(holder.surface)
             }
         }

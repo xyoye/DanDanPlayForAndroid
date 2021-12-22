@@ -52,6 +52,12 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
     override fun initView() {
         ARouter.getInstance().inject(this)
 
+        val realUrl = url
+        if (realUrl.isNullOrEmpty()) {
+            finish()
+            return
+        }
+
         title = titleText
 
         //进度条
@@ -92,7 +98,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
             }
         }
 
-        dataBinding.webView.loadUrl(url)
+        dataBinding.webView.loadUrl(realUrl)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

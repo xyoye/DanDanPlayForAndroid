@@ -203,8 +203,8 @@ class SlantedTextView : View {
 
     private fun calculateXY(canvas: Canvas, w: Int, h: Int): FloatArray {
         val xy = FloatArray(5)
-        var rect: Rect? = null
-        var rectF: RectF? = null
+        val rect: Rect?
+        val rectF: RectF?
         val offset = (mSlantedLength / 2).toInt()
         when (mode) {
             MODE_LEFT_TRIANGLE, MODE_LEFT -> {

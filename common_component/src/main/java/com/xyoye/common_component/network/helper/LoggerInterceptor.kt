@@ -216,7 +216,7 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
                 mediaType == null -> false
                 mediaType.type() == "text" -> true
                 else -> {
-                    mediaType.subtype().toLowerCase(Locale.getDefault()).run {
+                    mediaType.subtype().lowercase(Locale.getDefault()).run {
                         contains("x-www-form-urlencoded")
                                 || contains("json")
                                 || contains("xml")

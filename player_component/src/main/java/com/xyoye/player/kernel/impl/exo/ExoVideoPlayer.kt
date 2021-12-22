@@ -2,6 +2,7 @@ package com.xyoye.player.kernel.impl.exo
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.view.Surface
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.analytics.AnalyticsCollector
@@ -104,7 +105,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         }
 
         mIsPreparing = true
-        mMediaSource.addEventListener(Handler(), mMediaSourceEventListener)
+        mMediaSource.addEventListener(Handler(Looper.getMainLooper()), mMediaSourceEventListener)
         exoplayer.setMediaSource(mMediaSource)
         exoplayer.prepare()
     }

@@ -274,10 +274,10 @@ internal object TextPathUtils {
             pointList.append(i + 48, numbers[i])
         }
         // blank
-        pointList.append(' '.toInt(), floatArrayOf())
+        pointList.append(' '.code, floatArrayOf())
         // -
-        pointList.append('-'.toInt(), floatArrayOf(0f, 36f, 47f, 36f))
+        pointList.append('-'.code, floatArrayOf(0f, 36f, 47f, 36f))
         // .
-        pointList.append('.'.toInt(), floatArrayOf(24f, 60f, 24f, 72f))
+        pointList.append('.'.code, floatArrayOf(24f, 60f, 24f, 72f))
     }
 }

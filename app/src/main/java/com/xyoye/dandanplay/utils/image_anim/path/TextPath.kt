@@ -36,7 +36,7 @@ class TextPath constructor(str: String, scale: Float = 1f, textIntervalPx: Float
         val padding = 5
         var offsetForWidth = padding.toFloat()
         for (element in str) {
-            val pos = element.toInt()
+            val pos = element.code
             val key = TextPathUtils.pointList.indexOfKey(pos)
             if (key == -1) {
                 continue

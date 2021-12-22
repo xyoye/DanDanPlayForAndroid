@@ -8,7 +8,7 @@ import java.util.*
  */
 object FormatFactory {
     fun findFormat(path: String): TimedTextFileFormat? {
-        return when (getFileExtension(path).toUpperCase(Locale.ROOT)) {
+        return when (getFileExtension(path).uppercase(Locale.ROOT)) {
             "ASS" -> FormatASS()
             "SCC" -> FormatSCC()
             "SRT" -> FormatSRT()

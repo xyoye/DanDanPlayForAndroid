@@ -38,22 +38,22 @@ val supportSubtitleExtension = arrayOf(
 
 fun isVideoFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
-    return commonVideoExtension.contains(extension.toLowerCase(Locale.ROOT))
+    return commonVideoExtension.contains(extension.lowercase(Locale.ROOT))
 }
 
 fun isSubtitleFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
-    return supportSubtitleExtension.contains(extension.toLowerCase(Locale.ROOT))
+    return supportSubtitleExtension.contains(extension.lowercase(Locale.ROOT))
 }
 
 fun isDanmuFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
-    return "xml" == extension.toLowerCase(Locale.ROOT)
+    return "xml" == extension.lowercase(Locale.ROOT)
 }
 
 fun isTorrentFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
-    return extension.toLowerCase(Locale.ROOT) == "torrent"
+    return extension.lowercase(Locale.ROOT) == "torrent"
 }
 
 object MediaUtils {

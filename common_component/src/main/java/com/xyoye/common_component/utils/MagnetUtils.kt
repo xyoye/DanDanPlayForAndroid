@@ -25,9 +25,9 @@ object MagnetUtils {
 
         return when (magnet.length) {
             //SHA1(40位)
-            40 -> magnet.toUpperCase(Locale.ROOT)
+            40 -> magnet.uppercase()
             //MD5(32位)
-            32 -> magnet.toUpperCase(Locale.ROOT)
+            32 -> magnet.uppercase()
             else -> ""
         }
     }

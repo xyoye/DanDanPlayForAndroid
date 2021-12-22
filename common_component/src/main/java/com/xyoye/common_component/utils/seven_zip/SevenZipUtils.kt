@@ -19,8 +19,8 @@ object SevenZipUtils {
     fun getArchiveFormat(fileExtension: String): ArchiveFormat? {
         if (fileExtension.isEmpty()) return null
         for (format in ArchiveFormat.values()) {
-            val upperMethodName = format.methodName.toUpperCase(Locale.ROOT)
-            val upperExtension = fileExtension.toUpperCase(Locale.ROOT)
+            val upperMethodName = format.methodName.uppercase(Locale.ROOT)
+            val upperExtension = fileExtension.uppercase(Locale.ROOT)
             if (upperMethodName == upperExtension) {
                 return format
             }

@@ -3,7 +3,7 @@ package com.xyoye.player.kernel.impl.exo
 import android.net.Uri
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.database.StandaloneDatabaseProvider
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -11,7 +11,7 @@ import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.cache.Cache
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
@@ -64,7 +64,7 @@ object ExoMediaSourceHelper {
         val dataSourceFactory = if (isCache)
             getCacheDataSourceFactory()
         else
-            DefaultDataSourceFactory(BaseApplication.getAppContext(), mHttpDataSourceFactory)
+            DefaultDataSource.Factory(BaseApplication.getAppContext(), mHttpDataSourceFactory)
 
         return when (inferContentType(uri)) {
             C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
@@ -85,7 +85,7 @@ object ExoMediaSourceHelper {
             .setCache(mCache)
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             .setUpstreamDataSourceFactory(
-                DefaultDataSourceFactory(
+                DefaultDataSource.Factory(
                     BaseApplication.getAppContext(),
                     mHttpDataSourceFactory
                 )
@@ -96,7 +96,7 @@ object ExoMediaSourceHelper {
         return SimpleCache(
             PathHelper.getExoCacheDirectory(),
             LeastRecentlyUsedCacheEvictor(512L * 1024 * 1024),
-            ExoDatabaseProvider(BaseApplication.getAppContext())
+            StandaloneDatabaseProvider(BaseApplication.getAppContext())
         )
     }
 

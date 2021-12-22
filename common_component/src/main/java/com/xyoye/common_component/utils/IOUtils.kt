@@ -190,7 +190,7 @@ object IOUtils {
             var pos: Long = 0
             var count: Long
             while (pos < size) {
-                count = (size - pos).coerceAtMost(30 * 1024 * 1024)
+                count = (size - pos).coerceAtMost(30 * 1024 * 1024L)
                 pos += outputChannel.transferFrom(inputChannel, pos, count)
             }
         } finally {

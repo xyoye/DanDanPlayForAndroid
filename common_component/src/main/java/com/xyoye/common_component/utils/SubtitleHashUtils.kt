@@ -24,7 +24,7 @@ object SubtitleHashUtils {
                 file.seek(0)
                 file.read(buffer)
                 file.close()
-                return buffer2Hex(messageDigest.digest(buffer)).toUpperCase(Locale.ROOT)
+                return buffer2Hex(messageDigest.digest(buffer)).uppercase(Locale.ROOT)
             }
             val bufferSize = 0x5000
             val positions = longArrayOf(0, fileLength / 3, fileLength - bufferSize)
@@ -35,7 +35,7 @@ object SubtitleHashUtils {
                 file.read(buffer)
                 messageDigest.update(buffer)
             }
-            return buffer2Hex(messageDigest.digest()).toUpperCase(Locale.ROOT)
+            return buffer2Hex(messageDigest.digest()).uppercase(Locale.ROOT)
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: NoSuchAlgorithmException) {

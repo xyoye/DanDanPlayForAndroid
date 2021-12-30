@@ -8,7 +8,6 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.permission.requestPermissions
-import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.BottomActionDialog
@@ -70,7 +69,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 addItem<MediaLibraryEntity, ItemMediaLibraryBinding>(R.layout.item_media_library) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            libraryNameTv.setAutoSizeText(data.displayName, 12, 18)
+                            libraryNameTv.text = data.displayName
                             libraryUrlTv.text = when (data.mediaType) {
                                 MediaType.STREAM_LINK,
                                 MediaType.MAGNET_LINK,

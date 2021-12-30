@@ -38,6 +38,7 @@
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toStartOf="@id/filter_folder_cb"
+            app:layout_constraintHeight_max="44dp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@+id/folder_iv"
             app:layout_constraintTop_toTopOf="parent"
@@ -62,11 +63,11 @@
             android:id="@+id/filter_folder_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             style="@style/DividerStyle"

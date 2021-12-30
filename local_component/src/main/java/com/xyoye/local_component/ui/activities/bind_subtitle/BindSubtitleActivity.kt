@@ -18,7 +18,6 @@ import com.xyoye.common_component.adapter.paging.buildPagingAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.ToastCenter
@@ -104,7 +103,7 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
                         val language = "语言: ${data.language}"
 
                         positionTv.text = (position + 1).toString()
-                        subtitleNameTv.setAutoSizeText(data.name, 12, 14)
+                        subtitleNameTv.text = data.name
                         subtitleFormatTv.text = type
                         subtitleLanguageTv.text = language
                         subtitleTimeTv.text = data.time

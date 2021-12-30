@@ -36,7 +36,7 @@ class ScanFilterFragment : BaseFragment<ScanFilterFragmentViewModel, FragmentSca
                         itemBinding.apply {
                             val fileCountText = "${data.fileCount}视频"
 
-                            folderTv.setAutoSizeText(getFolderName(data.folderPath))
+                            folderTv.text = getFolderName(data.folderPath)
                             fileCountTv.text = fileCountText
 
                             folderIv.setImageResource(if (data.isFilter) R.drawable.ic_folder_filter else R.drawable.ic_folder)

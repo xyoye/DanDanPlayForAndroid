@@ -131,7 +131,7 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
                 addItem<SMBFile, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            fileNameTv.setAutoSizeText(data.name, 12, 17)
+                            fileNameTv.text = data.name
                             if (data.isDirectory) {
                                 fileDescribeTv.text = "目录"
                                 fileCoverIv.setImageResource(R.drawable.ic_folder)

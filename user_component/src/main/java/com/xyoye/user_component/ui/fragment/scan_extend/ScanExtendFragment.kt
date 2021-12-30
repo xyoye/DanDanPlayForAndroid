@@ -3,7 +3,6 @@ package com.xyoye.user_component.ui.fragment.scan_extend
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
-import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.FastClickFilter
@@ -56,7 +55,7 @@ class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentSca
                         itemBinding.apply {
                             val fileCountText = "${data.childCount}视频"
 
-                            folderTv.setAutoSizeText(getFolderName(data.folderPath))
+                            folderTv.text = getFolderName(data.folderPath)
                             fileCountTv.text = fileCountText
 
                             removeFolderIv.setOnClickListener {

@@ -37,6 +37,7 @@
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toStartOf="@id/remove_folder_iv"
+            app:layout_constraintHeight_max="44dp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@+id/folder_iv"
             app:layout_constraintTop_toTopOf="parent"

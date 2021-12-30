@@ -109,7 +109,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                         data as FolderBean
                         itemBinding.apply {
                             val folderName = getFolderName(data.folderPath)
-                            folderTv.setAutoSizeText(folderName)
+                            folderTv.text = folderName
                             folderTv.setTextColorRes(
                                 if (data.isLastPlay) R.color.text_theme else R.color.text_black
                             )
@@ -132,7 +132,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                             titleTv.setTextColorRes(
                                 if (data.isLastPlay) R.color.text_theme else R.color.text_black
                             )
-                            titleTv.setAutoSizeText(getFileNameNoExtension(data.filePath))
+                            titleTv.text = getFileNameNoExtension(data.filePath)
                             durationTv.text = formatDuration(data.videoDuration)
                             if (data.fileId != 0L) {
                                 val videoUri = IOUtils.getVideoUri(data.fileId)

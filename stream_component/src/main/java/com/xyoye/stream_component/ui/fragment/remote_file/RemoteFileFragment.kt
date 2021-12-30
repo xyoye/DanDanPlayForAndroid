@@ -7,7 +7,6 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseFragment
-import com.xyoye.common_component.extension.setAutoSizeText
 import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.RemoteHelper
@@ -69,7 +68,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                     checkType { data, _ -> data.isFolder }
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            folderTv.setAutoSizeText(data.Name)
+                            folderTv.text = data.Name
 //                            folderTv.setTextColorRes(
 //                                if (data.isLastPlay) R.color.text_theme else R.color.text_black
 //                            )
@@ -93,7 +92,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                     checkType { data, _ -> data.isFolder.not() }
                     initView { data, _, _ ->
                         itemBinding.run {
-                            titleTv.setAutoSizeText(data.getEpisodeName())
+                            titleTv.text = data.getEpisodeName()
                             durationTv.isGone = data.Duration == null
                             if (data.Duration != null) {
                                 durationTv.text = formatDuration(data.Duration!! * 1000)

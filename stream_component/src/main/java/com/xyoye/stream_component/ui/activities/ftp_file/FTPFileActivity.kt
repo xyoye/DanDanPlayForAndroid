@@ -131,7 +131,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
                 addItem<FTPFile, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            fileNameTv.setAutoSizeText(data.name, 12, 17)
+                            fileNameTv.text = data.name
                             if (data.isDirectory) {
                                 fileDescribeTv.text = "目录"
                                 fileCoverIv.setImageResource(R.drawable.ic_folder)
@@ -170,7 +170,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         }
     }
 
-    private fun openVideo(ftpFile: FTPFile){
+    private fun openVideo(ftpFile: FTPFile) {
         //仅支持视频文件
         if (!isVideoFile(ftpFile.name)) {
             ToastCenter.showWarning("不支持的视频文件格式")
@@ -178,7 +178,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         }
 
         val showTips = AppConfig.isShowFTPVideoTips()
-        if (!showTips){
+        if (!showTips) {
             viewModel.openVideoFile(ftpFile)
             return
         }
@@ -186,7 +186,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         CommonDialog.Builder().run {
             content = "FTP视频播放不能调整进度至未缓冲位置，请谨慎调整视频进度"
             addNegative()
-            addPositive{
+            addPositive {
                 it.dismiss()
                 viewModel.openVideoFile(ftpFile)
             }

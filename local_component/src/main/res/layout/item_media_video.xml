@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="86dp"
         android:background="@drawable/background_item_press">
 
         <ImageView
@@ -40,14 +40,14 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_tv"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="5dp"
             android:ellipsize="end"
-            android:gravity="start|center_vertical"
+            android:gravity="top"
             android:maxLines="3"
             android:textColor="@color/text_black"
             android:textSize="16sp"

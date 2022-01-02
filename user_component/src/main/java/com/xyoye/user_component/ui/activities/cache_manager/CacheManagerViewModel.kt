@@ -37,7 +37,6 @@ class CacheManagerViewModel : BaseViewModel() {
 
     //播放器缓存
     private val playCacheDirectory = PathHelper.getPlayCacheDirectory()
-    private val exoCacheDirectory = PathHelper.getPlayCacheDirectory()
     var playerDirectoryCacheSizeText = ObservableField("")
     var playerCacheDirectoryName = ObservableField("")
 
@@ -67,7 +66,6 @@ class CacheManagerViewModel : BaseViewModel() {
                 CacheType.SUBTITLE_CACHE -> clearCacheDirectory(subtitleDirectory)
                 CacheType.PLAY_CACHE -> {
                     clearCacheDirectory(playCacheDirectory)
-                    clearCacheDirectory(exoCacheDirectory)
                 }
                 CacheType.SCREEN_SHOT_CACHE -> clearCacheDirectory(screenShotDirectory)
                 CacheType.OTHER_CACHE -> {
@@ -75,10 +73,9 @@ class CacheManagerViewModel : BaseViewModel() {
                         danmuDirectory.absolutePath,
                         subtitleDirectory.absolutePath,
                         playCacheDirectory.absolutePath,
-                        exoCacheDirectory.absolutePath,
                         screenShotDirectory.absolutePath
                     )
-                    exoCacheDirectory.listFiles()?.forEach {
+                    playCacheDirectory.listFiles()?.forEach {
                         if (it.absolutePath !in cacheDir) {
                             clearCacheDirectory(it)
                         }
@@ -115,11 +112,8 @@ class CacheManagerViewModel : BaseViewModel() {
         subtitleDirectoryName.set("文件夹名称：${PathHelper.PATH_SUBTITLE}")
 
         //播放器缓存
-        val exoCacheDirectorySize = IOUtils.getDirectorySize(exoCacheDirectory)
         val playCacheDirectorySize = IOUtils.getDirectorySize(playCacheDirectory)
-        playerDirectoryCacheSizeText.set(
-            formatFileSize(playCacheDirectorySize + exoCacheDirectorySize)
-        )
+        playerDirectoryCacheSizeText.set(formatFileSize(playCacheDirectorySize))
         playerCacheDirectoryName.set("文件夹名称：${PathHelper.PATH_PLAY_CACHE}")
 
         //截图缓存

@@ -54,7 +54,10 @@ data class PlayHistoryEntity(
 
     @ColumnInfo(name = "extra")
     @Deprecated(message = "不再使用")
-    var extra: String? = null
+    var extra: String? = null,
+
+    @ColumnInfo(name = "unique_key")
+    var uniqueKey: String = ""
 ) {
     @Ignore
     var checked: Boolean = false

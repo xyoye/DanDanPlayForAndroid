@@ -5,6 +5,7 @@ import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
 
@@ -96,6 +97,10 @@ class TorrentMediaSource private constructor(
 
     override fun getHttpHeader(): Map<String, String>? {
         return null
+    }
+
+    override fun getUniqueKey(): String {
+        return getFileNameNoExtension(getTorrentPath())
     }
 
     override suspend fun indexSource(index: Int): GroupSource? {

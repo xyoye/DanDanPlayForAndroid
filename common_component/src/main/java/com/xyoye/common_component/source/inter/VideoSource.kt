@@ -18,4 +18,6 @@ interface VideoSource {
     fun getMediaType(): MediaType
 
     fun getHttpHeader(): Map<String, String>?
+
+    fun getUniqueKey(): String
 }

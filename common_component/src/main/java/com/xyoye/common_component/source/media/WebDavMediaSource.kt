@@ -1,6 +1,7 @@
 package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.source.helper.SourceHelper
 import com.xyoye.common_component.source.helper.WebDavMediaSourceHelper
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.GroupSource
@@ -116,6 +117,11 @@ class WebDavMediaSource private constructor(
 
     override fun getHttpHeader(): Map<String, String> {
         return authHeader
+    }
+
+    override fun getUniqueKey(): String {
+        val url = getVideoUrl()
+        return "webdav:/${SourceHelper.getHttpUniqueKey(url)}"
     }
 
     override suspend fun indexSource(index: Int): GroupSource? {

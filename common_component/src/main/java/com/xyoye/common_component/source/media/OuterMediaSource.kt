@@ -79,4 +79,8 @@ class OuterMediaSource private constructor(
         return null
     }
 
+    override fun getUniqueKey(): String {
+        return getVideoUrl()
+    }
+
 }

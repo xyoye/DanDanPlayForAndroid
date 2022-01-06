@@ -77,6 +77,12 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE play_history ADD COLUMN unique_key TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -93,7 +99,8 @@ class DatabaseManager private constructor() {
         MIGRATION_2_3,
         MIGRATION_3_4,
         MIGRATION_4_5,
-        MIGRATION_5_6
+        MIGRATION_5_6,
+        MIGRATION_6_7
     ).build()
 
 }

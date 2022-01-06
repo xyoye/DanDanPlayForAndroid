@@ -109,4 +109,8 @@ class SmbMediaSource private constructor(
     override fun getHttpHeader(): Map<String, String>? {
         return null
     }
+
+    override fun getUniqueKey(): String {
+        return rootPath + "\\" + getVideoTitle()
+    }
 }

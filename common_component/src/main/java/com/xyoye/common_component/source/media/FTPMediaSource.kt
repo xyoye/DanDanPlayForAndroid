@@ -116,4 +116,8 @@ class FTPMediaSource private constructor(
         return null
     }
 
+    override fun getUniqueKey(): String {
+        return rootPath + "/" + getVideoTitle()
+    }
+
 }

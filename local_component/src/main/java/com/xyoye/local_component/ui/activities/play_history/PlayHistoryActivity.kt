@@ -96,7 +96,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu?.let {
             menuInflater.inflate(R.menu.menu_history, it)
             removeItem = it.findItem(R.id.remove_history_item).apply { isVisible = false }

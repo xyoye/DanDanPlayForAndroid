@@ -24,6 +24,8 @@ object Dependencies {
         const val lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
         const val lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
 
+        const val activity_ktx = "androidx.activity:activity-ktx:1.4.0"
+
         const val appcompat = "androidx.appcompat:appcompat:1.2.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.4"

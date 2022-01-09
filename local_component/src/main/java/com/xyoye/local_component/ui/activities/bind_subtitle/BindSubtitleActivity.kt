@@ -167,7 +167,7 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_bind_subtitle, menu)
         return super.onCreateOptionsMenu(menu)
     }

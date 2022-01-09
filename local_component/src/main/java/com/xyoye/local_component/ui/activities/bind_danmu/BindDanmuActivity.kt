@@ -125,7 +125,7 @@ class BindDanmuActivity : BaseActivity<BindDanmuViewModel, ActivityBindDanmuBind
         viewModel.searchDanmuSource(lastSearchBean.animeName, lastSearchBean.episodeId)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_bind_danmu, menu)
         return super.onCreateOptionsMenu(menu)
     }

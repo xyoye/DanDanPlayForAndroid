@@ -1,6 +1,5 @@
 package com.xyoye.user_component.ui.activities.switch_themes
 
-import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
@@ -29,7 +28,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
         title = "深色模式"
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_switch_theme, menu)
         return super.onCreateOptionsMenu(menu)
     }

@@ -171,30 +171,20 @@ object DanmuUtils {
         val videoFile = File(videoPath)
         if (!videoFile.exists())
             return null
-
-        //可能存放弹幕的文件夹
-        val danmuDirectory = mutableListOf(
-            //弹幕下载目录
-            PathHelper.getDanmuDirectory()
-        )
-        //视频所在文件夹
-        videoFile.parentFile?.let {
-            danmuDirectory.add(it)
-        }
+        val parentDir = videoFile.parentFile
+            ?: return null
+        if (parentDir.exists().not())
+            return null
 
         //获取文件名，无后缀
         val videoNameNotExtension = getFileNameNoExtension(videoFile)
         val targetVideoName = "$videoNameNotExtension."
 
-        danmuDirectory.forEach { directory ->
-            if (directory.exists() && directory.isDirectory) {
-                //遍历文件夹
-                directory.listFiles()?.forEach {
-                    //存在可能是同名弹幕的文件
-                    isSameNameDanmu(it, targetVideoName)?.let { danmuPath ->
-                        return danmuPath
-                    }
-                }
+        //遍历文件夹
+        parentDir.listFiles()?.forEach {
+            //存在可能是同名弹幕的文件
+            isSameNameDanmu(it, targetVideoName)?.let { danmuPath ->
+                return danmuPath
             }
         }
         return null

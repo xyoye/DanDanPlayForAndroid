@@ -116,16 +116,10 @@ object SubtitleUtils {
         val videoFile = File(videoPath)
         if (!videoFile.exists())
             return null
-
-        //可能存字幕的文件夹
-        val subtitleDirectory = mutableListOf(
-            //字幕下载目录
-            PathHelper.getSubtitleDirectory()
-        )
-        //视频所在文件夹
-        videoFile.parentFile?.let {
-            subtitleDirectory.add(it)
-        }
+        val parentDir = videoFile.parentFile
+            ?: return null
+        if (parentDir.exists().not())
+            return null
 
         //获取文件名，无后缀
         val videoNameNotExtension = getFileNameNoExtension(videoFile)
@@ -133,15 +127,10 @@ object SubtitleUtils {
 
         val possibleList = mutableListOf<String>()
 
-        subtitleDirectory.forEach { directory ->
-            if (directory.exists() && directory.isDirectory) {
-                //遍历文件夹
-                directory.listFiles()?.forEach {
-                    //同名字幕的文件
-                    if (isSameNameSubtitle(it.absolutePath, targetVideoName)){
-                        possibleList.add(it.absolutePath)
-                    }
-                }
+        parentDir.listFiles()?.forEach {
+            //同名字幕的文件
+            if (isSameNameSubtitle(it.absolutePath, targetVideoName)){
+                possibleList.add(it.absolutePath)
             }
         }
 

@@ -2,8 +2,8 @@ package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.getFileName
-import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 
 /**
@@ -19,18 +19,15 @@ class OuterMediaSource private constructor(
 ) : VideoSource, ExtraSource {
 
     companion object {
-        fun build(
-            videoUrl: String,
-            historyEntity: PlayHistoryEntity?,
-            danmuPath: String?,
-            episodeId: Int,
-        ): OuterMediaSource {
+        suspend fun build(videoUrl: String): OuterMediaSource {
+            val history = PlayHistoryUtils.getPlayHistory(videoUrl, MediaType.OTHER_STORAGE)
+
             return OuterMediaSource(
                 videoUrl,
-                historyEntity?.videoPosition ?: 0L,
-                danmuPath,
-                episodeId,
-                historyEntity?.subtitlePath
+                history?.videoPosition ?: 0L,
+                history?.danmuPath,
+                history?.episodeId ?: 0,
+                history?.subtitlePath
             )
         }
     }

@@ -1,9 +1,7 @@
 package com.xyoye.player.utils
 
 enum class MessageTime(val time: Long) {
-    SHOT(1500),
+    SHOT(3000),
 
-    LONG(3000),
-
-    TIPS(5000)
+    LONG(5000)
 }

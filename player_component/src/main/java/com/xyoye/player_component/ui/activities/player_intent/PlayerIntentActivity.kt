@@ -59,7 +59,7 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
         if (videoUrl.isEmpty()) {
             videoUrl = intentData.toString()
         } else if (videoUrl.startsWith("file://")) {
-            videoUrl = videoUrl.decodeUrl().substring(7)
+            videoUrl = videoUrl.decodeUrl()
             viewModel.addUnrecognizedFile(videoUrl)
         }
 

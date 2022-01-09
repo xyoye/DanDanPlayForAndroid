@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.KeyEvent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -41,6 +42,8 @@ import java.io.File
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     PlayerReceiverListener {
+
+    private val danmuViewModel: PlayerDanmuViewModel by viewModels()
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
@@ -133,7 +136,17 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun initListener() {
+        danmuViewModel.loadDanmuLiveData.observe(this) {
+            val curVideoSource = dataBinding.danDanPlayer.getVideoSource()
+            val curVideoUrl = curVideoSource.getVideoUrl()
 
+            if (curVideoUrl == it.videoUrl && it.state == LoadDanmuState.MATCH_SUCCESS){
+                val danmuPath = it.danmuPath!!
+                videoController.showMessage(it.state.msg)
+                videoController.updateDanmu(danmuPath)
+                viewModel.bindSource(danmuPath, it.episodeId, curVideoSource.getVideoUrl(), false)
+            }
+        }
     }
 
     private fun initPlayer() {
@@ -170,6 +183,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (checkPlayParams(videoSource).not()) {
             return
         }
+        danmuViewModel.loadDanmu(videoSource!!)
         updatePlayer(videoSource!!)
         afterInitPlayer()
     }
@@ -200,7 +214,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 } else {
                     source.setDanmuPath(sourcePath)
                 }
-                viewModel.bindSource(sourcePath, source.getVideoUrl(), isSubtitle)
+                viewModel.bindSource(sourcePath, 0, source.getVideoUrl(), isSubtitle)
             }
             //发送弹幕
             videoController.observerSendDanmu {

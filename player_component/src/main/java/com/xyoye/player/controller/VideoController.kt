@@ -19,7 +19,10 @@ import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
-import com.xyoye.player.controller.video.*
+import com.xyoye.player.controller.video.LoadingView
+import com.xyoye.player.controller.video.PlayerBottomView
+import com.xyoye.player.controller.video.PlayerGestureView
+import com.xyoye.player.controller.video.PlayerTopView
 import com.xyoye.player.utils.MessageTime
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
@@ -242,6 +245,13 @@ class VideoController(
         mSubtitleController.updateSubtitle(subtitle)
     }
 
+    /**
+     * 更新弹幕
+     */
+    fun updateDanmu(danmuPath: String) {
+        mDanmuController.onDanmuSourceChanged(danmuPath)
+    }
+
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
         mSettingController.updateTrack(isAudio, trackData)
     }
@@ -262,7 +272,7 @@ class VideoController(
         if (lastPlayPosition <= 0)
             return
         mControlWrapper.seekTo(lastPlayPosition)
-        showMessage("已为你定位至：${formatDuration(lastPlayPosition)}", MessageTime.TIPS)
+        showMessage("已为你定位至：${formatDuration(lastPlayPosition)}", MessageTime.LONG)
         lastPlayPosition = 0
     }
 }

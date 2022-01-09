@@ -28,7 +28,7 @@ interface InterVideoController {
     /**
      * 提示消息
      */
-    fun showMessage(text: String, time: MessageTime)
+    fun showMessage(text: String, time: MessageTime = MessageTime.SHOT)
 
     /**
      * 设置播放器是否锁定

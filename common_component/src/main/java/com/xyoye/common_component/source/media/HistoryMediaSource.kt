@@ -62,4 +62,8 @@ class HistoryMediaSource(
             JsonHelper.parseJsonMap(it)
         }
     }
+
+    override fun getUniqueKey(): String {
+        return history.uniqueKey
+    }
 }

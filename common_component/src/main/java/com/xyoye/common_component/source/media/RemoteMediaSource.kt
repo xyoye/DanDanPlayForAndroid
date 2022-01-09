@@ -1,6 +1,7 @@
 package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.source.helper.RemoteMediaSourceHelper
+import com.xyoye.common_component.source.helper.SourceHelper
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.utils.PlayHistoryUtils
@@ -102,5 +103,10 @@ class RemoteMediaSource private constructor(
 
     override fun getHttpHeader(): Map<String, String>? {
         return null
+    }
+
+    override fun getUniqueKey(): String {
+        val url = getVideoUrl()
+        return "remote:/${SourceHelper.getHttpUniqueKey(url)}"
     }
 }

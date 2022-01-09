@@ -31,4 +31,8 @@ class StreamMediaSource(
     override fun getHttpHeader(): Map<String, String>? {
         return header
     }
+
+    override fun getUniqueKey(): String {
+        return getVideoUrl()
+    }
 }

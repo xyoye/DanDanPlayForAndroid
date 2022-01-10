@@ -143,8 +143,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             if (curVideoUrl == it.videoUrl && it.state == LoadDanmuState.MATCH_SUCCESS){
                 val danmuPath = it.danmuPath!!
                 videoController.showMessage(it.state.msg)
-                videoController.updateDanmu(danmuPath)
-                viewModel.bindSource(danmuPath, it.episodeId, curVideoSource.getVideoUrl(), false)
+                videoController.setDanmuPath(danmuPath)
+
+                if (curVideoSource is ExtraSource) {
+                    curVideoSource.setDanmuPath(danmuPath)
+                    curVideoSource.setEpisodeId(it.episodeId)
+                }
+                viewModel.storeDanmuSourceChange(danmuPath, it.episodeId, curVideoSource.getVideoUrl())
             }
         }
     }
@@ -207,14 +212,16 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             videoController.setDanmuPath(source.getDanmuPath())
             // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
             videoController.setSubtitlePath(source.getSubtitlePath())
-            //绑定资源
-            videoController.observerBindSource { sourcePath, isSubtitle ->
-                if (isSubtitle) {
-                    source.setSubtitlePath(sourcePath)
-                } else {
-                    source.setDanmuPath(sourcePath)
-                }
-                viewModel.bindSource(sourcePath, 0, source.getVideoUrl(), isSubtitle)
+            //当弹幕绑定更新，保存变更
+            videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
+                source.setDanmuPath(danmuPath)
+                source.setEpisodeId(episodeId)
+                viewModel.storeDanmuSourceChange(danmuPath, episodeId, source.getVideoUrl())
+            }
+            //当字幕绑定更新，保存变更
+            videoController.observeSubtitleSourceChanged {
+                source.setSubtitlePath(it)
+                viewModel.storeSubtitleSourceChange(it, source.getVideoUrl())
             }
             //发送弹幕
             videoController.observerSendDanmu {

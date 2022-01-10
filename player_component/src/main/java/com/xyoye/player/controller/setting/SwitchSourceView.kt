@@ -44,7 +44,6 @@ class SwitchSourceView(
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
     private var currentDirPath = mRootPath
     private var isSwitchSubtitle = false
-    private var bindSourceObserver: ((sourcePath: String, isSubtitle: Boolean) -> Unit)? = null
 
     private val mPathData = arrayListOf<FilePathBean>()
 
@@ -119,10 +118,6 @@ class SwitchSourceView(
 
     fun setSwitchType(isSwitchSubtitle: Boolean) {
         this.isSwitchSubtitle = isSwitchSubtitle
-    }
-
-    fun setBindSourceObserver(bindSourceObserver: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
-        this.bindSourceObserver = bindSourceObserver
     }
 
     private fun initRv() {
@@ -327,9 +322,7 @@ class SwitchSourceView(
         if (isSwitchSubtitle) {
             mControlWrapper.setSubtitlePath(data.filePath, playWhenReady = true)
         } else {
-            DDLog.i("切换弹幕源")
             mControlWrapper.onDanmuSourceChanged(data.filePath)
         }
-        bindSourceObserver?.invoke(data.filePath, isSwitchSubtitle)
     }
 }

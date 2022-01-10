@@ -151,6 +151,7 @@ class DanmuView(
 
     override fun release() {
         super.release()
+        mUrl = null
         clear()
         clearDanmakusOnScreen()
     }

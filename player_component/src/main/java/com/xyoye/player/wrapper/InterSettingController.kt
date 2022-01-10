@@ -28,5 +28,15 @@ interface InterSettingController {
      */
     fun hideSettingView()
 
+    /**
+     * 切换弹幕资源
+     */
+    fun onDanmuSourceChanged()
+
+    /**
+     * 切换字幕资源
+     */
+    fun onSubtitleSourceChanged()
+
     fun settingRelease()
 }

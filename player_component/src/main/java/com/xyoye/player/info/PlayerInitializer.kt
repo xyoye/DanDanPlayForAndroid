@@ -30,17 +30,27 @@ object PlayerInitializer {
     }
 
     object Danmu {
-        var offsetPosition = 0L
+        const val DEFAULT_POSITION = 0L
+        const val DEFAULT_SIZE = 40
+        const val DEFAULT_ALPHA = 100
+        const val DEFAULT_STOKE = 20
+        const val DEFAULT_SPEED = 35
+        const val DEFAULT_MOBILE_ENABLE = true
+        const val DEFAULT_TOP_ENABLE = true
+        const val DEFAULT_BOTTOM_ENABLE = true
+        const val DEFAULT_MAX_LINE = -1
+        const val DEFAULT_MAX_NUM = 0
 
-        var size = 40
-        var alpha = 100
-        var stoke = 20
-        var speed = 35
-        var mobileDanmu = true
-        var topDanmu = true
-        var bottomDanmu = true
-        var maxLine = -1
-        var maxNum = 0
+        var offsetPosition = DEFAULT_POSITION
+        var size = DEFAULT_SIZE
+        var alpha = DEFAULT_ALPHA
+        var stoke = DEFAULT_STOKE
+        var speed = DEFAULT_SPEED
+        var mobileDanmu = DEFAULT_MOBILE_ENABLE
+        var topDanmu = DEFAULT_TOP_ENABLE
+        var bottomDanmu = DEFAULT_BOTTOM_ENABLE
+        var maxLine = DEFAULT_MAX_LINE
+        var maxNum = DEFAULT_MAX_NUM
         var cloudBlock = false
         var updateInChoreographer = true
     }

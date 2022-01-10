@@ -20,6 +20,8 @@ class SettingController(context: Context) : InterSettingController {
     private val switchVideoSourceView = SwitchVideoSourceView(context)
     private val keywordBlockView = KeywordBlockView(context)
     private val screenShotView = ScreenShotView(context)
+    private val settingDanmuConfigView = SettingDanmuConfigView(context)
+    private val settingDanmuBlockView = SettingDanmuBlockView(context)
 
     private val settingViews : Array<InterSettingView> = arrayOf(
         playerSettingView,
@@ -28,7 +30,9 @@ class SettingController(context: Context) : InterSettingController {
         switchSourceView,
         switchVideoSourceView,
         keywordBlockView,
-        screenShotView
+        screenShotView,
+        settingDanmuConfigView,
+        settingDanmuBlockView
     )
 
     override fun switchSource(isSwitchSubtitle: Boolean) {
@@ -55,6 +59,14 @@ class SettingController(context: Context) : InterSettingController {
         }
     }
 
+    override fun onDanmuSourceChanged() {
+        danmuSettingView.onDanmuSourceChanged()
+    }
+
+    override fun onSubtitleSourceChanged() {
+
+    }
+
     override fun settingRelease() {
 
     }
@@ -69,10 +81,6 @@ class SettingController(context: Context) : InterSettingController {
         queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
     ) {
         keywordBlockView.setDatabaseBlock(add, remove, queryAll)
-    }
-
-    fun setBindSourceObserver(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
-        switchSourceView.setBindSourceObserver(block)
     }
 
     fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {

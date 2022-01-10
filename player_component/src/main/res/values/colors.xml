@@ -21,4 +21,6 @@
     <color name="setting_edit_hint_gray">#55ffffff</color>
 
     <color name="edit_offset_gray">#33ffffff</color>
+
+    <color name="player_view_divider">#a5a5a5</color>
 </resources>

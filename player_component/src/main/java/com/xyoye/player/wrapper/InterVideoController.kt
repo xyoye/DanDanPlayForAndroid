@@ -61,6 +61,16 @@ interface InterVideoController {
     fun showController(ignoreShowing: Boolean = false)
 
     /**
+     * 弹幕文件更新
+     */
+    fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int)
+
+    /**
+     * 弹幕文件更新
+     */
+    fun onSubtitleSourceUpdate(subtitlePath: String)
+
+    /**
      * 播放器销毁，预留方法
      */
     fun destroy()

@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
+import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.SendDanmuBean
@@ -54,6 +55,9 @@ class VideoController(
 
     private var lastPlayPosition = 0L
 
+    private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
+    private var mSubtitleSourceChanged: ((String) -> Unit)? = null
+
     private val controllerBinding = DataBindingUtil.inflate<LayoutPlayerControllerBinding>(
         LayoutInflater.from(context),
         R.layout.layout_player_controller,
@@ -87,6 +91,27 @@ class VideoController(
 
     override fun showMessage(text: String, time: MessageTime) {
         controllerBinding.messageContainer.showMessage(text, time)
+    }
+
+    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
+        val videoSource = mControlWrapper.getVideoSource()
+        if (videoSource is ExtraSource
+            && videoSource.getDanmuPath() == danmuPath
+            && videoSource.getEpisodeId() == episodeId
+        ){
+            return
+        }
+        mDanmuSourceChanged?.invoke(danmuPath, episodeId)
+    }
+
+    override fun onSubtitleSourceUpdate(subtitlePath: String) {
+        val videoSource = mControlWrapper.getVideoSource()
+        if (videoSource is ExtraSource
+            && videoSource.getSubtitlePath() == subtitlePath
+        ){
+            return
+        }
+        mSubtitleSourceChanged?.invoke(subtitlePath)
     }
 
     override fun onLockStateChanged(isLocked: Boolean) {
@@ -161,7 +186,7 @@ class VideoController(
      * 设置初始弹幕路径
      */
     fun setDanmuPath(url: String?) {
-        mDanmuController.setDanmuPath(url)
+        mControlWrapper.onDanmuSourceChanged(url ?: "")
     }
 
     /**
@@ -202,10 +227,17 @@ class VideoController(
     }
 
     /**
-     * 资源绑定回调
+     * 弹幕资源更新回调
      */
-    fun observerBindSource(block: (sourcePath: String, isSubtitle: Boolean) -> Unit) {
-        mSettingController.setBindSourceObserver(block)
+    fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: Int) -> Unit) {
+        mDanmuSourceChanged = block
+    }
+
+    /**
+     * 字幕资源更新回调
+     */
+    fun observeSubtitleSourceChanged(block: (subtitle: String) -> Unit) {
+        mSubtitleSourceChanged = block
     }
 
     /**
@@ -243,13 +275,6 @@ class VideoController(
      */
     fun updateSubtitle(subtitle: MixedSubtitle) {
         mSubtitleController.updateSubtitle(subtitle)
-    }
-
-    /**
-     * 更新弹幕
-     */
-    fun updateDanmu(danmuPath: String) {
-        mDanmuController.onDanmuSourceChanged(danmuPath)
     }
 
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {

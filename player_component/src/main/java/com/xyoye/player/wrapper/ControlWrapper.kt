@@ -130,6 +130,14 @@ class ControlWrapper(
         mController.showController(ignoreShowing)
     }
 
+    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
+        mController.onDanmuSourceUpdate(danmuPath, episodeId)
+    }
+
+    override fun onSubtitleSourceUpdate(subtitlePath: String) {
+        mController.onSubtitleSourceUpdate(subtitlePath)
+    }
+
     override fun destroy() {
         mController.destroy()
     }
@@ -190,8 +198,10 @@ class ControlWrapper(
         mDanmuController.toggleDanmuVisible()
     }
 
-    override fun onDanmuSourceChanged(filePath: String) {
+    override fun onDanmuSourceChanged(filePath: String, episodeId: Int) {
         mDanmuController.onDanmuSourceChanged(filePath)
+        mSettingController.onDanmuSourceChanged()
+        mController.onDanmuSourceUpdate(filePath, episodeId)
     }
 
     override fun allowSendDanmu(): Boolean {
@@ -279,6 +289,14 @@ class ControlWrapper(
 
     override fun hideSettingView() {
         mSettingController.hideSettingView()
+    }
+
+    override fun onDanmuSourceChanged() {
+        mSettingController.onDanmuSourceChanged()
+    }
+
+    override fun onSubtitleSourceChanged() {
+        mSettingController.onSubtitleSourceChanged()
     }
 
     override fun showSettingView(viewType: SettingViewType) {

@@ -1,530 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/player_setting_nsv"
+    <LinearLayout
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="@color/player_item_bg_color"
+        android:orientation="vertical"
+        android:padding="10dp"
         android:translationX="300dp"
         tools:translationX="0dp">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_action_view">
+
+            <TextView
+                android:id="@+id/tv_danmu_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/danmu_source"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_remove_danmu_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="5dp"
+                android:text="@string/remove"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_danmu_path"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:text="@string/not_loaded"
+                android:textColor="@color/text_red"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_danmu_source" />
+
+            <View
+                android:id="@+id/danmu_source_horizontal_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/player_view_divider"
+                app:layout_constraintTop_toBottomOf="@id/tv_danmu_path" />
+
+            <TextView
+                android:id="@+id/tv_switch_local_danmu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="@string/select_local_danmu"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintEnd_toStartOf="@id/danmu_source_vertical_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/danmu_source_horizontal_divider" />
+
+            <View
+                android:id="@+id/danmu_source_vertical_divider"
+                android:layout_width="0.5dp"
+                android:layout_height="0dp"
+                android:background="@color/player_view_divider"
+                app:layout_constraintBottom_toBottomOf="@id/tv_switch_local_danmu"
+                app:layout_constraintEnd_toStartOf="@id/tv_search_network_danmu"
+                app:layout_constraintStart_toEndOf="@id/tv_switch_local_danmu"
+                app:layout_constraintTop_toTopOf="@id/tv_switch_local_danmu" />
+
+            <TextView
+                android:id="@+id/tv_search_network_danmu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="@string/search_network_danmu"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/danmu_source_vertical_divider"
+                app:layout_constraintTop_toTopOf="@id/tv_switch_local_danmu" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_danmu_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_action_view"
             android:orientation="vertical"
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/tv_danmu_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/text_danmu_setting"
+                android:text="@string/danmu_config"
                 android:textColor="@color/text_white_immutable"
-                android:textSize="16sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="@string/text_source_path_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_source_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ellipsize="start"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/switch_danmu_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:paddingStart="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/text_source_change"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_size_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_size_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    tools:text="50%" />
-            </RelativeLayout>
-
-            <SeekBar
-                android:id="@+id/danmu_size_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:max="100" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_speed_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_speed_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    tools:text="50%" />
-            </RelativeLayout>
-
-            <SeekBar
-                android:id="@+id/danmu_speed_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:max="100" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_alpha_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_alpha_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    tools:text="100%" />
-            </RelativeLayout>
-
-            <SeekBar
-                android:id="@+id/danmu_alpha_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:max="100" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_project_alpha_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_stoke_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    tools:text="100%" />
-            </RelativeLayout>
-
-            <SeekBar
-                android:id="@+id/danmu_stoke_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:max="100" />
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_danmu_offset_tips"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
-
-            <RelativeLayout
+                android:id="@+id/tv_danmu_setting_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp">
-
-                <LinearLayout
-                    android:id="@+id/danmu_offset_time_ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/danmu_extra_time_reduce"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/edit_offset_gray"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_offset_reduce"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="18sp" />
-
-                    <EditText
-                        android:id="@+id/danmu_extra_time_et"
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:hint="@string/hint_danmu_offset"
-                        android:imeOptions="actionDone"
-                        android:inputType="numberDecimal"
-                        android:maxLength="50"
-                        android:maxLines="1"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="14sp"
-                        android:theme="@style/StyleSettingEdit"
-                        tools:text="0.0" />
-
-                    <TextView
-                        android:id="@+id/danmu_extra_time_add"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/edit_offset_gray"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_offset_add"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="#f9f9f9"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/tips_danmu_manager"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="16sp" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/tips_danmu_keyword_block"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
-
-                <TextView
-                    android:id="@+id/keyword_block_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:gravity="center"
-                    android:text="@string/action_manager_danmu_block"
-                    android:textColor="@color/text_theme"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_danmu_block"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/mobile_danmu_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_danmu_mobile" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_type_mobile"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/bottom_danmu_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_danmu_bottom" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_type_bottom"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/top_danmu_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_danmu_top" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_type_top"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/text_danmu_line_limit"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
-
-            <RelativeLayout
-                android:id="@+id/max_line_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
-
-                <TextView
-                    android:id="@+id/max_line_tv"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/background_setting_action_tv"
-                    android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/text_danmu_line_unlimited"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/max_line_et"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center"
-                    android:hint="@string/hint_danmu_line_limit"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:maxLength="50"
-                    android:maxLines="1"
-                    android:text=""
-                    android:textColor="@color/text_theme"
-                    android:textColorHint="@color/setting_edit_hint_gray"
-                    android:textSize="14sp"
-                    android:theme="@style/StyleSettingEdit" />
-            </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/text_danmu_screen_count"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
-
-            <RelativeLayout
-                android:id="@+id/number_limit_rl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
-
-                <TextView
-                    android:id="@+id/number_no_limit_tv"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/background_setting_action_tv"
-                    android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/text_danmu_screen_count_unlimited"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/number_auto_limit_tv"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/background_setting_action_tv"
-                    android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/text_danmu_screen_count_auto"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/number_input_limit_et"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center"
-                    android:hint="@string/hit_danmu_screen_count"
-                    android:imeOptions="actionDone"
-                    android:inputType="number"
-                    android:maxLength="50"
-                    android:maxLines="1"
-                    android:text=""
-                    android:textColor="@color/text_theme"
-                    android:textColorHint="@color/setting_edit_hint_gray"
-                    android:textSize="14sp"
-                    android:theme="@style/StyleSettingEdit" />
-            </RelativeLayout>
+                android:layout_marginTop="3dp"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_danmu_source"
+                tools:text="[大小：50%]    [速度：50%]    [时间：+50s]" />
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+        <LinearLayout
+            android:id="@+id/layout_danmu_block_setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_action_view"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/tv_danmu_block"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/danmu_block"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_danmu_block_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="start"
+                android:singleLine="true"
+                android:textColor="@color/text_gray"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_danmu_source"
+                tools:text="[滚动]  [顶部]  [底部]  [行数：∞]  [数量：自动]" />
+
+        </LinearLayout>
+    </LinearLayout>
 </layout>

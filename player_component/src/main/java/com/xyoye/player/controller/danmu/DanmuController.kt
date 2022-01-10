@@ -64,7 +64,7 @@ class DanmuController(context: Context) : InterDanmuController {
         danmuView.toggleVis()
     }
 
-    override fun onDanmuSourceChanged(filePath: String) {
+    override fun onDanmuSourceChanged(filePath: String, episodeId: Int) {
         danmuView.release()
         danmuView.loadDanmu(filePath)
     }
@@ -101,10 +101,6 @@ class DanmuController(context: Context) : InterDanmuController {
 
     override fun danmuRelease() {
         danmuView.release()
-    }
-
-    fun setDanmuPath(url: String?) {
-        danmuView.loadDanmu(url)
     }
 
     fun setCloudBlockLiveData(cloudBlockLiveData: LiveData<MutableList<DanmuBlockEntity>>?) {

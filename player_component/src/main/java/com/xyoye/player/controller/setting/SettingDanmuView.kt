@@ -1,22 +1,13 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
-import android.graphics.Point
+import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.inputmethod.EditorInfo
-import android.widget.LinearLayout
-import android.widget.SeekBar
-import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.utils.dp2px
-import com.xyoye.common_component.utils.hideKeyboard
-import com.xyoye.data_component.enums.PlayState
+import androidx.core.view.isVisible
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutSettingDanmuBinding
 
@@ -28,342 +19,113 @@ class SettingDanmuView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
-    private val mHideTranslateX = dp2px(300).toFloat()
-
-    private lateinit var mControlWrapper: ControlWrapper
-
-    private val viewBinding = DataBindingUtil.inflate<LayoutSettingDanmuBinding>(
-        LayoutInflater.from(context),
-        R.layout.layout_setting_danmu,
-        this,
-        true
-    )
+) : BaseSettingView<LayoutSettingDanmuBinding>(context, attrs, defStyleAttr) {
 
     init {
-        gravity = Gravity.END
-
-        initSettingView()
-
         initSettingListener()
     }
 
-    override fun attach(controlWrapper: ControlWrapper) {
-        mControlWrapper = controlWrapper
-    }
+    override fun getLayoutId() = R.layout.layout_setting_danmu
 
     override fun getSettingViewType() = SettingViewType.DANMU_SETTING
 
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
+        super.onSettingVisibilityChanged(isVisible)
         if (isVisible) {
-            viewBinding.danmuSourceTv.text = mControlWrapper.getDanmuUrl()
-            ViewCompat.animate(viewBinding.playerSettingNsv).translationX(0f).setDuration(500)
-                .start()
-        } else {
-            ViewCompat.animate(viewBinding.playerSettingNsv).translationX(mHideTranslateX)
-                .setDuration(500)
-                .start()
+            updateSettingView()
         }
     }
 
-    override fun isSettingShowing() = viewBinding.playerSettingNsv.translationX == 0f
+    fun onDanmuSourceChanged() {
+        val danmuPath = mControlWrapper.getDanmuUrl()
+        if (TextUtils.isEmpty(danmuPath)) {
+            viewBinding.tvDanmuPath.text = R.string.not_loaded.toResString()
+            viewBinding.tvDanmuPath.setTextColor(R.color.text_red.toResColor())
+            viewBinding.tvRemoveDanmuSource.isVisible = false
+            return
+        }
 
-    override fun getView() = this
-
-    override fun onVisibilityChanged(isVisible: Boolean) {
-
-    }
-
-    override fun onPlayStateChanged(playState: PlayState) {
-
-    }
-
-    override fun onProgressChanged(duration: Long, position: Long) {
-
-    }
-
-    override fun onLockStateChanged(isLocked: Boolean) {
-
-    }
-
-    override fun onVideoSizeChanged(videoSize: Point) {
-
-    }
-
-    private fun initSettingView() {
-        //文字大小
-        val danmuSizePercent = PlayerInitializer.Danmu.size
-        val danmuSizeText = "$danmuSizePercent%"
-        viewBinding.danmuSizeTv.text = danmuSizeText
-        viewBinding.danmuSizeSb.progress = danmuSizePercent
-
-        //弹幕速度
-        val danmuSpeedPercent = PlayerInitializer.Danmu.speed
-        val danmuSpeedText = "$danmuSpeedPercent%"
-        viewBinding.danmuSpeedTv.text = danmuSpeedText
-        viewBinding.danmuSpeedSb.progress = danmuSpeedPercent
-
-        //弹幕透明度
-        val danmuAlphaPercent = PlayerInitializer.Danmu.alpha
-        val danmuAlphaText = "$danmuAlphaPercent%"
-        viewBinding.danmuAlphaTv.text = danmuAlphaText
-        viewBinding.danmuAlphaSb.progress = danmuAlphaPercent
-
-        //弹幕描边宽度
-        val danmuStokePercent = PlayerInitializer.Danmu.stoke
-        val danmuStokeText = "$danmuStokePercent%"
-        viewBinding.danmuStokeTv.text = danmuStokeText
-        viewBinding.danmuStokeSb.progress = danmuStokePercent
-
-        //弹幕时间调节
-        val extraPosition = PlayerInitializer.Danmu.offsetPosition / 1000f
-        viewBinding.danmuExtraTimeEt.setText(extraPosition.toString())
-
-        //弹幕类型屏蔽
-        viewBinding.mobileDanmuIv.isSelected = !PlayerInitializer.Danmu.mobileDanmu
-        viewBinding.topDanmuIv.isSelected = !PlayerInitializer.Danmu.topDanmu
-        viewBinding.bottomDanmuIv.isSelected = !PlayerInitializer.Danmu.bottomDanmu
-
-        //滚动弹幕行数限制
-        updateMaxDanmuLine()
-
-        //弹幕同屏数量限制
-        updateMaxDanmuNum()
+        val path = danmuPath!!.replaceFirst("/storage/emulate/0", "根目录")
+        viewBinding.tvDanmuPath.text = path
+        viewBinding.tvDanmuPath.setTextColor(R.color.text_gray.toResColor())
+        viewBinding.tvRemoveDanmuSource.isVisible = true
     }
 
     private fun initSettingListener() {
-        viewBinding.danmuSizeSb.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val progressText = "$progress%"
-                viewBinding.danmuSizeTv.text = progressText
+        viewBinding.tvRemoveDanmuSource.setOnClickListener {
+            mControlWrapper.onDanmuSourceChanged("")
+        }
 
-                DanmuConfig.putDanmuSize(progress)
-                PlayerInitializer.Danmu.size = progress
-                mControlWrapper.updateDanmuSize()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
-        })
-
-        viewBinding.danmuSpeedSb.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val progressText = "$progress%"
-                viewBinding.danmuSpeedTv.text = progressText
-
-                DanmuConfig.putDanmuSpeed(progress)
-                PlayerInitializer.Danmu.speed = progress
-                mControlWrapper.updateDanmuSpeed()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
-        })
-
-        viewBinding.danmuAlphaSb.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val progressText = "$progress%"
-                viewBinding.danmuAlphaTv.text = progressText
-
-                DanmuConfig.putDanmuAlpha(progress)
-                PlayerInitializer.Danmu.alpha = progress
-                mControlWrapper.updateDanmuAlpha()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
-        })
-
-        viewBinding.danmuStokeSb.setOnSeekBarChangeListener(object :
-            SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val progressText = "$progress%"
-                viewBinding.danmuStokeTv.text = progressText
-
-                DanmuConfig.putDanmuStoke(progress)
-                PlayerInitializer.Danmu.stoke = progress
-                mControlWrapper.updateDanmuStoke()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
-        })
-
-        viewBinding.switchDanmuTv.setOnClickListener {
-            onSettingVisibilityChanged(false)
+        viewBinding.tvSwitchLocalDanmu.setOnClickListener {
             mControlWrapper.switchSource(false)
-        }
-
-        viewBinding.danmuExtraTimeReduce.setOnClickListener {
-            hideKeyboard(viewBinding.danmuExtraTimeEt)
-            viewBinding.danmuOffsetTimeLl.requestFocus()
-            PlayerInitializer.Danmu.offsetPosition -= 500
-            updateOffsetEt()
-            mControlWrapper.updateOffsetTime()
-        }
-
-        viewBinding.danmuExtraTimeAdd.setOnClickListener {
-            hideKeyboard(viewBinding.danmuExtraTimeEt)
-            viewBinding.danmuOffsetTimeLl.requestFocus()
-            PlayerInitializer.Danmu.offsetPosition += 500
-            updateOffsetEt()
-            mControlWrapper.updateOffsetTime()
-        }
-
-        viewBinding.danmuExtraTimeEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(viewBinding.danmuExtraTimeEt)
-                viewBinding.danmuOffsetTimeLl.requestFocus()
-
-                val extraTimeText = viewBinding.danmuExtraTimeEt.text.toString()
-                val newOffsetSecond = extraTimeText.toFloatOrNull() ?: 0f
-
-                PlayerInitializer.Danmu.offsetPosition = (newOffsetSecond * 1000).toLong()
-                updateOffsetEt()
-                mControlWrapper.updateOffsetTime()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-
-        viewBinding.mobileDanmuIv.setOnClickListener {
-            val newState = !PlayerInitializer.Danmu.mobileDanmu
-            viewBinding.mobileDanmuIv.isSelected = !newState
-            PlayerInitializer.Danmu.mobileDanmu = newState
-            DanmuConfig.putShowMobileDanmu(newState)
-            mControlWrapper.updateMobileDanmuState()
-        }
-
-        viewBinding.topDanmuIv.setOnClickListener {
-            val newState = !PlayerInitializer.Danmu.topDanmu
-            viewBinding.topDanmuIv.isSelected = !newState
-            PlayerInitializer.Danmu.topDanmu = newState
-            DanmuConfig.putShowTopDanmu(newState)
-            mControlWrapper.updateTopDanmuState()
-        }
-
-        viewBinding.bottomDanmuIv.setOnClickListener {
-            val newState = !PlayerInitializer.Danmu.bottomDanmu
-            viewBinding.bottomDanmuIv.isSelected = !newState
-            PlayerInitializer.Danmu.bottomDanmu = newState
-            DanmuConfig.putShowBottomDanmu(newState)
-            mControlWrapper.updateBottomDanmuState()
-        }
-
-        viewBinding.maxLineTv.setOnClickListener {
-            hideKeyboard(viewBinding.maxLineEt)
-            viewBinding.maxLineLl.requestFocus()
-            PlayerInitializer.Danmu.maxLine = -1
-            DanmuConfig.putDanmuMaxLine(-1)
-            updateMaxDanmuLine()
-            mControlWrapper.updateMaxLine()
-        }
-
-        viewBinding.maxLineEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(viewBinding.maxLineEt)
-                viewBinding.maxLineLl.requestFocus()
-
-                //输入为空或0，设置为五限制
-                val maxLineText = viewBinding.maxLineEt.text.toString()
-                var newMaxLine = if (maxLineText.isEmpty()) -1 else maxLineText.toInt()
-                newMaxLine = if (newMaxLine == 0) -1 else newMaxLine
-
-                PlayerInitializer.Danmu.maxLine = newMaxLine
-                DanmuConfig.putDanmuMaxLine(newMaxLine)
-                updateMaxDanmuLine()
-                mControlWrapper.updateMaxLine()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-
-        viewBinding.numberNoLimitTv.setOnClickListener {
-            viewBinding.numberLimitRl.requestFocus()
-            hideKeyboard(viewBinding.numberInputLimitEt)
-            PlayerInitializer.Danmu.maxNum = 0
-            DanmuConfig.putDanmuMaxCount(0)
-            updateMaxDanmuNum()
-            mControlWrapper.updateMaxScreenNum()
-        }
-
-        viewBinding.numberAutoLimitTv.setOnClickListener {
-            viewBinding.numberLimitRl.requestFocus()
-            hideKeyboard(viewBinding.numberInputLimitEt)
-            PlayerInitializer.Danmu.maxNum = -1
-            DanmuConfig.putDanmuMaxCount(-1)
-            updateMaxDanmuNum()
-            mControlWrapper.updateMaxScreenNum()
-        }
-
-        viewBinding.numberInputLimitEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewBinding.numberLimitRl.requestFocus()
-                hideKeyboard(viewBinding.numberInputLimitEt)
-
-                //输入为空，设置为五限制
-                val maxNumText = viewBinding.numberInputLimitEt.text.toString()
-                val newMaxNum = maxNumText.toIntOrNull() ?: 0
-
-                PlayerInitializer.Danmu.maxNum = newMaxNum
-                DanmuConfig.putDanmuMaxCount(newMaxNum)
-                updateMaxDanmuNum()
-                mControlWrapper.updateMaxScreenNum()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-
-        viewBinding.keywordBlockTv.setOnClickListener {
             onSettingVisibilityChanged(false)
-            mControlWrapper.showSettingView(SettingViewType.KEYWORD_BLOCK)
+        }
+
+        viewBinding.tvSearchNetworkDanmu.setOnClickListener {
+            onSettingVisibilityChanged(false)
+        }
+
+        viewBinding.layoutDanmuConfig.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.DANMU_SETTING_CONFIG)
+            onSettingVisibilityChanged(false)
+        }
+
+        viewBinding.layoutDanmuBlockSetting.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.DANMU_SETTING_BLOCK)
+            onSettingVisibilityChanged(false)
         }
     }
 
-    private fun updateOffsetEt() {
-        val offsetSecond = PlayerInitializer.Danmu.offsetPosition / 1000f
-        viewBinding.danmuExtraTimeEt.setText(offsetSecond.toString())
+    private fun updateSettingView() {
+        viewBinding.tvDanmuSettingDesc.text = getSettingParams()
+
+        viewBinding.tvDanmuBlockDesc.text = getBlockSetting()
     }
 
-    private fun updateMaxDanmuLine() {
-        if (PlayerInitializer.Danmu.maxLine == -1) {
-            viewBinding.maxLineTv.isSelected = true
-            viewBinding.maxLineEt.setText("")
+    private fun getSettingParams(): String {
+        val params = StringBuilder()
+        val danmuSizePercent = PlayerInitializer.Danmu.size
+        params.append("[大小：").append(danmuSizePercent).append("%]").append("    ")
+
+        val danmuSpeedPercent = PlayerInitializer.Danmu.speed
+        params.append("[速度：").append(danmuSpeedPercent).append("%]").append("    ")
+
+        if (PlayerInitializer.Danmu.offsetPosition != 0L) {
+            val extraPosition = PlayerInitializer.Danmu.offsetPosition / 1000f
+            val extraPositionStr = if (extraPosition > 0) "+$extraPosition" else "-$extraPosition"
+            params.append("[时间：").append(extraPositionStr).append("]")
+        }
+        return params.toString().trim()
+    }
+
+    private fun getBlockSetting(): String {
+        val setting = StringBuilder()
+        if (PlayerInitializer.Danmu.mobileDanmu.not()) {
+            setting.append("[滚动]").append("  ")
+        }
+        if (PlayerInitializer.Danmu.topDanmu.not()) {
+            setting.append("[顶部]").append("  ")
+        }
+        if (PlayerInitializer.Danmu.bottomDanmu.not()) {
+            setting.append("[底部]").append("  ")
+        }
+        if (PlayerInitializer.Danmu.maxLine == PlayerInitializer.Danmu.DEFAULT_MAX_LINE) {
+            setting.append("[行数：∞]").append("  ")
         } else {
-            viewBinding.maxLineTv.isSelected = false
-            viewBinding.maxLineEt.setText(PlayerInitializer.Danmu.maxLine.toString())
+            setting.append("[行数：").append(PlayerInitializer.Danmu.maxLine).append("]  ")
         }
-    }
-
-    private fun updateMaxDanmuNum() {
         when (PlayerInitializer.Danmu.maxNum) {
-            -1 -> {
-                viewBinding.numberNoLimitTv.isSelected = false
-                viewBinding.numberAutoLimitTv.isSelected = true
-                viewBinding.numberInputLimitEt.setText("")
+            PlayerInitializer.Danmu.DEFAULT_MAX_NUM -> {
+                setting.append("[数量：∞]")
             }
-            0 -> {
-                viewBinding.numberNoLimitTv.isSelected = true
-                viewBinding.numberAutoLimitTv.isSelected = false
-                viewBinding.numberInputLimitEt.setText("")
+            -1 -> {
+                setting.append("[数量：自动]")
             }
             else -> {
-                viewBinding.numberNoLimitTv.isSelected = false
-                viewBinding.numberAutoLimitTv.isSelected = false
-                viewBinding.numberInputLimitEt.setText(PlayerInitializer.Danmu.maxNum.toString())
+                setting.append("[数量：").append(PlayerInitializer.Danmu.maxNum).append("]")
             }
         }
 
+        return setting.toString().trim()
     }
 }

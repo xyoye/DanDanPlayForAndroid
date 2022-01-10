@@ -71,17 +71,19 @@ class PlayerViewModel : BaseViewModel() {
         }
     }
 
-    fun bindSource(sourcePath: String, episodeId: Int, videoPath: String, isSubtitle: Boolean) {
+    fun storeDanmuSourceChange(danmuPath: String, episodeId: Int, videoPath: String) {
         viewModelScope.launch {
-            if (isSubtitle) {
-                DatabaseManager.instance.getVideoDao().updateSubtitle(
-                    videoPath, sourcePath
-                )
-            } else {
-                DatabaseManager.instance.getVideoDao().updateDanmu(
-                    videoPath, sourcePath, episodeId
-                )
-            }
+            DatabaseManager.instance.getVideoDao().updateDanmu(
+                videoPath, danmuPath, episodeId
+            )
+        }
+    }
+
+    fun storeSubtitleSourceChange(subtitle: String, videoPath: String) {
+        viewModelScope.launch {
+            DatabaseManager.instance.getVideoDao().updateSubtitle(
+                videoPath, subtitle
+            )
         }
     }
 

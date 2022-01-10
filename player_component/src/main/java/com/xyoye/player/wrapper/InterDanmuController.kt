@@ -71,7 +71,7 @@ interface InterDanmuController {
     /**
      * 切换弹幕资源
      */
-    fun onDanmuSourceChanged(filePath: String)
+    fun onDanmuSourceChanged(filePath: String, episodeId: Int = 0)
 
     /**
      * 是否允许发送弹幕

@@ -17,5 +17,9 @@ enum class SettingViewType {
 
     SCREEN_SHOT,
 
-    SWITCH_VIDEO_SOURCE
+    SWITCH_VIDEO_SOURCE,
+
+    DANMU_SETTING_CONFIG,
+
+    DANMU_SETTING_BLOCK
 }

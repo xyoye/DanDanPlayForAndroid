@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.LoadDanmuState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.InterSettingController
 
@@ -93,5 +94,9 @@ class SettingController(context: Context) : InterSettingController {
         } else {
             subtitleSettingView.updateSubtitleTrack(trackData)
         }
+    }
+
+    fun updateLoadDanmuState(state: LoadDanmuState) {
+        danmuSettingView.updateLoadDanmuSate(state)
     }
 }

@@ -139,8 +139,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         danmuViewModel.loadDanmuLiveData.observe(this) {
             val curVideoSource = dataBinding.danDanPlayer.getVideoSource()
             val curVideoUrl = curVideoSource.getVideoUrl()
+            if (curVideoUrl != it.videoUrl){
+                return@observe
+            }
 
-            if (curVideoUrl == it.videoUrl && it.state == LoadDanmuState.MATCH_SUCCESS){
+            videoController.updateLoadDanmuState(it.state)
+            if (it.state == LoadDanmuState.MATCH_SUCCESS){
                 val danmuPath = it.danmuPath!!
                 videoController.showMessage(it.state.msg)
                 videoController.setDanmuPath(danmuPath)

@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import androidx.core.view.isVisible
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResString
+import com.xyoye.data_component.enums.LoadDanmuState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
@@ -49,6 +50,12 @@ class SettingDanmuView(
         viewBinding.tvDanmuPath.text = path
         viewBinding.tvDanmuPath.setTextColor(R.color.text_gray.toResColor())
         viewBinding.tvRemoveDanmuSource.isVisible = true
+    }
+
+    fun updateLoadDanmuSate(state: LoadDanmuState) {
+        viewBinding.tvDanmuPath.text = state.msg
+        viewBinding.tvDanmuPath.setTextColor(R.color.text_gray.toResColor())
+        viewBinding.tvRemoveDanmuSource.isVisible = false
     }
 
     private fun initSettingListener() {

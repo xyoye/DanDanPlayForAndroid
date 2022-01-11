@@ -14,6 +14,7 @@ import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.LoadDanmuState
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.base.GestureVideoController
@@ -277,8 +278,18 @@ class VideoController(
         mSubtitleController.updateSubtitle(subtitle)
     }
 
+    /**
+     * 更新音频/字幕流
+     */
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
         mSettingController.updateTrack(isAudio, trackData)
+    }
+
+    /**
+     * 更新自动匹配弹幕状态
+     */
+    fun updateLoadDanmuState(state: LoadDanmuState) {
+        mSettingController.updateLoadDanmuState(state)
     }
 
     private fun updateShotVisible(isVisible: Boolean) {

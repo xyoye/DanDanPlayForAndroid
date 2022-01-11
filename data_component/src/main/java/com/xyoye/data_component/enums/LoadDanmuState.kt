@@ -5,13 +5,13 @@ package com.xyoye.data_component.enums
  */
 
 enum class LoadDanmuState(val msg: String) {
-    NOT_SUPPORTED("不支持"),
+    NOT_SUPPORTED("不支持自动匹配弹幕，请手动加载"),
 
-    COLLECTING("数据收集中"),
+    COLLECTING("正在收集自动匹配弹幕所需数据"),
 
-    MATCHING("正在匹配"),
+    MATCHING("正在自动匹配弹幕"),
 
-    NO_MATCHED("无相关弹幕"),
+    NO_MATCHED("未匹配到弹幕，请手动加载"),
 
     MATCH_SUCCESS("匹配弹幕成功")
 }

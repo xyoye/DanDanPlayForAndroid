@@ -67,7 +67,7 @@ object SmbSourceFactory {
         }
 
         //匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
             //目标文件名
             val targetFileName = getFileNameNoExtension(smbFile.name) + ".xml"
             val targetFile = extSources.find { it.name == targetFileName }
@@ -96,7 +96,7 @@ object SmbSourceFactory {
         }
 
         //匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()) {
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
             val videoFileName = getFileNameNoExtension(smbFile.name) + "."
             val targetFile = extSources.find {
                 SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)

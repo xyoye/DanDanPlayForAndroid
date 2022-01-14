@@ -40,13 +40,9 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
     inner class DanmuSettingDataStore : PreferenceDataStore() {
         override fun getBoolean(key: String?, defValue: Boolean): Boolean {
             return when (key) {
-                "auto_load_local_danmu" -> DanmuConfig.isAutoLoadLocalDanmu()
-                "auto_load_network_danmu" -> DanmuConfig.isAutoLoadNetworkDanmu()
+                "auto_load_same_name_danmu" -> DanmuConfig.isAutoLoadSameNameDanmu()
+                "auto_match_danmu" -> DanmuConfig.isAutoMatchDanmu()
                 "danmu_update_in_choreographer" -> DanmuConfig.isDanmuUpdateInChoreographer()
-                "show_dialog_before_play" -> DanmuConfig.isShowDialogBeforePlay()
-                "auto_launch_danmu_before_play" -> DanmuConfig.isAutoLaunchDanmuBeforePlay()
-                "auto_load_danmu_network_storage" -> DanmuConfig.isAutoLoadDanmuNetworkStorage()
-                "auto_match_danmu_network_storage" -> DanmuConfig.isAutoMatchDanmuNetworkStorage()
                 "danmu_cloud_block" -> DanmuConfig.isCloudDanmuBlock()
                 "danmu_debug" -> DanmuConfig.isDanmuDebug()
                 else -> super.getBoolean(key, defValue)
@@ -55,13 +51,9 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
 
         override fun putBoolean(key: String?, value: Boolean) {
             when (key) {
-                "auto_load_local_danmu" -> DanmuConfig.putAutoLoadLocalDanmu(value)
-                "auto_load_network_danmu" -> DanmuConfig.putAutoLoadNetworkDanmu(value)
+                "auto_load_same_name_danmu" -> DanmuConfig.putAutoLoadSameNameDanmu(value)
+                "auto_match_danmu" -> DanmuConfig.putAutoMatchDanmu(value)
                 "danmu_update_in_choreographer" -> DanmuConfig.putDanmuUpdateInChoreographer(value)
-                "show_dialog_before_play" -> DanmuConfig.putShowDialogBeforePlay(value)
-                "auto_launch_danmu_before_play" -> DanmuConfig.putAutoLaunchDanmuBeforePlay(value)
-                "auto_load_danmu_network_storage" -> DanmuConfig.putAutoLoadDanmuNetworkStorage(value)
-                "auto_match_danmu_network_storage" -> DanmuConfig.putAutoMatchDanmuNetworkStorage(value)
                 "danmu_cloud_block" -> DanmuConfig.putCloudDanmuBlock(value)
                 "danmu_debug" -> DanmuConfig.putDanmuDebug(value)
                 else -> super.putBoolean(key, value)

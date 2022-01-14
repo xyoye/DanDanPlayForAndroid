@@ -77,7 +77,7 @@ object FTPSourceFactory {
         }
 
         //匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadDanmuNetworkStorage()) {
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
             val targetFileName = getFileNameNoExtension(ftpFile.name) + ".xml"
             val danmuFTPFile = extSources.find { it.name == targetFileName }
 
@@ -106,7 +106,7 @@ object FTPSourceFactory {
         }
 
         //匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSubtitleNetworkStorage()) {
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
             val videoFileName = getFileNameNoExtension(ftpFile.name) + "."
 
             val danmuFTPFile = extSources.find {

@@ -53,34 +53,17 @@ object DanmuConfigTable {
     /**
      * -------------播放器设置-----------
      */
-
-    //自动加载本地弹幕
+    //自动加载同名弹幕
     @MMKVFiled
-    const val autoLoadLocalDanmu = true
+    const val autoLoadSameNameDanmu = true
 
-    //自动加载网络弹幕
+    //自动匹配同名弹幕
     @MMKVFiled
-    const val autoLoadNetworkDanmu = true
-
-    //网络视频自动加载同名弹幕
-    @MMKVFiled
-    const val autoLoadDanmuNetworkStorage = true
-
-    //网络视频自动匹配字幕
-    @MMKVFiled
-    const val autoMatchDanmuNetworkStorage = true
+    const val autoMatchDanmu = true
 
     //根据屏幕刷新率绘制弹幕
     @MMKVFiled
     const val danmuUpdateInChoreographer = true
-
-    //【外部视频】展示选择弹幕弹窗
-    @MMKVFiled
-    const val showDialogBeforePlay = true
-
-    //【外部视频】自动进入选择弹幕
-    @MMKVFiled
-    const val autoLaunchDanmuBeforePlay = false
 
     @MMKVFiled
     const val danmuDebug = false

@@ -188,7 +188,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (checkPlayParams(videoSource).not()) {
             return
         }
-        danmuViewModel.loadDanmu(videoSource!!)
+        if (DanmuConfig.isAutoMatchDanmu()) {
+            danmuViewModel.loadDanmu(videoSource!!)
+        }
         updatePlayer(videoSource!!)
         afterInitPlayer()
     }

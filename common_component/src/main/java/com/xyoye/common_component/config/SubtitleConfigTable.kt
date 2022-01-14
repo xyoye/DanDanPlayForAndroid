@@ -33,16 +33,11 @@ object SubtitleConfigTable {
     /**
      * -------------播放器设置-----------
      */
-
-    //自动加载本地字幕
+    //自动加载同名字幕
     @MMKVFiled
-    const val autoLoadLocalSubtitle = true
+    const val autoLoadSameNameSubtitle = true
 
-    //自动加载网络字幕
+    //自动匹配同名字幕
     @MMKVFiled
-    const val autoLoadNetworkSubtitle = false
-
-    //网络视频自动加载同名字幕
-    @MMKVFiled
-    const val autoLoadSubtitleNetworkStorage = true
+    const val autoMatchSubtitle = true
 }

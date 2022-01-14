@@ -2,27 +2,18 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="本地视频加载策略">
+    <PreferenceCategory android:title="字幕加载策略">
         <SwitchPreference
-            android:key="auto_load_local_subtitle"
-            android:summary="未指定字幕时，如果【本地同名字幕】存在则自动加载"
-            android:title="自动加载本地字幕"
-            app:icon="@drawable/ic_player_setting_subtitle_setting" />
-
-        <SwitchPreference
-            android:key="auto_load_network_subtitle"
-            android:summary="未指定字幕时，如果【网络字幕】匹配存在则自动加载"
-            android:title="自动加载网络字幕"
-            app:icon="@drawable/ic_player_setting_subtitle_network" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="网络视频加载策略【FTP、WebDav、SMB】">
-
-        <SwitchPreference
-            android:key="auto_load_subtitle_network_storage"
-            android:summary="自动下载同文件夹内同名字幕，并与视频绑定播放"
+            android:key="auto_load_same_name_subtitle"
+            android:summary="播放视频前，自动加载同文件夹内同名字幕"
             android:title="自动加载同名字幕"
             app:icon="@drawable/ic_player_setting_subtitle_setting" />
+
+        <SwitchPreference
+            android:key="auto_match_subtitle"
+            android:summary="未指定字幕时，自动为视频匹配合适的网络字幕（仅支持本地文件）"
+            android:title="自动匹配网络字幕"
+            app:icon="@drawable/ic_player_setting_subtitle_network" />
+
     </PreferenceCategory>
 </PreferenceScreen>

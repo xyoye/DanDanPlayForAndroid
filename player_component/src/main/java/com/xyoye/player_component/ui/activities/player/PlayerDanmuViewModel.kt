@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.FileHashUtils
 import com.xyoye.common_component.utils.IOUtils
@@ -22,13 +21,8 @@ import kotlinx.coroutines.launch
 class PlayerDanmuViewModel : BaseViewModel() {
     val loadDanmuLiveData = MutableLiveData<LoadDanmuBean>()
 
-    fun loadDanmu(videoSource: VideoSource) {
+    fun loadDanmu(videoSource: BaseVideoSource) {
         val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
-
-        if (videoSource !is ExtraSource) {
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
 
         val historyDanmuPath = videoSource.getDanmuPath()
         if (historyDanmuPath?.isNotEmpty() == true){
@@ -49,7 +43,12 @@ class PlayerDanmuViewModel : BaseViewModel() {
                 loadLocalDanmu(videoUrl)
             }
             else -> {
-                loadDanmuLiveData.postValue(loadResult)
+                //本地视频的绝对路径，例：/storage/emulate/0/Download/test.mp4
+                if (videoUrl.startsWith("/")) {
+                    loadLocalDanmu(videoUrl)
+                } else {
+                    loadDanmuLiveData.postValue(loadResult)
+                }
             }
         }
     }
@@ -81,7 +80,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
         }
     }
 
-    private fun loadNetworkDanmu(videoSource: VideoSource) {
+    private fun loadNetworkDanmu(videoSource: BaseVideoSource) {
         viewModelScope.launch(Dispatchers.IO) {
             val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
             val headers = videoSource.getHttpHeader() ?: emptyMap()

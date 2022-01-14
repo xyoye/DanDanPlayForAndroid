@@ -1,11 +1,9 @@
 package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.helper.SourceHelper
-import com.xyoye.common_component.source.helper.WebDavMediaSourceHelper
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
-import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
@@ -14,7 +12,7 @@ import com.xyoye.sardine.DavResource
  * Created by xyoye on 2021/11/16.
  */
 
-class WebDavMediaSource private constructor(
+class WebDavMediaSource(
     private val rootPath: String,
     private val authHeader: Map<String, String>,
     private val index: Int,
@@ -24,50 +22,7 @@ class WebDavMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : GroupVideoSource(index, videoSources), ExtraSource {
-
-    companion object {
-
-        suspend fun build(
-            rootPath: String,
-            authHeader: Map<String, String>,
-            index: Int,
-            videoSources: List<DavResource>,
-            extSources: List<DavResource>
-        ): WebDavMediaSource? {
-            val davResource = videoSources.getOrNull(index) ?: return null
-
-            val videoUrl = rootPath + davResource.href.toASCIIString()
-            val history = PlayHistoryUtils.getPlayHistory(videoUrl, MediaType.WEBDAV_SERVER)
-            val position = WebDavMediaSourceHelper.getHistoryPosition(history)
-            val (episodeId, danmuPath) = WebDavMediaSourceHelper.getVideoDanmu(
-                davResource,
-                extSources,
-                rootPath,
-                authHeader,
-                history
-            )
-            val subtitlePath = WebDavMediaSourceHelper.getVideoSubtitle(
-                davResource,
-                extSources,
-                rootPath,
-                authHeader,
-                history
-            )
-
-            return WebDavMediaSource(
-                rootPath,
-                authHeader,
-                index,
-                videoSources,
-                extSources,
-                position,
-                danmuPath,
-                episodeId,
-                subtitlePath
-            )
-        }
-    }
+) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
         return rootPath + videoSources[index].href.toASCIIString()
@@ -124,9 +79,18 @@ class WebDavMediaSource private constructor(
         return "webdav:/${SourceHelper.getHttpUniqueKey(url)}"
     }
 
-    override suspend fun indexSource(index: Int): GroupSource? {
-        if (index in videoSources.indices)
-            return build(rootPath, authHeader, index, videoSources, extSources)
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        if (index in videoSources.indices) {
+            val source = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setExtraSource(extSources)
+                .setRootPath(rootPath)
+                .setHttpHeaders(authHeader)
+                .setIndex(index)
+                .create(getMediaType())
+                ?: return null
+            return source as WebDavMediaSource
+        }
         return null
     }
 }

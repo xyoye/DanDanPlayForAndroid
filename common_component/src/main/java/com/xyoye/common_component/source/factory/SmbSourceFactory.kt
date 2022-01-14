@@ -1,34 +1,61 @@
-package com.xyoye.common_component.source.helper
+package com.xyoye.common_component.source.factory
 
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.media.SmbMediaSource
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.FileHashUtils
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.server.SMBPlayServer
 import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.common_component.utils.smb.v2.SMBJManager
 import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.MediaType
+
 
 /**
- * Created by xyoye on 2021/11/20.
+ * Created by xyoye on 2022/1/12
  */
+object SmbSourceFactory {
 
-object SmbMediaSourceHelper {
+    suspend fun create(builder: VideoSourceFactory.Builder): SmbMediaSource? {
+        val videoSources = builder.videoSources.filterIsInstance<SMBFile>()
+        val extSources = builder.extraSources.filterIsInstance<SMBFile>()
 
-    fun createProxyUrl(rootPath: String, smbFile: SMBFile): String {
+        val smbFile = videoSources.getOrNull(builder.index) ?: return null
+        val proxyUrl = createProxyUrl(builder.rootPath, smbFile)
+        val history = PlayHistoryUtils.getPlayHistory(proxyUrl, MediaType.SMB_SERVER)
+        val position = getHistoryPosition(history)
+        val (episodeId, danmuPath) = getVideoDanmu(history, builder.rootPath, smbFile, extSources)
+        val subtitlePath = getVideoSubtitle(history, builder.rootPath, smbFile, extSources)
+
+        return SmbMediaSource(
+            builder.index,
+            videoSources,
+            extSources,
+            builder.rootPath,
+            proxyUrl,
+            position,
+            danmuPath,
+            episodeId,
+            subtitlePath
+        )
+    }
+
+    private fun createProxyUrl(rootPath: String, smbFile: SMBFile): String {
         val filePath = "$rootPath\\${smbFile.name}"
         return SMBPlayServer.getInstance().getInputStreamUrl(filePath, smbFile.size) {
             SMBJManager.getInstance().getInputStream(it)
         }
     }
 
-    fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
+    private fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
         return entity?.videoPosition ?: 0L
     }
 
-    suspend fun getVideoDanmu(
+    private fun getVideoDanmu(
         history: PlayHistoryEntity?,
         rootPath: String,
         smbFile: SMBFile,
@@ -54,22 +81,10 @@ object SmbMediaSourceHelper {
             }
         }
 
-        //匹配视频网络弹幕
-        if (DanmuConfig.isAutoMatchDanmuNetworkStorage()) {
-            val filePath = "$rootPath\\${smbFile.name}"
-            val stream = SMBJManager.getInstance().getInputStream(filePath)
-            val fileHash = FileHashUtils.getHash(stream)
-            if (!fileHash.isNullOrEmpty()) {
-                DanmuUtils.matchDanmuSilence(filePath, fileHash)?.let {
-                    return Pair(it.second, it.first)
-                }
-            }
-        }
-
         return Pair(0, null)
     }
 
-    fun getVideoSubtitle(
+    private fun getVideoSubtitle(
         history: PlayHistoryEntity?,
         rootPath: String,
         smbFile: SMBFile,

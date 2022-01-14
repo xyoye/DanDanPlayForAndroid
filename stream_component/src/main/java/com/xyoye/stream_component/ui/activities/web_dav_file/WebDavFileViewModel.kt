@@ -6,11 +6,12 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.WebDavMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
 import com.xyoye.sardine.impl.OkHttpSardine
 import com.xyoye.sardine.util.SardineConfig
@@ -111,7 +112,13 @@ class WebDavFileViewModel : BaseViewModel() {
             val header = mapOf(Pair("Authorization", credentials))
 
             showLoading()
-            val mediaSource = WebDavMediaSource.build(addressUrl, header, index, videoSources, extSources)
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setExtraSource(extSources)
+                .setRootPath(addressUrl)
+                .setHttpHeaders(header)
+                .setIndex(index)
+                .create(MediaType.WEBDAV_SERVER)
             hideLoading()
 
             if (mediaSource == null) {

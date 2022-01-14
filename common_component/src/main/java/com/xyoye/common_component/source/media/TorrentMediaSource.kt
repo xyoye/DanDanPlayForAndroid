@@ -1,10 +1,8 @@
 package com.xyoye.common_component.source.media
 
 import com.xunlei.downloadlib.parameter.TorrentFileInfo
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
-import com.xyoye.common_component.utils.PathHelper
-import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
@@ -13,7 +11,7 @@ import com.xyoye.data_component.enums.MediaType
  * Created by xyoye on 2021/11/14.
  */
 
-class TorrentMediaSource private constructor(
+class TorrentMediaSource(
     private val index: Int,
     private val videoSources: List<TorrentFileInfo>,
     private val playUrl: String,
@@ -22,34 +20,7 @@ class TorrentMediaSource private constructor(
     private var danmuPath: String?,
     private var episodeId: Int,
     private var subtitlePath: String?
-) : GroupVideoSource(index, videoSources), ExtraSource {
-
-    companion object {
-        suspend fun build(
-            index: Int,
-            torrentPath: String,
-        ): TorrentMediaSource? {
-            val (playUrl, torrentFileInfoList) = ThunderManager.getInstance().torrent2PlayUrl(
-                torrentPath,
-                PathHelper.getPlayCacheDirectory(),
-                index
-            )
-            if (playUrl.isNullOrEmpty())
-                return null
-
-            val history = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.MAGNET_LINK)
-            return TorrentMediaSource(
-                index,
-                torrentFileInfoList,
-                playUrl,
-                torrentPath,
-                history?.videoPosition ?: 0,
-                history?.danmuPath,
-                history?.episodeId ?: 0,
-                history?.subtitlePath
-            )
-        }
-    }
+) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
         return playUrl
@@ -103,8 +74,13 @@ class TorrentMediaSource private constructor(
         return getFileNameNoExtension(getTorrentPath())
     }
 
-    override suspend fun indexSource(index: Int): GroupSource? {
-        return build(index, torrentPath)
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        val source = VideoSourceFactory.Builder()
+            .setRootPath(torrentPath)
+            .setIndex(index)
+            .create(getMediaType())
+            ?: return null
+        return source as TorrentMediaSource
     }
 
     fun getPlayTaskId(): Long {

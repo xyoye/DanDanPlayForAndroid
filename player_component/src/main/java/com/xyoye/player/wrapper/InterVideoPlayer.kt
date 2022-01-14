@@ -3,7 +3,7 @@ package com.xyoye.player.wrapper
 import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.VideoScreenScale
 
@@ -26,7 +26,7 @@ interface InterVideoPlayer {
     /**
      * 获取当前视频资源
      */
-    fun getVideoSource(): VideoSource
+    fun getVideoSource(): BaseVideoSource
 
     /**
      * 获取资源时长

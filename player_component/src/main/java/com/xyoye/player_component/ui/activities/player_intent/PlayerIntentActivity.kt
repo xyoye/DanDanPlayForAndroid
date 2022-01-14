@@ -1,20 +1,16 @@
 package com.xyoye.player_component.ui.activities.player_intent
 
 import android.net.Uri
-import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.decodeUrl
-import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.OuterMediaSource
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerIntentBinding
-import kotlinx.coroutines.launch
 
 class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerIntentBinding>() {
 
@@ -37,6 +33,8 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
     }
 
     override fun initView() {
+        observerPlay()
+
         dataBinding.exitTv.setOnClickListener {
             finish()
         }
@@ -55,13 +53,11 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             viewModel.addUnrecognizedFile(videoUrl)
         }
 
-        openPlayer(videoUrl)
+        viewModel.openIntentUrl(videoUrl)
     }
 
-    private fun openPlayer(videoUrl: String) {
-        lifecycleScope.launch {
-            val videoSource = OuterMediaSource.build(videoUrl)
-            VideoSourceManager.getInstance().setSource(videoSource)
+    private fun observerPlay() {
+        viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()

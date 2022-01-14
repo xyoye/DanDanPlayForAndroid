@@ -8,7 +8,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
-import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.SendDanmuBean
@@ -96,10 +95,9 @@ class VideoController(
 
     override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
         val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource is ExtraSource
-            && videoSource.getDanmuPath() == danmuPath
+        if (videoSource.getDanmuPath() == danmuPath
             && videoSource.getEpisodeId() == episodeId
-        ){
+        ) {
             return
         }
         mDanmuSourceChanged?.invoke(danmuPath, episodeId)
@@ -107,9 +105,7 @@ class VideoController(
 
     override fun onSubtitleSourceUpdate(subtitlePath: String) {
         val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource is ExtraSource
-            && videoSource.getSubtitlePath() == subtitlePath
-        ){
+        if (videoSource.getSubtitlePath() == subtitlePath) {
             return
         }
         mSubtitleSourceChanged?.invoke(subtitlePath)

@@ -5,8 +5,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtils
@@ -28,19 +27,10 @@ class PlayerViewModel : BaseViewModel() {
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)
 
-    fun addPlayHistory(source: VideoSource?, position: Long, duration: Long) {
+    fun addPlayHistory(source: BaseVideoSource?, position: Long, duration: Long) {
         source ?: return
 
         GlobalScope.launch(context = Dispatchers.IO) {
-            var sourceDanmuPath: String? = null
-            var sourceEpisodeId = 0
-            var sourceSubtitlePath: String? = null
-            if (source is ExtraSource) {
-                sourceDanmuPath = source.getDanmuPath()
-                sourceEpisodeId = source.getEpisodeId()
-                sourceSubtitlePath = source.getSubtitlePath()
-            }
-
             var torrentPath: String? = null
             var torrentIndex = -1
             if (source is TorrentMediaSource) {
@@ -56,9 +46,9 @@ class PlayerViewModel : BaseViewModel() {
                 position,
                 duration,
                 Date(),
-                sourceDanmuPath,
-                sourceEpisodeId,
-                sourceSubtitlePath,
+                source.getDanmuPath(),
+                source.getEpisodeId(),
+                source.getSubtitlePath(),
                 torrentPath,
                 torrentIndex,
                 JsonHelper.toJson(source.getHttpHeader()),

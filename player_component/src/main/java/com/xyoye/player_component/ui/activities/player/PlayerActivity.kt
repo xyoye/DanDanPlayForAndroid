@@ -21,9 +21,7 @@ import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.inter.ExtraSource
-import com.xyoye.common_component.source.inter.GroupSource
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -53,7 +51,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private lateinit var videoController: VideoController
 
-    private var videoSource: VideoSource? = null
+    private var videoSource: BaseVideoSource? = null
 
     //电量管理
     private var batteryHelper = BatteryHelper()
@@ -119,7 +117,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         dataBinding.danDanPlayer.pause()
     }
 
-    private fun checkPlayParams(source: VideoSource?): Boolean {
+    private fun checkPlayParams(source: BaseVideoSource?): Boolean {
         if (source == null || source.getVideoUrl().isEmpty()) {
             CommonDialog.Builder().run {
                 content = "解析播放参数失败"
@@ -149,10 +147,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 videoController.showMessage(it.state.msg)
                 videoController.setDanmuPath(danmuPath)
 
-                if (curVideoSource is ExtraSource) {
-                    curVideoSource.setDanmuPath(danmuPath)
-                    curVideoSource.setEpisodeId(it.episodeId)
-                }
+                curVideoSource.setDanmuPath(danmuPath)
+                curVideoSource.setEpisodeId(it.episodeId)
                 viewModel.storeDanmuSourceChange(danmuPath, it.episodeId, curVideoSource.getVideoUrl())
             }
         }
@@ -183,7 +179,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    private fun applyPlaySource(newSource: VideoSource?) {
+    private fun applyPlaySource(newSource: BaseVideoSource?) {
         dataBinding.danDanPlayer.pause()
         dataBinding.danDanPlayer.release()
         videoController.release()
@@ -197,7 +193,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         afterInitPlayer()
     }
 
-    private fun updatePlayer(source: VideoSource) {
+    private fun updatePlayer(source: BaseVideoSource) {
 
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
@@ -212,31 +208,27 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
-        if (source is ExtraSource) {
-            videoController.setDanmuPath(source.getDanmuPath())
-            // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
-            videoController.setSubtitlePath(source.getSubtitlePath())
-            //当弹幕绑定更新，保存变更
-            videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
-                source.setDanmuPath(danmuPath)
-                source.setEpisodeId(episodeId)
-                viewModel.storeDanmuSourceChange(danmuPath, episodeId, source.getVideoUrl())
-            }
-            //当字幕绑定更新，保存变更
-            videoController.observeSubtitleSourceChanged {
-                source.setSubtitlePath(it)
-                viewModel.storeSubtitleSourceChange(it, source.getVideoUrl())
-            }
-            //发送弹幕
-            videoController.observerSendDanmu {
-                viewModel.sendDanmu(source.getEpisodeId(), source.getDanmuPath(), it)
-            }
+        videoController.setDanmuPath(source.getDanmuPath())
+        // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
+        videoController.setSubtitlePath(source.getSubtitlePath())
+        //当弹幕绑定更新，保存变更
+        videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
+            source.setDanmuPath(danmuPath)
+            source.setEpisodeId(episodeId)
+            viewModel.storeDanmuSourceChange(danmuPath, episodeId, source.getVideoUrl())
+        }
+        //当字幕绑定更新，保存变更
+        videoController.observeSubtitleSourceChanged {
+            source.setSubtitlePath(it)
+            viewModel.storeSubtitleSourceChange(it, source.getVideoUrl())
+        }
+        //发送弹幕
+        videoController.observerSendDanmu {
+            viewModel.sendDanmu(source.getEpisodeId(), source.getDanmuPath(), it)
         }
 
-        if (source is GroupSource) {
-            videoController.setSwitchVideoSourceBlock {
-                switchVideoSource(it)
-            }
+        videoController.setSwitchVideoSourceBlock {
+            switchVideoSource(it)
         }
     }
 
@@ -357,11 +349,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         showLoading()
         dataBinding.danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
-            val source = videoSource
-            var targetSource: VideoSource? = null
-            if (source is GroupSource) {
-                targetSource = source.indexSource(index)
-            }
+            val targetSource = videoSource?.indexSource(index)
             if (targetSource == null) {
                 ToastCenter.showOriginalToast("播放资源不存在")
                 return@launch

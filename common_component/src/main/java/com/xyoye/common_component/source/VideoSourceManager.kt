@@ -1,6 +1,6 @@
 package com.xyoye.common_component.source
 
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
 
 /**
  * Created by xyoye on 2021/11/14.
@@ -17,9 +17,9 @@ class VideoSourceManager private constructor() {
         val instance = VideoSourceManager()
     }
 
-    private var videoSource: VideoSource? = null
+    private var videoSource: BaseVideoSource? = null
 
-    fun setSource(source: VideoSource) {
+    fun setSource(source: BaseVideoSource) {
         videoSource = source
     }
 

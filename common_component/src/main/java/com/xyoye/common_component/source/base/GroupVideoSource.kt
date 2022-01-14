@@ -1,4 +1,4 @@
-package com.xyoye.common_component.source.media
+package com.xyoye.common_component.source.base
 
 import com.xyoye.common_component.source.inter.GroupSource
 
@@ -9,7 +9,7 @@ import com.xyoye.common_component.source.inter.GroupSource
 abstract class GroupVideoSource(
     private val index: Int,
     private val videoSources: List<*>
-) : GroupSource {
+): GroupSource {
 
     override fun getGroupIndex(): Int {
         return index

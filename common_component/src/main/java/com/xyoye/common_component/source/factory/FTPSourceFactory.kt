@@ -1,23 +1,55 @@
-package com.xyoye.common_component.source.helper
+package com.xyoye.common_component.source.factory
 
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.media.FTPMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.ftp.FTPManager
 import com.xyoye.common_component.utils.server.FTPPlayServer
 import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.MediaType
 import org.apache.commons.net.ftp.FTPFile
 import java.io.File
 import java.io.InputStream
 
+
 /**
- * Created by xyoye on 2021/11/20.
+ * Created by xyoye on 2022/1/11
  */
+object FTPSourceFactory {
 
-object FTPMediaSourceHelper {
+    suspend fun create(builder: VideoSourceFactory.Builder): FTPMediaSource? {
+        val videoSources = builder.videoSources.filterIsInstance<FTPFile>()
+        val extSources = builder.extraSources.filterIsInstance<FTPFile>()
 
-    fun fillPlaySource(rootPath: String, ftpFile: FTPFile): Boolean {
+        val ftpFile = videoSources.getOrNull(builder.index) ?: return null
+
+        val proxyUrl = FTPPlayServer.getInstance().getInputStreamUrl(ftpFile.name)
+        val history = PlayHistoryUtils.getPlayHistory(proxyUrl, MediaType.FTP_SERVER)
+        val position = getHistoryPosition(history)
+        val (episodeId, danmuPath) = getVideoDanmu(history, builder.rootPath, ftpFile, extSources)
+        val subtitlePath = getVideoSubtitle(history, builder.rootPath, ftpFile, extSources)
+
+        if (fillPlaySource(builder.rootPath, ftpFile).not()) {
+            return null
+        }
+
+        return FTPMediaSource(
+            builder.index,
+            videoSources,
+            extSources,
+            builder.rootPath,
+            proxyUrl,
+            position,
+            danmuPath,
+            episodeId,
+            subtitlePath
+        )
+    }
+
+    private fun fillPlaySource(rootPath: String, ftpFile: FTPFile): Boolean {
         val inputStream: InputStream?
         try {
             inputStream = FTPManager.getInstance().getInputStream(rootPath, ftpFile.name)
@@ -29,11 +61,11 @@ object FTPMediaSourceHelper {
         return true
     }
 
-    fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
+    private fun getHistoryPosition(entity: PlayHistoryEntity?): Long {
         return entity?.videoPosition ?: 0L
     }
 
-    suspend fun getVideoDanmu(
+    private fun getVideoDanmu(
         history: PlayHistoryEntity?,
         rootPath: String,
         ftpFile: FTPFile,
@@ -59,23 +91,10 @@ object FTPMediaSourceHelper {
             }
         }
 
-        //匹配视频网络弹幕
-        if (DanmuConfig.isAutoMatchDanmuNetworkStorage()) {
-            val stream = FTPManager.getInstance().getInputStream(rootPath, ftpFile.name)
-            val fileHash = FileHashUtils.getHash(stream)
-            FTPManager.getInstance().disconnect()
-            if (!fileHash.isNullOrEmpty()) {
-                //根据hash匹配弹幕
-                DanmuUtils.matchDanmuSilence(ftpFile.name, fileHash)?.let {
-                    return Pair(it.second, it.first)
-                }
-            }
-        }
-
         return Pair(0, null)
     }
 
-    fun getVideoSubtitle(
+    private fun getVideoSubtitle(
         history: PlayHistoryEntity?,
         rootPath: String,
         ftpFile: FTPFile,

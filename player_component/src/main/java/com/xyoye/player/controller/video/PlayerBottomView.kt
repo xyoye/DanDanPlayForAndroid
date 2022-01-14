@@ -15,7 +15,6 @@ import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResDrawable
-import com.xyoye.common_component.source.inter.GroupSource
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
@@ -84,14 +83,14 @@ class PlayerBottomView(
 
         viewBinding.ivNextSource.setOnClickListener {
             val videoSource = mControlWrapper.getVideoSource()
-            if (videoSource is GroupSource && videoSource.hasNextSource()) {
+            if (videoSource.hasNextSource()) {
                 switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() + 1)
             }
         }
 
         viewBinding.ivPreviousSource.setOnClickListener {
             val videoSource = mControlWrapper.getVideoSource()
-            if (videoSource is GroupSource && videoSource.hasPreviousSource()) {
+            if (videoSource.hasPreviousSource()) {
                 switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() - 1)
             }
         }
@@ -217,14 +216,9 @@ class PlayerBottomView(
 
     private fun updateSourceAction() {
         val videoSource = mControlWrapper.getVideoSource()
-        val isGroupSource = videoSource is GroupSource
-        viewBinding.ivNextSource.isVisible = isGroupSource
-        viewBinding.ivPreviousSource.isVisible = isGroupSource
-        viewBinding.videoListIv.isVisible = isGroupSource
-
-        if (videoSource !is GroupSource) {
-            return
-        }
+        viewBinding.ivNextSource.isVisible = videoSource.hasNextSource()
+        viewBinding.ivPreviousSource.isVisible = videoSource.hasNextSource()
+        viewBinding.videoListIv.isVisible = videoSource.getGroupSize() > 1
 
         //上一个视频资源是否可用
         val hasNextSource = videoSource.hasNextSource()

@@ -5,10 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.xunlei.downloadlib.parameter.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.*
 
 class PlaySelectionViewModel : BaseViewModel() {
@@ -38,7 +39,10 @@ class PlaySelectionViewModel : BaseViewModel() {
     fun torrentPlay(torrentPath: String, selectIndex: Int) {
         viewModelScope.launch {
             showLoading()
-            val mediaSource = TorrentMediaSource.build(selectIndex, torrentPath)
+            val mediaSource = VideoSourceFactory.Builder()
+                .setRootPath(torrentPath)
+                .setIndex(selectIndex)
+                .create(MediaType.MAGNET_LINK)
             hideLoading()
 
             if (mediaSource == null) {

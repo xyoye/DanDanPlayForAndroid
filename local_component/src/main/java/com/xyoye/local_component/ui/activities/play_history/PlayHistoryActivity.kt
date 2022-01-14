@@ -16,8 +16,6 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.StreamMediaSource
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
@@ -97,8 +95,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu?.let {
-            menuInflater.inflate(R.menu.menu_history, it)
+        menu.let {
+            menuInflater.inflate(R.menu.menu_history, menu)
             removeItem = it.findItem(R.id.remove_history_item).apply { isVisible = false }
             selectAllItem = it.findItem(R.id.select_all_history_item).apply { isVisible = false }
         }
@@ -219,12 +217,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
 
     private fun showStreamDialog() {
         StreamLinkDialog { link, header ->
-            VideoSourceManager.getInstance().setSource(
-                StreamMediaSource(link, header)
-            )
-            ARouter.getInstance()
-                .build(RouteTable.Player.Player)
-                .navigation()
+            viewModel.openStreamLink(link, header)
         }.show(this)
     }
 

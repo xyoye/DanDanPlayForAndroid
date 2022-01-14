@@ -6,11 +6,12 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.RemoteMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.remote.RemoteFileHelper
 import kotlinx.coroutines.launch
 
@@ -66,10 +67,10 @@ class RemoteFileViewModel : BaseViewModel() {
             }
 
             showLoading()
-            val mediaSource = RemoteMediaSource.build(
-                index,
-                videoSources
-            )
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setIndex(index)
+                .create(MediaType.REMOTE_STORAGE)
             hideLoading()
 
             if (mediaSource == null) {

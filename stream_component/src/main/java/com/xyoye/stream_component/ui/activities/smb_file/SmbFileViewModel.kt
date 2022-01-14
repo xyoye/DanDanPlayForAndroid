@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.SmbMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.server.SMBPlayServer
 import com.xyoye.common_component.utils.smb.SMBException
@@ -14,6 +14,7 @@ import com.xyoye.common_component.utils.smb.v2.SMBJManager
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -146,8 +147,12 @@ class SmbFileViewModel : BaseViewModel() {
                 ?: emptyList()
 
             showLoading()
-            val mediaSource =
-                SmbMediaSource.build(index, videoSources, extSources, getOpenedDirPath())
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(videoSources)
+                .setExtraSource(extSources)
+                .setRootPath(getOpenedDirPath())
+                .setIndex(index)
+                .create(MediaType.SMB_SERVER)
             hideLoading()
 
             if (mediaSource == null) {

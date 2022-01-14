@@ -12,7 +12,6 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.source.media.GroupVideoSource
 import com.xyoye.common_component.weight.CenterLayoutManager
 import com.xyoye.data_component.bean.VideoSourceBean
 import com.xyoye.data_component.enums.PlayState
@@ -126,10 +125,6 @@ class SwitchVideoSourceView @JvmOverloads constructor(
 
     private fun buildVideoSource() {
         val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource !is GroupVideoSource) {
-            return
-        }
-
         val videoSources = mutableListOf<VideoSourceBean>()
         for (index in 0 until videoSource.getGroupSize()) {
             videoSources.add(

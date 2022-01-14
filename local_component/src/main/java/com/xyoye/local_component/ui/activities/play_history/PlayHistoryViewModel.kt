@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.HistoryMediaSource
-import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
@@ -46,9 +45,14 @@ class PlayHistoryViewModel : BaseViewModel() {
             val mediaSource = if (
                 history.mediaType == MediaType.MAGNET_LINK && history.torrentPath != null
             ) {
-                TorrentMediaSource.build(history.torrentIndex, history.torrentPath!!)
+                VideoSourceFactory.Builder()
+                    .setRootPath(history.torrentPath!!)
+                    .setIndex(history.torrentIndex)
+                    .create(MediaType.MAGNET_LINK)
             } else {
-                HistoryMediaSource(history)
+                VideoSourceFactory.Builder()
+                    .setVideoSources(listOf(history))
+                    .createHistory()
             }
             hideLoading()
 
@@ -57,6 +61,24 @@ class PlayHistoryViewModel : BaseViewModel() {
                 return@launch
             }
 
+            VideoSourceManager.getInstance().setSource(mediaSource)
+            playLiveData.postValue(Any())
+        }
+    }
+
+    fun openStreamLink(url: String, headers: Map<String, String>?) {
+        viewModelScope.launch {
+            showLoading()
+            val mediaSource = VideoSourceFactory.Builder()
+                .setVideoSources(listOf(url))
+                .setHttpHeaders(headers ?: emptyMap())
+                .create(MediaType.STREAM_LINK)
+            hideLoading()
+
+            if (mediaSource == null) {
+                ToastCenter.showError("播放失败，无法打开播放资源")
+                return@launch
+            }
             VideoSourceManager.getInstance().setSource(mediaSource)
             playLiveData.postValue(Any())
         }

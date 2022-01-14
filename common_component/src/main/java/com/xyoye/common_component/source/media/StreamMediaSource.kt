@@ -1,6 +1,7 @@
 package com.xyoye.common_component.source.media
 
-import com.xyoye.common_component.source.inter.VideoSource
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 
@@ -9,19 +10,25 @@ import com.xyoye.data_component.enums.MediaType
  */
 
 class StreamMediaSource(
-    private val videoUrl: String,
-    private val header: Map<String, String>?
-) : VideoSource {
+    private val index: Int,
+    private val videoSources: List<String>,
+    private val header: Map<String, String>? = null,
+    private val currentPosition: Long,
+    private var danmuPath: String?,
+    private var episodeId: Int,
+    private var subtitlePath: String?,
+) : BaseVideoSource(index, videoSources) {
+
     override fun getVideoUrl(): String {
-        return videoUrl
+        return videoSources[index]
     }
 
     override fun getVideoTitle(): String {
-        return getFileName(videoUrl)
+        return getFileName(videoSources[index])
     }
 
     override fun getCurrentPosition(): Long {
-        return 0L
+        return currentPosition
     }
 
     override fun getMediaType(): MediaType {
@@ -34,5 +41,45 @@ class StreamMediaSource(
 
     override fun getUniqueKey(): String {
         return getVideoUrl()
+    }
+
+    override fun indexTitle(index: Int): String {
+        return videoSources.getOrNull(index)
+            ?.let { getFileName(it) }
+            ?: ""
+    }
+
+    override suspend fun indexSource(index: Int): BaseVideoSource? {
+        val source = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setIndex(index)
+            .setHttpHeaders(header ?: emptyMap())
+            .create(getMediaType())
+            ?: return null
+        return source as StreamMediaSource
+    }
+
+    override fun getDanmuPath(): String? {
+        return danmuPath
+    }
+
+    override fun setDanmuPath(path: String) {
+        danmuPath = path
+    }
+
+    override fun getEpisodeId(): Int {
+        return episodeId
+    }
+
+    override fun setEpisodeId(id: Int) {
+        episodeId = id
+    }
+
+    override fun getSubtitlePath(): String? {
+        return subtitlePath
+    }
+
+    override fun setSubtitlePath(path: String) {
+        subtitlePath = path
     }
 }

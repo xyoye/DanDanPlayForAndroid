@@ -12,7 +12,7 @@ import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.media.LocalMediaSource
+import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FolderBean
@@ -405,7 +405,10 @@ class LocalMediaViewModel : BaseViewModel() {
      */
     private suspend fun playIndexFromList(index: Int, list: List<VideoEntity>?) {
         showLoading()
-        val mediaSource = LocalMediaSource.build(index, list)
+        val mediaSource = VideoSourceFactory.Builder()
+            .setVideoSources(list ?: emptyList())
+            .setIndex(index)
+            .create(MediaType.LOCAL_STORAGE)
         hideLoading()
 
         if (mediaSource == null) {

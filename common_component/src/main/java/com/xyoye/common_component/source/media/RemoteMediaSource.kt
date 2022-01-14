@@ -2,7 +2,7 @@ package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.source.helper.SourceHelper
+import com.xyoye.common_component.source.factory.RemoteSourceFactory
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
 
@@ -78,7 +78,6 @@ class RemoteMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        val url = getVideoUrl()
-        return "remote:/${SourceHelper.getHttpUniqueKey(url)}"
+        return RemoteSourceFactory.generateUniqueKey(videoSources[index])
     }
 }

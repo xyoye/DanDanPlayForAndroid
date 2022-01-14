@@ -1,9 +1,11 @@
 package com.xyoye.common_component.source.factory
 
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
 
@@ -33,5 +35,10 @@ object TorrentSourceFactory {
             history?.episodeId ?: 0,
             history?.subtitlePath
         )
+    }
+
+    fun generateUniqueKey(torrentPath: String, index: Int): String {
+        val hash = getFileNameNoExtension(torrentPath)
+        return "${hash}_${index}".toMd5String()
     }
 }

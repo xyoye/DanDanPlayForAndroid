@@ -3,7 +3,7 @@ package com.xyoye.common_component.source.media
 import com.xunlei.downloadlib.parameter.TorrentFileInfo
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.source.factory.TorrentSourceFactory
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
 
@@ -71,7 +71,7 @@ class TorrentMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return getFileNameNoExtension(getTorrentPath())
+        return TorrentSourceFactory.generateUniqueKey(getTorrentPath(), index)
     }
 
     override suspend fun indexSource(index: Int): BaseVideoSource? {

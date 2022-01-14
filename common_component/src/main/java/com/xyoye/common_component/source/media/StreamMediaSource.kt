@@ -2,6 +2,7 @@ package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.StreamSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 
@@ -40,7 +41,7 @@ class StreamMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return getVideoUrl()
+        return StreamSourceFactory.generateUniqueKey(getVideoUrl())
     }
 
     override fun indexTitle(index: Int): String {

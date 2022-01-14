@@ -1,7 +1,9 @@
 package com.xyoye.common_component.source.factory
 
+import android.text.TextUtils
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.RemoteMediaSource
@@ -35,6 +37,13 @@ object RemoteSourceFactory {
             episodeId,
             subtitlePath
         )
+    }
+
+    fun generateUniqueKey(videoData: RemoteVideoData): String {
+        var uniqueKey = videoData.Hash
+        if (TextUtils.isEmpty(uniqueKey))
+            uniqueKey = videoData.absolutePath
+        return uniqueKey.toMd5String()
     }
 
     private fun getHistoryPosition(entity: PlayHistoryEntity?): Long {

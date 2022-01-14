@@ -3,6 +3,7 @@ package com.xyoye.common_component.source.media
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.SmbSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.data_component.enums.MediaType
@@ -83,6 +84,6 @@ class SmbMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return rootPath + "\\" + getVideoTitle()
+        return SmbSourceFactory.generateUniqueKey(rootPath, videoSources[index])
     }
 }

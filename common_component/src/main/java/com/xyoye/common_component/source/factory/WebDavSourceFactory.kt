@@ -2,6 +2,7 @@ package com.xyoye.common_component.source.factory
 
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.WebDavMediaSource
@@ -55,6 +56,10 @@ object WebDavSourceFactory {
             episodeId,
             subtitlePath
         )
+    }
+
+    fun generateUniqueKey(rootPath: String, davResource: DavResource): String {
+        return (rootPath + "_" + davResource.href.toASCIIString()).toMd5String()
     }
 
     private fun getHistoryPosition(entity: PlayHistoryEntity?): Long {

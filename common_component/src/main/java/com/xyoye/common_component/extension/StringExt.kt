@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.utils.EntropyUtils
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -36,3 +37,5 @@ fun String.decodeUrl(charset: Charset = Charsets.UTF_8): String{
 }
 
 fun String.formatFileName() = trim().replace("[*>/:\\\\?<|]".toRegex(), "_").replace(" ", "_")
+
+fun String?.toMd5String() = EntropyUtils.string2Md5(this)

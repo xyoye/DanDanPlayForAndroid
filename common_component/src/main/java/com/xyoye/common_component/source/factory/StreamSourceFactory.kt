@@ -1,8 +1,10 @@
 package com.xyoye.common_component.source.factory
 
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.StreamMediaSource
 import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.sardine.DavResource
 
 
 /**
@@ -25,5 +27,9 @@ object StreamSourceFactory {
             history?.episodeId ?: 0,
             history?.subtitlePath
         )
+    }
+
+    fun generateUniqueKey(videoUrl: String): String {
+        return videoUrl.toMd5String()
     }
 }

@@ -3,10 +3,12 @@ package com.xyoye.common_component.source.factory
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.LocalMediaSource
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.SubtitleUtils
+import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 
@@ -31,6 +33,10 @@ object LocalSourceFactory {
             episodeId,
             subtitlePath
         )
+    }
+
+    fun generateUniqueKey(entity: VideoEntity): String {
+        return entity.filePath.toMd5String()
     }
 
     private suspend fun getHistoryPosition(video: VideoEntity): Long {

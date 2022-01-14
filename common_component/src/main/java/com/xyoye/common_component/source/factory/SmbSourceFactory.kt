@@ -2,6 +2,7 @@ package com.xyoye.common_component.source.factory
 
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.SmbMediaSource
 import com.xyoye.common_component.utils.DanmuUtils
@@ -42,6 +43,10 @@ object SmbSourceFactory {
             episodeId,
             subtitlePath
         )
+    }
+
+    fun generateUniqueKey(rootPath: String, smbFile: SMBFile): String {
+        return (rootPath + "_" + smbFile.name).toMd5String()
     }
 
     private fun createProxyUrl(rootPath: String, smbFile: SMBFile): String {

@@ -3,6 +3,7 @@ package com.xyoye.local_component.ui.activities.local_media
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -13,6 +14,7 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.source.factory.LocalSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
@@ -26,6 +28,7 @@ import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityLocalMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaFolderBinding
 import com.xyoye.local_component.databinding.ItemMediaVideoBinding
+import java.io.File
 
 @Route(path = RouteTable.Local.LocalMediaStorage)
 class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaBinding>() {
@@ -134,10 +137,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                             )
                             titleTv.text = getFileNameNoExtension(data.filePath)
                             durationTv.text = formatDuration(data.videoDuration)
-                            if (data.fileId != 0L) {
-                                val videoUri = IOUtils.getVideoUri(data.fileId)
-                                coverIv.setGlideImage(videoUri, 5)
-                            }
+                            setVideoCover(coverIv, data)
                             danmuTipsTv.isVisible = isFileExist(data.danmuPath)
                             subtitleTipsTv.isVisible = isFileExist(data.subtitlePath)
 
@@ -309,5 +309,18 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
         }
 
         return false
+    }
+
+    private fun setVideoCover(imageView: ImageView, data: VideoEntity) {
+        val uniqueKey = LocalSourceFactory.generateUniqueKey(data)
+        val coverFile = File(PathHelper.getVideoCoverDirectory(), uniqueKey)
+        if (coverFile.exists()) {
+            imageView.setGlideImage(coverFile.absolutePath, 5, isCache = false)
+        } else {
+            if (data.fileId != 0L) {
+                val videoUri = IOUtils.getVideoUri(data.fileId)
+                imageView.setGlideImage(videoUri, 5)
+            }
+        }
     }
 }

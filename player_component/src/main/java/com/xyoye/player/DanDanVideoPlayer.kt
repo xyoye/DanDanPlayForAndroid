@@ -28,6 +28,7 @@ import com.xyoye.player.surface.SurfaceFactory
 import com.xyoye.player.utils.AudioFocusHelper
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.wrapper.InterVideoPlayer
+import com.xyoye.player_component.utils.PlayRecorder
 import com.xyoye.subtitle.MixedSubtitle
 
 /**
@@ -309,12 +310,20 @@ class DanDanVideoPlayer(
         }
     }
 
+    /**
+     * 保存播放信息
+     */
+    fun recordPlayInfo() {
+        //保存最后一帧
+        PlayRecorder.recordImage(videoSource.getUniqueKey(), mRenderView)
+        //保存进度
+        val position = mVideoPlayer.getCurrentPosition()
+        val duration = mVideoPlayer.getDuration()
+        mProgressBlock?.invoke(position, duration)
+    }
+
     fun release() {
         if (mCurrentPlayState != PlayState.STATE_IDLE) {
-            //保存进度
-            val position = mVideoPlayer.getCurrentPosition()
-            val duration = mVideoPlayer.getDuration()
-            mProgressBlock?.invoke(position, duration)
             //释放播放器
             mVideoPlayer.release()
             //关闭常亮

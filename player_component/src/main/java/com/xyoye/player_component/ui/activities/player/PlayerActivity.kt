@@ -102,6 +102,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (dataBinding.danDanPlayer.onBackPressed()) {
             return
         }
+        dataBinding.danDanPlayer.recordPlayInfo()
         finish()
     }
 
@@ -167,6 +168,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //退出播放
             observerPlayExit {
+                dataBinding.danDanPlayer.recordPlayInfo()
                 finish()
             }
             //弹幕屏蔽

@@ -199,7 +199,7 @@ object MediaUtils {
         return false
     }
 
-    private fun saveImage(file: File, bitmap: Bitmap): Boolean {
+    fun saveImage(file: File, bitmap: Bitmap): Boolean {
         var fileOutputStream: FileOutputStream? = null
         try {
             fileOutputStream = FileOutputStream(file)

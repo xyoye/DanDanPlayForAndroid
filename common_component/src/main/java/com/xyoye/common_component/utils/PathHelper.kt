@@ -14,6 +14,7 @@ object PathHelper {
     const val PATH_SUBTITLE = "subtitle"
     const val PATH_PLAY_CACHE = "play_cache"
     const val PATH_SCREEN_SHOT = "screen_shot"
+    const val PATH_VIDEO_COVER = "video_cover"
     const val PATH_EXO_CACHE = ".exo_cache"
 
     private const val PATH_DOWNLOAD = "download/files"
@@ -47,6 +48,16 @@ object PathHelper {
             checkDirectory(this)
         }
     }
+
+    /**
+     * 获取视频封面的文件夹
+     */
+    fun getVideoCoverDirectory(): File {
+        return File(getCachePath(), PATH_VIDEO_COVER).apply {
+            checkDirectory(this)
+        }
+    }
+
 
     /**
      * 获取下载文件目录

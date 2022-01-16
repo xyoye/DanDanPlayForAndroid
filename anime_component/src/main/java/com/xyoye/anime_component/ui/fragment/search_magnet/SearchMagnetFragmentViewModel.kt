@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import java.io.File
 
 class SearchMagnetFragmentViewModel : BaseViewModel() {
 
@@ -82,7 +83,7 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
                 )
 
                 //遍历绑定进度
-                val torrentDirPath = PathHelper.getDownloadTorrentDirectory().absolutePath
+                val torrentDirPath = PathHelper.getTorrentDirectory().absolutePath
                 searchResult.Resources?.forEach { magnetData ->
                     val hash = MagnetUtils.getMagnetHash(magnetData.Magnet)
                     magnetHistory
@@ -132,7 +133,7 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             api {
                 val requestBody = RequestBody.create(MediaType.parse("text/plain"), magnet)
                 val responseBody = Retrofit.torrentService.downloadTorrent(requestBody)
-                val torrentFile = PathHelper.torrentFile(magnet)
+                val torrentFile = File(PathHelper.getTorrentDirectory(), "$magnet.torrent")
                 val saveResult = AndroidPlatform.getInstance().getFileSystem()
                     .write(torrentFile, responseBody.byteStream())
 

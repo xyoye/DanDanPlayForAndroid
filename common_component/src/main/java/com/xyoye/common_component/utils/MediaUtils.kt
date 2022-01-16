@@ -102,7 +102,7 @@ object MediaUtils {
         }
 
         //保存到公共录失败，尝试保存到私有目录
-        val pictureFile = File(PathHelper.PATH_SCREEN_SHOT, getShotImageName())
+        val pictureFile = File(PathHelper.getScreenShotDirectory(), getShotImageName())
         return if (saveImage(pictureFile, bitmap)) {
             Pair(first = true, second = "私有目录")
         } else {

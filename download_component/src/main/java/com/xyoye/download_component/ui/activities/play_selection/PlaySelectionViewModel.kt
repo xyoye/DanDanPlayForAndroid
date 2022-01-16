@@ -22,7 +22,7 @@ class PlaySelectionViewModel : BaseViewModel() {
             showLoading()
             val torrentFilePath = ThunderManager.getInstance().downloadTorrentFile(
                 magnetLink,
-                PathHelper.getDownloadTorrentDirectory()
+                PathHelper.getTorrentDirectory()
             )
             hideLoading()
 

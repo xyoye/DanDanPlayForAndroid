@@ -145,7 +145,7 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         }
     }
 
-    open fun setData(list: MutableList<T>) {
+    open fun setData(list: List<T>) {
         items.apply {
             clear()
             addAll(list)

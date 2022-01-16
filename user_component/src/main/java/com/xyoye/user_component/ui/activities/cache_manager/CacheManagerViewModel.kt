@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.*
+import com.xyoye.data_component.bean.CacheBean
 import com.xyoye.data_component.enums.CacheType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,117 +14,84 @@ import java.io.File
 
 class CacheManagerViewModel : BaseViewModel() {
 
-    //系统缓存
-    private val systemCacheDir = BaseApplication.getAppContext().cacheDir
-    val systemCachePath = ObservableField("")
+    private val appCacheDir = BaseApplication.getAppContext().cacheDir
+    private val externalCacheDir = File(PathHelper.getCachePath())
+
+    val systemCachePath = appCacheDir.absolutePath ?: ""
+    val externalCachePath = externalCacheDir.absolutePath ?: ""
+
     val systemCacheSizeText = ObservableField("")
+    val externalCacheSizeText = ObservableField("")
 
-    //文件缓存总大小
-    private val externalCacheFile = File(PathHelper.getCachePath())
-    var externalCachePath = ObservableField("")
-    var externalCacheSizeText = ObservableField("")
+    val cacheDirsLiveData = MutableLiveData<List<CacheBean>>()
 
-    //弹幕缓存
-    private val danmuDirectory = PathHelper.getDanmuDirectory()
-    var danmuFileCount = ObservableField("")
-    var danmuDirectoryName = ObservableField("")
-    var danmuDirectorySizeText = ObservableField("")
+    fun refreshCache() {
+        val appCacheDirSize = IOUtils.getDirectorySize(appCacheDir)
+        systemCacheSizeText.set(formatFileSize(appCacheDirSize))
 
-    //字幕缓存
-    private val subtitleDirectory = PathHelper.getSubtitleDirectory()
-    var subtitleFileCount = ObservableField("")
-    var subtitleDirectorySizeText = ObservableField("")
-    var subtitleDirectoryName = ObservableField("")
+        val externalCacheDirSize = IOUtils.getDirectorySize(externalCacheDir)
+        externalCacheSizeText.set(formatFileSize(externalCacheDirSize))
 
-    //播放器缓存
-    private val playCacheDirectory = PathHelper.getPlayCacheDirectory()
-    var playerDirectoryCacheSizeText = ObservableField("")
-    var playerCacheDirectoryName = ObservableField("")
-
-    //截图缓存
-    private val screenShotDirectory = PathHelper.getScreenShotDirectory()
-    var screenShotDirectorySizeText = ObservableField("")
-    var screenShotDirectoryName = ObservableField("")
-
-    //其它缓存
-    var otherCacheSizeText = ObservableField("")
-
-    val confirmCacheLiveData = MutableLiveData<CacheType>()
-
-    init {
-        getCacheSize()
-    }
-
-    fun clearCache(type: CacheType) {
-        confirmCacheLiveData.postValue(type)
-    }
-
-    fun confirmClearCache(type: CacheType) {
-        viewModelScope.launch(Dispatchers.IO) {
-            when (type) {
-                CacheType.SYSTEM_CACHE -> clearCacheDirectory(systemCacheDir)
-                CacheType.DANMU_CACHE -> clearCacheDirectory(danmuDirectory)
-                CacheType.SUBTITLE_CACHE -> clearCacheDirectory(subtitleDirectory)
-                CacheType.PLAY_CACHE -> {
-                    clearCacheDirectory(playCacheDirectory)
-                }
-                CacheType.SCREEN_SHOT_CACHE -> clearCacheDirectory(screenShotDirectory)
-                CacheType.OTHER_CACHE -> {
-                    val cacheDir = arrayOf(
-                        danmuDirectory.absolutePath,
-                        subtitleDirectory.absolutePath,
-                        playCacheDirectory.absolutePath,
-                        screenShotDirectory.absolutePath
-                    )
-                    playCacheDirectory.listFiles()?.forEach {
-                        if (it.absolutePath !in cacheDir) {
-                            clearCacheDirectory(it)
-                        }
-                    }
-                }
-                else -> {
-                }
+        val cacheDirs = mutableListOf<CacheBean>()
+        CacheType.values().forEach {
+            var fileCount = 0
+            if (it == CacheType.DANMU_CACHE) {
+                fileCount = getDanmuFileCount(PathHelper.getDanmuDirectory())
+            } else if (it == CacheType.SUBTITLE_CACHE) {
+                fileCount = getSubtitleFileCount(PathHelper.getSubtitleDirectory())
             }
-            getCacheSize()
+            val cacheBean = CacheBean(it, fileCount, getCacheSize(it))
+            cacheDirs.add(cacheBean)
+        }
+
+        val otherCacheBean = CacheBean(null, 0, getCacheSize(null))
+        cacheDirs.add(otherCacheBean)
+
+        cacheDirsLiveData.postValue(cacheDirs)
+    }
+
+    fun clearAppCache() {
+        viewModelScope.launch(Dispatchers.IO) {
+            clearCacheDirectory(appCacheDir)
         }
     }
 
-    private fun getCacheSize() {
-        //系统缓存
-        val systemCacheSize = IOUtils.getDirectorySize(systemCacheDir)
-        systemCachePath.set("路径：${systemCacheDir.absolutePath}")
-        systemCacheSizeText.set(formatFileSize(systemCacheSize))
+    fun clearCacheByType(cacheType: CacheType?) {
+        if (cacheType != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                clearCacheDirectory(PathHelper.getCacheDirectory(cacheType))
+                refreshCache()
+            }
+            return
+        }
+        val childCacheDirs = externalCacheDir.listFiles()
+            ?: return
 
-        //文件缓存总大小
-        val externalCacheSize = IOUtils.getDirectorySize(externalCacheFile)
-        externalCachePath.set("路径：${externalCacheFile.absolutePath}")
-        externalCacheSizeText.set(formatFileSize(externalCacheSize))
+        val namedCacheDirPaths = CacheType.values().map {
+            PathHelper.getCacheDirectory(it).absolutePath
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            childCacheDirs.forEach {
+                if (it.absolutePath !in namedCacheDirPaths) {
+                    clearCacheDirectory(it)
+                }
+            }
+            refreshCache()
+        }
+    }
 
-        //弹幕缓存
-        val danmuDirectorySize = IOUtils.getDirectorySize(danmuDirectory)
-        danmuFileCount.set("弹幕文件（${getDanmuFileCount(danmuDirectory)}）")
-        danmuDirectoryName.set("文件夹名称：${PathHelper.PATH_DANMU}")
-        danmuDirectorySizeText.set(formatFileSize(IOUtils.getDirectorySize(danmuDirectory)))
-
-        //字幕缓存
-        val subtitleDirectorySize = IOUtils.getDirectorySize(subtitleDirectory)
-        subtitleFileCount.set("字幕文件（${getSubtitleFileCount(subtitleDirectory)}）")
-        subtitleDirectorySizeText.set(formatFileSize(IOUtils.getDirectorySize(subtitleDirectory)))
-        subtitleDirectoryName.set("文件夹名称：${PathHelper.PATH_SUBTITLE}")
-
-        //播放器缓存
-        val playCacheDirectorySize = IOUtils.getDirectorySize(playCacheDirectory)
-        playerDirectoryCacheSizeText.set(formatFileSize(playCacheDirectorySize))
-        playerCacheDirectoryName.set("文件夹名称：${PathHelper.PATH_PLAY_CACHE}")
-
-        //截图缓存
-        val screenShotDirectorySize = IOUtils.getDirectorySize(screenShotDirectory)
-        screenShotDirectorySizeText.set(formatFileSize(screenShotDirectorySize))
-        screenShotDirectoryName.set("文件夹名称：${PathHelper.PATH_SCREEN_SHOT}")
-
-        val otherCacheSize = externalCacheSize - danmuDirectorySize - subtitleDirectorySize -
-                playCacheDirectorySize - screenShotDirectorySize
-        otherCacheSizeText.set(formatFileSize(otherCacheSize))
+    private fun getCacheSize(cacheType: CacheType?): Long {
+        return if (cacheType != null) {
+            val cacheTypeDir = PathHelper.getCacheDirectory(cacheType)
+            IOUtils.getDirectorySize(cacheTypeDir)
+        } else {
+            val totalCacheSize = IOUtils.getDirectorySize(externalCacheDir)
+            var namedCacheSize = 0L
+            CacheType.values().forEach {
+                namedCacheSize += getCacheSize(it)
+            }
+            totalCacheSize - namedCacheSize
+        }
     }
 
     /**

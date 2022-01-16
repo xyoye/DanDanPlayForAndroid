@@ -150,7 +150,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
                 curVideoSource.setDanmuPath(danmuPath)
                 curVideoSource.setEpisodeId(it.episodeId)
-                viewModel.storeDanmuSourceChange(danmuPath, it.episodeId, curVideoSource.getVideoUrl())
+                viewModel.storeDanmuSourceChange(curVideoSource)
             }
         }
     }
@@ -182,6 +182,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun applyPlaySource(newSource: BaseVideoSource?) {
+        dataBinding.danDanPlayer.recordPlayInfo()
         dataBinding.danDanPlayer.pause()
         dataBinding.danDanPlayer.release()
         videoController.release()
@@ -205,9 +206,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         dataBinding.danDanPlayer.apply {
-            setProgressObserver { position, duration ->
-                viewModel.addPlayHistory(videoSource, position, duration)
-            }
             setVideoSource(source)
             start()
         }
@@ -219,12 +217,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
             source.setDanmuPath(danmuPath)
             source.setEpisodeId(episodeId)
-            viewModel.storeDanmuSourceChange(danmuPath, episodeId, source.getVideoUrl())
+            viewModel.storeDanmuSourceChange(source)
         }
         //当字幕绑定更新，保存变更
         videoController.observeSubtitleSourceChanged {
             source.setSubtitlePath(it)
-            viewModel.storeSubtitleSourceChange(it, source.getVideoUrl())
+            viewModel.storeSubtitleSourceChange(source)
         }
         //发送弹幕
         videoController.observerSendDanmu {

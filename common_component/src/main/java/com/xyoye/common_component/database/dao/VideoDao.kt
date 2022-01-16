@@ -74,4 +74,7 @@ interface VideoDao {
 
     @Query("UPDATE video SET filter = (:filter) WHERE folder_path = (:folderPath)")
     suspend fun updateFolderFilter(filter: Boolean, folderPath: String)
+
+    @Query("UPDATE video SET video_duration = (:duration) WHERE file_path = (:filePath)")
+    suspend fun updateDuration(duration: Long, filePath: String)
 }

@@ -55,9 +55,9 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun deleteTypeAll(mediaType: MediaType)
 
-    @Query("UPDATE play_history SET danmu_path = (:danmuPath) WHERE url = (:url) AND media_type = (:mediaType)")
+    @Query("UPDATE play_history SET danmu_path = (:danmuPath) AND episode_id = (:episodeId) WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateDanmu(url: String, mediaType: MediaType, danmuPath: String?)
+    suspend fun updateDanmu(url: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
 
     @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)

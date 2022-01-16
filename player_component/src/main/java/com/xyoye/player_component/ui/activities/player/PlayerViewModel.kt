@@ -6,74 +6,52 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.data.SendDanmuData
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import com.xyoye.data_component.entity.PlayHistoryEntity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
-import java.util.*
 
 class PlayerViewModel : BaseViewModel() {
 
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)
 
-    fun addPlayHistory(source: BaseVideoSource?, position: Long, duration: Long) {
-        source ?: return
-
-        GlobalScope.launch(context = Dispatchers.IO) {
-            var torrentPath: String? = null
-            var torrentIndex = -1
-            if (source is TorrentMediaSource) {
-                torrentPath = source.getTorrentPath()
-                torrentIndex = source.getTorrentIndex()
+    fun storeDanmuSourceChange(videoSource: BaseVideoSource) {
+        viewModelScope.launch {
+            DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
+                videoSource.getVideoUrl(),
+                videoSource.getMediaType(),
+                videoSource.getDanmuPath(),
+                videoSource.getEpisodeId()
+            )
+            if (videoSource.getMediaType() == MediaType.LOCAL_STORAGE) {
+                DatabaseManager.instance.getVideoDao().updateDanmu(
+                    videoSource.getVideoUrl(),
+                    videoSource.getDanmuPath(),
+                    videoSource.getEpisodeId()
+                )
             }
-
-            val history = PlayHistoryEntity(
-                0,
-                source.getVideoTitle(),
-                source.getVideoUrl(),
-                source.getMediaType(),
-                position,
-                duration,
-                Date(),
-                source.getDanmuPath(),
-                source.getEpisodeId(),
-                source.getSubtitlePath(),
-                torrentPath,
-                torrentIndex,
-                JsonHelper.toJson(source.getHttpHeader()),
-                null,
-                source.getUniqueKey()
-            )
-
-            DatabaseManager.instance.getPlayHistoryDao()
-                .insert(history)
         }
     }
 
-    fun storeDanmuSourceChange(danmuPath: String, episodeId: Int, videoPath: String) {
+    fun storeSubtitleSourceChange(videoSource: BaseVideoSource) {
         viewModelScope.launch {
-            DatabaseManager.instance.getVideoDao().updateDanmu(
-                videoPath, danmuPath, episodeId
+            DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
+                videoSource.getVideoUrl(),
+                videoSource.getMediaType(),
+                videoSource.getSubtitlePath()
             )
-        }
-    }
-
-    fun storeSubtitleSourceChange(subtitle: String, videoPath: String) {
-        viewModelScope.launch {
-            DatabaseManager.instance.getVideoDao().updateSubtitle(
-                videoPath, subtitle
-            )
+            if (videoSource.getMediaType() == MediaType.LOCAL_STORAGE) {
+                DatabaseManager.instance.getVideoDao().updateSubtitle(
+                    videoSource.getVideoUrl(), videoSource.getSubtitlePath()
+                )
+            }
         }
     }
 

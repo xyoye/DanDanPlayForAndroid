@@ -6,8 +6,14 @@ import android.os.Handler
 import android.os.Looper
 import android.view.*
 import androidx.annotation.RequiresApi
+import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.player.surface.InterSurfaceView
 import com.xyoye.player_component.R
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +21,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
+import java.util.*
 
 /**
  * Created by xyoye on 2022/1/15.
@@ -22,6 +29,45 @@ import java.io.File
 
 object PlayRecorder {
     private const val HEIGHT = 150f
+
+    fun recordProgress(source: BaseVideoSource, position: Long, duration: Long) {
+        GlobalScope.launch(context = Dispatchers.IO) {
+            var torrentPath: String? = null
+            var torrentIndex = -1
+            if (source is TorrentMediaSource) {
+                torrentPath = source.getTorrentPath()
+                torrentIndex = source.getTorrentIndex()
+            }
+
+            val history = PlayHistoryEntity(
+                0,
+                source.getVideoTitle(),
+                source.getVideoUrl(),
+                source.getMediaType(),
+                position,
+                duration,
+                Date(),
+                source.getDanmuPath(),
+                source.getEpisodeId(),
+                source.getSubtitlePath(),
+                torrentPath,
+                torrentIndex,
+                JsonHelper.toJson(source.getHttpHeader()),
+                null,
+                source.getUniqueKey()
+            )
+
+            DatabaseManager.instance.getPlayHistoryDao()
+                .insert(history)
+
+            //部分视频无法获取到视频时长，播放后再更新时长
+            if (source.getMediaType() == MediaType.LOCAL_STORAGE) {
+                DatabaseManager.instance
+                    .getVideoDao()
+                    .updateDuration(duration, source.getVideoUrl())
+            }
+        }
+    }
 
     fun recordImage(key: String, renderView: InterSurfaceView?) {
         val view = renderView?.getView()

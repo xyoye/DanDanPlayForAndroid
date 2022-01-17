@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.activities.local_media
 
+import android.net.Uri
 import android.text.TextUtils
 import android.view.*
 import android.view.inputmethod.EditorInfo
@@ -28,7 +29,6 @@ import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityLocalMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaFolderBinding
 import com.xyoye.local_component.databinding.ItemMediaVideoBinding
-import java.io.File
 
 @Route(path = RouteTable.Local.LocalMediaStorage)
 class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaBinding>() {
@@ -313,14 +313,10 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
     private fun setVideoCover(imageView: ImageView, data: VideoEntity) {
         val uniqueKey = LocalSourceFactory.generateUniqueKey(data)
-        val coverFile = File(PathHelper.getVideoCoverDirectory(), uniqueKey)
-        if (coverFile.exists()) {
-            imageView.setGlideImage(coverFile.absolutePath, 5, isCache = false)
-        } else {
-            if (data.fileId != 0L) {
-                val videoUri = IOUtils.getVideoUri(data.fileId)
-                imageView.setGlideImage(videoUri, 5)
-            }
+        var defaultImage: Uri? = null
+        if (data.fileId != 0L) {
+            defaultImage = IOUtils.getVideoUri(data.fileId)
         }
+        imageView.setVideoCover(uniqueKey, defaultImage)
     }
 }

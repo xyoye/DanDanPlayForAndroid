@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.EntropyUtils
+import com.xyoye.common_component.utils.PathHelper
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -17,6 +18,12 @@ fun String?.toFile() : File? {
     if (this.isNullOrEmpty())
         return null
     return File(this)
+}
+
+fun String?.toCoverFile(): File? {
+    if (this.isNullOrEmpty())
+        return null
+    return File(PathHelper.getVideoCoverDirectory(), this)
 }
 
 fun String.addToClipboard(){

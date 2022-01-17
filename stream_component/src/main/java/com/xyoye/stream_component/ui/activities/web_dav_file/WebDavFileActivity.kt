@@ -1,6 +1,7 @@
 package com.xyoye.stream_component.ui.activities.web_dav_file
 
 import android.view.KeyEvent
+import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -10,16 +11,20 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
+import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
+import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.sardine.DavResource
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityWebDavFileBinding
-import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
+import com.xyoye.stream_component.databinding.ItemStorageFolderV2Binding
+import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
 
 @Route(path = RouteTable.Stream.WebDavFile)
 class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileBinding>() {
@@ -27,6 +32,11 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
     @Autowired
     @JvmField
     var webDavData: MediaLibraryEntity? = null
+
+    companion object {
+        private const val ACTION_UNBIND_DANMU = 1
+        private const val ACTION_UNBIND_SUBTITLE = 2
+    }
 
     override fun initViewModel() =
         ViewModelInit(
@@ -60,6 +70,11 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
                 .navigation()
         }
         viewModel.listStorageRoot(webDavData!!)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshDirectory()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -101,33 +116,78 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         dataBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<DavResource> {
-                addItem<DavResource, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
+            adapter = buildAdapter<Any> {
+
+                addItem<Any, ItemStorageVideoBinding>(R.layout.item_storage_video) {
+                    checkType { data, _ -> data is WebDavFileBean }
                     initView { data, _, _ ->
-                        itemBinding.apply {
-                            fileNameTv.text = data.name
-                            if (data.isDirectory) {
-                                fileDescribeTv.text = "目录"
-                                fileCoverIv.setImageResource(R.drawable.ic_folder)
-                            } else {
-                                fileDescribeTv.text = formatFileSize(data.contentLength)
-                                fileCoverIv.setImageResource(MediaUtils.getMediaTypeCover(data.name))
-                            }
-                            fileDateTv.text = date2Str(data.modified, "yy-MM-dd HH:mm")
-                            itemLayout.setOnClickListener {
-                                when {
-                                    data.isDirectory -> {
-                                        viewModel.openDirectory(data.path)
-                                    }
-                                    else -> {
-                                        viewModel.playItem(data)
-                                    }
-                                }
-                            }
+                        val bean = data as WebDavFileBean
+                        itemBinding.coverIv.setVideoCover(bean.uniqueKey)
+                        itemBinding.titleTv.text = bean.davSource.name
+                        itemBinding.danmuTipsTv.isVisible = bean.danmuPath?.isNotEmpty() ?: false
+                        itemBinding.subtitleTipsTv.isVisible =
+                            bean.subtitlePath?.isNotEmpty() ?: false
+
+                        itemBinding.itemLayout.setOnClickListener {
+                            viewModel.playItem(bean.davSource)
+                        }
+                        itemBinding.itemLayout.setOnLongClickListener {
+                            showVideoManagerDialog(data)
+                        }
+                    }
+                }
+
+                addItem<Any, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
+                    checkType { data, _ -> data is DavResource }
+                    initView { data, _, _ ->
+                        val davResource = data as DavResource
+                        itemBinding.folderTv.text = davResource.name
+                        itemBinding.fileCountTv.text = "目录"
+                        itemBinding.itemLayout.setOnClickListener {
+                            viewModel.openDirectory(davResource.path)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun showVideoManagerDialog(bean: WebDavFileBean): Boolean {
+        val actionList = mutableListOf<SheetActionBean>()
+
+        if (bean.uniqueKey.isNullOrEmpty()) {
+            return false
+        }
+
+        if (!bean.danmuPath.isNullOrEmpty()) {
+            actionList.add(
+                SheetActionBean(
+                    ACTION_UNBIND_DANMU,
+                    "移除弹幕绑定",
+                    R.drawable.ic_unbind_danmu
+                )
+            )
+        }
+        if (!bean.subtitlePath.isNullOrEmpty()) {
+            actionList.add(
+                SheetActionBean(
+                    ACTION_UNBIND_SUBTITLE,
+                    "移除字幕绑定",
+                    R.drawable.ic_unbind_subtitle
+                )
+            )
+        }
+        if (actionList.isEmpty())
+            return false
+
+        BottomActionDialog(actionList, SheetActionType.VERTICAL) {
+            when (it) {
+                ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(bean.uniqueKey)
+                ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(bean.uniqueKey)
+            }
+            return@BottomActionDialog true
+        }.show(this)
+
+        return true
     }
 }

@@ -55,7 +55,7 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun deleteTypeAll(mediaType: MediaType)
 
-    @Query("UPDATE play_history SET danmu_path = (:danmuPath) AND episode_id = (:episodeId) WHERE url = (:url) AND media_type = (:mediaType)")
+    @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun updateDanmu(url: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
 
@@ -66,4 +66,16 @@ interface PlayHistoryDao {
     @Query("SELECT video_position FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getPlayHistoryPosition(url: String, mediaType: MediaType): Long?
+
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun getHistoryByKey(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?
+
+    @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun updateDanmuByKey(uniqueKey: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
+
+    @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun updateSubtitleByKey(uniqueKey: String, mediaType: MediaType, subtitlePath: String?)
 }

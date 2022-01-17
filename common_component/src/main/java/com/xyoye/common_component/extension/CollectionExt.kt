@@ -29,7 +29,7 @@ inline fun <reified T, reified E> MutableIterator<T>.deduplication(
 /**
  * 过滤以.开头的文件
  */
-inline fun <T> MutableList<T>.filterHideFile(getName: (T) -> String): MutableList<T> {
+inline fun <T> List<T>.filterHideFile(getName: (T) -> String): MutableList<T> {
     val showHiddenFile = AppConfig.isShowHiddenFile()
     return filter {
         showHiddenFile || getName.invoke(it).startsWith(".").not()

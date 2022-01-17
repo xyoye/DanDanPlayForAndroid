@@ -3,10 +3,11 @@ package com.xyoye.stream_component.ui.activities.web_dav_file
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.extension.filterHideFile
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.WebDavSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -29,8 +30,10 @@ class WebDavFileViewModel : BaseViewModel() {
     private lateinit var credentials: String
     private var rootPath = PATH_ROOT
 
-    val fileLiveData = MutableLiveData<MutableList<DavResource>>()
-    val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
+    private val curDirectoryFiles = mutableListOf<DavResource>()
+
+    val fileLiveData = MutableLiveData<List<Any>>()
+    val pathLiveData = MutableLiveData<List<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
     private lateinit var sardine: OkHttpSardine
@@ -57,17 +60,17 @@ class WebDavFileViewModel : BaseViewModel() {
         showLoading()
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                //获取文件列表，过滤同路径文件夹
-                val fileList = sardine.list(addressUrl + path)
-                    .filter { formatPath(it.path) != formatPath(path) }
-                    .toMutableList()
+                val childFiles = sardine.list(addressUrl + path)
+                    .filter {
+                        val isNotCurrentDir = formatPath(it.path) != formatPath(path)
+                        val isNotNeedHide = FileNameUtils.fileNeedHide(it.name).not()
+                        //过滤同路径文件夹 和 .开头的隐藏文件
+                        isNotCurrentDir && isNotNeedHide
+                    }
+                curDirectoryFiles.clear()
+                curDirectoryFiles.addAll(childFiles)
 
-                fileList.sortWith(FileComparator(
-                    value = { it.name },
-                    isDirectory = { it.isDirectory }
-                ))
-
-                fileLiveData.postValue(fileList.filterHideFile { it.name })
+                refreshDirectory()
                 //获取路径列表
                 pathLiveData.postValue(splitPath(path))
             } catch (t: Throwable) {
@@ -77,6 +80,28 @@ class WebDavFileViewModel : BaseViewModel() {
             withContext(Dispatchers.Main) {
                 hideLoading()
             }
+        }
+    }
+
+    fun refreshDirectory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val displayFiles = curDirectoryFiles
+                .filter { it.isDirectory || isVideoFile(it.name) }
+                .sortedWith(FileComparator(
+                    value = { it.name },
+                    isDirectory = { it.isDirectory }
+                ))
+                .map {
+                    if (it.isDirectory) {
+                        return@map it
+                    }
+                    val uniqueKey = WebDavSourceFactory.generateUniqueKey(addressUrl, it)
+                    val history = DatabaseManager.instance.getPlayHistoryDao()
+                        .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
+                    WebDavFileBean(it, history?.danmuPath, history?.subtitlePath, uniqueKey)
+                }
+
+            fileLiveData.postValue(displayFiles)
         }
     }
 
@@ -95,19 +120,16 @@ class WebDavFileViewModel : BaseViewModel() {
 
     fun playItem(davResource: DavResource) {
         viewModelScope.launch(Dispatchers.IO) {
-            val videoSources = fileLiveData.value
-                ?.filter { isVideoFile(it.name) }
-            val index = videoSources?.indexOf(davResource)
-                ?: -1
+            val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
+            val index = videoSources.indexOf(davResource)
             if (videoSources.isNullOrEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
             }
 
             //同文件夹内的弹幕和字幕资源
-            val extSources = fileLiveData.value
-                ?.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
-                ?: emptyList()
+            val extSources = curDirectoryFiles
+                .filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
             //身份验证请求头
             val header = mapOf(Pair("Authorization", credentials))
 
@@ -127,6 +149,24 @@ class WebDavFileViewModel : BaseViewModel() {
             }
             VideoSourceManager.getInstance().setSource(mediaSource)
             playLiveData.postValue(Any())
+        }
+    }
+
+    fun unbindDanmu(uniqueKey: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DatabaseManager.instance.getPlayHistoryDao().updateDanmuByKey(
+                uniqueKey, MediaType.WEBDAV_SERVER, null, 0
+            )
+            refreshDirectory()
+        }
+    }
+
+    fun unbindSubtitle(uniqueKey: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DatabaseManager.instance.getPlayHistoryDao().updateSubtitleByKey(
+                uniqueKey, MediaType.WEBDAV_SERVER, null
+            )
+            refreshDirectory()
         }
     }
 

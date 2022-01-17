@@ -61,7 +61,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
 
             layoutManager = vertical()
 
-            adapter = buildAdapter<RemoteVideoData> {
+            adapter = buildAdapter {
                 initData(mFileData)
 
                 addItem<RemoteVideoData, ItemRemoteFolderBinding>(R.layout.item_remote_folder) {

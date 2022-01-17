@@ -99,17 +99,15 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
         dataBinding.mediaRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<Any> {
+            adapter = buildAdapter {
                 addEmptyView(R.layout.layout_empty) {
                     initEmptyView {
                         itemBinding.emptyTv.text = "找不到相关视频"
                     }
                 }
 
-                addItem<Any, ItemMediaFolderBinding>(R.layout.item_media_folder) {
-                    checkType { data, _ -> data is FolderBean }
+                addItem<FolderBean, ItemMediaFolderBinding>(R.layout.item_media_folder) {
                     initView { data, _, _ ->
-                        data as FolderBean
                         itemBinding.apply {
                             val folderName = getFolderName(data.folderPath)
                             folderTv.text = folderName
@@ -127,10 +125,8 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                     }
                 }
 
-                addItem<Any, ItemMediaVideoBinding>(R.layout.item_media_video) {
-                    checkType { data, _ -> data is VideoEntity }
+                addItem<VideoEntity, ItemMediaVideoBinding>(R.layout.item_media_video) {
                     initView { data, position, _ ->
-                        data as VideoEntity
                         itemBinding.run {
                             titleTv.setTextColorRes(
                                 if (data.isLastPlay) R.color.text_theme else R.color.text_black

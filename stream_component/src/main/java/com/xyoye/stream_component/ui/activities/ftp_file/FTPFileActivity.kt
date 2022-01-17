@@ -101,7 +101,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         dataBinding.pathRv.apply {
             layoutManager = horizontal()
 
-            adapter = buildAdapter<FilePathBean> {
+            adapter = buildAdapter {
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, position, _ ->
                         itemBinding.apply {
@@ -127,7 +127,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         dataBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<FTPFile> {
+            adapter = buildAdapter {
                 addItem<FTPFile, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
                     initView { data, _, _ ->
                         itemBinding.apply {

@@ -26,10 +26,10 @@ import com.xyoye.data_component.data.AnimeData
  * Created by xyoye on 2020/10/4.
  */
 
-class AnimeAdapter : BaseAdapter<AnimeData>() {
+class AnimeAdapter : BaseAdapter() {
 
     companion object {
-        fun getAdapter(activity: Activity) = buildAdapter<AnimeData> {
+        fun getAdapter(activity: Activity) = buildAdapter {
 
             addEmptyView(R.layout.layout_empty)
 
@@ -73,7 +73,7 @@ class AnimeAdapter : BaseAdapter<AnimeData>() {
     }
 }
 
-fun BaseAdapter<AnimeData>.setNewAnimeData(newData: MutableList<AnimeData>) {
+fun BaseAdapter.setNewAnimeData(newData: MutableList<AnimeData>) {
     val calculateResult = DiffUtil.calculateDiff(
         AnimeDiffCallBack(this.items, newData)
     )

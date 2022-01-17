@@ -74,7 +74,7 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
         binding.danmuSourceRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<DanmuSourceBean> {
+            adapter = buildAdapter {
                 initData(downloadSources)
 
                 addItem<DanmuSourceBean, ItemDanmuSourceSelectBinding>(R.layout.item_danmu_source_select) {

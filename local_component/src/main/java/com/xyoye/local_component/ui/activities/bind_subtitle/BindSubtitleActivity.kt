@@ -75,7 +75,7 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
         dataBinding.subtitleRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<SubtitleMatchData> {
+            adapter = buildAdapter {
                 addEmptyView(R.layout.layout_empty)
 
                 addItem<SubtitleMatchData, ItemSubtitleSourceBinding>(R.layout.item_subtitle_source) {

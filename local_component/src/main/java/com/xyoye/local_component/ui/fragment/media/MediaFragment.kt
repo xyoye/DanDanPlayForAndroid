@@ -65,7 +65,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         dataBinding.mediaLibRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<MediaLibraryEntity> {
+            adapter = buildAdapter {
                 addItem<MediaLibraryEntity, ItemMediaLibraryBinding>(R.layout.item_media_library) {
                     initView { data, _, _ ->
                         itemBinding.apply {

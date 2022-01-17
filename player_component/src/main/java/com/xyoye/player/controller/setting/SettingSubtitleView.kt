@@ -174,7 +174,7 @@ class SettingSubtitleView(
         viewBinding.subtitleTrackRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<VideoTrackBean> {
+            adapter = buildAdapter {
                 initData(subtitleTrackList)
 
                 addItem<VideoTrackBean, ItemVideoTrackBinding>(R.layout.item_video_track) {

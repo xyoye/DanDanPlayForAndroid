@@ -126,7 +126,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
         binding.pathRv.apply {
             layoutManager = horizontal()
 
-            adapter = buildAdapter<FilePathBean> {
+            adapter = buildAdapter {
                 initData(mPathData)
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, _, _ ->
@@ -153,7 +153,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
         binding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<FileManagerBean> {
+            adapter = buildAdapter {
                 addItem<FileManagerBean, ItemFileManagerBinding>(R.layout.item_file_manager) {
                     initView { data, _, _ ->
                         itemBinding.apply {

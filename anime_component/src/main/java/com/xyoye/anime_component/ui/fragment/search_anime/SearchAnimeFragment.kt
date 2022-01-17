@@ -23,7 +23,7 @@ import com.xyoye.data_component.data.CommonTypeData
 
 class SearchAnimeFragment :
     BaseFragment<SearchAnimeFragmentViewModel, FragmentSearchAnimeBinding>(), SearchListener {
-    private lateinit var animeAdapter: BaseAdapter<AnimeData>
+    private lateinit var animeAdapter: BaseAdapter
 
     companion object {
         fun newInstance(): SearchAnimeFragment {
@@ -86,7 +86,7 @@ class SearchAnimeFragment :
 
             addItemDecoration(ItemDecorationSpace(dp2px(2)))
 
-            adapter = buildAdapter<CommonTypeData> {
+            adapter = buildAdapter {
                 addItem<CommonTypeData, ItemCommonScreenBinding>(R.layout.item_common_screen) {
                     initView { data, position, _ ->
                         itemBinding.apply {
@@ -111,7 +111,7 @@ class SearchAnimeFragment :
         dataBinding.sortRv.apply {
             layoutManager = grid(viewModel.screenSpanCount)
 
-            adapter = buildAdapter<CommonTypeData> {
+            adapter = buildAdapter {
                 initData(viewModel.sortTypeData)
 
                 addItemDecoration(ItemDecorationSpace(dp2px(2), 0))

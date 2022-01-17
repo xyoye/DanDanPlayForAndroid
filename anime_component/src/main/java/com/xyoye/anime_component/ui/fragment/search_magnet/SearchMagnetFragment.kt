@@ -112,7 +112,7 @@ class SearchMagnetFragment :
         dataBinding.magnetRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<MagnetData> {
+            adapter = buildAdapter {
                 addEmptyView(R.layout.layout_empty)
 
                 addItem<MagnetData, ItemSearchMagnetBinding>(R.layout.item_search_magnet) {

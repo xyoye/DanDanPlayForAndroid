@@ -90,7 +90,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         dataBinding.pathRv.apply {
             layoutManager = horizontal()
 
-            adapter = buildAdapter<FilePathBean> {
+            adapter = buildAdapter {
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -116,10 +116,9 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         dataBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<Any> {
+            adapter = buildAdapter {
 
-                addItem<Any, ItemStorageVideoBinding>(R.layout.item_storage_video) {
-                    checkType { data, _ -> data is WebDavFileBean }
+                addItem<WebDavFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
                     initView { data, _, _ ->
                         val bean = data as WebDavFileBean
                         itemBinding.coverIv.setVideoCover(bean.uniqueKey)
@@ -137,8 +136,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
                     }
                 }
 
-                addItem<Any, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
-                    checkType { data, _ -> data is DavResource }
+                addItem<DavResource, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
                     initView { data, _, _ ->
                         val davResource = data as DavResource
                         itemBinding.folderTv.text = davResource.name

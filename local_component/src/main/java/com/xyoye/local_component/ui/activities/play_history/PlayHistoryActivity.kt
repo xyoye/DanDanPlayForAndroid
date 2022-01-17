@@ -138,7 +138,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         dataBinding.playHistoryRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<PlayHistoryEntity> {
+            adapter = buildAdapter {
                 addEmptyView(R.layout.layout_empty) {
                     initEmptyView {
                         itemBinding.emptyTv.text = "暂无播放记录"

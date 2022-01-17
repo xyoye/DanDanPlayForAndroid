@@ -103,7 +103,7 @@ class SwitchVideoSourceView @JvmOverloads constructor(
         viewBinding.sourceRv.apply {
             layoutManager = CenterLayoutManager(context)
 
-            adapter = buildAdapter<VideoSourceBean> {
+            adapter = buildAdapter {
                 addItem<VideoSourceBean, ItemVideoSourceBinding>(R.layout.item_video_source) {
                     initView { data, _, _ ->
                         val indexText = "${data.index + 1}"

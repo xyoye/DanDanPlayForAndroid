@@ -30,7 +30,7 @@ class LicenseActivity : BaseActivity<LicenseViewModel, ActivityLicenseBinding>()
         dataBinding.licenseRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<Pair<String, String>> {
+            adapter = buildAdapter {
                 addItem<Pair<String, String>, ItemLicenseBinding>(R.layout.item_license) {
                     initView { data, _, _ ->
                         itemBinding.apply {

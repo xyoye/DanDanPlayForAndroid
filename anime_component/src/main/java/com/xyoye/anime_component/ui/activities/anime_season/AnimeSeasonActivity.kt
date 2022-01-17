@@ -46,7 +46,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         dataBinding.yearRv.run {
             layoutManager = grid(4)
 
-            adapter = buildAdapter<CommonTypeData> {
+            adapter = buildAdapter {
                 addItem<CommonTypeData, ItemCommonScreenBinding>(R.layout.item_common_screen) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -70,7 +70,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         dataBinding.seasonRv.apply {
             layoutManager = grid(4)
 
-            adapter = buildAdapter<CommonTypeData> {
+            adapter = buildAdapter {
                 addItem<CommonTypeData, ItemCommonScreenBinding>(R.layout.item_common_screen) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -96,7 +96,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         dataBinding.sortRv.apply {
             layoutManager = grid(4)
 
-            adapter = buildAdapter<CommonTypeData> {
+            adapter = buildAdapter {
                 initData(viewModel.sortTypeData)
 
                 addItemDecoration(ItemDecorationSpace(dp2px(2), 0))

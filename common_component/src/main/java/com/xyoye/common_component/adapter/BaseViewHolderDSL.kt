@@ -1,26 +1,31 @@
 package com.xyoye.common_component.adapter
 
 import androidx.databinding.ViewDataBinding
-import com.xyoye.mmkv_compiler.utils.throwException
+import kotlin.reflect.KClass
 
 /**
  * Created by xyoye on 2020/7/7.
  */
 
-class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(private val resourceId: Int) :
-    BaseViewHolderCreator<T, V>() {
+class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(
+    private val resourceId: Int,
+    private val clazz: KClass<T>
+) : BaseViewHolderCreator<V>() {
     private lateinit var viewType: ((data: T, position: Int) -> Boolean)
     private var viewHolder: (
-        (data: T, position: Int, creator: BaseViewHolderCreator<T, out ViewDataBinding>) -> Unit
+        (data: T, position: Int, creator: BaseViewHolderCreator<out ViewDataBinding>) -> Unit
     )? = null
     private var emptyViewHolder: (() -> Unit)? = null
 
-    override fun isForViewType(data: T?, position: Int): Boolean {
-        if (!this::viewType.isInitialized)
-            throwException("多类型Item需要类型判断：调用checkType")
+    override fun isForViewType(data: Any?, position: Int): Boolean {
         if (data == null)
             return false
-        return viewType.invoke(data, position)
+        if (clazz.isInstance(data).not())
+            return false
+        if (this::viewType.isInitialized) {
+            return viewType.invoke(data as T, position)
+        }
+        return true
     }
 
     /**
@@ -30,7 +35,7 @@ class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(private val resourceId: In
         this.viewType = viewType
     }
 
-    fun initView(holder: (data: T, position: Int, holder: BaseViewHolderCreator<T, out ViewDataBinding>) -> Unit) {
+    fun initView(holder: (data: T, position: Int, holder: BaseViewHolderCreator<out ViewDataBinding>) -> Unit) {
         this.viewHolder = holder
     }
 
@@ -41,18 +46,18 @@ class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(private val resourceId: In
     override fun getResourceId() = resourceId
 
     override fun onBindViewHolder(
-        data: T?,
+        data: Any?,
         position: Int,
-        creator: BaseViewHolderCreator<T, out ViewDataBinding>
+        creator: BaseViewHolderCreator<out ViewDataBinding>
     ) {
         //空布局
         if (position == -1 && data == null) {
             emptyViewHolder?.invoke()
+            return
         }
-        //正常布局不允许数据为null
-        else if (data != null) {
-            viewHolder?.invoke(data, position, creator)
-        }
+
+        data ?: return
+        viewHolder?.invoke(data as T, position, creator)
     }
 
 }

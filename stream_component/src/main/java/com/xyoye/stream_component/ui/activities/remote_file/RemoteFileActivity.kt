@@ -36,7 +36,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
     private val fragmentStack = Stack<RemoteFileFragment>()
     private val pathList = mutableListOf<FilePathBean>()
 
-    private lateinit var pathAdapter: BaseAdapter<FilePathBean>
+    private lateinit var pathAdapter: BaseAdapter
 
     override fun initViewModel() =
         ViewModelInit(

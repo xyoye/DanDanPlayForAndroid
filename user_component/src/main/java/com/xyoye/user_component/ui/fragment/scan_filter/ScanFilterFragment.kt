@@ -30,7 +30,7 @@ class ScanFilterFragment : BaseFragment<ScanFilterFragmentViewModel, FragmentSca
         dataBinding.filterFolderRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<FolderBean> {
+            adapter = buildAdapter {
                 addItem<FolderBean, ItemFilterFolderBinding>(R.layout.item_filter_folder) {
                     initView { data, _, _ ->
                         itemBinding.apply {

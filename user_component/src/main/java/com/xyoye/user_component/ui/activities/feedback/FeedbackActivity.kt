@@ -89,7 +89,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         dataBinding.feedbackRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<Pair<String, String>> {
+            adapter = buildAdapter {
 
                 initData(question)
 

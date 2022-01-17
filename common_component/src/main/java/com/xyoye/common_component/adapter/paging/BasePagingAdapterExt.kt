@@ -17,8 +17,8 @@ fun <T : Any> BasePagingAdapter<T>.initData(lifecycle: Lifecycle, pagingData: Pa
     submitPagingData(lifecycle, pagingData)
 }
 
-fun <T : Any, V: ViewDataBinding> BasePagingAdapter<T>.addItem(resourceId: Int, init: BaseViewHolderDSL<T, V>.() -> Unit) {
+inline fun <reified T : Any, V: ViewDataBinding> BasePagingAdapter<T>.addItem(resourceId: Int, init: BaseViewHolderDSL<T, V>.() -> Unit) {
     register(
-        BaseViewHolderDSL<T, V>(resourceId).apply { init() }
+        BaseViewHolderDSL<T, V>(resourceId, T::class).apply { init() }
     )
 }

@@ -35,7 +35,7 @@ class AnimeEpisodeFragment :
         }
     }
 
-    private lateinit var episodeAdapter: BaseAdapter<EpisodeData>
+    private lateinit var episodeAdapter: BaseAdapter
 
     override fun initViewModel() =
         ViewModelInit(
@@ -47,7 +47,7 @@ class AnimeEpisodeFragment :
 
     override fun initView() {
 
-        episodeAdapter = buildAdapter<EpisodeData> {
+        episodeAdapter = buildAdapter {
             addItem<EpisodeData, ItemAnimeEpisodeBinding>(R.layout.item_anime_episode) {
                 initView { data, _, _ ->
                     itemBinding.apply {

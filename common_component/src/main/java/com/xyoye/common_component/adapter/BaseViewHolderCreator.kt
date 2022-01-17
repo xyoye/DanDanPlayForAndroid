@@ -8,15 +8,15 @@ import androidx.databinding.ViewDataBinding
  * Created by xyoye on 2020/7/7.
  */
 
-abstract class BaseViewHolderCreator<T : Any, V : ViewDataBinding> {
-    abstract fun isForViewType(data: T?, position: Int): Boolean
+abstract class BaseViewHolderCreator<V : ViewDataBinding> {
+    abstract fun isForViewType(data: Any?, position: Int): Boolean
 
     abstract fun getResourceId(): Int
 
     abstract fun onBindViewHolder(
-        data: T?,
+        data: Any?,
         position: Int,
-        creator: BaseViewHolderCreator<T, out ViewDataBinding>
+        creator: BaseViewHolderCreator<out ViewDataBinding>
     )
 
     lateinit var itemView: View

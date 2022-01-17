@@ -37,7 +37,7 @@ class CacheManagerActivity : BaseActivity<CacheManagerViewModel, ActivityCacheMa
 
         dataBinding.rvCache.apply {
             layoutManager = vertical()
-            adapter = buildAdapter<CacheBean> {
+            adapter = buildAdapter {
                 addItem<CacheBean, ItemCacheTypeBinding>(R.layout.item_cache_type) {
                     initView { data, _, _ ->
                         var cacheTypeName = data.cacheType?.displayName ?: "其它文件"

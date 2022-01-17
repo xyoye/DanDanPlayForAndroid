@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Created by xyoye on 2020/7/7.
  */
 
-open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+open class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         //空布局ViewType
@@ -22,23 +22,23 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
 
     //数据源
-    var items: MutableList<T> = mutableListOf()
+    var items: MutableList<Any> = mutableListOf()
 
     //是否已添加空布局
     private var isAddedEmptyView = false
 
     //空布局Holder建造者
-    private lateinit var emptyViewHolderCreator: BaseViewHolderCreator<T, out ViewDataBinding>
+    private lateinit var emptyViewHolderCreator: BaseViewHolderCreator<out ViewDataBinding>
 
     //viewHolder集合
-    private val typeHolders: SparseArrayCompat<BaseViewHolderCreator<T, out ViewDataBinding>> = SparseArrayCompat()
+    private val typeHolders: SparseArrayCompat<BaseViewHolderCreator<out ViewDataBinding>> = SparseArrayCompat()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val viewHolderCreator =
             if (viewType == VIEW_TYPE_EMPTY) getEmptyHolderCreator() else getHolderCreator(viewType)
 
         return BaseViewHolder(
-            DataBindingUtil.inflate<ViewDataBinding>(
+            DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
                 viewHolderCreator.getResourceId(),
                 parent,
@@ -105,12 +105,12 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     /**
      * 根据viewType获取ViewHolder创建者
      */
-    private fun getHolderCreator(viewType: Int): BaseViewHolderCreator<T, out ViewDataBinding> {
+    private fun getHolderCreator(viewType: Int): BaseViewHolderCreator<out ViewDataBinding> {
         return typeHolders.get(viewType)
             ?: throw RuntimeException("no holder added for view type: $viewType")
     }
 
-    private fun getEmptyHolderCreator(): BaseViewHolderCreator<T, out ViewDataBinding> {
+    private fun getEmptyHolderCreator(): BaseViewHolderCreator<out ViewDataBinding> {
         return emptyViewHolderCreator
     }
 
@@ -121,12 +121,12 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         return position == 0 && isAddedEmptyView && items.size == 0
     }
 
-    open fun addData(data: T, position: Int = items.size) = apply {
+    open fun addData(data: Any, position: Int = items.size) = apply {
         items.add(position, data)
         notifyItemInserted(position)
     }
 
-    open fun addData(data: MutableList<T>) = apply {
+    open fun addData(data: MutableList<Any>) = apply {
         items.addAll(data)
         notifyDataSetChanged()
     }
@@ -136,7 +136,7 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         notifyItemRemoved(position)
     }
 
-    open fun updateOneData(position: Int, newData: T, payload: Boolean = true) {
+    open fun updateOneData(position: Int, newData: Any, payload: Boolean = true) {
         items[position] = newData
         if (payload) {
             notifyItemChanged(position, newData)
@@ -145,7 +145,7 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         }
     }
 
-    open fun setData(list: List<T>) {
+    open fun setData(list: List<Any>) {
         items.apply {
             clear()
             addAll(list)
@@ -153,12 +153,12 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
         notifyDataSetChanged()
     }
 
-    open fun getItem(position: Int): T? = items.getOrNull(position)
+    open fun getItem(position: Int): Any? = items.getOrNull(position)
 
     /**
      * 添加一个ViewHolder创建者，以下标作为key保存
      */
-    fun register(creator: BaseViewHolderCreator<T, out ViewDataBinding>) = apply {
+    fun register(creator: BaseViewHolderCreator<out ViewDataBinding>) = apply {
         var viewType = typeHolders.size()
         while (typeHolders.get(viewType) != null) {
             viewType++
@@ -175,7 +175,7 @@ open class BaseAdapter<T: Any> : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     /**
      * 添加空布局的ViewHolder创建者
      */
-    fun <V : ViewDataBinding> registerEmptyView(creator: BaseViewHolderCreator<T, V>) = apply {
+    fun <V : ViewDataBinding> registerEmptyView(creator: BaseViewHolderCreator<V>) = apply {
         require(typeHolders.get(VIEW_TYPE_EMPTY) == null) {
             "duplicate addition of empty views is not allowed"
         }

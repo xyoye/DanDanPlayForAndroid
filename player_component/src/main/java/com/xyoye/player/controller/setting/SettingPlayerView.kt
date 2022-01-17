@@ -130,7 +130,7 @@ class SettingPlayerView(
         viewBinding.videoScaleRv.apply {
             layoutManager = grid(5)
 
-            adapter = buildAdapter<VideoScaleBean> {
+            adapter = buildAdapter {
                 initData(mVideoScaleData)
 
                 addItem<VideoScaleBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
@@ -168,7 +168,7 @@ class SettingPlayerView(
         viewBinding.audioTrackRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<VideoTrackBean> {
+            adapter = buildAdapter {
                 addItem<VideoTrackBean, ItemVideoTrackBinding>(R.layout.item_video_track) {
                     initView { data, position, _ ->
                         itemBinding.apply {

@@ -34,10 +34,8 @@ class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentSca
         dataBinding.extendFolderRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<Any> {
-                addItem<Any, ItemExtendFolderAddBinding>(R.layout.item_extend_folder_add) {
-                    checkType { data, _ -> data is Int }
-
+            adapter = buildAdapter {
+                addItem<Int, ItemExtendFolderAddBinding>(R.layout.item_extend_folder_add) {
                     initView { _, _, _ ->
                         itemBinding.itemLayout.setOnClickListener {
                             if (FastClickFilter.isNeedFilter())
@@ -47,11 +45,8 @@ class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentSca
                     }
                 }
 
-                addItem<Any, ItemExtendFolderBinding>(R.layout.item_extend_folder) {
-                    checkType { data, _ -> data is ExtendFolderEntity }
-
+                addItem<ExtendFolderEntity, ItemExtendFolderBinding>(R.layout.item_extend_folder) {
                     initView { data, _, _ ->
-                        data as ExtendFolderEntity
                         itemBinding.apply {
                             val fileCountText = "${data.childCount}视频"
 

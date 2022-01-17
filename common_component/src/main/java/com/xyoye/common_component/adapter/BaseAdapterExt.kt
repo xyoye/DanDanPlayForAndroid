@@ -7,30 +7,29 @@ import com.xyoye.common_component.databinding.LayoutEmptyBinding
  * Created by xyoye on 2020/7/7.
  */
 
-fun <T : Any> buildAdapter(init: BaseAdapter<T>.() -> Unit): BaseAdapter<T> {
-    return BaseAdapter<T>().apply { init() }
+fun buildAdapter(init: BaseAdapter.() -> Unit): BaseAdapter {
+    return BaseAdapter().apply { init() }
 }
 
-fun <T : Any> BaseAdapter<T>.initData(items: MutableList<T>) {
-    this.items = items
+fun BaseAdapter.initData(items: List<Any>) {
+    this.items.clear()
+    this.items.addAll(items)
 }
 
-fun <T : Any, V : ViewDataBinding> BaseAdapter<T>.addItem(
+inline fun <reified T : Any, V : ViewDataBinding> BaseAdapter.addItem(
     resourceId: Int,
     init: BaseViewHolderDSL<T, V>.() -> Unit
 ) {
     register(
-        BaseViewHolderDSL<T, V>(resourceId).apply { init() }
+        BaseViewHolderDSL<T, V>(resourceId, T::class).apply { init() }
     )
 }
 
-fun <T : Any> BaseAdapter<T>.addEmptyView(
+inline fun BaseAdapter.addEmptyView(
     resourceId: Int,
-    init: (BaseViewHolderDSL<T, LayoutEmptyBinding>.() -> Unit)? = null
+    init: (BaseViewHolderDSL<Any, LayoutEmptyBinding>.() -> Unit) = {}
 ) {
-    val creator = BaseViewHolderDSL<T, LayoutEmptyBinding>(resourceId)
-    init?.let {
-        creator.apply(it)
-    }
+    val creator = BaseViewHolderDSL<Any, LayoutEmptyBinding>(resourceId, Any::class)
+    creator.apply(init)
     registerEmptyView(creator)
 }

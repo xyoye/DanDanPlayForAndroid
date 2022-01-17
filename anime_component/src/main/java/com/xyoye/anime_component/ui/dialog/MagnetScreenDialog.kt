@@ -44,7 +44,7 @@ class MagnetScreenDialog : BaseBottomDialog<DialogMagnetScreenBinding> {
 
             layoutManager = grid(2)
 
-            adapter = buildAdapter<MagnetScreenEntity> {
+            adapter = buildAdapter {
                 initData(screenData)
 
                 addItem<MagnetScreenEntity, ItemMagnetScreenBinding>(R.layout.item_magnet_screen) {

@@ -76,7 +76,7 @@ class BottomActionDialog : BaseBottomDialog<DialogBottomActionBinding> {
 
             layoutManager = actionLayoutManager
 
-            adapter = buildAdapter<SheetActionBean> {
+            adapter = buildAdapter {
                 initData(mActionData)
 
                 addItem<SheetActionBean, ViewDataBinding>(itemLayoutId) {

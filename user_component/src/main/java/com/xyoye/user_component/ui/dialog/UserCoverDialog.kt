@@ -30,7 +30,7 @@ class UserCoverDialog : BaseBottomDialog<DialogUserCoverBinding> {
         binding.userCoverRv.apply {
             layoutManager = grid(4)
 
-            adapter = buildAdapter<Int> {
+            adapter = buildAdapter {
                 addItem<Int, ItemUserCoverBinding>(R.layout.item_user_cover) {
                     initView { data, position, _ ->
                         val drawableArray = resources.obtainTypedArray(R.array.cover)

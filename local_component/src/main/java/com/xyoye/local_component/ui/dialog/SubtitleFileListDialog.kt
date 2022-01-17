@@ -46,7 +46,7 @@ class SubtitleFileListDialog : BaseBottomDialog<DialogSubtitleFileListBinding> {
         binding.subtitleFileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<SubFileData> {
+            adapter = buildAdapter {
                 initData(subtitleList)
 
                 addItem<SubFileData, ItemSubtitleFileBinding>(R.layout.item_subtitle_file) {

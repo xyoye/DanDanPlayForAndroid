@@ -45,7 +45,7 @@ class AnimeIntroFragment : BaseFragment<AnimeIntroFragmentViewModel, FragmentAni
 
         dataBinding.tagRv.apply {
             layoutManager = horizontal()
-            adapter = buildAdapter<TagData> {
+            adapter = buildAdapter {
                 addItem<TagData, ItemAnimeTagBinding>(R.layout.item_anime_tag) {
                     initView { data, _, _ ->
                         itemBinding.tagTv.text = data.name

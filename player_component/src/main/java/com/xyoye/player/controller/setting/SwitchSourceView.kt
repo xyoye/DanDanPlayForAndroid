@@ -124,7 +124,7 @@ class SwitchSourceView(
         viewBinding.pathRv.apply {
             layoutManager = horizontal()
 
-            adapter = buildAdapter<FilePathBean> {
+            adapter = buildAdapter {
                 initData(mPathData)
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, _, _ ->
@@ -151,7 +151,7 @@ class SwitchSourceView(
         viewBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<FileManagerBean> {
+            adapter = buildAdapter {
                 addItem<FileManagerBean, ItemFileManagerPlayerBinding>(R.layout.item_file_manager_player) {
                     initView { data, _, _ ->
                         itemBinding.apply {

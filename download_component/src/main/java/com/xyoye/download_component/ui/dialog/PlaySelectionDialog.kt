@@ -36,7 +36,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
 
     private val torrentFileList = mutableListOf<TorrentFileInfo>()
 
-    private lateinit var fileInfoAdapter: BaseAdapter<TorrentFileInfo>
+    private lateinit var fileInfoAdapter: BaseAdapter
 
     override fun getChildLayoutId() = R.layout.dialog_play_selection
 

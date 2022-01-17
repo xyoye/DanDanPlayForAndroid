@@ -25,7 +25,7 @@ class BasePagingAdapter<T : Any>(pagingItemCallback: PagingItemCallback<T> = Pag
     }
 
     //viewHolder集合
-    private val typeHolders: SparseArrayCompat<BaseViewHolderCreator<T, out ViewDataBinding>> = SparseArrayCompat()
+    private val typeHolders: SparseArrayCompat<BaseViewHolderCreator<out ViewDataBinding>> = SparseArrayCompat()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         BaseViewHolder(
@@ -72,7 +72,7 @@ class BasePagingAdapter<T : Any>(pagingItemCallback: PagingItemCallback<T> = Pag
     /**
      * 根据viewType获取ViewHolder创建者
      */
-    private fun getHolderCreator(viewType: Int): BaseViewHolderCreator<T, out ViewDataBinding> {
+    private fun getHolderCreator(viewType: Int): BaseViewHolderCreator<out ViewDataBinding> {
         return typeHolders.get(viewType)
             ?: throw RuntimeException("no holder added for view type: $viewType")
     }
@@ -84,7 +84,7 @@ class BasePagingAdapter<T : Any>(pagingItemCallback: PagingItemCallback<T> = Pag
     /**
      * 添加一个ViewHolder创建者，以下标作为key保存
      */
-    fun register(creator: BaseViewHolderCreator<T, out ViewDataBinding>) = apply {
+    fun register(creator: BaseViewHolderCreator<out ViewDataBinding>) = apply {
         var viewType = typeHolders.size()
         while (typeHolders.get(viewType) != null) {
             viewType++

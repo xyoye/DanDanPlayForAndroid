@@ -62,7 +62,7 @@ class BindDanmuActivity : BaseActivity<BindDanmuViewModel, ActivityBindDanmuBind
         dataBinding.danmuRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter<DanmuMatchDetailData> {
+            adapter = buildAdapter {
                 addEmptyView(R.layout.layout_empty)
 
                 addItem<DanmuMatchDetailData, ItemDanmuSourceBinding>(R.layout.item_danmu_source) {

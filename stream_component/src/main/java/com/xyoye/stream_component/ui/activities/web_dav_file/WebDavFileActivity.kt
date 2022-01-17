@@ -12,6 +12,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
@@ -120,15 +121,16 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
 
                 addItem<WebDavFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
                     initView { data, _, _ ->
-                        val bean = data as WebDavFileBean
-                        itemBinding.coverIv.setVideoCover(bean.uniqueKey)
-                        itemBinding.titleTv.text = bean.davSource.name
-                        itemBinding.danmuTipsTv.isVisible = bean.danmuPath?.isNotEmpty() ?: false
+                        itemBinding.coverIv.setVideoCover(data.uniqueKey)
+                        itemBinding.titleTv.text = data.davSource.name
+                        itemBinding.durationTv.text = formatDuration(data.duration)
+                        itemBinding.durationTv.isVisible = data.duration > 0
+                        itemBinding.danmuTipsTv.isVisible = data.danmuPath?.isNotEmpty() ?: false
                         itemBinding.subtitleTipsTv.isVisible =
-                            bean.subtitlePath?.isNotEmpty() ?: false
+                            data.subtitlePath?.isNotEmpty() ?: false
 
                         itemBinding.itemLayout.setOnClickListener {
-                            viewModel.playItem(bean.davSource)
+                            viewModel.playItem(data.davSource)
                         }
                         itemBinding.itemLayout.setOnLongClickListener {
                             showVideoManagerDialog(data)
@@ -138,11 +140,10 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
 
                 addItem<DavResource, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
                     initView { data, _, _ ->
-                        val davResource = data as DavResource
-                        itemBinding.folderTv.text = davResource.name
+                        itemBinding.folderTv.text = data.name
                         itemBinding.fileCountTv.text = "目录"
                         itemBinding.itemLayout.setOnClickListener {
-                            viewModel.openDirectory(davResource.path)
+                            viewModel.openDirectory(data.path)
                         }
                     }
                 }

@@ -20,7 +20,9 @@
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:padding="15dp"
+            tools:src="@drawable/ic_dandanplay" />
 
         <TextView
             android:id="@+id/duration_tv"

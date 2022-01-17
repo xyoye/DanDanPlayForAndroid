@@ -96,9 +96,16 @@ class WebDavFileViewModel : BaseViewModel() {
                         return@map it
                     }
                     val uniqueKey = WebDavSourceFactory.generateUniqueKey(addressUrl, it)
-                    val history = DatabaseManager.instance.getPlayHistoryDao()
+                    val history = DatabaseManager.instance
+                        .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
-                    WebDavFileBean(it, history?.danmuPath, history?.subtitlePath, uniqueKey)
+                    WebDavFileBean(
+                        it,
+                        history?.danmuPath,
+                        history?.subtitlePath,
+                        history?.videoPosition ?: 0,
+                        history?.videoDuration ?: 0,
+                        uniqueKey)
                 }
 
             fileLiveData.postValue(displayFiles)

@@ -1,8 +1,8 @@
 package com.xyoye.common_component.extension
 
-import android.net.Uri
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
+import androidx.core.view.setPadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
@@ -40,8 +40,7 @@ fun ImageView.setGlideImage(
 }
 
 fun ImageView.setVideoCover(uniqueKey: String?, placeholder: Any? = null) {
-    // TODO: 2022/1/17 找一张好一点的占位图
-    val videoResId = R.drawable.ic_default_video
+    val videoResId = R.drawable.ic_dandanplay
 
     val bitmapRequestBuilder = Glide.with(this).asBitmap()
 
@@ -56,10 +55,13 @@ fun ImageView.setVideoCover(uniqueKey: String?, placeholder: Any? = null) {
             bitmapRequestBuilder.load(placeholder)
         }
         else -> {
-            bitmapRequestBuilder.load(videoResId)
+            setImageResource(videoResId)
+            setPadding(dp2px(15))
+            return
         }
     }
 
+    setPadding(0)
     requestBuilder
         .error(videoResId)
         .transition((BitmapTransitionOptions.withCrossFade()))

@@ -1,6 +1,7 @@
 package com.xyoye.stream_component.ui.activities.web_dav_file
 
 import android.view.KeyEvent
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -18,6 +19,7 @@ import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.SheetActionBean
+import com.xyoye.data_component.bean.WebDavFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.sardine.DavResource
@@ -121,16 +123,28 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
 
                 addItem<WebDavFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
                     initView { data, _, _ ->
+                        val progressText = if (data.position > 0 && data.duration > 0) {
+                            "${formatDuration(data.position)}/${formatDuration(data.duration)}"
+                        } else if (data.duration > 0) {
+                            formatDuration(data.duration)
+                        } else {
+                            ""
+                        }
+
                         itemBinding.coverIv.setVideoCover(data.uniqueKey)
-                        itemBinding.titleTv.text = data.davSource.name
-                        itemBinding.durationTv.text = formatDuration(data.duration)
+                        itemBinding.titleTv.text = data.fileName
+                        itemBinding.durationTv.text = progressText
                         itemBinding.durationTv.isVisible = data.duration > 0
-                        itemBinding.danmuTipsTv.isVisible = data.danmuPath?.isNotEmpty() ?: false
-                        itemBinding.subtitleTipsTv.isVisible =
-                            data.subtitlePath?.isNotEmpty() ?: false
+                        itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
+                        itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
+                        itemBinding.moreActionIv.isGone =
+                            data.danmuPath.isNullOrEmpty() && data.subtitlePath.isNullOrEmpty()
 
                         itemBinding.itemLayout.setOnClickListener {
-                            viewModel.playItem(data.davSource)
+                            viewModel.playItem(data.href)
+                        }
+                        itemBinding.moreActionIv.setOnClickListener {
+                            showVideoManagerDialog(data)
                         }
                         itemBinding.itemLayout.setOnLongClickListener {
                             showVideoManagerDialog(data)
@@ -154,7 +168,8 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
     private fun showVideoManagerDialog(bean: WebDavFileBean): Boolean {
         val actionList = mutableListOf<SheetActionBean>()
 
-        if (bean.uniqueKey.isNullOrEmpty()) {
+        val uniqueKey = bean.uniqueKey
+        if (uniqueKey.isNullOrEmpty()) {
             return false
         }
 
@@ -181,8 +196,8 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
 
         BottomActionDialog(actionList, SheetActionType.VERTICAL) {
             when (it) {
-                ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(bean.uniqueKey)
-                ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(bean.uniqueKey)
+                ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(uniqueKey)
+                ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(uniqueKey)
             }
             return@BottomActionDialog true
         }.show(this)

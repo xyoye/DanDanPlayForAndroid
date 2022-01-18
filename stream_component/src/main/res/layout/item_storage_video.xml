@@ -24,21 +24,32 @@
             tools:padding="15dp"
             tools:src="@drawable/ic_dandanplay" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/duration_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@drawable/background_duration"
+            android:gravity="center"
+            android:maxLines="1"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
             android:textColor="@color/text_white_immutable"
             android:textSize="12sp"
             android:visibility="gone"
+            app:autoSizeMaxTextSize="12sp"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@+id/cover_iv"
             app:layout_constraintEnd_toEndOf="@+id/cover_iv"
-            tools:text="00:00" />
+            app:layout_constraintHorizontal_bias="100"
+            app:layout_constraintStart_toStartOf="@+id/cover_iv"
+            app:layout_constraintWidth_default="wrap"
+            tools:text="00:00"
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_tv"
@@ -60,7 +71,7 @@
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toTopOf="@id/danmu_tips_tv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/more_action_iv"
             app:layout_constraintStart_toEndOf="@+id/cover_iv"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
@@ -105,6 +116,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/danmu_tips_tv"
             tools:ignore="SmallSp"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/more_action_iv"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_item_press"
+            android:src="@drawable/ic_more_video_action"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
 
         <View

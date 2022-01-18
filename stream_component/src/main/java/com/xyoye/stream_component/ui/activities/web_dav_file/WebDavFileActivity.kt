@@ -3,6 +3,7 @@ package com.xyoye.stream_component.ui.activities.web_dav_file
 import android.view.KeyEvent
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -15,19 +16,18 @@ import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
-import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
-import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.WebDavFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.data_component.enums.SheetActionType
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityWebDavFileBinding
 import com.xyoye.stream_component.databinding.ItemStorageFolderV2Binding
 import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
+import com.xyoye.stream_component.ui.dialog.UnBindSourceDialogUtils
 
 @Route(path = RouteTable.Stream.WebDavFile)
 class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileBinding>() {
@@ -35,11 +35,6 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
     @Autowired
     @JvmField
     var webDavData: MediaLibraryEntity? = null
-
-    companion object {
-        private const val ACTION_UNBIND_DANMU = 1
-        private const val ACTION_UNBIND_SUBTITLE = 2
-    }
 
     override fun initViewModel() =
         ViewModelInit(
@@ -166,42 +161,14 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
     }
 
     private fun showVideoManagerDialog(bean: WebDavFileBean): Boolean {
-        val actionList = mutableListOf<SheetActionBean>()
-
-        val uniqueKey = bean.uniqueKey
-        if (uniqueKey.isNullOrEmpty()) {
-            return false
-        }
-
-        if (!bean.danmuPath.isNullOrEmpty()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_DANMU,
-                    "移除弹幕绑定",
-                    R.drawable.ic_unbind_danmu
-                )
-            )
-        }
-        if (!bean.subtitlePath.isNullOrEmpty()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_SUBTITLE,
-                    "移除字幕绑定",
-                    R.drawable.ic_unbind_subtitle
-                )
-            )
-        }
-        if (actionList.isEmpty())
-            return false
-
-        BottomActionDialog(actionList, SheetActionType.VERTICAL) {
-            when (it) {
-                ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(uniqueKey)
-                ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(uniqueKey)
-            }
-            return@BottomActionDialog true
-        }.show(this)
-
-        return true
+        return UnBindSourceDialogUtils.show(
+            this,
+            viewModel.viewModelScope,
+            MediaType.WEBDAV_SERVER,
+            bean.uniqueKey,
+            bean.danmuPath,
+            bean.subtitlePath,
+            afterUnbindSource = { viewModel.refreshDirectory() }
+        )
     }
 }

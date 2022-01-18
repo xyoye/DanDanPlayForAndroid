@@ -3,9 +3,11 @@ package com.xyoye.stream_component.ui.activities.smb_file
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.filterHideFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.SmbSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.server.SMBPlayServer
 import com.xyoye.common_component.utils.smb.SMBException
@@ -21,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class SmbFileViewModel : BaseViewModel() {
 
-    val fileLiveData = MutableLiveData<MutableList<SMBFile>>()
+    val fileLiveData = MutableLiveData<List<SMBFile>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
@@ -96,6 +98,16 @@ class SmbFileViewModel : BaseViewModel() {
 
         //获取目录文件
         listDirectory(dirPath)
+    }
+
+    fun refreshDirectoryWithHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val smbFiles = fileLiveData.value
+                ?: return@launch
+            fileLiveData.postValue(
+                mapWithHistory(smbFiles)
+            )
+        }
     }
 
     /**
@@ -200,8 +212,7 @@ class SmbFileViewModel : BaseViewModel() {
                         value = { it.name },
                         isDirectory = { it.isDirectory }
                     ))
-                    .toMutableList()
-                fileLiveData.postValue(fileList)
+                fileLiveData.postValue(mapWithHistory(fileList))
                 hideLoading()
             } catch (e: SMBException) {
                 fileLiveData.postValue(mutableListOf())
@@ -239,5 +250,27 @@ class SmbFileViewModel : BaseViewModel() {
             dirPath.append("\\").append(name)
         }
         return dirPath.toString()
+    }
+
+    private suspend fun mapWithHistory(smbFiles: List<SMBFile>): List<SMBFile> {
+        return smbFiles.map {
+            if (it.isDirectory) {
+                return@map it
+            }
+            val uniqueKey = SmbSourceFactory.generateUniqueKey(getOpenedDirPath(), it)
+            val history = DatabaseManager.instance
+                .getPlayHistoryDao()
+                .getHistoryByKey(uniqueKey, MediaType.WEBDAV_SERVER)
+            SMBFile(
+                it.name,
+                it.size,
+                it.isDirectory,
+                history?.danmuPath,
+                history?.subtitlePath,
+                history?.videoPosition ?: 0L,
+                history?.videoDuration ?: 0L,
+                uniqueKey
+            )
+        }
     }
 }

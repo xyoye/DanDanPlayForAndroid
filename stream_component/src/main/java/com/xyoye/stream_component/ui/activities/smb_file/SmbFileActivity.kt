@@ -2,6 +2,9 @@ package com.xyoye.stream_component.ui.activities.smb_file
 
 import android.content.Intent
 import android.view.KeyEvent
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -11,18 +14,20 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.dp2px
-import com.xyoye.common_component.utils.formatFileSize
+import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbFileBinding
-import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
+import com.xyoye.stream_component.databinding.ItemStorageFolderV2Binding
+import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
+import com.xyoye.stream_component.ui.dialog.UnBindSourceDialogUtils
 
 @Route(path = RouteTable.Stream.SmbFile)
 class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>() {
@@ -61,6 +66,11 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
         initObserver()
 
         viewModel.initFtp(smbData!!)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshDirectoryWithHistory()
     }
 
     override fun observeLoadingDialog() {
@@ -128,25 +138,46 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                addItem<SMBFile, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
+                addItem<SMBFile, ItemStorageVideoBinding>(R.layout.item_storage_video) {
+                    checkType { data, _ -> data.isDirectory.not() }
+
                     initView { data, _, _ ->
-                        itemBinding.apply {
-                            fileNameTv.text = data.name
-                            if (data.isDirectory) {
-                                fileDescribeTv.text = "目录"
-                                fileCoverIv.setImageResource(R.drawable.ic_folder)
-                            } else {
-                                fileDescribeTv.text = formatFileSize(data.size)
-                                fileCoverIv.setImageResource(MediaUtils.getMediaTypeCover(data.name))
-                            }
-                            //fileDateTv.text = date2Str(data.timestamp.time, "yy-MM-dd HH:mm")
-                            itemLayout.setOnClickListener {
-                                if (data.isDirectory) {
-                                    viewModel.openChildDirectory(data.name)
-                                } else {
-                                    viewModel.openVideoFile(data)
-                                }
-                            }
+                        val progressText = if (data.position > 0 && data.duration > 0) {
+                            "${formatDuration(data.position)}/${formatDuration(data.duration)}"
+                        } else if (data.duration > 0) {
+                            formatDuration(data.duration)
+                        } else {
+                            ""
+                        }
+
+                        itemBinding.coverIv.setVideoCover(data.uniqueKey)
+                        itemBinding.titleTv.text = data.name
+                        itemBinding.durationTv.text = progressText
+                        itemBinding.durationTv.isVisible = data.duration > 0
+                        itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
+                        itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
+                        itemBinding.moreActionIv.isGone =
+                            data.danmuPath.isNullOrEmpty() && data.subtitlePath.isNullOrEmpty()
+
+                        itemBinding.itemLayout.setOnClickListener {
+                            viewModel.openVideoFile(data)
+                        }
+                        itemBinding.moreActionIv.setOnClickListener {
+                            showVideoManagerDialog(data)
+                        }
+                        itemBinding.itemLayout.setOnLongClickListener {
+                            showVideoManagerDialog(data)
+                        }
+                    }
+                }
+
+                addItem<SMBFile, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
+                    checkType { data, _ -> data.isDirectory }
+                    initView { data, _, _ ->
+                        itemBinding.folderTv.text = data.name
+                        itemBinding.fileCountTv.text = "目录"
+                        itemBinding.itemLayout.setOnClickListener {
+                            viewModel.openChildDirectory(data.name)
                         }
                     }
                 }
@@ -170,4 +201,17 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
         }
     }
 
+    private fun showVideoManagerDialog(smbFile: SMBFile): Boolean {
+        return UnBindSourceDialogUtils.show(
+            this@SmbFileActivity,
+            viewModel.viewModelScope,
+            MediaType.SMB_SERVER,
+            smbFile.uniqueKey,
+            smbFile.danmuPath,
+            smbFile.subtitlePath,
+            afterUnbindSource = {
+                viewModel.refreshDirectoryWithHistory()
+            }
+        )
+    }
 }

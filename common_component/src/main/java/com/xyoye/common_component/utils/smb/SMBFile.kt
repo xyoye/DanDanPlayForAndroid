@@ -7,10 +7,5 @@ package com.xyoye.common_component.utils.smb
 data class SMBFile(
     val name: String,
     val size: Long,
-    val isDirectory: Boolean,
-    val danmuPath: String? = null,
-    val subtitlePath: String? = null,
-    val position: Long = 0,
-    val duration: Long = 0,
-    val uniqueKey: String? = null
+    val isDirectory: Boolean
 )

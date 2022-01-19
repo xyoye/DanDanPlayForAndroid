@@ -1,13 +1,12 @@
 package com.xyoye.data_component.bean
 
-import java.net.URI
-
 
 /**
- * Created by xyoye on 2022/1/17
+ * Created by xyoye on 2022/1/19
  */
-data class WebDavFileBean(
-    val href: URI,
+data class StorageFileBean(
+    val isDirectory: Boolean,
+    val filePath: String,
     val fileName: String,
     val danmuPath: String? = null,
     val subtitlePath: String? = null,

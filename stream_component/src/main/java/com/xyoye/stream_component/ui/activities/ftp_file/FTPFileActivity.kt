@@ -18,11 +18,11 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityFtpFileBinding
-import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
-import org.apache.commons.net.ftp.FTPFile
+import com.xyoye.stream_component.utils.StorageAdapter
 
 @Route(path = RouteTable.Stream.FTPFile)
 class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>() {
@@ -33,6 +33,14 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
     @Autowired
     @JvmField
     var ftpData: MediaLibraryEntity? = null
+
+    private val fileAdapter = StorageAdapter.newInstance(
+        this,
+        MediaType.FTP_SERVER,
+        refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
+        openFile = { openVideo(it) },
+        openDirectory = { viewModel.openChildDirectory(it) }
+    )
 
     override fun initViewModel() =
         ViewModelInit(
@@ -61,6 +69,11 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         initObserver()
 
         viewModel.initFtp(ftpData!!)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshDirectoryWithHistory()
     }
 
     override fun observeLoadingDialog() {
@@ -127,30 +140,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         dataBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter {
-                addItem<FTPFile, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
-                    initView { data, _, _ ->
-                        itemBinding.apply {
-                            fileNameTv.text = data.name
-                            if (data.isDirectory) {
-                                fileDescribeTv.text = "目录"
-                                fileCoverIv.setImageResource(R.drawable.ic_folder)
-                            } else {
-                                fileDescribeTv.text = formatFileSize(data.size)
-                                fileCoverIv.setImageResource(MediaUtils.getMediaTypeCover(data.name))
-                            }
-                            fileDateTv.text = date2Str(data.timestamp.time, "yy-MM-dd HH:mm")
-                            itemLayout.setOnClickListener {
-                                if (data.isDirectory) {
-                                    viewModel.openChildDirectory(data.name)
-                                } else {
-                                    openVideo(data)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            adapter = fileAdapter
         }
     }
 
@@ -170,16 +160,10 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         }
     }
 
-    private fun openVideo(ftpFile: FTPFile) {
-        //仅支持视频文件
-        if (!isVideoFile(ftpFile.name)) {
-            ToastCenter.showWarning("不支持的视频文件格式")
-            return
-        }
-
+    private fun openVideo(uniqueKey: String) {
         val showTips = AppConfig.isShowFTPVideoTips()
         if (!showTips) {
-            viewModel.openVideoFile(ftpFile)
+            viewModel.openVideoFile(uniqueKey)
             return
         }
 
@@ -188,7 +172,7 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             addNegative()
             addPositive {
                 it.dismiss()
-                viewModel.openVideoFile(ftpFile)
+                viewModel.openVideoFile(uniqueKey)
             }
             addNoShowAgain { AppConfig.putShowFTPVideoTips(!it) }
             build()

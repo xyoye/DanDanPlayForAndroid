@@ -2,9 +2,6 @@ package com.xyoye.stream_component.ui.activities.smb_file
 
 import android.content.Intent
 import android.view.KeyEvent
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.lifecycle.viewModelScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -15,8 +12,6 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
-import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -25,9 +20,7 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbFileBinding
-import com.xyoye.stream_component.databinding.ItemStorageFolderV2Binding
-import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
-import com.xyoye.stream_component.ui.dialog.UnBindSourceDialogUtils
+import com.xyoye.stream_component.utils.StorageAdapter
 
 @Route(path = RouteTable.Stream.SmbFile)
 class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>() {
@@ -38,6 +31,14 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
     @Autowired
     @JvmField
     var smbData: MediaLibraryEntity? = null
+
+    private val fileAdapter = StorageAdapter.newInstance(
+        this,
+        MediaType.SMB_SERVER,
+        refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
+        openFile = { viewModel.openVideoFile(it) },
+        openDirectory = { viewModel.openChildDirectory(it) }
+    )
 
     override fun initViewModel() =
         ViewModelInit(
@@ -137,51 +138,7 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
         dataBinding.fileRv.apply {
             layoutManager = vertical()
 
-            adapter = buildAdapter {
-                addItem<SMBFile, ItemStorageVideoBinding>(R.layout.item_storage_video) {
-                    checkType { data, _ -> data.isDirectory.not() }
-
-                    initView { data, _, _ ->
-                        val progressText = if (data.position > 0 && data.duration > 0) {
-                            "${formatDuration(data.position)}/${formatDuration(data.duration)}"
-                        } else if (data.duration > 0) {
-                            formatDuration(data.duration)
-                        } else {
-                            ""
-                        }
-
-                        itemBinding.coverIv.setVideoCover(data.uniqueKey)
-                        itemBinding.titleTv.text = data.name
-                        itemBinding.durationTv.text = progressText
-                        itemBinding.durationTv.isVisible = data.duration > 0
-                        itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
-                        itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
-                        itemBinding.moreActionIv.isGone =
-                            data.danmuPath.isNullOrEmpty() && data.subtitlePath.isNullOrEmpty()
-
-                        itemBinding.itemLayout.setOnClickListener {
-                            viewModel.openVideoFile(data)
-                        }
-                        itemBinding.moreActionIv.setOnClickListener {
-                            showVideoManagerDialog(data)
-                        }
-                        itemBinding.itemLayout.setOnLongClickListener {
-                            showVideoManagerDialog(data)
-                        }
-                    }
-                }
-
-                addItem<SMBFile, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
-                    checkType { data, _ -> data.isDirectory }
-                    initView { data, _, _ ->
-                        itemBinding.folderTv.text = data.name
-                        itemBinding.fileCountTv.text = "目录"
-                        itemBinding.itemLayout.setOnClickListener {
-                            viewModel.openChildDirectory(data.name)
-                        }
-                    }
-                }
-            }
+            adapter = fileAdapter
         }
     }
 
@@ -199,19 +156,5 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
                 .build(RouteTable.Player.Player)
                 .navigation(this, PLAY_REQUEST_CODE)
         }
-    }
-
-    private fun showVideoManagerDialog(smbFile: SMBFile): Boolean {
-        return UnBindSourceDialogUtils.show(
-            this@SmbFileActivity,
-            viewModel.viewModelScope,
-            MediaType.SMB_SERVER,
-            smbFile.uniqueKey,
-            smbFile.danmuPath,
-            smbFile.subtitlePath,
-            afterUnbindSource = {
-                viewModel.refreshDirectoryWithHistory()
-            }
-        )
     }
 }

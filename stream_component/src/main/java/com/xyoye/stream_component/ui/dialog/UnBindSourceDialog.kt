@@ -1,13 +1,13 @@
 package com.xyoye.stream_component.ui.dialog
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.stream_component.R
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -21,7 +21,6 @@ object UnBindSourceDialogUtils {
 
     fun show(
         activity: AppCompatActivity,
-        viewModelScope: CoroutineScope,
         mediaType: MediaType,
         uniqueKey: String?,
         danmuPath: String?,
@@ -57,13 +56,13 @@ object UnBindSourceDialogUtils {
         BottomActionDialog(actionList, SheetActionType.VERTICAL) {
             when (it) {
                 ACTION_UNBIND_DANMU -> unbindDanmu(
-                    viewModelScope,
+                    activity,
                     mediaType,
                     uniqueKey,
                     afterUnbindSource
                 )
                 ACTION_UNBIND_SUBTITLE -> unbindSubtitle(
-                    viewModelScope,
+                    activity,
                     mediaType,
                     uniqueKey,
                     afterUnbindSource
@@ -76,12 +75,12 @@ object UnBindSourceDialogUtils {
     }
 
     private fun unbindDanmu(
-        viewModelScope: CoroutineScope,
+        activity: AppCompatActivity,
         mediaType: MediaType,
         uniqueKey: String,
         afterUnbindSource: () -> Unit
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        activity.lifecycleScope.launch(Dispatchers.IO) {
             DatabaseManager.instance.getPlayHistoryDao().updateDanmuByKey(
                 uniqueKey, mediaType, null, 0
             )
@@ -90,12 +89,12 @@ object UnBindSourceDialogUtils {
     }
 
     private fun unbindSubtitle(
-        viewModelScope: CoroutineScope,
+        activity: AppCompatActivity,
         mediaType: MediaType,
         uniqueKey: String,
         afterUnbindSource: () -> Unit
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        activity.lifecycleScope.launch(Dispatchers.IO) {
             DatabaseManager.instance.getPlayHistoryDao().updateSubtitleByKey(
                 uniqueKey, mediaType, null
             )

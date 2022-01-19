@@ -15,6 +15,7 @@ import com.xyoye.common_component.utils.smb.SMBFile
 import com.xyoye.common_component.utils.smb.v2.SMBJManager
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
+import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class SmbFileViewModel : BaseViewModel() {
 
-    val fileLiveData = MutableLiveData<List<SMBFile>>()
+    val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
 
@@ -107,16 +108,16 @@ class SmbFileViewModel : BaseViewModel() {
                 .filter { it.isDirectory || isVideoFile(it.name) }
                 .map {
                     if (it.isDirectory) {
-                        return@map it
+                        return@map StorageFileBean(true, it.name, it.name)
                     }
                     val uniqueKey = SmbSourceFactory.generateUniqueKey(getOpenedDirPath(), it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.SMB_SERVER)
-                    SMBFile(
+                    StorageFileBean(
+                        true,
                         it.name,
-                        it.size,
-                        it.isDirectory,
+                        it.name,
                         history?.danmuPath,
                         history?.subtitlePath,
                         history?.videoPosition ?: 0L,
@@ -152,7 +153,7 @@ class SmbFileViewModel : BaseViewModel() {
     /**
      * 打开视频文件
      */
-    fun openVideoFile(smbFile: SMBFile) {
+    fun openVideoFile(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val playServer = SMBPlayServer.getInstance()
@@ -163,14 +164,17 @@ class SmbFileViewModel : BaseViewModel() {
             }
 
             val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
-            val index = videoSources.indexOf(smbFile)
+            val index = videoSources.indexOfFirst {
+                SmbSourceFactory.generateUniqueKey(getOpenedDirPath(), it) == uniqueKey
+            }
             if (videoSources.isNullOrEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
             }
 
             //同文件夹内的弹幕和字幕资源
-            val extSources = curDirectoryFiles.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
+            val extSources =
+                curDirectoryFiles.filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
 
             showLoading()
             val mediaSource = VideoSourceFactory.Builder()

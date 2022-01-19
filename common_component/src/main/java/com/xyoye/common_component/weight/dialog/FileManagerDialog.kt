@@ -336,7 +336,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
 
     private fun setFileData(fileList: MutableList<FileManagerBean>) {
         binding.fileRv.setData(
-            fileList.filterHideFile { it.fileName }
+            fileList.filterHiddenFile { it.fileName }
         )
     }
 }

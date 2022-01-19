@@ -313,7 +313,7 @@ class SwitchSourceView(
 
     private fun setFileData(fileList: MutableList<FileManagerBean>) {
         viewBinding.fileRv.setData(
-            fileList.filterHideFile { it.fileName }
+            fileList.filterHiddenFile { it.fileName }
         )
     }
 

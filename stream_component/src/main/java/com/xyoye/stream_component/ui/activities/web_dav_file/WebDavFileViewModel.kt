@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
@@ -63,16 +64,16 @@ class WebDavFileViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val childFiles = sardine.list(addressUrl + path)
-                    .filter {
-                        val isNotCurrentDir = formatPath(it.path) != formatPath(path)
-                        val isNotNeedHide = FileNameUtils.fileNeedHide(it.name).not()
-                        //过滤同路径文件夹 和 .开头的隐藏文件
-                        isNotCurrentDir && isNotNeedHide
-                    }
+                    .filter { formatPath(it.path) != formatPath(path) }
+                    .filterHiddenFile { it.name }
+                    .sortedWith(FileComparator(
+                        value = { it.name },
+                        isDirectory = { it.isDirectory }
+                    ))
                 curDirectoryFiles.clear()
                 curDirectoryFiles.addAll(childFiles)
 
-                refreshDirectory()
+                refreshDirectoryWithHistory()
                 //获取路径列表
                 pathLiveData.postValue(splitPath(path))
             } catch (t: Throwable) {
@@ -85,14 +86,10 @@ class WebDavFileViewModel : BaseViewModel() {
         }
     }
 
-    fun refreshDirectory() {
+    fun refreshDirectoryWithHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             val displayFiles = curDirectoryFiles
                 .filter { it.isDirectory || isVideoFile(it.name) }
-                .sortedWith(FileComparator(
-                    value = { it.name },
-                    isDirectory = { it.isDirectory }
-                ))
                 .map {
                     if (it.isDirectory) {
                         return@map it

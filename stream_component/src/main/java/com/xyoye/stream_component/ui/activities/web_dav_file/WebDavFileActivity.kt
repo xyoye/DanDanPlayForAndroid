@@ -72,7 +72,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshDirectory()
+        viewModel.refreshDirectoryWithHistory()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -168,7 +168,7 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
             bean.uniqueKey,
             bean.danmuPath,
             bean.subtitlePath,
-            afterUnbindSource = { viewModel.refreshDirectory() }
+            afterUnbindSource = { viewModel.refreshDirectoryWithHistory() }
         )
     }
 }

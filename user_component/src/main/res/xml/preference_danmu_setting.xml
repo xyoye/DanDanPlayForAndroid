@@ -12,7 +12,7 @@
 
         <SwitchPreference
             android:key="auto_match_danmu"
-            android:summary="未指定弹幕时，自动为视频匹配合适的网络弹幕"
+            android:summary="未指定弹幕时，自动为视频匹配合适的网络弹幕（不支持FTP媒体库）"
             android:title="自动匹配网络弹幕"
             app:icon="@drawable/ic_player_setting_danmu_load" />
 

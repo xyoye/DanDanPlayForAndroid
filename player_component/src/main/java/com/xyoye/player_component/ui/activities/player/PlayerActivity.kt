@@ -191,7 +191,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (checkPlayParams(videoSource).not()) {
             return
         }
-        if (DanmuConfig.isAutoMatchDanmu()) {
+        if (DanmuConfig.isAutoMatchDanmu() && videoSource!!.getMediaType() != MediaType.FTP_SERVER) {
             danmuViewModel.loadDanmu(videoSource!!)
         }
         updatePlayer(videoSource!!)

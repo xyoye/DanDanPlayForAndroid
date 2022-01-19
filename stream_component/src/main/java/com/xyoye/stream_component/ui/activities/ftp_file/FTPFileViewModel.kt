@@ -116,7 +116,7 @@ class FTPFileViewModel : BaseViewModel() {
                         .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.FTP_SERVER)
                     StorageFileBean(
-                        true,
+                        false,
                         it.name,
                         it.name,
                         history?.danmuPath,

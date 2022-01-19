@@ -115,7 +115,7 @@ class SmbFileViewModel : BaseViewModel() {
                         .getPlayHistoryDao()
                         .getHistoryByKey(uniqueKey, MediaType.SMB_SERVER)
                     StorageFileBean(
-                        true,
+                        false,
                         it.name,
                         it.name,
                         history?.danmuPath,

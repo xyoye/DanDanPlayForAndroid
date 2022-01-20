@@ -4,7 +4,6 @@ import android.os.Environment
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.DialogFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerBinding
@@ -127,7 +126,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
             layoutManager = horizontal()
 
             adapter = buildAdapter {
-                initData(mPathData)
+
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -148,6 +147,8 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
             if (divider != null) {
                 addItemDecoration(FilePathItemDecoration(divider, dividerSize))
             }
+
+            setData(mPathData)
         }
 
         binding.fileRv.apply {
@@ -195,7 +196,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
         }
         mPathData.clear()
         mPathData.addAll(pathData)
-        binding.pathRv.adapter?.notifyDataSetChanged()
+        binding.pathRv.setData(mPathData)
         binding.pathRv.scrollToPosition(mPathData.size - 1)
 
         setFileData(getDirectoryChildData(directory))
@@ -220,7 +221,7 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
                 true
             )
         )
-        binding.pathRv.adapter?.notifyDataSetChanged()
+        binding.pathRv.setData(mPathData)
         binding.pathRv.scrollToPosition(mPathData.size - 1)
 
         setFileData(getDirectoryChildData(directory))

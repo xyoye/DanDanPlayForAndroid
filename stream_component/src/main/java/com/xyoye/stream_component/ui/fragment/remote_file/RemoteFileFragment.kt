@@ -5,8 +5,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseFragment
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.RemoteHelper
@@ -62,7 +62,6 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                initData(mFileData)
 
                 addItem<RemoteVideoData, ItemRemoteFolderBinding>(R.layout.item_remote_folder) {
                     checkType { data, _ -> data.isFolder }
@@ -112,6 +111,8 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                     }
                 }
             }
+
+            setData(mFileData)
         }
     }
 }

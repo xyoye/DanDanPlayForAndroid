@@ -113,7 +113,7 @@ class AnimeEpisodeFragment :
             dataBinding.sortTv.setTextColorRes(color)
 
             episodeAdapter.items.reverse()
-            episodeAdapter.notifyDataSetChanged()
+            dataBinding.episodeRv.setData(episodeAdapter.items)
         }
     }
 

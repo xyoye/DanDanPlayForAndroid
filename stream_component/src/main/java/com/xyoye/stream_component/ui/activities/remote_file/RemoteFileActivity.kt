@@ -9,7 +9,6 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
@@ -93,7 +92,6 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
 
     private fun initRv() {
         pathAdapter = buildAdapter {
-            initData(pathList)
 
             addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                 initView { data, position, _ ->
@@ -144,7 +142,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                         val index = pathList.indexOfLast { it.path == fragment.tag }
                         if (index >= 0) {
                             pathList.removeAt(index)
-                            pathAdapter.notifyItemRemoved(index)
+                            pathAdapter.setData(pathList)
                         }
                         supportFragmentManager.removeFragment(fragment, true)
                         fragmentStack.pop()
@@ -159,7 +157,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                 supportFragmentManager.removeFragment(fragment, true)
 
                 pathList.removeLast()
-                pathAdapter.notifyItemRemoved(pathList.size)
+                pathAdapter.setData(pathList)
                 true
             }
             else -> {
@@ -172,7 +170,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         val pathBean = FilePathBean(name, path, true)
         pathList.find { it.isOpened }?.isOpened = false
         pathList.add(pathBean)
-        pathAdapter.notifyItemInserted(pathList.size)
+        pathAdapter.setData(pathList)
 
         val childFragment = RemoteFileFragment.newInstance(fileData)
         fragmentStack.push(childFragment)

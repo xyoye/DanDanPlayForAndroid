@@ -2,7 +2,7 @@ package com.xyoye.local_component.ui.dialog
 
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.data.SubFileData
@@ -47,7 +47,6 @@ class SubtitleFileListDialog : BaseBottomDialog<DialogSubtitleFileListBinding> {
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                initData(subtitleList)
 
                 addItem<SubFileData, ItemSubtitleFileBinding>(R.layout.item_subtitle_file) {
                     initView { data, _, _ ->
@@ -62,6 +61,8 @@ class SubtitleFileListDialog : BaseBottomDialog<DialogSubtitleFileListBinding> {
                     }
                 }
             }
+
+            setData(subtitleList)
         }
     }
 }

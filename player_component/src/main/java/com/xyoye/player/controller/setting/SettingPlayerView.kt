@@ -12,7 +12,6 @@ import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
@@ -131,7 +130,6 @@ class SettingPlayerView(
             layoutManager = grid(5)
 
             adapter = buildAdapter {
-                initData(mVideoScaleData)
 
                 addItem<VideoScaleBean, ItemSettingVideoParamsBinding>(R.layout.item_setting_video_params) {
                     initView { data, position, _ ->
@@ -163,6 +161,8 @@ class SettingPlayerView(
                     }
                 }
             }
+
+            setData(mVideoScaleData)
         }
 
         viewBinding.audioTrackRv.apply {

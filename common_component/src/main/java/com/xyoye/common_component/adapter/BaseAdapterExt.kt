@@ -11,11 +11,6 @@ fun buildAdapter(init: BaseAdapter.() -> Unit): BaseAdapter {
     return BaseAdapter().apply { init() }
 }
 
-fun BaseAdapter.initData(items: List<Any>) {
-    this.items.clear()
-    this.items.addAll(items)
-}
-
 inline fun <reified T : Any, V : ViewDataBinding> BaseAdapter.addItem(
     resourceId: Int,
     init: BaseViewHolderDSL<T, V>.() -> Unit

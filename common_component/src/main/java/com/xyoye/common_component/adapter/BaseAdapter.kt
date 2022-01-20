@@ -146,6 +146,7 @@ open class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     open fun setData(list: List<Any>) {
+        // TODO: 2022/1/20 这里希望用DiffUtil实现，但是由于空布局的存在，后面再整体修改
         items.apply {
             clear()
             addAll(list)

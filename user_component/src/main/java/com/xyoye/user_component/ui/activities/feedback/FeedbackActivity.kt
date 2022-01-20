@@ -5,13 +5,9 @@ import android.os.Build
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.addToClipboard
-import com.xyoye.common_component.extension.startUrlActivity
-import com.xyoye.common_component.extension.toResString
-import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.AppUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.user_component.BR
@@ -91,8 +87,6 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
 
             adapter = buildAdapter {
 
-                initData(question)
-
                 addItem<Pair<String, String>, ItemCommonQuestionBinding>(R.layout.item_common_question) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -106,6 +100,8 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
                     }
                 }
             }
+
+            setData(question)
         }
 
     }

@@ -4,8 +4,8 @@ import androidx.core.view.isVisible
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.getDomainFormUrl
@@ -75,7 +75,6 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                initData(downloadSources)
 
                 addItem<DanmuSourceBean, ItemDanmuSourceSelectBinding>(R.layout.item_danmu_source_select) {
                     initView { data, _, _ ->
@@ -98,6 +97,8 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
                     }
                 }
             }
+
+            setData(downloadSources)
         }
     }
 

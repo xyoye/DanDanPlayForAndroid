@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.databinding.DialogBottomActionBinding
 import com.xyoye.common_component.databinding.ItemBottomActionGridBinding
 import com.xyoye.common_component.databinding.ItemBottomActionHorizontalBinding
@@ -77,7 +76,6 @@ class BottomActionDialog : BaseBottomDialog<DialogBottomActionBinding> {
             layoutManager = actionLayoutManager
 
             adapter = buildAdapter {
-                initData(mActionData)
 
                 addItem<SheetActionBean, ViewDataBinding>(itemLayoutId) {
                     initView { data, _, _ ->
@@ -120,6 +118,8 @@ class BottomActionDialog : BaseBottomDialog<DialogBottomActionBinding> {
                         }
                     }
                 }
+
+                setData(mActionData)
             }
 
             if (mActionType == SheetActionType.GRID) {

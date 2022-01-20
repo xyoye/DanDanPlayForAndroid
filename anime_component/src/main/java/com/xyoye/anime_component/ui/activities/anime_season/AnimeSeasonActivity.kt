@@ -10,13 +10,12 @@ import com.xyoye.anime_component.ui.adapter.setNewAnimeData
 import com.xyoye.anime_component.ui.dialog.date_picker.DatePickerDialog
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.data.CommonTypeData
 
 @Route(path = RouteTable.Anime.AnimeSeason)
@@ -97,7 +96,6 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
             layoutManager = grid(4)
 
             adapter = buildAdapter {
-                initData(viewModel.sortTypeData)
 
                 addItemDecoration(ItemDecorationSpace(dp2px(2), 0))
 
@@ -114,6 +112,8 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                     }
                 }
             }
+
+            setData(viewModel.sortTypeData)
         }
 
         dataBinding.animeRv.apply {

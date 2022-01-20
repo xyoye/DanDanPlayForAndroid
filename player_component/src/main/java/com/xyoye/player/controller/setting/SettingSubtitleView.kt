@@ -12,8 +12,8 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.dp2px
@@ -138,7 +138,7 @@ class SettingSubtitleView(
         } else if (subtitleTrackList.size == 1) {
             subtitleTrackList[0].isChecked = true
         }
-        viewBinding.subtitleTrackRv.adapter?.notifyDataSetChanged()
+        viewBinding.subtitleTrackRv.setData(subtitleTrackList)
     }
 
     private fun initSettingView() {
@@ -175,7 +175,6 @@ class SettingSubtitleView(
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                initData(subtitleTrackList)
 
                 addItem<VideoTrackBean, ItemVideoTrackBinding>(R.layout.item_video_track) {
                     initView { data, position, _ ->
@@ -208,6 +207,8 @@ class SettingSubtitleView(
                     }
                 }
             }
+
+            setData(subtitleTrackList)
         }
     }
 
@@ -369,7 +370,7 @@ class SettingSubtitleView(
         subtitleTrackList.add(
             TrackUtils.buildExSubtitleTrack(sourceUrl, isDisable = !isLoaded)
         )
-        viewBinding.subtitleTrackRv.adapter?.notifyDataSetChanged()
+        viewBinding.subtitleTrackRv.setData(subtitleTrackList)
 
         if (isLoaded) {
             selectTrack(subtitleTrackList.size - 1)

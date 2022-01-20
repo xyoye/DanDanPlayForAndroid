@@ -12,7 +12,6 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
@@ -125,7 +124,6 @@ class SwitchSourceView(
             layoutManager = horizontal()
 
             adapter = buildAdapter {
-                initData(mPathData)
                 addItem<FilePathBean, ItemFileManagerPathBinding>(R.layout.item_file_manager_path) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -146,6 +144,8 @@ class SwitchSourceView(
             if (divider != null) {
                 addItemDecoration(FilePathItemDecoration(divider, dividerSize))
             }
+
+            setData(mPathData)
         }
 
         viewBinding.fileRv.apply {
@@ -191,7 +191,7 @@ class SwitchSourceView(
         }
         mPathData.clear()
         mPathData.addAll(pathData)
-        viewBinding.pathRv.adapter?.notifyDataSetChanged()
+        viewBinding.pathRv.setData(mPathData)
         viewBinding.pathRv.scrollToPosition(mPathData.size - 1)
 
         setFileData(getDirectoryChildData(directory))
@@ -216,7 +216,7 @@ class SwitchSourceView(
                 true
             )
         )
-        viewBinding.pathRv.adapter?.notifyDataSetChanged()
+        viewBinding.pathRv.setData(mPathData)
         viewBinding.pathRv.scrollToPosition(mPathData.size - 1)
 
         setFileData(getDirectoryChildData(directory))

@@ -6,7 +6,7 @@ import com.xunlei.downloadlib.parameter.TorrentInfo
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.dp2px
@@ -44,6 +44,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
         setTitle("选择播放文件")
 
         initTorrentData()
+
         initRv(binding)
 
         setNegativeListener {
@@ -95,7 +96,6 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
 
     private fun initRv(binding: DialogPlaySelectionBinding) {
         fileInfoAdapter = buildAdapter {
-            initData(torrentFileList)
 
             addItem<TorrentFileInfo, ItemDownloadSelectionBinding>(R.layout.item_download_selection) {
                 initView { data, position, _ ->
@@ -120,6 +120,8 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
             adapter = fileInfoAdapter
 
             addItemDecoration(ItemDecorationSpace(0, dp2px(8)))
+
+            setData(torrentFileList)
         }
     }
 

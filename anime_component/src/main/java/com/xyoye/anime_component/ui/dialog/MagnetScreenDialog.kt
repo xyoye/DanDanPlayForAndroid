@@ -5,8 +5,8 @@ import com.xyoye.anime_component.databinding.DialogMagnetScreenBinding
 import com.xyoye.anime_component.databinding.ItemMagnetScreenBinding
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.adapter.initData
 import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.entity.MagnetScreenEntity
 import com.xyoye.data_component.enums.MagnetScreenType
@@ -45,7 +45,6 @@ class MagnetScreenDialog : BaseBottomDialog<DialogMagnetScreenBinding> {
             layoutManager = grid(2)
 
             adapter = buildAdapter {
-                initData(screenData)
 
                 addItem<MagnetScreenEntity, ItemMagnetScreenBinding>(R.layout.item_magnet_screen) {
                     initView { data, _, _ ->
@@ -59,6 +58,8 @@ class MagnetScreenDialog : BaseBottomDialog<DialogMagnetScreenBinding> {
                     }
                 }
             }
+
+            setData(screenData)
         }
     }
 }

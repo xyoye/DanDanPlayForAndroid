@@ -5,19 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.remote.RemoteFileHelper
-import kotlinx.coroutines.launch
 
 class RemoteFileViewModel : BaseViewModel() {
 
-    val playLiveData = MutableLiveData<Any>()
     val folderLiveData = MutableLiveData<MutableList<RemoteVideoData>>()
 
     fun openStorage(remoteData: MediaLibraryEntity) {
@@ -54,32 +49,6 @@ class RemoteFileViewModel : BaseViewModel() {
             onComplete {
                 hideLoading()
             }
-        }
-    }
-
-    fun playIndexFromList(data: RemoteVideoData, videoList: List<RemoteVideoData>) {
-        viewModelScope.launch {
-            val videoSources = videoList.filter { it.isFolder.not() }
-            val index = videoSources.indexOf(data)
-            if (videoSources.isEmpty() || index < 0) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(videoSources)
-                .setIndex(index)
-                .create(MediaType.REMOTE_STORAGE)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
     }
 }

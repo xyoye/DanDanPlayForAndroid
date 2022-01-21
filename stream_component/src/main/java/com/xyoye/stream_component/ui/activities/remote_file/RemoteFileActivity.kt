@@ -125,12 +125,6 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         viewModel.folderLiveData.observe(this) {
             listFolder("根目录", "/", it)
         }
-
-        viewModel.playLiveData.observe(this) {
-            ARouter.getInstance()
-                .build(RouteTable.Player.Player)
-                .navigation()
-        }
     }
 
     private fun backFragment(pathBean: FilePathBean? = null): Boolean {
@@ -175,9 +169,5 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         val childFragment = RemoteFileFragment.newInstance(fileData)
         fragmentStack.push(childFragment)
         supportFragmentManager.addFragment(R.id.container, childFragment, path, true)
-    }
-
-    fun openVideo(data: RemoteVideoData, videoList: List<RemoteVideoData>) {
-        viewModel.playIndexFromList(data, videoList)
     }
 }

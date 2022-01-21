@@ -12,5 +12,7 @@ data class StorageFileBean(
     val subtitlePath: String? = null,
     val position: Long = 0,
     val duration: Long = 0,
-    val uniqueKey: String? = null
+    val uniqueKey: String? = null,
+    val childFileCount: Int = 0,
+    val fileCoverUrl: String? = null
 )

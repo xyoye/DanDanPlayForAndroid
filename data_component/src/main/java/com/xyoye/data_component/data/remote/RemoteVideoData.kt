@@ -31,10 +31,7 @@ data class RemoteVideoData(
     @NullToEmptyString
     var absolutePath: String = "",
     var isFolder: Boolean = false,
-    var childData: MutableList<RemoteVideoData> = mutableListOf(),
-
-    var danmuPath: String? = null,
-    var subtitlePath: String? = null
+    var childData: MutableList<RemoteVideoData> = mutableListOf()
 ) : Parcelable {
 
     fun getEpisodeName(): String{

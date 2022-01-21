@@ -34,7 +34,7 @@ object StorageAdapter {
                 initView { data, _, _ ->
 
 
-                    itemBinding.coverIv.setVideoCover(data.uniqueKey)
+                    itemBinding.coverIv.setVideoCover(data.uniqueKey, data.fileCoverUrl)
                     itemBinding.titleTv.text = data.fileName
                     itemBinding.durationTv.text = getProgress(data.position, data.duration)
                     itemBinding.durationTv.isVisible = data.duration > 0
@@ -58,8 +58,12 @@ object StorageAdapter {
             addItem<StorageFileBean, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
                 checkType { data, _ -> data.isDirectory }
                 initView { data, _, _ ->
+                    val fileCount = if (data.childFileCount > 0)
+                        "${data.childFileCount}文件"
+                    else
+                        "目录"
                     itemBinding.folderTv.text = data.fileName
-                    itemBinding.fileCountTv.text = "目录"
+                    itemBinding.fileCountTv.text = fileCount
                     itemBinding.itemLayout.setOnClickListener {
                         openDirectory.invoke(data.filePath)
                     }

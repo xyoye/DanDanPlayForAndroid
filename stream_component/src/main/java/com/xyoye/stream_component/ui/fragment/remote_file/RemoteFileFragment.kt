@@ -1,24 +1,18 @@
 package com.xyoye.stream_component.ui.fragment.remote_file
 
 import android.os.Bundle
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import com.xyoye.common_component.adapter.addItem
-import com.xyoye.common_component.adapter.buildAdapter
+import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseFragment
+import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
-import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.extension.vertical
-import com.xyoye.common_component.utils.RemoteHelper
-import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.common_component.utils.isFileExist
 import com.xyoye.data_component.data.remote.RemoteVideoData
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.FragmentRemoteFileBinding
-import com.xyoye.stream_component.databinding.ItemRemoteFolderBinding
-import com.xyoye.stream_component.databinding.ItemRemoteVideoBinding
 import com.xyoye.stream_component.ui.activities.remote_file.RemoteFileActivity
+import com.xyoye.stream_component.utils.StorageAdapter
 
 class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRemoteFileBinding>() {
 
@@ -35,8 +29,6 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
         }
     }
 
-    private var mFileData = mutableListOf<RemoteVideoData>()
-
     override fun initViewModel() =
         ViewModelInit(
             BR.viewModel,
@@ -46,73 +38,48 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
     override fun getLayoutId() = R.layout.fragment_remote_file
 
     override fun initView() {
-        var fileData = arguments?.getParcelableArrayList<RemoteVideoData>(FILE_DATA)
-        if (fileData == null) {
-            fileData = arrayListOf()
-        }
-        arguments?.clear()
-
-        mFileData.addAll(fileData)
-        initRv()
-    }
-    private fun initRv() {
-
         dataBinding.mediaRv.apply {
 
             layoutManager = vertical()
 
-            adapter = buildAdapter {
-
-                addItem<RemoteVideoData, ItemRemoteFolderBinding>(R.layout.item_remote_folder) {
-                    checkType { data, _ -> data.isFolder }
-                    initView { data, _, _ ->
-                        itemBinding.apply {
-                            folderTv.text = data.Name
-//                            folderTv.setTextColorRes(
-//                                if (data.isLastPlay) R.color.text_theme else R.color.text_black
-//                            )
-
-                            val fileCount = "${data.childData.size}视频"
-                            fileCountTv.text = fileCount
-                            itemLayout.setOnClickListener {
-                                if (mAttachActivity is RemoteFileActivity) {
-                                    (mAttachActivity as RemoteFileActivity).listFolder(
-                                        data.Name,
-                                        data.absolutePath,
-                                        data.childData
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                addItem<RemoteVideoData, ItemRemoteVideoBinding>(R.layout.item_remote_video) {
-                    checkType { data, _ -> data.isFolder.not() }
-                    initView { data, _, _ ->
-                        itemBinding.run {
-                            titleTv.text = data.getEpisodeName()
-                            durationTv.isGone = data.Duration == null
-                            if (data.Duration != null) {
-                                durationTv.text = formatDuration(data.Duration!! * 1000)
-                            }
-                            val coverUrl = RemoteHelper.getInstance().buildImageUrl(data.Id)
-                            coverIv.setGlideImage(coverUrl, 5)
-
-                            danmuTipsTv.isVisible = isFileExist(data.danmuPath)
-                            subtitleTipsTv.isVisible = isFileExist(data.subtitlePath)
-
-                            itemLayout.setOnClickListener {
-                                if (mAttachActivity is RemoteFileActivity) {
-                                    (mAttachActivity as RemoteFileActivity).openVideo(data, mFileData)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            setData(mFileData)
+            adapter = StorageAdapter.newInstance(
+                mAttachActivity as RemoteFileActivity,
+                MediaType.REMOTE_STORAGE,
+                refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
+                openFile = { viewModel.playItem(it) },
+                openDirectory = { openDirectory(it) }
+            )
         }
+
+        viewModel.fileLiveData.observe(this) {
+            dataBinding.mediaRv.setData(it)
+        }
+
+        viewModel.playLiveData.observe(this) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
+                .navigation()
+        }
+
+        val fileData = arguments?.getParcelableArrayList<RemoteVideoData>(FILE_DATA)
+        arguments?.clear()
+        viewModel.initDirectoryFiles(fileData)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshDirectoryWithHistory()
+    }
+
+    private fun openDirectory(path: String) {
+        val remoteVideoData = viewModel.curDirectoryFiles.find {
+            it.absolutePath == path
+        } ?: return
+
+        (mAttachActivity as RemoteFileActivity).listFolder(
+            remoteVideoData.Name,
+            path,
+            remoteVideoData.childData
+        )
     }
 }

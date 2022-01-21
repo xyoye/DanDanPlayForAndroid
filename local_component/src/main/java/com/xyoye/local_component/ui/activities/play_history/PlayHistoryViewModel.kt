@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class PlayHistoryViewModel : BaseViewModel() {
 
     val showAddButton = ObservableBoolean()
-    val isEditMode = ObservableBoolean()
 
     lateinit var playHistoryLiveData: LiveData<MutableList<PlayHistoryEntity>>
     val playLiveData = MutableLiveData<Any>()
@@ -30,12 +29,35 @@ class PlayHistoryViewModel : BaseViewModel() {
         }
     }
 
-    fun removeHistory(historyList: MutableList<PlayHistoryEntity>) {
+    fun removeHistory(history: PlayHistoryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            DatabaseManager.instance.getPlayHistoryDao().delete(history.id)
+        }
+    }
+
+    fun clearHistory(mediaType: MediaType) {
         viewModelScope.launch(Dispatchers.IO) {
             val historyDao = DatabaseManager.instance.getPlayHistoryDao()
-            historyList.forEach {
-                historyDao.delete(it.url, it.mediaType)
+            if (mediaType == MediaType.STREAM_LINK || mediaType == MediaType.MAGNET_LINK) {
+                historyDao.deleteTypeAll(listOf(mediaType))
+            } else {
+                historyDao.deleteTypeAll()
             }
+        }
+    }
+
+    fun unbindDanmu(history: PlayHistoryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            history.danmuPath = null
+            history.episodeId = 0
+            DatabaseManager.instance.getPlayHistoryDao().insert(history)
+        }
+    }
+
+    fun unbindSubtitle(history: PlayHistoryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            history.subtitlePath = null
+            DatabaseManager.instance.getPlayHistoryDao().insert(history)
         }
     }
 

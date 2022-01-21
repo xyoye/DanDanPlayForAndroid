@@ -2,12 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/select_all_history_item"
-        android:title="@string/item_select_all_history"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/remove_history_item"
-        android:icon="@drawable/ic_history_remove"
-        android:title="@string/item_remove_history"
+        android:id="@+id/clear_history_item"
+        android:title="@string/action_clear"
         app:showAsAction="ifRoom" />
 </menu>

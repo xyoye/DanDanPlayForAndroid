@@ -47,13 +47,16 @@ interface PlayHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)
 
-    @Query("DELETE FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
+    @Query("DELETE FROM play_history WHERE id = (:id)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun delete(url: String, mediaType: MediaType)
+    suspend fun delete(id: Int)
 
-    @Query("DELETE FROM play_history WHERE media_type = (:mediaType)")
+    @Query("DELETE FROM play_history WHERE media_type IN (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun deleteTypeAll(mediaType: MediaType)
+    suspend fun deleteTypeAll(mediaType: List<MediaType>)
+
+    @Query("DELETE FROM play_history")
+    suspend fun deleteTypeAll()
 
     @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE url = (:url) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)

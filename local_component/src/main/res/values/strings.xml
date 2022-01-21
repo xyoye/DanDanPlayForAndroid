@@ -43,4 +43,5 @@
     <string name="tips_danmu_search_file_name">文件名（长按可复制）</string>
 
     <string name="text_search_file">搜索文件</string>
+    <string name="action_clear">清空</string>
 </resources>

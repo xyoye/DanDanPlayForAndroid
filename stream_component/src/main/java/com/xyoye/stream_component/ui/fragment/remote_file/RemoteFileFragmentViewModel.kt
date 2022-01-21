@@ -39,6 +39,14 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
                     .getPlayHistoryDao()
                     .getHistoryByKey(uniqueKey, MediaType.REMOTE_STORAGE)
 
+                val historyDuration = history?.videoDuration ?: 0L
+                val remoteDuration = it.Duration ?: 0L
+                val duration = if (historyDuration > 0) {
+                    historyDuration
+                } else {
+                    remoteDuration * 1000
+                }
+
                 StorageFileBean(
                     it.isFolder,
                     it.absolutePath,
@@ -46,7 +54,7 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
                     history?.danmuPath,
                     history?.subtitlePath,
                     history?.videoPosition ?: 0L,
-                    history?.videoDuration ?: (it.Duration ?: 0L) * 1000,
+                    duration,
                     uniqueKey,
                     it.childData.size,
                     RemoteHelper.getInstance().buildImageUrl(it.Id)

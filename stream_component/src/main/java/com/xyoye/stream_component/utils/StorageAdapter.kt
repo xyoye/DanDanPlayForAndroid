@@ -11,7 +11,7 @@ import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
-import com.xyoye.stream_component.databinding.ItemStorageFolderV2Binding
+import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
 import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
 import com.xyoye.stream_component.ui.dialog.UnBindSourceDialogUtils
 
@@ -55,7 +55,7 @@ object StorageAdapter {
                 }
             }
 
-            addItem<StorageFileBean, ItemStorageFolderV2Binding>(R.layout.item_storage_folder_v2) {
+            addItem<StorageFileBean, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
                 checkType { data, _ -> data.isDirectory }
                 initView { data, _, _ ->
                     val fileCount = if (data.childFileCount > 0)

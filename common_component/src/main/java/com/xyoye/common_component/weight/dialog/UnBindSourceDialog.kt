@@ -1,13 +1,13 @@
-package com.xyoye.stream_component.ui.dialog
+package com.xyoye.common_component.weight.dialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.xyoye.common_component.R
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.enums.SheetActionType
-import com.xyoye.stream_component.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

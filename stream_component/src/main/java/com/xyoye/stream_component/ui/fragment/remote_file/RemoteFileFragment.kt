@@ -6,13 +6,13 @@ import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.FragmentRemoteFileBinding
 import com.xyoye.stream_component.ui.activities.remote_file.RemoteFileActivity
-import com.xyoye.stream_component.utils.StorageAdapter
 
 class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRemoteFileBinding>() {
 

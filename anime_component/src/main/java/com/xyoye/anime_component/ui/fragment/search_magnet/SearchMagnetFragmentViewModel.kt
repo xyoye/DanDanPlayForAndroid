@@ -9,7 +9,6 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.platform.AndroidPlatform
-import com.xyoye.common_component.utils.MagnetUtils
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.MagnetData
@@ -71,30 +70,12 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
                 val subgroupIdText = if (subgroupId < 0) "" else subgroupId.toString()
                 val typeIdText = if (typeId < 0) "" else typeId.toString()
 
-                //播放记录
-                val magnetHistory = DatabaseManager.instance.getPlayHistoryDao()
-                    .getByMediaType(com.xyoye.data_component.enums.MediaType.MAGNET_LINK)
-
                 //搜索结果
-                val searchResult = Retrofit.resService.searchMagnet(
+                Retrofit.resService.searchMagnet(
                     searchTextStr,
                     typeIdText,
                     subgroupIdText
                 )
-
-                //遍历绑定进度
-                val torrentDirPath = PathHelper.getTorrentDirectory().absolutePath
-                searchResult.Resources?.forEach { magnetData ->
-                    val hash = MagnetUtils.getMagnetHash(magnetData.Magnet)
-                    magnetHistory
-                        .find { it.torrentPath == "$torrentDirPath/$hash.torrent" }
-                        ?.let { history ->
-                            magnetData.position = history.videoPosition
-                            magnetData.duration = history.videoDuration
-                        }
-                }
-
-                searchResult
             }
 
             onSuccess {

@@ -14,6 +14,7 @@ import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
+import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.FilePathBean
@@ -22,7 +23,6 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityFtpFileBinding
-import com.xyoye.stream_component.utils.StorageAdapter
 
 @Route(path = RouteTable.Stream.FTPFile)
 class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>() {

@@ -22,7 +22,6 @@ import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.MagnetUtils
-import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SheetActionBean
@@ -35,7 +34,6 @@ class SearchMagnetFragment :
     BaseFragment<SearchMagnetFragmentViewModel, FragmentSearchMagnetBinding>(), SearchListener {
 
     companion object {
-        private const val ACTION_PLAY_SOURCE = 1
         private const val ACTION_COPY_MAGNET = 3
         private const val ACTION_COPY_MAGNET_CONTENT = 4
 
@@ -49,11 +47,6 @@ class SearchMagnetFragment :
     }
 
     private val actionData = mutableListOf(
-        SheetActionBean(
-            ACTION_PLAY_SOURCE,
-            "播放资源",
-            R.drawable.ic_magnet_play
-        ),
         SheetActionBean(
             ACTION_COPY_MAGNET,
             "复制磁链",
@@ -134,20 +127,22 @@ class SearchMagnetFragment :
                             magnetTypeTv.text = data.TypeName
                             magnetTimeTv.text = time
 
-                            //有播放记录，且进度>0
-                            if (data.position > 0) {
-                                val progress =
-                                    "${(data.position.toFloat() / data.duration.toFloat() * 100f).toInt()}%"
-                                val progressText =
-                                    "播放进度：${formatDuration(data.position)}/${formatDuration(data.duration)} （$progress）"
-                                progressTv.text = progressText
-                                progressTv.isVisible = true
-                            } else {
-                                progressTv.isVisible = false
+                            contentView.setOnClickListener {
+                                val magnetHash = MagnetUtils.getMagnetHash(data.Magnet)
+                                if (magnetHash.isEmpty()){
+                                    ToastCenter.showError("错误，磁链为空或无法解析")
+                                    return@setOnClickListener
+                                }
+                                val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
+                                ARouter.getInstance()
+                                    .build(RouteTable.Download.PlaySelection)
+                                    .withString("magnetLink", magnetLink)
+                                    .navigation()
                             }
 
-                            contentView.setOnClickListener {
+                            contentView.setOnLongClickListener {
                                 showActionDialog(data)
+                                return@setOnLongClickListener true
                             }
                         }
                     }
@@ -220,12 +215,6 @@ class SearchMagnetFragment :
             val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
 
             when (it) {
-                ACTION_PLAY_SOURCE -> {
-                    ARouter.getInstance()
-                        .build(RouteTable.Download.PlaySelection)
-                        .withString("magnetLink", magnetLink)
-                        .navigation()
-                }
                 ACTION_COPY_MAGNET -> {
                     magnetLink.addToClipboard()
                     ToastCenter.showSuccess("磁链已复制！")

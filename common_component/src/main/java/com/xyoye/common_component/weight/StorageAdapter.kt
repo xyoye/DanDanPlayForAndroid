@@ -1,19 +1,19 @@
-package com.xyoye.stream_component.utils
+package com.xyoye.common_component.weight
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.databinding.ItemStorageFolderBinding
+import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.setVideoCover
 import com.xyoye.common_component.utils.formatDuration
+import com.xyoye.common_component.weight.dialog.UnBindSourceDialogUtils
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.stream_component.R
-import com.xyoye.stream_component.databinding.ItemStorageFolderBinding
-import com.xyoye.stream_component.databinding.ItemStorageVideoBinding
-import com.xyoye.stream_component.ui.dialog.UnBindSourceDialogUtils
 
 
 /**

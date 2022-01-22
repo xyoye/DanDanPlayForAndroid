@@ -4,17 +4,8 @@
     package="com.xyoye.download_component">
 
     <application>
-        <activity android:name=".ui.activities.download_list.DownloadListActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity android:name=".ui.activities.download_detail.DownloadDetailActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name=".ui.activities.download_selection.DownloadSelectionActivity"
-            android:theme="@style/DialogActivityTheme"
-            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.play_selection.PlaySelectionActivity"
-            android:theme="@style/DialogActivityTheme"
             android:configChanges="orientation|screenSize" />
 
         <provider

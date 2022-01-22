@@ -93,27 +93,13 @@
                 app:layout_constraintTop_toBottomOf="@id/magnet_title_tv"
                 tools:text="time" />
 
-            <TextView
-                android:id="@+id/progress_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/text_theme"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/magnet_type_tv"
-                tools:text="播放进度: 33:00/34:00(99%)"
-                tools:visibility="visible" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/layout_bg_color"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/progress_tv" />
+                app:layout_constraintTop_toBottomOf="@id/magnet_type_tv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

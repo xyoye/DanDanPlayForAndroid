@@ -5,10 +5,13 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.weight.StorageAdapter
+import com.xyoye.data_component.enums.MediaType
 import com.xyoye.download_component.BR
 import com.xyoye.download_component.R
 import com.xyoye.download_component.databinding.ActivityPlaySelectionBinding
-import com.xyoye.download_component.ui.dialog.PlaySelectionDialog
 import com.xyoye.download_component.utils.PlayTaskManager
 
 @Route(path = RouteTable.Download.PlaySelection)
@@ -22,10 +25,6 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
     @JvmField
     var magnetLink: String? = ""
 
-    @Autowired
-    @JvmField
-    var torrentIndex: Int = -1
-
     override fun initViewModel() =
         ViewModelInit(
             BR.viewModel,
@@ -36,23 +35,18 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
 
     override fun initView() {
         ARouter.getInstance().inject(this)
-        title = ""
+        title = "资源详情"
 
-        initTaskManager()
+        PlayTaskManager.init()
 
-        if (torrentPath.isNullOrEmpty() && magnetLink.isNullOrEmpty()) {
-            finish()
-            return
-        } else if (!torrentPath.isNullOrEmpty()) {
-            showPlaySelectionDialog(torrentPath!!)
-        } else {
-            viewModel.downloadTorrentFile(magnetLink!!)
+        initRv()
+
+        viewModel.fileLiveData.observe(this) {
+            dataBinding.fileRv.setData(it)
         }
 
-        viewModel.torrentDownloadLiveData.observe(this) {
-            showPlaySelectionDialog(it)
-        }
-        viewModel.dismissLiveData.observe(this) {
+        viewModel.finishLiveData.observe(this) {
+            hideLoading()
             finish()
         }
 
@@ -60,23 +54,28 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()
-
-            finish()
-        }
-    }
-
-    private fun showPlaySelectionDialog(torrentPath: String) {
-        if (torrentIndex != -1) {
-            viewModel.torrentPlay(torrentPath, torrentIndex)
-            return
         }
 
-        PlaySelectionDialog(torrentPath) { selectIndex ->
-            viewModel.torrentPlay(torrentPath, selectIndex)
-        }.show(this)
+        viewModel.initTorrentFiles(magnetLink, torrentPath)
     }
 
-    private fun initTaskManager() {
-        PlayTaskManager.init()
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshDirectoryWithHistory()
+    }
+
+    private fun initRv() {
+        dataBinding.fileRv.apply {
+
+            layoutManager = vertical()
+
+            adapter = StorageAdapter.newInstance(
+                this@PlaySelectionActivity,
+                MediaType.WEBDAV_SERVER,
+                refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
+                openFile = { viewModel.playItem(it) },
+                openDirectory = { }
+            )
+        }
     }
 }

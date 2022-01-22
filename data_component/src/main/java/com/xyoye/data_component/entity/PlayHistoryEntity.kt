@@ -10,7 +10,7 @@ import java.util.*
  * Created by xyoye on 2021/1/19.
  */
 
-@Entity(tableName = "play_history", indices = [Index(value = arrayOf("url"), unique = true)])
+@Entity(tableName = "play_history", indices = [Index(value = arrayOf("unique_key"), unique = true)])
 @TypeConverters(DateConverter::class, MediaTypeConverter::class)
 data class PlayHistoryEntity(
     @PrimaryKey(autoGenerate = true)

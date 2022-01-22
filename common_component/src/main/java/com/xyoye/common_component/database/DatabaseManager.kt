@@ -80,6 +80,12 @@ class DatabaseManager private constructor() {
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE play_history ADD COLUMN unique_key TEXT NOT NULL DEFAULT ''")
+                //更新新增字段默认值为随机值
+                database.execSQL("UPDATE play_history SET unique_key = hex(randomblob(16)) WHERE unique_key = ''")
+                //移除旧的唯一约束
+                database.execSQL("DROP INDEX IF EXISTS 'index_play_history_url'")
+                //设置unique_key字段的唯一约束
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_play_history_unique_key ON play_history(unique_key)")
             }
         }
 

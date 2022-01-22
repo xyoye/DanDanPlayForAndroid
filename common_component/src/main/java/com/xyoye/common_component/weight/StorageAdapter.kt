@@ -10,6 +10,7 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.setVideoCover
+import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.weight.dialog.UnBindSourceDialogUtils
 import com.xyoye.data_component.bean.StorageFileBean
@@ -32,8 +33,6 @@ object StorageAdapter {
             addItem<StorageFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
                 checkType { data, _ -> data.isDirectory.not() }
                 initView { data, _, _ ->
-
-
                     itemBinding.coverIv.setVideoCover(data.uniqueKey, data.fileCoverUrl)
                     itemBinding.titleTv.text = data.fileName
                     itemBinding.durationTv.text = getProgress(data.position, data.duration)
@@ -42,6 +41,10 @@ object StorageAdapter {
                     itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
                     itemBinding.moreActionIv.isGone =
                         data.danmuPath.isNullOrEmpty() && data.subtitlePath.isNullOrEmpty()
+                    itemBinding.lastPlayTimeTv.isVisible = data.lastPlayTime != null
+                    data.lastPlayTime?.let {
+                        itemBinding.lastPlayTimeTv.text = PlayHistoryUtils.formatPlayTime(it)
+                    }
 
                     itemBinding.itemLayout.setOnClickListener {
                         openFile.invoke(data.uniqueKey ?: "")

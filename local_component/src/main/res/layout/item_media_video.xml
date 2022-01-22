@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
-        android:layout_height="86dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/background_item_press">
 
         <ImageView
@@ -42,7 +42,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_tv"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
@@ -50,61 +50,66 @@
             android:layout_marginBottom="5dp"
             android:ellipsize="end"
             android:gravity="top"
+            android:includeFontPadding="false"
             android:maxLines="3"
             android:textColor="@color/text_black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            app:autoSizeMaxTextSize="16sp"
-            app:autoSizeMinTextSize="12sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toTopOf="@id/danmu_tips_tv"
+            app:layout_constraintBottom_toTopOf="@id/extra_source_cl"
             app:layout_constraintEnd_toStartOf="@+id/more_action_iv"
             app:layout_constraintStart_toEndOf="@+id/cover_iv"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintVertical_chainStyle="spread_inside"
             tools:text="测试" />
 
-        <TextView
-            android:id="@+id/danmu_tips_tv"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/extra_source_cl"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/background_text_circle_theme"
-            android:paddingStart="4dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="4dp"
-            android:paddingBottom="2dp"
-            android:text="@string/tips_bound_danmu"
-            android:textColor="@color/text_theme"
-            android:textSize="8sp"
-            android:visibility="invisible"
+            android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cover_iv"
-            tools:ignore="SmallSp"
-            tools:visibility="visible" />
+            app:layout_constraintEnd_toEndOf="@id/title_tv"
+            app:layout_constraintStart_toStartOf="@id/title_tv"
+            app:layout_constraintTop_toBottomOf="@id/title_tv">
 
-        <TextView
-            android:id="@+id/subtitle_tips_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/background_text_circle_orange"
-            android:paddingStart="4dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="4dp"
-            android:paddingBottom="2dp"
-            android:text="@string/tips_bound_subtitle"
-            android:textColor="@color/text_orange"
-            android:textSize="8sp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/danmu_tips_tv"
-            tools:ignore="SmallSp"
-            tools:visibility="visible" />
+            <TextView
+                android:id="@+id/danmu_tips_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_text_circle_theme"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:text="@string/tips_bound_danmu"
+                android:textColor="@color/text_theme"
+                android:textSize="8sp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SmallSp"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/subtitle_tips_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/background_text_circle_orange"
+                android:paddingStart="4dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="4dp"
+                android:paddingBottom="2dp"
+                android:text="@string/tips_bound_subtitle"
+                android:textColor="@color/text_orange"
+                android:textSize="8sp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@id/danmu_tips_tv"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginStart="0dp"
+                tools:ignore="SmallSp"
+                tools:visibility="visible" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/more_action_iv"

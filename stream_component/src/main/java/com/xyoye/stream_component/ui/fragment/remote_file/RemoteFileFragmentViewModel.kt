@@ -57,7 +57,8 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
                     duration,
                     uniqueKey,
                     it.childData.size,
-                    RemoteHelper.getInstance().buildImageUrl(it.Id)
+                    RemoteHelper.getInstance().buildImageUrl(it.Id),
+                    lastPlayTime = history?.playTime
                 )
             }
             fileLiveData.postValue(storageFiles)

@@ -12,6 +12,7 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.BottomActionDialog
@@ -26,7 +27,6 @@ import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityPlayHistoryBinding
-import com.xyoye.local_component.databinding.ItemPlayHistoryBinding
 import com.xyoye.local_component.ui.dialog.MagnetPlayDialog
 import com.xyoye.local_component.ui.dialog.StreamLinkDialog
 import java.io.File
@@ -127,7 +127,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                     }
                 }
 
-                addItem<PlayHistoryEntity, ItemPlayHistoryBinding>(R.layout.item_play_history) {
+                addItem<PlayHistoryEntity, ItemStorageVideoBinding>(R.layout.item_storage_video) {
                     initView { data, _, _ ->
                         var placeholder: String? = null
                         if (data.mediaType == MediaType.LOCAL_STORAGE) {
@@ -146,11 +146,15 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                         itemBinding.titleTv.setTextColor(titleTextColor)
                         itemBinding.titleTv.text = data.videoName
 
+                        itemBinding.mediaTypeTv.isVisible = true
                         itemBinding.mediaTypeTv.text = data.mediaType.storageName
-                        itemBinding.playTimeTv.text = formatPlayTime(data.playTime)
+
+                        itemBinding.lastPlayTimeTv.isVisible = true
+                        itemBinding.lastPlayTimeTv.text = PlayHistoryUtils.formatPlayTime(data.playTime)
 
                         itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
                         itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
+                        itemBinding.moreActionIv.isVisible = true
 
                         itemBinding.itemLayout.setOnClickListener {
                             //防止快速点击
@@ -164,6 +168,9 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                             viewModel.openHistory(data)
                         }
 
+                        itemBinding.moreActionIv.setOnClickListener {
+                            showEditDialog(data)
+                        }
                         itemBinding.itemLayout.setOnLongClickListener {
                             showEditDialog(data)
                             return@setOnLongClickListener true
@@ -280,29 +287,5 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         } else {
             ""
         }
-    }
-
-    private fun formatPlayTime(time: Date): String {
-        val currentTime = System.currentTimeMillis()
-        val oneDayTime = 24 * 60 * 60 * 1000
-
-        val interval = currentTime - time.time
-
-        val header = when {
-            interval < oneDayTime -> {
-                "今天"
-            }
-            interval < oneDayTime * 2 -> {
-                "昨天"
-            }
-            interval < oneDayTime * 3 -> {
-                "前天"
-            }
-            else -> {
-                "${(interval / oneDayTime) + 1}天前"
-            }
-        }
-        val footer = date2Str(time, "HH:mm")
-        return "$header $footer"
     }
 }

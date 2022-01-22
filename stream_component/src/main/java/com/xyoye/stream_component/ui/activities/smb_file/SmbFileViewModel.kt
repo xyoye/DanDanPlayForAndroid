@@ -122,7 +122,8 @@ class SmbFileViewModel : BaseViewModel() {
                         history?.subtitlePath,
                         history?.videoPosition ?: 0L,
                         history?.videoDuration ?: 0L,
-                        uniqueKey
+                        uniqueKey,
+                        lastPlayTime = history?.playTime
                     )
                 }
             fileLiveData.postValue(smbFiles)

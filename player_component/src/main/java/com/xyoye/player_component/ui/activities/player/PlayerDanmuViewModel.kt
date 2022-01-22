@@ -23,37 +23,41 @@ class PlayerDanmuViewModel : BaseViewModel() {
 
     fun loadDanmu(videoSource: BaseVideoSource) {
         val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
-
         val historyDanmuPath = videoSource.getDanmuPath()
-        if (historyDanmuPath?.isNotEmpty() == true){
-            loadResult.state = LoadDanmuState.MATCH_SUCCESS
-            loadResult.danmuPath = historyDanmuPath
-            loadResult.episodeId = videoSource.getEpisodeId()
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
 
-        val videoUrl = videoSource.getVideoUrl()
-        val uri = Uri.parse(videoUrl)
-        when (uri.scheme) {
-            "http", "https" -> {
-                loadNetworkDanmu(videoSource)
+        viewModelScope.launch(Dispatchers.IO) {
+            //如果弹幕内容不为空，则无需匹配弹幕
+            if (DanmuUtils.isDanmuContentEmpty(historyDanmuPath).not()){
+                loadResult.state = LoadDanmuState.NO_MATCH_REQUIRE
+                loadResult.danmuPath = historyDanmuPath
+                loadResult.episodeId = videoSource.getEpisodeId()
+                loadDanmuLiveData.postValue(loadResult)
+                return@launch
             }
-            "file", "content" -> {
-                loadLocalDanmu(videoUrl)
-            }
-            else -> {
-                //本地视频的绝对路径，例：/storage/emulate/0/Download/test.mp4
-                if (videoUrl.startsWith("/")) {
+
+            //根据弹幕路径选择合适弹幕匹配方法
+            val videoUrl = videoSource.getVideoUrl()
+            val uri = Uri.parse(videoUrl)
+            when (uri.scheme) {
+                "http", "https" -> {
+                    loadNetworkDanmu(videoSource)
+                }
+                "file", "content" -> {
                     loadLocalDanmu(videoUrl)
-                } else {
-                    loadDanmuLiveData.postValue(loadResult)
+                }
+                else -> {
+                    //本地视频的绝对路径，例：/storage/emulate/0/Download/test.mp4
+                    if (videoUrl.startsWith("/")) {
+                        loadLocalDanmu(videoUrl)
+                    } else {
+                        loadDanmuLiveData.postValue(loadResult)
+                    }
                 }
             }
         }
     }
 
-    private fun loadLocalDanmu(videoUrl: String) {
+    private suspend fun loadLocalDanmu(videoUrl: String) {
         val loadResult = LoadDanmuBean(videoUrl)
 
         val uri = Uri.parse(videoUrl)
@@ -63,52 +67,48 @@ class PlayerDanmuViewModel : BaseViewModel() {
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            loadResult.state = LoadDanmuState.MATCHING
+        loadResult.state = LoadDanmuState.MATCHING
+        loadDanmuLiveData.postValue(loadResult)
+        val danmuInfo = DanmuUtils.matchDanmuSilence(videoUrl, fileHash)
+        if (danmuInfo == null) {
+            loadResult.state = LoadDanmuState.NO_MATCHED
             loadDanmuLiveData.postValue(loadResult)
-            val danmuInfo = DanmuUtils.matchDanmuSilence(videoUrl, fileHash)
-            if (danmuInfo == null) {
-                loadResult.state = LoadDanmuState.NO_MATCHED
-                loadDanmuLiveData.postValue(loadResult)
-                return@launch
-            }
-
-            loadResult.state = LoadDanmuState.MATCH_SUCCESS
-            loadResult.danmuPath = danmuInfo.first
-            loadResult.episodeId = danmuInfo.second
-            loadDanmuLiveData.postValue(loadResult)
+            return
         }
+
+        loadResult.state = LoadDanmuState.MATCH_SUCCESS
+        loadResult.danmuPath = danmuInfo.first
+        loadResult.episodeId = danmuInfo.second
+        loadDanmuLiveData.postValue(loadResult)
     }
 
-    private fun loadNetworkDanmu(videoSource: BaseVideoSource) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
-            val headers = videoSource.getHttpHeader() ?: emptyMap()
+    private suspend fun loadNetworkDanmu(videoSource: BaseVideoSource) {
+        val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
+        val headers = videoSource.getHttpHeader() ?: emptyMap()
 
-            loadResult.state = LoadDanmuState.COLLECTING
+        loadResult.state = LoadDanmuState.COLLECTING
+        loadDanmuLiveData.postValue(loadResult)
+        val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
+        val hash = FileHashUtils.getHash(response.byteStream())
+
+        if (hash.isNullOrEmpty()){
+            loadResult.state = LoadDanmuState.NOT_SUPPORTED
             loadDanmuLiveData.postValue(loadResult)
-            val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
-            val hash = FileHashUtils.getHash(response.byteStream())
-
-            if (hash.isNullOrEmpty()){
-                loadResult.state = LoadDanmuState.NOT_SUPPORTED
-                loadDanmuLiveData.postValue(loadResult)
-                return@launch
-            }
-
-            loadResult.state = LoadDanmuState.MATCHING
-            loadDanmuLiveData.postValue(loadResult)
-            val danmuInfo = DanmuUtils.matchDanmuSilence(videoSource.getVideoTitle(), hash)
-            if (danmuInfo == null) {
-                loadResult.state = LoadDanmuState.NO_MATCHED
-                loadDanmuLiveData.postValue(loadResult)
-                return@launch
-            }
-
-            loadResult.state = LoadDanmuState.MATCH_SUCCESS
-            loadResult.danmuPath = danmuInfo.first
-            loadResult.episodeId = danmuInfo.second
-            loadDanmuLiveData.postValue(loadResult)
+            return
         }
+
+        loadResult.state = LoadDanmuState.MATCHING
+        loadDanmuLiveData.postValue(loadResult)
+        val danmuInfo = DanmuUtils.matchDanmuSilence(videoSource.getVideoTitle(), hash)
+        if (danmuInfo == null) {
+            loadResult.state = LoadDanmuState.NO_MATCHED
+            loadDanmuLiveData.postValue(loadResult)
+            return
+        }
+
+        loadResult.state = LoadDanmuState.MATCH_SUCCESS
+        loadResult.danmuPath = danmuInfo.first
+        loadResult.episodeId = danmuInfo.second
+        loadDanmuLiveData.postValue(loadResult)
     }
 }

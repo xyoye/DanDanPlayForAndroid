@@ -1,6 +1,7 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
+import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,8 @@ import javax.xml.transform.stream.StreamResult
  */
 
 object DanmuUtils {
+    private const val MAX_DANMU_CHECK_LINE = 15
+    private const val DANMU_TAG = "<d p="
 
     fun saveDanmu(fileName: String, inputStream: InputStream): String? {
         val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
@@ -281,6 +284,40 @@ object DanmuUtils {
                 return@withContext null
             }
         }
+    }
+
+    /**
+     * 弹幕内容是否为空
+     *
+     * 前15行必须出现以 <d p= 开头的内容，否则视为空弹幕文件
+     */
+    fun isDanmuContentEmpty(danmuPath: String?): Boolean {
+        if (danmuPath.isNullOrEmpty())
+            return true
+        val danmuFile = File(danmuPath)
+        if (danmuFile.isInvalid())
+            return true
+
+        var fileReader: FileReader? = null
+        var bufferReader: BufferedReader? = null
+        try {
+            fileReader = FileReader(danmuFile)
+            bufferReader = BufferedReader(fileReader)
+
+            var line = 0
+            while (line < MAX_DANMU_CHECK_LINE) {
+                val content = bufferReader.readLine().trim()
+                if (content.startsWith(DANMU_TAG))
+                    return false
+                line++
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            IOUtils.closeIO(fileReader)
+            IOUtils.closeIO(bufferReader)
+        }
+        return true
     }
 
     private fun isSameNameDanmu(childFile: File, targetVideoName: String): String? {

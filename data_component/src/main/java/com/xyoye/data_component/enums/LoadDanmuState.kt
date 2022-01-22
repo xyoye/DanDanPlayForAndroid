@@ -13,5 +13,7 @@ enum class LoadDanmuState(val msg: String) {
 
     NO_MATCHED("未匹配到弹幕，请手动加载"),
 
-    MATCH_SUCCESS("匹配弹幕成功")
+    MATCH_SUCCESS("匹配弹幕成功"),
+
+    NO_MATCH_REQUIRE("无需匹配弹幕")
 }

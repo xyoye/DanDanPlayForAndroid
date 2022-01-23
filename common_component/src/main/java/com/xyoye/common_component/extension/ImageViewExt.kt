@@ -2,7 +2,6 @@ package com.xyoye.common_component.extension
 
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
-import androidx.core.view.setPadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
@@ -56,12 +55,10 @@ fun ImageView.setVideoCover(uniqueKey: String?, placeholder: Any? = null) {
         }
         else -> {
             setImageResource(videoResId)
-            setPadding(dp2px(15))
             return
         }
     }
 
-    setPadding(0)
     requestBuilder
         .error(videoResId)
         .transition((BitmapTransitionOptions.withCrossFade()))

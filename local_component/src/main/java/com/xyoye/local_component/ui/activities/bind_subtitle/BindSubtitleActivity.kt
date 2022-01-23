@@ -60,9 +60,6 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
 
         title = "选绑字幕"
 
-        if (videoPath == null)
-            return
-
         initObserver()
 
         dataBinding.refreshLayout.apply {
@@ -121,7 +118,9 @@ class BindSubtitleActivity : BaseActivity<BindSubtitleViewModel, ActivityBindSub
             }
         }
 
-        viewModel.matchSubtitleSource(videoPath!!)
+        videoPath?.let {
+            viewModel.matchSubtitleSource(it)
+        }
     }
 
     private fun initObserver() {

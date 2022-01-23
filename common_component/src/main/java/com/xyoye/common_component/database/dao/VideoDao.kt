@@ -18,7 +18,7 @@ interface VideoDao {
     suspend fun getAll(): MutableList<VideoEntity>
 
     @Query("SELECT * FROM video WHERE folder_path = (:folderPath)")
-    fun getVideoInFolder(folderPath: String): LiveData<MutableList<VideoEntity>>
+    suspend fun getVideoInFolder(folderPath: String): List<VideoEntity>
 
     @Query("SELECT * FROM video WHERE folder_path = (SELECT folder_path FROM video WHERE file_path = (:filePath))")
     suspend fun getFolderVideoByFilePath(filePath: String): MutableList<VideoEntity>
@@ -43,16 +43,16 @@ interface VideoDao {
     suspend fun getFolderByFilter(isFilter: Boolean = false): MutableList<FolderBean>
 
     @Query("SELECT * FROM video WHERE filter = 0 AND file_path LIKE (:keyword)")
-    fun searchVideo(keyword: String): LiveData<MutableList<VideoEntity>>
+    suspend fun searchVideo(keyword: String): List<VideoEntity>
 
     @Query("SELECT * FROM video WHERE file_path = (:filePath)")
     suspend fun findVideoByPath(filePath: String): VideoEntity?
 
     @Query("SELECT * FROM video WHERE filter = 0 AND folder_path = (:folderPath) AND file_path LIKE (:keyword)")
-    fun searchVideoInFolder(
+    suspend fun searchVideoInFolder(
         keyword: String,
         folderPath: String?
-    ): LiveData<MutableList<VideoEntity>>
+    ): List<VideoEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: VideoEntity)

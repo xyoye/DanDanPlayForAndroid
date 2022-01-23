@@ -1,18 +1,19 @@
 package com.xyoye.common_component.weight
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.setVideoCover
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.common_component.weight.dialog.UnBindSourceDialogUtils
+import com.xyoye.common_component.weight.dialog.ExtraSourceDialogUtils
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.enums.MediaType
 
@@ -23,11 +24,12 @@ import com.xyoye.data_component.enums.MediaType
 object StorageAdapter {
 
     fun newInstance(
-        activity: AppCompatActivity,
+        activity: BaseActivity<*, *>,
         mediaType: MediaType,
         refreshDirectory: () -> Unit,
-        openFile: (String) -> Unit,
-        openDirectory: (String) -> Unit
+        openFile: (StorageFileBean) -> Unit,
+        openDirectory: (StorageFileBean) -> Unit,
+        moreAction: ((StorageFileBean) -> Boolean)? = null
     ): BaseAdapter {
         return buildAdapter {
             addItem<StorageFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
@@ -35,24 +37,29 @@ object StorageAdapter {
                 initView { data, _, _ ->
                     itemBinding.coverIv.setVideoCover(data.uniqueKey, data.fileCoverUrl)
                     itemBinding.titleTv.text = data.fileName
+                    itemBinding.titleTv.setTextColor(getTitleColor(data.isLastPlay))
                     itemBinding.durationTv.text = getProgress(data.position, data.duration)
                     itemBinding.durationTv.isVisible = data.duration > 0
                     itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
                     itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
-                    itemBinding.moreActionIv.isGone =
-                        data.danmuPath.isNullOrEmpty() && data.subtitlePath.isNullOrEmpty()
                     itemBinding.lastPlayTimeTv.isVisible = data.lastPlayTime != null
                     data.lastPlayTime?.let {
                         itemBinding.lastPlayTimeTv.text = PlayHistoryUtils.formatPlayTime(it)
                     }
 
                     itemBinding.itemLayout.setOnClickListener {
-                        openFile.invoke(data.uniqueKey ?: "")
+                        openFile.invoke(data)
                     }
                     itemBinding.moreActionIv.setOnClickListener {
+                        if (moreAction?.invoke(data) == true){
+                            return@setOnClickListener
+                        }
                         showVideoManagerDialog(activity, mediaType, data, refreshDirectory)
                     }
                     itemBinding.itemLayout.setOnLongClickListener {
+                        if (moreAction?.invoke(data) == true){
+                            return@setOnLongClickListener true
+                        }
                         showVideoManagerDialog(activity, mediaType, data, refreshDirectory)
                     }
                 }
@@ -66,13 +73,21 @@ object StorageAdapter {
                     else
                         "目录"
                     itemBinding.folderTv.text = data.fileName
+                    itemBinding.folderTv.setTextColor(getTitleColor(data.isLastPlay))
                     itemBinding.fileCountTv.text = fileCount
                     itemBinding.itemLayout.setOnClickListener {
-                        openDirectory.invoke(data.filePath)
+                        openDirectory.invoke(data)
                     }
                 }
             }
         }
+    }
+
+    private fun getTitleColor(isLastPlay: Boolean): Int {
+        return if (isLastPlay)
+            R.color.text_theme.toResColor()
+        else
+            R.color.text_black.toResColor()
     }
 
     private fun getProgress(position: Long, duration: Long): String {
@@ -86,17 +101,15 @@ object StorageAdapter {
     }
 
     private fun showVideoManagerDialog(
-        Activity: AppCompatActivity,
+        Activity: BaseActivity<*, *>,
         mediaType: MediaType,
-        bean: StorageFileBean,
+        data: StorageFileBean,
         refreshDirectory: () -> Unit
     ): Boolean {
-        return UnBindSourceDialogUtils.show(
+        return ExtraSourceDialogUtils.show(
             Activity,
             mediaType,
-            bean.uniqueKey,
-            bean.danmuPath,
-            bean.subtitlePath,
+            data,
             refreshDirectory
         )
     }

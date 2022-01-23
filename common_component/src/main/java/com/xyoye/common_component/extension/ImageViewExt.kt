@@ -38,7 +38,7 @@ fun ImageView.setGlideImage(
     }
 }
 
-fun ImageView.setVideoCover(uniqueKey: String?, placeholder: Any? = null) {
+fun ImageView.setVideoCover(uniqueKey: String?, placeholder: String? = null) {
     val videoResId = R.drawable.ic_dandanplay
 
     val bitmapRequestBuilder = Glide.with(this).asBitmap()

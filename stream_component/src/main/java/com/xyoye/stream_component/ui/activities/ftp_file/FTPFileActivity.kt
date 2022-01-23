@@ -38,8 +38,8 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         this,
         MediaType.FTP_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-        openFile = { openVideo(it) },
-        openDirectory = { viewModel.openChildDirectory(it) }
+        openFile = { openVideo(it.uniqueKey ?: "") },
+        openDirectory = { viewModel.openChildDirectory(it.filePath) }
     )
 
     override fun initViewModel() =

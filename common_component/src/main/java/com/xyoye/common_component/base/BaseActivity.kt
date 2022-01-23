@@ -51,6 +51,8 @@ abstract class BaseActivity<VM : BaseViewModel, V : ViewDataBinding> : BaseAppCo
         })
     }
 
+    fun getOwnerViewModel(): BaseViewModel = viewModel
+
     abstract fun initViewModel(): ViewModelInit<VM>
 
     data class ViewModelInit<VM>(val variableId: Int, val clazz: Class<VM>)

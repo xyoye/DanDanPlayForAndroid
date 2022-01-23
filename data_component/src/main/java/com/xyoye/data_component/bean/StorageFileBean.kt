@@ -17,5 +17,6 @@ data class StorageFileBean(
     val uniqueKey: String? = null,
     val childFileCount: Int = 0,
     val fileCoverUrl: String? = null,
-    val lastPlayTime: Date? = null
+    val lastPlayTime: Date? = null,
+    var isLastPlay: Boolean = false
 )

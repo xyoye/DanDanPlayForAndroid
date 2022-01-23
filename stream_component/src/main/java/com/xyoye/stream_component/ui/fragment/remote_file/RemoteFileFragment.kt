@@ -46,8 +46,8 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                 mAttachActivity as RemoteFileActivity,
                 MediaType.REMOTE_STORAGE,
                 refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-                openFile = { viewModel.playItem(it) },
-                openDirectory = { openDirectory(it) }
+                openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+                openDirectory = { openDirectory(it.filePath) }
             )
         }
 

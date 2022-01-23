@@ -36,8 +36,8 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
         this,
         MediaType.SMB_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-        openFile = { viewModel.openVideoFile(it) },
-        openDirectory = { viewModel.openChildDirectory(it) }
+        openFile = { viewModel.openVideoFile(it.uniqueKey ?: "") },
+        openDirectory = { viewModel.openChildDirectory(it.filePath) }
     )
 
     override fun initViewModel() =

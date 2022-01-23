@@ -32,8 +32,8 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         this,
         MediaType.WEBDAV_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-        openFile = { viewModel.playItem(it) },
-        openDirectory = { viewModel.openDirectory(it) }
+        openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+        openDirectory = { viewModel.openDirectory(it.filePath) }
     )
 
     override fun initViewModel() =

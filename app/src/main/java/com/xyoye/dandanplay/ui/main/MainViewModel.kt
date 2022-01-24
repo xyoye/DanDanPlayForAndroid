@@ -6,6 +6,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.database.migration.ManualMigration
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.UserInfoHelper
@@ -39,6 +40,12 @@ class MainViewModel : BaseViewModel() {
                     reLoginLiveData.postValue(it)
                 }
             }
+        }
+    }
+
+    fun initDatabase() {
+        viewModelScope.launch {
+            ManualMigration.migrate()
         }
     }
 

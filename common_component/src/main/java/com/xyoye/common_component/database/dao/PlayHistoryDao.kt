@@ -13,14 +13,10 @@ import com.xyoye.data_component.helper.MediaTypeConverter
 @Dao
 interface PlayHistoryDao {
 
-    @Query("SELECT * FROM play_history ORDER BY play_time DESC")
+    @Query("SELECT * FROM play_history WHERE url != '' ORDER BY play_time DESC")
     fun getAll(): LiveData<MutableList<PlayHistoryEntity>>
 
-    @Query("SELECT * FROM play_history WHERE media_type IN (:mediaTypes) ORDER BY play_time DESC")
-    @TypeConverters(MediaTypeConverter::class)
-    fun getMultipleMediaType(mediaTypes: Array<MediaType>): LiveData<MutableList<PlayHistoryEntity>>
-
-    @Query("SELECT * FROM play_history WHERE media_type = (:mediaType) ORDER BY play_time DESC")
+    @Query("SELECT * FROM play_history WHERE url != '' AND media_type = (:mediaType) ORDER BY play_time DESC")
     @TypeConverters(MediaTypeConverter::class)
     fun getSingleMediaType(mediaType: MediaType): LiveData<MutableList<PlayHistoryEntity>>
 
@@ -28,21 +24,13 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitLastPlay(vararg mediaTypes: MediaType): PlayHistoryEntity?
 
-    @Query("SELECT * FROM play_history WHERE media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun findMagnetPlay(mediaType: MediaType): MutableList<PlayHistoryEntity>
-
     @Query("SELECT * FROM play_history WHERE media_type = (:mediaTypes) ORDER BY play_time DESC LIMIT 1")
     @TypeConverters(MediaTypeConverter::class)
     fun gitLastPlayLiveData(mediaTypes: MediaType): LiveData<PlayHistoryEntity?>
 
-    @Query("SELECT * FROM play_history WHERE media_type = (:mediaType) ORDER BY play_time DESC")
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun getByMediaType(mediaType: MediaType): MutableList<PlayHistoryEntity>
-
-    @Query("SELECT * FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun getPlayHistory(url: String, mediaType: MediaType): PlayHistoryEntity?
+    suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)
@@ -56,29 +44,13 @@ interface PlayHistoryDao {
     suspend fun deleteTypeAll(mediaType: List<MediaType>)
 
     @Query("DELETE FROM play_history")
-    suspend fun deleteTypeAll()
-
-    @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE url = (:url) AND media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateDanmu(url: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
-
-    @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE url = (:url) AND media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateSubtitle(url: String, mediaType: MediaType, subtitlePath: String?)
-
-    @Query("SELECT video_position FROM play_history WHERE url = (:url) AND media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun getPlayHistoryPosition(url: String, mediaType: MediaType): Long?
-
-    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
-    @TypeConverters(MediaTypeConverter::class)
-    suspend fun getHistoryByKey(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?
+    suspend fun deleteAll()
 
     @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateDanmuByKey(uniqueKey: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
+    suspend fun updateDanmu(uniqueKey: String, mediaType: MediaType, danmuPath: String?, episodeId: Int)
 
     @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateSubtitleByKey(uniqueKey: String, mediaType: MediaType, subtitlePath: String?)
+    suspend fun updateSubtitle(uniqueKey: String, mediaType: MediaType, subtitlePath: String?)
 }

@@ -3,7 +3,6 @@ package com.xyoye.common_component.source.media
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.source.factory.WebDavSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.sardine.DavResource
@@ -21,7 +20,8 @@ class WebDavMediaSource(
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
-    private var subtitlePath: String?
+    private var subtitlePath: String?,
+    private val uniqueKey: String
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getVideoUrl(): String {
@@ -75,7 +75,7 @@ class WebDavMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return WebDavSourceFactory.generateUniqueKey(rootPath, videoSources[index])
+        return uniqueKey
     }
 
     override suspend fun indexSource(index: Int): BaseVideoSource? {

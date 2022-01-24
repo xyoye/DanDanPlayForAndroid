@@ -169,7 +169,7 @@ class LocalMediaViewModel : BaseViewModel() {
                     val uniqueKey = LocalSourceFactory.generateUniqueKey(it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
-                        .getHistoryByKey(uniqueKey, MediaType.LOCAL_STORAGE)
+                        .getPlayHistory(uniqueKey, MediaType.LOCAL_STORAGE)
 
                     //视频封面
                     var defaultImage: Uri? = null
@@ -301,15 +301,18 @@ class LocalMediaViewModel : BaseViewModel() {
     }
 
     private suspend fun checkSourceExist(videoEntity: VideoEntity) {
-        if (videoEntity.danmuPath.toFile().isInvalid()) {
-            DatabaseManager.instance.getVideoDao().updateDanmu(
-                videoEntity.filePath, null, 0
+        val uniqueKey = LocalSourceFactory.generateUniqueKey(videoEntity)
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.LOCAL_STORAGE)
+
+        if (history?.danmuPath.toFile().isInvalid()) {
+            DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
+                uniqueKey, MediaType.LOCAL_STORAGE, null, 0
             )
         }
 
-        if (videoEntity.subtitlePath.toFile().isInvalid()) {
-            DatabaseManager.instance.getVideoDao().updateSubtitle(
-                videoEntity.filePath, null
+        if (history?.subtitlePath.toFile().isInvalid()) {
+            DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
+                uniqueKey, MediaType.LOCAL_STORAGE, null
             )
         }
     }

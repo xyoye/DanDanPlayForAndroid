@@ -114,7 +114,7 @@ class FTPFileViewModel : BaseViewModel() {
                     val uniqueKey = FTPSourceFactory.generateUniqueKey(getOpenedDirPath(), it)
                     val history = DatabaseManager.instance
                         .getPlayHistoryDao()
-                        .getHistoryByKey(uniqueKey, MediaType.FTP_SERVER)
+                        .getPlayHistory(uniqueKey, MediaType.FTP_SERVER)
                     StorageFileBean(
                         false,
                         it.name,

@@ -37,7 +37,7 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
                 val uniqueKey = RemoteSourceFactory.generateUniqueKey(it)
                 val history = DatabaseManager.instance
                     .getPlayHistoryDao()
-                    .getHistoryByKey(uniqueKey, MediaType.REMOTE_STORAGE)
+                    .getPlayHistory(uniqueKey, MediaType.REMOTE_STORAGE)
 
                 val historyDuration = history?.videoDuration ?: 0L
                 val remoteDuration = it.Duration ?: 0L

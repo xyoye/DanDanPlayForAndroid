@@ -26,8 +26,8 @@ object WebDavSourceFactory {
         val davResource = videoSources.getOrNull(builder.index)
             ?: return null
 
-        val videoUrl = builder.rootPath + davResource.href.toASCIIString()
-        val history = PlayHistoryUtils.getPlayHistory(videoUrl, MediaType.WEBDAV_SERVER)
+        val uniqueKey = generateUniqueKey(builder.rootPath, videoSources[builder.index])
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.WEBDAV_SERVER)
 
         val position = getHistoryPosition(history)
         val (episodeId, danmuPath) = getVideoDanmu(
@@ -54,7 +54,8 @@ object WebDavSourceFactory {
             position,
             danmuPath,
             episodeId,
-            subtitlePath
+            subtitlePath,
+            uniqueKey
         )
     }
 

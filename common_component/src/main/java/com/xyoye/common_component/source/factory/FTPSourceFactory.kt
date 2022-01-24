@@ -29,9 +29,11 @@ object FTPSourceFactory {
         val extSources = builder.extraSources.filterIsInstance<FTPFile>()
 
         val ftpFile = videoSources.getOrNull(builder.index) ?: return null
-
         val proxyUrl = FTPPlayServer.getInstance().getInputStreamUrl(ftpFile.name)
-        val history = PlayHistoryUtils.getPlayHistory(proxyUrl, MediaType.FTP_SERVER)
+
+        val uniqueKey = generateUniqueKey(builder.rootPath, videoSources[builder.index])
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.FTP_SERVER)
+
         val position = getHistoryPosition(history)
         val (episodeId, danmuPath) = getVideoDanmu(history, builder.rootPath, ftpFile, extSources)
         val subtitlePath = getVideoSubtitle(history, builder.rootPath, ftpFile, extSources)
@@ -49,7 +51,8 @@ object FTPSourceFactory {
             position,
             danmuPath,
             episodeId,
-            subtitlePath
+            subtitlePath,
+            uniqueKey
         )
     }
 

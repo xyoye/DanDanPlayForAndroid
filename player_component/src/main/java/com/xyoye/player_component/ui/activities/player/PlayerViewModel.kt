@@ -25,33 +25,21 @@ class PlayerViewModel : BaseViewModel() {
     fun storeDanmuSourceChange(videoSource: BaseVideoSource) {
         viewModelScope.launch {
             DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
-                videoSource.getVideoUrl(),
+                videoSource.getUniqueKey(),
                 videoSource.getMediaType(),
                 videoSource.getDanmuPath(),
                 videoSource.getEpisodeId()
             )
-            if (videoSource.getMediaType() == MediaType.LOCAL_STORAGE) {
-                DatabaseManager.instance.getVideoDao().updateDanmu(
-                    videoSource.getVideoUrl(),
-                    videoSource.getDanmuPath(),
-                    videoSource.getEpisodeId()
-                )
-            }
         }
     }
 
     fun storeSubtitleSourceChange(videoSource: BaseVideoSource) {
         viewModelScope.launch {
             DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
-                videoSource.getVideoUrl(),
+                videoSource.getUniqueKey(),
                 videoSource.getMediaType(),
                 videoSource.getSubtitlePath()
             )
-            if (videoSource.getMediaType() == MediaType.LOCAL_STORAGE) {
-                DatabaseManager.instance.getVideoDao().updateSubtitle(
-                    videoSource.getVideoUrl(), videoSource.getSubtitlePath()
-                )
-            }
         }
     }
 

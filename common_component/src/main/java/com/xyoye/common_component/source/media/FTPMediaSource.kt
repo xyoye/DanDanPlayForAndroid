@@ -3,7 +3,6 @@ package com.xyoye.common_component.source.media
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
-import com.xyoye.common_component.source.factory.FTPSourceFactory
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.enums.MediaType
 import org.apache.commons.net.ftp.FTPFile
@@ -21,7 +20,8 @@ class FTPMediaSource(
     private val currentPosition: Long,
     private var danmuPath: String?,
     private var episodeId: Int,
-    private var subtitlePath: String?
+    private var subtitlePath: String?,
+    private val uniqueKey: String
 ) : BaseVideoSource(index, videoSources) {
 
     override fun getDanmuPath(): String? {
@@ -87,7 +87,7 @@ class FTPMediaSource(
     }
 
     override fun getUniqueKey(): String {
-        return FTPSourceFactory.generateUniqueKey(rootPath, videoSources[index])
+        return uniqueKey
     }
 
 }

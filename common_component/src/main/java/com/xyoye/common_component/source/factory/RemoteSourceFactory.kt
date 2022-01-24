@@ -23,11 +23,14 @@ object RemoteSourceFactory {
         val videoData = videoSources.getOrNull(builder.index) ?: return null
 
         val playUrl = RemoteHelper.getInstance().buildVideoUrl(videoData.Id)
-        val historyEntity = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.REMOTE_STORAGE)
+
+        val uniqueKey = generateUniqueKey(videoSources[builder.index])
+        val historyEntity = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.REMOTE_STORAGE)
 
         val position = getHistoryPosition(historyEntity)
         val (episodeId, danmuPath) = getVideoDanmu(historyEntity, videoData)
         val subtitlePath = getVideoSubtitle(historyEntity, videoData)
+
         return RemoteMediaSource(
             builder.index,
             videoSources,
@@ -35,7 +38,8 @@ object RemoteSourceFactory {
             position,
             danmuPath,
             episodeId,
-            subtitlePath
+            subtitlePath,
+            uniqueKey
         )
     }
 

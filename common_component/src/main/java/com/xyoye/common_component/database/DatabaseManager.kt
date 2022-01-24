@@ -84,8 +84,8 @@ class DatabaseManager private constructor() {
                 database.execSQL("UPDATE play_history SET unique_key = hex(randomblob(16)) WHERE unique_key = ''")
                 //移除旧的唯一约束
                 database.execSQL("DROP INDEX IF EXISTS 'index_play_history_url'")
-                //设置unique_key字段的唯一约束
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_play_history_unique_key ON play_history(unique_key)")
+                //设置unique_key和media_type的多列唯一约束
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_play_history_unique_key_media_type ON play_history(unique_key, media_type)")
             }
         }
 

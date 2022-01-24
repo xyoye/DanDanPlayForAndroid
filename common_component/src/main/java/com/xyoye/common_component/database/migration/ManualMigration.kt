@@ -49,7 +49,9 @@ object ManualMigration {
                 }
             }
 
-            DatabaseManager.instance.getPlayHistoryDao().insert(*historyList.toTypedArray())
+            if (historyList.isNotEmpty()) {
+                DatabaseManager.instance.getPlayHistoryDao().insert(*historyList.toTypedArray())
+            }
             DatabaseConfig.putIsMigrated_6_7(true)
         }
     }

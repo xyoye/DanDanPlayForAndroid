@@ -24,7 +24,9 @@ object TorrentSourceFactory {
         if (playUrl.isNullOrEmpty())
             return null
 
-        val history = PlayHistoryUtils.getPlayHistory(playUrl, MediaType.MAGNET_LINK)
+        val uniqueKey = generateUniqueKey(builder.rootPath, builder.index)
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.MAGNET_LINK)
+
         return TorrentMediaSource(
             builder.index,
             torrentFileInfoList,
@@ -33,7 +35,8 @@ object TorrentSourceFactory {
             history?.videoPosition ?: 0,
             history?.danmuPath,
             history?.episodeId ?: 0,
-            history?.subtitlePath
+            history?.subtitlePath,
+            uniqueKey
         )
     }
 

@@ -27,7 +27,10 @@ object SmbSourceFactory {
 
         val smbFile = videoSources.getOrNull(builder.index) ?: return null
         val proxyUrl = createProxyUrl(builder.rootPath, smbFile)
-        val history = PlayHistoryUtils.getPlayHistory(proxyUrl, MediaType.SMB_SERVER)
+
+        val uniqueKey = generateUniqueKey(builder.rootPath, videoSources[builder.index])
+        val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.SMB_SERVER)
+
         val position = getHistoryPosition(history)
         val (episodeId, danmuPath) = getVideoDanmu(history, builder.rootPath, smbFile, extSources)
         val subtitlePath = getVideoSubtitle(history, builder.rootPath, smbFile, extSources)
@@ -41,7 +44,8 @@ object SmbSourceFactory {
             position,
             danmuPath,
             episodeId,
-            subtitlePath
+            subtitlePath,
+            uniqueKey
         )
     }
 

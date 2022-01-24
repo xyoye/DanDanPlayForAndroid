@@ -13,10 +13,10 @@ import java.util.*
 
 object PlayHistoryUtils {
 
-    suspend fun getPlayHistory(url: String, mediaType: MediaType): PlayHistoryEntity? {
+    suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity? {
         return withContext(Dispatchers.IO) {
             return@withContext DatabaseManager.instance.getPlayHistoryDao()
-                    .getPlayHistory(url, mediaType)
+                    .getPlayHistory(uniqueKey, mediaType)
         }
     }
 

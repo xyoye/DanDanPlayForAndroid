@@ -66,7 +66,7 @@ class PlaySelectionViewModel : BaseViewModel() {
                 val uniqueKey = TorrentSourceFactory.generateUniqueKey(mTorrentPath, index)
                 val history = DatabaseManager.instance
                     .getPlayHistoryDao()
-                    .getHistoryByKey(uniqueKey, MediaType.MAGNET_LINK)
+                    .getPlayHistory(uniqueKey, MediaType.MAGNET_LINK)
                 val fileBean = StorageFileBean(
                     false,
                     "",

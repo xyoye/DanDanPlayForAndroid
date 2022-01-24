@@ -119,7 +119,7 @@ object ExtraSourceDialogUtils {
         onSourceChanged: () -> Unit
     ) {
         scope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao().updateDanmuByKey(
+            DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
                 uniqueKey, mediaType, null, 0
             )
             onSourceChanged.invoke()
@@ -133,7 +133,7 @@ object ExtraSourceDialogUtils {
         onSourceChanged: () -> Unit
     ) {
         scope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao().updateSubtitleByKey(
+            DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
                 uniqueKey, mediaType, null
             )
             onSourceChanged.invoke()

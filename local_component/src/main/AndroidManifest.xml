@@ -16,6 +16,9 @@
             android:configChanges="orientation|screenSize" />
         <activity android:name=".ui.activities.shooter_subtitle.ShooterSubtitleActivity"
             android:configChanges="orientation|screenSize" />
+        <activity android:name=".ui.activities.bind_source.BindExtraSourceActivity"
+            android:theme="@style/ShareElementActivityTheme"
+            android:configChanges="orientation|screenSize" />
     </application>
 
 </manifest>

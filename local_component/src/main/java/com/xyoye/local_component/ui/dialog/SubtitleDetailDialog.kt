@@ -58,7 +58,7 @@ class SubtitleDetailDialog : BaseBottomDialog<DialogSubtitleDetailBinding> {
             binding.fileExtensionTv.isVisible = false
         }
 
-        val fileSizeText = "文件大小：${formatFileSize(subDetailData.size)}"
+        val fileSizeText = "文件大小：${formatFileSize(subDetailData.size ?: 0)}"
         binding.fileSizeTv.text = fileSizeText
         val fileCountText = "文件数量：${(subDetailData.filelist?.size ?: 0)}"
         binding.fileCountTv.text = fileCountText

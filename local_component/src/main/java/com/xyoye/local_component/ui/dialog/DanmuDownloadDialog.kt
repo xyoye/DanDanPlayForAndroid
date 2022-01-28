@@ -1,17 +1,15 @@
 package com.xyoye.local_component.ui.dialog
 
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.getDomainFormUrl
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.bean.DanmuSourceBean
-import com.xyoye.data_component.data.DanmuMatchDetailData
 import com.xyoye.data_component.data.DanmuRelatedData
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogDanmuDowanloadBinding
@@ -23,18 +21,21 @@ import com.xyoye.local_component.databinding.ItemDanmuSourceSelectBinding
 
 class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
 
-    private lateinit var matchData: DanmuMatchDetailData
     private lateinit var relatedData: DanmuRelatedData
     private lateinit var callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
+    private var episodeId: Int = 0
+
+    private val languageViewIds =
+        arrayOf(R.id.danmu_default_rb, R.id.danmu_simplified_rb, R.id.danmu_traditional_rb)
 
     constructor() : super()
 
     constructor(
-        matchData: DanmuMatchDetailData,
+        episodeId: Int,
         relatedData: DanmuRelatedData,
         callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
     ) : super(true) {
-        this.matchData = matchData
+        this.episodeId = episodeId
         this.relatedData = relatedData
         this.callback = callback
     }
@@ -46,17 +47,7 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
 
         setTitle("下载弹幕")
 
-        binding.animeNameTv.text = matchData.animeTitle
-        binding.episodeTv.text = matchData.episodeTitle
-
         binding.downloadPathTv.text = PathHelper.getDanmuDirectory().absolutePath
-
-        binding.animeNameTv.setOnClickListener {
-            ARouter.getInstance()
-                .build(RouteTable.Anime.AnimeDetail)
-                .withInt("animeId", matchData.animeId)
-                .navigation()
-        }
 
         setNegativeListener { dismiss() }
 
@@ -83,12 +74,14 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
                             danmuSourceCb.text = data.sourceName
                             danmuSourceDescribeTv.text = data.sourceDescribe
                             danmuFormatRg.isVisible = data.isOfficial
+
+                            val checkedIndex = DanmuConfig.getDefaultLanguage()
+                            danmuFormatRg.check(getLanguageViewId(checkedIndex))
+
                             danmuFormatRg.setOnCheckedChangeListener { _, checkedId ->
-                                data.format = when (checkedId) {
-                                    R.id.danmu_simplified_rb -> 1
-                                    R.id.danmu_traditional_rb -> 2
-                                    else -> 0
-                                }
+                                val languageType = languageViewIds.indexOf(checkedId)
+                                data.format = languageType
+                                DanmuConfig.putDefaultLanguage(languageType)
                             }
                             danmuSourceCb.setOnCheckedChangeListener { _, isChecked ->
                                 data.isChecked = isChecked
@@ -108,7 +101,7 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
         downloadSources.add(
             DanmuSourceBean(
                 "弹弹Play",
-                matchData.episodeId.toString(),
+                episodeId.toString(),
                 "www.dandanplay.com",
                 isOfficial = true,
                 isChecked = true,
@@ -123,5 +116,9 @@ class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
         }
 
         return downloadSources
+    }
+
+    private fun getLanguageViewId(index: Int): Int {
+        return languageViewIds.getOrNull(index) ?: R.id.danmu_default_rb
     }
 }

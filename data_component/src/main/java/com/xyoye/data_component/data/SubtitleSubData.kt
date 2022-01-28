@@ -26,7 +26,7 @@ data class SubDetailData(
     val lang: LanguageData?,
 
     val filename: String?,
-    val size: Long,
+    val size: Long?,
     val url: String?,
     val filelist: MutableList<SubFileData>?
 )

@@ -1,5 +1,7 @@
 package com.xyoye.common_component.weight
 
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.xyoye.common_component.R
@@ -51,16 +53,28 @@ object StorageAdapter {
                         openFile.invoke(data)
                     }
                     itemBinding.moreActionIv.setOnClickListener {
-                        if (moreAction?.invoke(data) == true){
+                        if (moreAction?.invoke(data) == true) {
                             return@setOnClickListener
                         }
-                        showVideoManagerDialog(activity, mediaType, data, refreshDirectory)
+
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity,
+                            Pair(itemBinding.coverIv, itemBinding.coverIv.transitionName),
+                            Pair(itemBinding.titleTv, itemBinding.titleTv.transitionName)
+                        )
+                        showVideoManagerDialog(activity, mediaType, data, options, refreshDirectory)
                     }
                     itemBinding.itemLayout.setOnLongClickListener {
-                        if (moreAction?.invoke(data) == true){
+                        if (moreAction?.invoke(data) == true) {
                             return@setOnLongClickListener true
                         }
-                        showVideoManagerDialog(activity, mediaType, data, refreshDirectory)
+
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity,
+                            Pair(itemBinding.coverIv, itemBinding.coverIv.transitionName),
+                            Pair(itemBinding.titleTv, itemBinding.titleTv.transitionName)
+                        )
+                        showVideoManagerDialog(activity, mediaType, data, options, refreshDirectory)
                     }
                 }
             }
@@ -104,12 +118,14 @@ object StorageAdapter {
         Activity: BaseActivity<*, *>,
         mediaType: MediaType,
         data: StorageFileBean,
+        options: ActivityOptionsCompat,
         refreshDirectory: () -> Unit
     ): Boolean {
         return ExtraSourceDialogUtils.show(
             Activity,
             mediaType,
             data,
+            options,
             refreshDirectory
         )
     }

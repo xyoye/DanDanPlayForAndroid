@@ -33,6 +33,12 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="ShareElementActivityTheme" parent="AppTheme">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">false</item>
+        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+    </style>
+
     <style name="LoadingDialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorPrimary">@android:color/transparent</item>

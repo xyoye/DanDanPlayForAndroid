@@ -67,4 +67,13 @@ object DanmuConfigTable {
 
     @MMKVFiled
     const val danmuDebug = false
+
+    /**
+     * -------------弹幕下载-----------
+     */
+    @MMKVFiled
+    const val showThirdSource = false
+
+    @MMKVFiled
+    const val defaultLanguage = 0
 }

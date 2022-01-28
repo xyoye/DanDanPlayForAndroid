@@ -9,55 +9,6 @@
         android:layout_gravity="center_vertical">
 
         <TextView
-            android:id="@+id/file_name_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="番剧: "
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/anime_name_tv" />
-
-        <TextView
-            android:id="@+id/anime_name_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:maxLines="2"
-            android:textColor="@color/text_theme"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/file_name_tips"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="" />
-
-        <TextView
-            android:id="@+id/episode_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="剧集: "
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
-            app:autoSizeMaxTextSize="16sp"
-            app:autoSizeMinTextSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/episode_tv" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/episode_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:maxLines="2"
-            android:textColor="@color/text_gray"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/episode_tips"
-            app:layout_constraintTop_toBottomOf="@id/anime_name_tv"
-            tools:text="" />
-
-        <TextView
             android:id="@+id/download_path_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -44,4 +44,7 @@
 
     <string name="text_search_file">搜索文件</string>
     <string name="action_clear">清空</string>
+    <string name="search">搜索</string>
+    <string name="tips_search_danmu">搜索弹幕：番剧名+空格+集数</string>
+    <string name="tips_search_subtitle">搜索字幕：番剧名</string>
 </resources>

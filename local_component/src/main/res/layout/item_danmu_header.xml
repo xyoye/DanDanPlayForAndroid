@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_danmu_header"
+        android:minHeight="46dp"
+        android:paddingVertical="10dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/recommend_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_text_circle_fill_theme"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="3dp"
+            android:paddingVertical="2dp"
+            android:text="荐"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="10sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineHeight="8sp"
+            tools:ignore="SmallSp"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/anime_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/selector_black_theme"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/recommend_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginStart="10dp"
+            tools:text="测试" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

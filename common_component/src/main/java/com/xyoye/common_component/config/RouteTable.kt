@@ -20,6 +20,7 @@ object RouteTable {
 
     object Local {
         const val MediaFragment = "/local/media_fragment"
+        const val BindExtraSource = "/local/bind_extra_source"
         const val BindDanmu = "/local/bind_danmu"
         const val BindSubtitle = "/local/bind_subtitle"
         const val LocalMediaStorage = "/local/local_media_storage"
@@ -36,6 +37,7 @@ object RouteTable {
         const val UserInfo = "/user/info"
         const val SettingPlayer = "/user/setting_player"
         const val SettingApp = "/user/setting_app"
+        const val SettingDanmuSource = "/user/setting_danmu_source"
         const val WebView = "/user/web_view"
         const val ScanManager = "/user/scan_manager"
         const val CacheManager = "/user/cache_manager"

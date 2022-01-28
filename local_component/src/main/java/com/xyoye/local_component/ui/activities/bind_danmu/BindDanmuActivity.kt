@@ -18,7 +18,6 @@ import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.DanmuSearchBean
-import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.data.DanmuMatchDetailData
 import com.xyoye.data_component.enums.FileManagerAction
 import com.xyoye.local_component.BR
@@ -89,14 +88,7 @@ class BindDanmuActivity : BaseActivity<BindDanmuViewModel, ActivityBindDanmuBind
         }
 
         viewModel.relatedLiveData.observe(this) {
-            danmuDownloadDialog = DanmuDownloadDialog(
-                it.first,
-                it.second
-            ) { sources: MutableList<DanmuSourceBean>, isCheckedAll: Boolean ->
-                val danmuFileName = it.first.animeTitle+"_"+it.first.episodeTitle+".xml"
-                viewModel.downloadDanmu(sources, isCheckedAll, videoPath, it.first.episodeId, danmuFileName)
-            }
-            danmuDownloadDialog!!.show(this)
+
         }
 
         viewModel.bindSuccessLiveData.observe(this) {

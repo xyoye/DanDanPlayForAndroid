@@ -1,5 +1,6 @@
 package com.xyoye.common_component.weight.dialog
 
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.viewModelScope
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.R
@@ -29,6 +30,7 @@ object ExtraSourceDialogUtils {
         activity: BaseActivity<*, *>,
         mediaType: MediaType,
         data: StorageFileBean,
+        options: ActivityOptionsCompat,
         onSourceChanged: () -> Unit,
     ): Boolean {
         val uniqueKey = data.uniqueKey
@@ -70,10 +72,20 @@ object ExtraSourceDialogUtils {
         val viewModelScope = activity.getOwnerViewModel().viewModelScope
         BottomActionDialog(actionList, SheetActionType.VERTICAL) {
             when (it) {
-                ACTION_BIND_DANMU -> bindDanmu(mediaType, data)
-                ACTION_BIND_SUBTITLE -> bindSubtitle(mediaType, data)
-                ACTION_UNBIND_DANMU -> unbindDanmu(viewModelScope, mediaType, uniqueKey, onSourceChanged)
-                ACTION_UNBIND_SUBTITLE -> unbindSubtitle(viewModelScope, mediaType, uniqueKey, onSourceChanged)
+                ACTION_BIND_DANMU -> bindExtraSource(activity, mediaType, data, options, true)
+                ACTION_BIND_SUBTITLE -> bindExtraSource(activity, mediaType, data, options, false)
+                ACTION_UNBIND_DANMU -> unbindDanmu(
+                    viewModelScope,
+                    mediaType,
+                    uniqueKey,
+                    onSourceChanged
+                )
+                ACTION_UNBIND_SUBTITLE -> unbindSubtitle(
+                    viewModelScope,
+                    mediaType,
+                    uniqueKey,
+                    onSourceChanged
+                )
             }
             return@BottomActionDialog true
         }.show(activity)
@@ -81,35 +93,28 @@ object ExtraSourceDialogUtils {
         return true
     }
 
-    private fun bindDanmu(
+    private fun bindExtraSource(
+        activity: BaseActivity<*, *>,
         mediaType: MediaType,
-        data: StorageFileBean
+        data: StorageFileBean,
+        options: ActivityOptionsCompat,
+        isSearchDanmu: Boolean,
     ) {
         val videoPath = if (mediaType == MediaType.LOCAL_STORAGE) {
             data.filePath
         } else {
-            ""
+            null
         }
         ARouter.getInstance()
-            .build(RouteTable.Local.BindDanmu)
-            .withString("videoName", data.fileName)
+            .build(RouteTable.Local.BindExtraSource)
+            .withBoolean("isSearchDanmu", isSearchDanmu)
             .withString("videoPath", videoPath)
-            .navigation()
-    }
-
-    private fun bindSubtitle(
-        mediaType: MediaType,
-        data: StorageFileBean
-    ) {
-        val videoPath = if (mediaType == MediaType.LOCAL_STORAGE) {
-            data.filePath
-        } else {
-            ""
-        }
-        ARouter.getInstance()
-            .build(RouteTable.Local.BindSubtitle)
-            .withString("videoPath", videoPath)
-            .navigation()
+            .withString("videoTitle", data.fileName)
+            .withString("uniqueKey", data.uniqueKey)
+            .withString("mediaType", mediaType.value)
+            .withString("fileCoverUrl", data.fileCoverUrl)
+            .withOptionsCompat(options)
+            .navigation(activity)
     }
 
     private fun unbindDanmu(

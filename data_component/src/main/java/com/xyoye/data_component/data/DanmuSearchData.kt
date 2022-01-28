@@ -27,6 +27,6 @@ data class DanmuAnimeData(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class DanmuEpisodeData(
-    val episodeId: Int,
-    val episodeTitle: String?
+    val episodeId: Int = 0,
+    val episodeTitle: String = ""
 ) : Parcelable

@@ -1,11 +1,5 @@
 <resources>
 
-    <style name="AnimeDetailTheme" parent="AppTheme">
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">false</item>
-        <item name="android:windowAllowReturnTransitionOverlap">false</item>
-    </style>
-
     <style name="CardViewStyle">
         <item name="android:layout_margin">5dp</item>
         <item name="android:background">@color/item_bg_color</item>

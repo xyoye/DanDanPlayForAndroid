@@ -5,7 +5,7 @@
     <application>
         <activity
             android:name=".ui.activities.anime_detail.AnimeDetailActivity"
-            android:theme="@style/AnimeDetailTheme"
+            android:theme="@style/ShareElementActivityTheme"
             android:configChanges="orientation|screenSize" />
 
         <activity android:name=".ui.activities.search.SearchActivity"

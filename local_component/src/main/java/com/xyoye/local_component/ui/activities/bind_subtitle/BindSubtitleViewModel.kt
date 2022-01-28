@@ -1,7 +1,6 @@
 package com.xyoye.local_component.ui.activities.bind_subtitle
 
 import androidx.lifecycle.*
-import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
@@ -13,13 +12,12 @@ import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.*
-import com.xyoye.local_component.utils.SearchSubtitleRepository
-import kotlinx.coroutines.flow.*
+import com.xyoye.local_component.utils.SubtitleSearchHelper
 import kotlinx.coroutines.launch
 
 class BindSubtitleViewModel : BaseViewModel() {
 
-    private val searchSubtitleRepository = SearchSubtitleRepository(viewModelScope)
+    private val searchSubtitleRepository = SubtitleSearchHelper(viewModelScope)
 
     val sourceLiveData = MutableLiveData<MutableList<SubtitleMatchData>>()
     val bindResultLiveData = MutableLiveData<Boolean>()
@@ -230,15 +228,15 @@ class BindSubtitleViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-                val responseBody = Retrofit.extService.downloadResource(url)
-                //这里用回调处理不是很好，暂时没有更好方案
-                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
-                    if (it.isNotEmpty()) {
-                        unzipResultLiveData.postValue(it)
-                    } else {
-                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-                    }
-                }
+//                val responseBody = Retrofit.extService.downloadResource(url)
+//                //这里用回调处理不是很好，暂时没有更好方案
+//                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
+//                    if (it.isNotEmpty()) {
+//                        unzipResultLiveData.postValue(it)
+//                    } else {
+//                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
+//                    }
+//                }
             }
 
             onError { showNetworkError(it) }

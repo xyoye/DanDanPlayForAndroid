@@ -16,7 +16,7 @@ import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonEditDialog
 import com.xyoye.data_component.bean.EditBean
-import com.xyoye.data_component.data.SubtitleSearchData
+import com.xyoye.data_component.data.SubtitleSourceBean
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityShooterSubtitleBinding
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class ShooterSubtitleActivity :
     BaseActivity<ShooterSubtitleViewModel, ActivityShooterSubtitleBinding>() {
 
-    private lateinit var subtitleSearchAdapter: BasePagingAdapter<SubtitleSearchData>
+    private lateinit var subtitleSearchAdapter: BasePagingAdapter<SubtitleSourceBean>
 
     override fun initViewModel() =
         ViewModelInit(
@@ -47,17 +47,14 @@ class ShooterSubtitleActivity :
 
         subtitleSearchAdapter = buildPagingAdapter {
 
-            addItem<SubtitleSearchData, ItemSubtitleSearchSourceBinding>(R.layout.item_subtitle_search_source) {
+            addItem<SubtitleSourceBean, ItemSubtitleSearchSourceBinding>(R.layout.item_subtitle_search_source) {
                 initView { data, position, _ ->
                     itemBinding.apply {
-                        val type = "格式: ${data.type}"
                         val language = "语言: ${data.language}"
 
                         positionTv.text = (position + 1).toString()
                         subtitleNameTv.text = data.name
-                        subtitleFormatTv.text = type
-                        subtitleLanguageTv.text = language
-                        subtitleTimeTv.text = data.time
+                        subtitleDescribeTv.text = language
                         itemLayout.setOnClickListener {
                             viewModel.getSearchSubDetail(data.id)
                         }

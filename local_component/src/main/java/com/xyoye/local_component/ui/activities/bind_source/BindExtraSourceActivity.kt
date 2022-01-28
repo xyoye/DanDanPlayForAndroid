@@ -87,7 +87,7 @@ class BindExtraSourceActivity :
 
         initListener()
 
-        viewModel.updateSourceBind(uniqueKey!!, mMediaType)
+        viewModel.updateSourceChanged(uniqueKey!!, mMediaType)
     }
 
     private fun initListener() {
@@ -101,7 +101,7 @@ class BindExtraSourceActivity :
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard(dataBinding.searchEt)
                 dataBinding.searchCl.requestFocus()
-                search(dataBinding.searchEt.text.toString().trim())
+                childPage()?.search(dataBinding.searchEt.text.toString().trim())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -136,7 +136,7 @@ class BindExtraSourceActivity :
         dataBinding.searchTv.setOnClickListener {
             hideKeyboard(dataBinding.searchEt)
             dataBinding.searchCl.requestFocus()
-            search(dataBinding.searchEt.text.toString().trim())
+            childPage()?.search(dataBinding.searchEt.text.toString().trim())
         }
 
         dataBinding.clearTextIv.setOnClickListener {
@@ -144,18 +144,25 @@ class BindExtraSourceActivity :
             showKeyboard(dataBinding.searchEt)
         }
 
-        dataBinding.settingTv.setOnClickListener {
-            ARouter.getInstance()
-                .build(RouteTable.User.SettingDanmuSource)
-                .navigation()
+        dataBinding.sourceCl.setOnClickListener {
+            viewModel.searchText.set(videoTitle)
+            showKeyboard(dataBinding.searchEt)
         }
 
         dataBinding.danmuTipsTv.setOnClickListener {
-            unbindDanmu()
+            childPage(0)?.unbindDanmu()
         }
 
         dataBinding.subtitleTipsTv.setOnClickListener {
-            unbindSubtitle()
+            childPage(1)?.unbindSubtitle()
+        }
+
+        dataBinding.settingTv.setOnClickListener {
+            childPage()?.setting()
+        }
+
+        dataBinding.localFileBt.setOnClickListener {
+            childPage()?.localFile()
         }
 
         dataBinding.viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -175,35 +182,19 @@ class BindExtraSourceActivity :
                     1 -> getString(R.string.tips_search_subtitle)
                     else -> ""
                 }
-                dataBinding.settingTv.isVisible = position == 0
             }
 
         })
     }
 
-    private fun search(searchText: String) {
-        val tag = "android:switcher:${R.id.viewpager}:${dataBinding.viewpager.currentItem}"
-        supportFragmentManager.findFragmentByTag(tag)?.apply {
-            (this as ExtraSourceListener).search(searchText)
-        }
-    }
-
-    private fun unbindDanmu() {
-        val tag = "android:switcher:${R.id.viewpager}:0"
-        supportFragmentManager.findFragmentByTag(tag)?.apply {
-            (this as ExtraSourceListener).unbindDanmu()
-        }
-    }
-
-    private fun unbindSubtitle() {
-        val tag = "android:switcher:${R.id.viewpager}:1"
-        supportFragmentManager.findFragmentByTag(tag)?.apply {
-            (this as ExtraSourceListener).unbindSubtitle()
-        }
+    private fun childPage(index: Int? = null): ExtraSourceListener? {
+        val pageIndex = index ?: dataBinding.viewpager.currentItem
+        val tag = "android:switcher:${R.id.viewpager}:$pageIndex"
+        return supportFragmentManager.findFragmentByTag(tag) as? ExtraSourceListener?
     }
 
     fun onSourceChanged() {
-        viewModel.updateSourceBind(uniqueKey!!, mMediaType)
+        viewModel.updateSourceChanged(uniqueKey!!, mMediaType)
     }
 
     inner class BindSourcePageAdapter(
@@ -217,7 +208,7 @@ class BindExtraSourceActivity :
         override fun getItem(position: Int): Fragment {
             return when (position) {
                 0 -> BindDanmuSourceFragment.newInstance(videoPath, uniqueKey!!, mediaType!!)
-                1 -> BindSubtitleSourceFragment.newInstance(videoPath)
+                1 -> BindSubtitleSourceFragment.newInstance(videoPath, uniqueKey!!, mediaType!!)
                 else -> throw IndexOutOfBoundsException("only 2 fragment, but position : $position")
 
             }

@@ -16,10 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="5dp"
-            android:textColor="@color/text_black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/text_theme"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,44 +40,25 @@
             tools:text="" />
 
         <TextView
-            android:id="@+id/subtitle_format_tv"
+            android:id="@+id/subtitle_describe_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/text_subtitle_format"
+            tools:text="语言：英 中"
+            android:textColor="@color/text_gray"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/subtitle_language_tv"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toEndOf="@id/position_tv"
             app:layout_constraintTop_toBottomOf="@id/subtitle_name_tv" />
 
-        <TextView
-            android:id="@+id/subtitle_language_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_subtitle_language"
-            android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/subtitle_format_tv"
-            app:layout_constraintEnd_toStartOf="@id/subtitle_time_tv"
-            app:layout_constraintStart_toEndOf="@id/subtitle_format_tv"
-            app:layout_constraintTop_toTopOf="@id/subtitle_format_tv" />
-
-        <TextView
-            android:id="@+id/subtitle_time_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:gravity="end"
-            android:text="@string/text_subtitle_upload_time"
-            android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/subtitle_language_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/subtitle_language_tv"
-            app:layout_constraintTop_toTopOf="@id/subtitle_language_tv" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="12dp"
+            android:background="@color/layout_bg_color"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -19,27 +19,11 @@ class BindExtraSourceViewModel : BaseViewModel() {
     val boundDanmu = ObservableBoolean()
     val boundSubtitle = ObservableBoolean()
 
-    fun updateSourceBind(uniqueKey: String, mediaType: MediaType) {
+    fun updateSourceChanged(uniqueKey: String, mediaType: MediaType) {
         viewModelScope.launch(Dispatchers.IO) {
             val history = DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(uniqueKey, mediaType)
             boundDanmu.set(history?.danmuPath.isNullOrEmpty().not())
             boundSubtitle.set(history?.subtitlePath.isNullOrEmpty().not())
-        }
-    }
-
-    fun removeDanmu(uniqueKey: String, mediaType: MediaType) {
-        viewModelScope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao()
-                .updateDanmu(uniqueKey, mediaType, null, 0)
-            updateSourceBind(uniqueKey, mediaType)
-        }
-    }
-
-    fun removeSubtitle(uniqueKey: String, mediaType: MediaType) {
-        viewModelScope.launch(Dispatchers.IO) {
-            DatabaseManager.instance.getPlayHistoryDao()
-                .updateSubtitle(uniqueKey, mediaType, null)
-            updateSourceBind(uniqueKey, mediaType)
         }
     }
 }

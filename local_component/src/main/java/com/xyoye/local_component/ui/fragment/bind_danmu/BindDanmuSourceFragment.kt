@@ -3,15 +3,19 @@ package com.xyoye.local_component.ui.fragment.bind_danmu
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.view.isVisible
+import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.DanmuConfig
+import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.DanmuSourceHeaderBean
+import com.xyoye.data_component.enums.FileManagerAction
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
@@ -152,6 +156,20 @@ class BindDanmuSourceFragment :
 
     override fun search(searchText: String) {
         viewModel.searchDanmu(searchText)
+    }
+
+    override fun setting() {
+        ARouter.getInstance()
+            .build(RouteTable.User.SettingDanmuSource)
+            .navigation()
+    }
+
+    override fun localFile() {
+        FileManagerDialog(
+            FileManagerAction.ACTION_SELECT_DANMU
+        ) {
+            viewModel.bindLocalDanmu(it)
+        }.show(this)
     }
 
     override fun unbindDanmu() {

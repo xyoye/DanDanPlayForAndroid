@@ -9,9 +9,6 @@
     <string name="tips_subtitle_zip_name">文件名：</string>
     <string name="hint_subtitle_search">视频名</string>
     <string name="hint_danmu_search">番剧名</string>
-    <string name="text_subtitle_format">格式：</string>
-    <string name="text_subtitle_language">语言：</string>
-    <string name="text_subtitle_upload_time">上传时间:</string>
     <string name="tips_input_episode1">第</string>
     <string name="tips_input_episode2">集</string>
     <string name="tips_ova">剧场版</string>

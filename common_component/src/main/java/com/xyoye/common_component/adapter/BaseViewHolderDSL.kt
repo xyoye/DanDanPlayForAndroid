@@ -11,7 +11,7 @@ class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(
     private val resourceId: Int,
     private val clazz: KClass<T>
 ) : BaseViewHolderCreator<V>() {
-    private lateinit var viewType: ((data: T, position: Int) -> Boolean)
+    private var checkViewType: ((data: Any, position: Int) -> Boolean)? = null
     private var viewHolder: (
         (data: T, position: Int, creator: BaseViewHolderCreator<out ViewDataBinding>) -> Unit
     )? = null
@@ -20,19 +20,17 @@ class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(
     override fun isForViewType(data: Any?, position: Int): Boolean {
         if (data == null)
             return false
-        if (clazz.isInstance(data).not())
-            return false
-        if (this::viewType.isInitialized) {
-            return viewType.invoke(data as T, position)
+        if (checkViewType != null) {
+            return checkViewType!!.invoke(data, position)
         }
-        return true
+        return clazz.isInstance(data)
     }
 
     /**
      * 用于判断当前position对应数据类型
      */
-    fun checkType(viewType: (data: T, position: Int) -> Boolean) {
-        this.viewType = viewType
+    fun checkType(viewType: (data: Any, position: Int) -> Boolean) {
+        this.checkViewType = viewType
     }
 
     fun initView(holder: (data: T, position: Int, holder: BaseViewHolderCreator<out ViewDataBinding>) -> Unit) {

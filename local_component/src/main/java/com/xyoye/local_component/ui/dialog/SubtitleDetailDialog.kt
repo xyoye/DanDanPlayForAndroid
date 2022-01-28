@@ -76,7 +76,7 @@ class SubtitleDetailDialog : BaseBottomDialog<DialogSubtitleDetailBinding> {
         setPositiveText("下载压缩包")
 
         if (subDetailData.filelist != null && subDetailData.filelist?.size ?: 0 > 0) {
-            addNeutralButton("下载单个文件") {
+            addNeutralButton("下载单个字幕") {
                 dismiss()
                 downloadOne.invoke()
             }

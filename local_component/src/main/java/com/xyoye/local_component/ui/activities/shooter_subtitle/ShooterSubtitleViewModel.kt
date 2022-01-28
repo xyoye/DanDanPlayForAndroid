@@ -3,7 +3,6 @@ package com.xyoye.local_component.ui.activities.shooter_subtitle
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.*
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.Retrofit
@@ -12,12 +11,11 @@ import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
 import com.xyoye.data_component.data.SubtitleSubData
-import com.xyoye.local_component.utils.SearchSubtitleRepository
-import kotlinx.coroutines.flow.*
+import com.xyoye.local_component.utils.SubtitleSearchHelper
 
 class ShooterSubtitleViewModel : BaseViewModel() {
 
-    private val searchSubtitleRepository = SearchSubtitleRepository(viewModelScope)
+    private val searchSubtitleRepository = SubtitleSearchHelper(viewModelScope)
     val searchSubDetailLiveData = MutableLiveData<SubDetailData>()
 
     val searchSubtitleLiveData = searchSubtitleRepository.subtitleLiveData
@@ -84,15 +82,15 @@ class ShooterSubtitleViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-                val responseBody = Retrofit.extService.downloadResource(url)
+//                val responseBody = Retrofit.extService.downloadResource(url)
                 //这里用回调处理不是很好，暂时没有更好方案
-                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
-                    if (it.isNotEmpty()) {
-                        ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
-                    } else {
-                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-                    }
-                }
+//                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
+//                    if (it.isNotEmpty()) {
+//                        ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
+//                    } else {
+//                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
+//                    }
+//                }
             }
 
             onError { showNetworkError(it) }

@@ -6,6 +6,7 @@ import com.xyoye.common_component.utils.seven_zip.SevenZipUtils
 import com.xyoye.data_component.data.SubtitleThunderData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okio.IOException
 import java.io.*
 
 
@@ -79,20 +80,19 @@ object SubtitleUtils {
         }
     }
 
-    fun saveAndUnzipFile(
+    suspend fun saveAndUnzipFile(
         fileName: String,
-        inputStream: InputStream,
-        callback: (destDirPath: String) -> Unit
-    ) {
+        inputStream: InputStream
+    ): String? {
         //创建压缩文件
+        var outputStream: OutputStream? = null
         val zipFile = File(PathHelper.getSubtitleDirectory(), fileName.formatFileName())
         if (zipFile.exists()) {
             zipFile.delete()
         }
-        zipFile.createNewFile()
-        //保存
-        var outputStream: OutputStream? = null
         try {
+            //保存
+            zipFile.createNewFile()
             outputStream = BufferedOutputStream(FileOutputStream(zipFile, false))
             val data = ByteArray(512 * 1024)
             var len: Int
@@ -102,14 +102,14 @@ object SubtitleUtils {
             outputStream.flush()
 
             //解压
-            SevenZipUtils.extractFile(zipFile, callback)
+            return SevenZipUtils.extractFile(zipFile)
         } catch (e: IOException) {
             e.printStackTrace()
-            callback.invoke("")
         } finally {
             IOUtils.closeIO(inputStream)
             IOUtils.closeIO(outputStream)
         }
+        return null
     }
 
     fun findLocalSubtitleByVideo(videoPath: String): String? {
@@ -129,7 +129,7 @@ object SubtitleUtils {
 
         parentDir.listFiles()?.forEach {
             //同名字幕的文件
-            if (isSameNameSubtitle(it.absolutePath, targetVideoName)){
+            if (isSameNameSubtitle(it.absolutePath, targetVideoName)) {
                 possibleList.add(it.absolutePath)
             }
         }

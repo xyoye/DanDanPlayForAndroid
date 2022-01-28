@@ -7,7 +7,7 @@ import java.io.File
 class ArchiveExtractCallback constructor(
     private val inArchive: IInArchive,
     private val destDir: File,
-    private val callback: (destDirPath: String) -> Unit
+    private val callback: (destDirPath: String?) -> Unit
 ) : IArchiveExtractCallback {
 
     private var totalProgress: Long = 0
@@ -24,7 +24,7 @@ class ArchiveExtractCallback constructor(
 
     override fun setOperationResult(extractOperationResult: ExtractOperationResult) {
         if (extractOperationResult !== ExtractOperationResult.OK) {
-            callback.invoke("")
+            callback.invoke(null)
         }
     }
 

@@ -7,6 +7,10 @@ package com.xyoye.local_component.listener
 interface ExtraSourceListener {
     fun search(searchText: String)
 
+    fun setting()
+
+    fun localFile()
+
     fun unbindDanmu()
 
     fun unbindSubtitle()

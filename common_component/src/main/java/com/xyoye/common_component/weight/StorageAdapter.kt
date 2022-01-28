@@ -35,7 +35,7 @@ object StorageAdapter {
     ): BaseAdapter {
         return buildAdapter {
             addItem<StorageFileBean, ItemStorageVideoBinding>(R.layout.item_storage_video) {
-                checkType { data, _ -> data.isDirectory.not() }
+                checkType { data, _ -> data is StorageFileBean && data.isDirectory.not() }
                 initView { data, _, _ ->
                     itemBinding.coverIv.setVideoCover(data.uniqueKey, data.fileCoverUrl)
                     itemBinding.titleTv.text = data.fileName
@@ -80,7 +80,7 @@ object StorageAdapter {
             }
 
             addItem<StorageFileBean, ItemStorageFolderBinding>(R.layout.item_storage_folder) {
-                checkType { data, _ -> data.isDirectory }
+                checkType { data, _ -> data is StorageFileBean && data.isDirectory }
                 initView { data, _, _ ->
                     val fileCount = if (data.childFileCount > 0)
                         "${data.childFileCount}文件"

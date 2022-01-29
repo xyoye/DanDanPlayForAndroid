@@ -21,5 +21,7 @@ enum class SettingViewType {
 
     DANMU_SETTING_CONFIG,
 
-    DANMU_SETTING_BLOCK
+    DANMU_SETTING_BLOCK,
+
+    SEARCH_DANMU
 }

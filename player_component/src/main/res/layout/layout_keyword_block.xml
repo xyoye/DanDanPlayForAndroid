@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:imeOptions="actionDone"
             android:maxLength="50"
@@ -46,13 +46,14 @@
         <TextView
             android:id="@+id/keyword_block_add_tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
+            android:layout_height="0dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:text="@string/action_add_block_keyword"
             android:textColor="@color/text_theme"
             android:textSize="14sp"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="@id/keyword_block_add_et"
             app:layout_constraintBottom_toBottomOf="@id/keyword_block_add_et"
             app:layout_constraintEnd_toEndOf="parent" />
 

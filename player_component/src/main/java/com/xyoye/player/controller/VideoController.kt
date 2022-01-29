@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
+import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
@@ -263,6 +264,17 @@ class VideoController(
     ) {
         mDanmuController.setCloudBlockLiveData(cloudBlock)
         mSettingController.setDatabaseBlock(add, remove, queryAll)
+    }
+
+    /**
+     * 弹幕搜索
+     */
+    fun observerDanmuSearch(
+        search: (String) -> Unit,
+        download: (DanmuSourceContentBean) -> Unit,
+        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+    ) {
+        mSettingController.setDanmuSearch(search, download, searchResult)
     }
 
     /**

@@ -97,4 +97,8 @@
     <string name="danmu_source">弹幕源</string>
     <string name="danmu_config">弹幕参数</string>
     <string name="danmu_block">弹幕屏蔽</string>
+
+    <string name="text_search">搜索</string>
+    <string name="text_search_danmu">搜索弹幕</string>
+    <string name="hint_search_danmu">搜索弹幕：番剧名+空格+集数</string>
 </resources>

@@ -69,6 +69,7 @@ class SettingDanmuView(
         }
 
         viewBinding.tvSearchNetworkDanmu.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.SEARCH_DANMU)
             onSettingVisibilityChanged(false)
         }
 

@@ -2,6 +2,7 @@ package com.xyoye.player.controller.setting
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.LoadDanmuState
@@ -23,6 +24,7 @@ class SettingController(context: Context) : InterSettingController {
     private val screenShotView = ScreenShotView(context)
     private val settingDanmuConfigView = SettingDanmuConfigView(context)
     private val settingDanmuBlockView = SettingDanmuBlockView(context)
+    private val searchDanmuView = SearchDanmuView(context)
 
     private val settingViews : Array<InterSettingView> = arrayOf(
         playerSettingView,
@@ -33,7 +35,8 @@ class SettingController(context: Context) : InterSettingController {
         keywordBlockView,
         screenShotView,
         settingDanmuConfigView,
-        settingDanmuBlockView
+        settingDanmuBlockView,
+        searchDanmuView
     )
 
     override fun switchSource(isSwitchSubtitle: Boolean) {
@@ -82,6 +85,14 @@ class SettingController(context: Context) : InterSettingController {
         queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
     ) {
         keywordBlockView.setDatabaseBlock(add, remove, queryAll)
+    }
+
+    fun setDanmuSearch(
+        search: (String) -> Unit,
+        download: (DanmuSourceContentBean) -> Unit,
+        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+    ) {
+        searchDanmuView.setDanmuSearch(search, download, searchResult)
     }
 
     fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {

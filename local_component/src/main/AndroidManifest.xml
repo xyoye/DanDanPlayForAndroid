@@ -3,10 +3,6 @@
     package="com.xyoye.local_component">
 
     <application>
-        <activity android:name=".ui.activities.bind_danmu.BindDanmuActivity"
-            android:configChanges="orientation|screenSize"/>
-        <activity android:name=".ui.activities.bind_subtitle.BindSubtitleActivity"
-            android:configChanges="orientation|screenSize" />
         <activity android:name=".ui.activities.local_media.LocalMediaActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/LocalMediaActivityStyle"/>

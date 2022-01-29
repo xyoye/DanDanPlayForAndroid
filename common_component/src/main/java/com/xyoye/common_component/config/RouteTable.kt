@@ -21,8 +21,6 @@ object RouteTable {
     object Local {
         const val MediaFragment = "/local/media_fragment"
         const val BindExtraSource = "/local/bind_extra_source"
-        const val BindDanmu = "/local/bind_danmu"
-        const val BindSubtitle = "/local/bind_subtitle"
         const val LocalMediaStorage = "/local/local_media_storage"
         const val PlayHistory = "/local/play_history"
         const val BiliBiliDanmu = "/local/bilibili_danmu"

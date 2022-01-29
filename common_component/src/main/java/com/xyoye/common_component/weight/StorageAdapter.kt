@@ -57,6 +57,7 @@ object StorageAdapter {
                             return@setOnClickListener
                         }
 
+                        // TODO: 共享元素的动画有问题，动画总是从最后一个Item开始
                         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                             activity,
                             Pair(itemBinding.coverIv, itemBinding.coverIv.transitionName),

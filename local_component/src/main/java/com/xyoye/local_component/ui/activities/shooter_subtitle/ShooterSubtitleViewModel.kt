@@ -82,15 +82,13 @@ class ShooterSubtitleViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-//                val responseBody = Retrofit.extService.downloadResource(url)
-                //这里用回调处理不是很好，暂时没有更好方案
-//                SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()) {
-//                    if (it.isNotEmpty()) {
-//                        ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
-//                    } else {
-//                        ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-//                    }
-//                }
+                val responseBody = Retrofit.extService.downloadResource(url)
+                val unzipDirPath = SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream())
+                if (unzipDirPath.isNullOrEmpty()) {
+                    ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
+                } else {
+                    ToastCenter.showSuccess("字幕下载成功：$unzipDirPath", Toast.LENGTH_LONG)
+                }
             }
 
             onError { showNetworkError(it) }

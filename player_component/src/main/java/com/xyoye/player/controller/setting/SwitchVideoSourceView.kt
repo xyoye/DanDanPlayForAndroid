@@ -114,6 +114,7 @@ class SwitchVideoSourceView @JvmOverloads constructor(
                         itemBinding.tvSourceName.setTextColor(getTitleColor(data.isCurrent))
                         itemBinding.itemLayout.setOnClickListener {
                             if (data.isCurrent.not()) {
+                                onSettingVisibilityChanged(false)
                                 switchVideoSourceBlock?.invoke(data.index)
                             }
                         }

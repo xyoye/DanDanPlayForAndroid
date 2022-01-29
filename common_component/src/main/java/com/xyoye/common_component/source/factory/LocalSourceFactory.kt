@@ -1,8 +1,8 @@
 package com.xyoye.common_component.source.factory
 
+import android.text.TextUtils
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.LocalMediaSource
@@ -45,8 +45,8 @@ object LocalSourceFactory {
 
     private fun getVideoDanmu(video: VideoEntity, history: PlayHistoryEntity?): Pair<Int, String?> {
         //当前视频已绑定弹幕
-        if (history?.danmuPath != null) {
-            return Pair(history.episodeId, history.danmuPath)
+        if (TextUtils.isEmpty(history?.danmuPath).not()) {
+            return Pair(history!!.episodeId, history.danmuPath)
         }
         //从本地找同名弹幕
         if (DanmuConfig.isAutoLoadSameNameDanmu()) {
@@ -59,8 +59,8 @@ object LocalSourceFactory {
 
     private suspend fun getVideoSubtitle(video: VideoEntity, history: PlayHistoryEntity?): String? {
         //当前视频已绑定字幕
-        if (history?.subtitlePath != null) {
-            return history.subtitlePath
+        if (TextUtils.isEmpty(history?.subtitlePath).not()) {
+            return history!!.subtitlePath
         }
         //自动加载本地同名字幕
         if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {

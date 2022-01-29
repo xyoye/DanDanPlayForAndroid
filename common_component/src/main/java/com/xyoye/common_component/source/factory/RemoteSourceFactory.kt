@@ -59,8 +59,8 @@ object RemoteSourceFactory {
         videoData: RemoteVideoData
     ): Pair<Int, String?> {
         //从播放记录读取弹幕
-        if (history?.danmuPath != null) {
-            return Pair(history.episodeId, history.danmuPath)
+        if (TextUtils.isEmpty(history?.danmuPath).not()) {
+            return Pair(history!!.episodeId, history.danmuPath)
         }
 
         //自动匹配同文件夹内同名弹幕
@@ -86,8 +86,8 @@ object RemoteSourceFactory {
         videoData: RemoteVideoData
     ): String? {
         //从播放记录读取弹幕
-        if (history?.subtitlePath != null) {
-            return history.subtitlePath
+        if (TextUtils.isEmpty(history?.subtitlePath).not()) {
+            return history!!.subtitlePath
         }
 
         //自动匹配同文件夹内同名字幕

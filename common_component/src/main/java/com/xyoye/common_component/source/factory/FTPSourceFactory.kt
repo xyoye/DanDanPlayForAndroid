@@ -1,5 +1,6 @@
 package com.xyoye.common_component.source.factory
 
+import android.text.TextUtils
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.formatFileName
@@ -83,8 +84,8 @@ object FTPSourceFactory {
         extSources: List<FTPFile>
     ): Pair<Int, String?> {
         //从播放记录读取弹幕
-        if (history?.danmuPath != null) {
-            return Pair(history.episodeId, history.danmuPath)
+        if (TextUtils.isEmpty(history?.danmuPath).not()) {
+            return Pair(history!!.episodeId, history.danmuPath)
         }
 
         //匹配同文件夹内同名弹幕
@@ -112,8 +113,8 @@ object FTPSourceFactory {
         extSources: List<FTPFile>
     ): String? {
         //从播放记录读取弹幕
-        if (history?.subtitlePath != null) {
-            return history.subtitlePath
+        if (TextUtils.isEmpty(history?.subtitlePath).not()) {
+            return history!!.subtitlePath
         }
 
         //匹配同文件夹内同名字幕

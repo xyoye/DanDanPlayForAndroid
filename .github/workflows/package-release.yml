@@ -19,7 +19,7 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: '11'
 
       # 3.获取签名密钥
       - name: decrypt key

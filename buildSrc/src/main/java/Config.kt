@@ -1,3 +1,3 @@
 object Config {
-    const val isDebug = true
+    const val isDebug = false
 }

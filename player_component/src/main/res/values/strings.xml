@@ -9,6 +9,7 @@
 
     <string name="text_setting_player">播放器设置</string>
     <string name="text_orientation_changeable">开启屏幕翻转</string>
+    <string name="text_auto_play_next">自动播放下一集</string>
     <string name="text_video_scale_type">视频比例</string>
     <string name="text_video_speed">播放速度</string>
     <string name="text_audio_stream">音频流</string>

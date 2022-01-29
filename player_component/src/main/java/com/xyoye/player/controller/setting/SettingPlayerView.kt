@@ -69,6 +69,12 @@ class SettingPlayerView(
             PlayerInitializer.isOrientationEnabled = isChecked
         }
 
+        viewBinding.autoPlayNextSw.isChecked = PlayerInitializer.Player.isAutoPlayNext
+        viewBinding.autoPlayNextSw.setOnCheckedChangeListener { _, isChecked ->
+            PlayerInitializer.Player.isAutoPlayNext = isChecked
+            PlayerConfig.putAutoPlayNext(isChecked)
+        }
+
         for (data in mVideoScaleData) {
             if (data.screenScale == PlayerInitializer.screenScale) {
                 data.isChecked = true

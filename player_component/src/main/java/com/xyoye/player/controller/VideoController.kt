@@ -25,6 +25,7 @@ import com.xyoye.player.controller.video.LoadingView
 import com.xyoye.player.controller.video.PlayerBottomView
 import com.xyoye.player.controller.video.PlayerGestureView
 import com.xyoye.player.controller.video.PlayerTopView
+import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
@@ -60,6 +61,7 @@ class VideoController(
 
     private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
+    private var switchVideoSourceBlock: ((Int) -> Unit)? = null
 
     private val controllerBinding = DataBindingUtil.inflate<LayoutPlayerControllerBinding>(
         LayoutInflater.from(context),
@@ -145,6 +147,13 @@ class VideoController(
         super.onPlayStateChanged(playState)
         if (playState == PlayState.STATE_PLAYING) {
             considerSeekToLastPlay()
+        } else if (playState == PlayState.STATE_COMPLETED) {
+            if (PlayerInitializer.Player.isAutoPlayNext) {
+                val videoSource = mControlWrapper.getVideoSource()
+                if (videoSource.hasNextSource()) {
+                    switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() + 1)
+                }
+            }
         }
     }
 
@@ -250,6 +259,7 @@ class VideoController(
      * 切换视频资源回调
      */
     fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {
+        this.switchVideoSourceBlock = block
         playerBotView.setSwitchVideoSourceBlock(block)
         mSettingController.setSwitchVideoSourceBlock(block)
     }

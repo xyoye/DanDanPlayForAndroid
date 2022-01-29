@@ -47,7 +47,9 @@ class VideoController(
     private val mSubtitleController = SubtitleController(context)
 
     //设置视图控制器
-    private val mSettingController = SettingController(context)
+    private val mSettingController = SettingController(context) {
+        addControlComponent(it)
+    }
 
     private val playerTopView = PlayerTopView(context)
     private val playerBotView = PlayerBottomView(context)
@@ -73,7 +75,6 @@ class VideoController(
         addControlComponent(playerTopView)
         addControlComponent(playerBotView)
         addControlComponent(loadingView)
-        addControlComponent(*mSettingController.getViews())
 
         controllerBinding.playerLockIv.setOnClickListener {
             mControlWrapper.toggleLockState()

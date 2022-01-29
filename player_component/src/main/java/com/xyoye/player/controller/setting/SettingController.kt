@@ -13,58 +13,55 @@ import com.xyoye.player.wrapper.InterSettingController
  * Created by xyoye on 2021/4/14.
  */
 
-class SettingController(context: Context) : InterSettingController {
+class SettingController(
+    private val context: Context,
+    private val addView: (InterSettingView) -> Unit
+) : InterSettingController {
 
-    private val playerSettingView = SettingPlayerView(context)
-    private val danmuSettingView = SettingDanmuView(context)
-    private val subtitleSettingView = SettingSubtitleView(context)
-    private val switchSourceView = SwitchSourceView(context)
-    private val switchVideoSourceView = SwitchVideoSourceView(context)
-    private val keywordBlockView = KeywordBlockView(context)
-    private val screenShotView = ScreenShotView(context)
-    private val settingDanmuConfigView = SettingDanmuConfigView(context)
-    private val settingDanmuBlockView = SettingDanmuBlockView(context)
-    private val searchDanmuView = SearchDanmuView(context)
+    private lateinit var playerSettingView: SettingPlayerView
+    private lateinit var danmuSettingView: SettingDanmuView
+    private lateinit var subtitleSettingView: SettingSubtitleView
+    private lateinit var switchSourceView: SwitchSourceView
+    private lateinit var switchVideoSourceView: SwitchVideoSourceView
+    private lateinit var keywordBlockView: KeywordBlockView
+    private lateinit var screenShotView: ScreenShotView
+    private lateinit var settingDanmuConfigView: SettingDanmuConfigView
+    private lateinit var settingDanmuBlockView: SettingDanmuBlockView
+    private lateinit var searchDanmuView: SearchDanmuView
 
-    private val settingViews : Array<InterSettingView> = arrayOf(
-        playerSettingView,
-        danmuSettingView,
-        subtitleSettingView,
-        switchSourceView,
-        switchVideoSourceView,
-        keywordBlockView,
-        screenShotView,
-        settingDanmuConfigView,
-        settingDanmuBlockView,
-        searchDanmuView
-    )
+    private val showingSettingViews = mutableListOf<InterSettingView>()
 
     override fun switchSource(isSwitchSubtitle: Boolean) {
-        switchSourceView.setSwitchType(isSwitchSubtitle)
+        (getSettingView(SettingViewType.SWITCH_SOURCE) as SwitchSourceView)
+            .setSwitchType(isSwitchSubtitle)
     }
 
     override fun isSettingViewShowing(): Boolean {
-        return settingViews.find { it.isSettingShowing() } != null
+        return showingSettingViews.find { it.isSettingShowing() } != null
     }
 
     override fun showSettingView(viewType: SettingViewType) {
-        settingViews.forEach {
-            if (it.getSettingViewType() == viewType && !it.isSettingShowing()){
-                it.onSettingVisibilityChanged(true)
-            }
+        val settingView = getSettingView(viewType)
+        if (settingView.isSettingShowing().not()) {
+            showingSettingViews.add(settingView)
+            settingView.onSettingVisibilityChanged(true)
         }
     }
 
     override fun hideSettingView() {
-        settingViews.forEach {
-            if (it.isSettingShowing()){
-                it.onSettingVisibilityChanged(false)
+        val iterator = showingSettingViews.iterator()
+        while (iterator.hasNext()) {
+            val view = iterator.next()
+            if (view.isSettingShowing()) {
+                view.onSettingVisibilityChanged(false)
+                iterator.remove()
             }
         }
     }
 
     override fun onDanmuSourceChanged() {
-        danmuSettingView.onDanmuSourceChanged()
+        (getSettingView(SettingViewType.DANMU_SETTING) as SettingDanmuView)
+            .onDanmuSourceChanged()
     }
 
     override fun onSubtitleSourceChanged() {
@@ -75,16 +72,13 @@ class SettingController(context: Context) : InterSettingController {
 
     }
 
-    fun getViews(): Array<InterSettingView> {
-        return settingViews
-    }
-
     fun setDatabaseBlock(
         add: ((keyword: String, isRegex: Boolean) -> Unit),
         remove: ((id: Int) -> Unit),
         queryAll: () -> LiveData<MutableList<DanmuBlockEntity>>
     ) {
-        keywordBlockView.setDatabaseBlock(add, remove, queryAll)
+        (getSettingView(SettingViewType.KEYWORD_BLOCK) as KeywordBlockView)
+            .setDatabaseBlock(add, remove, queryAll)
     }
 
     fun setDanmuSearch(
@@ -92,22 +86,102 @@ class SettingController(context: Context) : InterSettingController {
         download: (DanmuSourceContentBean) -> Unit,
         searchResult: () -> LiveData<List<DanmuSourceContentBean>>
     ) {
-        searchDanmuView.setDanmuSearch(search, download, searchResult)
+        (getSettingView(SettingViewType.SEARCH_DANMU) as SearchDanmuView)
+            .setDanmuSearch(search, download, searchResult)
     }
 
     fun setSwitchVideoSourceBlock(block: (Int) -> Unit) {
-        switchVideoSourceView.setSwitchVideoSourceBlock(block)
+        (getSettingView(SettingViewType.SWITCH_VIDEO_SOURCE) as SwitchVideoSourceView)
+            .setSwitchVideoSourceBlock(block)
     }
 
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
-        if (isAudio){
-            playerSettingView.updateAudioTrack(trackData)
+        if (isAudio) {
+            (getSettingView(SettingViewType.PLAYER_SETTING) as SettingPlayerView)
+                .updateAudioTrack(trackData)
         } else {
-            subtitleSettingView.updateSubtitleTrack(trackData)
+            (getSettingView(SettingViewType.SUBTITLE_SETTING) as SettingSubtitleView)
+                .updateSubtitleTrack(trackData)
         }
     }
 
     fun updateLoadDanmuState(state: LoadDanmuState) {
-        danmuSettingView.updateLoadDanmuSate(state)
+        (getSettingView(SettingViewType.DANMU_SETTING) as SettingDanmuView)
+            .updateLoadDanmuSate(state)
+    }
+
+    private fun getSettingView(type: SettingViewType): InterSettingView {
+        when (type) {
+            SettingViewType.PLAYER_SETTING -> {
+                if (this::playerSettingView.isInitialized.not()) {
+                    playerSettingView = SettingPlayerView(context)
+                    addView.invoke(playerSettingView)
+                }
+                return playerSettingView
+            }
+            SettingViewType.DANMU_SETTING -> {
+                if (this::danmuSettingView.isInitialized.not()) {
+                    danmuSettingView = SettingDanmuView(context)
+                    addView.invoke(danmuSettingView)
+                }
+                return danmuSettingView
+            }
+            SettingViewType.SUBTITLE_SETTING -> {
+                if (this::subtitleSettingView.isInitialized.not()) {
+                    subtitleSettingView = SettingSubtitleView(context)
+                    addView.invoke(subtitleSettingView)
+                }
+                return subtitleSettingView
+            }
+            SettingViewType.SWITCH_SOURCE -> {
+                if (this::switchSourceView.isInitialized.not()) {
+                    switchSourceView = SwitchSourceView(context)
+                    addView.invoke(switchSourceView)
+                }
+                return switchSourceView
+            }
+            SettingViewType.SWITCH_VIDEO_SOURCE -> {
+                if (this::switchVideoSourceView.isInitialized.not()) {
+                    switchVideoSourceView = SwitchVideoSourceView(context)
+                    addView.invoke(switchVideoSourceView)
+                }
+                return switchVideoSourceView
+            }
+            SettingViewType.KEYWORD_BLOCK -> {
+                if (this::keywordBlockView.isInitialized.not()) {
+                    keywordBlockView = KeywordBlockView(context)
+                    addView.invoke(keywordBlockView)
+                }
+                return keywordBlockView
+            }
+            SettingViewType.SCREEN_SHOT -> {
+                if (this::screenShotView.isInitialized.not()) {
+                    screenShotView = ScreenShotView(context)
+                    addView.invoke(screenShotView)
+                }
+                return screenShotView
+            }
+            SettingViewType.DANMU_SETTING_CONFIG -> {
+                if (this::settingDanmuConfigView.isInitialized.not()) {
+                    settingDanmuConfigView = SettingDanmuConfigView(context)
+                    addView.invoke(settingDanmuConfigView)
+                }
+                return settingDanmuConfigView
+            }
+            SettingViewType.DANMU_SETTING_BLOCK -> {
+                if (this::settingDanmuBlockView.isInitialized.not()) {
+                    settingDanmuBlockView = SettingDanmuBlockView(context)
+                    addView.invoke(settingDanmuBlockView)
+                }
+                return settingDanmuBlockView
+            }
+            SettingViewType.SEARCH_DANMU -> {
+                if (this::searchDanmuView.isInitialized.not()) {
+                    searchDanmuView = SearchDanmuView(context)
+                    addView.invoke(searchDanmuView)
+                }
+                return searchDanmuView
+            }
+        }
     }
 }

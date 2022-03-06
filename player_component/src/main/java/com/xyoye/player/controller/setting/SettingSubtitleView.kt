@@ -1,25 +1,17 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
-import android.graphics.Point
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
-import android.widget.LinearLayout
 import android.widget.SeekBar
-import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.vertical
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.data_component.bean.VideoTrackBean
-import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.TrackUtils
@@ -36,23 +28,11 @@ class SettingSubtitleView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
-    private val mHideTranslateX = dp2px(300).toFloat()
-
-    private lateinit var mControlWrapper: ControlWrapper
+) : BaseSettingView<LayoutSettingSubtitleBinding>(context, attrs, defStyleAttr) {
 
     private val subtitleTrackList = mutableListOf<VideoTrackBean>()
 
-    private val viewBinding = DataBindingUtil.inflate<LayoutSettingSubtitleBinding>(
-        LayoutInflater.from(context),
-        R.layout.layout_setting_subtitle,
-        this,
-        true
-    )
-
     init {
-        gravity = Gravity.END
-
         initSettingView()
 
         initSettingListener()
@@ -65,45 +45,9 @@ class SettingSubtitleView(
         }
     }
 
-    override fun getView() = this
-
-    override fun onVisibilityChanged(isVisible: Boolean) {
-
-    }
-
-    override fun onPlayStateChanged(playState: PlayState) {
-
-    }
-
-    override fun onProgressChanged(duration: Long, position: Long) {
-
-    }
-
-    override fun onLockStateChanged(isLocked: Boolean) {
-
-    }
-
-    override fun onVideoSizeChanged(videoSize: Point) {
-
-    }
+    override fun getLayoutId() = R.layout.layout_setting_subtitle
 
     override fun getSettingViewType() = SettingViewType.SUBTITLE_SETTING
-
-    override fun onSettingVisibilityChanged(isVisible: Boolean) {
-        if (isVisible) {
-            ViewCompat.animate(viewBinding.subtitleSettingNsv)
-                .translationX(0f)
-                .setDuration(500)
-                .start()
-        } else {
-            ViewCompat.animate(viewBinding.subtitleSettingNsv)
-                .translationX(mHideTranslateX)
-                .setDuration(500)
-                .start()
-        }
-    }
-
-    override fun isSettingShowing() = viewBinding.subtitleSettingNsv.translationX == 0f
 
     fun updateSubtitleTrack(trackData: MutableList<VideoTrackBean>) {
         subtitleTrackList.clear()

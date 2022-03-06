@@ -2,14 +2,9 @@ package com.xyoye.player.controller.setting
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Point
 import android.os.Environment
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.AppConfig
@@ -19,10 +14,8 @@ import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
-import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
-import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemFileManagerPlayerBinding
 import com.xyoye.player_component.databinding.LayoutSwitchSourceBinding
@@ -37,8 +30,7 @@ class SwitchSourceView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
-    private val mHideTranslateX = -dp2px(300).toFloat()
+) : BaseSettingView<LayoutSwitchSourceBinding>(context, attrs, defStyleAttr) {
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
     private var currentDirPath = mRootPath
@@ -46,18 +38,7 @@ class SwitchSourceView(
 
     private val mPathData = arrayListOf<FilePathBean>()
 
-    private lateinit var mControlWrapper: ControlWrapper
-
-    private val viewBinding = DataBindingUtil.inflate<LayoutSwitchSourceBinding>(
-        LayoutInflater.from(context),
-        R.layout.layout_switch_source,
-        this,
-        true
-    )
-
     init {
-        gravity = Gravity.START
-
         viewBinding.switchSourceLl.setOnTouchListener { _, _ -> return@setOnTouchListener true }
 
         viewBinding.rootPathTv.setOnClickListener {
@@ -67,52 +48,17 @@ class SwitchSourceView(
         initRv()
     }
 
+    override fun getLayoutId() = R.layout.layout_switch_source
+
     override fun getSettingViewType() = SettingViewType.SWITCH_SOURCE
 
+    override fun getGravity() = Gravity.START
+
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
+        super.onSettingVisibilityChanged(isVisible)
         viewBinding.switchSourceTv.text = if (isSwitchSubtitle) "选择字幕" else "选择弹幕"
         val initialPath = PlayerInitializer.selectSourceDirectory ?: AppConfig.getCachePath()!!
         openTargetDirectory(initialPath)
-
-        if (isVisible) {
-            ViewCompat.animate(viewBinding.switchSourceLl)
-                .translationX(0f)
-                .setDuration(500)
-                .start()
-        } else {
-            ViewCompat.animate(viewBinding.switchSourceLl)
-                .translationX(mHideTranslateX)
-                .setDuration(500)
-                .start()
-        }
-    }
-
-    override fun isSettingShowing() = viewBinding.switchSourceLl.translationX == 0f
-
-    override fun attach(controlWrapper: ControlWrapper) {
-        mControlWrapper = controlWrapper
-    }
-
-    override fun getView() = this
-
-    override fun onVisibilityChanged(isVisible: Boolean) {
-
-    }
-
-    override fun onPlayStateChanged(playState: PlayState) {
-
-    }
-
-    override fun onProgressChanged(duration: Long, position: Long) {
-
-    }
-
-    override fun onLockStateChanged(isLocked: Boolean) {
-
-    }
-
-    override fun onVideoSizeChanged(videoSize: Point) {
-
     }
 
     fun setSwitchType(isSwitchSubtitle: Boolean) {

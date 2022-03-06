@@ -1,25 +1,17 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
-import android.graphics.Point
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.widget.LinearLayout
 import android.widget.SeekBar
-import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
-import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.bean.VideoScaleBean
 import com.xyoye.data_component.bean.VideoTrackBean
-import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.info.PlayerInitializer
@@ -38,9 +30,7 @@ class SettingPlayerView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr), InterSettingView {
-
-    private val mHideTranslateX = dp2px(300).toFloat()
+) : BaseSettingView<LayoutSettingPlayerBinding>(context, attrs, defStyleAttr) {
 
     private val mVideoScaleData = mutableListOf(
         VideoScaleBean(VideoScreenScale.SCREEN_SCALE_16_9, "16:9"),
@@ -52,18 +42,7 @@ class SettingPlayerView(
 
     private val audioTrackData = mutableListOf<VideoTrackBean>()
 
-    private lateinit var mControlWrapper: ControlWrapper
-
-    private val viewBinding = DataBindingUtil.inflate<LayoutSettingPlayerBinding>(
-        LayoutInflater.from(context),
-        R.layout.layout_setting_player,
-        this,
-        true
-    )
-
     init {
-        gravity = Gravity.END
-
         viewBinding.orientationChangeSw.isChecked = PlayerInitializer.isOrientationEnabled
         viewBinding.orientationChangeSw.setOnCheckedChangeListener { _, isChecked ->
             PlayerInitializer.isOrientationEnabled = isChecked
@@ -87,48 +66,15 @@ class SettingPlayerView(
         initVideoSpeed()
     }
 
+    override fun getLayoutId() = R.layout.layout_setting_player
+
     override fun getSettingViewType() = SettingViewType.PLAYER_SETTING
 
-    override fun onSettingVisibilityChanged(isVisible: Boolean) {
-        if (isVisible) {
-            ViewCompat.animate(viewBinding.playerSettingNsv).translationX(0f).setDuration(500)
-                .start()
-        } else {
-            ViewCompat.animate(viewBinding.playerSettingNsv).translationX(mHideTranslateX)
-                .setDuration(500)
-                .start()
-        }
-    }
-
-    override fun isSettingShowing() = viewBinding.playerSettingNsv.translationX == 0f
-
     override fun attach(controlWrapper: ControlWrapper) {
-        mControlWrapper = controlWrapper
+        super.attach(controlWrapper)
         viewBinding.videoSpeedSb.postDelayed({
             viewBinding.videoSpeedSb.progress = PlayerInitializer.Player.videoSpeed
         }, 200)
-    }
-
-    override fun getView() = this
-
-    override fun onVisibilityChanged(isVisible: Boolean) {
-
-    }
-
-    override fun onPlayStateChanged(playState: PlayState) {
-
-    }
-
-    override fun onProgressChanged(duration: Long, position: Long) {
-
-    }
-
-    override fun onLockStateChanged(isLocked: Boolean) {
-
-    }
-
-    override fun onVideoSizeChanged(videoSize: Point) {
-
     }
 
     private fun initRv() {
@@ -143,9 +89,6 @@ class SettingPlayerView(
                             paramsTv.text = data.scaleName
                             paramsTv.isSelected = data.isChecked
                             paramsTv.setOnClickListener {
-                                if (!this@SettingPlayerView::mControlWrapper.isInitialized)
-                                    return@setOnClickListener
-
                                 if (data.isChecked) {
                                     mControlWrapper.setScreenScale(VideoScreenScale.SCREEN_SCALE_DEFAULT)
                                     data.isChecked = false

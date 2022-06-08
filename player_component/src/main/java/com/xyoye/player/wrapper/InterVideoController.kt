@@ -51,6 +51,11 @@ interface InterVideoController {
     fun stopProgress()
 
     /**
+     * 设置进度
+     */
+    fun setProgress(position: Long)
+
+    /**
      * 隐藏控制器视图
      */
     fun hideController()

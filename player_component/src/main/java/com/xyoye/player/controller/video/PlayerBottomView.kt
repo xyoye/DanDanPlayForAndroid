@@ -129,22 +129,24 @@ class PlayerBottomView(
             PlayState.STATE_PREPARING -> {
                 updateSourceAction()
                 viewBinding.playIv.isSelected = false
-                mControlWrapper.startProgress()
             }
             PlayState.STATE_START_ABORT,
             PlayState.STATE_PREPARED,
             PlayState.STATE_PAUSED,
             PlayState.STATE_ERROR -> {
                 viewBinding.playIv.isSelected = false
-                mControlWrapper.startProgress()
+                mControlWrapper.stopProgress()
             }
             PlayState.STATE_PLAYING -> {
                 viewBinding.playIv.isSelected = true
                 mControlWrapper.startProgress()
             }
             PlayState.STATE_BUFFERING_PAUSED,
-            PlayState.STATE_BUFFERING_PLAYING,
+            PlayState.STATE_BUFFERING_PLAYING -> {
+                viewBinding.playIv.isSelected = mControlWrapper.isPlaying()
+            }
             PlayState.STATE_COMPLETED -> {
+                mControlWrapper.stopProgress()
                 viewBinding.playIv.isSelected = mControlWrapper.isPlaying()
             }
         }
@@ -202,7 +204,6 @@ class PlayerBottomView(
         val newPosition =
             (duration * viewBinding.playSeekBar.progress) / viewBinding.playSeekBar.max
         mControlWrapper.seekTo(newPosition)
-        mControlWrapper.startProgress()
         mControlWrapper.startFadeOut()
     }
 

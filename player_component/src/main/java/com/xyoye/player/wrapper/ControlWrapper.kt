@@ -43,8 +43,16 @@ class ControlWrapper(
     override fun getCurrentPosition() = mVideoPlayer.getCurrentPosition()
 
     override fun seekTo(timeMs: Long) {
+        //播放器
         mVideoPlayer.seekTo(timeMs)
+        //弹幕
         seekTo(timeMs, isPlaying())
+        //视图
+        if (isPlaying()) {
+            startProgress()
+        } else {
+            setProgress(timeMs)
+        }
     }
 
     override fun isPlaying() = mVideoPlayer.isPlaying()
@@ -120,6 +128,10 @@ class ControlWrapper(
 
     override fun stopProgress() {
         mController.stopProgress()
+    }
+
+    override fun setProgress(position: Long) {
+        mController.setProgress(position)
     }
 
     override fun hideController() {

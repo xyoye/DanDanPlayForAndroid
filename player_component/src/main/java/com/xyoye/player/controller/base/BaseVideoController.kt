@@ -171,6 +171,10 @@ abstract class BaseVideoController(
         removeCallbacks(mUpdateProgress)
     }
 
+    override fun setProgress(position: Long) {
+        handleProgressChanged(mControlWrapper.getDuration(), position)
+    }
+
     override fun onOrientationChanged(orientation: Int) {
         if (!PlayerInitializer.isOrientationEnabled)
             return

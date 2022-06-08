@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import master.flame.danmaku.controller.DanmakuFilters;
@@ -26,11 +25,9 @@ public class RegexFilter extends DanmakuFilters.BaseDanmakuFilter<List<String>> 
         for (int i = 0; i < mRegexList.size(); i++) {
             String regex = mRegexList.get(i);
 
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(danmaku.text);
-            if (matcher.find()) {
+            filtered = Pattern.matches(regex, danmaku.text);
+            if (filtered) {
                 Log.d("RegexFilter", danmaku.text.toString());
-                filtered = true;
                 break;
             }
         }

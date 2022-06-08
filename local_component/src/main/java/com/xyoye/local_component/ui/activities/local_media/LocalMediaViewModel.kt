@@ -162,6 +162,11 @@ class LocalMediaViewModel : BaseViewModel() {
     }
 
     fun refreshDirectoryWithHistory() {
+        //根目录下，且不是搜索状态时，不刷新文件列表
+        if (inRootFolder.get() && inSearchState.get().not()) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             val displayFiles = curDirectoryFiles
                 .sortedWith(FileComparator(

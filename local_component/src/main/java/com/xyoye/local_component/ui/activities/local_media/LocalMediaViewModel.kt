@@ -3,7 +3,8 @@ package com.xyoye.local_component.ui.activities.local_media
 import android.net.Uri
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.deduplication
@@ -18,8 +19,10 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LocalMediaViewModel : BaseViewModel() {
     //当前是否在根目录
@@ -57,7 +60,7 @@ class LocalMediaViewModel : BaseViewModel() {
                 return@launch
             }
 
-            playItem(lastHistory.uniqueKey)
+            playItem(lastHistory.url)
         }
     }
 

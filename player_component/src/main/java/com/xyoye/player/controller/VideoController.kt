@@ -326,6 +326,13 @@ class VideoController(
     private fun considerSeekToLastPlay() {
         if (lastPlayPosition <= 0)
             return
+
+        //上次进度大于90%时，不执行自动定位进度
+        val duration = mControlWrapper.getDuration()
+        if (1.0 * lastPlayPosition / duration >= 0.9) {
+            return
+        }
+
         mControlWrapper.seekTo(lastPlayPosition)
         showMessage("已为你定位至：${formatDuration(lastPlayPosition)}", MessageTime.LONG)
         lastPlayPosition = 0

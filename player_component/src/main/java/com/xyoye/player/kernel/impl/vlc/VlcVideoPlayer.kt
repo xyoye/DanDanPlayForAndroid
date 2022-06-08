@@ -227,13 +227,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     }
                 }
                 //打开中
-                MediaPlayer.Event.Opening -> {
-                    mPlayerEventListener.onInfo(
-                        PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
-                        0
-                    )
-                    VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_VIDEO_RENDERING_START")
-                }
+                MediaPlayer.Event.Opening -> {}
                 //播放中
                 MediaPlayer.Event.Playing -> playbackState = PlaybackStateCompat.STATE_PLAYING
                 //已暂停
@@ -263,6 +257,12 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     if (it.voutCount > 0) {
                         mMediaPlayer.updateVideoSurfaces()
                     }
+
+                    mPlayerEventListener.onInfo(
+                        PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
+                        0
+                    )
+                    VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_VIDEO_RENDERING_START")
                 }
                 //播放完成
                 MediaPlayer.Event.EndReached -> {

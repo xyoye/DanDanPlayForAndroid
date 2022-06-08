@@ -95,8 +95,14 @@ class PlayerDanmuViewModel : BaseViewModel() {
 
         loadResult.state = LoadDanmuState.COLLECTING
         loadDanmuLiveData.postValue(loadResult)
-        val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
-        val hash = FileHashUtils.getHash(response.byteStream())
+
+        var hash: String? = null
+        try {
+            val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
+            hash = FileHashUtils.getHash(response.byteStream())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         if (hash.isNullOrEmpty()) {
             loadResult.state = LoadDanmuState.NOT_SUPPORTED

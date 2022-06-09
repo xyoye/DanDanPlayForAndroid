@@ -139,7 +139,7 @@ class SettingPlayerView(
     private fun initVideoSpeed() {
         viewBinding.videoSpeedSb.apply {
             max = 100
-            progress = 25
+            progress = PlayerInitializer.Player.DEFAULT_SPEED
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
@@ -175,7 +175,12 @@ class SettingPlayerView(
 
         viewBinding.videoSpeedTv.text = "1.0"
         viewBinding.resetSpeedTv.setOnClickListener {
-            viewBinding.videoSpeedSb.progress = 25
+            val progress = PlayerInitializer.Player.DEFAULT_SPEED
+            viewBinding.videoSpeedSb.progress = progress
+
+            var speed = 4.0f * progress / 100f
+            speed = max(0.25f, speed)
+            mControlWrapper.setSpeed(speed)
         }
     }
 

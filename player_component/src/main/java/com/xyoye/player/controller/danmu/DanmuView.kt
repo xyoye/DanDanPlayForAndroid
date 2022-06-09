@@ -103,7 +103,7 @@ class DanmuView(
                 release()
             }
             PlayState.STATE_PLAYING -> {
-                if (isPrepared && isPaused) {
+                if (isPrepared) {
                     resume()
                 }
             }
@@ -113,7 +113,7 @@ class DanmuView(
                 }
             }
             PlayState.STATE_BUFFERING_PLAYING -> {
-                if (isPrepared && isPaused && mControlWrapper.isPlaying()) {
+                if (isPrepared && mControlWrapper.isPlaying()) {
                     resume()
                 }
             }

@@ -31,6 +31,7 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.subtitle.MixedSubtitle
+import kotlin.math.max
 
 /**
  * Created by xyoye on 2020/11/3.
@@ -58,6 +59,7 @@ class VideoController(
     private val loadingView = LoadingView(context)
 
     private var lastPlayPosition = 0L
+    private var lastVideoSpeed = 0
 
     private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
@@ -147,6 +149,7 @@ class VideoController(
         super.onPlayStateChanged(playState)
         if (playState == PlayState.STATE_PLAYING) {
             considerSeekToLastPlay()
+            considerSetVideoSpeed()
         } else if (playState == PlayState.STATE_COMPLETED) {
             if (PlayerInitializer.Player.isAutoPlayNext) {
                 val videoSource = mControlWrapper.getVideoSource()
@@ -211,6 +214,13 @@ class VideoController(
      */
     fun setLastPosition(position: Long) {
         lastPlayPosition = position
+    }
+
+    /**
+     * 设置上次播放速度
+     */
+    fun setLastPlaySpeed(speed: Int) {
+        lastVideoSpeed = speed
     }
 
     /**
@@ -336,5 +346,15 @@ class VideoController(
         mControlWrapper.seekTo(lastPlayPosition)
         showMessage("已为你定位至：${formatDuration(lastPlayPosition)}", MessageTime.LONG)
         lastPlayPosition = 0
+    }
+
+    private fun considerSetVideoSpeed() {
+        if (lastVideoSpeed <= 0) {
+            return
+        }
+
+        var speed = 4.0f * lastVideoSpeed / 100f
+        speed = max(0.25f, speed)
+        mControlWrapper.setSpeed(speed)
     }
 }

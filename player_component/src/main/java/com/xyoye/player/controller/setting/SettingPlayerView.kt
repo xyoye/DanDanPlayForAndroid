@@ -156,7 +156,10 @@ class SettingPlayerView(
 
                     val progressText = "$speed"
                     viewBinding.videoSpeedTv.text = progressText
-                    mControlWrapper.setSpeed(speed)
+
+                    if (fromUser) {
+                        mControlWrapper.setSpeed(speed)
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {

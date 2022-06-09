@@ -227,6 +227,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())
+            setLastPlaySpeed(PlayerConfig.getVideoSpeed())
         }
 
         dataBinding.danDanPlayer.apply {

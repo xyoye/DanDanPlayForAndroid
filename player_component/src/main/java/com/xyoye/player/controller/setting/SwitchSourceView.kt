@@ -2,9 +2,13 @@ package com.xyoye.player.controller.setting
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Environment
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatImageView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.AppConfig
@@ -46,6 +50,8 @@ class SwitchSourceView(
         }
 
         initRv()
+
+        initTag()
     }
 
     override fun getLayoutId() = R.layout.layout_switch_source
@@ -57,8 +63,7 @@ class SwitchSourceView(
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
         super.onSettingVisibilityChanged(isVisible)
         viewBinding.switchSourceTv.text = if (isSwitchSubtitle) "选择字幕" else "选择弹幕"
-        val initialPath = PlayerInitializer.selectSourceDirectory ?: AppConfig.getCachePath()!!
-        openTargetDirectory(initialPath)
+        openTargetDirectory(AppConfig.getCachePath()!!)
     }
 
     fun setSwitchType(isSwitchSubtitle: Boolean) {
@@ -270,5 +275,82 @@ class SwitchSourceView(
         } else {
             mControlWrapper.onDanmuSourceChanged(data.filePath)
         }
+    }
+
+    /**
+     * 初始化快速打开目录标签
+     */
+    private fun initTag() {
+        //视频所在目录
+        val videoFolder = PlayerInitializer.selectSourceDirectory
+        if (videoFolder?.isNotEmpty() == true) {
+            val videoFolderDrawable = com.xyoye.common_component.R.drawable.ic_tag.toResDrawable()
+            videoFolderDrawable?.setTint(com.xyoye.common_component.R.color.white.toResColor())
+            addAction(videoFolderDrawable, 8).setOnClickListener {
+                openTargetDirectory(videoFolder)
+            }
+        }
+
+        //常用目录1
+        val commonlyFolder1 = AppConfig.getCommonlyFolder1()
+        if (commonlyFolder1?.isNotEmpty() == true) {
+            val folder1Drawable = com.xyoye.common_component.R.drawable.ic_tag.toResDrawable()
+            folder1Drawable?.setTint(com.xyoye.common_component.R.color.colorAccent.toResColor())
+            addAction(folder1Drawable, 8).setOnClickListener {
+                openTargetDirectory(commonlyFolder1)
+            }
+        }
+
+        //常用目录2
+        val commonlyFolder2 = AppConfig.getCommonlyFolder2()
+        if (commonlyFolder2?.isNotEmpty() == true) {
+            val folder2Drawable = com.xyoye.common_component.R.drawable.ic_tag.toResDrawable()
+            folder2Drawable?.setTint(com.xyoye.common_component.R.color.orange.toResColor())
+            addAction(folder2Drawable, 8).setOnClickListener {
+                openTargetDirectory(commonlyFolder2)
+            }
+        }
+
+        //上次打开目录
+        val lastOpenFolderPath = AppConfig.getLastOpenFolder()
+        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
+            val lastOpenDrawable = com.xyoye.common_component.R.drawable.ic_tag.toResDrawable()
+            lastOpenDrawable?.setTint(com.xyoye.common_component.R.color.cyan.toResColor())
+            addAction(lastOpenDrawable, 8, "上次打开目录").setOnClickListener {
+                openTargetDirectory(lastOpenFolderPath)
+            }
+        }
+
+        //本次打开目录
+        val defaultDrawable = com.xyoye.common_component.R.drawable.ic_tag.toResDrawable()
+        defaultDrawable?.setTint(com.xyoye.common_component.R.color.gray.toResColor())
+        addAction(defaultDrawable, 8, "本次打开目录").setOnClickListener {
+            openTargetDirectory(AppConfig.getCachePath()!!)
+        }
+    }
+
+    private fun addAction(
+        drawable: Drawable?,
+        paddingDp: Int = 6,
+        description: String = ""
+    ): View {
+        val actionView = createActionView(drawable, description, paddingDp)
+        viewBinding.actionContainer.addView(actionView, actionLayoutParams())
+        return actionView
+    }
+
+    private fun actionLayoutParams(): LinearLayout.LayoutParams {
+        val size = dp2px(36)
+        return LinearLayout.LayoutParams(size, size)
+    }
+
+    private fun createActionView(drawable: Drawable?, description: String, paddingDp: Int): View {
+        val padding = dp2px(paddingDp)
+        val actionView = AppCompatImageView(context)
+        actionView.setImageDrawable(drawable)
+        actionView.setPadding(padding, padding, padding, padding)
+        actionView.background = rippleDrawable()
+        actionView.contentDescription = description
+        return actionView
     }
 }

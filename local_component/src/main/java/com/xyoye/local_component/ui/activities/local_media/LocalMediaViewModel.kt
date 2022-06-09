@@ -48,19 +48,18 @@ class LocalMediaViewModel : BaseViewModel() {
 
     private var searchJob: Job? = null
 
-    //记录最近一次本地播放的live data
-    val lastPlayHistory = DatabaseManager.instance.getPlayHistoryDao()
-        .gitLastPlayLiveData(MediaType.LOCAL_STORAGE)
-
     fun fastPlay() {
         viewModelScope.launch {
-            val lastHistory = lastPlayHistory.value
-            if (lastHistory == null) {
+            //最近播放的视频
+            val lastPlay = DatabaseManager.instance.getPlayHistoryDao()
+                .gitLastPlay(MediaType.LOCAL_STORAGE)
+
+            if (lastPlay == null) {
                 ToastCenter.showError("无最近播放记录")
                 return@launch
             }
 
-            playItem(lastHistory.url)
+            playItem(lastPlay.url)
         }
     }
 
@@ -68,25 +67,29 @@ class LocalMediaViewModel : BaseViewModel() {
         inRootFolder.set(true)
         inSearchState.set(false)
 
-        if (deepRefresh.not() && curDirectories.isNotEmpty()) {
-            val lastPlayFolder = lastPlayHistory.value?.url?.run {
-                getDirPath(this)
-            }
-            curDirectories.forEach {
-                it.isLastPlay = it.filePath == lastPlayFolder
-            }
-            fileLiveData.postValue(curDirectories)
-            return
-        }
-
         viewModelScope.launch(Dispatchers.IO) {
+            val lastPlay = DatabaseManager.instance.getPlayHistoryDao()
+                .gitLastPlay(MediaType.LOCAL_STORAGE)
+
+            //普通刷新，只刷新最近播放状态
+            if (deepRefresh.not() && curDirectories.isNotEmpty()) {
+                val lastPlayFolder = lastPlay?.url?.run {
+                    getDirPath(this)
+                }
+                curDirectories.forEach {
+                    it.isLastPlay = it.filePath == lastPlayFolder
+                }
+                fileLiveData.postValue(curDirectories)
+                return@launch
+            }
+
             refreshEnableLiveData.postValue(true)
             //深度刷新所有视频数据
             val refreshSuccess = refreshSystemVideo()
             if (refreshSuccess) {
                 val folderData = DatabaseManager.instance.getVideoDao().getFolderByFilter()
 
-                val lastPlayFolder = lastPlayHistory.value?.url?.run {
+                val lastPlayFolder = lastPlay?.url?.run {
                     getDirPath(this)
                 }
                 val directories = folderData.sortedWith(FileComparator(
@@ -168,6 +171,11 @@ class LocalMediaViewModel : BaseViewModel() {
         }
 
         viewModelScope.launch(Dispatchers.IO) {
+
+            //最近播放的视频
+            val lastPlay = DatabaseManager.instance.getPlayHistoryDao()
+                .gitLastPlay(MediaType.LOCAL_STORAGE)
+
             val displayFiles = curDirectoryFiles
                 .sortedWith(FileComparator(
                     value = { getFileNameNoExtension(it.filePath) },
@@ -204,7 +212,7 @@ class LocalMediaViewModel : BaseViewModel() {
                         uniqueKey,
                         lastPlayTime = history?.playTime,
                         fileCoverUrl = defaultImage?.toString(),
-                        isLastPlay = it.filePath == lastPlayHistory.value?.url
+                        isLastPlay = it.filePath == lastPlay?.url
                     )
                 }
             fileLiveData.postValue(displayFiles)

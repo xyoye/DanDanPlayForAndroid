@@ -24,10 +24,6 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitLastPlay(vararg mediaTypes: MediaType): PlayHistoryEntity?
 
-    @Query("SELECT * FROM play_history WHERE media_type = (:mediaTypes) ORDER BY play_time DESC LIMIT 1")
-    @TypeConverters(MediaTypeConverter::class)
-    fun gitLastPlayLiveData(mediaTypes: MediaType): LiveData<PlayHistoryEntity?>
-
     @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?

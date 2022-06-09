@@ -10,7 +10,6 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.enums.MediaType
@@ -135,10 +134,6 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             if (!isSuccess) {
                 ToastCenter.showError("未找到视频文件")
             }
-        }
-
-        viewModel.lastPlayHistory.observe(this) {
-            //ignore
         }
 
         viewModel.playLiveData.observe(this) {

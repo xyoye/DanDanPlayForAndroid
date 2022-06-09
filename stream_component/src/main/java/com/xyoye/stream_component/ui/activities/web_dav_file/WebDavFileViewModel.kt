@@ -134,7 +134,7 @@ class WebDavFileViewModel : BaseViewModel() {
             val index = videoSources.indexOfFirst {
                 WebDavSourceFactory.generateUniqueKey(addressUrl, it) == uniqueKey
             }
-            if (videoSources.isNullOrEmpty() || index < 0) {
+            if (videoSources.isEmpty() || index < 0) {
                 ToastCenter.showError("播放失败，不支持播放的资源")
                 return@launch
             }
@@ -143,7 +143,10 @@ class WebDavFileViewModel : BaseViewModel() {
             val extSources = curDirectoryFiles
                 .filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
             //身份验证请求头
-            val header = mapOf(Pair("Authorization", credentials))
+            val header: HashMap<String, String> = hashMapOf()
+            if (this@WebDavFileViewModel::credentials.isInitialized) {
+                header["Authorization"] = credentials
+            }
 
             showLoading()
             val mediaSource = VideoSourceFactory.Builder()

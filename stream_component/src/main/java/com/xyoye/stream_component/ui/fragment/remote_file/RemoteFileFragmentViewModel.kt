@@ -14,6 +14,7 @@ import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class RemoteFileFragmentViewModel : BaseViewModel() {
@@ -22,6 +23,8 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
     val playLiveData = MutableLiveData<Any>()
 
     val curDirectoryFiles = mutableListOf<RemoteVideoData>()
+
+    private var refreshJob: Job? = null
 
     fun initDirectoryFiles(fileList: MutableList<RemoteVideoData>?) {
         curDirectoryFiles.clear()
@@ -32,7 +35,8 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
     }
 
     fun refreshDirectoryWithHistory() {
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch(Dispatchers.IO) {
             val storageFiles = curDirectoryFiles.map {
                 val uniqueKey = RemoteSourceFactory.generateUniqueKey(it)
                 val history = DatabaseManager.instance

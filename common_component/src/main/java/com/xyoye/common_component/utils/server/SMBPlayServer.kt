@@ -39,7 +39,13 @@ class SMBPlayServer private constructor() : NanoHTTPD(randomPort()) {
             closeIO()
 
             //重新打开数据流，重要，否则无法设置offset
-            val videoInputStream = inputStreamBlock!!.invoke(sourcePath!!)
+            val videoInputStream: InputStream?
+            try {
+                videoInputStream = inputStreamBlock!!.invoke(sourcePath!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return super.serve(session)
+            }
 
             //解析Range
             val rangeText = session.headers["range"] ?: session.headers["Range"]

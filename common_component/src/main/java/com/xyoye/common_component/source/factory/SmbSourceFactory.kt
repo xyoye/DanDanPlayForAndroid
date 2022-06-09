@@ -83,11 +83,15 @@ object SmbSourceFactory {
             val targetFile = extSources.find { it.name == targetFileName }
 
             if (targetFile != null) {
-                val danmuInputStream = SMBJManager.getInstance().getInputStream(
-                    "$rootPath\\${targetFile.name}"
-                )
-                val danmuPath = DanmuUtils.saveDanmu(targetFile.name, danmuInputStream)
-                return Pair(0, danmuPath)
+                try {
+                    val danmuInputStream = SMBJManager.getInstance().getInputStream(
+                        "$rootPath\\${targetFile.name}"
+                    )
+                    val danmuPath = DanmuUtils.saveDanmu(targetFile.name, danmuInputStream)
+                    return Pair(0, danmuPath)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
 
@@ -112,9 +116,13 @@ object SmbSourceFactory {
                 SubtitleUtils.isSameNameSubtitle(it.name, videoFileName)
             }
             if (targetFile != null) {
-                val targetFilePath = "$rootPath\\${targetFile.name}"
-                val subtitleInputStream = SMBJManager.getInstance().getInputStream(targetFilePath)
-                return SubtitleUtils.saveSubtitle(targetFile.name, subtitleInputStream)
+                try {
+                    val targetFilePath = "$rootPath\\${targetFile.name}"
+                    val subtitleInputStream = SMBJManager.getInstance().getInputStream(targetFilePath)
+                    return SubtitleUtils.saveSubtitle(targetFile.name, subtitleInputStream)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
 

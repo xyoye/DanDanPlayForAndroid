@@ -218,10 +218,10 @@ class PlayerBottomView(
     private fun updateSourceAction() {
         val videoSource = mControlWrapper.getVideoSource()
         viewBinding.ivNextSource.isVisible = videoSource.hasNextSource()
-        viewBinding.ivPreviousSource.isVisible = videoSource.hasNextSource()
+        viewBinding.ivPreviousSource.isVisible = videoSource.hasPreviousSource()
         viewBinding.videoListIv.isVisible = videoSource.getGroupSize() > 1
 
-        //上一个视频资源是否可用
+        //下一个视频资源是否可用
         val hasNextSource = videoSource.hasNextSource()
         viewBinding.ivNextSource.isEnabled = hasNextSource
         val nextIcon = R.drawable.ic_video_next.toResDrawable()
@@ -232,7 +232,7 @@ class PlayerBottomView(
         }
         viewBinding.ivNextSource.setImageDrawable(nextIcon)
 
-        //下一个视频资源是否可用
+        //上一个视频资源是否可用
         val hasPreviousSource = videoSource.hasPreviousSource()
         viewBinding.ivPreviousSource.isEnabled = hasPreviousSource
         val previousIcon = R.drawable.ic_video_previous.toResDrawable()

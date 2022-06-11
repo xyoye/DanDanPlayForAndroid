@@ -3,11 +3,8 @@ package com.xyoye.common_component.utils.thunder
 import com.xunlei.downloadlib.XLDownloadManager
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.*
-import com.xyoye.common_component.utils.FileComparator
-import com.xyoye.common_component.utils.MagnetUtils
-import com.xyoye.common_component.utils.isVideoFile
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeoutOrNull
+import com.xyoye.common_component.utils.*
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -114,17 +111,21 @@ class ThunderManager private constructor() {
     }
 
     fun stopTask(taskId: Long) {
-        XLTaskHelper.getInstance().stopTask(taskId)
+        val playCacheDir = PathHelper.getPlayCacheDirectory()
+        XLTaskHelper.getInstance().deleteTask(taskId, playCacheDir.absolutePath)
+
         mTaskList.entries.find { it.value == taskId }?.let {
             mTaskList.remove(it.key)
         }
+
     }
 
     private fun stopAllTask() {
         val iterator = mTaskList.iterator()
+        val playCacheDir = PathHelper.getPlayCacheDirectory()
         while (iterator.hasNext()) {
             val entity = iterator.next()
-            XLTaskHelper.getInstance().stopTask(entity.value)
+            XLTaskHelper.getInstance().deleteTask(entity.value, playCacheDir.absolutePath)
             iterator.remove()
         }
     }
@@ -167,11 +168,23 @@ class ThunderManager private constructor() {
         var taskId = XLTaskHelper.getInstance()
             .startTask(btTaskParam, selectedIndexes, deSelectIndexes)
         if (taskId == INVALID_ID) {
-            stopAllTask()
+            stopTask(taskId)
             delay(200)
             taskId = XLTaskHelper.getInstance()
                 .startTask(btTaskParam, selectedIndexes, deSelectIndexes)
         }
+
+        if (taskId == INVALID_ID) {
+            stopTask(taskId)
+            return INVALID_ID
+        }
+
+        //任务无法下载
+        if (checkTaskFailed(taskId)) {
+            stopTask(taskId)
+            return INVALID_ID
+        }
+
         return taskId
     }
 
@@ -206,5 +219,20 @@ class ThunderManager private constructor() {
         }
 
         return Pair(selectIndexSet, deSelectIndexSet)
+    }
+
+    /**
+     * 检查下载任务是否失败
+     */
+    private suspend fun checkTaskFailed(taskId: Long): Boolean {
+        delay(2000)
+
+        //任务下载失败
+        val taskStatus = XLTaskHelper.getInstance().getTaskInfo(taskId).mTaskStatus
+        if (taskStatus == XLConstant.XLTaskStatus.TASK_FAILED) {
+            return true
+        }
+
+        return false
     }
 }

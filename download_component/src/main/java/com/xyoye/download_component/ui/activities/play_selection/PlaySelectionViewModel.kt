@@ -106,8 +106,7 @@ class PlaySelectionViewModel : BaseViewModel() {
             hideLoading()
 
             if (mediaSource == null) {
-                ToastCenter.showError("启动播放任务失败，请重试")
-                finishLiveData.postValue(true)
+                ToastCenter.showError("资源无法播放，请更换其它资源")
                 return@launch
             }
 

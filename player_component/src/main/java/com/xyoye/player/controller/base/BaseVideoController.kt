@@ -49,12 +49,7 @@ abstract class BaseVideoController(
         override fun run() {
             val position = mControlWrapper.getCurrentPosition()
             handleProgressChanged(mControlWrapper.getDuration(), position)
-            if (mControlWrapper.isPlaying()) {
-                postDelayed(this, ((1000 - position % 1000) / mControlWrapper.getSpeed()).toLong())
-            } else {
-                mIsStartProgress = false
-                postDelayed(this, 1000L)
-            }
+            postDelayed(this, 1000L)
         }
     }
 

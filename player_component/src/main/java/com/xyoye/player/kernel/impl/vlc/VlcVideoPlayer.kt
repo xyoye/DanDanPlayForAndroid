@@ -22,7 +22,6 @@ import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
-import kotlin.math.abs
 
 /**
  * Created by xyoye on 2021/4/12.
@@ -42,8 +41,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     private lateinit var mMediaPlayer: MediaPlayer
     private lateinit var mMedia: Media
 
-    private val progress = Progress()
-    private var lastTime = 0L
+    private var mCurrentDuration = 0L
     private var seekable = true
     private var isBufferEnd = false
 
@@ -77,18 +75,19 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         mMedia = Media(libVlc, videoUri)
 
         //是否开启硬件加速
-        if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DISABLE){
+        if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DISABLE) {
             mMedia.setHWDecoderEnabled(false, false)
         } else if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DECODING ||
-                PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_FULL){
+            PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_FULL
+        ) {
             mMedia.setHWDecoderEnabled(true, true)
-            if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DECODING){
+            if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DECODING) {
                 mMedia.addOption(":no-mediacodec-dr")
                 mMedia.addOption(":no-omxil-dr")
             }
         } /* else automatic: use default options */
 
-        progress.duration = mMedia.duration
+        mCurrentDuration = mMedia.duration
         mMediaPlayer.media = mMedia
         mMedia.release()
     }
@@ -111,8 +110,6 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun stop() {
         playbackState = PlaybackStateCompat.STATE_STOPPED
-        progress.release()
-        lastTime = 0
 
         mMediaPlayer.stop()
     }
@@ -178,11 +175,11 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun getCurrentPosition(): Long {
-        return progress.position
+        return mMediaPlayer.time
     }
 
     override fun getDuration(): Long {
-        return progress.duration
+        return mCurrentDuration
     }
 
     override fun getSpeed(): Float {
@@ -227,7 +224,8 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     }
                 }
                 //打开中
-                MediaPlayer.Event.Opening -> {}
+                MediaPlayer.Event.Opening -> {
+                }
                 //播放中
                 MediaPlayer.Event.Playing -> playbackState = PlaybackStateCompat.STATE_PLAYING
                 //已暂停
@@ -242,15 +240,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 }
                 //时长输出
                 MediaPlayer.Event.LengthChanged -> {
-                    progress.duration = it.lengthChanged
-                }
-                //进度改变
-                MediaPlayer.Event.TimeChanged -> {
-                    val currentTime = it.timeChanged
-                    if (abs(currentTime - lastTime) > 950L) {
-                        progress.position = currentTime
-                        lastTime = currentTime
-                    }
+                    mCurrentDuration = it.lengthChanged
                 }
                 //视频输出
                 MediaPlayer.Event.Vout -> {
@@ -292,12 +282,4 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     private fun isVideoPlaying() =
         !mMediaPlayer.isReleased && mMediaPlayer.vlcVout.areViewsAttached()
-
-    class Progress(var position: Long = 0L, var duration: Long = 0L) {
-
-        fun release() {
-            position = 0L
-            duration = 0L
-        }
-    }
 }

@@ -76,9 +76,13 @@ class DanmuView(
                 post {
                     isDanmuLoaded = true
                     if (mControlWrapper.isPlaying()) {
-                        val position =
+                        val position = if (mSeekPosition == INVALID_VALUE) {
                             mControlWrapper.getCurrentPosition() + PlayerInitializer.Danmu.offsetPosition
-                        start(position)
+                        } else {
+                            mSeekPosition
+                        }
+                        seekTo(position)
+                        mSeekPosition = INVALID_VALUE
                     }
                 }
             }
@@ -108,7 +112,7 @@ class DanmuView(
                 }
             }
             PlayState.STATE_BUFFERING_PAUSED -> {
-                if (isPrepared){
+                if (isPrepared) {
                     pause()
                 }
             }
@@ -157,7 +161,7 @@ class DanmuView(
     }
 
     fun seekTo(timeMs: Long, isPlaying: Boolean) {
-        if (isPlaying) {
+        if (isPlaying && isDanmuLoaded) {
             seekTo(timeMs + PlayerInitializer.Danmu.offsetPosition)
         } else {
             mSeekPosition = timeMs + PlayerInitializer.Danmu.offsetPosition
@@ -344,7 +348,7 @@ class DanmuView(
         addDanmaku(danmaku)
     }
 
-    fun setSpeed(speed: Float){
+    fun setSpeed(speed: Float) {
         mDanmakuContext.setSpeed(speed)
     }
 

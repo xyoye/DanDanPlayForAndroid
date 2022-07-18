@@ -28,7 +28,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.xyoye.player_component.widgets.MarqueeTextView
+        <com.xyoye.common_component.weight.MarqueeTextView
             android:id="@+id/video_title_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.xyoye.player_component.widgets;
+package com.xyoye.common_component.weight;
 
 import android.content.Context;
 import android.util.AttributeSet;

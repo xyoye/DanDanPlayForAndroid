@@ -54,7 +54,7 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
                 StorageFileBean(
                     it.isFolder,
                     it.absolutePath,
-                    it.getEpisodeName(),
+                    it.displayName,
                     history?.danmuPath,
                     history?.subtitlePath,
                     history?.videoPosition ?: 0L,

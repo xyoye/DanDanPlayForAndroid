@@ -59,13 +59,47 @@ object RemoteFileHelper {
                 treeList.addAll(it.value)
             } else if (it.key != TAG_INVALID) {
                 val absolutePath = folderName + it.key + separator
+                val child = convertTreeData(it.value, absolutePath)
+                val displayName = child.run {
+                    var firstAnimeTitle: String? = null
+                    var hasSecond = false
+                    for (i in 0 until child.size) {
+                        val item = get(i)
+                        if (item.isFolder.not() && item.AnimeTitle.isNotEmpty()) {
+                            when (firstAnimeTitle) {
+                                null -> firstAnimeTitle = item.AnimeTitle
+                                else -> {
+                                    if (item.AnimeTitle != firstAnimeTitle) {
+                                        hasSecond = true
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (firstAnimeTitle != null && !hasSecond) {
+                        "$firstAnimeTitle ( ${it.key} )"
+                    } else {
+                        for (item in child) {
+                            if (!item.isFolder && item.AnimeTitle.isNotEmpty()) {
+                                item.displayName = if (item.EpisodeTitle.isNotEmpty()) {
+                                    "${item.AnimeTitle} - ${item.EpisodeTitle}"
+                                } else {
+                                    item.getEpisodeName()
+                                }
+                            }
+                        }
+                        it.key
+                    }
+                }
                 val videoBean = RemoteVideoData(
                     isFolder = true,
                     Name = it.key,
                     absolutePath = absolutePath,
                     //目录则递归获取子文件及子目录
-                    childData = convertTreeData(it.value, absolutePath)
+                    childData = child
                 )
+                videoBean.displayName = displayName
                 treeList.add(videoBean)
             }
         }

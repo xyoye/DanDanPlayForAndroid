@@ -77,7 +77,7 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
         } ?: return
 
         (mAttachActivity as RemoteFileActivity).listFolder(
-            remoteVideoData.Name,
+            remoteVideoData.displayName,
             path,
             remoteVideoData.childData
         )

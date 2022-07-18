@@ -3,6 +3,7 @@ package com.xyoye.stream_component.ui.activities.remote_file
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -165,7 +166,9 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         pathList.find { it.isOpened }?.isOpened = false
         pathList.add(pathBean)
         pathAdapter.setData(pathList)
-
+        dataBinding.pathRv.apply {
+            (layoutManager as? LinearLayoutManager)?.scrollToPosition(pathList.lastIndex)
+        }
         val childFragment = RemoteFileFragment.newInstance(fileData)
         fragmentStack.push(childFragment)
         supportFragmentManager.addFragment(R.id.container, childFragment, path, true)

@@ -31,13 +31,11 @@ data class RemoteVideoData(
     @NullToEmptyString
     var absolutePath: String = "",
     var isFolder: Boolean = false,
+    var displayName: String = EpisodeTitle.ifEmpty { Name },
     var childData: MutableList<RemoteVideoData> = mutableListOf()
 ) : Parcelable {
 
-    fun getEpisodeName(): String{
-        return if (EpisodeTitle.isEmpty())
-            Name
-        else
-            EpisodeTitle
+    fun getEpisodeName(): String {
+        return EpisodeTitle.ifEmpty { Name }
     }
 }

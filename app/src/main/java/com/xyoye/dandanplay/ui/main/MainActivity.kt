@@ -9,7 +9,7 @@ import com.xyoye.common_component.bridge.LoginObserver
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.addFragment
-import com.xyoye.common_component.extension.findAndHideFragment
+import com.xyoye.common_component.extension.findAndRemoveFragment
 import com.xyoye.common_component.extension.hideFragment
 import com.xyoye.common_component.extension.showFragment
 import com.xyoye.common_component.weight.ToastCenter
@@ -52,8 +52,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         //默认显示媒体库页面
         //标题
         title = "媒体库"
-        //隐藏所有已添加的fragment，防止如旋转屏幕后导致的屏幕错乱
-        supportFragmentManager.findAndHideFragment(
+        //移除所有已添加的fragment，防止如旋转屏幕后导致的屏幕错乱
+        supportFragmentManager.findAndRemoveFragment(
             TAG_FRAGMENT_HOME,
             TAG_FRAGMENT_MEDIA,
             TAG_FRAGMENT_PERSONAL

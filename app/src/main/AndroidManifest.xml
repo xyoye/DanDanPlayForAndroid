@@ -44,7 +44,6 @@
 
         <activity
             android:name="com.xyoye.dandanplay.ui.main.MainActivity"
-            android:configChanges="orientation|screenSize"
             android:launchMode="singleTask" />
     </application>
 

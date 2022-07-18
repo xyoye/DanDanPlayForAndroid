@@ -7,6 +7,7 @@ import com.xyoye.anime_component.databinding.FragmentHomePageBinding
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
 import com.xyoye.common_component.base.BaseAppFragment
 import com.xyoye.common_component.extension.gridEmpty
+import com.xyoye.common_component.extension.isLandScreen
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
@@ -30,8 +31,10 @@ class HomePageFragment : BaseAppFragment<FragmentHomePageBinding>() {
     override fun getLayoutId() = R.layout.fragment_home_page
 
     override fun initView() {
+        val spanCount = if (mAttachActivity.isLandScreen()) 4 else 3
+
         dataBinding.pageAnimeRv.apply {
-            layoutManager = gridEmpty(3)
+            layoutManager = gridEmpty(spanCount)
 
             adapter = AnimeAdapter.getAdapter(mAttachActivity)
 

@@ -27,7 +27,6 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.MagnetData
 import com.xyoye.data_component.enums.MagnetScreenType
-import com.xyoye.data_component.enums.SheetActionType
 
 
 class SearchMagnetFragment :
@@ -205,7 +204,7 @@ class SearchMagnetFragment :
     }
 
     private fun showActionDialog(data: MagnetData) {
-        BottomActionDialog(actionData, SheetActionType.VERTICAL) {
+        BottomActionDialog(actionData) {
             val magnetHash = MagnetUtils.getMagnetHash(data.Magnet)
             if (it != ACTION_COPY_MAGNET_CONTENT && magnetHash.isEmpty()){
                 ToastCenter.showError("错误，磁链为空或无法解析")

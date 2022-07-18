@@ -12,7 +12,6 @@ import com.xyoye.common_component.utils.showKeyboard
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.SheetActionBean
-import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivityLoginBinding
@@ -69,8 +68,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
                     arrayListOf(
                         SheetActionBean(1, "重置密码", R.drawable.ic_forgot_password),
                         SheetActionBean(2, "找回帐号", R.drawable.ic_forgot_account)
-                    ),
-                    SheetActionType.VERTICAL
+                    )
                 ) {
                     ARouter.getInstance()
                         .build(RouteTable.User.UserForgot)

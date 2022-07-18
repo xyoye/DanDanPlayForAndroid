@@ -9,7 +9,6 @@ import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.dialog.CommonEditDialog
 import com.xyoye.data_component.bean.EditBean
 import com.xyoye.data_component.bean.SheetActionBean
-import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
@@ -73,7 +72,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                 SheetActionBean(DOWNLOAD_BY_URL, "输入链接下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_AV_CODE, "输入av号下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_BV_CODE, "输入bv号下载", R.drawable.ic_input_code)
-            ), SheetActionType.VERTICAL, "下载弹幕"
+            ), "下载弹幕"
         ) {
             when (it) {
                 DOWNLOAD_BY_LINK -> {

@@ -13,6 +13,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -131,6 +132,10 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
 
     protected fun setNegativeVisible(visible: Boolean) {
         rootViewBinding.negativeBt.isVisible = visible
+    }
+
+    protected fun removeParentPadding() {
+        rootViewBinding.containerFl.setPadding(0)
     }
 
     protected fun addNeutralButton(text: String, block: () -> Unit) {

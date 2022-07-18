@@ -23,7 +23,6 @@ import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.FileManagerAction
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityPlayHistoryBinding
@@ -248,7 +247,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 R.drawable.ic_delete_history
             )
         )
-        BottomActionDialog(actionList, SheetActionType.VERTICAL) {
+        BottomActionDialog(actionList) {
             when (it) {
                 ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(history)
                 ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(history)

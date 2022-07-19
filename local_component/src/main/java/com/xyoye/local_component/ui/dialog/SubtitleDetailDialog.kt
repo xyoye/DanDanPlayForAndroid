@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import android.app.Activity
 import androidx.core.view.isVisible
 import com.xyoye.common_component.utils.formatFileSize
 import com.xyoye.common_component.utils.getFileExtension
@@ -14,22 +15,12 @@ import com.xyoye.local_component.databinding.DialogSubtitleDetailBinding
  * Created by xyoye on 2020/12/9.
  */
 
-class SubtitleDetailDialog : BaseBottomDialog<DialogSubtitleDetailBinding> {
-
-    private lateinit var subDetailData: SubDetailData
-    private lateinit var downloadOne: () -> Unit
-    private lateinit var downloadZip: (fileName: String, url: String) -> Unit
-
-    constructor() : super()
-    constructor(
-        subDetailData: SubDetailData,
-        downloadOne: () -> Unit,
-        downloadZip: (fileName: String, url: String) -> Unit
-    ) : super(true) {
-        this.subDetailData = subDetailData
-        this.downloadOne = downloadOne
-        this.downloadZip = downloadZip
-    }
+class SubtitleDetailDialog(
+    activity: Activity,
+    private val subDetailData: SubDetailData,
+    private val downloadOne: () -> Unit,
+    private val downloadZip: (fileName: String, url: String) -> Unit
+) : BaseBottomDialog<DialogSubtitleDetailBinding>(activity) {
 
     private var extension: String? = null
 
@@ -75,7 +66,7 @@ class SubtitleDetailDialog : BaseBottomDialog<DialogSubtitleDetailBinding> {
         setNegativeListener { dismiss() }
         setPositiveText("下载压缩包")
 
-        if (subDetailData.filelist != null && subDetailData.filelist?.size ?: 0 > 0) {
+        if (subDetailData.filelist != null && (subDetailData.filelist?.size ?: 0) > 0) {
             addNeutralButton("下载单个字幕") {
                 dismiss()
                 downloadOne.invoke()

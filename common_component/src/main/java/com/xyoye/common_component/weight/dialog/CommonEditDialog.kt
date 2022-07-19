@@ -1,6 +1,7 @@
 package com.xyoye.common_component.weight.dialog
 
 import android.text.InputType
+import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogCommonEditBinding
 import com.xyoye.common_component.utils.hideKeyboard
@@ -12,25 +13,13 @@ import com.xyoye.data_component.bean.EditBean
  * Created by xyoye on 2021/1/11.
  */
 
-class CommonEditDialog : BaseBottomDialog<DialogCommonEditBinding> {
-    private lateinit var editBean: EditBean
-    private var inputOnlyDigit: Boolean = false
-    private var checkBlock: ((result: String) -> Boolean)? = null
-    private lateinit var callback: (result: String) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        editBean: EditBean,
-        inputOnlyDigit: Boolean = false,
-        checkBlock: ((result: String) -> Boolean)? = null,
-        callback: (result: String) -> Unit
-    ) : super(true) {
-        this.editBean = editBean
-        this.inputOnlyDigit = inputOnlyDigit
-        this.checkBlock = checkBlock
-        this.callback = callback
-    }
+class CommonEditDialog(
+    activity: AppCompatActivity,
+    private val editBean: EditBean,
+    private val inputOnlyDigit: Boolean = false,
+    private val checkBlock: ((result: String) -> Boolean)? = null,
+    private val callback: (result: String) -> Unit
+) : BaseBottomDialog<DialogCommonEditBinding>(activity) {
 
     var onNegativeCallback: (() -> Unit)? = null
 

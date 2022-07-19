@@ -31,7 +31,7 @@
             app:autoSizeMinTextSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/download_path_tips"
-            app:layout_constraintTop_toBottomOf="@id/episode_tv"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="" />
 
         <TextView

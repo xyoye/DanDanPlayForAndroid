@@ -1,5 +1,7 @@
 package com.xyoye.common_component.weight
 
+import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
@@ -14,29 +16,19 @@ import com.xyoye.data_component.bean.SheetActionBean
  * Created by xyoye on 2020/11/18.
  */
 
-class BottomActionDialog : BaseBottomDialog<DialogBottomActionBinding> {
-    private lateinit var mActionData: MutableList<SheetActionBean>
-    private var mTitle: String? = null
-    private lateinit var mCallback: ((Int) -> Boolean)
-
-    constructor() : super()
-
-    constructor(
-        actionData: MutableList<SheetActionBean>,
-        title: String? = null,
-        callback: (Int) -> Boolean
-    ) : super(true) {
-        mCallback = callback
-        mActionData = actionData
-        mTitle = title
-    }
+class BottomActionDialog(
+    activity: Activity,
+    private val actionData: MutableList<SheetActionBean>,
+    private val title: String? = null,
+    private val callback: (Int) -> Boolean
+) : BaseBottomDialog<DialogBottomActionBinding>(activity) {
 
     var onNegativeCallback: (() -> Unit)? = null
 
     override fun getChildLayoutId() = R.layout.dialog_bottom_action
 
     override fun initView(binding: DialogBottomActionBinding) {
-        setTitle(mTitle ?: "请选择操作")
+        setTitle(title ?: "请选择操作")
 
         setNegativeListener {
             onNegativeCallback?.invoke()
@@ -62,13 +54,13 @@ class BottomActionDialog : BaseBottomDialog<DialogBottomActionBinding> {
                             actionDescribeTv.isGone = data.describe.isNullOrEmpty()
                             actionDescribeTv.text = data.describe
                             itemLayout.setOnClickListener {
-                                if (mCallback.invoke(data.actionId)) dismiss()
+                                if (callback.invoke(data.actionId)) dismiss()
                             }
                         }
                     }
                 }
 
-                setData(mActionData)
+                setData(actionData)
             }
         }
     }

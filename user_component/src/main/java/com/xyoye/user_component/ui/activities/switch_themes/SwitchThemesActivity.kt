@@ -38,7 +38,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
             val targetMode = viewModel.targetMode.get() ?: return true
 
             if (viewModel.needReboot.get() == true) {
-                CommonDialog.Builder().apply {
+                CommonDialog.Builder(this).apply {
                     content = "新的设置需要重启应用才能生效"
                     addPositive {
                         it.dismiss()
@@ -53,7 +53,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
                     addNegative {
                         it.dismiss()
                     }
-                }.build().show(this)
+                }.build().show()
             } else {
                 AppCompatDelegate.setDefaultNightMode(targetMode)
                 AppConfig.putDarkMode(targetMode)

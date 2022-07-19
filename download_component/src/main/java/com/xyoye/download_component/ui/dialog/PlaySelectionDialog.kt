@@ -1,5 +1,6 @@
 package com.xyoye.download_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.TorrentFileInfo
 import com.xunlei.downloadlib.parameter.TorrentInfo
@@ -20,19 +21,11 @@ import com.xyoye.download_component.databinding.DialogPlaySelectionBinding
 import com.xyoye.download_component.databinding.ItemDownloadSelectionBinding
 import java.io.File
 
-class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
-    private lateinit var filePath: String
-    private lateinit var selectCallback: (Int) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        filePath: String,
-        selectCallback: (Int) -> Unit
-    ) : super(true) {
-        this.filePath = filePath
-        this.selectCallback = selectCallback
-    }
+class PlaySelectionDialog(
+    private val activity: AppCompatActivity,
+    private val filePath: String,
+    private val selectCallback: (Int) -> Unit
+) : BaseBottomDialog<DialogPlaySelectionBinding>(activity) {
 
     private val torrentFileList = mutableListOf<TorrentFileInfo>()
 
@@ -43,13 +36,18 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
     override fun initView(binding: DialogPlaySelectionBinding) {
         setTitle("选择播放文件")
 
+        disableSheetDrag()
+
         initTorrentData()
 
         initRv(binding)
 
         setNegativeListener {
             dismiss()
-            mOwnerActivity?.finish()
+        }
+
+        setOnDismissListener {
+            activity.finish()
         }
 
         setPositiveListener {
@@ -70,7 +68,6 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
     private fun getTorrentInfo(filePath: String): TorrentInfo? {
         if (filePath.isEmpty()) {
             dismiss()
-            mOwnerActivity?.finish()
             ToastCenter.showError("文件路径为空")
             return null
         }
@@ -78,7 +75,6 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
         val torrentFile = File(filePath)
         if (!torrentFile.exists() || !torrentFile.canRead()) {
             dismiss()
-            mOwnerActivity?.finish()
             ToastCenter.showError("文件不存在或无法访问：${filePath}")
             return null
         }
@@ -86,7 +82,6 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
         val torrentInfo = XLTaskHelper.getInstance().getTorrentInfo(filePath)
         if (torrentInfo?.mSubFileInfo.isNullOrEmpty()) {
             dismiss()
-            mOwnerActivity?.finish()
             ToastCenter.showError("解析种子文件失败")
             return null
         }
@@ -138,7 +133,7 @@ class PlaySelectionDialog : BaseBottomDialog<DialogPlaySelectionBinding> {
 
         if (torrentFileList.isEmpty()) {
             dismiss()
-            mOwnerActivity?.finish()
+            activity.finish()
             ToastCenter.showError("当前资源内无可播放的视频文件")
             return
         }

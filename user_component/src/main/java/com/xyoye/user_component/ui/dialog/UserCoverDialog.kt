@@ -1,5 +1,7 @@
 package com.xyoye.user_component.ui.dialog
 
+import android.app.Activity
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.extension.grid
@@ -13,17 +15,16 @@ import com.xyoye.user_component.databinding.ItemUserCoverBinding
  * Created by xyoye on 2021/1/6.
  */
 
-class UserCoverDialog : BaseBottomDialog<DialogUserCoverBinding> {
-    private lateinit var callback: (Int) -> Unit
-
-    constructor() : super()
-    constructor(callback: (Int) -> Unit) : super(true) {
-        this.callback = callback
-    }
+class UserCoverDialog(
+    private val activity: Activity,
+    private val callback: (Int) -> Unit
+) : BaseBottomDialog<DialogUserCoverBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_user_cover
 
     override fun initView(binding: DialogUserCoverBinding) {
+
+        disableSheetDrag()
 
         setTitle("选择头像")
 
@@ -51,9 +52,10 @@ class UserCoverDialog : BaseBottomDialog<DialogUserCoverBinding> {
             }
         }
 
-        val coverArray = resources.getIntArray(R.array.cover)
-        val coverIndexArray = Array(coverArray.size) { k -> k }
-        binding.userCoverRv.setData(coverIndexArray.toMutableList())
+        activity.resources?.getIntArray(R.array.cover)?.let {
+            val coverIndexArray = Array(it.size) { k -> k }
+            binding.userCoverRv.setData(coverIndexArray.toMutableList())
+        }
 
         setNegativeListener { dismiss() }
 

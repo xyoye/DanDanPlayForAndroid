@@ -112,6 +112,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun addMediaStorage() {
         BottomActionDialog(
+            requireActivity(),
             mutableListOf(
                 SheetActionBean(
                     ACTION_ADD_FTP_LIBRARY,
@@ -149,7 +150,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 .navigation()
 
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun launchMediaStorage(data: MediaLibraryEntity) {
@@ -194,6 +195,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun showEditStorageDialog(data: MediaLibraryEntity) {
         BottomActionDialog(
+            requireActivity(),
             mutableListOf(
                 SheetActionBean(
                     ACTION_EDIT_STORAGE,
@@ -223,11 +225,11 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 showDeleteStorageDialog(data)
             }
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun showDeleteStorageDialog(data: MediaLibraryEntity) {
-        CommonDialog.Builder()
+        CommonDialog.Builder(requireActivity())
             .apply {
                 content = "确认删除以下媒体库?\n\n${data.displayName}"
                 positiveText = "确认"
@@ -236,6 +238,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     viewModel.deleteStorage(data)
                 }
                 addNegative()
-            }.build().show(this)
+            }.build().show()
     }
 }

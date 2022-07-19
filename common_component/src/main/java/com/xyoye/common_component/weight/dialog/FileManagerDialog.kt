@@ -1,5 +1,6 @@
 package com.xyoye.common_component.weight.dialog
 
+import android.app.Activity
 import android.os.Environment
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
@@ -20,22 +21,12 @@ import java.io.File
  * Created by xyoye on 2020/11/26.
  */
 
-class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
-    private lateinit var action: FileManagerAction
-    private var defaultFolderPath: String? = null
-    private lateinit var listener: (resultPath: String) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        action: FileManagerAction,
-        defaultFolderPath: String? = null,
-        listener: (resultPath: String) -> Unit
-    ) : super(true) {
-        this.action = action
-        this.defaultFolderPath = defaultFolderPath
-        this.listener = listener
-    }
+class FileManagerDialog(
+    activity: Activity,
+    private val action: FileManagerAction,
+    private var defaultFolderPath: String? = null,
+    private val listener: (resultPath: String) -> Unit
+) : BaseBottomDialog<DialogFileManagerBinding>(activity) {
 
     private lateinit var binding: DialogFileManagerBinding
 
@@ -48,6 +39,8 @@ class FileManagerDialog : BaseBottomDialog<DialogFileManagerBinding> {
 
     override fun initView(binding: DialogFileManagerBinding) {
         this.binding = binding
+
+        disableSheetDrag()
 
         rootViewBinding.containerFl.apply {
             setPadding(paddingLeft, 0, paddingRight, paddingBottom)

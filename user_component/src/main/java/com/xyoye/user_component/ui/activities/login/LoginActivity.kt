@@ -65,6 +65,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
 
             forgotTv.setOnClickListener {
                 BottomActionDialog(
+                    this@LoginActivity,
                     arrayListOf(
                         SheetActionBean(1, "重置密码", R.drawable.ic_forgot_password),
                         SheetActionBean(2, "找回帐号", R.drawable.ic_forgot_account)
@@ -75,7 +76,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
                         .withBoolean("isForgotPassword", it == 1)
                         .navigation()
                     return@BottomActionDialog true
-                }.show(this@LoginActivity)
+                }.show()
             }
         }
 
@@ -97,7 +98,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
     }
 
     private fun showLimitDialog() {
-        CommonDialog.Builder().apply {
+        CommonDialog.Builder(this).apply {
             content = "当前应用为非官方版本\n\n无法使用帐号相关功能"
             cancelable = false
             touchCancelable = false
@@ -105,6 +106,6 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
                 it.dismiss()
                 finish()
             }
-        }.build().show(this)
+        }.build().show()
     }
 }

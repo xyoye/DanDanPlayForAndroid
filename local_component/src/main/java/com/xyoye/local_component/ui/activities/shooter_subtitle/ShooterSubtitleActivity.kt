@@ -120,25 +120,26 @@ class ShooterSubtitleActivity :
         }
 
         viewModel.searchSubDetailLiveData.observe(this) {
-            SubtitleDetailDialog(it,
+            SubtitleDetailDialog(this, it,
                 downloadOne = {
-                    SubtitleFileListDialog(it.filelist!!) { fileName, url ->
+                    SubtitleFileListDialog(this, it.filelist!!) { fileName, url ->
                         viewModel.downloadSubtitle(fileName, url)
-                    }.show(this)
+                    }.show()
                 },
                 downloadZip = { fileName, url ->
                     viewModel.downloadAndUnzipFile(fileName, url)
                 }
-            ).show(this)
+            ).show()
         }
     }
 
     private fun showSecretDialog() {
-        ShooterSecretDialog().show(this)
+        ShooterSecretDialog(this).show()
     }
 
     private fun showSearchDialog() {
         CommonEditDialog(
+            this,
             EditBean(
                 "搜索字幕",
                 "视频名称不能为空",
@@ -146,6 +147,6 @@ class ShooterSubtitleActivity :
             )
         ) {
             viewModel.searchSubtitle(it)
-        }.show(this)
+        }.show()
     }
 }

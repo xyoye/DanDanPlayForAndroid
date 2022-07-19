@@ -47,23 +47,31 @@ class CommonlyFolderActivity :
         val defaultPath = Environment.getExternalStorageDirectory().absolutePath
 
         dataBinding.commonlyFolder1Ll.setOnClickListener {
-            FileManagerDialog(FileManagerAction.ACTION_SELECT_DIRECTORY, defaultPath) {
+            FileManagerDialog(
+                this,
+                FileManagerAction.ACTION_SELECT_DIRECTORY,
+                defaultPath
+            ) {
                 AppConfig.putCommonlyFolder1(it)
                 val path = "路径：$it"
                 dataBinding.commonlyFolder1Tv.text = path
-            }.show(this)
+            }.show()
         }
 
         dataBinding.commonlyFolder2Ll.setOnClickListener {
-            FileManagerDialog(FileManagerAction.ACTION_SELECT_DIRECTORY, defaultPath) {
+            FileManagerDialog(
+                this,
+                FileManagerAction.ACTION_SELECT_DIRECTORY,
+                defaultPath
+            ) {
                 AppConfig.putCommonlyFolder2(it)
                 val path = "路径：$it"
                 dataBinding.commonlyFolder2Tv.text = path
-            }.show(this)
+            }.show()
         }
 
         dataBinding.commonlyFolder1Ll.setOnLongClickListener {
-            CommonDialog.Builder().apply {
+            CommonDialog.Builder(this).apply {
                 content = "确认删除常用文件夹1？"
                 addPositive {
                     AppConfig.putCommonlyFolder1("")
@@ -71,12 +79,12 @@ class CommonlyFolderActivity :
                     it.dismiss()
                 }
                 addNegative { it.dismiss() }
-            }.build().show(this)
+            }.build().show()
             return@setOnLongClickListener true
         }
 
         dataBinding.commonlyFolder2Ll.setOnLongClickListener {
-            CommonDialog.Builder().apply {
+            CommonDialog.Builder(this).apply {
                 content = "确认删除常用文件夹2？"
                 addPositive {
                     AppConfig.putCommonlyFolder2("")
@@ -84,7 +92,7 @@ class CommonlyFolderActivity :
                     it.dismiss()
                 }
                 addNegative { it.dismiss() }
-            }.build().show(this)
+            }.build().show()
             return@setOnLongClickListener true
         }
 

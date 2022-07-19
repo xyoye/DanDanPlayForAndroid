@@ -121,14 +121,14 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun checkPlayParams(source: BaseVideoSource?): Boolean {
         if (source == null || source.getVideoUrl().isEmpty()) {
-            CommonDialog.Builder().run {
+            CommonDialog.Builder(this).run {
                 content = "解析播放参数失败"
                 addPositive("退出重试") {
                     it.dismiss()
                     finish()
                 }
                 build()
-            }.show(this)
+            }.show()
             return false
         }
 

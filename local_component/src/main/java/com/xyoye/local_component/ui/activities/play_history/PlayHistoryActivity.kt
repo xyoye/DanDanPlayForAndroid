@@ -29,7 +29,6 @@ import com.xyoye.local_component.databinding.ActivityPlayHistoryBinding
 import com.xyoye.local_component.ui.dialog.MagnetPlayDialog
 import com.xyoye.local_component.ui.dialog.StreamLinkDialog
 import java.io.File
-import java.util.*
 
 @Route(path = RouteTable.Local.PlayHistory)
 class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHistoryBinding>() {
@@ -101,7 +100,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.clear_history_item) {
-            CommonDialog.Builder().run {
+            CommonDialog.Builder(this).run {
                 tips = "清空播放记录"
                 content = "清空播放记录，将同时移除弹幕和字幕绑定记录，确定清空?"
                 addNegative()
@@ -110,7 +109,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                     viewModel.clearHistory(mediaType)
                 }
                 build()
-            }.show(this)
+            }.show()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -149,7 +148,8 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                         itemBinding.mediaTypeTv.text = data.mediaType.storageName
 
                         itemBinding.lastPlayTimeTv.isVisible = true
-                        itemBinding.lastPlayTimeTv.text = PlayHistoryUtils.formatPlayTime(data.playTime)
+                        itemBinding.lastPlayTimeTv.text =
+                            PlayHistoryUtils.formatPlayTime(data.playTime)
 
                         itemBinding.danmuTipsTv.isGone = data.danmuPath.isNullOrEmpty()
                         itemBinding.subtitleTipsTv.isGone = data.subtitlePath.isNullOrEmpty()
@@ -189,13 +189,13 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     private fun showStreamDialog() {
-        StreamLinkDialog { link, header ->
+        StreamLinkDialog(this) { link, header ->
             viewModel.openStreamLink(link, header)
-        }.show(this)
+        }.show()
     }
 
     private fun showMagnetDialog() {
-        MagnetPlayDialog(magnetCallback = {
+        MagnetPlayDialog(this, magnetCallback = {
             //磁链选择播放
             ARouter.getInstance()
                 .build(RouteTable.Download.PlaySelection)
@@ -203,14 +203,14 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 .navigation()
         }, torrentCallback = {
             //选择本地种子文件
-            FileManagerDialog(FileManagerAction.ACTION_SELECT_TORRENT) {
+            FileManagerDialog(this, FileManagerAction.ACTION_SELECT_TORRENT) {
                 //磁链选择播放
                 ARouter.getInstance()
                     .build(RouteTable.Download.PlaySelection)
                     .withString("torrentPath", it)
                     .navigation()
-            }.show(this)
-        }).show(this)
+            }.show()
+        }).show()
     }
 
     private fun showEditDialog(history: PlayHistoryEntity) {
@@ -247,7 +247,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 R.drawable.ic_delete_history
             )
         )
-        BottomActionDialog(actionList) {
+        BottomActionDialog(this, actionList) {
             when (it) {
                 ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(history)
                 ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(history)
@@ -258,7 +258,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 }
             }
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun isHistoryInvalid(entity: PlayHistoryEntity): Boolean {

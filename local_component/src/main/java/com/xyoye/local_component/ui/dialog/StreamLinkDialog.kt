@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.xyoye.common_component.utils.StreamHeaderUtil
 import com.xyoye.common_component.utils.hideKeyboard
@@ -13,16 +14,10 @@ import com.xyoye.local_component.databinding.DialogStreamLinkBinding
  * Created by xyoye on 2021/1/22.
  */
 
-class StreamLinkDialog : BaseBottomDialog<DialogStreamLinkBinding> {
-    private lateinit var callback: (link: String, header: Map<String, String>?) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        callback: (link: String, header: Map<String, String>?) -> Unit
-    ) : super(true) {
-        this.callback = callback
-    }
+class StreamLinkDialog(
+    activity: AppCompatActivity,
+    private val callback: (link: String, header: Map<String, String>?) -> Unit
+) : BaseBottomDialog<DialogStreamLinkBinding>(activity) {
 
     private lateinit var binding: DialogStreamLinkBinding
 
@@ -62,7 +57,7 @@ class StreamLinkDialog : BaseBottomDialog<DialogStreamLinkBinding> {
     }
 
     override fun dismiss() {
-        if (this::binding.isInitialized){
+        if (this::binding.isInitialized) {
             hideKeyboard(binding.linkInputEt)
         }
         super.dismiss()

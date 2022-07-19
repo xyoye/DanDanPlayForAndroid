@@ -1,5 +1,6 @@
 package com.xyoye.anime_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.DialogMagnetScreenBinding
 import com.xyoye.anime_component.databinding.ItemMagnetScreenBinding
@@ -15,22 +16,12 @@ import com.xyoye.data_component.enums.MagnetScreenType
  * Created by xyoye on 2020/10/26.
  */
 
-class MagnetScreenDialog : BaseBottomDialog<DialogMagnetScreenBinding> {
-    private lateinit var screenData: MutableList<MagnetScreenEntity>
-    private lateinit var screenType: MagnetScreenType
-    private lateinit var block: (MagnetScreenEntity) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        screenData: MutableList<MagnetScreenEntity>,
-        screenType: MagnetScreenType,
-        block: (MagnetScreenEntity) -> Unit
-    ) : super(true) {
-        this.screenData = screenData
-        this.screenType = screenType
-        this.block = block
-    }
+class MagnetScreenDialog(
+    activity: AppCompatActivity,
+    private val screenData: MutableList<MagnetScreenEntity>,
+    private val screenType: MagnetScreenType,
+    private val block: (MagnetScreenEntity) -> Unit
+) : BaseBottomDialog<DialogMagnetScreenBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_magnet_screen
 

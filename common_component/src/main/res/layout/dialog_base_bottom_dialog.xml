@@ -6,8 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@drawable/background_bottom_dialog"
+        android:orientation="vertical">
 
         <FrameLayout
             android:id="@+id/action_left_container"
@@ -31,9 +31,9 @@
             app:autoSizeMinTextSize="14sp"
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/action_left_container"
             app:layout_constraintEnd_toStartOf="@id/action_right_container"
+            app:layout_constraintStart_toEndOf="@id/action_left_container"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="测试" />
 
         <FrameLayout
@@ -71,6 +71,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/background_dialog_button"
                 android:text="@string/cancel_dialog"
+                android:textColor="@color/text_black"
                 android:textSize="14sp" />
 
             <Button

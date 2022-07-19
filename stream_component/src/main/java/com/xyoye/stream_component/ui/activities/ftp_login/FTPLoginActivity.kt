@@ -30,6 +30,7 @@ class FTPLoginActivity : BaseActivity<FTPLoginViewModel, ActivityFtpLoginBinding
         ARouter.getInstance().inject(this)
 
         FTPLoginDialog(
+            this,
             editData,
             addMediaStorage = {
                 viewModel.addFTPStorage(editData, it)
@@ -38,6 +39,6 @@ class FTPLoginActivity : BaseActivity<FTPLoginViewModel, ActivityFtpLoginBinding
                 viewModel.testConnect(it)
             },
             viewModel.testConnectLiveData
-        ).show(this)
+        ).show()
     }
 }

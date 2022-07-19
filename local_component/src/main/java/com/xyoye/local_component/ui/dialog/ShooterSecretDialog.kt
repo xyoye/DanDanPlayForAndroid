@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import android.app.Activity
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.startUrlActivity
 import com.xyoye.common_component.weight.ToastCenter
@@ -11,7 +12,9 @@ import com.xyoye.local_component.databinding.DialogShooterSecretBinding
  * Created by xyoye on 2021/2/24.
  */
 
-class ShooterSecretDialog : BaseBottomDialog<DialogShooterSecretBinding>(true) {
+class ShooterSecretDialog(
+    private val activity: Activity,
+) : BaseBottomDialog<DialogShooterSecretBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_shooter_secret
 
@@ -33,7 +36,7 @@ class ShooterSecretDialog : BaseBottomDialog<DialogShooterSecretBinding>(true) {
         }
 
         binding.loginShooterTv.setOnClickListener {
-            requireContext().startUrlActivity("https://secure.assrt.net/user/logon.xml")
+            activity.startUrlActivity("https://secure.assrt.net/user/logon.xml")
         }
     }
 }

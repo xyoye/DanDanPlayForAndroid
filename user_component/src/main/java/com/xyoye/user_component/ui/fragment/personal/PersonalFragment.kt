@@ -84,13 +84,13 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
     private fun initClick() {
 
         dataBinding.userCoverIv.setOnClickListener {
-            UserCoverDialog {
+            UserCoverDialog(requireActivity()) {
                 val typedArray = resources.obtainTypedArray(R.array.cover)
                 val coverResId = typedArray.getResourceId(it, 0)
                 typedArray.recycle()
                 UserConfig.putUserCoverIndex(it)
                 dataBinding.userCoverIv.setImageResource(coverResId)
-            }.show(this)
+            }.show()
         }
 
         dataBinding.userAccountCl.setOnClickListener {

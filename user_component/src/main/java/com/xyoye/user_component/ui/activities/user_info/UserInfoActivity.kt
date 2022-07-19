@@ -19,10 +19,7 @@ import com.xyoye.user_component.ui.dialog.UpdatePasswordDialog
 @Route(path = RouteTable.User.UserInfo)
 class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding>() {
 
-    private val updatePasswordDialog = UpdatePasswordDialog { old, new ->
-        viewModel.updatePassword(old, new)
-        return@UpdatePasswordDialog false
-    }
+    private lateinit var updatePasswordDialog : UpdatePasswordDialog
 
     override fun initViewModel() =
         ViewModelInit(
@@ -42,10 +39,16 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
         val coverResId = typedArray.getResourceId(coverIndex, 0)
         typedArray.recycle()
 
+        updatePasswordDialog = UpdatePasswordDialog(this) { old, new ->
+            viewModel.updatePassword(old, new)
+            return@UpdatePasswordDialog false
+        }
+
         dataBinding.userCoverIv.setImageResource(coverResId)
 
         dataBinding.screenNameEditLl.setOnClickListener {
             CommonEditDialog(
+                this,
                 EditBean(
                     "修改昵称",
                     "昵称不能为空",
@@ -53,12 +56,11 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
                 )
             ) {
                 viewModel.updateScreenName(it)
-            }.show(this)
+            }.show()
         }
 
-
         dataBinding.passwordEditLl.setOnClickListener {
-            updatePasswordDialog.show(this)
+            updatePasswordDialog.show()
         }
 
         viewModel.updatePasswordLiveData.observe(this) {
@@ -85,7 +87,7 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_exit_login -> {
-                CommonDialog.Builder().apply {
+                CommonDialog.Builder(this).apply {
                     addPositive {
                         it.dismiss()
                         val userAccount: String? = UserInfoHelper.mLoginData?.userName
@@ -98,7 +100,7 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
                     }
                     addNegative()
                     content = "确定退出登录？"
-                }.build().show(this)
+                }.build().show()
 
             }
         }

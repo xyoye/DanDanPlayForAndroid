@@ -34,12 +34,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.add_torrent_task_bt).setOnClickListener {
-            FileManagerDialog(FileManagerAction.ACTION_SELECT_TORRENT) {
+            FileManagerDialog(this, FileManagerAction.ACTION_SELECT_TORRENT) {
                 ARouter.getInstance()
                     .build(RouteTable.Download.DownloadSelection)
                     .withString("torrentPath", it)
                     .navigation()
-            }.show(this)
+            }.show()
         }
 
         val urlEt = findViewById<EditText>(R.id.play_url_et)

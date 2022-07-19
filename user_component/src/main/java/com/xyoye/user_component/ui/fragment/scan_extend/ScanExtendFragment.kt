@@ -73,19 +73,19 @@ class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentSca
     }
 
     private fun showExtendFolderDialog() {
-        FileManagerDialog(FileManagerAction.ACTION_SELECT_DIRECTORY) {
+        FileManagerDialog(requireActivity(), FileManagerAction.ACTION_SELECT_DIRECTORY) {
             viewModel.addExtendFolder(it)
-        }.show(this)
+        }.show()
     }
 
     private fun showConfirmRemoveDialog(entity: ExtendFolderEntity) {
-        CommonDialog.Builder().apply {
+        CommonDialog.Builder(requireActivity()).apply {
             content = "确认移除文件夹？"
             addPositive {
                 it.dismiss()
                 viewModel.removeExtendFolder(entity)
             }
             addNegative { it.dismiss() }
-        }.build().show(this)
+        }.build().show()
     }
 }

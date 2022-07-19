@@ -140,12 +140,13 @@ class BindDanmuSourceFragment :
         viewModel.thirdSourceLiveData.observe(this) {
             danmuDownloadDialog?.dismiss()
             danmuDownloadDialog = DanmuDownloadDialog(
+                requireActivity(),
                 it.first.episodeId,
                 it.second
             ) { sources: MutableList<DanmuSourceBean>, isCheckedAll: Boolean ->
                 viewModel.downloadDanmu(sources, isCheckedAll, it.first)
             }
-            danmuDownloadDialog!!.show(this)
+            danmuDownloadDialog!!.show()
         }
 
         viewModel.sourceRefreshLiveData.observe(this) {
@@ -166,10 +167,11 @@ class BindDanmuSourceFragment :
 
     override fun localFile() {
         FileManagerDialog(
+            requireActivity(),
             FileManagerAction.ACTION_SELECT_DANMU
         ) {
             viewModel.bindLocalDanmu(it)
-        }.show(this)
+        }.show()
     }
 
     override fun unbindDanmu() {

@@ -69,7 +69,7 @@ object ExtraSourceDialogUtils {
         }
 
         val viewModelScope = activity.getOwnerViewModel().viewModelScope
-        BottomActionDialog(actionList) {
+        BottomActionDialog(activity, actionList) {
             when (it) {
                 ACTION_BIND_DANMU -> bindExtraSource(activity, mediaType, data, options, true)
                 ACTION_BIND_SUBTITLE -> bindExtraSource(activity, mediaType, data, options, false)
@@ -87,7 +87,7 @@ object ExtraSourceDialogUtils {
                 )
             }
             return@BottomActionDialog true
-        }.show(activity)
+        }.show()
 
         return true
     }

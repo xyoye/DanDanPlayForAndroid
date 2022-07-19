@@ -1,5 +1,6 @@
 package com.xyoye.anime_component.ui.dialog
 
+import android.app.Activity
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.DialogSearchDomainBinding
 import com.xyoye.common_component.config.AppConfig
@@ -11,15 +12,10 @@ import com.xyoye.common_component.weight.dialog.BaseBottomDialog
  * Created by xyoye on 2021/2/24.
  */
 
-class SearchDomainDialog : BaseBottomDialog<DialogSearchDomainBinding> {
-
-    private var domainCallback: ((String) -> Unit)? = null
-
-    constructor() : super()
-
-    constructor(callback: (String) -> Unit) : super(true) {
-        domainCallback = callback
-    }
+class SearchDomainDialog(
+    private val activity: Activity,
+    private val callback: (String) -> Unit
+) : BaseBottomDialog<DialogSearchDomainBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_search_domain
 
@@ -31,7 +27,7 @@ class SearchDomainDialog : BaseBottomDialog<DialogSearchDomainBinding> {
         binding.searchDomainEt.setText(domainLink)
 
         binding.findDomainTv.setOnClickListener {
-            requireContext().startUrlActivity("https://github.com/kansaer/dandanplay-apiNode")
+            activity.startUrlActivity("https://github.com/kansaer/dandanplay-apiNode")
         }
 
         setNegativeListener { dismiss() }
@@ -48,7 +44,7 @@ class SearchDomainDialog : BaseBottomDialog<DialogSearchDomainBinding> {
                 return@setPositiveListener
             }
 
-            domainCallback?.invoke(domain)
+            callback.invoke(domain)
             dismiss()
         }
     }

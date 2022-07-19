@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.weight.ToastCenter
@@ -14,33 +15,21 @@ import com.xyoye.stream_component.databinding.DialogRemoteLoginBinding
  * Created by xyoye on 2021/3/25.
  */
 
-class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
-    private var originalStorage: MediaLibraryEntity? = null
-    private lateinit var addMediaStorage: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnect: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnectResult: MutableLiveData<Boolean>
-    private lateinit var scanQRCode: () -> Unit
+class RemoteLoginDialog(
+    private val activity: AppCompatActivity,
+    private val originalStorage: MediaLibraryEntity?,
+    private val addMediaStorage: (MediaLibraryEntity) -> Unit,
+    private val testConnect: (MediaLibraryEntity) -> Unit,
+    private val testConnectResult: MutableLiveData<Boolean>,
+    private val scanQRCode: () -> Unit
+) : BaseBottomDialog<DialogRemoteLoginBinding>(activity) {
 
-    private lateinit var remoteData: MediaLibraryEntity
+    private var remoteData: MediaLibraryEntity
     private var tokenRequired = false
 
     private lateinit var binding: DialogRemoteLoginBinding
 
-    constructor() : super()
-
-    constructor(
-        originalStorage: MediaLibraryEntity?,
-        addMediaStorage: (MediaLibraryEntity) -> Unit,
-        testConnect: (MediaLibraryEntity) -> Unit,
-        testConnectResult: MutableLiveData<Boolean>,
-        scanQRCode: () -> Unit
-    ) : super(true) {
-        this.originalStorage = originalStorage
-        this.addMediaStorage = addMediaStorage
-        this.testConnect = testConnect
-        this.testConnectResult = testConnectResult
-        this.scanQRCode = scanQRCode
-
+    init {
         remoteData = originalStorage ?: MediaLibraryEntity(
             0,
             "",
@@ -69,7 +58,7 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
             }
         }
 
-        testConnectResult.observe(mOwnerActivity!!, {
+        testConnectResult.observe(activity) {
             if (it) {
                 binding.serverStatusTv.text = "连接成功"
                 binding.serverStatusTv.setTextColorRes(R.color.text_blue)
@@ -77,19 +66,21 @@ class RemoteLoginDialog : BaseBottomDialog<DialogRemoteLoginBinding> {
                 binding.serverStatusTv.text = "连接失败"
                 binding.serverStatusTv.setTextColorRes(R.color.text_red)
             }
-        })
+        }
 
         setPositiveListener {
             if (checkParams(remoteData)) {
                 addMediaStorage.invoke(remoteData)
                 dismiss()
-                mOwnerActivity?.finish()
             }
         }
 
         setNegativeListener {
             dismiss()
-            mOwnerActivity?.finish()
+        }
+
+        setOnDismissListener {
+            activity.finish()
         }
     }
 

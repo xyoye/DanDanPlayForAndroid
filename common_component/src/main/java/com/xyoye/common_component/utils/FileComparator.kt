@@ -28,7 +28,7 @@ class FileComparator<T>(
         return when {
             //都是文件夹，或都是文件
             isDirectory1 == isDirectory2 -> {
-                compareFileName(o1, o2)
+                compareFileName(isDirectory1, o1, o2)
             }
             //文件夹在前
             isDirectory1 && isDirectory2.not() -> -1
@@ -39,7 +39,7 @@ class FileComparator<T>(
     /**
      * 比较文件名
      */
-    private fun compareFileName(o1: T, o2: T): Int {
+    private fun compareFileName(isDirectory: Boolean, o1: T, o2: T): Int {
         //获取文件名
         val str1 = if (desc) value.invoke(o2) else value.invoke(o1)
         val str2 = if (desc) value.invoke(o1) else value.invoke(o2)
@@ -53,9 +53,13 @@ class FileComparator<T>(
             return intCompare
         }
 
-        //是否存在需要对比的扩展名
-        val needCompareExt1 = isNeedCompareExtension(str1)
-        val needCompareExt2 = isNeedCompareExtension(str2)
+        var needCompareExt1 = false
+        var needCompareExt2 = false
+        //文件类型，判断是否存在需要对比的扩展名
+        if (isDirectory.not()) {
+            needCompareExt1 = isNeedCompareExtension(str1)
+            needCompareExt2 = isNeedCompareExtension(str2)
+        }
 
         return when {
             needCompareExt1 && needCompareExt2 -> compareFileNameAndExt(str1, str2)

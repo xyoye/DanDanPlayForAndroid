@@ -26,7 +26,8 @@ object StreamSourceFactory {
             history?.danmuPath,
             history?.episodeId ?: 0,
             history?.subtitlePath,
-            uniqueKey
+            uniqueKey,
+            builder.mediaType
         )
     }
 

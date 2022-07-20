@@ -50,7 +50,7 @@ class PlayerIntentViewModel : BaseViewModel() {
             showLoading()
             val mediaSource = VideoSourceFactory.Builder()
                 .setVideoSources(listOf(url))
-                .create(MediaType.STREAM_LINK)
+                .create(MediaType.OTHER_STORAGE)
             hideLoading()
 
             if (mediaSource == null) {

@@ -11,7 +11,7 @@ import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterGestureView
-import com.xyoye.player.wrapper.ControlWrapper
+import com.xyoye.player.utils.LongPressAccelerator
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -46,7 +46,13 @@ abstract class GestureVideoController(
     private var mChangeBrightness = false
     private var mChangeVolume = false
 
-    private val mSpeedX2Mode: SpeedX2Mode = SpeedX2Mode { mControlWrapper }
+    private val longPressAccelerator : LongPressAccelerator by lazy {
+        LongPressAccelerator(
+            mControlWrapper,
+            onStart = { speed -> startAccelerate(speed) },
+            onStop = { stopAccelerate() }
+        )
+    }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -66,7 +72,7 @@ abstract class GestureVideoController(
         if (!mGestureDetector.onTouchEvent(event)) {
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
-                    mSpeedX2Mode.disable()
+                    longPressAccelerator.disable()
                     stopSlide()
                     if (mSeekPosition > 0) {
                         mControlWrapper.seekTo(mSeekPosition)
@@ -90,7 +96,7 @@ abstract class GestureVideoController(
     ) = false
 
     override fun onLongPress(e: MotionEvent?) {
-        mSpeedX2Mode.enable()
+        longPressAccelerator.enable()
     }
 
     override fun onShowPress(e: MotionEvent?) {}
@@ -238,11 +244,11 @@ abstract class GestureVideoController(
         }
     }
 
-    fun onVolumeKeyDown(isVolumeUp: Boolean){
+    fun onVolumeKeyDown(isVolumeUp: Boolean) {
         val maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val curVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
-        var newVolume = if (isVolumeUp){
+        var newVolume = if (isVolumeUp) {
             curVolume + (maxVolume / 15)
         } else {
             curVolume - (maxVolume / 15)
@@ -273,47 +279,26 @@ abstract class GestureVideoController(
         }
     }
 
+    private fun startAccelerate(speed: Float) {
+        for (entry in mControlComponents.entries) {
+            val view = entry.key
+            if (view is InterGestureView) {
+                view.onStartAccelerate(speed)
+            }
+        }
+    }
+
+    private fun stopAccelerate() {
+        for (entry in mControlComponents.entries) {
+            val view = entry.key
+            if (view is InterGestureView) {
+                view.onStopAccelerate()
+            }
+        }
+    }
+
     private fun isNormalPlayState() = isWrapperInitialized() and
             (mCurrentPlayState != PlayState.STATE_ERROR) and
             (mCurrentPlayState != PlayState.STATE_IDLE) and
             (mCurrentPlayState != PlayState.STATE_START_ABORT)
-
-    /**
-     * 倍速播放
-     */
-    private class SpeedX2Mode(private val getPlayer: () -> ControlWrapper) {
-        private var originSpeed: Float = 1F
-        private var isEnable = false
-
-        fun enable() {
-            //已暂停
-            if (getPlayer().isPlaying().not()) {
-                return
-            }
-            //已锁屏
-            if (getPlayer().isLocked()) {
-                return
-            }
-            //正在展示设置相关View
-            if (getPlayer().isSettingViewShowing()) {
-                return
-            }
-            if (isEnable) {
-                return
-            }
-            isEnable = true
-
-            originSpeed = getPlayer().getSpeed()
-            getPlayer().setSpeed(originSpeed * 2)
-        }
-
-        fun disable() {
-            if (!isEnable) {
-                return
-            }
-            isEnable = false
-
-            getPlayer().setSpeed(originSpeed)
-        }
-    }
 }

@@ -356,5 +356,6 @@ class VideoController(
         var speed = 4.0f * lastVideoSpeed / 100f
         speed = max(0.25f, speed)
         mControlWrapper.setSpeed(speed)
+        lastVideoSpeed = 0
     }
 }

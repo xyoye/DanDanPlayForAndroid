@@ -11,7 +11,7 @@ import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterGestureView
-import com.xyoye.player.wrapper.InterVideoPlayer
+import com.xyoye.player.wrapper.ControlWrapper
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -281,11 +281,23 @@ abstract class GestureVideoController(
     /**
      * 倍速播放
      */
-    private class SpeedX2Mode(private val getPlayer: () -> InterVideoPlayer) {
+    private class SpeedX2Mode(private val getPlayer: () -> ControlWrapper) {
         private var originSpeed: Float = 1F
         private var isEnable = false
 
         fun enable() {
+            //已暂停
+            if (getPlayer().isPlaying().not()) {
+                return
+            }
+            //已锁屏
+            if (getPlayer().isLocked()) {
+                return
+            }
+            //正在展示设置相关View
+            if (getPlayer().isSettingViewShowing()) {
+                return
+            }
             if (isEnable) {
                 return
             }

@@ -11,6 +11,7 @@ import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterGestureView
+import com.xyoye.player.wrapper.InterVideoPlayer
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -45,6 +46,8 @@ abstract class GestureVideoController(
     private var mChangeBrightness = false
     private var mChangeVolume = false
 
+    private val mSpeedX2Mode: SpeedX2Mode = SpeedX2Mode { mControlWrapper }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setOnTouchListener(this)
@@ -63,6 +66,7 @@ abstract class GestureVideoController(
         if (!mGestureDetector.onTouchEvent(event)) {
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
+                    mSpeedX2Mode.disable()
                     stopSlide()
                     if (mSeekPosition > 0) {
                         mControlWrapper.seekTo(mSeekPosition)
@@ -85,7 +89,9 @@ abstract class GestureVideoController(
         velocityY: Float
     ) = false
 
-    override fun onLongPress(e: MotionEvent?) {}
+    override fun onLongPress(e: MotionEvent?) {
+        mSpeedX2Mode.enable()
+    }
 
     override fun onShowPress(e: MotionEvent?) {}
 
@@ -271,4 +277,31 @@ abstract class GestureVideoController(
             (mCurrentPlayState != PlayState.STATE_ERROR) and
             (mCurrentPlayState != PlayState.STATE_IDLE) and
             (mCurrentPlayState != PlayState.STATE_START_ABORT)
+
+    /**
+     * 倍速播放
+     */
+    private class SpeedX2Mode(private val getPlayer: () -> InterVideoPlayer) {
+        private var originSpeed: Float = 1F
+        private var isEnable = false
+
+        fun enable() {
+            if (isEnable) {
+                return
+            }
+            isEnable = true
+
+            originSpeed = getPlayer().getSpeed()
+            getPlayer().setSpeed(originSpeed * 2)
+        }
+
+        fun disable() {
+            if (!isEnable) {
+                return
+            }
+            isEnable = false
+
+            getPlayer().setSpeed(originSpeed)
+        }
+    }
 }

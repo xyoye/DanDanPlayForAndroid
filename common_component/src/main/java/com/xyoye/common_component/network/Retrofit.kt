@@ -26,6 +26,7 @@ class Retrofit private constructor() {
         val extService = Holder.instance.extRetrofitService
         val torrentService = Holder.instance.torrentRetrofitService
         val remoteService = Holder.instance.remoteRetrofitService
+        val screencastService = Holder.instance.screencastService
     }
 
     private var retrofitService: RetrofitService
@@ -33,6 +34,7 @@ class Retrofit private constructor() {
     private var extRetrofitService: ExtRetrofitService
     private var torrentRetrofitService: TorrentRetrofitService
     private var remoteRetrofitService: RemoteService
+    private var screencastService: ScreencastService
 
     private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
 
@@ -71,6 +73,13 @@ class Retrofit private constructor() {
             .baseUrl(remoteUrl)
             .build()
             .create(RemoteService::class.java)
+
+        screencastService = Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(getOkHttpClient(screencast = true))
+            .baseUrl(remoteUrl)
+            .build()
+            .create(ScreencastService::class.java)
     }
 
     private object Holder {
@@ -80,7 +89,8 @@ class Retrofit private constructor() {
     private fun getOkHttpClient(
         needAuth: Boolean = false,
         resDomain: Boolean = false,
-        isRemote: Boolean = false
+        isRemote: Boolean = false,
+        screencast: Boolean = false,
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.connectTimeout(10, TimeUnit.SECONDS)
@@ -100,6 +110,10 @@ class Retrofit private constructor() {
         //自定义的资源节点
         if (resDomain) {
             builder.addInterceptor(ResDomainInterceptor())
+        }
+        //投屏连接
+        if (screencast) {
+            builder.addInterceptor(ScreencastInterceptor())
         }
         //日志输出
         if (BuildConfig.IS_DEBUG_MODE) {

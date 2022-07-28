@@ -69,5 +69,7 @@ object RouteTable {
         const val RemoteScan = "/stream/remote_scan"
         const val RemoteFile = "/stream/remote_file"
         const val RemoteControl = "/stream/remote_control"
+        const val ScreencastReceiver = "/stream/screencast_receiver"
+        const val ScreencastConnect = "/stream/screencast_connect"
     }
 }

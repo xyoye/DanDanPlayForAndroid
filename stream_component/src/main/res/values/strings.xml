@@ -9,14 +9,14 @@
     <string name="hint_login_password">密码</string>
     <string name="tips_test_connect">连接状态</string>
     <string name="hint_ftp_address">FTP地址</string>
-    <string name="hint_ftp_port">端口</string>
+    <string name="hint_port">端口</string>
     <string name="hint_ftp_encoding">编码</string>
     <string name="text_ftp_passive_mode">被动连接</string>
     <string name="text_ftp_active_mode">主动连接</string>
     <string name="text_ftp_connect_mode">连接模式</string>
     <string name="hint_remote_secret">API密钥</string>
     <string name="action_toggle_file_hidden">显示隐藏文件</string>
-    <string name="hint_smb_address">IP地址</string>
+    <string name="hint_ip_address">IP地址</string>
     <string name="hint_smb_path">共享目录（可空）</string>
     <string name="text_smb_version">SMB版本</string>
     <string name="text_smb_v2">SMB 2</string>
@@ -28,4 +28,14 @@
     <string name="tips_parse_mode">数据解析</string>
     <string name="strict_parse_mode">严格模式</string>
     <string name="normal_parse_mode">宽松模式</string>
+
+    <string name="text_start_screen_cast_server">启动投屏服务</string>
+    <string name="text_stop_screen_cast_server">停止投屏服务</string>
+    <string name="text_screencast_connect_type">连接方式</string>
+    <string name="action_scan_connect_screencast">扫码连接</string>
+    <string name="action_input_connect_screencast">输入连接</string>
+    <string name="action_auto_connect_screencast">搜索连接</string>
+    <string name="tips_connect_mode">连接模式</string>
+    <string name="text_password_connect">密码连接</string>
+    <string name="text_direct_connect">直接连接</string>
 </resources>

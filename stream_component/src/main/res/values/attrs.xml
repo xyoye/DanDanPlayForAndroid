@@ -25,10 +25,22 @@
             <enum name="center" value="4" />
         </attr>
 
-        <attr name="control_color" format="color"/>
-        <attr name="control_pressed_color" format="color"/>
-        <attr name="center_stroke_color" format="color"/>
+        <attr name="control_color" format="color" />
+        <attr name="control_pressed_color" format="color" />
+        <attr name="center_stroke_color" format="color" />
 
+    </declare-styleable>
+
+    <declare-styleable name="RadarScanView">
+        <attr name="background_line_color" format="color" />
+        <attr name="background_line_width" format="dimension" />
+        <attr name="scan_line_color" format="color" />
+        <attr name="scan_line_width" format="dimension" />
+        <attr name="scan_frame_color" format="color" />
+        <attr name="scan_point_color" format="color" />
+        <attr name="scan_max_point" format="integer" />
+        <attr name="scan_min_point" format="integer" />
+        <attr name="scan_once_time" format="integer" />
     </declare-styleable>
 
 

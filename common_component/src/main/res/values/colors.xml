@@ -23,6 +23,9 @@
     <!-- 谱图icon中主题色路径的填充颜色 -->
     <color name="icon_primary_path_fill_color">#2095f4</color>
 
+    <!-- 普通layout背景色-浅色 -->
+    <color name="layout_bg_color_light">#77f3f3f3</color>
+
     <!-- 以下颜色不随深色模式改变 -->
     <color name="colorAccent">#2095f4</color>
 
@@ -40,6 +43,7 @@
     <color name="division_dark">#e3e3e3</color>
 
     <color name="text_white_immutable">#ffffff</color>
+    <color name="text_black_immutable">#353535</color>
     <color name="text_gray">#999999</color>
     <color name="text_orange">#f89957</color>
     <color name="text_theme">#2095f4</color>

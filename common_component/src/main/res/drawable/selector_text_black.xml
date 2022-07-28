@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/text_white_immutable" android:state_selected="true" />
+    <item android:color="@color/text_gray" android:state_enabled="false"/>
+    <item android:color="@color/text_black" android:state_selected="false" />
+</selector>

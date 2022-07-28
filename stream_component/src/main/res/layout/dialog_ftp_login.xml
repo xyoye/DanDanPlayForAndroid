@@ -51,7 +51,7 @@
                 android:layout_marginStart="5dp"
                 android:background="@drawable/background_dialog_edit"
                 android:gravity="center"
-                android:hint="@string/hint_ftp_port"
+                android:hint="@string/hint_port"
                 android:inputType="number"
                 android:maxLength="5"
                 android:maxLines="1"

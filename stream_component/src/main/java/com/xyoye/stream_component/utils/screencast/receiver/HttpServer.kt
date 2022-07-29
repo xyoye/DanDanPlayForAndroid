@@ -15,12 +15,7 @@ import kotlin.random.Random
  * </pre>
  */
 
-class HttpServer(private val password: String?) : NanoHTTPD(randomPort()) {
-
-    companion object {
-        //随机端口
-        private fun randomPort() = Random.nextInt(20000, 30000)
-    }
+class HttpServer(private val password: String?, port: Int) : NanoHTTPD(port) {
 
     override fun serve(session: IHTTPSession?): Response {
         if (session != null && session.method == Method.GET) {

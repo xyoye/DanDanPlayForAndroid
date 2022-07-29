@@ -1,15 +1,21 @@
 package com.xyoye.stream_component.ui.activities.screencast.receiver
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.wifi.WifiManager
-import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.huawei.hms.hmsscankit.ScanUtil
+import com.huawei.hms.ml.scan.HmsBuildBitmapOption
+import com.huawei.hms.ml.scan.HmsScan
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityScreenCastBinding
+
 
 @Route(path = RouteTable.Stream.ScreencastReceiver)
 class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastBinding>() {
@@ -28,16 +34,24 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
         initUdpLock()
 
-        dataBinding.tvStartServer.setOnClickListener {
-            dataBinding.tvStartServer.isVisible = false
-            dataBinding.tvStopServer.isVisible = true
-            viewModel.startServer(password = "test")
-        }
+        try {
+            val content = "123dsafsdaf123"
 
-        dataBinding.tvStopServer.setOnClickListener {
-            dataBinding.tvStartServer.isVisible = true
-            dataBinding.tvStopServer.isVisible = false
-            viewModel.stopServer()
+            val logo = BitmapFactory.decodeResource(resources, R.mipmap.ic_logo)
+            val options = HmsBuildBitmapOption.Creator()
+                .setQRLogoBitmap(logo)
+                .setBitmapColor(R.color.text_black.toResColor())
+                .create()
+            val qrBitmap: Bitmap = ScanUtil.buildBitmap(
+                content,
+                HmsScan.QRCODE_SCAN_TYPE,
+                dp2px(200),
+                dp2px(200),
+                options
+            )
+            dataBinding.qrCodeIv.setImageBitmap(qrBitmap)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

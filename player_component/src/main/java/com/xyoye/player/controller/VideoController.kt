@@ -155,8 +155,10 @@ class VideoController(
                 val videoSource = mControlWrapper.getVideoSource()
                 if (videoSource.hasNextSource()) {
                     switchVideoSourceBlock?.invoke(videoSource.getGroupIndex() + 1)
+                    return
                 }
             }
+            mPlayCompletionBlock?.invoke()
         }
     }
 
@@ -241,6 +243,7 @@ class VideoController(
      * 退出播放回调
      */
     fun observerPlayExit(block: () -> Unit) {
+        mPlayCompletionBlock = block
         playerTopView.setExitObserver(block)
     }
 

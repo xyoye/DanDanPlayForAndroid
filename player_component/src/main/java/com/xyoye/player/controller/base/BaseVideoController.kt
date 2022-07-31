@@ -41,6 +41,9 @@ abstract class BaseVideoController(
     //播放失败回调
     protected var mPlayErrorBlock: (() -> Unit)? = null
 
+    //播放失败回调
+    protected var mPlayCompletionBlock: (() -> Unit)? = null
+
     //隐藏视图Runnable
     protected var mHideControllerJob: Job? = null
 

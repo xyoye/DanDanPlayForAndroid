@@ -8,6 +8,7 @@ import com.xyoye.common_component.extension.isValid
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
+import java.net.URLDecoder 
 
 
 /**
@@ -37,7 +38,7 @@ fun getFileName(file: File?): String {
 fun getFileName(filePath: String?): String {
     if (filePath.isNullOrEmpty()) return ""
     val lastSep: Int = filePath.lastIndexOf(File.separator)
-    return if (lastSep == -1) filePath else filePath.substring(lastSep + 1)
+    return if (lastSep == -1) filePath else URLDecoder.decode(filePath.substring(lastSep + 1), "UTF-8")
 }
 
 /**

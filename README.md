@@ -61,7 +61,7 @@
 
 3.x版本使用Java + MVP模式开发，详细信息请切换分支查看
 
-本项目接口由[弹弹play开放平台](https://api.acplay.net/swagger/ui/index)提供
+本项目接口由[弹弹play开放平台](https://api.dandanplay.net/swagger/ui/index)提供
 
 ## 项目结构
 

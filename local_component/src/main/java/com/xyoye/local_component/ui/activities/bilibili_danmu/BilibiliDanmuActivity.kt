@@ -9,7 +9,6 @@ import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.dialog.CommonEditDialog
 import com.xyoye.data_component.bean.EditBean
 import com.xyoye.data_component.bean.SheetActionBean
-import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
@@ -68,12 +67,13 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
 
     private fun showActionDialog() {
         BottomActionDialog(
+            this,
             mutableListOf(
                 SheetActionBean(DOWNLOAD_BY_LINK, "选取链接下载", R.drawable.ic_select_link),
                 SheetActionBean(DOWNLOAD_BY_URL, "输入链接下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_AV_CODE, "输入av号下载", R.drawable.ic_input_code),
                 SheetActionBean(DOWNLOAD_BY_BV_CODE, "输入bv号下载", R.drawable.ic_input_code)
-            ), SheetActionType.VERTICAL, "下载弹幕"
+            ), "下载弹幕"
         ) {
             when (it) {
                 DOWNLOAD_BY_LINK -> {
@@ -86,7 +86,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                 else -> showInputDialog(it)
             }
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun showInputDialog(action: Int) {
@@ -98,6 +98,7 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
         }
 
         CommonEditDialog(
+            this,
             EditBean(title, wranning, hint),
             inputOnlyDigit = action == DOWNLOAD_BY_AV_CODE
         ) {
@@ -106,6 +107,6 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
                 DOWNLOAD_BY_AV_CODE -> viewModel.downloadByCode(it, true)
                 DOWNLOAD_BY_BV_CODE -> viewModel.downloadByCode(it, false)
             }
-        }.show(this)
+        }.show()
     }
 }

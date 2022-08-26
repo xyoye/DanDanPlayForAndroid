@@ -1,5 +1,6 @@
 package com.xyoye.anime_component.ui.dialog.date_picker
 
+import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.DialogDatePickerBinding
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
@@ -9,20 +10,11 @@ import java.util.*
  * Created by xyoye on 2020/10/14.
  */
 
-class DatePickerDialog : BaseBottomDialog<DialogDatePickerBinding> {
-
-    private var defaultYear: Int = -1
-    private lateinit var block: (Int) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        defaultYear: Int = -1,
-        block: (Int) -> Unit
-    ) : super(true) {
-        this.defaultYear = defaultYear
-        this.block = block
-    }
+class DatePickerDialog(
+    activity: AppCompatActivity,
+    private val defaultYear: Int = -1,
+    private val block: (Int) -> Unit
+) : BaseBottomDialog<DialogDatePickerBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_date_picker
 

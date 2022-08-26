@@ -69,4 +69,12 @@
         <item name="colorControlNormal">@color/text_white_immutable</item>
     </style>
 
+    <style name="Bottom_Sheet_Dialog" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/Bottom_Sheet_Modal</item>
+    </style>
+    <style name="Bottom_Sheet_Modal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/transparent</item>
+        <item name="behavior_skipCollapsed">true</item>
+    </style>
 </resources>

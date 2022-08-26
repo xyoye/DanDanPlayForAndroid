@@ -39,8 +39,13 @@ interface VideoDao {
     )
     fun getAllFolder(isFilter: Boolean = true): LiveData<MutableList<FolderBean>>
 
-    @Query("SELECT folder_path,COUNT(*) AS file_count,filter FROM video WHERE filter = (:isFilter) GROUP BY folder_path")
-    suspend fun getFolderByFilter(isFilter: Boolean = false): MutableList<FolderBean>
+    @Query("SELECT video.folder_path,COUNT(*) AS file_count,video.filter " +
+            "FROM video " +
+            "LEFT JOIN(SELECT folder_path FROM video WHERE filter = (:notFilter) GROUP BY folder_path) AS filter_table " +
+            "ON filter_table.folder_path = video.folder_path WHERE filter_table.folder_path IS NULL " +
+            "GROUP BY video.folder_path"
+    )
+    suspend fun getFolderByFilter(notFilter: Boolean = true): MutableList<FolderBean>
 
     @Query("SELECT * FROM video WHERE filter = 0 AND file_path LIKE (:keyword)")
     suspend fun searchVideo(keyword: String): List<VideoEntity>

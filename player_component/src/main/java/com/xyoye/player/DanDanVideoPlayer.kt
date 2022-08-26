@@ -295,6 +295,7 @@ class DanDanVideoPlayer(
                 && mCurrentPlayState != PlayState.STATE_IDLE
                 && mCurrentPlayState != PlayState.STATE_PREPARING
                 && mCurrentPlayState != PlayState.STATE_START_ABORT
+                && mCurrentPlayState != PlayState.STATE_COMPLETED
     }
 
     fun resume() {

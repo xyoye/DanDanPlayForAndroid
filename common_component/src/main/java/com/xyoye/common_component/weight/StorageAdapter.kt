@@ -49,7 +49,7 @@ object StorageAdapter {
                         itemBinding.lastPlayTimeTv.text = PlayHistoryUtils.formatPlayTime(it)
                     }
 
-                    itemBinding.itemLayout.setOnClickListener {
+                    itemBinding.mainActionFl.setOnClickListener {
                         openFile.invoke(data)
                     }
                     itemBinding.moreActionIv.setOnClickListener {

@@ -11,7 +11,6 @@ import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.data_component.enums.SheetActionType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,7 +69,7 @@ object ExtraSourceDialogUtils {
         }
 
         val viewModelScope = activity.getOwnerViewModel().viewModelScope
-        BottomActionDialog(actionList, SheetActionType.VERTICAL) {
+        BottomActionDialog(activity, actionList) {
             when (it) {
                 ACTION_BIND_DANMU -> bindExtraSource(activity, mediaType, data, options, true)
                 ACTION_BIND_SUBTITLE -> bindExtraSource(activity, mediaType, data, options, false)
@@ -88,7 +87,7 @@ object ExtraSourceDialogUtils {
                 )
             }
             return@BottomActionDialog true
-        }.show(activity)
+        }.show()
 
         return true
     }

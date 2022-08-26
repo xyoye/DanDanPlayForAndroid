@@ -1,24 +1,17 @@
 package com.xyoye.local_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogMagnetPlayBinding
 
-class MagnetPlayDialog : BaseBottomDialog<DialogMagnetPlayBinding> {
-    private lateinit var magnetCallback: (magnetLink: String) -> Unit
-    private lateinit var torrentCallback: () -> Unit
-
-    constructor() : super()
-
-    constructor(
-        magnetCallback: (magnetLink: String) -> Unit,
-        torrentCallback: () -> Unit
-    ) : super(true) {
-        this.magnetCallback = magnetCallback
-        this.torrentCallback = torrentCallback
-    }
+class MagnetPlayDialog(
+    activity: AppCompatActivity,
+    private val magnetCallback: (magnetLink: String) -> Unit,
+    private val torrentCallback: () -> Unit
+) : BaseBottomDialog<DialogMagnetPlayBinding>(activity) {
 
     private lateinit var binding: DialogMagnetPlayBinding
 

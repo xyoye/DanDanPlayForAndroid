@@ -2,6 +2,7 @@ package com.xyoye.stream_component.ui.dialog
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.extension.setTextColorRes
@@ -16,27 +17,15 @@ import com.xyoye.stream_component.databinding.DialogSmbLoginBinding
  * Created by xyoye on 2021/2/2.
  */
 
-class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
-    private var originalStorage: MediaLibraryEntity? = null
-    private lateinit var addMediaStorage: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnect: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnectResult: MutableLiveData<Boolean>
+class SmbLoginDialog(
+    private val activity: AppCompatActivity,
+    private var originalStorage: MediaLibraryEntity?,
+    private val addMediaStorage: (MediaLibraryEntity) -> Unit,
+    private val testConnect: (MediaLibraryEntity) -> Unit,
+    private val testConnectResult: MutableLiveData<Boolean>
+) : BaseBottomDialog<DialogSmbLoginBinding>(activity) {
 
     private lateinit var binding: DialogSmbLoginBinding
-
-    constructor() : super()
-
-    constructor(
-        originalStorage: MediaLibraryEntity?,
-        addMediaStorage: (MediaLibraryEntity) -> Unit,
-        testConnect: (MediaLibraryEntity) -> Unit,
-        testConnectResult: MutableLiveData<Boolean>
-    ) : super(true) {
-        this.originalStorage = originalStorage
-        this.addMediaStorage = addMediaStorage
-        this.testConnect = testConnect
-        this.testConnectResult = testConnectResult
-    }
 
     override fun getChildLayoutId() = R.layout.dialog_smb_login
 
@@ -62,7 +51,7 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
             }
         }
 
-        testConnectResult.observe(mOwnerActivity!!, {
+        testConnectResult.observe(activity) {
             if (it) {
                 binding.serverStatusTv.text = "连接成功"
                 binding.serverStatusTv.setTextColorRes(R.color.text_blue)
@@ -70,7 +59,7 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
                 binding.serverStatusTv.text = "连接失败"
                 binding.serverStatusTv.setTextColorRes(R.color.text_red)
             }
-        })
+        }
 
         binding.anonymousTv.setOnClickListener {
             serverData.isAnonymous = true
@@ -108,13 +97,15 @@ class SmbLoginDialog : BaseBottomDialog<DialogSmbLoginBinding> {
             if (checkParams(serverData)) {
                 addMediaStorage.invoke(serverData)
                 dismiss()
-                mOwnerActivity?.finish()
             }
         }
 
         setNegativeListener {
             dismiss()
-            mOwnerActivity?.finish()
+        }
+
+        setOnDismissListener {
+            activity.finish()
         }
     }
 

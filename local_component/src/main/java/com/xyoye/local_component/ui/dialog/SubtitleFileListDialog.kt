@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import android.app.Activity
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.extension.setData
@@ -14,23 +15,17 @@ import com.xyoye.local_component.databinding.ItemSubtitleFileBinding
  * Created by xyoye on 2020/12/9.
  */
 
-class SubtitleFileListDialog : BaseBottomDialog<DialogSubtitleFileListBinding> {
-    private lateinit var subtitleList: MutableList<SubFileData>
-    private lateinit var callback: (fileName: String, url: String) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        subtitleList: MutableList<SubFileData>,
-        callback: (fileName: String, url: String) -> Unit
-    ) : super(true) {
-        this.subtitleList = subtitleList
-        this.callback = callback
-    }
+class SubtitleFileListDialog(
+    activity: Activity,
+    private val subtitleList: MutableList<SubFileData>,
+    private val callback: (fileName: String, url: String) -> Unit
+) : BaseBottomDialog<DialogSubtitleFileListBinding>(activity) {
 
     override fun getChildLayoutId() = R.layout.dialog_subtitle_file_list
 
     override fun initView(binding: DialogSubtitleFileListBinding) {
+        disableSheetDrag()
+
         setTitle("选择字幕文件下载")
 
         setNegativeListener { dismiss() }

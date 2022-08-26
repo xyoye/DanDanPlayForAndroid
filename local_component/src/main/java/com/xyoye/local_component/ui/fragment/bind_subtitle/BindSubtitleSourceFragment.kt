@@ -135,16 +135,21 @@ class BindSubtitleSourceFragment :
         }
 
         viewModel.searchSubtitleDetailLiveData.observe(this) {
-            SubtitleDetailDialog(it,
+            SubtitleDetailDialog(
+                requireActivity(),
+                it,
                 downloadOne = {
-                    SubtitleFileListDialog(it.filelist!!) { fileName, url ->
+                    SubtitleFileListDialog(
+                        requireActivity(),
+                        it.filelist!!
+                    ) { fileName, url ->
                         viewModel.downloadSearchSubtitle(fileName, url)
-                    }.show(this)
+                    }.show()
                 },
                 downloadZip = { fileName, url ->
                     viewModel.downloadSearchSubtitle(fileName, url, true)
                 }
-            ).show(this)
+            ).show()
         }
 
         viewModel.sourceRefreshLiveData.observe(this) {
@@ -152,10 +157,14 @@ class BindSubtitleSourceFragment :
         }
 
         viewModel.unzipResultLiveData.observe(this) { dirPath ->
-            FileManagerDialog(FileManagerAction.ACTION_SELECT_SUBTITLE, dirPath) {
+            FileManagerDialog(
+                requireActivity(),
+                FileManagerAction.ACTION_SELECT_SUBTITLE,
+                dirPath
+            ) {
                 viewModel.databaseSubtitle(it)
                 ToastCenter.showSuccess("绑定字幕成功！")
-            }.show(this)
+            }.show()
         }
     }
 
@@ -169,15 +178,16 @@ class BindSubtitleSourceFragment :
     }
 
     override fun setting() {
-        ShooterSecretDialog().show(this)
+        ShooterSecretDialog(requireActivity()).show()
     }
 
     override fun localFile() {
         FileManagerDialog(
+            requireActivity(),
             FileManagerAction.ACTION_SELECT_SUBTITLE
         ) {
             viewModel.databaseSubtitle(it)
-        }.show(this)
+        }.show()
     }
 
     override fun unbindDanmu() {

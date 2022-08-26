@@ -33,8 +33,9 @@
             android:src="@drawable/ic_add_white"
             app:backgroundTint="@color/float_button_bg_color"
             app:borderWidth="0dp"
-            app:elevation="5dp"
+            app:elevation="3dp"
             app:fabCustomSize="52dp"
+            app:hoveredFocusedTranslationZ="10dp"
             app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
             app:maxImageSize="26dp"
             app:rippleColor="@color/float_button_ripple_color" />

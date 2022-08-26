@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.decodeUrl
@@ -18,23 +19,13 @@ import com.xyoye.local_component.databinding.DialogSearchDanmuBinding
  * Created by xyoye on 2020/11/26.
  */
 
-class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
-    private var searchKeyword: String? = null
-    private var videoName: String? = null
+class DanmuSearchDialog(
+    activity: AppCompatActivity,
+    private val searchKeyword: String? = null,
+    private val videoName: String? = null,
+    private val listener: (animeName: String, episodeId: String) -> Unit
+) : BaseBottomDialog<DialogSearchDanmuBinding>(activity) {
     private var tipsIndex = 1
-    private lateinit var listener: (animeName: String, episodeId: String) -> Unit
-
-    constructor() : super()
-
-    constructor(
-        searchKeyword: String? = null,
-        videoName: String? = null,
-        listener: (animeName: String, episodeId: String) -> Unit
-    ) : super(true) {
-        this.searchKeyword = searchKeyword
-        this.videoName = videoName
-        this.listener = listener
-    }
 
     private lateinit var binding: DialogSearchDanmuBinding
 
@@ -56,7 +47,7 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
             binding.fileNameTips.isVisible = true
             binding.fileNameTv.isVisible = true
             binding.fileNameTv.setTextIsSelectable(true)
-            binding.fileNameTv.text = videoName?.decodeUrl()
+            binding.fileNameTv.text = videoName.decodeUrl()
         }
 
         binding.episodeRb.setOnClickListener {
@@ -114,7 +105,7 @@ class DanmuSearchDialog : BaseBottomDialog<DialogSearchDanmuBinding> {
         if (searchKeyword.isNullOrEmpty()) {
             return
         }
-        val keywordList = KeywordHelper.extract(searchKeyword!!)
+        val keywordList = KeywordHelper.extract(searchKeyword)
         if (keywordList.isEmpty()) {
             return
         }

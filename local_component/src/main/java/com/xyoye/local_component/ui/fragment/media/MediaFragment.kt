@@ -16,7 +16,6 @@ import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.data_component.enums.SheetActionType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentMediaBinding
@@ -56,9 +55,9 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             addMediaStorage()
         }
 
-        viewModel.mediaLibLiveData.observe(this, {
+        viewModel.mediaLibLiveData.observe(this) {
             dataBinding.mediaLibRv.setData(it)
-        })
+        }
     }
 
     private fun initRv() {
@@ -113,6 +112,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun addMediaStorage() {
         BottomActionDialog(
+            requireActivity(),
             mutableListOf(
                 SheetActionBean(
                     ACTION_ADD_FTP_LIBRARY,
@@ -135,7 +135,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     R.drawable.ic_remote_storage
                 )
             ),
-            SheetActionType.VERTICAL,
             "新增网络媒体库"
         ) {
             val routePath = when (it) {
@@ -151,7 +150,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 .navigation()
 
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun launchMediaStorage(data: MediaLibraryEntity) {
@@ -196,6 +195,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun showEditStorageDialog(data: MediaLibraryEntity) {
         BottomActionDialog(
+            requireActivity(),
             mutableListOf(
                 SheetActionBean(
                     ACTION_EDIT_STORAGE,
@@ -207,8 +207,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     "删除媒体库",
                     R.drawable.ic_delete_storage
                 )
-            ),
-            SheetActionType.VERTICAL
+            )
         ) {
             if (it == ACTION_EDIT_STORAGE) {
                 val routePath = when (data.mediaType) {
@@ -226,11 +225,11 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 showDeleteStorageDialog(data)
             }
             return@BottomActionDialog true
-        }.show(this)
+        }.show()
     }
 
     private fun showDeleteStorageDialog(data: MediaLibraryEntity) {
-        CommonDialog.Builder()
+        CommonDialog.Builder(requireActivity())
             .apply {
                 content = "确认删除以下媒体库?\n\n${data.displayName}"
                 positiveText = "确认"
@@ -239,6 +238,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     viewModel.deleteStorage(data)
                 }
                 addNegative()
-            }.build().show(this)
+            }.build().show()
     }
 }

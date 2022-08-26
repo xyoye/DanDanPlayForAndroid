@@ -2,6 +2,7 @@ package com.xyoye.stream_component.ui.dialog
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.extension.setTextColorRes
@@ -17,27 +18,15 @@ import java.nio.charset.Charset
  * Created by xyoye on 2021/1/28.
  */
 
-class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
-    private var originalStorage: MediaLibraryEntity? = null
-    private lateinit var addMediaStorage: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnect: (MediaLibraryEntity) -> Unit
-    private lateinit var testConnectResult: MutableLiveData<Boolean>
+class FTPLoginDialog(
+    private val activity: AppCompatActivity,
+    private val originalStorage: MediaLibraryEntity?,
+    private val addMediaStorage: (MediaLibraryEntity) -> Unit,
+    private val testConnect: (MediaLibraryEntity) -> Unit,
+    private val testConnectResult: MutableLiveData<Boolean>
+) : BaseBottomDialog<DialogFtpLoginBinding>(activity) {
 
     private lateinit var binding: DialogFtpLoginBinding
-
-    constructor() : super()
-
-    constructor(
-        originalStorage: MediaLibraryEntity?,
-        addMediaStorage: (MediaLibraryEntity) -> Unit,
-        testConnect: (MediaLibraryEntity) -> Unit,
-        testConnectResult: MutableLiveData<Boolean>
-    ) : super(true) {
-        this.originalStorage = originalStorage
-        this.addMediaStorage = addMediaStorage
-        this.testConnect = testConnect
-        this.testConnectResult = testConnectResult
-    }
 
     override fun getChildLayoutId() = R.layout.dialog_ftp_login
 
@@ -73,7 +62,7 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
             }
         }
 
-        testConnectResult.observe(mOwnerActivity!!, {
+        testConnectResult.observe(activity) {
             if (it) {
                 binding.serverStatusTv.text = "连接成功"
                 binding.serverStatusTv.setTextColorRes(R.color.text_blue)
@@ -81,7 +70,7 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
                 binding.serverStatusTv.text = "连接失败"
                 binding.serverStatusTv.setTextColorRes(R.color.text_red)
             }
-        })
+        }
 
         binding.anonymousTv.setOnClickListener {
             serverData.isAnonymous = true
@@ -119,13 +108,15 @@ class FTPLoginDialog : BaseBottomDialog<DialogFtpLoginBinding> {
             if (checkParams(serverData)) {
                 addMediaStorage.invoke(serverData)
                 dismiss()
-                mOwnerActivity?.finish()
             }
         }
 
         setNegativeListener {
             dismiss()
-            mOwnerActivity?.finish()
+        }
+
+        setOnDismissListener {
+            activity.finish()
         }
     }
 

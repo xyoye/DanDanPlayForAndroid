@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.dialog
 
+import android.app.Activity
 import androidx.core.view.isVisible
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -19,31 +20,22 @@ import com.xyoye.local_component.databinding.ItemDanmuSourceSelectBinding
  * Created by xyoye on 2020/11/25.
  */
 
-class DanmuDownloadDialog : BaseBottomDialog<DialogDanmuDowanloadBinding> {
-
-    private lateinit var relatedData: DanmuRelatedData
-    private lateinit var callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
-    private var episodeId: Int = 0
+class DanmuDownloadDialog(
+    activity: Activity,
+    private val episodeId: Int,
+    private val relatedData: DanmuRelatedData,
+    private val callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
+) : BaseBottomDialog<DialogDanmuDowanloadBinding>(activity) {
 
     private val languageViewIds =
         arrayOf(R.id.danmu_default_rb, R.id.danmu_simplified_rb, R.id.danmu_traditional_rb)
-
-    constructor() : super()
-
-    constructor(
-        episodeId: Int,
-        relatedData: DanmuRelatedData,
-        callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
-    ) : super(true) {
-        this.episodeId = episodeId
-        this.relatedData = relatedData
-        this.callback = callback
-    }
 
     override fun getChildLayoutId() = R.layout.dialog_danmu_dowanload
 
     override fun initView(binding: DialogDanmuDowanloadBinding) {
         val downloadSources = initDownloadSources()
+
+        disableSheetDrag()
 
         setTitle("下载弹幕")
 

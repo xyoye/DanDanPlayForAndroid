@@ -6,8 +6,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
-        android:layout_height="86dp"
-        android:background="@drawable/background_item_press">
+        android:layout_height="86dp">
+
+        <FrameLayout
+            android:id="@+id/main_action_fl"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_item_press"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/more_action_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/cover_iv"

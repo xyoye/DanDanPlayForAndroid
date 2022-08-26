@@ -63,7 +63,7 @@ object Dependencies {
     }
 
     object Google {
-        const val material = "com.google.android.material:material:1.1.0"
+        const val material = "com.google.android.material:material:1.6.1"
 
         const val exoplayer = "com.google.android.exoplayer:exoplayer:${Versions.exoplayer}"
         const val exoplayer_core =
@@ -108,6 +108,6 @@ object Dependencies {
     }
 
     object VLC {
-        const val vlc = "org.videolan.android:libvlc-all:3.3.11"
+        const val vlc = "org.videolan.android:libvlc-all:3.4.9"
     }
 }

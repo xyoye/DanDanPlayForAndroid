@@ -69,7 +69,7 @@ class CacheManagerActivity : BaseActivity<CacheManagerViewModel, ActivityCacheMa
     }
 
     private fun considerClearSystemCache() {
-        CommonDialog.Builder().run {
+        CommonDialog.Builder(this).run {
             tips = "清除系统缓存"
             content = "系统缓存包括图片缓存、日志缓存，清除后重新加载图片会消耗流量，确认清除？"
             addPositive { dialog ->
@@ -78,7 +78,7 @@ class CacheManagerActivity : BaseActivity<CacheManagerViewModel, ActivityCacheMa
             }
             addNegative { dialog -> dialog.dismiss() }
             build()
-        }.show(this)
+        }.show()
     }
 
     private fun considerClearCache(cacheType: CacheType?) {
@@ -90,7 +90,7 @@ class CacheManagerActivity : BaseActivity<CacheManagerViewModel, ActivityCacheMa
         val message = cacheType?.clearTips ?: "确认清除其它缓存？"
         val delay = cacheType == CacheType.DANMU_CACHE || cacheType == CacheType.SUBTITLE_CACHE
 
-        CommonDialog.Builder().run {
+        CommonDialog.Builder(this).run {
             tips = title
             content = message
             delayConfirm = delay
@@ -100,6 +100,6 @@ class CacheManagerActivity : BaseActivity<CacheManagerViewModel, ActivityCacheMa
             }
             addNegative { it.dismiss() }
             build()
-        }.show(this)
+        }.show()
     }
 }

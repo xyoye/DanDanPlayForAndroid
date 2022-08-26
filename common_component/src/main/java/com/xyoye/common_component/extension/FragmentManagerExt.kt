@@ -64,3 +64,15 @@ fun FragmentManager.findAndHideFragment(vararg tags: String) {
         commit()
     }
 }
+
+fun FragmentManager.findAndRemoveFragment(vararg tags: String) {
+    beginTransaction().run {
+        tags.forEach {
+            findFragmentByTag(it)?.also { fragment ->
+                this.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .remove(fragment)
+            }
+        }
+        commitNow()
+    }
+}

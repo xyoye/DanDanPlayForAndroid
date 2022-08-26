@@ -1,7 +1,6 @@
 package com.xyoye.common_component.weight.dialog
 
-import android.app.Dialog
-import android.content.DialogInterface
+import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.Gravity
@@ -10,18 +9,15 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDialog
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogBaseBottomDialogBinding
 import com.xyoye.common_component.extension.rippleDrawable
-import com.xyoye.common_component.extension.toResDrawable
-import com.xyoye.common_component.utils.DialogFragmentHelper
 import com.xyoye.common_component.utils.dp2px
 
 
@@ -29,26 +25,14 @@ import com.xyoye.common_component.utils.dp2px
  * Created by xyoye on 2020/12/22.
  */
 
-abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment {
-    private lateinit var mDialog: Dialog
+abstract class BaseBottomDialog<T : ViewDataBinding>(
+    activity: Activity
+) : BottomSheetDialog(activity, R.style.Bottom_Sheet_Dialog) {
 
-    protected var onDialogDismiss: (() -> Unit)? = null
-    protected var mOwnerActivity: AppCompatActivity? = null
     protected lateinit var rootViewBinding: DialogBaseBottomDialogBinding
 
-    constructor() : super()
-
-    constructor(anyValue: Boolean) : super() {
-        arguments = DialogFragmentHelper.buildArgument()
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        mDialog = AppCompatDialog(context, theme)
-        if (DialogFragmentHelper.isArgumentInvalid(arguments)) {
-            //如果弹窗被重建，关闭弹窗
-            dismiss()
-            return mDialog
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         val layoutInflater = LayoutInflater.from(context)
         rootViewBinding = DataBindingUtil.inflate(
@@ -65,44 +49,20 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
             true
         )
 
-        mDialog.apply {
-            window?.apply {
-                decorView.setPadding(0, decorView.top, 0, decorView.bottom)
+        window?.apply {
+            decorView.setPadding(0, decorView.top, 0, decorView.bottom)
 
-                val layoutParams = attributes
-                layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-                attributes = layoutParams
+            val layoutParams = attributes
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+            attributes = layoutParams
 
-                setGravity(Gravity.BOTTOM)
-                setWindowAnimations(R.style.BaseBottomDialogStyle)
-                setBackgroundDrawable(R.drawable.background_bottom_dialog.toResDrawable())
-            }
-
-            setContentView(rootViewBinding.root)
+            setGravity(Gravity.BOTTOM)
         }
 
-        //默认不允许从外部关闭
-        mDialog.setCanceledOnTouchOutside(false)
-        isCancelable = false
+        setContentView(rootViewBinding.root)
 
         initView(childViewBinding)
-
-        return mDialog
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        onDialogDismiss?.invoke()
-    }
-
-    open fun show(activity: AppCompatActivity) {
-        mOwnerActivity = activity
-        super.show(activity.supportFragmentManager, this::class.simpleName)
-    }
-
-    open fun show(fragment: Fragment) {
-        mOwnerActivity = null
-        super.show(fragment.childFragmentManager, this::class.simpleName)
     }
 
     protected fun setTitle(text: String) {
@@ -131,6 +91,10 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
 
     protected fun setNegativeVisible(visible: Boolean) {
         rootViewBinding.negativeBt.isVisible = visible
+    }
+
+    protected fun removeParentPadding() {
+        rootViewBinding.containerFl.setPadding(0)
     }
 
     protected fun addNeutralButton(text: String, block: () -> Unit) {
@@ -201,8 +165,17 @@ abstract class BaseBottomDialog<T : ViewDataBinding> : BottomSheetDialogFragment
     }
 
     protected fun setDialogCancelable(touchCancel: Boolean, backPressedCancel: Boolean) {
-        mDialog.setCanceledOnTouchOutside(touchCancel)
-        isCancelable = backPressedCancel
+        setCancelable(backPressedCancel)
+        setCanceledOnTouchOutside(touchCancel)
+    }
+
+    /**
+     * 禁止BottomSheetDialog拖动关闭
+     * 避免与RecyclerView滑动产生冲突
+     */
+    protected fun disableSheetDrag() {
+        behavior.isDraggable = false
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     abstract fun getChildLayoutId(): Int

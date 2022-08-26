@@ -246,13 +246,13 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.Vout -> {
                     if (it.voutCount > 0) {
                         mMediaPlayer.updateVideoSurfaces()
-                    }
 
-                    mPlayerEventListener.onInfo(
-                        PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
-                        0
-                    )
-                    VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_VIDEO_RENDERING_START")
+                        mPlayerEventListener.onInfo(
+                            PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START,
+                            0
+                        )
+                        VideoLog.d("$TAG--listener--onInfo--> MEDIA_INFO_VIDEO_RENDERING_START")
+                    }
                 }
                 //播放完成
                 MediaPlayer.Event.EndReached -> {

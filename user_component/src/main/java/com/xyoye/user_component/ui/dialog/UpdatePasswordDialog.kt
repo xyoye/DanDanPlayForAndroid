@@ -2,6 +2,7 @@ package com.xyoye.user_component.ui.dialog
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
 import com.xyoye.common_component.weight.ToastCenter
@@ -13,15 +14,10 @@ import com.xyoye.user_component.databinding.DialogUpdatePasswordBinding
  * Created by xyoye on 2021/1/11.
  */
 
-class UpdatePasswordDialog : BaseBottomDialog<DialogUpdatePasswordBinding> {
-    private lateinit var callback: (old: String, new: String) -> Boolean
-
-    constructor() : super()
-    constructor(
-        callback: (old: String, new: String) -> Boolean
-    ) : super(true) {
-        this.callback = callback
-    }
+class UpdatePasswordDialog(
+    activity: AppCompatActivity,
+    private val callback: (old: String, new: String) -> Boolean
+) : BaseBottomDialog<DialogUpdatePasswordBinding>(activity) {
 
     private lateinit var binding: DialogUpdatePasswordBinding
 

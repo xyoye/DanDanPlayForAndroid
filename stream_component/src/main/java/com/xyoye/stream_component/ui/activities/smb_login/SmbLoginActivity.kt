@@ -11,7 +11,6 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivitySmbLoginBinding
 import com.xyoye.stream_component.ui.dialog.SmbLoginDialog
-import com.xyoye.stream_component.ui.dialog.WebDavLoginDialog
 
 @Route(path = RouteTable.Stream.SmbLogin)
 class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding>() {
@@ -32,6 +31,7 @@ class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding
         ARouter.getInstance().inject(this)
 
         SmbLoginDialog(
+            this,
             editData,
             addMediaStorage = {
                 viewModel.addWebDavStorage(editData, it)
@@ -40,6 +40,6 @@ class SmbLoginActivity : BaseActivity<SmbLoginViewModel, ActivitySmbLoginBinding
                 viewModel.testConnect(it)
             },
             viewModel.testConnectLiveData
-        ).show(this)
+        ).show()
     }
 }

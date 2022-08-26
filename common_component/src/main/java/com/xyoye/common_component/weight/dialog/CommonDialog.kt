@@ -1,26 +1,20 @@
 package com.xyoye.common_component.weight.dialog
 
-import android.content.DialogInterface
+import android.app.Activity
 import android.os.CountDownTimer
 import androidx.core.view.isVisible
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogCommonBinding
 import com.xyoye.common_component.extension.setTextColorRes
-import java.util.*
 
 /**
  * Created by xyoye on 2020/10/28.
  */
 
-open class CommonDialog : BaseBottomDialog<DialogCommonBinding> {
-
-    private lateinit var mBuilder: Builder
-
-    constructor(): super()
-
-    private constructor(builder: Builder): super(true){
-        mBuilder = builder
-    }
+open class CommonDialog private constructor(
+    activity: Activity,
+    private val builder: Builder
+) : BaseBottomDialog<DialogCommonBinding>(activity) {
 
     private val delayTimer = object : CountDownTimer(5000L, 1000L) {
         override fun onTick(millisUntilFinished: Long) {
@@ -38,7 +32,7 @@ open class CommonDialog : BaseBottomDialog<DialogCommonBinding> {
         }
     }
 
-    open class Builder {
+    open class Builder(private val activity: Activity) {
         var tips: String? = null
         var content: String = ""
         var cancelable = true
@@ -75,15 +69,14 @@ open class CommonDialog : BaseBottomDialog<DialogCommonBinding> {
             return this
         }
 
-        fun build(): CommonDialog =
-            CommonDialog(this)
+        fun build(): CommonDialog = CommonDialog(activity, this)
     }
 
     override fun getChildLayoutId() = R.layout.dialog_common
 
     override fun initView(binding: DialogCommonBinding) {
 
-        mBuilder.apply {
+        builder.apply {
 
             setTitle(tips ?: "提示")
 
@@ -112,14 +105,11 @@ open class CommonDialog : BaseBottomDialog<DialogCommonBinding> {
 
             setPositiveListener { positiveClickListener?.invoke(this@CommonDialog) }
 
+            setOnDismissListener { delayTimer.cancel() }
+
             if (delayConfirm) {
                 delayTimer.start()
             }
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        delayTimer.cancel()
-        super.onDismiss(dialog)
     }
 }

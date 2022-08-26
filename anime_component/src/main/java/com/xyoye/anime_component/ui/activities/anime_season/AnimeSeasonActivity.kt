@@ -55,9 +55,12 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                                 if (data.isEnable) {
                                     viewModel.checkYear(data.typeId)
                                 } else {
-                                    DatePickerDialog(data.typeId.toInt()) {
+                                    DatePickerDialog(
+                                        this@AnimeSeasonActivity,
+                                        data.typeId.toInt()
+                                    ) {
                                         viewModel.checkYear(it.toString())
-                                    }.show(this@AnimeSeasonActivity)
+                                    }.show()
                                 }
                             }
                         }

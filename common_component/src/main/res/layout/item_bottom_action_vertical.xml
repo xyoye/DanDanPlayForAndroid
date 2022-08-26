@@ -10,8 +10,8 @@
         android:background="@drawable/background_item_press"
         android:gravity="start"
         android:orientation="horizontal"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp">
+        android:paddingVertical="15dp"
+        android:paddingHorizontal="20dp">
 
         <ImageView
             android:id="@+id/action_iv"

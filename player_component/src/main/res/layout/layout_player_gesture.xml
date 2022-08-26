@@ -4,48 +4,106 @@
 
     <FrameLayout
         android:id="@+id/gesture_container"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:background="@drawable/backgrund_video_view"
-        android:visibility="gone">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
         <!-- 声音 -->
-        <TextView
-            android:id="@+id/volume_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/volume_ll"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:drawableTop="@mipmap/ic_volume_on"
-            android:drawablePadding="5dp"
+            android:background="@drawable/backgrund_video_view"
             android:gravity="center"
-            android:textColor="@color/text_white_immutable"
-            android:visibility="gone"
-            tools:text="50%" />
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_volume" />
+
+            <TextView
+                android:id="@+id/volume_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                tools:text="50%" />
+        </LinearLayout>
 
         <!-- 亮度 -->
-        <TextView
-            android:id="@+id/battery_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/battery_ll"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
-            android:drawableTop="@mipmap/ic_brightness"
-            android:drawablePadding="5dp"
+            android:background="@drawable/backgrund_video_view"
             android:gravity="center"
-            android:textColor="@color/text_white_immutable"
-            android:visibility="gone"
-            tools:text="50%" />
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_brightness" />
+
+            <TextView
+                android:id="@+id/battery_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                tools:text="50%" />
+        </LinearLayout>
 
         <!-- 进度 -->
         <TextView
             android:id="@+id/position_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
+            android:background="@drawable/backgrund_video_view"
             android:drawablePadding="5dp"
             android:gravity="center"
             android:textColor="@color/text_white_immutable"
             android:visibility="gone"
             tools:text="12:12:/31:01\n+6秒" />
+
+        <!-- 倍速 -->
+        <LinearLayout
+            android:id="@+id/accelerate_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/backgrund_video_view"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_speed_accelerate" />
+
+            <TextView
+                android:id="@+id/accelerate_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                tools:text="x2.0倍速播放中" />
+        </LinearLayout>
     </FrameLayout>
 </layout>

@@ -76,8 +76,9 @@ class PlayerGestureView(
 
     override fun onPositionChange(newPosition: Long, currentPosition: Long, duration: Long) {
         viewBinding.positionTv.isVisible = true
-        viewBinding.volumeTv.isVisible = false
-        viewBinding.batteryTv.isVisible = false
+        viewBinding.volumeLl.isVisible = false
+        viewBinding.batteryLl.isVisible = false
+        viewBinding.accelerateLl.isVisible = false
 
         val durationFormat = formatDuration(duration)
         val newPositionFormat =
@@ -91,9 +92,10 @@ class PlayerGestureView(
     }
 
     override fun onBrightnessChange(percent: Int) {
-        viewBinding.batteryTv.isVisible = true
-        viewBinding.volumeTv.isVisible = false
+        viewBinding.batteryLl.isVisible = true
+        viewBinding.volumeLl.isVisible = false
         viewBinding.positionTv.isVisible = false
+        viewBinding.accelerateLl.isVisible = false
 
         val batteryText = "$percent%"
         viewBinding.batteryTv.text = batteryText
@@ -101,11 +103,27 @@ class PlayerGestureView(
 
     override fun onVolumeChange(percent: Int) {
         viewBinding.positionTv.isVisible = false
-        viewBinding.volumeTv.isVisible = true
-        viewBinding.batteryTv.isVisible = false
+        viewBinding.volumeLl.isVisible = true
+        viewBinding.batteryLl.isVisible = false
+        viewBinding.accelerateLl.isVisible = false
 
         val volumeText = "$percent%"
         viewBinding.volumeTv.text = volumeText
+    }
+
+    override fun onStartAccelerate(speed: Float) {
+        onStartSlide()
+        viewBinding.batteryLl.isVisible = false
+        viewBinding.volumeLl.isVisible = false
+        viewBinding.positionTv.isVisible = false
+        viewBinding.accelerateLl.isVisible = true
+
+        val batteryText = "x${speed}倍速播放中"
+        viewBinding.accelerateTv.text = batteryText
+    }
+
+    override fun onStopAccelerate() {
+        hideGestureView()
     }
 
 
@@ -118,8 +136,9 @@ class PlayerGestureView(
                     super.onAnimationEnd(view)
                     viewBinding.gestureContainer.isVisible = false
                     viewBinding.positionTv.isVisible = false
-                    viewBinding.batteryTv.isVisible = false
-                    viewBinding.volumeTv.isVisible = false
+                    viewBinding.batteryLl.isVisible = false
+                    viewBinding.volumeLl.isVisible = false
+                    viewBinding.accelerateLl.isVisible = false
                 }
             }).start()
     }

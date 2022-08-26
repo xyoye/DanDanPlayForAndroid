@@ -11,6 +11,7 @@ import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterGestureView
+import com.xyoye.player.utils.LongPressAccelerator
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -45,6 +46,14 @@ abstract class GestureVideoController(
     private var mChangeBrightness = false
     private var mChangeVolume = false
 
+    private val longPressAccelerator : LongPressAccelerator by lazy {
+        LongPressAccelerator(
+            mControlWrapper,
+            onStart = { speed -> startAccelerate(speed) },
+            onStop = { stopAccelerate() }
+        )
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setOnTouchListener(this)
@@ -63,6 +72,7 @@ abstract class GestureVideoController(
         if (!mGestureDetector.onTouchEvent(event)) {
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
+                    longPressAccelerator.disable()
                     stopSlide()
                     if (mSeekPosition > 0) {
                         mControlWrapper.seekTo(mSeekPosition)
@@ -85,7 +95,9 @@ abstract class GestureVideoController(
         velocityY: Float
     ) = false
 
-    override fun onLongPress(e: MotionEvent?) {}
+    override fun onLongPress(e: MotionEvent?) {
+        longPressAccelerator.enable()
+    }
 
     override fun onShowPress(e: MotionEvent?) {}
 
@@ -232,11 +244,11 @@ abstract class GestureVideoController(
         }
     }
 
-    fun onVolumeKeyDown(isVolumeUp: Boolean){
+    fun onVolumeKeyDown(isVolumeUp: Boolean) {
         val maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         val curVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
-        var newVolume = if (isVolumeUp){
+        var newVolume = if (isVolumeUp) {
             curVolume + (maxVolume / 15)
         } else {
             curVolume - (maxVolume / 15)
@@ -263,6 +275,24 @@ abstract class GestureVideoController(
             val view = entry.key
             if (view is InterGestureView) {
                 view.onStopSlide()
+            }
+        }
+    }
+
+    private fun startAccelerate(speed: Float) {
+        for (entry in mControlComponents.entries) {
+            val view = entry.key
+            if (view is InterGestureView) {
+                view.onStartAccelerate(speed)
+            }
+        }
+    }
+
+    private fun stopAccelerate() {
+        for (entry in mControlComponents.entries) {
+            val view = entry.key
+            if (view is InterGestureView) {
+                view.onStopAccelerate()
             }
         }
     }

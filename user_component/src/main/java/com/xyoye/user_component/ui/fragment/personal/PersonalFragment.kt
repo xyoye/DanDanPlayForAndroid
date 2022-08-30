@@ -163,6 +163,12 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
                 .navigation()
         }
 
+        dataBinding.screencastReceiverLl.setOnClickListener {
+            ARouter.getInstance()
+                .build(RouteTable.Stream.ScreencastReceiver)
+                .navigation()
+        }
+
         dataBinding.appSettingLl.setOnClickListener {
             ARouter.getInstance()
                 .build(RouteTable.User.SettingApp)

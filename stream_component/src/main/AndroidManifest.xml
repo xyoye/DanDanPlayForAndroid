@@ -3,6 +3,7 @@
     package="com.xyoye.stream_component">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
 
     <application>
         <activity
@@ -38,6 +39,13 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.smb_file.SmbFileActivity"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".ui.activities.screencast_connect.ScreencastConnectActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/DialogActivityTheme" />
+        <activity
+            android:name=".ui.activities.screencast.receiver.ScreencastActivity"
             android:configChanges="orientation|screenSize" />
     </application>
 

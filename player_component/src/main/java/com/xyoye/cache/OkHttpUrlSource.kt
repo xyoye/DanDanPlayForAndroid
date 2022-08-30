@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * <pre>
- *     author: xieyy@anjiu-tech.com
+ *     author: xyoye1997@outlook.com
  *     time  : 2021/12/23
  *     desc  :
  * </pre>

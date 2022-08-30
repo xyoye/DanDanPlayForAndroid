@@ -1,6 +1,8 @@
 package com.xyoye.common_component.extension
 
+import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import androidx.annotation.ColorRes
@@ -12,18 +14,27 @@ import com.xyoye.common_component.base.app.BaseApplication
  * Created by xyoye on 2021/3/20.
  */
 
-fun Int.toResColor(): Int{
-    return ContextCompat.getColor(BaseApplication.getAppContext(), this)
+fun Int.toResColor(context: Context = BaseApplication.getAppContext()): Int {
+    return ContextCompat.getColor(context, this)
 }
 
-fun Int.toResDrawable(): Drawable?{
-    return ContextCompat.getDrawable(BaseApplication.getAppContext(), this)
+fun Int.toResDrawable(context: Context = BaseApplication.getAppContext()): Drawable? {
+    return ContextCompat.getDrawable(context, this)
 }
 
-fun Int.toResString(): String{
-    return BaseApplication.getAppContext().resources.getString(this)
+fun Int.toResString(context: Context = BaseApplication.getAppContext()): String {
+    return context.resources.getString(this)
 }
 
-fun rippleDrawable(@ColorRes rippleColorId: Int = R.color.gray_40): Drawable{
+fun Int.colorWithAlpha(alpha: Int): Int {
+    return Color.argb(
+        alpha,
+        Color.red(this),
+        Color.green(this),
+        Color.blue(this)
+    )
+}
+
+fun rippleDrawable(@ColorRes rippleColorId: Int = R.color.gray_40): Drawable {
     return RippleDrawable(ColorStateList.valueOf(rippleColorId.toResColor()), null, null)
 }

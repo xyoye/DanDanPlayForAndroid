@@ -1,5 +1,6 @@
 package com.xyoye.common_component.source.media
 
+import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.getFileName
@@ -26,7 +27,7 @@ class StreamMediaSource(
     }
 
     override fun getVideoTitle(): String {
-        return getFileName(videoSources[index])
+        return getFileName(videoSources[index].decodeUrl())
     }
 
     override fun getCurrentPosition(): Long {

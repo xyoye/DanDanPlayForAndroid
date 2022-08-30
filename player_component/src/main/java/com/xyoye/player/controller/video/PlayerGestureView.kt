@@ -132,7 +132,7 @@ class PlayerGestureView(
             .alpha(0f)
             .setDuration(150)
             .setListener(object : ViewPropertyAnimatorListenerAdapter() {
-                override fun onAnimationEnd(view: View?) {
+                override fun onAnimationEnd(view: View) {
                     super.onAnimationEnd(view)
                     viewBinding.gestureContainer.isVisible = false
                     viewBinding.positionTv.isVisible = false

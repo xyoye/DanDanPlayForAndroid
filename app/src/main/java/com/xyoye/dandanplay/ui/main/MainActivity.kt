@@ -66,7 +66,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         }
 
         //设置底部导航栏事件
-        dataBinding.navigationView.setOnNavigationItemSelectedListener {
+        dataBinding.navigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.navigation_home -> {
                     title = "弹弹play"
@@ -81,7 +81,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                     switchFragment(TAG_FRAGMENT_PERSONAL)
                 }
             }
-            return@setOnNavigationItemSelectedListener true
+            return@setOnItemSelectedListener true
         }
 
         viewModel.initDatabase()

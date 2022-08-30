@@ -1,7 +1,10 @@
 package com.xyoye.dandanplay.ui.splash
 
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.view.KeyEvent
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
@@ -14,11 +17,12 @@ import com.xyoye.dandanplay.R
 import com.xyoye.dandanplay.databinding.ActivitySplashBinding
 import com.xyoye.dandanplay.ui.main.MainActivity
 import com.xyoye.dandanplay.utils.image_anim.path.TextPathAnimView
+
 /**
  * Created by xyoye on 2020/7/27.
  */
 
-class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>(){
+class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>() {
     override fun getLayoutId() = R.layout.activity_splash
 
     override fun initStatusBar() {
@@ -30,16 +34,21 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>(){
 
     override fun initView() {
         window.run {
-            addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insetsController?.hide(WindowInsets.Type.statusBars())
+            } else {
+                addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            }
+            statusBarColor = Color.TRANSPARENT
             addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER)
         }
 
         val mode = AppConfig.getDarkMode()
         AppCompatDelegate.setDefaultNightMode(mode)
 
-        if (!AppConfig.isShowSplashAnimation()){
+        if (!AppConfig.isShowSplashAnimation()) {
             launchActivity()
+            return
         }
 
         val alphaAnimation = AlphaAnimation(0f, 1f)
@@ -54,7 +63,7 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>(){
         dataBinding.run {
             appNameTv.text = appName
 
-            textPathView.setAnimListener(object: TextPathAnimView.AnimListener {
+            textPathView.setAnimListener(object : TextPathAnimView.AnimListener {
                 override fun onStart() {
 
                 }
@@ -81,6 +90,11 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>(){
         } else {
             super.dispatchKeyEvent(event)
         }
+    }
+
+    override fun onDestroy() {
+        dataBinding.textPathView.cancelAnim()
+        super.onDestroy()
     }
 
     private fun launchActivity() {

@@ -52,36 +52,18 @@ class SettingSubtitleView(
     fun updateSubtitleTrack(trackData: MutableList<VideoTrackBean>) {
         subtitleTrackList.clear()
         subtitleTrackList.add(TrackUtils.getEmptyTrack())
+        subtitleTrackList.addAll(trackData)
 
-        var hasExSubtitleSelected = false
-        val iterator = subtitleTrackList.iterator()
-        while (iterator.hasNext()) {
-            val track = iterator.next()
-            if (!track.isExTrack) {
-                iterator.remove()
-            } else if (track.isChecked) {
-                hasExSubtitleSelected = true
-            }
-        }
-
-        val innerSelectedTrack = trackData.find { it.isChecked }
-        //有外挂字幕已选中 且 有内置字幕选中，取消内置字幕的选中
-        if (hasExSubtitleSelected && innerSelectedTrack != null) {
-            mControlWrapper.selectTrack(null, null)
-            return
-        }
+        val hasInnerSubtitleChecked = trackData.any { it.isChecked }
 
         //有内置字幕被选中，开启内置字幕显示
-        if (innerSelectedTrack != null) {
+        if (hasInnerSubtitleChecked) {
             mControlWrapper.showInnerTextSubtitle()
             mControlWrapper.setImageSubtitleEnable(true)
-        }
-
-        if (trackData.size > 0) {
-            subtitleTrackList.addAll(1, trackData)
-        } else if (subtitleTrackList.size == 1) {
+        } else {
             subtitleTrackList[0].isChecked = true
         }
+
         viewBinding.subtitleTrackRv.setData(subtitleTrackList)
     }
 
@@ -255,39 +237,29 @@ class SettingSubtitleView(
     }
 
     private fun selectTrack(position: Int) {
-        if (position > subtitleTrackList.size)
+        val targetTrack = subtitleTrackList.getOrNull(position) ?: return
+        if (targetTrack.isChecked) {
             return
-
-        val currentSelectTrack = subtitleTrackList[position]
-
-        //取消上一次已选中的字幕
-        var lastSelectedTrack: VideoTrackBean? = null
-        for ((index, track) in subtitleTrackList.withIndex()) {
-            if (track.isChecked) {
-                //当前选中和已选中相同，不再进行后续操作
-                if (currentSelectTrack == track)
-                    return
-
-                track.isChecked = false
-                lastSelectedTrack = track
-                viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(index)
-                break
-            }
         }
-
-        currentSelectTrack.isChecked = true
+        targetTrack.isChecked = true
         viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(position)
+
+        val currentTrackIndex = subtitleTrackList.indexOfFirst { it.isChecked }
+        if (currentTrackIndex != -1) {
+            subtitleTrackList[currentTrackIndex].isChecked = false
+            viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(currentTrackIndex)
+        }
 
         when {
             //选中“无”的字幕流
-            TrackUtils.isEmptyTrack(currentSelectTrack) -> {
-                mControlWrapper.selectTrack(null, lastSelectedTrack)
+            TrackUtils.isEmptyTrack(subtitleTrackList[currentTrackIndex]) -> {
+                mControlWrapper.selectTrack(null, subtitleTrackList[currentTrackIndex])
                 mControlWrapper.setTextSubtitleDisable()
                 mControlWrapper.setImageSubtitleEnable(false)
                 return
             }
             //选中外挂字幕流
-            currentSelectTrack.isExTrack -> {
+            targetTrack.isExTrack -> {
                 mControlWrapper.showExternalTextSubtitle()
                 mControlWrapper.setImageSubtitleEnable(false)
                 mControlWrapper.selectTrack(null, null)
@@ -296,7 +268,7 @@ class SettingSubtitleView(
             else -> {
                 mControlWrapper.showInnerTextSubtitle()
                 mControlWrapper.setImageSubtitleEnable(true)
-                mControlWrapper.selectTrack(currentSelectTrack, lastSelectedTrack)
+                mControlWrapper.selectTrack(targetTrack, subtitleTrackList[currentTrackIndex])
             }
         }
     }

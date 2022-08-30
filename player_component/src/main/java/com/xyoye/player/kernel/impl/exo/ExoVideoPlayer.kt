@@ -5,13 +5,13 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Surface
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.analytics.AnalyticsCollector
+import com.google.android.exoplayer2.analytics.DefaultAnalyticsCollector
 import com.google.android.exoplayer2.ext.FfmpegRenderersFactory
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.text.Cue
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -60,6 +60,12 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             mLoadControl = DefaultLoadControl()
         }
 
+        //番剧，字幕优先使用中文，音频优先使用日语
+        mTrackSelector.parameters = TrackSelectionParameters.Builder(mContext)
+            .setPreferredTextLanguage("zh")
+            .setPreferredAudioLanguage("jap")
+            .build()
+
         exoplayer = ExoPlayer.Builder(
             mContext,
             mRenderersFactory,
@@ -67,17 +73,14 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             mTrackSelector,
             mLoadControl,
             DefaultBandwidthMeter.getSingletonInstance(mContext),
-            AnalyticsCollector(Clock.DEFAULT)
+            DefaultAnalyticsCollector(Clock.DEFAULT)
         ).build()
 
         setOptions()
 
         if (PlayerInitializer.isPrintLog && mTrackSelector is MappingTrackSelector) {
             exoplayer.addAnalyticsListener(
-                EventLogger(
-                    mTrackSelector as MappingTrackSelector,
-                    ExoVideoPlayer::class.java.simpleName
-                )
+                EventLogger(ExoVideoPlayer::class.java.simpleName)
             )
         }
 
@@ -167,7 +170,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     }
 
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mTrackHelper.selectExoTrack(mTrackSelector, select)
+        mTrackHelper.selectExoTrack(mContext, mTrackSelector, select, exoplayer.currentTracks)
     }
 
     override fun isPlaying(): Boolean {
@@ -248,13 +251,10 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         mLastReportedPlayWhenReady = playWhenReady
     }
 
-    override fun onTracksChanged(
-        trackGroups: TrackGroupArray,
-        trackSelections: TrackSelectionArray
-    ) {
+    override fun onTracksChanged(tracks: Tracks) {
         subtitleType = SubtitleType.UN_KNOW
         val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
-        mTrackHelper.initExoTrack(mTrackSelector, trackSelections, trackNameProvider)
+        mTrackHelper.initExoTrack(tracks, trackNameProvider)
     }
 
     override fun onPlayerError(error: PlaybackException) {

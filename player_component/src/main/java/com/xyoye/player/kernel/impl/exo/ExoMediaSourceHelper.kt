@@ -67,10 +67,10 @@ object ExoMediaSourceHelper {
             DefaultDataSource.Factory(BaseApplication.getAppContext(), mHttpDataSourceFactory)
 
         return when (inferContentType(uri)) {
-            C.TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            C.TYPE_SS -> SsMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            C.TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
-            C.TYPE_OTHER -> ProgressiveMediaSource.Factory(dataSourceFactory)
+            C.CONTENT_TYPE_DASH -> DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            C.CONTENT_TYPE_SS -> SsMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            C.CONTENT_TYPE_HLS -> HlsMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            C.CONTENT_TYPE_OTHER -> ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(mediaItem)
             else -> ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
         }
@@ -104,16 +104,16 @@ object ExoMediaSourceHelper {
         val name = fileName.lowercase(Locale.getDefault())
         return when {
             name.contains(".mpd") -> {
-                C.TYPE_DASH
+                C.CONTENT_TYPE_DASH
             }
             name.contains(".m3u8") -> {
-                C.TYPE_HLS
+                C.CONTENT_TYPE_HLS
             }
             name.matches(".*\\.ism(l)?(/manifest(\\(.+\\))?)?".toRegex()) -> {
-                C.TYPE_SS
+                C.CONTENT_TYPE_SS
             }
             else -> {
-                C.TYPE_OTHER
+                C.CONTENT_TYPE_OTHER
             }
         }
     }

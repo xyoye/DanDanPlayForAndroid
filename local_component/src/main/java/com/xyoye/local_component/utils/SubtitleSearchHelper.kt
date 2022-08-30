@@ -3,10 +3,7 @@ package com.xyoye.local_component.utils
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestError
@@ -77,7 +74,7 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
         private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSourceBean> {
             return mutableListOf<SubtitleSourceBean>().apply {
                 val subList = subData?.sub?.subs
-                if (subList?.size ?: 0 > 0) {
+                if ((subList?.size ?: 0) > 0) {
                     for (subDetailData in subList!!) {
                         val subtitleName =
                             if (subDetailData.native_name.isNullOrEmpty())
@@ -96,6 +93,10 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
                     }
                 }
             }
+        }
+
+        override fun getRefreshKey(state: PagingState<Int, SubtitleSourceBean>): Int? {
+           return null
         }
     }
 }

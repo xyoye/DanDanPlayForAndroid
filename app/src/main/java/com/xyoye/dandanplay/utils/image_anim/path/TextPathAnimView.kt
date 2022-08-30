@@ -176,6 +176,10 @@ class TextPathAnimView : View {
         }
     }
 
+    fun cancelAnim() {
+        mAnimator.cancel()
+    }
+
     fun setAnimListener(listener: AnimListener?) {
         animListener = listener
     }

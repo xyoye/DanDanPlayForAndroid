@@ -1,10 +1,14 @@
 package com.xyoye.player.utils
 
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.trackselection.*
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
+import android.content.Context
+import com.google.android.exoplayer2.C.TRACK_TYPE_AUDIO
+import com.google.android.exoplayer2.C.TRACK_TYPE_TEXT
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.Tracks
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.TrackNameProvider
-import com.google.android.exoplayer2.util.MimeTypes
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.kernel.inter.VideoPlayerEventListener
 import org.videolan.libvlc.MediaPlayer
@@ -41,54 +45,37 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
     }
 
     fun initExoTrack(
-        trackSelector: TrackSelector,
-        trackSelections: TrackSelectionArray,
+        tracks: Tracks,
         trackNameProvider: TrackNameProvider
     ) {
-        if (trackSelector !is MappingTrackSelector) {
-            return
-        }
-
-        val trackInfo = trackSelector.currentMappedTrackInfo ?: return
-        val (selectedAudioId, selectedSubtitleId) = getExoSelectedTrack(trackSelections)
-
         audioTrackData.clear()
         subtitleTrackData.clear()
-        for (groupArrayIndex in 0 until trackInfo.rendererCount) {
-            val groupArray = trackInfo.getTrackGroups(groupArrayIndex)
-            for (groupIndex in 0 until groupArray.length) {
-                val group = groupArray.get(groupIndex)
-                for (formatIndex in 0 until group.length) {
-                    val format = group.getFormat(formatIndex)
 
-                    val trackName = trackNameProvider.getTrackName(format)
-                    val mineType = format.sampleMimeType ?: "und"
-
-                    if (MimeTypes.isAudio(mineType)) {
-                        val isChecked = selectedAudioId == format.id
-                        audioTrackData.add(
-                            VideoTrackBean(
-                                trackName,
-                                true,
-                                formatIndex,
-                                isChecked,
-                                groupArrayIndex,
-                                groupIndex
-                            )
-                        )
-                    } else if (MimeTypes.isText(mineType)) {
-                        val isChecked = selectedSubtitleId == format.id
-                        subtitleTrackData.add(
-                            VideoTrackBean(
-                                trackName,
-                                false,
-                                formatIndex,
-                                isChecked,
-                                groupArrayIndex,
-                                groupIndex
-                            )
-                        )
-                    }
+        tracks.groups.forEachIndexed { groupIndex, group ->
+            if (group.isSupported.not()) {
+                return
+            }
+            if (group.type == TRACK_TYPE_AUDIO) {
+                getExoGroupFormat(group).forEachIndexed { formatIndex, format ->
+                    val track = VideoTrackBean(
+                        trackName = trackNameProvider.getTrackName(format),
+                        isAudio = true,
+                        trackId = formatIndex,
+                        isChecked = group.isSelected,
+                        trackGroupId = groupIndex
+                    )
+                    audioTrackData.add(track)
+                }
+            } else if (group.type == TRACK_TYPE_TEXT) {
+                getExoGroupFormat(group).forEachIndexed { formatIndex, format ->
+                    val track = VideoTrackBean(
+                        trackName = trackNameProvider.getTrackName(format),
+                        isAudio = false,
+                        trackId = formatIndex,
+                        isChecked = group.isSelected,
+                        trackGroupId = groupIndex
+                    )
+                    subtitleTrackData.add(track)
                 }
             }
         }
@@ -115,35 +102,30 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
         mPlayerEventListener.updateTrack(false, subtitleTrackData)
     }
 
-    fun selectExoTrack(trackSelector: TrackSelector, videoTrackBean: VideoTrackBean?) {
-        if (trackSelector !is DefaultTrackSelector) {
+    fun selectExoTrack(
+        context: Context,
+        trackSelector: TrackSelector,
+        track: VideoTrackBean?,
+        tracks: Tracks
+    ) {
+        if (track == null) {
+            trackSelector.parameters = TrackSelectionParameters.Builder(context)
+                .clearOverridesOfType(TRACK_TYPE_TEXT)
+                .setTrackTypeDisabled(TRACK_TYPE_TEXT, true)
+                .build()
             return
         }
 
-        val trackInfo = trackSelector.currentMappedTrackInfo ?: return
+        val trackGroup = tracks.groups.getOrNull(track.trackGroupId)?.mediaTrackGroup
+            ?: return
+        val override = TrackSelectionOverride(trackGroup, track.trackId)
 
-        //只有字幕流才会被设置为空，设置为空时，关闭当前流
-        if (videoTrackBean == null) {
-            for (renderIndex in 0 until trackInfo.rendererCount) {
-                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_TEXT) {
-                    val parametersBuilder = trackSelector.parameters.buildUpon().apply {
-                        setRendererDisabled(renderIndex, true)
-                    }
-                    trackSelector.setParameters(parametersBuilder)
-                    break
-                }
-            }
-            return
-        }
-
-        val trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId)
-        val override = SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId)
-        val parametersBuilder = trackSelector.parameters.buildUpon().apply {
-            setRendererDisabled(videoTrackBean.renderId, false)
-            setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override)
-        }
-
-        trackSelector.setParameters(parametersBuilder)
+        val trackParams = TrackSelectionParameters.Builder(context)
+            .setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
+            .clearOverridesOfType(trackGroup.type)
+            .addOverride(override)
+            .build()
+        trackSelector.parameters = trackParams
     }
 
     fun selectVLCTrack(isAudio: Boolean, trackId: Int) {
@@ -156,25 +138,12 @@ class TrackHelper(private val mPlayerEventListener: VideoPlayerEventListener) {
         }
     }
 
-    private fun getExoSelectedTrack(trackSelections: TrackSelectionArray) : Pair<String?, String?>{
-        var selectedAudioId: String? = null
-        var selectedSubtitleId: String? = null
-
-        for (selection: TrackSelection? in trackSelections.all) {
-            if (selection == null) continue
-            for (trackIndex in 0 until selection.length()) {
-                val format = selection.getFormat(trackIndex)
-                if (MimeTypes.isAudio(format.sampleMimeType)) {
-                    selectedAudioId = format.id
-                } else if (MimeTypes.isText(format.sampleMimeType)) {
-                    selectedSubtitleId = format.id
-                }
-                val isContinue = selectedAudioId.isNullOrEmpty() || selectedSubtitleId.isNullOrEmpty()
-                if (isContinue.not()) {
-                    return Pair(selectedAudioId, selectedSubtitleId)
-                }
-            }
+    private fun getExoGroupFormat(group: Tracks.Group): List<Format> {
+        val formats = mutableListOf<Format>()
+        for (formatIndex in 0 until group.length) {
+            val format = group.getTrackFormat(formatIndex)
+            formats.add(format)
         }
-        return Pair(selectedAudioId, selectedSubtitleId)
+        return formats
     }
 }

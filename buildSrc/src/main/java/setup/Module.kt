@@ -26,11 +26,11 @@ fun Project.moduleSetup() {
             }
 
             getByName("debug") {
-                initWith(buildTypes.getByName("release"))
+                initWith(buildTypes.getByName("debug"))
             }
 
             create("beta") {
-                initWith(buildTypes.getByName("release"))
+                initWith(buildTypes.getByName("beta"))
             }
         }
 

@@ -34,7 +34,7 @@ open class BaseApplication : Application() {
         APPLICATION_CONTEXT = this
         mMainHandler = Handler(getAppContext().mainLooper)
 
-        if (BuildConfig.IS_DEBUG_MODE) {
+        if (BuildConfig.DEBUG) {
             ARouter.openLog()
             ARouter.openDebug()
         }
@@ -43,7 +43,7 @@ open class BaseApplication : Application() {
         Bugly.init(
             applicationContext,
             SecurityHelper.getInstance().buglyId,
-            BuildConfig.IS_DEBUG_MODE
+            BuildConfig.DEBUG
         )
     }
 }

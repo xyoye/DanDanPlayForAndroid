@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class Retrofit private constructor() {
     companion object {
-        private const val baseUrl = "https://api.dandanplay.net/"
+        const val baseUrl = "https://api.dandanplay.net/"
         private const val resUrl = "http://res.acplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
         private const val torrentUrl = "https://m2t.dandanplay.net/"
@@ -116,7 +116,7 @@ class Retrofit private constructor() {
             builder.addInterceptor(ScreencastInterceptor())
         }
         //日志输出
-        if (BuildConfig.IS_DEBUG_MODE) {
+        if (BuildConfig.DEBUG) {
             builder.addInterceptor(LoggerInterceptor().retrofit())
         }
         return builder.build()

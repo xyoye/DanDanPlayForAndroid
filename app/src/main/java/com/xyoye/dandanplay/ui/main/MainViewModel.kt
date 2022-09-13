@@ -58,7 +58,7 @@ class MainViewModel : BaseViewModel() {
             httpRequest<MutableList<String>>(viewModelScope) {
 
                 api {
-                    val filterUrl = "https://api.acplay.net/config/filter.xml"
+                    val filterUrl = "${Retrofit.baseUrl}config/filter.xml"
                     val responseBody = Retrofit.extService.downloadResource(filterUrl)
 
                     parseFilterData(responseBody.byteStream())

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class Retrofit private constructor() {
     companion object {
-        private const val baseUrl = "https://api.dandanplay.net/"
+        const val baseUrl = "https://api.dandanplay.net/"
         private const val resUrl = "http://res.acplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
         private const val torrentUrl = "https://m2t.dandanplay.net/"

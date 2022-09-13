@@ -102,7 +102,7 @@ class Retrofit private constructor() {
             builder.addInterceptor(ResDomainInterceptor())
         }
         //日志输出
-        if (BuildConfig.IS_DEBUG_MODE) {
+        if (BuildConfig.DEBUG) {
             builder.addInterceptor(LoggerInterceptor().retrofit())
         }
         return builder.build()

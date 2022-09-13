@@ -9,12 +9,6 @@ plugins {
 moduleSetup()
 
 android {
-    buildTypes {
-        all {
-            buildConfigField("Boolean", "IS_DEBUG_MODE", "${Config.isDebug}")
-        }
-    }
-
     sourceSets {
         named("main").configure {
             jniLibs.srcDir("libs")

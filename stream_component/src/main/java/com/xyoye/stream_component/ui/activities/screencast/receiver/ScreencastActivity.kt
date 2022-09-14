@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.wifi.WifiManager
+import android.os.Build
 import androidx.core.view.isInvisible
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.huawei.hms.hmsscankit.ScanUtil
@@ -13,8 +14,10 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityScreenCastBinding
@@ -139,10 +142,18 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
     }
 
     private fun setupEnabledStyle() {
-        val ipContent = viewModel.ipList.joinToString(separator = ",")
-        createQRCode(ipContent, true)?.let {
+        val qrCodeContent = RemoteScanData(
+            viewModel.ipList,
+            viewModel.httpPort,
+            Build.MODEL,
+            dataBinding.setPasswordRb.isChecked,
+            null
+        )
+        val qrCodeJson = JsonHelper.toJson(qrCodeContent) ?: ""
+        createQRCode(qrCodeJson, true)?.let {
             dataBinding.qrCodeIv.setImageBitmap(it)
         }
+
         dataBinding.serverStatusTv.text = "已启动"
         dataBinding.serverStatusTv.setTextColor(R.color.text_theme.toResColor())
 

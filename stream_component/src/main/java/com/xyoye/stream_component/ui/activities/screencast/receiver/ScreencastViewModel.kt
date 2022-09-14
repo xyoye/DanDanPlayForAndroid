@@ -26,7 +26,7 @@ class ScreencastViewModel : BaseViewModel() {
     var multicastJob: Job? = null
     var httpServer: HttpServer? = null
 
-    private var httpPort = 0
+    var httpPort = 0
     val ipList = mutableListOf<String>()
 
     fun initIpPort() {

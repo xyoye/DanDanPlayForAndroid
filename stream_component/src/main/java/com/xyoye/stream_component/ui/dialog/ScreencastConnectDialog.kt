@@ -238,5 +238,9 @@ class ScreencastConnectDialog(
         binding.ipEt.setText(data.selectedIP)
         binding.portEt.setText(data.port.toString())
         binding.displayNameEt.setText(data.machineName)
+
+        if (data.tokenRequired) {
+            ToastCenter.showToast("请输入连接密码")
+        }
     }
 }

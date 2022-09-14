@@ -44,13 +44,21 @@ object AppConfigTable {
 
     @MMKVFiled
     //上次打开目录
-    var lastOpenFolder : String? = null
+    var lastOpenFolder: String? = null
 
     @MMKVFiled
     //上次打开目录开关
-    var lastOpenFolderEnable : Boolean = true
+    var lastOpenFolderEnable: Boolean = true
 
     @MMKVFiled
     //上次搜索弹幕记录
     var lastSearchDanmuJson: String? = null
+
+    @MMKVFiled
+    //是否使用投屏接收密码
+    var useScreencastPwd: Boolean = false
+
+    @MMKVFiled
+    //上次使用的投屏接收密码
+    var lastUsedScreencastPwd: String? = null
 }

@@ -180,19 +180,29 @@
 
             <TextView
                 android:id="@+id/port_tv"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{viewModel.displayPort}"
                 android:textColor="@color/text_gray"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/port_tips"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tips_barrier"
                 app:layout_constraintTop_toTopOf="@id/port_tips"
-                tools:text="192.168.1.1" />
+                tools:text="8080" />
+
+            <ImageView
+                android:id="@+id/refresh_port_iv"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/background_item_press"
+                android:padding="8dp"
+                android:src="@drawable/ic_password_refresh"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="@id/port_tv"
+                app:layout_constraintBottom_toBottomOf="@id/port_tv"
+                app:layout_constraintStart_toEndOf="@id/port_tv"/>
 
             <TextView
                 android:id="@+id/password_tips"
@@ -204,7 +214,7 @@
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/port_tv" />
+                app:layout_constraintTop_toBottomOf="@id/refresh_port_iv" />
 
             <RadioGroup
                 android:id="@+id/password_radio_gp"

@@ -6,27 +6,31 @@ import android.graphics.BitmapFactory
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption
 import com.huawei.hms.ml.scan.HmsScan
 import com.xyoye.common_component.base.BaseActivity
-import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityScreenCastBinding
+import kotlin.random.Random
 
 
 @Route(path = RouteTable.Stream.ScreencastReceiver)
 class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastBinding>() {
 
     private lateinit var multicastLock: WifiManager.MulticastLock
+    private var httpPort = 0
 
     override fun initViewModel() =
         ViewModelInit(
@@ -43,6 +47,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         initUdpLock()
 
         initListener()
+
+        initPort()
 
         initPassword()
 
@@ -78,7 +84,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
                 }
                 password = inputPwd
             }
-            viewModel.startServer(password)
+            viewModel.startServer(password, httpPort)
         }
 
         dataBinding.passwordRadioGp.setOnCheckedChangeListener { _, checkedId ->
@@ -100,6 +106,21 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             dataBinding.passwordEt.setText(newPassword)
         }
 
+        dataBinding.refreshPortIv.setOnClickListener {
+            CommonDialog.Builder(this).run {
+                title = "提示"
+                content = "确认更换端口号？\n\n更换后已连接设备需要重新连接"
+                addPositive {
+                    val port = Random.nextInt(20000, 30000)
+                    ScreencastConfig.putReceiverPort(port)
+                    dataBinding.portTv.text = port.toString()
+                    it.dismiss()
+                }
+                addNegative { it.dismiss() }
+                build()
+            }.show()
+        }
+
         viewModel.serverStatusLiveData.observe(this) {
             if (it) {
                 setupEnabledStyle()
@@ -109,18 +130,27 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         }
     }
 
+    private fun initPort() {
+        httpPort = ScreencastConfig.getReceiverPort()
+        if (httpPort == 0) {
+            httpPort = Random.nextInt(20000, 30000)
+            ScreencastConfig.putReceiverPort(httpPort)
+        }
+        dataBinding.portTv.text = httpPort.toString()
+    }
+
     private fun initPassword() {
-        val isUsePwd = AppConfig.isUseScreencastPwd()
+        val isUsePwd = ScreencastConfig.isUseReceiverPassword()
         dataBinding.noPasswordRb.isChecked = isUsePwd.not()
         dataBinding.setPasswordRb.isChecked = isUsePwd
         dataBinding.refreshPasswordIv.isInvisible = isUsePwd.not()
 
-        val lastUsedPwd = AppConfig.getLastUsedScreencastPwd()
-        if (lastUsedPwd.isNullOrEmpty() && isUsePwd) {
+        val receiverPwd = ScreencastConfig.getReceiverPassword()
+        if (receiverPwd.isNullOrEmpty() && isUsePwd) {
             val randomPwd = viewModel.createRandomPwd()
             dataBinding.passwordEt.setText(randomPwd)
-        } else if (lastUsedPwd.isNullOrEmpty().not()) {
-            dataBinding.passwordEt.setText(lastUsedPwd)
+        } else if (receiverPwd.isNullOrEmpty().not()) {
+            dataBinding.passwordEt.setText(receiverPwd)
         }
     }
 
@@ -139,12 +169,13 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         dataBinding.noPasswordRb.isEnabled = true
         dataBinding.passwordEt.isEnabled = true
         dataBinding.refreshPasswordIv.isEnabled = true
+        dataBinding.refreshPortIv.isVisible = true
     }
 
     private fun setupEnabledStyle() {
         val qrCodeContent = RemoteScanData(
             viewModel.ipList,
-            viewModel.httpPort,
+            httpPort,
             Build.MODEL,
             dataBinding.setPasswordRb.isChecked,
             null
@@ -165,6 +196,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         dataBinding.noPasswordRb.isEnabled = false
         dataBinding.passwordEt.isEnabled = false
         dataBinding.refreshPasswordIv.isEnabled = false
+        dataBinding.refreshPortIv.isVisible = false
     }
 
     private fun createQRCode(content: String, enable: Boolean = true): Bitmap? {

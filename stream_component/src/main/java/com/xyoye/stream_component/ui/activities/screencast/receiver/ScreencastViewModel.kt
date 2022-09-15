@@ -4,7 +4,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.stream_component.utils.screencast.receiver.HttpServer
 import com.xyoye.stream_component.utils.screencast.receiver.UdpServer
@@ -15,18 +15,15 @@ import java.net.Inet4Address
 import java.net.NetworkInterface
 import java.net.SocketException
 import java.util.*
-import kotlin.random.Random
 
 class ScreencastViewModel : BaseViewModel() {
     var serverStatusLiveData = MutableLiveData<Boolean>()
 
     val displayIp = ObservableField<String>()
-    val displayPort = ObservableField<String>()
 
     var multicastJob: Job? = null
     var httpServer: HttpServer? = null
 
-    var httpPort = 0
     val ipList = mutableListOf<String>()
 
     fun initIpPort() {
@@ -63,13 +60,10 @@ class ScreencastViewModel : BaseViewModel() {
             ipList.clear()
             ipList.addAll(ipAddresses)
             displayIp.set(ipAddresses.joinToString(separator = "\n"))
-
-            httpPort = Random.nextInt(20000, 30000)
-            displayPort.set(httpPort.toString())
         }
     }
 
-    fun startServer(password: String? = null) {
+    fun startServer(password: String? = null, httpPort: Int) {
         stopServer()
         multicastJob = viewModelScope.launch(Dispatchers.IO) {
             showLoading()
@@ -77,15 +71,14 @@ class ScreencastViewModel : BaseViewModel() {
             val httpServer = startHttpServer(password, httpPort)
             hideLoading()
             if (httpServer == null) {
-                ToastCenter.showError("启动投屏服务器失败")
+                ToastCenter.showError("启动投屏服务器失败, 请尝试更换端口")
                 return@launch
             }
             this@ScreencastViewModel.httpServer = httpServer
 
-            AppConfig.putLastUsedScreencastPwd(password ?: "")
-            AppConfig.putUseScreencastPwd(password.isNullOrEmpty().not())
+            ScreencastConfig.putReceiverPassword(password ?: "")
+            ScreencastConfig.putUseReceiverPassword(password.isNullOrEmpty().not())
 
-            displayPort.set(httpPort.toString())
             serverStatusLiveData.postValue(true)
             //启动UDP组播
             UdpServer.startMulticast(
@@ -107,19 +100,14 @@ class ScreencastViewModel : BaseViewModel() {
         return uuid.substring(0, 8)
     }
 
-    private fun startHttpServer(password: String?, port: Int, retry: Boolean = true): HttpServer? {
-        httpPort = port
+    private fun startHttpServer(password: String?, port: Int): HttpServer? {
         return try {
             val httpServer = HttpServer(viewModelScope, password, port)
             httpServer.start(2000)
             httpServer
         } catch (e: Exception) {
             e.printStackTrace()
-            if (retry) {
-                startHttpServer(password, port + 1, false)
-            } else {
-                null
-            }
+            null
         }
     }
 }

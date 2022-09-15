@@ -110,7 +110,7 @@ class ScreencastViewModel : BaseViewModel() {
     private fun startHttpServer(password: String?, port: Int, retry: Boolean = true): HttpServer? {
         httpPort = port
         return try {
-            val httpServer = HttpServer(password, port)
+            val httpServer = HttpServer(viewModelScope, password, port)
             httpServer.start(2000)
             httpServer
         } catch (e: Exception) {

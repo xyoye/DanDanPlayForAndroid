@@ -14,6 +14,10 @@ android {
             jniLibs.srcDir("libs")
         }
     }
+
+    defaultConfig {
+        buildConfigField("String", "APPLICATION_ID", "\"${Versions.applicationId}\"")
+    }
 }
 
 kapt {

@@ -5,6 +5,7 @@ import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.coroutines.CoroutineScope
 import kotlin.random.Random
 
 /**
@@ -15,7 +16,11 @@ import kotlin.random.Random
  * </pre>
  */
 
-class HttpServer(private val password: String?, port: Int) : NanoHTTPD(port) {
+class HttpServer(
+    private val scope: CoroutineScope,
+    private val password: String?,
+    port: Int
+) : NanoHTTPD(port) {
 
     override fun serve(session: IHTTPSession?): Response {
         if (session != null && session.method == Method.GET) {
@@ -25,7 +30,10 @@ class HttpServer(private val password: String?, port: Int) : NanoHTTPD(port) {
             }
 
             //处理请求
-            val response = ServerController.handleGetRequest(session.uri, session.parameters)
+            val response = ServerController.handleGetRequest(
+                session,
+                scope
+            )
             if (response != null) {
                 return response
             }

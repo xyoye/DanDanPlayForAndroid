@@ -5,11 +5,13 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.enums.MediaType
@@ -22,6 +24,9 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
 
     private var mSearchView: SearchView? = null
     private var mSearchEt: SearchView.SearchAutoComplete? = null
+
+    @Autowired
+    lateinit var screencastProvideService: ScreencastProvideService
 
     override fun initViewModel() =
         ViewModelInit(
@@ -86,6 +91,7 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             adapter = StorageAdapter.newInstance(
                 this@LocalMediaActivity,
                 MediaType.LOCAL_STORAGE,
+                screencastProvideService,
                 refreshDirectory = {
                     viewModel.refreshDirectoryWithHistory()
                 },

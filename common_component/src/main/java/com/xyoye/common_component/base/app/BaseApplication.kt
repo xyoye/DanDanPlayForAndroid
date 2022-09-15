@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.bugly.Bugly
 import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
+import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.utils.SecurityHelper
 
 /**
@@ -45,5 +46,6 @@ open class BaseApplication : Application() {
             SecurityHelper.getInstance().buglyId,
             BuildConfig.DEBUG
         )
+        Notifications.setupNotificationChannels(this)
     }
 }

@@ -7,6 +7,14 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+
+    <application>
+
+        <receiver
+            android:name=".receiver.NotificationReceiver"
+            android:exported="false" />
+    </application>
 </manifest>

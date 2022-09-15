@@ -1,7 +1,7 @@
 package com.xyoye.stream_component.utils.screencast.provider
 
+import com.xyoye.common_component.utils.EntropyUtils
 import fi.iki.elonen.NanoHTTPD
-import kotlin.random.Random
 
 /**
  * <pre>
@@ -11,14 +11,16 @@ import kotlin.random.Random
  * </pre>
  */
 
-class HttpServer : NanoHTTPD(randomPort()){
-
-    companion object {
-        //随机端口
-        private fun randomPort() = Random.nextInt(20000, 30000)
-    }
+class HttpServer(private val filePath: String, port: Int) : NanoHTTPD(port) {
 
     override fun serve(session: IHTTPSession?): Response {
+        if (session != null && session.method == Method.GET) {
+            return ServerController.handleGetRequest(filePath, session)
+        }
         return super.serve(session)
+    }
+
+    fun getProxyUrl(): String {
+        return "http://127.0.0.1:$listeningPort/${EntropyUtils.string2Md5(filePath)}"
     }
 }

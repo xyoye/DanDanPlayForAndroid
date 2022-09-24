@@ -34,6 +34,7 @@
             android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:hint="@string/hint_search_danmu"
+            android:inputType="text"
             android:imeOptions="actionSearch"
             android:maxLength="50"
             android:maxLines="1"

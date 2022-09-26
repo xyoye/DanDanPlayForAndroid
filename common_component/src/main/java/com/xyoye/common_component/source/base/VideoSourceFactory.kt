@@ -64,6 +64,7 @@ object VideoSourceFactory {
                 MediaType.REMOTE_STORAGE -> RemoteSourceFactory.create(this)
                 MediaType.LOCAL_STORAGE -> LocalSourceFactory.create(this)
                 MediaType.SMB_SERVER -> SmbSourceFactory.create(this)
+                MediaType.SCREEN_CAST -> ScreencastSourceFactory.create(this)
                 MediaType.STREAM_LINK,
                 MediaType.OTHER_STORAGE -> StreamSourceFactory.create(this)
                 else -> null

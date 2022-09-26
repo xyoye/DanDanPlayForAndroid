@@ -51,6 +51,7 @@ class ScreencastConnectDialog(
             MediaType.SCREEN_CAST
         )
         binding.serverData = serverData
+        binding.ipEt.setText(serverData.url.split(":").getOrNull(0))
 
         initListener()
 

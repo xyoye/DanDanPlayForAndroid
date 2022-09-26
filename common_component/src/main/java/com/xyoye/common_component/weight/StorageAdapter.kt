@@ -13,11 +13,11 @@ import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.setVideoCover
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.weight.dialog.ExtraSourceDialogUtils
 import com.xyoye.data_component.bean.StorageFileBean
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 
 
@@ -29,10 +29,10 @@ object StorageAdapter {
     fun newInstance(
         activity: BaseActivity<*, *>,
         mediaType: MediaType,
-        screencastProvideService: ScreencastProvideService? = null,
         refreshDirectory: () -> Unit,
         openFile: (StorageFileBean) -> Unit,
         openDirectory: (StorageFileBean) -> Unit,
+        castFile: ((StorageFileBean, MediaLibraryEntity) -> Unit)? = null,
         moreAction: ((StorageFileBean) -> Boolean)? = null
     ): BaseAdapter {
         return buildAdapter {
@@ -65,9 +65,9 @@ object StorageAdapter {
                             Pair(itemBinding.coverIv, itemBinding.coverIv.transitionName),
                             Pair(itemBinding.titleTv, itemBinding.titleTv.transitionName)
                         )
-                        showVideoManagerDialog(activity, mediaType, data, options, screencastProvideService, refreshDirectory)
+                        showVideoManagerDialog(activity, mediaType, data, options, castFile, refreshDirectory)
                     }
-                    itemBinding.itemLayout.setOnLongClickListener {
+                    itemBinding.mainActionFl.setOnLongClickListener {
                         if (moreAction?.invoke(data) == true) {
                             return@setOnLongClickListener true
                         }
@@ -77,7 +77,7 @@ object StorageAdapter {
                             Pair(itemBinding.coverIv, itemBinding.coverIv.transitionName),
                             Pair(itemBinding.titleTv, itemBinding.titleTv.transitionName)
                         )
-                        showVideoManagerDialog(activity, mediaType, data, options, screencastProvideService, refreshDirectory)
+                        showVideoManagerDialog(activity, mediaType, data, options, castFile, refreshDirectory)
                     }
                 }
             }
@@ -122,7 +122,7 @@ object StorageAdapter {
         mediaType: MediaType,
         data: StorageFileBean,
         options: ActivityOptionsCompat,
-        screencastProvideService: ScreencastProvideService?,
+        castFile: ((StorageFileBean, MediaLibraryEntity) -> Unit)?,
         refreshDirectory: () -> Unit
     ): Boolean {
         return ExtraSourceDialogUtils.show(
@@ -130,7 +130,7 @@ object StorageAdapter {
             mediaType,
             data,
             options,
-            screencastProvideService,
+            castFile,
             refreshDirectory
         )
     }

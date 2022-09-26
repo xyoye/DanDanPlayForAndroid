@@ -1,12 +1,12 @@
 package com.xyoye.stream_component.utils.screencast.receiver
 
 import android.util.Base64
+import com.xyoye.common_component.network.helper.ScreencastInterceptor
 import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
+import com.xyoye.stream_component.services.ScreencastReceiveHandler
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.CoroutineScope
-import kotlin.random.Random
 
 /**
  * <pre>
@@ -17,23 +17,29 @@ import kotlin.random.Random
  */
 
 class HttpServer(
-    private val scope: CoroutineScope,
     private val password: String?,
     port: Int
 ) : NanoHTTPD(port) {
+    private var handler: ScreencastReceiveHandler? = null
 
     override fun serve(session: IHTTPSession?): Response {
-        if (session != null && session.method == Method.GET) {
+        if (session != null) {
             //身份验证
             if (authentication(session).not()) {
                 return unauthorizedResponse()
             }
 
-            //处理请求
-            val response = ServerController.handleGetRequest(
-                session,
-                scope
-            )
+            val response = when (session.method) {
+                Method.GET -> {
+                    ServerController.handleGetRequest(session)
+                }
+                Method.POST -> {
+                    ServerController.handlePostRequest(session, handler)
+                }
+                else -> {
+                    null
+                }
+            }
             if (response != null) {
                 return response
             }
@@ -58,7 +64,7 @@ class HttpServer(
         }
         try {
             return password == EntropyUtils.aesDecode(
-                UdpServer.multicastMsgKey,
+                ScreencastInterceptor.KEY_AUTHORIZATION,
                 authorization.substring("Bearer ".length),
                 Base64.NO_WRAP
             )
@@ -76,5 +82,9 @@ class HttpServer(
         )
         val json = JsonHelper.toJson(jsonData)
         return newFixedLengthResponse(json)
+    }
+
+    fun setScreenReceiveHandler(handler: ScreencastReceiveHandler?) {
+        this.handler = handler
     }
 }

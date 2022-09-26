@@ -12,6 +12,7 @@ import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.extension.notificationManager
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.services.ScreencastProvideService
+import com.xyoye.common_component.services.ScreencastReceiveService
 
 /**
  * <pre>
@@ -25,15 +26,38 @@ class NotificationReceiver : BroadcastReceiver() {
 
     @Autowired
     lateinit var screencastProvideService: ScreencastProvideService
+    @Autowired
+    lateinit var screencastReceiveService: ScreencastReceiveService
 
     private object Action {
         const val CANCEL_SCREENCAST_PROVIDE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_PROVIDE"
+        const val CANCEL_SCREENCAST_RECEIVE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_RECEIVE"
     }
 
     companion object {
+
+        /**
+         * 关闭投屏投送服务
+         */
         fun cancelScreencastProvidePendingBroadcast(context: Context): PendingIntent {
             val intent = Intent(context, NotificationReceiver::class.java).apply {
                 action = Action.CANCEL_SCREENCAST_PROVIDE
+            }
+
+            val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+            return PendingIntent.getBroadcast(context, 0, intent, flag)
+        }
+
+        /**
+         * 关闭投屏接收服务
+         */
+        fun cancelScreencastReceivePendingBroadcast(context: Context): PendingIntent {
+            val intent = Intent(context, NotificationReceiver::class.java).apply {
+                action = Action.CANCEL_SCREENCAST_RECEIVE
             }
 
             val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -55,6 +79,10 @@ class NotificationReceiver : BroadcastReceiver() {
                 context,
                 Notifications.Id.SCREENCAST_PROVIDE
             )
+            Action.CANCEL_SCREENCAST_RECEIVE -> cancelScreencastReceive(
+                context,
+                Notifications.Id.SCREENCAST_RECEIVE
+            )
         }
     }
 
@@ -63,6 +91,16 @@ class NotificationReceiver : BroadcastReceiver() {
      */
     private fun cancelScreencastProvide(context: Context, notificationId: Int) {
         screencastProvideService.stopService(context)
+        ContextCompat.getMainExecutor(context).execute {
+            dismissNotification(context, notificationId)
+        }
+    }
+
+    /**
+     * 关闭投屏内容提供服务
+     */
+    private fun cancelScreencastReceive(context: Context, notificationId: Int) {
+        screencastReceiveService.stopService(context)
         ContextCompat.getMainExecutor(context).execute {
             dismissNotification(context, notificationId)
         }

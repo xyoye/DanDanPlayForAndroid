@@ -21,6 +21,10 @@ class ScreencastProvideServiceImpl : ScreencastProvideService {
 
     }
 
+    override fun isRunning(context: Context): Boolean {
+        return com.xyoye.stream_component.services.ScreencastProvideService.isRunning(context)
+    }
+
     override fun startService(context: Context, receiver: MediaLibraryEntity) {
         com.xyoye.stream_component.services.ScreencastProvideService.start(context, receiver)
     }

@@ -2,6 +2,9 @@ package com.xyoye.common_component.utils
 
 import android.text.TextUtils
 import android.util.Base64
+import com.xyoye.common_component.extension.isInvalid
+import java.io.File
+import java.io.FileInputStream
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -23,6 +26,33 @@ object EntropyUtils {
         val messageDigest = MessageDigest.getInstance("MD5")
         messageDigest.update(string!!.toByteArray())
         return buffer2Hex(messageDigest.digest())
+    }
+
+    /**
+     * 获取文件MD5值
+     */
+    fun file2Md5(file: File): String? {
+        if (file.isInvalid()) {
+            return null
+        }
+
+        val messageDigest = MessageDigest.getInstance("MD5")
+        var fileInputStream: FileInputStream? = null
+        val buffer = ByteArray(1024)
+        var length: Int
+        try {
+            fileInputStream = FileInputStream(file)
+            while (fileInputStream.read(buffer).also { length = it } != -1) {
+                messageDigest.update(buffer, 0, length)
+            }
+            return buffer2Hex(messageDigest.digest())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            IOUtils.closeIO(fileInputStream)
+        }
+
+        return null
     }
 
     /**

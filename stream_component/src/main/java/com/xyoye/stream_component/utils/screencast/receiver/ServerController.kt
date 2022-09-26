@@ -1,17 +1,11 @@
 package com.xyoye.stream_component.utils.screencast.receiver
 
-import com.alibaba.android.arouter.launcher.ARouter
-import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.JsonHelper
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.CommonJsonData
-import com.xyoye.data_component.enums.MediaType
+import com.xyoye.data_component.data.screeencast.ScreencastData
+import com.xyoye.stream_component.services.ScreencastReceiveHandler
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.io.IOException
 
 /**
  * <pre>
@@ -24,18 +18,36 @@ import kotlinx.coroutines.launch
 object ServerController {
 
     fun handleGetRequest(
-        session: NanoHTTPD.IHTTPSession,
-        scope: CoroutineScope
+        session: NanoHTTPD.IHTTPSession
     ): NanoHTTPD.Response? {
-        val uri = session.uri
-        val parameters = session.parameters
-        val requestIpAddress = session.remoteIpAddress
-        if (uri == "/init") {
-            return init()
-        } else if (uri == "/play") {
-            return play(requestIpAddress, parameters, scope)
+        return when (session.uri) {
+            "/init" -> init()
+            else -> null
         }
-        return null
+    }
+
+    fun handlePostRequest(
+        session: NanoHTTPD.IHTTPSession,
+        handler: ScreencastReceiveHandler?
+    ): NanoHTTPD.Response? {
+        val postData: Map<String, String?> = HashMap()
+        try {
+            session.parseBody(postData)
+        } catch (ioe: IOException) {
+            return NanoHTTPD.newFixedLengthResponse(
+                NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                NanoHTTPD.MIME_PLAINTEXT,
+                "SERVER INTERNAL ERROR: IOException: " + ioe.message
+            )
+        } catch (re: NanoHTTPD.ResponseException) {
+            return NanoHTTPD.newFixedLengthResponse(re.status, NanoHTTPD.MIME_PLAINTEXT, re.message)
+        }
+
+
+        return when (session.uri) {
+            "/play" -> play(session, postData, handler)
+            else -> null
+        }
     }
 
     /**
@@ -49,37 +61,19 @@ object ServerController {
      * 播放视频
      */
     private fun play(
-        requestIpAddress: String,
-        parameters: Map<String, List<String>>,
-        scope: CoroutineScope
+        session: NanoHTTPD.IHTTPSession,
+        postData: Map<String, String?>,
+        handler: ScreencastReceiveHandler?
     ): NanoHTTPD.Response {
-        var videoUrl = parameters["video_url"]?.first()
-        if (videoUrl.isNullOrEmpty()) {
-            return createResponse(
-                code = 502,
-                success = false,
-                message = "资源路径为空"
-            )
-        }
-        if (videoUrl.contains("127.0.0.1")) {
-            videoUrl = videoUrl.replace("127.0.0.1", requestIpAddress)
-        }
-
-        scope.launch(Dispatchers.IO) {
-            val videoSource = VideoSourceFactory.Builder()
-                .setVideoSources(listOf(videoUrl))
-                .create(MediaType.STREAM_LINK)
-            if (videoSource == null) {
-                ToastCenter.showError("播放失败，无法打开播放资源")
-                return@launch
-            }
-            VideoSourceManager.getInstance().setSource(videoSource)
-            ARouter.getInstance()
-                .build(RouteTable.Player.Player)
-                .navigation()
-        }
-
-
+        val screencastData = postData["postData"]?.run {
+            JsonHelper.parseJson<ScreencastData>(this)
+        } ?: return createResponse(
+            code = 502,
+            success = false,
+            message = "无法读取资源"
+        )
+        screencastData.apply { ip = session.remoteIpAddress }
+        handler?.onReceiveVideo(screencastData)
         return createResponse()
     }
 

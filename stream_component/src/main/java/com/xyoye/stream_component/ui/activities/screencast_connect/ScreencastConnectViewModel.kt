@@ -1,6 +1,5 @@
 package com.xyoye.stream_component.ui.activities.screencast_connect
 
-import android.util.Base64
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
@@ -8,13 +7,11 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestError
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.data_component.bean.UDPDeviceBean
 import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.screencast.provider.UdpClient
-import com.xyoye.stream_component.utils.screencast.receiver.UdpServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -27,12 +24,12 @@ class ScreencastConnectViewModel : BaseViewModel() {
 
     fun startReceive() {
         viewModelScope.launch(Dispatchers.IO) {
-            UdpClient.startReceive { considerAddDevice(it) }
+            UdpClient.startMulticastReceive { considerAddDevice(it) }
         }
     }
 
     fun stopReceive() {
-        UdpClient.release()
+        UdpClient.stopMulticastReceive()
     }
 
     fun connectDevice(device: UDPDeviceBean, password: String?) {
@@ -44,7 +41,7 @@ class ScreencastConnectViewModel : BaseViewModel() {
                 Retrofit.screencastService.init(
                     host = device.ipAddress ?: "",
                     port = device.httpPort,
-                    authorization = createAuthorization(password)
+                    authorization = password
                 )
             }
 
@@ -68,13 +65,14 @@ class ScreencastConnectViewModel : BaseViewModel() {
             return
         }
         val addedDevice = devices.find {
-            it.ipAddress == device.ipAddress
+            it.ipAddress == device.ipAddress && it.httpPort == device.httpPort
         }
         if (addedDevice != null) {
             devices.remove(addedDevice)
         }
 
         devices.add(device)
+        devices.sortBy { it.ipAddress + it.httpPort }
         foundDevices.postValue(devices)
     }
 
@@ -82,9 +80,9 @@ class ScreencastConnectViewModel : BaseViewModel() {
         viewModelScope.launch {
             val entity = MediaLibraryEntity(
                 displayName = device.deviceName,
-                url = device.ipAddress ?: "",
+                url = "http://${device.ipAddress}:${device.httpPort}",
+                screencastAddress = device.ipAddress ?: "",
                 port = device.httpPort,
-                describe = "http://${device.ipAddress}:${device.httpPort}",
                 password = password,
                 mediaType = MediaType.SCREEN_CAST
             )
@@ -92,21 +90,5 @@ class ScreencastConnectViewModel : BaseViewModel() {
                 .getMediaLibraryDao()
                 .insert(entity)
         }
-    }
-
-    private fun createAuthorization(password: String?): String? {
-        if (password == null || password.isEmpty()) {
-            return null
-        }
-
-        val authorization = EntropyUtils.aesEncode(
-            UdpServer.multicastMsgKey,
-            password,
-            Base64.NO_WRAP
-        )
-        if (authorization == null || authorization.isEmpty()) {
-            return null
-        }
-        return "Bearer $authorization"
     }
 }

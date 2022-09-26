@@ -23,6 +23,7 @@ import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.enums.*
@@ -39,7 +40,7 @@ import java.io.File
 
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
-    PlayerReceiverListener {
+    PlayerReceiverListener, ScreencastHandler {
 
     private val danmuViewModel: PlayerDanmuViewModel by viewModels()
 
@@ -117,6 +118,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onHeadsetRemoved() {
         dataBinding.danDanPlayer.pause()
+    }
+
+    override fun playScreencast(videoSource: BaseVideoSource) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            applyPlaySource(videoSource)
+        }
     }
 
     private fun checkPlayParams(source: BaseVideoSource?): Boolean {

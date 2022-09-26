@@ -51,6 +51,10 @@
         <service
             android:name=".services.ScreencastProvideService"
             android:exported="false" />
+
+        <service
+            android:name=".services.ScreencastReceiveService"
+            android:exported="false" />
     </application>
 
 </manifest>

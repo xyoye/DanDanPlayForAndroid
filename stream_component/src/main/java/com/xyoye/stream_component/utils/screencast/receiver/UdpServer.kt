@@ -6,12 +6,14 @@ import android.text.TextUtils
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.EntropyUtils
+import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.bean.UDPDeviceBean
 import kotlinx.coroutines.*
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.MulticastSocket
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * <pre>
@@ -39,20 +41,44 @@ object UdpServer {
     //组播次数
     private var multicastCount = 0
 
-    private var isRunning = false
+    private var isRunning = AtomicBoolean(false)
 
     /**
-     * 启动组播
+     * 启动组播发送
      */
-    suspend fun startMulticast(httpPort: Int, needPassword: Boolean = false) = suspendCancellableCoroutine<Unit> {
+    suspend fun startMulticastEmit(httpPort: Int, needPassword: Boolean) {
+        stopMulticastEmit()
+
+        if (initMulticastSocket().not()) {
+            return
+        }
+
+        isRunning.set(true)
         multicastCount = 0
+        while (isRunning.get()) {
+            sendMulticast(httpPort, needPassword)
+            delay(timeMillis = multicastIntervalMs)
+        }
+    }
 
-        stopMulticast()
+    /**
+     * 停止组播发送
+     */
+    fun stopMulticastEmit() {
+        isRunning.set(false)
+        IOUtils.closeIO(multicastSocket)
+        multicastSocket = null
+    }
 
+    /**
+     * 初始化组播Socket
+     */
+    private fun initMulticastSocket(): Boolean {
         try {
             multicastAddress = InetAddress.getByName(multicastHostName)
             if (!multicastAddress!!.isMulticastAddress) {
                 DDLog.e(TAG, "${multicastHostName}不是组播地址")
+                return false
             }
             multicastSocket = MulticastSocket()
         } catch (e: Exception) {
@@ -60,25 +86,10 @@ object UdpServer {
         }
 
         if (multicastSocket == null) {
-            return@suspendCancellableCoroutine
+            return false
         }
 
-        isRunning = true
-        runBlocking {
-            while (isRunning) {
-                sendMulticast(httpPort, needPassword)
-                delay(timeMillis = multicastIntervalMs)
-            }
-        }
-    }
-
-    /**
-     * 关闭组播
-     */
-    fun stopMulticast() {
-        isRunning = false
-        multicastSocket?.close()
-        multicastSocket = null
+        return true
     }
 
     /**
@@ -99,8 +110,9 @@ object UdpServer {
             if (TextUtils.isEmpty(entropyMsg)) {
                 return
             }
+            DDLog.i(UdpServer::class.java.simpleName, entropyMsg!!)
 
-            val data = entropyMsg!!.toByteArray()
+            val data = entropyMsg.toByteArray()
 
             val sendPacket =
                 DatagramPacket(data, data.size, multicastAddress, multicastPort)

@@ -17,6 +17,7 @@ import com.xyoye.common_component.source.factory.LocalSourceFactory
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.StorageFileBean
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +43,7 @@ class LocalMediaViewModel : BaseViewModel() {
     val fileLiveData = MutableLiveData<List<StorageFileBean>>()
 
     val playLiveData = MutableLiveData<Any>()
+    val castLiveData = MutableLiveData<MediaLibraryEntity>()
 
     private val curDirectories = mutableListOf<StorageFileBean>()
     private val curDirectoryFiles = mutableListOf<VideoEntity>()
@@ -134,34 +136,48 @@ class LocalMediaViewModel : BaseViewModel() {
 
     fun playItem(filePath: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val videoSources =
-                DatabaseManager.instance.getVideoDao().getFolderVideoByFilePath(filePath)
-            videoSources.sortWith(FileComparator(
-                value = { getFileName(it.filePath) },
-                isDirectory = { false }
-            ))
-
-            //如果视频地址对应的目录下找不到，可能视频已经被移除
-            val index = videoSources.indexOfFirst { it.filePath == filePath }
-            if (index == -1) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
+            if (setupVideoSource(filePath)) {
+                playLiveData.postValue(Any())
             }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(videoSources)
-                .setIndex(index)
-                .create(MediaType.LOCAL_STORAGE)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    fun castFile(data: StorageFileBean, device: MediaLibraryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupVideoSource(data.filePath)) {
+                castLiveData.postValue(device)
+            }
+        }
+    }
+
+    private suspend fun setupVideoSource(filePath: String): Boolean {
+        val videoSources =
+            DatabaseManager.instance.getVideoDao().getFolderVideoByFilePath(filePath)
+        videoSources.sortWith(FileComparator(
+            value = { getFileName(it.filePath) },
+            isDirectory = { false }
+        ))
+
+        //如果视频地址对应的目录下找不到，可能视频已经被移除
+        val index = videoSources.indexOfFirst { it.filePath == filePath }
+        if (index == -1) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+
+        showLoading()
+        val mediaSource = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setIndex(index)
+            .create(MediaType.LOCAL_STORAGE)
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 
     fun refreshDirectoryWithHistory() {
@@ -320,13 +336,15 @@ class LocalMediaViewModel : BaseViewModel() {
         val uniqueKey = LocalSourceFactory.generateUniqueKey(videoEntity)
         val history = PlayHistoryUtils.getPlayHistory(uniqueKey, MediaType.LOCAL_STORAGE)
 
-        if (history?.danmuPath.toFile().isInvalid()) {
+        val danmuPath = history?.danmuPath
+        if (danmuPath.isNullOrEmpty().not() && danmuPath.toFile().isInvalid()) {
             DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
                 uniqueKey, MediaType.LOCAL_STORAGE, null, 0
             )
         }
 
-        if (history?.subtitlePath.toFile().isInvalid()) {
+        val subtitlePath = history?.subtitlePath
+        if (subtitlePath.isNullOrEmpty().not() && subtitlePath.toFile().isInvalid()) {
             DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
                 uniqueKey, MediaType.LOCAL_STORAGE, null
             )

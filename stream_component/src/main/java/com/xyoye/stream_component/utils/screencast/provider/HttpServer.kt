@@ -1,6 +1,7 @@
 package com.xyoye.stream_component.utils.screencast.provider
 
-import com.xyoye.common_component.utils.EntropyUtils
+import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.stream_component.services.ScreencastProvideHandler
 import fi.iki.elonen.NanoHTTPD
 
 /**
@@ -11,16 +12,17 @@ import fi.iki.elonen.NanoHTTPD
  * </pre>
  */
 
-class HttpServer(private val filePath: String, port: Int) : NanoHTTPD(port) {
+class HttpServer(private val videoSource: BaseVideoSource, port: Int) : NanoHTTPD(port) {
+    private var handler: ScreencastProvideHandler? = null
 
     override fun serve(session: IHTTPSession?): Response {
         if (session != null && session.method == Method.GET) {
-            return ServerController.handleGetRequest(filePath, session)
+            return ServerController.handleGetRequest(videoSource, session, handler)
         }
         return super.serve(session)
     }
 
-    fun getProxyUrl(): String {
-        return "http://127.0.0.1:$listeningPort/${EntropyUtils.string2Md5(filePath)}"
+    fun setScreenProvideHandler(handler: ScreencastProvideHandler) {
+        this.handler = handler
     }
 }

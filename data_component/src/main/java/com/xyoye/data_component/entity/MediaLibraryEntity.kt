@@ -5,6 +5,7 @@ import androidx.room.*
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.BooleanConverter
 import com.xyoye.data_component.helper.MediaTypeConverter
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -61,5 +62,13 @@ data class MediaLibraryEntity(
     var remoteSecret: String? = null,
 
     @ColumnInfo(name = "web_dav_strict")
-    var webDavStrict: Boolean = true
-) : Parcelable
+    var webDavStrict: Boolean = true,
+
+    @ColumnInfo(name = "screencast_address")
+    var screencastAddress: String = ""
+) : Parcelable {
+
+    @Ignore
+    @IgnoredOnParcel
+    var running: Boolean = false
+}

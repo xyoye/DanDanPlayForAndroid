@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -336,6 +337,24 @@
                         android:textColor="@color/text_black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
+                    <androidx.legacy.widget.Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/screencast_status_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_text_circle_theme"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="3dp"
+                        android:text="@string/tips_screencast_receiving"
+                        android:textColor="@color/text_theme"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
                 </LinearLayout>
 
             </LinearLayout>

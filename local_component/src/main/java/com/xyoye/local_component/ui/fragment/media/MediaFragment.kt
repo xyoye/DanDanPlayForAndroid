@@ -1,6 +1,8 @@
 package com.xyoye.local_component.ui.fragment.media
 
 import android.Manifest
+import androidx.core.view.isVisible
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
@@ -10,6 +12,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -40,6 +43,9 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         private const val ACTION_DELETE_STORAGE = 12
     }
 
+    @Autowired
+    lateinit var provideService: ScreencastProvideService
+
     override fun initViewModel() = ViewModelInit(
         BR.viewModel,
         MediaViewModel::class.java
@@ -48,6 +54,8 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
     override fun getLayoutId() = R.layout.fragment_media
 
     override fun initView() {
+        ARouter.getInstance().inject(this)
+
         viewModel.initLocalStorage()
 
         initRv()
@@ -56,7 +64,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             addMediaStorage()
         }
 
-        viewModel.mediaLibLiveData.observe(this) {
+        viewModel.mediaLibWithStatusLiveData.observe(this) {
             dataBinding.mediaLibRv.setData(it)
         }
     }
@@ -74,11 +82,16 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 MediaType.STREAM_LINK,
                                 MediaType.MAGNET_LINK,
                                 MediaType.REMOTE_STORAGE,
-                                MediaType.SMB_SERVER,
-                                MediaType.SCREEN_CAST -> data.describe
+                                MediaType.SMB_SERVER -> data.describe
                                 else -> data.url
                             }
                             libraryCoverIv.setImageResource(data.mediaType.getCover())
+
+                            screencastStatusTv.isVisible = data.mediaType == MediaType.SCREEN_CAST && data.running
+                            screencastStatusTv.setOnClickListener {
+                                showStopServiceDialog()
+                            }
+
                             itemLayout.setOnClickListener {
                                 requestPermissions(
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -197,7 +210,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .navigation()
             }
             MediaType.SCREEN_CAST -> {
-                ToastCenter.showToast("请前往其它媒体库选择文件投屏")
+                viewModel.checkScreenDeviceRunning(data)
             }
         }
     }
@@ -246,6 +259,19 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 addPositive { dialog ->
                     dialog.dismiss()
                     viewModel.deleteStorage(data)
+                }
+                addNegative()
+            }.build().show()
+    }
+
+    private fun showStopServiceDialog() {
+        CommonDialog.Builder(requireActivity())
+            .apply {
+                content = "确认停止投屏投送服务？"
+                positiveText = "确认"
+                addPositive { dialog ->
+                    dialog.dismiss()
+                    provideService.stopService(requireActivity())
                 }
                 addNegative()
             }.build().show()

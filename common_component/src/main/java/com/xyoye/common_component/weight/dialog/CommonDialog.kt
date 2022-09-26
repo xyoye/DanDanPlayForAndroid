@@ -44,6 +44,7 @@ open class CommonDialog private constructor(
         var positiveClickListener: ((CommonDialog) -> Unit)? = null
         var noShowAgain: Boolean = false
         var noShowAgainListener: ((Boolean) -> Unit)? = null
+        var doOnDismiss: (() -> Unit)? = null
 
         open fun addNegative(
             negativeText: String = "取消",
@@ -66,6 +67,11 @@ open class CommonDialog private constructor(
         open fun addNoShowAgain(listener: (Boolean) -> Unit): Builder {
             noShowAgain = true
             noShowAgainListener = listener
+            return this
+        }
+
+        open fun doOnDismiss(action: () -> Unit): Builder {
+            doOnDismiss = action
             return this
         }
 
@@ -105,7 +111,10 @@ open class CommonDialog private constructor(
 
             setPositiveListener { positiveClickListener?.invoke(this@CommonDialog) }
 
-            setOnDismissListener { delayTimer.cancel() }
+            setOnDismissListener {
+                delayTimer.cancel()
+                doOnDismiss?.invoke()
+            }
 
             if (delayConfirm) {
                 delayTimer.start()

@@ -22,10 +22,12 @@ object Notifications {
 
     object Channel {
         const val SCREENCAST_PROVIDE = "screencast_provide_channel"
+        const val SCREENCAST_RECEIVE = "screencast_receive_channel"
     }
 
     object Id {
         const val SCREENCAST_PROVIDE = 1001
+        const val SCREENCAST_RECEIVE = 1002
     }
 
     fun setupNotificationChannels(context: Context) {
@@ -54,6 +56,14 @@ object Notifications {
                     NotificationManagerCompat.IMPORTANCE_LOW
                 ) {
                     setName("投屏内容提供服务")
+                    setGroup(ChannelGroup.SCREENCAST)
+                    setShowBadge(false)
+                },
+                buildNotificationChannel(
+                    Channel.SCREENCAST_RECEIVE,
+                    NotificationManagerCompat.IMPORTANCE_LOW
+                ) {
+                    setName("投屏内容接收服务")
                     setGroup(ChannelGroup.SCREENCAST)
                     setShowBadge(false)
                 }

@@ -72,5 +72,6 @@ object RouteTable {
         const val ScreencastReceiver = "/stream/screencast_receiver"
         const val ScreencastConnect = "/stream/screencast_connect"
         const val ScreencastProvide = "/stream/screencast_provide"
+        const val ScreencastReceive = "/stream/screencast_receive"
     }
 }

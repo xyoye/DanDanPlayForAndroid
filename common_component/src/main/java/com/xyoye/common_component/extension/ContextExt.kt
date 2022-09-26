@@ -1,5 +1,6 @@
 package com.xyoye.common_component.extension
 
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -38,4 +39,12 @@ fun Context.notificationBuilder(
         builder.block()
     }
     return builder
+}
+
+@Suppress("DEPRECATION")
+fun Context.isServiceRunning(serviceClass: Class<*>): Boolean {
+    val className = serviceClass.name
+    val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val runningServices = manager.getRunningServices(Integer.MAX_VALUE)
+    return runningServices.any { it.service.className == className }
 }

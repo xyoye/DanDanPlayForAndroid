@@ -89,6 +89,12 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE media_library ADD COLUMN screencast_address TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -106,7 +112,8 @@ class DatabaseManager private constructor() {
         MIGRATION_3_4,
         MIGRATION_4_5,
         MIGRATION_5_6,
-        MIGRATION_6_7
+        MIGRATION_6_7,
+        MIGRATION_7_8
     ).build()
 
 }

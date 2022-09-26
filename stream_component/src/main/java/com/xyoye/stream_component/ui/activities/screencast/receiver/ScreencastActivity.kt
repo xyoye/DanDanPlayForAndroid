@@ -1,9 +1,7 @@
 package com.xyoye.stream_component.ui.activities.screencast.receiver
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -12,6 +10,7 @@ import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption
 import com.huawei.hms.ml.scan.HmsScan
 import com.xyoye.common_component.base.BaseActivity
+import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.extension.toResColor
@@ -23,13 +22,13 @@ import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityScreenCastBinding
+import com.xyoye.stream_component.services.ScreencastReceiveService
 import kotlin.random.Random
 
 
 @Route(path = RouteTable.Stream.ScreencastReceiver)
 class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastBinding>() {
 
-    private lateinit var multicastLock: WifiManager.MulticastLock
     private var httpPort = 0
 
     override fun initViewModel() =
@@ -44,47 +43,37 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
         title = "投屏接收端"
 
-        initUdpLock()
-
         initListener()
 
         initPort()
 
         initPassword()
 
-        setupDisableStyle()
+        if (ScreencastReceiveService.isRunning(this)) {
+            setupEnabledStyle()
+        } else {
+            setupDisableStyle()
+        }
 
         viewModel.initIpPort()
     }
 
-    override fun onDestroy() {
-        viewModel.stopServer()
-        multicastLock.release()
-        super.onDestroy()
-    }
-
-    private fun initUdpLock() {
-        val manager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        multicastLock = manager.createMulticastLock("udp_multicast")
-        multicastLock.acquire()
-    }
-
     private fun initListener() {
+        ServiceLifecycleBridge.getScreencastReceiveObserver().observe(this) {
+            if (it) {
+                setupEnabledStyle()
+            } else {
+                setupDisableStyle()
+            }
+        }
+
         dataBinding.serverSwitchTv.setOnClickListener {
-            if (viewModel.serverStatusLiveData.value == true) {
-                viewModel.stopServer()
+            if (ScreencastReceiveService.isRunning(this)) {
+                stopService()
                 return@setOnClickListener
             }
-            var password: String? = null
-            if (dataBinding.setPasswordRb.isChecked) {
-                val inputPwd = dataBinding.passwordEt.text.toString()
-                if (inputPwd.isEmpty() || inputPwd.length != 8) {
-                    ToastCenter.showWarning("密码需要设置为8位")
-                    return@setOnClickListener
-                }
-                password = inputPwd
-            }
-            viewModel.startServer(password, httpPort)
+
+            startService()
         }
 
         dataBinding.passwordRadioGp.setOnCheckedChangeListener { _, checkedId ->
@@ -111,22 +100,14 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
                 title = "提示"
                 content = "确认更换端口号？\n\n更换后已连接设备需要重新连接"
                 addPositive {
-                    val port = Random.nextInt(20000, 30000)
-                    ScreencastConfig.putReceiverPort(port)
-                    dataBinding.portTv.text = port.toString()
+                    httpPort = Random.nextInt(20000, 30000)
+                    ScreencastConfig.putReceiverPort(httpPort)
+                    dataBinding.portTv.text = httpPort.toString()
                     it.dismiss()
                 }
                 addNegative { it.dismiss() }
                 build()
             }.show()
-        }
-
-        viewModel.serverStatusLiveData.observe(this) {
-            if (it) {
-                setupEnabledStyle()
-            } else {
-                setupDisableStyle()
-            }
         }
     }
 
@@ -152,6 +133,26 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         } else if (receiverPwd.isNullOrEmpty().not()) {
             dataBinding.passwordEt.setText(receiverPwd)
         }
+    }
+
+    private fun startService() {
+        var password: String? = null
+        if (dataBinding.setPasswordRb.isChecked) {
+            val inputPwd = dataBinding.passwordEt.text.toString()
+            if (inputPwd.isEmpty() || inputPwd.length != 8) {
+                ToastCenter.showWarning("密码需要设置为8位")
+                return
+            }
+            password = inputPwd
+        }
+
+        ScreencastConfig.putReceiverPassword(password ?: "")
+        ScreencastConfig.putUseReceiverPassword(password.isNullOrEmpty().not())
+        ScreencastReceiveService.start(this, httpPort, password)
+    }
+
+    private fun stopService() {
+        ScreencastReceiveService.stop(this)
     }
 
     private fun setupDisableStyle() {

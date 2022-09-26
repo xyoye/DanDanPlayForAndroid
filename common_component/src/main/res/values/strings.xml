@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">弹弹play 概念版</string>
     <string name="text_dialog_config">确定</string>
     <string name="text_dialog_cancel">取消</string>
     <string name="title_common_dialog">提示</string>

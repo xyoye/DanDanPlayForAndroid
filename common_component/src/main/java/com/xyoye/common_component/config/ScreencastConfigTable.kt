@@ -25,4 +25,12 @@ object ScreencastConfigTable {
     @MMKVFiled
     //投屏接收端端口
     var receiverPort: Int = 0
+
+    @MMKVFiled
+    //接收到投屏时需手动确认
+    var receiveNeedConfirm: Boolean = true
+
+    @MMKVFiled
+    //投屏时，优先使用本地已缓存的弹幕/字幕
+    var useHistoryExtraSource: Boolean = false
 }

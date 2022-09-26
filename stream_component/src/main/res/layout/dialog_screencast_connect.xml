@@ -65,7 +65,6 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:singleLine="true"
-                    android:text="@={serverData.url}"
                     android:textColor="@color/text_black"
                     android:textColorHint="@color/text_gray"
                     android:textSize="14sp" />

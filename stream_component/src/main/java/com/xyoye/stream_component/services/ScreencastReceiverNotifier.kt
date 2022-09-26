@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import com.xyoye.common_component.extension.notificationBuilder
 import com.xyoye.common_component.extension.notificationManager
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.receiver.NotificationReceiver
 import com.xyoye.stream_component.R
@@ -11,15 +12,15 @@ import com.xyoye.stream_component.R
 /**
  * <pre>
  *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/14
+ *     time  : 2022/9/16
  *     desc  :
  * </pre>
  */
 
-class ScreencastProvideNotifier(private val context: Context) {
+class ScreencastReceiverNotifier(private val context: Context) {
 
     private val cancelIntent by lazy {
-        NotificationReceiver.cancelScreencastProvidePendingBroadcast(context)
+        NotificationReceiver.cancelScreencastReceivePendingBroadcast(context)
     }
 
     private val notificationBitmap by lazy {
@@ -27,8 +28,8 @@ class ScreencastProvideNotifier(private val context: Context) {
     }
 
     val notificationBuilder by lazy {
-        context.notificationBuilder(Notifications.Channel.SCREENCAST_PROVIDE) {
-            setContentTitle("投屏内容提供服务")
+        context.notificationBuilder(Notifications.Channel.SCREENCAST_RECEIVE) {
+            setContentTitle("投屏接收服务")
             setLargeIcon(notificationBitmap)
             setSmallIcon(R.mipmap.ic_logo)
             setOngoing(true)
@@ -41,11 +42,11 @@ class ScreencastProvideNotifier(private val context: Context) {
         }
     }
 
-    fun showProvideVideo(name: String) {
-        notificationBuilder.setContentText("投屏中：$name")
+    fun showReceivedVideo(name: String) {
+        notificationBuilder.setContentText("最近投屏：$name")
 
         context.notificationManager.notify(
-            Notifications.Id.SCREENCAST_PROVIDE,
+            Notifications.Id.SCREENCAST_RECEIVE,
             notificationBuilder.build(),
         )
     }

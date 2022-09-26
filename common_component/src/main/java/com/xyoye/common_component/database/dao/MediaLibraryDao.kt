@@ -22,7 +22,7 @@ interface MediaLibraryDao {
 
     @Query("SELECT * FROM media_library WHERE media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun getByMediaTypeSuspend(mediaType: MediaType): MediaLibraryEntity?
+    suspend fun getByMediaTypeSuspend(mediaType: MediaType): MutableList<MediaLibraryEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: MediaLibraryEntity)

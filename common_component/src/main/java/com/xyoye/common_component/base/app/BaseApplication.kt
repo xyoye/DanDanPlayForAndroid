@@ -8,6 +8,7 @@ import com.tencent.bugly.Bugly
 import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.notification.Notifications
+import com.xyoye.common_component.utils.ActivityHelper
 import com.xyoye.common_component.utils.SecurityHelper
 
 /**
@@ -47,5 +48,6 @@ open class BaseApplication : Application() {
             BuildConfig.DEBUG
         )
         Notifications.setupNotificationChannels(this)
+        ActivityHelper.instance.init(this)
     }
 }

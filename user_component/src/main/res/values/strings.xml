@@ -67,6 +67,7 @@
     <string name="tips_last_choose_folder">上次选择目录</string>
     <string name="tips_current_open_folder">本次打开目录</string>
     <string name="action_commonly_folder_manager">常用目录管理</string>
+    <string name="tips_screencast_receiving">运行中</string>
 
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>

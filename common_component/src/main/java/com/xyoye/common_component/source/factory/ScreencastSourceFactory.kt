@@ -1,6 +1,7 @@
 package com.xyoye.common_component.source.factory
 
-import com.xyoye.common_component.config.ScreencastConfig
+import com.xyoye.common_component.extension.md5
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.source.base.VideoSourceFactory
@@ -63,38 +64,21 @@ object ScreencastSourceFactory {
         video: ScreencastVideoData,
         history: PlayHistoryEntity?
     ): Pair<Int, String?> {
-        //优先读取本地历史弹幕
-        if (ScreencastConfig.isUseHistoryExtraSource()) {
-            var danmuData = getDanmuFromLocal(history)
-            if (danmuData.second.isNullOrEmpty()) {
-                danmuData = getDanmuFromRemote(screencastData, video)
-            }
-            return danmuData
-        }
-
-        //优先读取远端投屏弹幕
-        var danmuData = getDanmuFromRemote(screencastData, video)
-        if (danmuData.second.isNullOrEmpty()) {
-            danmuData = getDanmuFromLocal(history)
-        }
-        return danmuData
-    }
-
-    /**
-     * 获取视频关联的弹幕，从投屏远端
-     */
-    private suspend fun getDanmuFromRemote(
-        screencastData: ScreencastData,
-        video: ScreencastVideoData
-    ): Pair<Int, String?> {
-        val defaultResult = Pair(0, null)
-
+        //历史使用的弹幕
+        val historyDanmu = Pair(history?.episodeId ?: 0, history?.danmuPath)
+        //投屏远端弹幕地址
         val danmuUrl = screencastData.getDanmuUrl(video.videoIndex)
         try {
             val response = Retrofit.extService.downloadResourceWithHeader(danmuUrl)
-            if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return defaultResult
-            val responseBody = response.body() ?: return defaultResult
+            if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return historyDanmu
+            val responseBody = response.body() ?: return historyDanmu
 
+            //投屏弹幕与历史弹幕相同，使用历史弹幕
+            if (isSameMd5(response.headers()["danmuMd5"], historyDanmu.second)) {
+                return historyDanmu
+            }
+
+            //下载并使用投屏弹幕
             val danmuPath = DanmuUtils.saveDanmu(
                 fileName = "${getFileNameNoExtension(video.videoTitle)}.xml",
                 inputStream = responseBody.byteStream()
@@ -104,21 +88,8 @@ object ScreencastSourceFactory {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return defaultResult
-    }
-
-    /**
-     * 获取视频关联的弹幕，从本地历史
-     */
-    private fun getDanmuFromLocal(history: PlayHistoryEntity?): Pair<Int, String?> {
-        val defaultResult = Pair(0, null)
-
-        val danmuPath = history?.danmuPath
-        if (danmuPath.isNullOrEmpty()) {
-            return defaultResult
-        }
-
-        return Pair(history.episodeId, danmuPath)
+        //使用历史弹幕
+        return historyDanmu
     }
 
     /**
@@ -129,37 +100,22 @@ object ScreencastSourceFactory {
         video: ScreencastVideoData,
         history: PlayHistoryEntity?
     ): String? {
-        //优先读取本地历史字幕
-        if (ScreencastConfig.isUseHistoryExtraSource()) {
-            var subtitle = getSubtitleFromLocal(history)
-            if (subtitle.isNullOrEmpty()) {
-                subtitle = getSubtitleFromRemote(screencastData, video)
-            }
-            return subtitle
-        }
-
-        //优先读取远端投屏字幕
-        var subtitle = getSubtitleFromRemote(screencastData, video)
-        if (subtitle.isNullOrEmpty()) {
-            subtitle = getSubtitleFromLocal(history)
-        }
-        return subtitle
-    }
-
-    /**
-     * 获取视频关联的字幕，从投屏远端
-     */
-    private suspend fun getSubtitleFromRemote(
-        screencastData: ScreencastData,
-        video: ScreencastVideoData
-    ): String? {
-        val subtitleUrl = screencastData.getSubtitleUrl(video.videoIndex)
+        //历史使用的字幕
+        val historySubtitle = history?.subtitlePath
+        //投屏远端字幕地址
+        val remoteSubtitleUrl = screencastData.getSubtitleUrl(video.videoIndex)
 
         try {
-            val response = Retrofit.extService.downloadResourceWithHeader(subtitleUrl)
-            if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return null
-            val responseBody = response.body() ?: return null
+            val response = Retrofit.extService.downloadResourceWithHeader(remoteSubtitleUrl)
+            if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return historySubtitle
+            val responseBody = response.body() ?: return historySubtitle
 
+            //投屏字幕与历史字幕相同，使用历史字幕
+            if (isSameMd5(response.headers()["subtitleMd5"], historySubtitle)) {
+                return historySubtitle
+            }
+
+            //下载并使用投屏字幕
             val subtitleSuffix = response.headers()["subtitleSuffix"] ?: "ass"
             val subtitleFileName = "${getFileNameNoExtension(video.videoTitle)}.${subtitleSuffix}"
             return SubtitleUtils.saveSubtitle(
@@ -170,18 +126,18 @@ object ScreencastSourceFactory {
             e.printStackTrace()
         }
 
-        return null
+        //使用历史字幕
+        return historySubtitle
     }
 
     /**
-     * 获取视频关联的字幕，从本地历史
+     * 判断文件MD5与目标MD5值是否相同
      */
-    private fun getSubtitleFromLocal(history: PlayHistoryEntity?): String? {
-        val subtitlePath = history?.subtitlePath
-        if (subtitlePath.isNullOrEmpty()) {
-            return null
+    private fun isSameMd5(targetMd5: String?, sourceFilePath: String?): Boolean {
+        if (targetMd5 == null || targetMd5.isEmpty()) {
+            return false
         }
-
-        return subtitlePath
+        val sourceMd5 = sourceFilePath?.toFile()?.md5()
+        return targetMd5 == sourceMd5
     }
 }

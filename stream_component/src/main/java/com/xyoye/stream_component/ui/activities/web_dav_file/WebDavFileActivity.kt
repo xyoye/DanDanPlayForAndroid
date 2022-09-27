@@ -10,6 +10,7 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.StorageAdapter
@@ -33,6 +34,9 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
         MediaType.WEBDAV_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
         openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+        castFile = { data, device ->
+            viewModel.castItem(data.uniqueKey ?: "", device)
+        },
         openDirectory = { viewModel.openDirectory(it.filePath) }
     )
 
@@ -66,6 +70,11 @@ class WebDavFileActivity : BaseActivity<WebDavFileViewModel, ActivityWebDavFileB
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()
+        }
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(this, it)
         }
         viewModel.listStorageRoot(webDavData!!)
     }

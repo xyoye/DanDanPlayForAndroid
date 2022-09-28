@@ -172,7 +172,7 @@ class SettingDanmuConfigView(
         PlayerInitializer.Danmu.offsetPosition = position
         val offsetSecond = PlayerInitializer.Danmu.offsetPosition / 1000f
         viewBinding.danmuExtraTimeEt.setText(offsetSecond.toString())
-        mControlWrapper.updateOffsetTime()
+        mControlWrapper.updateDanmuOffsetTime()
         onConfigChanged()
     }
 

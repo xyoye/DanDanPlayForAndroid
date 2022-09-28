@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -67,8 +68,13 @@ public class FormatASS implements TimedTextFileFormat {
         //first lets load the file
         //creating a reader with correct encoding
         Charset defaultCharset = Charset.forName("GBK");
-        InputStreamReader in = (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
-        BufferedReader br = new BufferedReader(in);
+        Reader reader = ReaderFactory.createReaderFromFile(file, defaultCharset);
+        BufferedReader br;
+        if (reader instanceof InputStreamReader) {
+            br = new BufferedReader(reader);
+        } else {
+            br = (BufferedReader) reader;
+        }
         String line;
         int lineCounter = 0;
         try {
@@ -227,7 +233,7 @@ public class FormatASS implements TimedTextFileFormat {
             tto.warnings += "unexpected end of file, maybe last caption is not complete.\n\n";
         } finally {
             //we close the reader
-            in.close();
+            reader.close();
         }
 
         tto.built = true;

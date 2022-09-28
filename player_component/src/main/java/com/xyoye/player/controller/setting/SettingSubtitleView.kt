@@ -40,7 +40,7 @@ class SettingSubtitleView(
 
     override fun attach(controlWrapper: ControlWrapper) {
         mControlWrapper = controlWrapper
-        mControlWrapper.setDanmuLoadedCallback { sourceUrl, isLoaded ->
+        mControlWrapper.setSubtitleLoadedCallback { sourceUrl, isLoaded ->
             onSubtitleLoaded(sourceUrl, isLoaded)
         }
     }
@@ -203,7 +203,7 @@ class SettingSubtitleView(
             viewBinding.subtitleOffsetTimeLl.requestFocus()
             PlayerInitializer.Subtitle.offsetPosition -= 500
             updateOffsetEt()
-            mControlWrapper.updateOffsetTime()
+            mControlWrapper.updateSubtitleOffsetTime()
         }
 
         viewBinding.subtitleExtraTimeAdd.setOnClickListener {
@@ -211,7 +211,7 @@ class SettingSubtitleView(
             viewBinding.subtitleOffsetTimeLl.requestFocus()
             PlayerInitializer.Subtitle.offsetPosition += 500
             updateOffsetEt()
-            mControlWrapper.updateOffsetTime()
+            mControlWrapper.updateSubtitleOffsetTime()
         }
 
         viewBinding.subtitleExtraTimeEt.setOnEditorActionListener { _, actionId, _ ->
@@ -224,7 +224,7 @@ class SettingSubtitleView(
 
                 PlayerInitializer.Subtitle.offsetPosition = (newOffsetSecond * 1000).toLong()
                 updateOffsetEt()
-                mControlWrapper.updateOffsetTime()
+                mControlWrapper.updateSubtitleOffsetTime()
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -241,8 +241,6 @@ class SettingSubtitleView(
         if (targetTrack.isChecked) {
             return
         }
-        targetTrack.isChecked = true
-        viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(position)
 
         val currentTrackIndex = subtitleTrackList.indexOfFirst { it.isChecked }
         if (currentTrackIndex != -1) {
@@ -250,9 +248,12 @@ class SettingSubtitleView(
             viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(currentTrackIndex)
         }
 
+        subtitleTrackList[position].isChecked = true
+        viewBinding.subtitleTrackRv.adapter?.notifyItemChanged(position)
+
         when {
             //选中“无”的字幕流
-            TrackUtils.isEmptyTrack(subtitleTrackList[currentTrackIndex]) -> {
+            TrackUtils.isEmptyTrack(targetTrack) -> {
                 mControlWrapper.selectTrack(null, subtitleTrackList[currentTrackIndex])
                 mControlWrapper.setTextSubtitleDisable()
                 mControlWrapper.setImageSubtitleEnable(false)

@@ -178,8 +178,8 @@ class ControlWrapper(
         mDanmuController.updateDanmuStoke()
     }
 
-    override fun updateOffsetTime() {
-        mDanmuController.updateOffsetTime()
+    override fun updateDanmuOffsetTime() {
+        mDanmuController.updateDanmuOffsetTime()
     }
 
     override fun danmuRelease() {
@@ -240,8 +240,8 @@ class ControlWrapper(
      * ------------------Subtitle Controller----------------------
      */
 
-    override fun setDanmuLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
-        mSubtitleController.setDanmuLoadedCallback(callback)
+    override fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
+        mSubtitleController.setSubtitleLoadedCallback(callback)
     }
 
     override fun setImageSubtitleEnable(enable: Boolean) {
@@ -282,6 +282,10 @@ class ControlWrapper(
 
     override fun updateStrokeColor() {
         mSubtitleController.updateStrokeColor()
+    }
+
+    override fun updateSubtitleOffsetTime() {
+        mSubtitleController.updateSubtitleOffsetTime()
     }
 
     override fun subtitleRelease() {

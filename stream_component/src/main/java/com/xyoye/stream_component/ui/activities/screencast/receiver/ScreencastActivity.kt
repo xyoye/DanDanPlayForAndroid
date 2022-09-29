@@ -55,6 +55,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             setupDisableStyle()
         }
 
+        dataBinding.needConfirmSwitch.isChecked = ScreencastConfig.isReceiveNeedConfirm()
+
         viewModel.initIpPort()
     }
 
@@ -108,6 +110,10 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
                 addNegative { it.dismiss() }
                 build()
             }.show()
+        }
+
+        dataBinding.needConfirmSwitch.setOnCheckedChangeListener { _, isChecked ->
+            ScreencastConfig.putReceiveNeedConfirm(isChecked)
         }
     }
 

@@ -46,7 +46,7 @@
             android:theme="@style/DialogActivityTheme" />
         <activity
             android:name=".ui.activities.screencast.receiver.ScreencastActivity"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="screenSize" />
 
         <service
             android:name=".services.ScreencastProvideService"

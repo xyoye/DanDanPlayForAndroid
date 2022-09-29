@@ -77,4 +77,11 @@
         <item name="android:background">@color/transparent</item>
         <item name="behavior_skipCollapsed">true</item>
     </style>
+
+    <style name="SwitchCompatLight" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/theme</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/theme</item>
+    </style>
 </resources>

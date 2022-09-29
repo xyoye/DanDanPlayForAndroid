@@ -196,7 +196,6 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             return false
         }
 
-        // todo 自定义弹窗样式，可设置自动接收
         //展示弹窗询问是否接收投屏
         return withContext(Dispatchers.Main) {
             suspendCancellableCoroutine { continuation ->

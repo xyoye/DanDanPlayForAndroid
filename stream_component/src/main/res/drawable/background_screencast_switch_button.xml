@@ -13,10 +13,18 @@
             <item android:left="1dp">
                 <shape>
                     <corners android:bottomRightRadius="12dp" android:topRightRadius="12dp" />
-                    <solid android:color="@color/white" />
+                    <solid android:color="@color/item_bg_color" />
                 </shape>
             </item>
         </layer-list>
+    </item>
+
+    <item android:state_focused="true">
+
+        <shape>
+            <corners android:bottomRightRadius="12dp" android:topRightRadius="12dp" />
+            <solid android:color="@color/blue" />
+        </shape>
     </item>
 
     <item>

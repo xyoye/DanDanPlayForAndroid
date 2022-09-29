@@ -40,7 +40,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/download_size_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/download_name_tv" />
+            app:layout_constraintTop_toTopOf="@+id/download_name_tv"
+            app:theme="@style/Theme.DanDanPlay.CheckBox" />
 
 
         <TextView

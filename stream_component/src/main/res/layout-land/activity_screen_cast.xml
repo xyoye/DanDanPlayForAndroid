@@ -183,7 +183,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
 
                 <View
                     android:layout_width="0dp"
@@ -197,7 +198,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:checked="false"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
             </RadioGroup>
 
             <TextView
@@ -325,7 +327,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:theme="@style/SwitchCompatLight" />
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +13,8 @@
             android:layout_height="wrap_content"
             android:checked="true"
             android:textColor="@color/text_black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:theme="@style/Theme.DanDanPlay.CheckBox" />
 
         <TextView
             android:id="@+id/danmu_source_describe_tv"
@@ -38,21 +40,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="@string/text_default_format_danmu" />
+                android:text="@string/text_default_format_danmu"
+                app:theme="@style/Theme.DanDanPlay.RadioButton"/>
 
             <RadioButton
                 android:id="@+id/danmu_simplified_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="@string/text_simplified_format_danmu" />
+                android:text="@string/text_simplified_format_danmu"
+                app:theme="@style/Theme.DanDanPlay.RadioButton" />
 
             <RadioButton
                 android:id="@+id/danmu_traditional_rb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="@string/text_traditional_format_danmu" />
+                android:text="@string/text_traditional_format_danmu"
+                app:theme="@style/Theme.DanDanPlay.RadioButton" />
 
         </RadioGroup>
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -52,8 +53,8 @@
     </style>
 
     <style name="LoadingDialog.Animation" parent="android:Animation">
-        <item name="android:windowEnterAnimation" >@anim/anim_activity_enter</item>
-        <item name="android:windowExitAnimation" >@anim/anim_activity_exit</item>
+        <item name="android:windowEnterAnimation">@anim/anim_activity_enter</item>
+        <item name="android:windowExitAnimation">@anim/anim_activity_exit</item>
     </style>
 
     <style name="BaseBottomDialogStyle">
@@ -61,7 +62,7 @@
         <item name="android:windowExitAnimation">@anim/anime_dialog_exit</item>
     </style>
 
-    <style name="DividerStyle" >
+    <style name="DividerStyle">
         <item name="android:background">@color/item_border_color</item>
     </style>
 
@@ -73,15 +74,24 @@
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/Bottom_Sheet_Modal</item>
     </style>
+
     <style name="Bottom_Sheet_Modal" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@color/transparent</item>
         <item name="behavior_skipCollapsed">true</item>
     </style>
 
-    <style name="SwitchCompatLight" parent="Theme.AppCompat.Light">
+    <style name="Theme.DanDanPlay.Widget" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/theme</item>
         <item name="colorPrimaryDark">@color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlNormal">@color/theme</item>
+        <item name="colorControlNormal">@color/gray</item>
+        <item name="colorControlActivated">@color/theme</item>
+        <item name="colorControlHighlight">@color/theme</item>
     </style>
+
+    <style name="Theme.DanDanPlay.CheckBox" parent="Theme.DanDanPlay.Widget" />
+
+    <style name="Theme.DanDanPlay.SwitchCompat" parent="Theme.DanDanPlay.Widget" />
+
+    <style name="Theme.DanDanPlay.RadioButton" parent="Theme.DanDanPlay.Widget" />
 </resources>

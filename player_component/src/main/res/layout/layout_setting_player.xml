@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
@@ -43,11 +44,11 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/orientation_change_sw"
-                    style="@style/Widget.AppCompat.CompoundButton.Switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"
+                    app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -67,11 +68,11 @@
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/auto_play_next_sw"
-                    style="@style/Widget.AppCompat.CompoundButton.Switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"
+                    app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
             </RelativeLayout>
 
             <TextView

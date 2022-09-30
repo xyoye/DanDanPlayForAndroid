@@ -60,6 +60,9 @@ abstract class BaseBottomDialog<T : ViewDataBinding>(
             setGravity(Gravity.BOTTOM)
         }
 
+        //默认展开
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         setContentView(rootViewBinding.root)
 
         initView(childViewBinding)
@@ -175,7 +178,6 @@ abstract class BaseBottomDialog<T : ViewDataBinding>(
      */
     protected fun disableSheetDrag() {
         behavior.isDraggable = false
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     abstract fun getChildLayoutId(): Int

@@ -117,4 +117,9 @@ interface InterVideoPlayer {
      *  是否由播放器处理外挂弹幕
      */
     fun interceptSubtitle(subtitlePath: String): Boolean
+
+    /**
+     * 更新字幕偏移时间
+     */
+    fun updateSubtitleOffsetTime()
 }

@@ -368,4 +368,8 @@ class DanDanVideoPlayer(
             addView(it, mDefaultLayoutParams)
         }
     }
+
+    override fun updateSubtitleOffsetTime() {
+        mVideoPlayer.setSubtitleOffset(PlayerInitializer.Subtitle.offsetPosition)
+    }
 }

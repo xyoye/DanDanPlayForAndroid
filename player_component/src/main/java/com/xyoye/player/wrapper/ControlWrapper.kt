@@ -286,6 +286,7 @@ class ControlWrapper(
 
     override fun updateSubtitleOffsetTime() {
         mSubtitleController.updateSubtitleOffsetTime()
+        mVideoPlayer.updateSubtitleOffsetTime()
     }
 
     override fun subtitleRelease() {

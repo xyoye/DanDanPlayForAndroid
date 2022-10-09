@@ -95,6 +95,11 @@ abstract class AbstractVideoPlayer {
     abstract fun setLooping(isLooping: Boolean)
 
     /**
+     * 字幕时间调节
+     */
+    abstract fun setSubtitleOffset(offsetMs: Long)
+
+    /**
      * 选中资源流
      */
     abstract fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?)

@@ -160,6 +160,10 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         libVlc = LibVLC(mContext, options)
     }
 
+    override fun setSubtitleOffset(offsetMs: Long) {
+        mMediaPlayer.spuDelay = offsetMs * 1000
+    }
+
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
         if (select != null && isPlayerAvailable()) {
             if (select.isAudio) {

@@ -169,6 +169,10 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         exoplayer.playWhenReady = true
     }
 
+    //not support
+    override fun setSubtitleOffset(offsetMs: Long) {
+    }
+
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
         mTrackHelper.selectExoTrack(mContext, mTrackSelector, select, exoplayer.currentTracks)
     }

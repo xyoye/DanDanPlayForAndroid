@@ -204,6 +204,10 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     }
 
+    //not support
+    override fun setSubtitleOffset(offsetMs: Long) {
+    }
+
     override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
         var needSeek = false
         if (deselect != null) {

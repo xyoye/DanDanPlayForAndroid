@@ -17,5 +17,7 @@ kapt {
 dependencies {
     implementation(project(":common_component"))
 
+    implementation(Dependencies.Alibaba.alicloud_feedback)
+
     kapt(Dependencies.Alibaba.arouter_compiler)
 }

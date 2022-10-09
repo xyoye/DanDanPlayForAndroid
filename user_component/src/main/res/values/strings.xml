@@ -31,6 +31,7 @@
     <string name="action_bilibili_danmu_download">BiliBili弹幕下载</string>
     <string name="action_shooter_subtitle_download">射手(伪)字幕下载</string>
     <string name="action_app_setting">应用设置</string>
+    <string name="action_feedback">意见反馈</string>
     <string name="action_cache_manager">缓存目录管理</string>
     <string name="text_system_cache">系统缓存</string>
     <string name="text_file_cache">文件缓存</string>

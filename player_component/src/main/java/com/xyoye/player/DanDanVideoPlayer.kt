@@ -232,6 +232,9 @@ class DanDanVideoPlayer(
             PlayerConstant.MEDIA_INFO_VIDEO_ROTATION_CHANGED -> {
                 mRenderView?.setVideoRotation(extra)
             }
+            PlayerConstant.MEDIA_INFO_URL_EMPTY -> {
+                setPlayState(PlayState.STATE_ERROR)
+            }
         }
     }
 

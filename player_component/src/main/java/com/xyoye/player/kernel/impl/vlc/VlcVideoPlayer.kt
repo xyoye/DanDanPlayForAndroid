@@ -1,6 +1,8 @@
 package com.xyoye.player.kernel.impl.vlc
 
+import android.content.ContentResolver
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
@@ -57,7 +59,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             return
         }
 
-        var videoUri = if (path.startsWith("/") || path.startsWith("content://")) {
+        var videoUri = if (path.startsWith("/")) {
             Uri.fromFile(File(path))
         } else {
             Uri.parse(path)
@@ -72,7 +74,21 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             videoUri = Uri.parse(proxyUrl)
         }
 
-        mMedia = Media(libVlc, videoUri)
+        mMedia = if(videoUri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val fd = try {
+                mContext.contentResolver
+                    .openAssetFileDescriptor(videoUri, "r")
+            } catch (ignored: Exception) {
+                null
+            }
+            if(fd == null) {
+                mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_URL_EMPTY, 0)
+                return
+            }
+            Media(libVlc, fd)
+        } else {
+            Media(libVlc, videoUri)
+        }
 
         //是否开启硬件加速
         if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DISABLE) {

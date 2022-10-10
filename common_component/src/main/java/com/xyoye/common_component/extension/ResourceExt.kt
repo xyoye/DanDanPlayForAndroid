@@ -9,16 +9,17 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.utils.theme.ThemedContext
 
 /**
  * Created by xyoye on 2021/3/20.
  */
 
-fun Int.toResColor(context: Context = BaseApplication.getAppContext()): Int {
+fun Int.toResColor(context: Context = ThemedContext.get()): Int {
     return ContextCompat.getColor(context, this)
 }
 
-fun Int.toResDrawable(context: Context = BaseApplication.getAppContext()): Drawable? {
+fun Int.toResDrawable(context: Context = ThemedContext.get()): Drawable? {
     return ContextCompat.getDrawable(context, this)
 }
 

@@ -1,6 +1,7 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
+import android.view.KeyEvent
 import androidx.lifecycle.LiveData
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.VideoTrackBean
@@ -18,7 +19,7 @@ class SettingController(
     private val addView: (InterSettingView) -> Unit
 ) : InterSettingController {
 
-    private lateinit var playerSettingView: SettingPlayerView
+    private lateinit var playerSettingView: PlayerSettingView
     private lateinit var danmuSettingView: SettingDanmuView
     private lateinit var subtitleSettingView: SettingSubtitleView
     private lateinit var switchSourceView: SwitchSourceView
@@ -68,6 +69,19 @@ class SettingController(
 
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        val iterator = showingSettingViews.iterator()
+        while (iterator.hasNext()) {
+            val view = iterator.next()
+            if (view.isSettingShowing()) {
+                if (view.onKeyDown(keyCode, event)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     override fun settingRelease() {
 
     }
@@ -97,8 +111,8 @@ class SettingController(
 
     fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
         if (isAudio) {
-            (getSettingView(SettingViewType.PLAYER_SETTING) as SettingPlayerView)
-                .updateAudioTrack(trackData)
+//            (getSettingView(SettingViewType.PLAYER_SETTING) as SettingPlayerView)
+//                .updateAudioTrack(trackData)
         } else {
             (getSettingView(SettingViewType.SUBTITLE_SETTING) as SettingSubtitleView)
                 .updateSubtitleTrack(trackData)
@@ -114,7 +128,7 @@ class SettingController(
         when (type) {
             SettingViewType.PLAYER_SETTING -> {
                 if (this::playerSettingView.isInitialized.not()) {
-                    playerSettingView = SettingPlayerView(context)
+                    playerSettingView = PlayerSettingView(context)
                     addView.invoke(playerSettingView)
                 }
                 return playerSettingView

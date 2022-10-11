@@ -1,6 +1,7 @@
 package com.xyoye.player.wrapper
 
 import android.graphics.PointF
+import android.view.KeyEvent
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
@@ -314,6 +315,10 @@ class ControlWrapper(
 
     override fun onSubtitleSourceChanged() {
         mSettingController.onSubtitleSourceChanged()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return mSettingController.onKeyDown(keyCode, event)
     }
 
     override fun showSettingView(viewType: SettingViewType) {

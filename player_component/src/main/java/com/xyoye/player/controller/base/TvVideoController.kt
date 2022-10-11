@@ -27,7 +27,7 @@ abstract class TvVideoController(
         return if (intercept) {
             true
         } else {
-            super.onKeyDown(keyCode, event)
+            mControlWrapper.onKeyDown(keyCode, event)
         }
     }
 

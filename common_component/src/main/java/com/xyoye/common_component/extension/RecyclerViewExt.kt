@@ -1,5 +1,7 @@
 package com.xyoye.common_component.extension
 
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,5 +43,17 @@ fun RecyclerView.setData(items: List<Any>) {
         if (this is BaseAdapter) {
             this.setData(items)
         }
+    }
+}
+
+inline fun <reified T> RecyclerView.getChildViewBindingAt(index: Int): T? {
+    val binding = getChildAt(index)?.run {
+        DataBindingUtil.getBinding<ViewDataBinding>(this)
+    } ?: return null
+
+    return if (binding is T) {
+        binding
+    } else {
+        null
     }
 }

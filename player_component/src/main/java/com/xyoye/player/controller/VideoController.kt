@@ -31,7 +31,6 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.subtitle.MixedSubtitle
-import kotlin.math.max
 
 /**
  * Created by xyoye on 2020/11/3.
@@ -59,7 +58,7 @@ class VideoController(
     private val loadingView = LoadingView(context)
 
     private var lastPlayPosition = 0L
-    private var lastVideoSpeed = 0
+    private var lastVideoSpeed: Float? = null
 
     private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
@@ -221,7 +220,7 @@ class VideoController(
     /**
      * 设置上次播放速度
      */
-    fun setLastPlaySpeed(speed: Int) {
+    fun setLastPlaySpeed(speed: Float) {
         lastVideoSpeed = speed
     }
 
@@ -352,13 +351,9 @@ class VideoController(
     }
 
     private fun considerSetVideoSpeed() {
-        if (lastVideoSpeed <= 0) {
-            return
+        lastVideoSpeed?.let {
+            mControlWrapper.setSpeed(it)
         }
-
-        var speed = 4.0f * lastVideoSpeed / 100f
-        speed = max(0.25f, speed)
-        mControlWrapper.setSpeed(speed)
-        lastVideoSpeed = 0
+        lastVideoSpeed = null
     }
 }

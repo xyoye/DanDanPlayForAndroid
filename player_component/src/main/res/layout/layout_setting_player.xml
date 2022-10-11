@@ -129,14 +129,21 @@
                     tools:text="1.0" />
             </RelativeLayout>
 
-            <SeekBar
+
+            <com.google.android.material.slider.Slider
                 android:id="@+id/video_speed_sb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:max="100" />
+                android:stepSize="0.05"
+                android:theme="@style/Theme.MaterialComponents.DayNight"
+                android:valueFrom="0.25"
+                android:valueTo="4"
+                app:haloColor="@color/theme"
+                app:thumbColor="@color/theme"
+                app:tickColor="@color/theme"
+                app:trackColor="@color/gray_60" />
 
             <TextView
                 android:layout_width="wrap_content"

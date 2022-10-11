@@ -47,7 +47,7 @@ object PlayerConfigTable {
 
     //视频倍速
     @MMKVFiled
-    val videoSpeed = 25
+    val newVideoSpeed = 1f
 
     //自动播放下一集
     @MMKVFiled

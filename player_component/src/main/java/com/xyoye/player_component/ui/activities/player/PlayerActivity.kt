@@ -234,7 +234,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())
-            setLastPlaySpeed(PlayerConfig.getVideoSpeed())
+            setLastPlaySpeed(PlayerConfig.getNewVideoSpeed())
         }
 
         dataBinding.danDanPlayer.apply {
@@ -317,7 +317,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.surfaceType =
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
         //视频速度
-        PlayerInitializer.Player.videoSpeed = PlayerConfig.getVideoSpeed()
+        PlayerInitializer.Player.videoSpeed = PlayerConfig.getNewVideoSpeed()
         //自动播放下一集
         PlayerInitializer.Player.isAutoPlayNext = PlayerConfig.isAutoPlayNext()
 

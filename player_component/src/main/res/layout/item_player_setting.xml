@@ -14,11 +14,11 @@
             android:layout_height="50dp"
             android:background="@drawable/background_player_setting_item"
             android:focusable="true"
-            android:padding="10dp"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_brightness" />
+            tools:src="@drawable/ic_setting_video_aspect" />
 
         <com.xyoye.common_component.weight.MarqueeTextView
             android:id="@+id/tv_setting"

@@ -1,17 +1,22 @@
 package com.xyoye.player.controller.setting
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.getChildViewBindingAt
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
+import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.info.SettingAction
 import com.xyoye.player.info.SettingActionType
 import com.xyoye.player.info.SettingItem
@@ -55,8 +60,12 @@ class PlayerSettingView(
         return SettingViewType.PLAYER_SETTING
     }
 
-    override fun onViewShowed() {
-
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onViewShow() {
+        settingItems.asSequence()
+            .filter { it is SettingItem }
+            .forEach { applyItemStatus(it as SettingItem) }
+        viewBinding.settingRv.adapter?.notifyDataSetChanged()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -132,11 +141,6 @@ class PlayerSettingView(
         }
     }
 
-    private fun onItemClick(position: Int, item: SettingItem) {
-        item.selected = !item.selected
-        viewBinding.settingRv.adapter?.notifyItemChanged(position)
-    }
-
     /**
      * 根据KeyCode目标焦点ItemBinding
      */
@@ -188,7 +192,7 @@ class PlayerSettingView(
                 //item按分类分组
                 val groupedItemMap = settingItems.asSequence()
                     .filter { it is SettingItem }
-                    .groupBy { (it as SettingItem).type }
+                    .groupBy { (it as SettingItem).action.type }
                 //当前焦点所在分组
                 val focusedList = groupedItemMap.values
                     .find { it.contains(focusedItem) }
@@ -228,11 +232,73 @@ class PlayerSettingView(
                 it.type
             }.entries.forEach {
                 items.add(it.key)
-                items.addAll(it.value.map { action ->
-                    SettingItem(action.type, action.display, action.icon)
-                })
+                items.addAll(
+                    it.value.map { action -> SettingItem(action, action.display, action.icon) }
+                )
             }
         return items
     }
 
+    private fun applyItemStatus(item: SettingItem) {
+        var selected = false
+
+        when (item.action) {
+            SettingAction.VIDEO_ASPECT -> {
+                selected = PlayerInitializer.screenScale != VideoScreenScale.SCREEN_SCALE_DEFAULT
+            }
+            SettingAction.VIDEO_SPEED -> {
+                selected =
+                    PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
+            }
+            SettingAction.DANMU_LOAD -> {
+                selected = TextUtils.isEmpty(mControlWrapper.getDanmuUrl()).not()
+            }
+            SettingAction.DANMU_TIME -> {
+                selected =
+                    PlayerInitializer.Danmu.offsetPosition != PlayerInitializer.Danmu.DEFAULT_POSITION
+            }
+            SettingAction.DANMU_STYLE -> {
+                selected = PlayerInitializer.Danmu.size != PlayerInitializer.Danmu.DEFAULT_SIZE
+                        || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
+                        || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
+                        || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
+            }
+            SettingAction.SUBTITLE_TIME -> {
+                selected =
+                    PlayerInitializer.Subtitle.offsetPosition != PlayerInitializer.Subtitle.DEFAULT_POSITION
+            }
+            SettingAction.SCREEN_ORIENTATION -> {
+                selected = PlayerInitializer.isOrientationEnabled
+            }
+            SettingAction.NEXT_EPISODE -> {
+                selected = PlayerInitializer.Player.isAutoPlayNext
+            }
+            else -> {}
+        }
+        item.selected = selected
+    }
+
+    private fun onItemClick(position: Int, item: SettingItem) {
+        when (item.action) {
+            SettingAction.SCREEN_ORIENTATION -> {
+                val newStatus = !PlayerInitializer.isOrientationEnabled
+                PlayerInitializer.isOrientationEnabled = newStatus
+                PlayerConfig.putAllowOrientationChange(newStatus)
+                item.selected = newStatus
+                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+            }
+            SettingAction.NEXT_EPISODE -> {
+                val newStatus = !PlayerInitializer.Player.isAutoPlayNext
+                PlayerInitializer.Player.isAutoPlayNext = newStatus
+                PlayerConfig.putAutoPlayNext(newStatus)
+                item.selected = newStatus
+                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+            }
+            SettingAction.VIDEO_SPEED -> {
+                mControlWrapper.showSettingView(SettingViewType.VIDEO_SPEED)
+                onSettingVisibilityChanged(false)
+            }
+            else -> {}
+        }
+    }
 }

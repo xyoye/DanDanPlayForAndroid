@@ -20,7 +20,7 @@ object PlayerInitializer {
     var selectSourceDirectory: String? = null
 
     object Player {
-        const val DEFAULT_SPEED = 25
+        const val DEFAULT_SPEED = 1f
 
         var isMediaCodeCEnabled = false
         var isMediaCodeCH265Enabled = false
@@ -28,7 +28,7 @@ object PlayerInitializer {
         var pixelFormat = PixelFormat.PIXEL_AUTO
         var vlcPixelFormat = VLCPixelFormat.PIXEL_RGB_32
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
-        var videoSpeed = 1f
+        var videoSpeed = DEFAULT_SPEED
         var isAutoPlayNext = true
     }
 
@@ -59,7 +59,8 @@ object PlayerInitializer {
     }
 
     object Subtitle {
-        var offsetPosition = 0L
+        const val DEFAULT_POSITION = 0L
+        var offsetPosition = DEFAULT_POSITION
 
         var textSize = 20
         var strokeWidth = 5

@@ -7,6 +7,8 @@ enum class SettingAction(val type: SettingActionType, val display: String, val i
 
     VIDEO_SPEED(SettingActionType.VIDEO, "倍速", R.drawable.ic_setting_video_speed),
 
+    VIDEO_STREAM(SettingActionType.VIDEO, "音轨", R.drawable.ic_setting_audio_stream),
+
     DANMU_LOAD(SettingActionType.DANMU, "装载", R.drawable.ic_setting_add_source),
 
     DANMU_CONFIG(SettingActionType.DANMU, "配置", R.drawable.ic_setting_danmu_block),
@@ -22,8 +24,6 @@ enum class SettingAction(val type: SettingActionType, val display: String, val i
     SUBTITLE_STYLE(SettingActionType.SUBTITLE, "样式", R.drawable.ic_setting_style),
 
     SUBTITLE_TIME(SettingActionType.SUBTITLE, "时间", R.drawable.ic_setting_time),
-
-    VIDEO_STREAM(SettingActionType.OTHER, "音轨", R.drawable.ic_setting_audio_stream),
 
     SCREEN_ORIENTATION(SettingActionType.OTHER, "屏幕翻转", R.drawable.ic_setting_rotate),
 

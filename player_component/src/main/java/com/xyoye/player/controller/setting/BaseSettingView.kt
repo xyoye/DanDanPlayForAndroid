@@ -59,6 +59,7 @@ abstract class BaseSettingView<V : ViewDataBinding> @JvmOverloads constructor(
                 .setDuration(500)
                 .setListener(object : ViewPropertyAnimatorListener {
                     override fun onAnimationStart(view: View) {
+                        onViewShow()
                     }
 
                     override fun onAnimationEnd(view: View) {
@@ -120,6 +121,10 @@ abstract class BaseSettingView<V : ViewDataBinding> @JvmOverloads constructor(
     }
 
     open fun getGravity() = Gravity.END
+
+    open fun onViewShow() {
+
+    }
 
     open fun onViewShowed() {
 

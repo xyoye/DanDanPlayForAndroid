@@ -7,7 +7,7 @@ enum class SettingAction(val type: SettingActionType, val display: String, val i
 
     VIDEO_SPEED(SettingActionType.VIDEO, "倍速", R.drawable.ic_setting_video_speed),
 
-    VIDEO_STREAM(SettingActionType.VIDEO, "音轨", R.drawable.ic_setting_audio_stream),
+    AUDIO_STREAM(SettingActionType.VIDEO, "音轨", R.drawable.ic_setting_audio_stream),
 
     DANMU_LOAD(SettingActionType.DANMU, "装载", R.drawable.ic_setting_add_source),
 

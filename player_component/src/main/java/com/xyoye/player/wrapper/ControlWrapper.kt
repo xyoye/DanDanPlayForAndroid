@@ -3,6 +3,7 @@ package com.xyoye.player.wrapper
 import android.graphics.PointF
 import android.view.KeyEvent
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -97,7 +98,20 @@ class ControlWrapper(
         mVideoPlayer.selectTrack(select, deselect)
     }
 
-    override fun interceptSubtitle(subtitlePath: String) = mVideoPlayer.interceptSubtitle(subtitlePath)
+    override fun interceptSubtitle(subtitlePath: String) =
+        mVideoPlayer.interceptSubtitle(subtitlePath)
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getAudioStream()
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getSubtitleStream()
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        return mVideoPlayer.selectStream(stream)
+    }
 
     /**
      * ------------------Video Controller----------------------

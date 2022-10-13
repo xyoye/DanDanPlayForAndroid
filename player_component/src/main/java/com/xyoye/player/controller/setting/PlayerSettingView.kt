@@ -299,6 +299,10 @@ class PlayerSettingView(
                 mControlWrapper.showSettingView(SettingViewType.VIDEO_ASPECT)
                 onSettingVisibilityChanged(false)
             }
+            SettingAction.AUDIO_STREAM -> {
+                mControlWrapper.showSettingView(SettingViewType.AUDIO_STREAM)
+                onSettingVisibilityChanged(false)
+            }
             else -> {}
         }
     }

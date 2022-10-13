@@ -31,6 +31,7 @@ class SettingController(
     private lateinit var searchDanmuView: SearchDanmuView
     private lateinit var videoSpeedView: SettingVideoSpeedView
     private lateinit var videoAspectView: SettingVideoAspectView
+    private lateinit var audioStreamView: SettingAudioStreamView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
 
@@ -211,6 +212,13 @@ class SettingController(
                     addView.invoke(videoAspectView)
                 }
                 return videoAspectView
+            }
+            SettingViewType.AUDIO_STREAM -> {
+                if (this::audioStreamView.isInitialized.not()) {
+                    audioStreamView = SettingAudioStreamView(context)
+                    addView.invoke(audioStreamView)
+                }
+                return audioStreamView
             }
         }
     }

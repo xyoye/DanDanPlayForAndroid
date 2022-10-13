@@ -38,44 +38,73 @@ inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
 /**
  * 从当前位置寻找上一个T类型的Item
  * @param currentIndex 当前位置
- * @param loop 到达开头时，返回结尾位置
  */
-inline fun <reified T> List<*>.previousItemIndex(currentIndex: Int, loop: Boolean = true): Int {
-    if (this.isEmpty()) {
-        return -1
+inline fun <reified T> List<*>.previousItemIndex(currentIndex: Int): Int {
+    return findIndexOnLeft(currentIndex, loop = true) {
+        it is T
     }
-    for (index in (currentIndex - 1) downTo 0) {
-        if (this[index] is T) {
-            return index
-        }
-    }
-
-    if (loop) {
-        return this.indexOfLast { it is T }
-    }
-
-    return -1
 }
 
 
 /**
  * 从当前位置寻找下一个T类型的Item
  * @param currentIndex 当前位置
- * @param loop 到达结尾时，返回开头位置
  */
-inline fun <reified T> List<*>.nextItemIndex(currentIndex: Int, loop: Boolean = true): Int {
+inline fun <reified T> List<*>.nextItemIndex(currentIndex: Int): Int {
+    return findIndexOnRight(currentIndex, loop = true) {
+        it is T
+    }
+}
+
+
+/**
+ * 从当前位置往左寻找目标
+ * @param from 当前位置
+ * @param loop 左边无目标时，返回右边最后一个索引
+ */
+fun <T> List<T>.findIndexOnLeft(
+    from: Int,
+    loop: Boolean = false,
+    predicate: (T) -> Boolean
+): Int {
     if (this.isEmpty()) {
         return -1
     }
-    for (index in (currentIndex + 1) until size) {
-        if (this[index] is T) {
+
+    for (index in from - 1 downTo 0) {
+        if (predicate.invoke(this[index])) {
             return index
         }
     }
 
     if (loop) {
-        return this.indexOfFirst { it is T }
+        return this.indexOfLast { predicate.invoke(it) }
+    }
+    return -1
+}
+
+/**
+ * 从当前位置的往右寻找目标
+ * @param from 当前位置
+ * @param loop 右边无目标时，返回左边第一个索引
+ */
+fun <T> List<T>.findIndexOnRight(
+    from: Int,
+    loop: Boolean = false,
+    predicate: (T) -> Boolean
+): Int {
+    if (this.isEmpty()) {
+        return -1
     }
 
+    for (index in from + 1 until size) {
+        if (predicate.invoke(this[index])) {
+            return index
+        }
+    }
+
+    if (loop) {
+        return this.indexOfFirst { predicate.invoke(it) }
+    }
     return -1
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.cache.CacheManager
 import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -311,7 +312,7 @@ class DanDanVideoPlayer(
      * 保存播放信息
      */
     fun recordPlayInfo() {
-        if (this::videoSource.isInitialized.not()){
+        if (this::videoSource.isInitialized.not()) {
             return
         }
         //保存最后一帧
@@ -371,5 +372,17 @@ class DanDanVideoPlayer(
 
     override fun updateSubtitleOffsetTime() {
         mVideoPlayer.setSubtitleOffset(PlayerInitializer.Subtitle.offsetPosition)
+    }
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getAudioStream()
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getSubtitleStream()
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        return mVideoPlayer.selectStream(stream)
     }
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.VideoScreenScale
 
@@ -122,4 +123,19 @@ interface InterVideoPlayer {
      * 更新字幕偏移时间
      */
     fun updateSubtitleOffsetTime()
+
+    /**
+     * 获取音轨
+     */
+    fun getAudioStream(): List<VideoStreamBean>
+
+    /**
+     * 获取字幕轨道
+     */
+    fun getSubtitleStream(): List<VideoStreamBean>
+
+    /**
+     * 选择音/字幕轨
+     */
+    fun selectStream(stream: VideoStreamBean)
 }

@@ -27,5 +27,7 @@ enum class SettingViewType {
 
     VIDEO_SPEED,
 
-    VIDEO_ASPECT
+    VIDEO_ASPECT,
+
+    AUDIO_STREAM
 }

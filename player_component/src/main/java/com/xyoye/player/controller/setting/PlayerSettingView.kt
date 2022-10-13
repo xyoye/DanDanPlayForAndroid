@@ -12,6 +12,8 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.common_component.extension.getChildViewBindingAt
 import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.nextItemIndex
+import com.xyoye.common_component.extension.previousItemIndex
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
@@ -66,6 +68,11 @@ class PlayerSettingView(
             .filter { it is SettingItem }
             .forEach { applyItemStatus(it as SettingItem) }
         viewBinding.settingRv.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onViewHide() {
+        viewBinding.settingRv.focusedChild?.clearFocus()
+        viewBinding.settingRv.clearFocus()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -169,21 +176,11 @@ class PlayerSettingView(
         when (keyCode) {
             //左规则
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                for (index in (focusedIndex - 1) downTo 0) {
-                    if (settingItems[index] is SettingItem) {
-                        return index
-                    }
-                }
-                return settingItems.indexOfLast { it is SettingItem }
+                return settingItems.previousItemIndex<SettingItem>(focusedIndex)
             }
             //右规则
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                for (index in (focusedIndex + 1) until settingItems.size) {
-                    if (settingItems[index] is SettingItem) {
-                        return index
-                    }
-                }
-                return settingItems.indexOfFirst { it is SettingItem }
+                return settingItems.nextItemIndex<SettingItem>(focusedIndex)
             }
             //上、下规则
             //按类型分组后，找到当前焦点所在分组的位置，取上/下一个分组的同样位置
@@ -296,6 +293,10 @@ class PlayerSettingView(
             }
             SettingAction.VIDEO_SPEED -> {
                 mControlWrapper.showSettingView(SettingViewType.VIDEO_SPEED)
+                onSettingVisibilityChanged(false)
+            }
+            SettingAction.VIDEO_ASPECT -> {
+                mControlWrapper.showSettingView(SettingViewType.VIDEO_ASPECT)
                 onSettingVisibilityChanged(false)
             }
             else -> {}

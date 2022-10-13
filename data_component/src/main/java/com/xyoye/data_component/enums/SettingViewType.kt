@@ -25,5 +25,7 @@ enum class SettingViewType {
 
     SEARCH_DANMU,
 
-    VIDEO_SPEED
+    VIDEO_SPEED,
+
+    VIDEO_ASPECT
 }

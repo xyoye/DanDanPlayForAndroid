@@ -34,3 +34,48 @@ inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
         AppConfig.isShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
     }
 }
+
+/**
+ * 从当前位置寻找上一个T类型的Item
+ * @param currentIndex 当前位置
+ * @param loop 到达开头时，返回结尾位置
+ */
+inline fun <reified T> List<*>.previousItemIndex(currentIndex: Int, loop: Boolean = true): Int {
+    if (this.isEmpty()) {
+        return -1
+    }
+    for (index in (currentIndex - 1) downTo 0) {
+        if (this[index] is T) {
+            return index
+        }
+    }
+
+    if (loop) {
+        return this.indexOfLast { it is T }
+    }
+
+    return -1
+}
+
+
+/**
+ * 从当前位置寻找下一个T类型的Item
+ * @param currentIndex 当前位置
+ * @param loop 到达结尾时，返回开头位置
+ */
+inline fun <reified T> List<*>.nextItemIndex(currentIndex: Int, loop: Boolean = true): Int {
+    if (this.isEmpty()) {
+        return -1
+    }
+    for (index in (currentIndex + 1) until size) {
+        if (this[index] is T) {
+            return index
+        }
+    }
+
+    if (loop) {
+        return this.indexOfFirst { it is T }
+    }
+
+    return -1
+}

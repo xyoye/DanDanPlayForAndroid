@@ -30,6 +30,7 @@ class SettingController(
     private lateinit var settingDanmuBlockView: SettingDanmuBlockView
     private lateinit var searchDanmuView: SearchDanmuView
     private lateinit var videoSpeedView: SettingVideoSpeedView
+    private lateinit var videoAspectView: SettingVideoAspectView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
 
@@ -203,6 +204,13 @@ class SettingController(
                     addView.invoke(videoSpeedView)
                 }
                 return videoSpeedView
+            }
+            SettingViewType.VIDEO_ASPECT -> {
+                if (this::videoAspectView.isInitialized.not()) {
+                    videoAspectView = SettingVideoAspectView(context)
+                    addView.invoke(videoAspectView)
+                }
+                return videoAspectView
             }
         }
     }

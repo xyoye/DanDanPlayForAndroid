@@ -6,6 +6,7 @@ import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.enums.MediaType
@@ -47,6 +48,9 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
                 MediaType.REMOTE_STORAGE,
                 refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
                 openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+                castFile = { data, device ->
+                    viewModel.castItem(data.uniqueKey ?: "", device)
+                },
                 openDirectory = { openDirectory(it.filePath) }
             )
         }
@@ -59,6 +63,11 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()
+        }
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(mAttachActivity, it)
         }
 
         val fileData = arguments?.getParcelableArrayList<RemoteVideoData>(FILE_DATA)

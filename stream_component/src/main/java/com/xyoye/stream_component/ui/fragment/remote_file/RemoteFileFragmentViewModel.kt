@@ -12,6 +12,7 @@ import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.data.remote.RemoteVideoData
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,6 +22,7 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
 
     val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val playLiveData = MutableLiveData<Any>()
+    val castLiveData = MutableLiveData<MediaLibraryEntity>()
 
     val curDirectoryFiles = mutableListOf<RemoteVideoData>()
 
@@ -71,29 +73,42 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
 
     fun playItem(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val videoSources = curDirectoryFiles.filter { isVideoFile(it.Name) }
-            val index = videoSources.indexOfFirst {
-                RemoteSourceFactory.generateUniqueKey(it) == uniqueKey
+            if (setupVideoSource(uniqueKey)) {
+                playLiveData.postValue(Any())
             }
-            if (videoSources.isEmpty() || index < 0) {
-                ToastCenter.showError("播放失败，不支持播放的资源")
-                return@launch
-            }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(videoSources)
-                .setIndex(index)
-                .create(MediaType.REMOTE_STORAGE)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    fun castItem(uniqueKey: String, device: MediaLibraryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupVideoSource(uniqueKey)) {
+                castLiveData.postValue(device)
+            }
+        }
+    }
+
+    private suspend fun setupVideoSource(uniqueKey: String): Boolean {
+        val videoSources = curDirectoryFiles.filter { isVideoFile(it.Name) }
+        val index = videoSources.indexOfFirst {
+            RemoteSourceFactory.generateUniqueKey(it) == uniqueKey
+        }
+        if (videoSources.isEmpty() || index < 0) {
+            ToastCenter.showError("播放失败，不支持播放的资源")
+            return false
+        }
+
+        showLoading()
+        val mediaSource = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setIndex(index)
+            .create(MediaType.REMOTE_STORAGE)
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 }

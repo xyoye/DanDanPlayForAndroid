@@ -7,6 +7,7 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.download_component.BR
@@ -56,6 +57,12 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
                 .navigation()
         }
 
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(this, it)
+        }
+
         viewModel.initTorrentFiles(magnetLink, torrentPath)
     }
 
@@ -74,6 +81,9 @@ class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlayS
                 MediaType.WEBDAV_SERVER,
                 refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
                 openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+                castFile = { data, device ->
+                    viewModel.castItem(data.uniqueKey ?: "", device)
+                },
                 openDirectory = { }
             )
         }

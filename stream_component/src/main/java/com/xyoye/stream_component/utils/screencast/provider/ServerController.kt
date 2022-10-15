@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.utils.screencast.provider
 
+import android.net.Uri
 import com.xyoye.common_component.extension.md5
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.RangeUtils
@@ -120,8 +121,9 @@ object ServerController {
         val localhost = "127.0.0.1"
         val isLocalhostUrl = redirectUrl.contains(localhost)
         if (isLocalhostUrl) {
-            val host = session.headers["Host"]
+            var host = session.headers["Host"] ?: session.headers["host"]
             if (host != null && host.isNotEmpty()) {
+                host = Uri.parse("http://$host").host ?: host
                 redirectUrl = redirectUrl.replace(localhost, host)
             }
         }

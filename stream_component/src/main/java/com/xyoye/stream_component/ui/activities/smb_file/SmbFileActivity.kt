@@ -11,6 +11,7 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.StorageAdapter
@@ -36,7 +37,10 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
         this,
         MediaType.SMB_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
-        openFile = { viewModel.openVideoFile(it.uniqueKey ?: "") },
+        openFile = { viewModel.playItem(it.uniqueKey ?: "") },
+        castFile = { data, device ->
+            viewModel.castItem(data.uniqueKey ?: "", device)
+        },
         openDirectory = { viewModel.openChildDirectory(it.filePath) }
     )
 
@@ -76,7 +80,7 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
 
     override fun observeLoadingDialog() {
         //替换弹窗观察者
-        viewModel.loadingObserver.observe(this, {
+        viewModel.loadingObserver.observe(this) {
             if (dataBinding.refreshLayout.isRefreshing) {
                 dataBinding.refreshLayout.isRefreshing = false
             }
@@ -84,7 +88,7 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
             if (it.first > 0) {
                 dataBinding.refreshLayout.isRefreshing = true
             }
-        })
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -155,6 +159,12 @@ class SmbFileActivity : BaseActivity<SmbFileViewModel, ActivitySmbFileBinding>()
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation(this, PLAY_REQUEST_CODE)
+        }
+
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(this, it)
         }
     }
 }

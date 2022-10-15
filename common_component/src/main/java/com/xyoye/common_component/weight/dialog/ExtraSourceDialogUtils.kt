@@ -8,8 +8,6 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.resumeWhenAlive
-import com.xyoye.common_component.utils.FileComparator
-import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SheetActionBean
@@ -219,7 +217,9 @@ object ExtraSourceDialogUtils {
                 selectScreencastDevice(activity, screencastDevices)
             } ?: return@launch
 
-            castFile?.invoke(data, screencastDevice)
+            withContext(Dispatchers.Main) {
+                castFile?.invoke(data, screencastDevice)
+            }
         }
     }
 

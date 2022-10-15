@@ -57,6 +57,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
         dataBinding.needConfirmSwitch.isChecked = ScreencastConfig.isReceiveNeedConfirm()
 
+        dataBinding.autoStartSwitch.isChecked = ScreencastConfig.isStartReceiveWhenLaunch()
+
         viewModel.initIpPort()
     }
 
@@ -114,6 +116,10 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
         dataBinding.needConfirmSwitch.setOnCheckedChangeListener { _, isChecked ->
             ScreencastConfig.putReceiveNeedConfirm(isChecked)
+        }
+
+        dataBinding.autoStartSwitch.setOnCheckedChangeListener { _, isChecked ->
+            ScreencastConfig.putStartReceiveWhenLaunch(isChecked)
         }
     }
 

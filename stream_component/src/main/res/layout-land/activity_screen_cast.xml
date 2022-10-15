@@ -301,7 +301,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="96dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/background_item_corner"
             app:layout_constraintEnd_toEndOf="@+id/server_switch_layout"
@@ -309,13 +309,14 @@
             app:layout_constraintTop_toBottomOf="@id/server_switch_layout">
 
             <TextView
+                android:id="@+id/tips_confirm_receive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="@string/tips_need_confirm_screencast"
                 android:textColor="@color/text_gray"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/tips_auto_start"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -324,9 +325,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tips_confirm_receive"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tips_confirm_receive"
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
+
+            <TextView
+                android:id="@+id/tips_auto_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/tips_start_receive_when_start"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tips_confirm_receive"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/auto_start_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/tips_auto_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tips_auto_start"
                 app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

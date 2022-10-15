@@ -27,4 +27,8 @@ class ScreencastReceiveServiceImpl : ScreencastReceiveService {
     override fun stopService(context: Context) {
         com.xyoye.stream_component.services.ScreencastReceiveService.stop(context)
     }
+
+    override fun startService(context: Context, port: Int, password: String?) {
+        com.xyoye.stream_component.services.ScreencastReceiveService.start(context, port, password)
+    }
 }

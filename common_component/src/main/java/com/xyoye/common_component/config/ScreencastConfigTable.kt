@@ -29,4 +29,8 @@ object ScreencastConfigTable {
     @MMKVFiled
     //接收到投屏时需手动确认
     var receiveNeedConfirm: Boolean = true
+
+    @MMKVFiled
+    //应用启动时，自动启动投屏接收服务
+    var startReceiveWhenLaunch: Boolean = false
 }

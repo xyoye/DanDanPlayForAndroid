@@ -109,6 +109,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
         httpServer!!.setScreenReceiveHandler(this)
         //启动UDP组播
         startMulticast(password)
+        ToastCenter.showSuccess("投屏接收服务已启动")
         return START_STICKY
     }
 

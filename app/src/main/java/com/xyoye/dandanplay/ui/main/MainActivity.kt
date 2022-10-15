@@ -8,6 +8,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.bridge.LoginObserver
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.addFragment
 import com.xyoye.common_component.extension.findAndRemoveFragment
@@ -21,6 +22,7 @@ import com.xyoye.dandanplay.BR
 import com.xyoye.dandanplay.R
 import com.xyoye.dandanplay.databinding.ActivityMainBinding
 import com.xyoye.data_component.data.LoginData
+import kotlin.random.Random
 import kotlin.system.exitProcess
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
@@ -98,6 +100,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
 
         viewModel.initDatabase()
         viewModel.initCloudBlockData()
+
+        initScreencastReceive()
 
         if (UserConfig.isUserLoggedIn()) {
             viewModel.reLogin()
@@ -208,6 +212,23 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         ARouter.getInstance()
             .build(path)
             .navigation() as Fragment?
+
+    private fun initScreencastReceive() {
+        if (ScreencastConfig.isStartReceiveWhenLaunch().not()) {
+            return
+        }
+        if (receiveService.isRunning(this)) {
+            return
+        }
+
+        var httpPort = ScreencastConfig.getReceiverPort()
+        if (httpPort == 0) {
+            httpPort = Random.nextInt(20000, 30000)
+            ScreencastConfig.putReceiverPort(httpPort)
+        }
+        val receiverPwd = ScreencastConfig.getReceiverPassword()
+        receiveService.startService(this, httpPort, receiverPwd)
+    }
 
     private fun checkServiceExit(): Boolean {
         val isProvideServiceRunning = provideService.isRunning(this)

@@ -45,5 +45,6 @@
     <string name="tips_connect_info">连接信息</string>
     <string name="tips_connect_qe_code">连接码</string>
     <string name="tips_screencast_receive_service">投屏接收服务</string>
-    <string name="tips_need_confirm_screencast">需弹窗确认投屏播放</string>
+    <string name="tips_need_confirm_screencast">投屏接收时，需弹窗确认播放</string>
+    <string name="tips_start_receive_when_start">应用启动时，自动启动接收服务</string>
 </resources>

@@ -223,7 +223,8 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
             mediaType = videoSource.getMediaType().value,
             httpHeader = videoSource.getHttpHeader(),
             videos = videoData,
-            playIndex = videoSource.getGroupIndex()
+            playIndex = videoSource.getGroupIndex(),
+            uniqueKey = videoSource.getUniqueKey()
         )
     }
 

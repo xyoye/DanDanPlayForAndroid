@@ -53,7 +53,10 @@ object ScreencastSourceFactory {
     }
 
     fun generateUniqueKey(screencastData: ScreencastData, videoData: ScreencastVideoData): String {
-        return screencastData.getVideoUrl(videoData.videoIndex).toMd5String()
+        val originalUniqueKey = screencastData.uniqueKey
+            ?: screencastData.getVideoUrl(videoData.videoIndex).toMd5String()
+        //与原始的唯一值区分，避免使用其它媒体库的历史记录
+        return "${MediaType.SCREEN_CAST.value}_$originalUniqueKey".toMd5String()
     }
 
     /**

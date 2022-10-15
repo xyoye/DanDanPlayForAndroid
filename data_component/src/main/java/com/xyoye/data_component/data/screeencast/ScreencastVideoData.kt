@@ -21,7 +21,8 @@ data class ScreencastData(
     val playIndex: Int = 0,
     val mediaType: String = MediaType.OTHER_STORAGE.value,
     val httpHeader: Map<String, String>? = null,
-    val videos: List<ScreencastVideoData> = emptyList()
+    val videos: List<ScreencastVideoData> = emptyList(),
+    val uniqueKey: String? = null,
 ) : Parcelable{
 
     fun getVideoUrl(videoIndex: Int): String {
@@ -34,10 +35,6 @@ data class ScreencastData(
 
     fun getSubtitleUrl(videoIndex: Int): String {
         return "http://$ip:$port/subtitle?index=$videoIndex"
-    }
-
-    fun getIndexVideoUrl(videoIndex: Int): String {
-        return "http://$ip:$port/indexSource?index=$videoIndex"
     }
 }
 

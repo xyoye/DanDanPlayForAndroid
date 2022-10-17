@@ -62,17 +62,12 @@ class SettingVideoAspectView(
             return false
         }
 
-        //KeyCode对应的ItemBinding
-        val targetItemBinding = findTargetItemBindingByKeyCode(keyCode)
-        if (targetItemBinding != null) {
-            targetItemBinding.tvName.requestFocus()
+        val handled = handleKeyCode(keyCode)
+        if (handled) {
             return true
         }
 
-        viewBinding.rvAspect
-            .getChildViewBindingAt<ItemSeetingVideoAspectBinding>(0)
-            ?.tvName
-            ?.requestFocus()
+        viewBinding.rvAspect.requestIndexChildFocus(0)
         return true
     }
 
@@ -128,18 +123,19 @@ class SettingVideoAspectView(
     }
 
     /**
-     * 根据KeyCode目标焦点ItemBinding
+     * 处理KeyCode事件
      */
-    private fun findTargetItemBindingByKeyCode(keyCode: Int): ItemSeetingVideoAspectBinding? {
+    private fun handleKeyCode(keyCode: Int): Boolean {
         //已取得焦点的Item
         val focusedChild = viewBinding.rvAspect.focusedChild
-            ?: return null
+            ?: return false
         val focusedChildIndex = viewBinding.rvAspect.getChildAdapterPosition(focusedChild)
         if (focusedChildIndex == -1) {
-            return null
+            return false
         }
         val targetIndex = getTargetIndexByKeyCode(keyCode, focusedChildIndex)
-        return viewBinding.rvAspect.getChildViewBindingAt(targetIndex)
+        viewBinding.rvAspect.requestIndexChildFocus(targetIndex)
+        return true
     }
 
 

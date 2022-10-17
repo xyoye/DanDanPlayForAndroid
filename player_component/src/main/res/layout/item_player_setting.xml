@@ -15,6 +15,7 @@
             android:background="@drawable/background_player_setting_item"
             android:focusable="true"
             android:padding="12dp"
+            android:tag="@string/focusable_item"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

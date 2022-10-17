@@ -57,17 +57,14 @@ class SettingAudioStreamView(
             return false
         }
 
-        //KeyCode对应的ItemBinding
-        val targetItemBinding = findTargetItemBindingByKeyCode(keyCode)
-        if (targetItemBinding != null) {
-            targetItemBinding.tvName.requestFocus()
+        val handled = handleKeyCode(keyCode)
+        if (handled) {
             return true
         }
 
-        viewBinding.rvStream
-            .getChildViewBindingAt<ItemSeetingAudioStreamBinding>(0)
-            ?.tvName
-            ?.requestFocus()
+        if (audioStreamData.size > 0) {
+            viewBinding.rvStream.requestIndexChildFocus(0)
+        }
         return true
     }
 
@@ -119,18 +116,19 @@ class SettingAudioStreamView(
     }
 
     /**
-     * 根据KeyCode目标焦点ItemBinding
+     * 处理KeyCode事件
      */
-    private fun findTargetItemBindingByKeyCode(keyCode: Int): ItemSeetingAudioStreamBinding? {
+    private fun handleKeyCode(keyCode: Int): Boolean {
         //已取得焦点的Item
         val focusedChild = viewBinding.rvStream.focusedChild
-            ?: return null
+            ?: return false
         val focusedChildIndex = viewBinding.rvStream.getChildAdapterPosition(focusedChild)
         if (focusedChildIndex == -1) {
-            return null
+            return false
         }
         val targetIndex = getTargetIndexByKeyCode(keyCode, focusedChildIndex)
-        return viewBinding.rvStream.getChildViewBindingAt(targetIndex)
+        viewBinding.rvStream.requestIndexChildFocus(targetIndex)
+        return true
     }
 
 

@@ -5,15 +5,14 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.common_component.extension.getChildViewBindingAt
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.nextItemIndex
 import com.xyoye.common_component.extension.previousItemIndex
+import com.xyoye.common_component.extension.requestIndexChildFocus
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
@@ -73,19 +72,14 @@ class PlayerSettingView(
             return false
         }
 
-        //KeyCode对应的ItemBinding
-        val targetItemBinding = findTargetItemBindingByKeyCode(keyCode)
-        if (targetItemBinding != null) {
-            targetItemBinding.ivSetting.requestFocus()
+        val handled = handleKeyCode(keyCode)
+        if (handled) {
             return true
         }
 
-        //第一个Item获取焦点
-        settingItems.firstOrNull { it is SettingItem }?.let {
-            return viewBinding.settingRv
-                .getChildViewBindingAt<ItemPlayerSettingBinding>(settingItems.indexOf(it))
-                ?.ivSetting?.requestFocus()
-                ?: false
+        val firstIndex = settingItems.indexOfFirst { it is SettingItem }
+        if (firstIndex != -1) {
+            viewBinding.settingRv.requestIndexChildFocus(firstIndex)
         }
         return true
     }
@@ -137,24 +131,18 @@ class PlayerSettingView(
     }
 
     /**
-     * 根据KeyCode目标焦点ItemBinding
+     * 处理KeyCode事件
      */
-    private fun findTargetItemBindingByKeyCode(keyCode: Int): ItemPlayerSettingBinding? {
-        //已取得焦点的Item
-        val focusedIconIndex = settingItems.indexOfFirst {
-            if (it !is SettingItem) {
-                return@indexOfFirst false
-            }
-            return@indexOfFirst viewBinding.settingRv.getChildAt(settingItems.indexOf(it))
-                ?.let { view ->
-                    DataBindingUtil.getBinding<ItemPlayerSettingBinding>(view)?.ivSetting?.isFocused
-                } ?: false
+    private fun handleKeyCode(keyCode: Int): Boolean {
+        val focusedView = viewBinding.settingRv.focusedChild
+            ?: return false
+        val focusedIndex = viewBinding.settingRv.getChildAdapterPosition(focusedView)
+        if (focusedIndex == -1) {
+            return false
         }
-        if (focusedIconIndex == -1) {
-            return null
-        }
-        val targetIndex = getTargetIndexByKeyCode(keyCode, focusedIconIndex)
-        return viewBinding.settingRv.getChildViewBindingAt(targetIndex)
+        val targetIndex = getTargetIndexByKeyCode(keyCode, focusedIndex)
+        viewBinding.settingRv.requestIndexChildFocus(targetIndex)
+        return true
     }
 
     /**

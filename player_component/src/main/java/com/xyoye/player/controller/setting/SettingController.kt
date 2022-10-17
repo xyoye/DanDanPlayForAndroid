@@ -220,6 +220,14 @@ class SettingController(
                 }
                 return audioStreamView
             }
+            SettingViewType.LOAD_DANMU_SOURCE, SettingViewType.LOAD_SUBTITLE_SOURCE -> {
+                if (this::switchSourceView.isInitialized.not()) {
+                    switchSourceView = SwitchSourceView(context)
+                    addView.invoke(switchSourceView)
+                }
+                switchSourceView.setSwitchType(type == SettingViewType.LOAD_SUBTITLE_SOURCE)
+                return switchSourceView
+            }
         }
     }
 }

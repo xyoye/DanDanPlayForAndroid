@@ -109,4 +109,7 @@
     <string name="action_aspect_origin">原始</string>
     <string name="action_aspect_16_9">16：9</string>
     <string name="action_aspect_4_3">4：3</string>
+
+    <string name="action_remove_danmu">移除弹幕</string>
+    <string name="action_search_network_danmu">网络弹幕</string>
 </resources>

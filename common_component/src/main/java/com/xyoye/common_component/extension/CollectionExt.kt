@@ -36,6 +36,15 @@ inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
 }
 
 /**
+ * 过滤以.开头的文件
+ */
+inline fun <T> Sequence<T>.filterHiddenFile(predicate: (T) -> String): MutableCollection<T> {
+    return filterTo(ArrayList()) {
+        AppConfig.isShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
+    }
+}
+
+/**
  * 从当前位置寻找上一个T类型的Item
  * @param currentIndex 当前位置
  */

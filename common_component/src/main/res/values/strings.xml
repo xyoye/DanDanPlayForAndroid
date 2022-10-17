@@ -15,6 +15,9 @@
     <string name="tips_bound_danmu">弹</string>
     <string name="tips_bound_subtitle">字</string>
 
-    <item name="labels_key_data" type="id"/>
-    <item name="labels_key_position" type="id"/>
+    <item name="labels_key_data" type="id" />
+    <item name="labels_key_position" type="id" />
+
+    <!-- 标记为可处理焦点事件的Item -->
+    <string name="focusable_item">tag_focusable_item</string>
 </resources>

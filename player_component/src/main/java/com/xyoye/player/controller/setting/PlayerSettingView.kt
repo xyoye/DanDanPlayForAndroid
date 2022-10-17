@@ -44,14 +44,6 @@ class PlayerSettingView(
     //操作项集合
     private val settingItems = generateItems()
 
-    //当前View可处理的事件
-    private val handleKeyCodes = listOf(
-        KeyEvent.KEYCODE_DPAD_UP,
-        KeyEvent.KEYCODE_DPAD_DOWN,
-        KeyEvent.KEYCODE_DPAD_LEFT,
-        KeyEvent.KEYCODE_DPAD_RIGHT
-    )
-
     init {
         initRv()
     }
@@ -78,10 +70,6 @@ class PlayerSettingView(
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         //未展示
         if (isSettingShowing().not()) {
-            return false
-        }
-        //不是上下左右四个操作
-        if (handleKeyCodes.contains(keyCode).not()) {
             return false
         }
 
@@ -301,6 +289,16 @@ class PlayerSettingView(
             }
             SettingAction.AUDIO_STREAM -> {
                 mControlWrapper.showSettingView(SettingViewType.AUDIO_STREAM)
+                onSettingVisibilityChanged(false)
+            }
+            SettingAction.DANMU_LOAD -> {
+                mControlWrapper.showSettingView(SettingViewType.LOAD_DANMU_SOURCE)
+                onSettingVisibilityChanged(false)
+            }
+
+
+            SettingAction.SUBTITLE_LOAD -> {
+                mControlWrapper.showSettingView(SettingViewType.LOAD_SUBTITLE_SOURCE)
                 onSettingVisibilityChanged(false)
             }
             else -> {}

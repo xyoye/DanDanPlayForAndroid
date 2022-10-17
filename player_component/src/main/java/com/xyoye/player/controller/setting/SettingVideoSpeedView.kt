@@ -26,15 +26,6 @@ class SettingVideoSpeedView(
     defStyleAttr: Int = 0
 ) : BaseSettingView<LayoutSettingVideoSpeedBinding>(context, attrs, defStyleAttr) {
 
-    //当前View可处理的事件
-    private val handleKeyCodes = listOf(
-        KeyEvent.KEYCODE_DPAD_UP,
-        KeyEvent.KEYCODE_DPAD_DOWN,
-        KeyEvent.KEYCODE_DPAD_LEFT,
-        KeyEvent.KEYCODE_DPAD_RIGHT,
-        KeyEvent.KEYCODE_DPAD_CENTER
-    )
-
     init {
         initVideoSpeed()
     }
@@ -55,10 +46,9 @@ class SettingVideoSpeedView(
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (handleKeyCodes.contains(keyCode).not()) {
-            return super.onKeyDown(keyCode, event)
+        if (isSettingShowing().not()) {
+            return false
         }
-
         if (keyCode != KeyEvent.KEYCODE_DPAD_CENTER
             && viewBinding.speedSlider.hasFocus().not()
         ) {

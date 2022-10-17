@@ -29,5 +29,9 @@ enum class SettingViewType {
 
     VIDEO_ASPECT,
 
-    AUDIO_STREAM
+    AUDIO_STREAM,
+
+    LOAD_DANMU_SOURCE,
+
+    LOAD_SUBTITLE_SOURCE,
 }

@@ -32,15 +32,6 @@ class SettingAudioStreamView(
 
     private val audioStreamData = mutableListOf<VideoStreamBean>()
 
-    //当前View可处理的事件
-    private val handleKeyCodes = listOf(
-        KeyEvent.KEYCODE_DPAD_UP,
-        KeyEvent.KEYCODE_DPAD_DOWN,
-        KeyEvent.KEYCODE_DPAD_LEFT,
-        KeyEvent.KEYCODE_DPAD_RIGHT,
-        KeyEvent.KEYCODE_DPAD_CENTER
-    )
-
     init {
         initView()
     }
@@ -64,9 +55,6 @@ class SettingAudioStreamView(
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (isSettingShowing().not()) {
             return false
-        }
-        if (handleKeyCodes.contains(keyCode).not()) {
-            return super.onKeyDown(keyCode, event)
         }
 
         //KeyCode对应的ItemBinding

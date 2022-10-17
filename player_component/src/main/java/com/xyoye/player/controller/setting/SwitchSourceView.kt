@@ -55,7 +55,10 @@ class SwitchSourceView(
     override fun getGravity() = Gravity.START
 
     override fun onViewShow() {
-        viewBinding.titleTv.text = if (isSwitchSubtitle) "选择字幕" else "选择弹幕"
+        viewBinding.titleTv.text = if (isSwitchSubtitle)
+            R.string.text_select_subtitle.toResString()
+        else
+            R.string.select_local_danmu.toResString()
         openDirectory(getDefaultOpenDirectory())
 
         mCommonDirectoryData.clear()
@@ -107,7 +110,8 @@ class SwitchSourceView(
         }
 
         viewBinding.tvSearchNetworkDanmu.setOnClickListener {
-
+            mControlWrapper.showSettingView(SettingViewType.SEARCH_DANMU)
+            onSettingVisibilityChanged(false)
         }
     }
 

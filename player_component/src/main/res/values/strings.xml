@@ -100,7 +100,6 @@
     <string name="danmu_block">弹幕屏蔽</string>
 
     <string name="text_search">搜索</string>
-    <string name="text_search_danmu">搜索弹幕</string>
     <string name="hint_search_danmu">搜索弹幕：番剧名+空格+集数</string>
 
     <string name="action_aspect_default">默认</string>
@@ -110,6 +109,8 @@
     <string name="action_aspect_16_9">16：9</string>
     <string name="action_aspect_4_3">4：3</string>
 
+    <string name="text_select_subtitle">选择本地字幕</string>
     <string name="action_remove_danmu">移除弹幕</string>
     <string name="action_search_network_danmu">网络弹幕</string>
+    <string name="action_select_local_danmu">本地弹幕</string>
 </resources>

@@ -32,6 +32,7 @@ class SettingController(
     private lateinit var videoSpeedView: SettingVideoSpeedView
     private lateinit var videoAspectView: SettingVideoAspectView
     private lateinit var audioStreamView: SettingAudioStreamView
+    private lateinit var danmuConfigureView: SettingDanmuConfigureView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
 
@@ -227,6 +228,13 @@ class SettingController(
                 }
                 switchSourceView.setSwitchType(type == SettingViewType.LOAD_SUBTITLE_SOURCE)
                 return switchSourceView
+            }
+            SettingViewType.DANMU_CONFIGURE -> {
+                if (this::danmuConfigureView.isInitialized.not()) {
+                    danmuConfigureView = SettingDanmuConfigureView(context)
+                    addView.invoke(danmuConfigureView)
+                }
+                return danmuConfigureView
             }
         }
     }

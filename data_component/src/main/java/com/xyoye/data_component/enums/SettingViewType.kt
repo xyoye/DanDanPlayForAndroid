@@ -34,4 +34,6 @@ enum class SettingViewType {
     LOAD_DANMU_SOURCE,
 
     LOAD_SUBTITLE_SOURCE,
+
+    DANMU_CONFIGURE
 }

@@ -41,7 +41,7 @@ object PlayerInitializer {
         const val DEFAULT_MOBILE_ENABLE = true
         const val DEFAULT_TOP_ENABLE = true
         const val DEFAULT_BOTTOM_ENABLE = true
-        const val DEFAULT_MAX_LINE = -1
+        const val DEFAULT_MAX_LINE = 0
         const val DEFAULT_MAX_NUM = 0
 
         var offsetPosition = DEFAULT_POSITION
@@ -53,6 +53,9 @@ object PlayerInitializer {
         var topDanmu = DEFAULT_TOP_ENABLE
         var bottomDanmu = DEFAULT_BOTTOM_ENABLE
         var maxLine = DEFAULT_MAX_LINE
+        var maxScrollLine = DEFAULT_MAX_LINE
+        var maxTopLine = DEFAULT_MAX_LINE
+        var maxBottomLine = DEFAULT_MAX_LINE
         var maxNum = DEFAULT_MAX_NUM
         var cloudBlock = false
         var updateInChoreographer = true

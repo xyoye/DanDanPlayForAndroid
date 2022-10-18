@@ -283,8 +283,10 @@ class PlayerSettingView(
                 mControlWrapper.showSettingView(SettingViewType.LOAD_DANMU_SOURCE)
                 onSettingVisibilityChanged(false)
             }
-
-
+            SettingAction.DANMU_CONFIG -> {
+                mControlWrapper.showSettingView(SettingViewType.DANMU_CONFIGURE)
+                onSettingVisibilityChanged(false)
+            }
             SettingAction.SUBTITLE_LOAD -> {
                 mControlWrapper.showSettingView(SettingViewType.LOAD_SUBTITLE_SOURCE)
                 onSettingVisibilityChanged(false)

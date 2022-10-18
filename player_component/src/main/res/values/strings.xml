@@ -32,7 +32,7 @@
     <string name="text_danmu_line_limit">滚动弹幕行数</string>
     <string name="text_danmu_line_unlimited">无限制</string>
     <string name="hint_danmu_line_limit">行数</string>
-    <string name="text_danmu_screen_count">弹幕同屏数量</string>
+    <string name="text_danmu_screen_count">滚动弹幕同屏数量</string>
     <string name="text_danmu_screen_count_unlimited">无限制</string>
     <string name="text_danmu_screen_count_auto">自动</string>
     <string name="hit_danmu_screen_count">数量</string>

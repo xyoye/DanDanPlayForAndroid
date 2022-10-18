@@ -4,8 +4,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.KeyEvent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -42,7 +42,12 @@ import java.io.File
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     PlayerReceiverListener, ScreencastHandler {
 
-    private val danmuViewModel: PlayerDanmuViewModel by viewModels()
+    private val danmuViewModel: PlayerDanmuViewModel by lazy {
+        ViewModelProvider(
+            viewModelStore,
+            ViewModelProvider.AndroidViewModelFactory(application)
+        )[PlayerDanmuViewModel::class.java]
+    }
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver

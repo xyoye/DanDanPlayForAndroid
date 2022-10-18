@@ -6,7 +6,7 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="@drawable/backgrund_video_view">
+        tools:background="@drawable/background_video_view">
 
         <ImageView
             android:id="@+id/iv_setting"

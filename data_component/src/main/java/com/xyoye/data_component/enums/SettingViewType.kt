@@ -19,8 +19,6 @@ enum class SettingViewType {
 
     SWITCH_VIDEO_SOURCE,
 
-    DANMU_SETTING_CONFIG,
-
     DANMU_SETTING_BLOCK,
 
     SEARCH_DANMU,
@@ -35,5 +33,7 @@ enum class SettingViewType {
 
     LOAD_SUBTITLE_SOURCE,
 
-    DANMU_CONFIGURE
+    DANMU_CONFIGURE,
+
+    DANMU_STYLE,
 }

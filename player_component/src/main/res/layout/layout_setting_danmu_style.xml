@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
@@ -19,7 +20,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
@@ -36,7 +37,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:paddingHorizontal="10dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/background_player_setting_text_transparent"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="5dp"
                     android:text="@string/text_reset"
                     android:textColor="@color/text_theme"
                     android:textSize="14sp" />
@@ -74,7 +78,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:max="100" />
+                android:focusable="true"
+                android:max="100"
+                app:theme="@style/Theme.DanDanPlay.SeekBar" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -108,7 +114,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:max="100" />
+                android:focusable="true"
+                android:max="100"
+                app:theme="@style/Theme.DanDanPlay.SeekBar" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -142,7 +150,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:max="100" />
+                android:focusable="true"
+                android:max="100"
+                app:theme="@style/Theme.DanDanPlay.SeekBar" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -176,75 +186,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:max="100" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/text_danmu_offset_tips"
-                android:textColor="@color/text_white_immutable"
-                android:textSize="14sp" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp">
-
-                <LinearLayout
-                    android:id="@+id/danmu_offset_time_ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/danmu_extra_time_reduce"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/edit_offset_gray"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_offset_reduce"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="18sp" />
-
-                    <EditText
-                        android:id="@+id/danmu_extra_time_et"
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center"
-                        android:hint="@string/hint_danmu_offset"
-                        android:imeOptions="actionDone"
-                        android:inputType="numberDecimal"
-                        android:maxLength="50"
-                        android:maxLines="1"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="14sp"
-                        android:theme="@style/StyleSettingEdit"
-                        tools:text="0.0" />
-
-                    <TextView
-                        android:id="@+id/danmu_extra_time_add"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/edit_offset_gray"
-                        android:gravity="center"
-                        android:text="@string/text_danmu_offset_add"
-                        android:textColor="@color/text_white_immutable"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
+                android:focusable="true"
+                android:max="100"
+                app:theme="@style/Theme.DanDanPlay.SeekBar" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

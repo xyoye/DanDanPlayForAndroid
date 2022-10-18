@@ -26,7 +26,7 @@ class SettingController(
     private lateinit var switchVideoSourceView: SwitchVideoSourceView
     private lateinit var keywordBlockView: KeywordBlockView
     private lateinit var screenShotView: ScreenShotView
-    private lateinit var settingDanmuConfigView: SettingDanmuConfigView
+    private lateinit var settingDanmuStyleView: SettingDanmuStyleView
     private lateinit var settingDanmuBlockView: SettingDanmuBlockView
     private lateinit var searchDanmuView: SearchDanmuView
     private lateinit var videoSpeedView: SettingVideoSpeedView
@@ -179,12 +179,12 @@ class SettingController(
                 }
                 return screenShotView
             }
-            SettingViewType.DANMU_SETTING_CONFIG -> {
-                if (this::settingDanmuConfigView.isInitialized.not()) {
-                    settingDanmuConfigView = SettingDanmuConfigView(context)
-                    addView.invoke(settingDanmuConfigView)
+            SettingViewType.DANMU_STYLE -> {
+                if (this::settingDanmuStyleView.isInitialized.not()) {
+                    settingDanmuStyleView = SettingDanmuStyleView(context)
+                    addView.invoke(settingDanmuStyleView)
                 }
-                return settingDanmuConfigView
+                return settingDanmuStyleView
             }
             SettingViewType.DANMU_SETTING_BLOCK -> {
                 if (this::settingDanmuBlockView.isInitialized.not()) {

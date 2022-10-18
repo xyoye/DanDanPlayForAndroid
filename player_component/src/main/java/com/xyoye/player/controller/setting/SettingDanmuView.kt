@@ -74,7 +74,7 @@ class SettingDanmuView(
         }
 
         viewBinding.layoutDanmuConfig.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.DANMU_SETTING_CONFIG)
+            mControlWrapper.showSettingView(SettingViewType.DANMU_STYLE)
             onSettingVisibilityChanged(false)
         }
 

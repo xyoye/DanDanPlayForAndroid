@@ -97,4 +97,8 @@
     <style name="Theme.DanDanPlay.RadioButton" parent="Theme.DanDanPlay.Widget" />
 
     <style name="Theme.DanDanPlay.Slider" parent="Theme.DanDanPlay.Widget" />
+
+    <style name="Theme.DanDanPlay.SeekBar" parent="Theme.DanDanPlay.Widget">
+        <item name="colorControlHighlight">@color/theme_light</item>
+    </style>
 </resources>

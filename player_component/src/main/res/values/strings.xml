@@ -71,7 +71,7 @@
     <string name="exo_track_bitrate">%1$.2f Mbps</string>
     <string name="exo_item_list">%1$s，%2$s</string>
     <string name="action_add_block_keyword">添加</string>
-    <string name="tips_remove_block_keyword">长按可移除关键字</string>
+    <string name="tips_remove_block_keyword">点击可移除关键字</string>
     <string name="tips_keyword_block">关键字屏蔽</string>
     <string name="tips_support_regex">支持正则表达式, 例：regex=^[1–9]d*$</string>
     <string name="tips_danmu_text_size">弹幕字号</string>

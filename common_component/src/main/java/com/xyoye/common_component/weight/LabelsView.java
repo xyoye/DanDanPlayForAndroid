@@ -48,6 +48,8 @@ public class LabelsView extends ViewGroup implements View.OnClickListener, View.
     private static final int KEY_DATA = R.id.labels_key_data;
     //用于保存label位置的key
     private static final int KEY_POSITION = R.id.labels_key_position;
+    //可聚焦的标志
+    private static final int KEY_FOCUSABLE = R.string.focusable_item;
 
     private ArrayList<Object> mLabels = new ArrayList<>();
     //保存选中的label的位置
@@ -455,6 +457,7 @@ public class LabelsView extends ViewGroup implements View.OnClickListener, View.
         //label通过tag保存自己的数据(data)和位置(position)
         label.setTag(KEY_DATA, data);
         label.setTag(KEY_POSITION, position);
+        label.setTag(KEY_FOCUSABLE);
         label.setOnClickListener(this);
         label.setOnLongClickListener(this);
         addView(label);

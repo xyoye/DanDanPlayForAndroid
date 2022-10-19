@@ -299,6 +299,10 @@ class PlayerSettingView(
                 mControlWrapper.showSettingView(SettingViewType.LOAD_SUBTITLE_SOURCE)
                 onSettingVisibilityChanged(false)
             }
+            SettingAction.SUBTITLE_STREAM -> {
+                mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STREAM)
+                onSettingVisibilityChanged(false)
+            }
             else -> {}
         }
     }

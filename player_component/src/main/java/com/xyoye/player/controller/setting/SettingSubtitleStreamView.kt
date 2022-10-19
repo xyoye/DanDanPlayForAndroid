@@ -25,13 +25,13 @@ import com.xyoye.player_component.databinding.LayoutSettingStreamBinding
  * </pre>
  */
 
-class SettingAudioStreamView(
+class SettingSubtitleStreamView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : BaseSettingView<LayoutSettingStreamBinding>(context, attrs, defStyleAttr) {
 
-    private val audioStreamData = mutableListOf<VideoStreamBean>()
+    private val subtitleStreamData = mutableListOf<VideoStreamBean>()
 
     init {
         initView()
@@ -39,15 +39,15 @@ class SettingAudioStreamView(
 
     override fun getLayoutId() = R.layout.layout_setting_stream
 
-    override fun getSettingViewType() = SettingViewType.AUDIO_STREAM
+    override fun getSettingViewType() = SettingViewType.SUBTITLE_STREAM
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewShow() {
-        audioStreamData.clear()
-        audioStreamData.addAll(mControlWrapper.getAudioStream())
-        viewBinding.rvStream.setData(audioStreamData)
+        subtitleStreamData.clear()
+        subtitleStreamData.addAll(mControlWrapper.getSubtitleStream())
+        viewBinding.rvStream.setData(subtitleStreamData)
 
-        viewBinding.tvEmptyStream.isVisible = audioStreamData.isEmpty()
+        viewBinding.tvEmptyStream.isVisible = subtitleStreamData.isEmpty()
     }
 
     override fun onViewHide() {
@@ -65,7 +65,7 @@ class SettingAudioStreamView(
             return true
         }
 
-        if (audioStreamData.size > 0) {
+        if (subtitleStreamData.size > 0) {
             viewBinding.rvStream.requestIndexChildFocus(0)
         }
         return true
@@ -100,21 +100,21 @@ class SettingAudioStreamView(
     }
 
     private fun onClickStream(stream: VideoStreamBean) {
-        val selectedIndex = audioStreamData.indexOfFirst { it.isChecked }
+        val selectedIndex = subtitleStreamData.indexOfFirst { it.isChecked }
         if (selectedIndex != -1) {
-            if (audioStreamData[selectedIndex].trackId == stream.trackId
-                && audioStreamData[selectedIndex].trackGroupId == stream.trackGroupId
+            if (subtitleStreamData[selectedIndex].trackId == stream.trackId
+                && subtitleStreamData[selectedIndex].trackGroupId == stream.trackGroupId
             ) {
                 return
             }
-            audioStreamData[selectedIndex].isChecked = false
+            subtitleStreamData[selectedIndex].isChecked = false
             viewBinding.rvStream.adapter?.notifyItemChanged(selectedIndex)
         }
 
-        val currentIndex = audioStreamData.indexOfFirst {
+        val currentIndex = subtitleStreamData.indexOfFirst {
             it.trackId == stream.trackId && it.trackGroupId == stream.trackGroupId
         }
-        audioStreamData[currentIndex].isChecked = true
+        subtitleStreamData[currentIndex].isChecked = true
         viewBinding.rvStream.adapter?.notifyItemChanged(currentIndex)
 
         mControlWrapper.selectStream(stream)
@@ -136,7 +136,6 @@ class SettingAudioStreamView(
         return true
     }
 
-
     /**
      * 根据KeyCode与当前焦点位置，取得目标焦点位置
      */
@@ -144,11 +143,11 @@ class SettingAudioStreamView(
         return when (keyCode) {
             //左、上规则
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_UP -> {
-                audioStreamData.previousItemIndex<VideoStreamBean>(focusedIndex)
+                subtitleStreamData.previousItemIndex<VideoStreamBean>(focusedIndex)
             }
             //右、下规则
             KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_DOWN -> {
-                audioStreamData.nextItemIndex<VideoStreamBean>(focusedIndex)
+                subtitleStreamData.nextItemIndex<VideoStreamBean>(focusedIndex)
             }
             else -> {
                 -1

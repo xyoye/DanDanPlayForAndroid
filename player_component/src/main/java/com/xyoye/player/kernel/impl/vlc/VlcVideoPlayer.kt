@@ -200,25 +200,25 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun getAudioStream(): List<VideoStreamBean> {
-        return mMediaPlayer.audioTracks.map {
+        return mMediaPlayer.audioTracks?.map {
             VideoStreamBean(
                 it.name,
                 true,
                 it.id,
                 it.id == mMediaPlayer.audioTrack
             )
-        }
+        } ?: emptyList()
     }
 
     override fun getSubtitleStream(): List<VideoStreamBean> {
-        return mMediaPlayer.spuTracks.map {
+        return mMediaPlayer.spuTracks?.map {
             VideoStreamBean(
                 it.name,
                 false,
                 it.id,
                 it.id == mMediaPlayer.spuTrack
             )
-        }
+        } ?: emptyList()
     }
 
     override fun selectStream(stream: VideoStreamBean) {

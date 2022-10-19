@@ -1,5 +1,6 @@
 package com.xyoye.player.controller.setting
 
+import android.view.KeyEvent
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.video.InterControllerView
 
@@ -14,4 +15,6 @@ interface InterSettingView : InterControllerView {
     fun onSettingVisibilityChanged(isVisible: Boolean)
 
     fun isSettingShowing(): Boolean
+
+    fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean
 }

@@ -4,8 +4,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.KeyEvent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -42,7 +42,12 @@ import java.io.File
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     PlayerReceiverListener, ScreencastHandler {
 
-    private val danmuViewModel: PlayerDanmuViewModel by viewModels()
+    private val danmuViewModel: PlayerDanmuViewModel by lazy {
+        ViewModelProvider(
+            viewModelStore,
+            ViewModelProvider.AndroidViewModelFactory(application)
+        )[PlayerDanmuViewModel::class.java]
+    }
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
@@ -335,15 +340,16 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.Danmu.topDanmu = DanmuConfig.isShowTopDanmu()
         PlayerInitializer.Danmu.mobileDanmu = DanmuConfig.isShowMobileDanmu()
         PlayerInitializer.Danmu.bottomDanmu = DanmuConfig.isShowBottomDanmu()
-        PlayerInitializer.Danmu.maxLine = DanmuConfig.getDanmuMaxLine()
+        PlayerInitializer.Danmu.maxScrollLine = DanmuConfig.getDanmuScrollMaxLine()
+        PlayerInitializer.Danmu.maxTopLine = DanmuConfig.getDanmuTopMaxLine()
+        PlayerInitializer.Danmu.maxBottomLine = DanmuConfig.getDanmuBottomMaxLine()
         PlayerInitializer.Danmu.maxNum = DanmuConfig.getDanmuMaxCount()
         PlayerInitializer.Danmu.cloudBlock = DanmuConfig.isCloudDanmuBlock()
         PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
 
         //字幕配置
-        PlayerInitializer.Subtitle.textSize = (40f * SubtitleConfig.getTextSize() / 100f).toInt()
-        PlayerInitializer.Subtitle.strokeWidth =
-            (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
+        PlayerInitializer.Subtitle.textSize = SubtitleConfig.getTextSize()
+        PlayerInitializer.Subtitle.strokeWidth = SubtitleConfig.getStrokeWidth()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
     }

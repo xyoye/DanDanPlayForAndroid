@@ -1,6 +1,7 @@
 package com.xyoye.player.kernel.inter
 
 import android.view.Surface
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.utils.TrackHelper
 
@@ -135,6 +136,21 @@ abstract class AbstractVideoPlayer {
      * 获取网络加载速度
      */
     abstract fun getTcpSpeed(): Long
+
+    /**
+     * 获取音轨
+     */
+    abstract fun getAudioStream(): List<VideoStreamBean>
+
+    /**
+     * 获取字幕轨
+     */
+    abstract fun getSubtitleStream(): List<VideoStreamBean>
+
+    /**
+     * 选择音/字幕轨
+     */
+    abstract fun selectStream(stream: VideoStreamBean)
 
     /**
      * 是否由播放器处理外挂弹幕

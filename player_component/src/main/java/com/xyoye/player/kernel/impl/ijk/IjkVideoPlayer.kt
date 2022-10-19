@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
 import android.view.Surface
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.player.info.PlayerInitializer
@@ -214,7 +215,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             mMediaPlayer.deselectTrack(deselect.trackId)
             needSeek = true
         }
-        if(select != null){
+        if (select != null) {
             mMediaPlayer.selectTrack(select.trackId)
             needSeek = true
         }
@@ -232,6 +233,19 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     override fun getBufferedPercentage() = mBufferPercent
 
     override fun getTcpSpeed() = mMediaPlayer.tcpSpeed
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return getStreams(true)
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return getStreams(false)
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        mMediaPlayer.selectTrack(stream.trackId)
+        mMediaPlayer.seekTo(getCurrentPosition())
+    }
 
     private fun initIjkEventListener() {
         mMediaPlayer.apply {
@@ -300,5 +314,31 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
             setOnNativeInvokeListener { _, _ -> true }
         }
+    }
+
+    private fun getStreams(isAudio: Boolean): List<VideoStreamBean> {
+        val targetType = if (isAudio)
+            IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO
+        else
+            IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE
+
+        val streams = mutableListOf<VideoStreamBean>()
+        val selectedStreamId = mMediaPlayer.getSelectedTrack(targetType)
+
+        for ((index, info) in mMediaPlayer.trackInfo.withIndex()) {
+            if (info.trackType != targetType) {
+                continue
+            }
+            val trackName = "${info.title}[${info.language}, ${info.codecName}]"
+
+            val stream = VideoStreamBean(
+                trackName = trackName,
+                isAudio = isAudio,
+                trackId = index,
+                isChecked = index == selectedStreamId
+            )
+            streams.add(stream)
+        }
+        return streams
     }
 }

@@ -28,6 +28,7 @@
 
     <!-- 以下颜色不随深色模式改变 -->
     <color name="colorAccent">#2095f4</color>
+    <color name="theme_light">#772095f4</color>
 
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>

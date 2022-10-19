@@ -275,14 +275,23 @@ class DanmuView(
     }
 
     fun updateMaxLine() {
-        val maxLine = PlayerInitializer.Danmu.maxLine
-        var danmuMaxLineMap: MutableMap<Int, Int>? = null
-        if (maxLine > 0) {
-            danmuMaxLineMap = mutableMapOf()
-            danmuMaxLineMap[BaseDanmaku.TYPE_SCROLL_LR] = maxLine
-            danmuMaxLineMap[BaseDanmaku.TYPE_SCROLL_RL] = maxLine
-        }
+        val danmuMaxLineMap: MutableMap<Int, Int?> = mutableMapOf()
+
+        val scrollLine = PlayerInitializer.Danmu.maxScrollLine
+        val topLine = PlayerInitializer.Danmu.maxTopLine
+        val bottomLine = PlayerInitializer.Danmu.maxBottomLine
+        danmuMaxLineMap[BaseDanmaku.TYPE_SCROLL_LR] = getLineLimitValue(scrollLine)
+        danmuMaxLineMap[BaseDanmaku.TYPE_SCROLL_RL] = getLineLimitValue(scrollLine)
+        danmuMaxLineMap[BaseDanmaku.TYPE_FIX_TOP] = getLineLimitValue(topLine)
+        danmuMaxLineMap[BaseDanmaku.TYPE_FIX_BOTTOM] = getLineLimitValue(bottomLine)
         mDanmakuContext.setMaximumLines(danmuMaxLineMap)
+    }
+
+    private fun getLineLimitValue(line: Int): Int? {
+        if (line <= 0) {
+            return null
+        }
+        return line
     }
 
     fun updateMaxScreenNum() {

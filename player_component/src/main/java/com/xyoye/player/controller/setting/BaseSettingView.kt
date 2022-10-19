@@ -4,10 +4,12 @@ import android.content.Context
 import android.graphics.Point
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
+import androidx.core.view.ViewPropertyAnimatorListener
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.xyoye.common_component.utils.dp2px
@@ -18,7 +20,7 @@ import com.xyoye.player.wrapper.ControlWrapper
 /**
  * Created by xyoye on 2022/1/10
  */
-abstract class BaseSettingView<V: ViewDataBinding>(
+abstract class BaseSettingView<V : ViewDataBinding> @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -29,7 +31,7 @@ abstract class BaseSettingView<V: ViewDataBinding>(
     private val settingLayoutId by lazy { getLayoutId() }
     private val parentView by lazy { this }
 
-    private val defaultSettingWidth: Float = when(settingGravity){
+    private val defaultSettingWidth: Float = when (settingGravity) {
         Gravity.END -> dp2px(300).toFloat()
         Gravity.START -> -dp2px(300).toFloat()
         else -> throw IllegalArgumentException("Illegal setting view gravity: ${javaClass.simpleName}")
@@ -55,11 +57,37 @@ abstract class BaseSettingView<V: ViewDataBinding>(
             ViewCompat.animate(viewBinding.root)
                 .translationX(0f)
                 .setDuration(500)
+                .setListener(object : ViewPropertyAnimatorListener {
+                    override fun onAnimationStart(view: View) {
+                        onViewShow()
+                    }
+
+                    override fun onAnimationEnd(view: View) {
+                        onViewShowed()
+                    }
+
+                    override fun onAnimationCancel(view: View) {
+                        onViewHide()
+                    }
+                })
                 .start()
         } else {
             ViewCompat.animate(viewBinding.root)
                 .translationX(defaultSettingWidth)
                 .setDuration(500)
+                .setListener(object : ViewPropertyAnimatorListener {
+                    override fun onAnimationStart(view: View) {
+                        onViewHide()
+                    }
+
+                    override fun onAnimationEnd(view: View) {
+
+                    }
+
+                    override fun onAnimationCancel(view: View) {
+
+                    }
+                })
                 .start()
         }
     }
@@ -88,7 +116,23 @@ abstract class BaseSettingView<V: ViewDataBinding>(
 
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return false
+    }
+
     open fun getGravity() = Gravity.END
+
+    open fun onViewShow() {
+
+    }
+
+    open fun onViewShowed() {
+
+    }
+
+    open fun onViewHide() {
+
+    }
 
     abstract fun getLayoutId(): Int
 }

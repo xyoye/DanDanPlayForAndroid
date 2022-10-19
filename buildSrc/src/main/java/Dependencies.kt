@@ -63,7 +63,7 @@ object Dependencies {
     }
 
     object Google {
-        const val material = "com.google.android.material:material:1.6.1"
+        const val material = "com.google.android.material:material:1.8.0-alpha01"
 
         const val exoplayer = "com.google.android.exoplayer:exoplayer:${Versions.exoplayer}"
         const val exoplayer_core =

@@ -2,38 +2,56 @@ package com.xyoye.player.controller.setting
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.inputmethod.EditorInfo
+import android.view.KeyEvent
 import androidx.core.view.isVisible
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.extension.observeProgressChange
-import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
-import com.xyoye.player_component.databinding.LayoutSettingDanmuConfigBinding
+import com.xyoye.player_component.databinding.LayoutSettingDanmuStyleBinding
 
 
 /**
  * Created by xyoye on 2022/1/10
  */
 
-class SettingDanmuConfigView(
+class SettingDanmuStyleView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : BaseSettingView<LayoutSettingDanmuConfigBinding>(context, attrs, defStyleAttr) {
+) : BaseSettingView<LayoutSettingDanmuStyleBinding>(context, attrs, defStyleAttr) {
 
     init {
-        initSettingView()
-
         initSettingListener()
     }
 
-    override fun getLayoutId() = R.layout.layout_setting_danmu_config
+    override fun getLayoutId() = R.layout.layout_setting_danmu_style
 
-    override fun getSettingViewType() = SettingViewType.DANMU_SETTING_CONFIG
+    override fun getSettingViewType() = SettingViewType.DANMU_STYLE
 
-    private fun initSettingView() {
+    override fun onViewShow() {
+        applyDanmuStyleStatus()
+    }
+
+    override fun onViewHide() {
+        viewBinding.playerSettingNsv.focusedChild?.clearFocus()
+    }
+
+    override fun onViewShowed() {
+        viewBinding.danmuSizeSb.requestFocus()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (isSettingShowing().not()) {
+            return false
+        }
+
+        handleKeyCode(keyCode)
+        return true
+    }
+
+    private fun applyDanmuStyleStatus() {
         //文字大小
         val danmuSizePercent = PlayerInitializer.Danmu.size
         val danmuSizeText = "$danmuSizePercent%"
@@ -58,10 +76,6 @@ class SettingDanmuConfigView(
         viewBinding.danmuStokeTv.text = danmuStokeText
         viewBinding.danmuStokeSb.progress = danmuStokePercent
 
-        //弹幕时间调节
-        val extraPosition = PlayerInitializer.Danmu.offsetPosition / 1000f
-        viewBinding.danmuExtraTimeEt.setText(extraPosition.toString())
-
         viewBinding.tvResetDanmuConfig.isVisible = isConfigChanged()
     }
 
@@ -84,25 +98,6 @@ class SettingDanmuConfigView(
 
         viewBinding.danmuStokeSb.observeProgressChange {
             updateStroke(it)
-        }
-
-        viewBinding.danmuExtraTimeReduce.setOnClickListener {
-            updateOffsetPosition(PlayerInitializer.Danmu.offsetPosition - 500)
-        }
-
-        viewBinding.danmuExtraTimeAdd.setOnClickListener {
-            updateOffsetPosition(PlayerInitializer.Danmu.offsetPosition + 500)
-        }
-
-        viewBinding.danmuExtraTimeEt.setOnEditorActionListener { _, actionId, _ ->
-
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val extraTimeText = viewBinding.danmuExtraTimeEt.text.toString()
-                val newOffsetSecond = extraTimeText.toFloatOrNull() ?: 0f
-                updateOffsetPosition((newOffsetSecond * 1000).toLong())
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
         }
     }
 
@@ -162,26 +157,11 @@ class SettingDanmuConfigView(
         onConfigChanged()
     }
 
-    private fun updateOffsetPosition(position: Long) {
-        if (PlayerInitializer.Danmu.offsetPosition == position)
-            return
-
-        hideKeyboard(viewBinding.danmuExtraTimeEt)
-        viewBinding.danmuOffsetTimeLl.requestFocus()
-
-        PlayerInitializer.Danmu.offsetPosition = position
-        val offsetSecond = PlayerInitializer.Danmu.offsetPosition / 1000f
-        viewBinding.danmuExtraTimeEt.setText(offsetSecond.toString())
-        mControlWrapper.updateDanmuOffsetTime()
-        onConfigChanged()
-    }
-
     private fun resetConfig() {
         updateSize(PlayerInitializer.Danmu.DEFAULT_SIZE)
         updateSpeed(PlayerInitializer.Danmu.DEFAULT_SPEED)
         updateAlpha(PlayerInitializer.Danmu.DEFAULT_ALPHA)
         updateStroke(PlayerInitializer.Danmu.DEFAULT_STOKE)
-        updateOffsetPosition(PlayerInitializer.Danmu.DEFAULT_POSITION)
     }
 
     private fun onConfigChanged() {
@@ -194,5 +174,48 @@ class SettingDanmuConfigView(
                 || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
                 || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
                 || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
+    }
+
+    private fun handleKeyCode(keyCode: Int) {
+        if (viewBinding.tvResetDanmuConfig.hasFocus()) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> viewBinding.danmuStokeSb.requestFocus()
+                KeyEvent.KEYCODE_DPAD_DOWN -> viewBinding.danmuSizeSb.requestFocus()
+            }
+        } else if (viewBinding.danmuSizeSb.hasFocus()) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> {
+                    if (isConfigChanged()) {
+                        viewBinding.tvResetDanmuConfig.requestFocus()
+                    } else {
+                        viewBinding.danmuSpeedSb.requestFocus()
+                    }
+                }
+                KeyEvent.KEYCODE_DPAD_DOWN -> viewBinding.danmuSpeedSb.requestFocus()
+            }
+        } else if (viewBinding.danmuSpeedSb.hasFocus()) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> viewBinding.danmuSizeSb.requestFocus()
+                KeyEvent.KEYCODE_DPAD_DOWN -> viewBinding.danmuAlphaSb.requestFocus()
+            }
+        } else if (viewBinding.danmuAlphaSb.hasFocus()) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> viewBinding.danmuSpeedSb.requestFocus()
+                KeyEvent.KEYCODE_DPAD_DOWN -> viewBinding.danmuStokeSb.requestFocus()
+            }
+        } else if (viewBinding.danmuStokeSb.hasFocus()) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP -> viewBinding.danmuAlphaSb.requestFocus()
+                KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    if (isConfigChanged()) {
+                        viewBinding.tvResetDanmuConfig.requestFocus()
+                    } else {
+                        viewBinding.danmuSizeSb.requestFocus()
+                    }
+                }
+            }
+        } else {
+            viewBinding.danmuSizeSb.requestFocus()
+        }
     }
 }

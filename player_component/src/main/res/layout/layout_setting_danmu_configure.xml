@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/player_setting_nsv"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/player_item_bg_color"
+        android:translationX="300dp"
+        tools:translationX="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/text_danmu_block_setting"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_keyword_block"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:focusable="true"
+                android:gravity="center_vertical|start"
+                android:paddingHorizontal="10dp"
+                android:text="@string/tips_danmu_keyword_block"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+            <LinearLayout
+                android:id="@+id/ll_scroll_danmu"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@id/ll_bottom_danmu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_keyword_block">
+
+                <ImageView
+                    android:id="@+id/mobile_danmu_iv"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_danmu_mobile" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/text_danmu_type_mobile"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_bottom_danmu"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/ll_top_danmu"
+                app:layout_constraintStart_toEndOf="@id/ll_scroll_danmu"
+                app:layout_constraintTop_toTopOf="@id/ll_scroll_danmu">
+
+                <ImageView
+                    android:id="@+id/bottom_danmu_iv"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_danmu_bottom" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/text_danmu_type_bottom"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_top_danmu"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/ll_bottom_danmu"
+                app:layout_constraintTop_toTopOf="@id/ll_scroll_danmu">
+
+                <ImageView
+                    android:id="@+id/top_danmu_iv"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_danmu_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/text_danmu_type_top"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_danmu_enable_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_scroll_danmu"
+                tools:text="滚动弹幕开启" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_danmu_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_danmu_enable_tips"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_danmu_enable_tips"
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
+
+            <TextView
+                android:id="@+id/tv_line_limit_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_danmu_enable_tips"
+                tools:text="滚动弹幕行数" />
+
+            <TextView
+                android:id="@+id/tv_line_no_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:focusable="true"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="5dp"
+                android:text="@string/text_danmu_line_unlimited"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintStart_toStartOf="@id/tv_line_limit_tips"
+                app:layout_constraintTop_toBottomOf="@id/tv_line_limit_tips" />
+
+            <EditText
+                android:id="@+id/et_max_line"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:hint="@string/hint_danmu_line_limit"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="50"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/text_theme"
+                android:textColorHint="@color/setting_edit_hint_gray"
+                android:textSize="14sp"
+                android:theme="@style/StyleSettingEdit"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_line_no_limit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_line_no_limit" />
+
+            <TextView
+                android:id="@+id/tv_screen_limit_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/text_danmu_screen_count"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_line_no_limit" />
+
+            <TextView
+                android:id="@+id/tv_screen_no_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/background_player_setting_text"
+                android:focusable="true"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="5dp"
+                android:text="@string/text_danmu_screen_count_unlimited"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintStart_toStartOf="@id/tv_screen_limit_tips"
+                app:layout_constraintTop_toBottomOf="@id/tv_screen_limit_tips" />
+
+            <TextView
+                android:id="@+id/tv_screen_auto_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_player_setting_text"
+                android:focusable="true"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="5dp"
+                android:text="@string/text_danmu_screen_count_auto"
+                android:textColor="@color/text_white_immutable"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_screen_no_limit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_screen_no_limit" />
+
+            <EditText
+                android:id="@+id/et_screen_max_num"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:hint="@string/hit_danmu_screen_count"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="50"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/text_theme"
+                android:textColorHint="@color/setting_edit_hint_gray"
+                android:textSize="14sp"
+                android:theme="@style/StyleSettingEdit"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_screen_no_limit"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_screen_no_limit" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_screen_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="tv_screen_limit_tips,tv_screen_no_limit,tv_screen_auto_limit,et_screen_max_num"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

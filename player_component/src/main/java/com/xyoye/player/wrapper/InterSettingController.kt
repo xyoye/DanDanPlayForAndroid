@@ -1,5 +1,6 @@
 package com.xyoye.player.wrapper
 
+import android.view.KeyEvent
 import com.xyoye.data_component.enums.SettingViewType
 
 /**
@@ -37,6 +38,8 @@ interface InterSettingController {
      * 切换字幕资源
      */
     fun onSubtitleSourceChanged()
+
+    fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean
 
     fun settingRelease()
 }

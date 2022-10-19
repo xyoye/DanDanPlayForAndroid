@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setting_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/background_video_view"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationY="100dp"
+        tools:translationY="0dp">
+
+        <TextView
+            android:id="@+id/tv_reduce_ten"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_reduce_ten"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_reduce_five"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_reduce_five"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_reduce_ten"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_reduce_half"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_reduce_half"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_reduce_five"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_display"
+            app:layout_constraintEnd_toEndOf="@id/tv_display"
+            app:layout_constraintStart_toStartOf="@id/tv_display"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="增加" />
+
+        <TextView
+            android:id="@+id/tv_reset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_player_setting_text_transparent"
+            android:gravity="center"
+            android:paddingVertical="2dp"
+            android:text="@string/text_reset"
+            android:textColor="@color/text_theme"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_display"
+            app:layout_constraintStart_toStartOf="@id/tv_display"
+            app:layout_constraintTop_toBottomOf="@id/tv_display" />
+
+        <TextView
+            android:id="@+id/tv_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            tools:text="0秒"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_reduce_half"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_add_half"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_add_half"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_display"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_add_five"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_add_five"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_add_half"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_add_ten"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/action_offset_add_ten"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_add_five"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

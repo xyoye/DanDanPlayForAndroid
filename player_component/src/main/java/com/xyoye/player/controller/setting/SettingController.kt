@@ -33,6 +33,7 @@ class SettingController(
     private lateinit var videoAspectView: SettingVideoAspectView
     private lateinit var audioStreamView: SettingAudioStreamView
     private lateinit var danmuConfigureView: SettingDanmuConfigureView
+    private lateinit var danmuTimeView: SettingDanmuTimeView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
 
@@ -235,6 +236,13 @@ class SettingController(
                     addView.invoke(danmuConfigureView)
                 }
                 return danmuConfigureView
+            }
+            SettingViewType.DANMU_TIME -> {
+                if (this::danmuTimeView.isInitialized.not()) {
+                    danmuTimeView = SettingDanmuTimeView(context)
+                    addView.invoke(danmuTimeView)
+                }
+                return danmuTimeView
             }
         }
     }

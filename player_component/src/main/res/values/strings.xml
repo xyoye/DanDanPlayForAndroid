@@ -113,4 +113,11 @@
     <string name="action_remove_danmu">移除弹幕</string>
     <string name="action_search_network_danmu">网络弹幕</string>
     <string name="action_select_local_danmu">本地弹幕</string>
+
+    <string name="action_offset_reduce_ten">-10</string>
+    <string name="action_offset_reduce_five">-5</string>
+    <string name="action_offset_reduce_half">-0.5</string>
+    <string name="action_offset_add_half">+0.5</string>
+    <string name="action_offset_add_five">+5</string>
+    <string name="action_offset_add_ten">+10</string>
 </resources>

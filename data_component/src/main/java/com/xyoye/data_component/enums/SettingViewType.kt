@@ -36,4 +36,6 @@ enum class SettingViewType {
     DANMU_CONFIGURE,
 
     DANMU_STYLE,
+
+    DANMU_TIME
 }

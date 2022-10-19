@@ -33,7 +33,7 @@ class SettingController(
     private lateinit var videoAspectView: SettingVideoAspectView
     private lateinit var audioStreamView: SettingAudioStreamView
     private lateinit var danmuConfigureView: SettingDanmuConfigureView
-    private lateinit var danmuTimeView: SettingDanmuTimeView
+    private lateinit var offsetTimeView: SettingOffsetTimeView
     private lateinit var subtitleStreamView: SettingSubtitleStreamView
     private lateinit var subtitleStyleView: SettingSubtitleStyleView
 
@@ -239,12 +239,13 @@ class SettingController(
                 }
                 return danmuConfigureView
             }
-            SettingViewType.DANMU_TIME -> {
-                if (this::danmuTimeView.isInitialized.not()) {
-                    danmuTimeView = SettingDanmuTimeView(context)
-                    addView.invoke(danmuTimeView)
+            SettingViewType.DANMU_OFFSET_TIME -> {
+                if (this::offsetTimeView.isInitialized.not()) {
+                    offsetTimeView = SettingOffsetTimeView(context)
+                    addView.invoke(offsetTimeView)
                 }
-                return danmuTimeView
+                offsetTimeView.setSettingType(type)
+                return offsetTimeView
             }
             SettingViewType.SUBTITLE_STREAM -> {
                 if (this::subtitleStreamView.isInitialized.not()) {
@@ -259,6 +260,14 @@ class SettingController(
                     addView.invoke(subtitleStyleView)
                 }
                 return subtitleStyleView
+            }
+            SettingViewType.SUBTITLE_OFFSET_TIME -> {
+                if (this::offsetTimeView.isInitialized.not()) {
+                    offsetTimeView = SettingOffsetTimeView(context)
+                    addView.invoke(offsetTimeView)
+                }
+                offsetTimeView.setSettingType(type)
+                return offsetTimeView
             }
         }
     }

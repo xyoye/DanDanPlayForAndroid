@@ -37,9 +37,11 @@ enum class SettingViewType {
 
     DANMU_STYLE,
 
-    DANMU_TIME,
+    DANMU_OFFSET_TIME,
 
     SUBTITLE_STREAM,
 
-    SUBTITLE_STYLE
+    SUBTITLE_STYLE,
+
+    SUBTITLE_OFFSET_TIME
 }

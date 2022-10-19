@@ -12,7 +12,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
-import com.xyoye.player_component.databinding.LayoutSettingDanmuTimeBinding
+import com.xyoye.player_component.databinding.LayoutSettingOffsetTimeBinding
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import kotlin.math.abs
@@ -25,22 +25,23 @@ import kotlin.math.abs
  * </pre>
  */
 
-class SettingDanmuTimeView(
+class SettingOffsetTimeView(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : BaseSettingView<LayoutSettingDanmuTimeBinding>(context, attrs, defStyleAttr) {
+) : BaseSettingView<LayoutSettingOffsetTimeBinding>(context, attrs, defStyleAttr) {
 
     private val layoutHeight = dp2px(100).toFloat()
     private val actionViews = mutableListOf<TextView>()
+    private var mSettingType = SettingViewType.DANMU_OFFSET_TIME
 
     init {
         initView()
     }
 
-    override fun getLayoutId() = R.layout.layout_setting_danmu_time
+    override fun getLayoutId() = R.layout.layout_setting_offset_time
 
-    override fun getSettingViewType() = SettingViewType.DANMU_TIME
+    override fun getSettingViewType() = SettingViewType.DANMU_OFFSET_TIME
 
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
@@ -124,17 +125,26 @@ class SettingDanmuTimeView(
     }
 
     private fun changeTime(time: Float, reset: Boolean = false, dispatch: Boolean = true) {
-        val danmuOffset = PlayerInitializer.Danmu.offsetPosition
+        val offsetTime = if (mSettingType == SettingViewType.SUBTITLE_OFFSET_TIME) {
+            PlayerInitializer.Subtitle.offsetPosition
+        } else {
+            PlayerInitializer.Danmu.offsetPosition
+        }
         val currentOffset = time * 1000
-        var newOffset = danmuOffset + currentOffset
+        var newOffset = offsetTime + currentOffset
 
         if (reset) {
             newOffset = 0f
         }
 
         if (dispatch) {
-            PlayerInitializer.Danmu.offsetPosition = newOffset.toLong()
-            mControlWrapper.updateDanmuOffsetTime()
+            if (mSettingType == SettingViewType.SUBTITLE_OFFSET_TIME) {
+                PlayerInitializer.Subtitle.offsetPosition = newOffset.toLong()
+                mControlWrapper.updateSubtitleOffsetTime()
+            } else {
+                PlayerInitializer.Danmu.offsetPosition = newOffset.toLong()
+                mControlWrapper.updateDanmuOffsetTime()
+            }
         }
 
         val display = "${numberFormat(abs(newOffset / 1000))}秒"
@@ -180,5 +190,9 @@ class SettingDanmuTimeView(
             roundingMode = RoundingMode.HALF_UP
             format(num)
         }
+    }
+
+    fun setSettingType(settingType: SettingViewType) {
+        this.mSettingType = settingType
     }
 }

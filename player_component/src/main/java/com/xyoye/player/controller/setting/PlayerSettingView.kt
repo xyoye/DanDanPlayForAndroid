@@ -299,7 +299,7 @@ class PlayerSettingView(
                 onSettingVisibilityChanged(false)
             }
             SettingAction.DANMU_TIME -> {
-                mControlWrapper.showSettingView(SettingViewType.DANMU_TIME)
+                mControlWrapper.showSettingView(SettingViewType.DANMU_OFFSET_TIME)
                 onSettingVisibilityChanged(false)
             }
             SettingAction.SUBTITLE_LOAD -> {
@@ -314,7 +314,10 @@ class PlayerSettingView(
                 mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STYLE)
                 onSettingVisibilityChanged(false)
             }
-            else -> {}
+            SettingAction.SUBTITLE_TIME -> {
+                mControlWrapper.showSettingView(SettingViewType.SUBTITLE_OFFSET_TIME)
+                onSettingVisibilityChanged(false)
+            }
         }
     }
 }

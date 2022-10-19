@@ -348,9 +348,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
 
         //字幕配置
-        PlayerInitializer.Subtitle.textSize = (40f * SubtitleConfig.getTextSize() / 100f).toInt()
-        PlayerInitializer.Subtitle.strokeWidth =
-            (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
+        PlayerInitializer.Subtitle.textSize = SubtitleConfig.getTextSize()
+        PlayerInitializer.Subtitle.strokeWidth = SubtitleConfig.getStrokeWidth()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
     }

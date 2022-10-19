@@ -56,6 +56,7 @@
         <attr name="thumbColor" format="color"/>
         <attr name="maxPosition" format="integer"/>
         <attr name="defaultPosition" format="integer" />
+        <attr name="focusedColor" format="color" />
     </declare-styleable>
 
 </resources>

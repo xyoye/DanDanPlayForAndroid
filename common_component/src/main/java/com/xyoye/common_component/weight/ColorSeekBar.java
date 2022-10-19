@@ -1,6 +1,5 @@
 package com.xyoye.common_component.weight;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,19 +38,19 @@ public class ColorSeekBar extends View {
     private int mBarWidth;
     private int mBarRadius;
     private int mThumbColor;
+    private int mFocusedColor;
 
     private int mMaxPosition;
     private int mPosition;
 
     private int realLeft;
     private int mColorsToInvoke = -1;
-    private List<Integer> mCachedColors = new ArrayList<>();
+    private final List<Integer> mCachedColors = new ArrayList<>();
 
-    private Paint colorPaint = new Paint();
-    private Paint thumbPaint = new Paint();
+    private final Paint colorPaint = new Paint();
+    private final Paint thumbPaint = new Paint();
 
     private boolean mInit = false;
-    private boolean mFirstDraw = true;
     private boolean mMovingColorBar;
 
     private OnColorChangeListener mOnColorChangeLister;
@@ -72,7 +70,6 @@ public class ColorSeekBar extends View {
         init(context, attrs, defStyleAttr, 0);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public ColorSeekBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
@@ -103,6 +100,7 @@ public class ColorSeekBar extends View {
         mBarRadius = (int) a.getDimension(R.styleable.ColorSeekBar_barRadius, (float) dp2px(5));
         mThumbHeight = (int) a.getDimension(R.styleable.ColorSeekBar_thumbHeight, (float) dp2px(15));
         mThumbColor = a.getColor(R.styleable.ColorSeekBar_thumbColor, -1);
+        mFocusedColor = a.getColor(R.styleable.ColorSeekBar_focusedColor, -1);
         int colorsId = a.getResourceId(R.styleable.ColorSeekBar_colorSeeds, 0);
         a.recycle();
 
@@ -171,16 +169,16 @@ public class ColorSeekBar extends View {
         thumbPaint.setAntiAlias(true);
 
         //thumbGradientPaint.setShader(thumbShader);
-        thumbPaint.setColor(Color.WHITE);
-        canvas.drawCircle(thumbX, thumbY, (mThumbHeight / 2f) + 2f, thumbPaint);
-        thumbPaint.setColor(thumbColor);
-        canvas.drawCircle(thumbX, thumbY, mThumbHeight / 2f, thumbPaint);
-
-        if (mFirstDraw) {
-            if (mOnColorChangeLister != null) {
-                mOnColorChangeLister.onColorChange(mPosition, getCurrentColor());
-            }
-            mFirstDraw = false;
+        if (hasFocus() && mFocusedColor != -1) {
+            thumbPaint.setColor(mFocusedColor);
+            canvas.drawCircle(thumbX, thumbY, (mThumbHeight / 2f) + 6f, thumbPaint);
+            thumbPaint.setColor(thumbColor);
+            canvas.drawCircle(thumbX, thumbY, mThumbHeight / 2f - 4f, thumbPaint);
+        } else {
+            thumbPaint.setColor(Color.WHITE);
+            canvas.drawCircle(thumbX, thumbY, (mThumbHeight / 2f) + 2f, thumbPaint);
+            thumbPaint.setColor(thumbColor);
+            canvas.drawCircle(thumbX, thumbY, mThumbHeight / 2f, thumbPaint);
         }
         super.onDraw(canvas);
     }
@@ -258,6 +256,14 @@ public class ColorSeekBar extends View {
         cacheColors();
     }
 
+    public void previousPosition() {
+        seekTo(mPosition - 1);
+    }
+
+    public void nextPosition() {
+        seekTo(mPosition + 1);
+    }
+
     public void seekTo(int position) {
         this.mPosition = position;
         mPosition = Math.min(mPosition, mMaxPosition);
@@ -288,10 +294,6 @@ public class ColorSeekBar extends View {
      */
     private boolean isOnBar(RectF r, float x, float y) {
         return r.left - mThumbRadius < x && x < r.right + mThumbRadius && r.top - mThumbRadius < y && y < r.bottom + mThumbRadius;
-    }
-
-    public boolean isFirstDraw() {
-        return mFirstDraw;
     }
 
     private void cacheColors() {

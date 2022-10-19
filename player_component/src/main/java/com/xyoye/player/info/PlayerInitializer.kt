@@ -63,11 +63,16 @@ object PlayerInitializer {
 
     object Subtitle {
         const val DEFAULT_POSITION = 0L
+        const val DEFAULT_SIZE = 50
+        const val DEFAULT_STROKE = 50
+        const val DEFAULT_TEXT_COLOR = Color.WHITE
+        const val DEFAULT_STROKE_COLOR = Color.BLACK
+
         var offsetPosition = DEFAULT_POSITION
 
-        var textSize = 20
-        var strokeWidth = 5
-        var textColor = Color.WHITE
-        var strokeColor = Color.BLACK
+        var textSize = DEFAULT_SIZE
+        var strokeWidth = DEFAULT_STROKE
+        var textColor = DEFAULT_TEXT_COLOR
+        var strokeColor = DEFAULT_STROKE_COLOR
     }
 }

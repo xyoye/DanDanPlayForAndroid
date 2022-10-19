@@ -226,15 +226,22 @@ class PlayerSettingView(
             SettingAction.DANMU_LOAD -> {
                 selected = TextUtils.isEmpty(mControlWrapper.getDanmuUrl()).not()
             }
-            SettingAction.DANMU_TIME -> {
-                selected =
-                    PlayerInitializer.Danmu.offsetPosition != PlayerInitializer.Danmu.DEFAULT_POSITION
-            }
             SettingAction.DANMU_STYLE -> {
                 selected = PlayerInitializer.Danmu.size != PlayerInitializer.Danmu.DEFAULT_SIZE
                         || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
                         || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
                         || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
+            }
+            SettingAction.DANMU_TIME -> {
+                selected =
+                    PlayerInitializer.Danmu.offsetPosition != PlayerInitializer.Danmu.DEFAULT_POSITION
+            }
+            SettingAction.SUBTITLE_STYLE -> {
+                selected =
+                    PlayerInitializer.Subtitle.textSize != PlayerInitializer.Subtitle.DEFAULT_SIZE
+                            || PlayerInitializer.Subtitle.strokeWidth != PlayerInitializer.Subtitle.DEFAULT_STROKE
+                            || PlayerInitializer.Subtitle.textColor != PlayerInitializer.Subtitle.DEFAULT_TEXT_COLOR
+                            || PlayerInitializer.Subtitle.strokeColor != PlayerInitializer.Subtitle.DEFAULT_STROKE_COLOR
             }
             SettingAction.SUBTITLE_TIME -> {
                 selected =
@@ -301,6 +308,10 @@ class PlayerSettingView(
             }
             SettingAction.SUBTITLE_STREAM -> {
                 mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STREAM)
+                onSettingVisibilityChanged(false)
+            }
+            SettingAction.SUBTITLE_STYLE -> {
+                mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STYLE)
                 onSettingVisibilityChanged(false)
             }
             else -> {}

@@ -147,12 +147,14 @@ class SubtitleTextView(
 
     fun updateTextSize() {
         val textSize = PlayerInitializer.Subtitle.textSize
-        setTextSize(textSize)
+        val realSize = (40f * textSize / 100f).toInt()
+        setTextSize(realSize)
     }
 
     fun updateStrokeWidth() {
         val strokeWidth = PlayerInitializer.Subtitle.strokeWidth
-        setStrokeWidth(strokeWidth)
+        val realWidth = (10f * strokeWidth / 100f).toInt()
+        setStrokeWidth(realWidth)
     }
 
     fun updateTextColor() {

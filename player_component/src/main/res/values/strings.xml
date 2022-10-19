@@ -120,4 +120,7 @@
     <string name="action_offset_add_half">+0.5</string>
     <string name="action_offset_add_five">+5</string>
     <string name="action_offset_add_ten">+10</string>
+
+    <string name="text_setting_danmu_style">弹幕样式设置</string>
+    <string name="text_setting_subtitle_style">字幕样式设置</string>
 </resources>

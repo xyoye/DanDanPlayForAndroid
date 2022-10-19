@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/player_setting_nsv"
+        android:id="@+id/subtitle_setting_nsv"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
@@ -28,12 +28,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="@string/text_setting_danmu_style"
+                    android:text="@string/text_setting_subtitle_style"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/tv_reset_danmu_config"
+                    android:id="@+id/tv_reset_subtitle_config"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -52,29 +52,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_size_tips"
+                    android:text="@string/text_subtitle_size_tips"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/danmu_size_tv"
+                    android:id="@+id/subtitle_size_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp"
+                    tools:ignore="RelativeOverlap"
                     tools:text="50%" />
             </RelativeLayout>
 
             <SeekBar
-                android:id="@+id/danmu_size_sb"
+                android:id="@+id/subtitle_size_sb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -82,43 +83,8 @@
                 android:layout_marginEnd="10dp"
                 android:focusable="true"
                 android:max="100"
-                app:theme="@style/Theme.DanDanPlay.SeekBar" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_speed_tips"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/danmu_speed_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/text_white_immutable"
-                    android:textSize="14sp"
-                    tools:text="50%" />
-            </RelativeLayout>
-
-            <SeekBar
-                android:id="@+id/danmu_speed_sb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:focusable="true"
-                android:max="100"
-                app:theme="@style/Theme.DanDanPlay.SeekBar" />
+                app:theme="@style/Theme.DanDanPlay.SeekBar"
+                tools:progress="50" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -131,22 +97,23 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_alpha_tips"
+                    android:text="@string/text_subtitle_stroke_size_tips"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/danmu_alpha_tv"
+                    android:id="@+id/subtitle_stroke_width_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp"
-                    tools:text="100%" />
+                    tools:ignore="RelativeOverlap"
+                    tools:text="50%" />
             </RelativeLayout>
 
             <SeekBar
-                android:id="@+id/danmu_alpha_sb"
+                android:id="@+id/subtitle_stroke_width_sb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -154,7 +121,8 @@
                 android:layout_marginEnd="10dp"
                 android:focusable="true"
                 android:max="100"
-                app:theme="@style/Theme.DanDanPlay.SeekBar" />
+                app:theme="@style/Theme.DanDanPlay.SeekBar"
+                tools:progress="50" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -167,30 +135,76 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_danmu_project_alpha_tips"
+                    android:text="@string/text_subtitle_color_tips"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/danmu_stoke_tv"
+                    android:id="@+id/subtitle_color_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:textColor="@color/text_white_immutable"
                     android:textSize="14sp"
-                    tools:text="100%" />
+                    tools:ignore="RelativeOverlap"
+                    tools:text="50%" />
             </RelativeLayout>
 
-            <SeekBar
-                android:id="@+id/danmu_stoke_sb"
+            <com.xyoye.common_component.weight.ColorSeekBar
+                android:id="@+id/subtitle_color_sb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:focusable="true"
-                android:max="100"
-                app:theme="@style/Theme.DanDanPlay.SeekBar" />
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                app:colorSeeds="@array/text_colors"
+                app:focusedColor="@color/theme"
+                app:maxPosition="100"
+                tools:progress="50" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_subtitle_stroke_color_tips"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/subtitle_stroke_color_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/text_white_immutable"
+                    android:textSize="14sp"
+                    tools:ignore="RelativeOverlap"
+                    tools:text="50%" />
+            </RelativeLayout>
+
+            <com.xyoye.common_component.weight.ColorSeekBar
+                android:id="@+id/subtitle_stroke_color_sb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:focusable="true"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                app:colorSeeds="@array/text_colors"
+                app:focusedColor="@color/theme"
+                app:maxPosition="100"
+                tools:progress="50" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

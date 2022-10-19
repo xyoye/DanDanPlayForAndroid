@@ -35,6 +35,7 @@ class SettingController(
     private lateinit var danmuConfigureView: SettingDanmuConfigureView
     private lateinit var danmuTimeView: SettingDanmuTimeView
     private lateinit var subtitleStreamView: SettingSubtitleStreamView
+    private lateinit var subtitleStyleView: SettingSubtitleStyleView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
 
@@ -251,6 +252,13 @@ class SettingController(
                     addView.invoke(subtitleStreamView)
                 }
                 return subtitleStreamView
+            }
+            SettingViewType.SUBTITLE_STYLE -> {
+                if (this::subtitleStyleView.isInitialized.not()) {
+                    subtitleStyleView = SettingSubtitleStyleView(context)
+                    addView.invoke(subtitleStyleView)
+                }
+                return subtitleStyleView
             }
         }
     }

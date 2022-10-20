@@ -173,13 +173,19 @@ class SettingOffsetTimeView(
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            val targetView = actionViews.getOrNull(focusedIndex - 1) ?: actionViews.last()
+            var targetView = actionViews.getOrNull(focusedIndex - 1) ?: actionViews.last()
+            if (!targetView.isVisible) {
+                targetView = actionViews.getOrNull(focusedIndex - 2) ?: actionViews.last()
+            }
             targetView.requestFocus()
             return
         }
 
         if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-            val targetView = actionViews.getOrNull(focusedIndex + 1) ?: actionViews.first()
+            var targetView = actionViews.getOrNull(focusedIndex + 1) ?: actionViews.first()
+            if (!targetView.isVisible) {
+                targetView = actionViews.getOrNull(focusedIndex + 2) ?: actionViews.first()
+            }
             targetView.requestFocus()
             return
         }

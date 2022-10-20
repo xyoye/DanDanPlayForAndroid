@@ -1,6 +1,5 @@
 package com.xyoye.player.controller.setting
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -41,7 +40,6 @@ class SettingAudioStreamView(
 
     override fun getSettingViewType() = SettingViewType.AUDIO_STREAM
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewShow() {
         audioStreamData.clear()
         audioStreamData.addAll(mControlWrapper.getAudioStream())

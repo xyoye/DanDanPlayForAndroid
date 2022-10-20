@@ -1,6 +1,5 @@
 package com.xyoye.player.controller.setting
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Point
@@ -23,7 +22,6 @@ import com.xyoye.player_component.databinding.LayoutSceenShotBinding
  * Created by xyoye on 2021/5/2.
  */
 
-@SuppressLint("ClickableViewAccessibility")
 class ScreenShotView(
     context: Context,
     attrs: AttributeSet? = null,
@@ -44,10 +42,6 @@ class ScreenShotView(
         post {
             val hideY = -((mAttachActivity.getScreenHeight() - height) / 2f + height.toFloat())
             viewBinding.screenShotLayout.translationY = hideY
-        }
-
-        viewBinding.screenShotLayout.setOnTouchListener { _, _ ->
-            return@setOnTouchListener true
         }
 
         viewBinding.shotCancelBt.setOnClickListener {

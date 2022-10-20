@@ -10,11 +10,6 @@ import com.xyoye.data_component.enums.SettingViewType
 interface InterSettingController {
 
     /**
-     * 切换弹幕、字幕资源
-     */
-    fun switchSource(isSwitchSubtitle: Boolean)
-
-    /**
      * 当前视图是否正在显示
      */
     fun isSettingViewShowing(): Boolean

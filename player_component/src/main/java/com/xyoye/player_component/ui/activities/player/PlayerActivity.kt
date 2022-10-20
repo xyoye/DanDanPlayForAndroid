@@ -155,7 +155,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@observe
             }
 
-            videoController.updateLoadDanmuState(it.state)
             if (it.state == LoadDanmuState.MATCH_SUCCESS){
                 val danmuPath = it.danmuPath!!
                 videoController.showMessage(it.state.msg)

@@ -5,7 +5,6 @@ import android.graphics.Point
 import android.graphics.PointF
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.data_component.bean.VideoStreamBean
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.VideoScreenScale
 
 /**
@@ -108,11 +107,6 @@ interface InterVideoPlayer {
      *  设置视频角度
      */
     fun setRotation(rotation: Float)
-
-    /**
-     *  选中字幕流或音频流
-     */
-    fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?)
 
     /**
      *  是否由播放器处理外挂弹幕

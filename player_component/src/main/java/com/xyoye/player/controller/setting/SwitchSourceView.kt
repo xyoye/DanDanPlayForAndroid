@@ -36,7 +36,7 @@ class SwitchSourceView(
 ) : BaseSettingView<LayoutSwitchSourceBinding>(context, attrs, defStyleAttr) {
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
-    private var isSwitchSubtitle = false
+    private var mSettingViewType = SettingViewType.LOAD_DANMU_SOURCE
 
     private val mPathData = mutableListOf<FilePathBean>()
     private val mCommonDirectoryData = mutableListOf<FilePathBean>()
@@ -55,6 +55,7 @@ class SwitchSourceView(
     override fun getGravity() = Gravity.START
 
     override fun onViewShow() {
+        val isSwitchSubtitle = mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE
         viewBinding.titleTv.text = if (isSwitchSubtitle)
             R.string.text_select_subtitle.toResString()
         else
@@ -99,8 +100,8 @@ class SwitchSourceView(
         return true
     }
 
-    fun setSwitchType(isSwitchSubtitle: Boolean) {
-        this.isSwitchSubtitle = isSwitchSubtitle
+    fun setSwitchType(settingViewType: SettingViewType) {
+        this.mSettingViewType = settingViewType
     }
 
     private fun initView() {
@@ -187,7 +188,7 @@ class SwitchSourceView(
                             fileIv.setImageResource(
                                 when {
                                     data.isDirectory -> R.drawable.ic_folder
-                                    isSwitchSubtitle -> R.drawable.ic_file_subtitle
+                                    mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE -> R.drawable.ic_file_subtitle
                                     else -> R.drawable.ic_file_xml
                                 }
                             )
@@ -218,7 +219,7 @@ class SwitchSourceView(
             AppConfig.putLastOpenFolder(it)
         }
 
-        if (isSwitchSubtitle) {
+        if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
             mControlWrapper.setSubtitlePath(data.filePath, playWhenReady = true)
         } else {
             mControlWrapper.onDanmuSourceChanged(data.filePath)
@@ -309,6 +310,7 @@ class SwitchSourceView(
      * 是否为目标文件类型
      */
     private fun isTargetFile(filePath: String): Boolean {
+        val isSwitchSubtitle = mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE
         return (isSwitchSubtitle && isSubtitleFile(filePath))
                 || (!isSwitchSubtitle && isDanmuFile(filePath))
     }
@@ -355,7 +357,7 @@ class SwitchSourceView(
      * 否则：默认缓存目录
      */
     private fun getDefaultOpenDirectory(): String {
-        val targetFilePath = if (isSwitchSubtitle) {
+        val targetFilePath = if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
             AppConfig.getCachePath()
         } else {
             mControlWrapper.getDanmuUrl()

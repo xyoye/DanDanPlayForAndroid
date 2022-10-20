@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import com.xyoye.cache.CacheManager
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.data_component.bean.VideoStreamBean
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.controller.VideoController
@@ -186,10 +185,6 @@ class DanDanVideoPlayer(
 
     override fun getVideoSize() = mVideoSize
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mVideoPlayer.selectTrack(select, deselect)
-    }
-
     override fun interceptSubtitle(subtitlePath: String): Boolean {
         return mVideoPlayer.interceptSubtitle(subtitlePath)
     }
@@ -238,10 +233,6 @@ class DanDanVideoPlayer(
 
     override fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
         mVideoController?.updateSubtitle(subtitle)
-    }
-
-    override fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
-        mVideoController?.updateTrack(isAudio, trackData)
     }
 
     private fun initPlayer() {

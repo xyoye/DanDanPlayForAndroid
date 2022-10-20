@@ -4,7 +4,6 @@ import android.graphics.PointF
 import android.view.KeyEvent
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoStreamBean
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.utils.MessageTime
@@ -92,10 +91,6 @@ class ControlWrapper(
 
     override fun setRotation(rotation: Float) {
         mVideoPlayer.setRotation(rotation)
-    }
-
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mVideoPlayer.selectTrack(select, deselect)
     }
 
     override fun interceptSubtitle(subtitlePath: String) =
@@ -311,12 +306,6 @@ class ControlWrapper(
     /**
      * ------------------Setting Controller----------------------
      */
-
-    override fun switchSource(isSwitchSubtitle: Boolean) {
-        mSettingController.switchSource(isSwitchSubtitle)
-        showSettingView(SettingViewType.SWITCH_SOURCE)
-    }
-
     override fun isSettingViewShowing() = mSettingController.isSettingViewShowing()
 
     override fun hideSettingView() {

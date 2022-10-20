@@ -16,7 +16,6 @@ import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoSize
 import com.xyoye.data_component.bean.VideoStreamBean
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
@@ -171,10 +170,6 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     override fun setSubtitleOffset(offsetMs: Long) {
     }
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mTrackHelper.selectExoTrack(mContext, mTrackSelector, select, exoplayer.currentTracks)
-    }
-
     override fun isPlaying(): Boolean {
         return when (exoplayer.playbackState) {
             Player.STATE_BUFFERING,
@@ -279,8 +274,6 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
 
     override fun onTracksChanged(tracks: Tracks) {
         subtitleType = SubtitleType.UN_KNOW
-        val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
-        mTrackHelper.initExoTrack(tracks, trackNameProvider)
     }
 
     override fun onPlayerError(error: PlaybackException) {

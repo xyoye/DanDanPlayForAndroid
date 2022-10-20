@@ -10,7 +10,7 @@
         android:background="@drawable/background_player_setting_text_transparent"
         android:focusable="true"
         android:minHeight="46dp"
-        android:paddingHorizontal="10dp"
+        android:paddingHorizontal="5dp"
         android:tag="@string/focusable_item">
 
         <ImageView

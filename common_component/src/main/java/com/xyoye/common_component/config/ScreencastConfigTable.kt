@@ -4,11 +4,7 @@ import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/15
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/15
  */
 
 @MMKVKotlinClass(className = "ScreencastConfig")

@@ -7,11 +7,7 @@ import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.data_component.entity.MediaLibraryEntity
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/15
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/15
  */
 
 @Route(path = RouteTable.Stream.ScreencastProvide, name = "投屏内容提供服务")

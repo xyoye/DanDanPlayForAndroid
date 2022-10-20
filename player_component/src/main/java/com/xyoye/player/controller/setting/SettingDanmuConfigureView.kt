@@ -14,11 +14,7 @@ import com.xyoye.player_component.databinding.LayoutSettingDanmuConfigureBinding
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/18
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/18
  */
 
 class SettingDanmuConfigureView(

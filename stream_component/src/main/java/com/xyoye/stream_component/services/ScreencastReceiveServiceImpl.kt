@@ -6,11 +6,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.services.ScreencastReceiveService
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/15
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/15
  */
 
 @Route(path = RouteTable.Stream.ScreencastReceive, name = "投屏内容接收服务")

@@ -29,11 +29,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/16
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/16
  */
 
 interface ScreencastReceiveHandler {

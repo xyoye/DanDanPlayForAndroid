@@ -4,17 +4,12 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import com.xyoye.common_component.extension.notificationBuilder
 import com.xyoye.common_component.extension.notificationManager
-import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.receiver.NotificationReceiver
 import com.xyoye.stream_component.R
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/16
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/16
  */
 
 class ScreencastReceiverNotifier(private val context: Context) {

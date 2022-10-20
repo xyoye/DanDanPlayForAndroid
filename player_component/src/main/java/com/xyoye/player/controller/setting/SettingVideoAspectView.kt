@@ -18,11 +18,7 @@ import com.xyoye.player_component.databinding.ItemSeetingVideoAspectBinding
 import com.xyoye.player_component.databinding.LayoutSettingVideoAspectBinding
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/12
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/12
  */
 
 class SettingVideoAspectView(

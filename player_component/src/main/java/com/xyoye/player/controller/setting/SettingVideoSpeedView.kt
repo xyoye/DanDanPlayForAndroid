@@ -13,11 +13,7 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutSettingVideoSpeedBinding
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/12
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/12
  */
 
 class SettingVideoSpeedView(

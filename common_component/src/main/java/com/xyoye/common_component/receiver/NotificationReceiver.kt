@@ -15,11 +15,7 @@ import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.services.ScreencastReceiveService
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/14
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/14
  */
 
 class NotificationReceiver : BroadcastReceiver() {

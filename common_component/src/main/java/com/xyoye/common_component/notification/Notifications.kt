@@ -1,17 +1,12 @@
 package com.xyoye.common_component.notification
 
 import android.content.Context
-import androidx.core.app.NotificationChannelGroupCompat
 import androidx.core.app.NotificationManagerCompat
 import com.xyoye.common_component.extension.buildNotificationChannel
 import com.xyoye.common_component.extension.buildNotificationChannelGroup
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/14
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/14
  */
 
 object Notifications {

@@ -17,11 +17,7 @@ import com.xyoye.player_component.databinding.ItemSeetingStreamBinding
 import com.xyoye.player_component.databinding.LayoutSettingStreamBinding
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/12
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/12
  */
 
 class SettingAudioStreamView(

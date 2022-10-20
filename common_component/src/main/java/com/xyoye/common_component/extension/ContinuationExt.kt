@@ -4,11 +4,7 @@ import kotlinx.coroutines.CancellableContinuation
 import kotlin.coroutines.resume
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/19
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/19
  */
 
 fun <T> CancellableContinuation<T>.resumeWhenAlive(value: T) {

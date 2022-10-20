@@ -4,11 +4,7 @@ import android.content.Context
 import com.alibaba.android.arouter.facade.template.IProvider
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/15
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/15
  */
 
 interface ScreencastReceiveService : IProvider {

@@ -7,11 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.xyoye.common_component.base.app.BaseApplication
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/10
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/10
  */
 
 @SuppressLint("StaticFieldLeak")

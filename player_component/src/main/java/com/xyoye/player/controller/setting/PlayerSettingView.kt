@@ -27,11 +27,7 @@ import com.xyoye.player_component.databinding.ItemPlayerSettingTypeBinding
 import com.xyoye.player_component.databinding.LayoutPlayerSettingBinding
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/10/11
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/10/11
  */
 
 class PlayerSettingView(

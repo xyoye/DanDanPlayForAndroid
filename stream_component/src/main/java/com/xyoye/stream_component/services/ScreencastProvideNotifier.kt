@@ -9,11 +9,7 @@ import com.xyoye.common_component.receiver.NotificationReceiver
 import com.xyoye.stream_component.R
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/14
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/14
  */
 
 class ScreencastProvideNotifier(private val context: Context) {

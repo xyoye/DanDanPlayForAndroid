@@ -16,11 +16,7 @@ import java.io.IOException
 import java.io.InputStream
 
 /**
- * <pre>
- *     author: xieyy@anjiu-tech.com
- *     time  : 2022/9/15
- *     desc  :
- * </pre>
+ * Created by xyoye on 2022/9/15
  */
 
 object ServerController {

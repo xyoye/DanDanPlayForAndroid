@@ -19,11 +19,9 @@ abstract class BaseViewHolderCreator<V : ViewDataBinding> {
         creator: BaseViewHolderCreator<out ViewDataBinding>
     )
 
-    lateinit var itemView: View
     lateinit var itemBinding: V
 
-    fun registerItemView(itemView: View) {
-        this.itemView = itemView
+    fun initItemBinding(itemView: View) {
         this.itemBinding = DataBindingUtil.getBinding(itemView)!!
     }
 }

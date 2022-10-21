@@ -136,7 +136,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                         val index = pathList.indexOfLast { it.path == fragment.tag }
                         if (index >= 0) {
                             pathList.removeAt(index)
-                            pathAdapter.setData(pathList)
+                            dataBinding.pathRv.setData(pathList)
                         }
                         supportFragmentManager.removeFragment(fragment, true)
                         fragmentStack.pop()
@@ -151,7 +151,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                 supportFragmentManager.removeFragment(fragment, true)
 
                 pathList.removeLast()
-                pathAdapter.setData(pathList)
+                dataBinding.pathRv.setData(pathList)
                 true
             }
             else -> {
@@ -164,7 +164,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         val pathBean = FilePathBean(name, path, true)
         pathList.find { it.isOpened }?.isOpened = false
         pathList.add(pathBean)
-        pathAdapter.setData(pathList)
+        dataBinding.pathRv.setData(pathList)
 
         val childFragment = RemoteFileFragment.newInstance(fileData)
         fragmentStack.push(childFragment)

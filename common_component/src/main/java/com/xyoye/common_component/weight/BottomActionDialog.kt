@@ -1,13 +1,13 @@
 package com.xyoye.common_component.weight
 
 import android.app.Activity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.databinding.DialogBottomActionBinding
 import com.xyoye.common_component.databinding.ItemBottomActionVerticalBinding
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.bean.SheetActionBean
@@ -59,9 +59,9 @@ class BottomActionDialog(
                         }
                     }
                 }
-
-                setData(actionData)
             }
+
+            setData(actionData)
         }
     }
 }

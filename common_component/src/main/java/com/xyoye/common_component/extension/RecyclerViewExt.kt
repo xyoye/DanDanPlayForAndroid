@@ -1,8 +1,6 @@
 package com.xyoye.common_component.extension
 
 import android.view.View
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,35 +27,21 @@ fun RecyclerView.gridEmpty(spanCount: Int): GridLayoutManager {
     return GridLayoutManager(context, spanCount).also {
         it.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                if (adapter is RecyclerView.Adapter<RecyclerView.ViewHolder>) {
-                    if ((adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>)
-                            .getItemViewType(position) == BaseAdapter.VIEW_TYPE_EMPTY
-                    ) return spanCount
+                if (position == RecyclerView.NO_POSITION) {
+                    return 1
                 }
-                return 1
+                val viewType = adapter?.getItemViewType(position)
+                if (viewType != BaseAdapter.VIEW_TYPE_EMPTY) {
+                    return 1
+                }
+                return spanCount
             }
         }
     }
 }
 
 fun RecyclerView.setData(items: List<Any>) {
-    adapter?.apply {
-        if (this is BaseAdapter) {
-            this.setData(items)
-        }
-    }
-}
-
-inline fun <reified T> RecyclerView.getChildViewBindingAt(index: Int): T? {
-    val binding = getChildAt(index)?.run {
-        DataBindingUtil.getBinding<ViewDataBinding>(this)
-    } ?: return null
-
-    return if (binding is T) {
-        binding
-    } else {
-        null
-    }
+    (adapter as? BaseAdapter)?.setData(items)
 }
 
 fun RecyclerView.requestIndexChildFocus(index: Int): Boolean {

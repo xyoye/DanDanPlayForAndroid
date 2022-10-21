@@ -43,7 +43,7 @@ class BasePagingAdapter<T : Any>(pagingItemCallback: PagingItemCallback<T> = Pag
         //绑定ViewHolder数据
         getHolderCreator(holder.itemViewType).apply {
             //绑定View
-            registerItemView(holder.itemView)
+            initItemBinding(holder.itemView)
             //初始化item
             onBindViewHolder(getItem(position), position, this)
         }

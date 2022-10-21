@@ -9,13 +9,16 @@ import com.xyoye.data_component.data.AnimeData
 
 class AnimeDiffCallBack(
     private val oldData: MutableList<Any>,
-    private val newData: MutableList<AnimeData>
+    private val newData: MutableList<Any>
 ) : DiffUtil.Callback() {
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldData[oldItemPosition]
+        val newItem = newData[newItemPosition]
         if (oldItem !is AnimeData)
             return false
-        return oldItem.animeId == newData[newItemPosition].animeId
+        if (newItem !is AnimeData)
+            return false
+        return oldItem.animeId == newItem.animeId
     }
 
     override fun getOldListSize() = oldData.size
@@ -24,9 +27,12 @@ class AnimeDiffCallBack(
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldItem = oldData[oldItemPosition]
+        val newItem = newData[newItemPosition]
         if (oldItem !is AnimeData)
             return false
-        return oldItem.animeId == newData[newItemPosition].animeId
+        if (newItem !is AnimeData)
+            return false
+        return oldItem.animeId == newItem.animeId
     }
 
 }

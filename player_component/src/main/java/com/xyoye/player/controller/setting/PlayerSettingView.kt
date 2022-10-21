@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.common_component.extension.grid
-import com.xyoye.common_component.extension.nextItemIndex
-import com.xyoye.common_component.extension.previousItemIndex
-import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
@@ -120,9 +117,9 @@ class PlayerSettingView(
                 itemAnimator = null
 
                 addItemDecoration(ItemDecorationSpace(0, dp2px(8)))
-
-                setData(settingItems)
             }
+
+            setData(settingItems)
         }
     }
 

@@ -7,6 +7,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.RemoteSourceFactory
+import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.weight.ToastCenter
@@ -26,7 +27,13 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
 
     val curDirectoryFiles = mutableListOf<RemoteVideoData>()
 
+    private var remoteStorageData: MediaLibraryEntity? = null
+
     private var refreshJob: Job? = null
+
+    fun initRemoteStorage(data: MediaLibraryEntity?) {
+        this.remoteStorageData = data
+    }
 
     fun initDirectoryFiles(fileList: MutableList<RemoteVideoData>?) {
         curDirectoryFiles.clear()
@@ -39,36 +46,78 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
     fun refreshDirectoryWithHistory() {
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch(Dispatchers.IO) {
-            val storageFiles = curDirectoryFiles.map {
-                val uniqueKey = RemoteSourceFactory.generateUniqueKey(it)
-                val history = DatabaseManager.instance
-                    .getPlayHistoryDao()
-                    .getPlayHistory(uniqueKey, MediaType.REMOTE_STORAGE)
-
-                val historyDuration = history?.videoDuration ?: 0L
-                val remoteDuration = it.Duration ?: 0L
-                val duration = if (historyDuration > 0) {
-                    historyDuration
-                } else {
-                    remoteDuration * 1000
+            val storageFiles = curDirectoryFiles
+                .sortedWith(FileComparator(
+                    value = { getSortName(it) },
+                    isDirectory = { it.isFolder }
+                )).map {
+                    return@map if (it.isFolder) {
+                        convertStorageDirectory(it)
+                    } else {
+                        convertStorageFile(it)
+                    }
                 }
-
-                StorageFileBean(
-                    it.isFolder,
-                    it.absolutePath,
-                    it.getEpisodeName(),
-                    history?.danmuPath,
-                    history?.subtitlePath,
-                    history?.videoPosition ?: 0L,
-                    duration,
-                    uniqueKey,
-                    it.childData.size,
-                    RemoteHelper.getInstance().buildImageUrl(it.Id),
-                    lastPlayTime = history?.playTime
-                )
-            }
             fileLiveData.postValue(storageFiles)
         }
+    }
+
+    private fun convertStorageDirectory(videoData: RemoteVideoData): StorageFileBean {
+        return StorageFileBean(
+            videoData.isFolder,
+            videoData.absolutePath,
+            videoData.Name,
+            null,
+            null,
+            0L,
+            0L,
+            null,
+            videoData.childData.size,
+            null,
+            lastPlayTime = null
+        )
+    }
+
+    private suspend fun convertStorageFile(videoData: RemoteVideoData): StorageFileBean {
+        val uniqueKey = RemoteSourceFactory.generateUniqueKey(videoData)
+        val history = DatabaseManager.instance
+            .getPlayHistoryDao()
+            .getPlayHistory(uniqueKey, MediaType.REMOTE_STORAGE)
+
+        val historyDuration = history?.videoDuration ?: 0L
+        val remoteDuration = videoData.Duration ?: 0L
+        val duration = if (historyDuration > 0) {
+            historyDuration
+        } else {
+            remoteDuration * 1000
+        }
+
+        return StorageFileBean(
+            videoData.isFolder,
+            videoData.absolutePath,
+            videoData.getEpisodeName(),
+            history?.danmuPath,
+            history?.subtitlePath,
+            history?.videoPosition ?: 0L,
+            duration,
+            uniqueKey,
+            videoData.childData.size,
+            RemoteHelper.getInstance().buildImageUrl(videoData.Id),
+            lastPlayTime = history?.playTime
+        )
+    }
+
+    private fun getSortName(videoData: RemoteVideoData): String {
+        // 按原始文件名排序
+        if (remoteStorageData == null || remoteStorageData!!.remoteAnimeGrouping.not()) {
+            return videoData.Name
+        }
+
+        // 按剧集标题排序
+        val commonEpisodeName = "第\\d+话".toRegex().findAll(videoData.EpisodeTitle)
+        if (commonEpisodeName.count() > 0) {
+            return commonEpisodeName.first().value
+        }
+        return videoData.EpisodeTitle
     }
 
     fun playItem(uniqueKey: String) {

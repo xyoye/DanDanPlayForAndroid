@@ -47,4 +47,8 @@
     <string name="tips_screencast_receive_service">投屏接收服务</string>
     <string name="tips_need_confirm_screencast">投屏接收时，需弹窗确认播放</string>
     <string name="tips_start_receive_when_start">应用启动时，自动启动接收服务</string>
+
+    <string name="tips_group_mode">分组模式</string>
+    <string name="text_group_by_file">原始文件</string>
+    <string name="text_group_by_anime">番剧ID</string>
 </resources>

@@ -65,7 +65,10 @@ data class MediaLibraryEntity(
     var webDavStrict: Boolean = true,
 
     @ColumnInfo(name = "screencast_address")
-    var screencastAddress: String = ""
+    var screencastAddress: String = "",
+
+    @ColumnInfo(name = "remote_anime_grouping")
+    var remoteAnimeGrouping: Boolean = false
 ) : Parcelable {
 
     @Ignore

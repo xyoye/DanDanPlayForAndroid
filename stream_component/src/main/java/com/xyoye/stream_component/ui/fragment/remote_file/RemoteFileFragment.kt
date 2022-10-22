@@ -9,6 +9,7 @@ import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.data_component.data.remote.RemoteVideoData
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
@@ -18,12 +19,14 @@ import com.xyoye.stream_component.ui.activities.remote_file.RemoteFileActivity
 class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRemoteFileBinding>() {
 
     companion object {
+        private const val STORAGE_DATA = "storage_data"
         private const val FILE_DATA = "file_data"
 
-        fun newInstance(fileList: MutableList<RemoteVideoData>): RemoteFileFragment {
+        fun newInstance(remoteData: MediaLibraryEntity?, fileList: MutableList<RemoteVideoData>): RemoteFileFragment {
             val fragment = RemoteFileFragment()
             val bundle = Bundle()
 
+            bundle.putParcelable(STORAGE_DATA, remoteData)
             bundle.putParcelableArrayList(FILE_DATA, ArrayList(fileList))
             fragment.arguments = bundle
             return fragment
@@ -71,7 +74,9 @@ class RemoteFileFragment : BaseFragment<RemoteFileFragmentViewModel, FragmentRem
         }
 
         val fileData = arguments?.getParcelableArrayList<RemoteVideoData>(FILE_DATA)
+        val storageData = arguments?.getParcelable<MediaLibraryEntity>(STORAGE_DATA)
         arguments?.clear()
+        viewModel.initRemoteStorage(storageData)
         viewModel.initDirectoryFiles(fileData)
     }
 

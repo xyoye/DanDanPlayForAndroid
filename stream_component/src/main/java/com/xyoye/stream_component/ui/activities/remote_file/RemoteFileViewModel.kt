@@ -29,7 +29,11 @@ class RemoteFileViewModel : BaseViewModel() {
 
             api {
                 val videoData = Retrofit.remoteService.openStorage()
-                RemoteFileHelper.convertTreeData(videoData)
+                if (remoteData.remoteAnimeGrouping) {
+                    RemoteFileHelper.convertGroupData(videoData)
+                } else {
+                    RemoteFileHelper.convertTreeData(videoData)
+                }
             }
 
             onSuccess {

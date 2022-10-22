@@ -166,7 +166,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
         pathList.add(pathBean)
         dataBinding.pathRv.setData(pathList)
 
-        val childFragment = RemoteFileFragment.newInstance(fileData)
+        val childFragment = RemoteFileFragment.newInstance(remoteData, fileData)
         fragmentStack.push(childFragment)
         supportFragmentManager.addFragment(R.id.container, childFragment, path, true)
     }

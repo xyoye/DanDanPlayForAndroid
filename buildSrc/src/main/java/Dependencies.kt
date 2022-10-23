@@ -15,6 +15,7 @@ object Dependencies {
         const val arouter_api = "com.alibaba:arouter-api:${Versions.arouter}"
         const val arouter_compiler = "com.alibaba:arouter-compiler:${Versions.arouter}"
         const val alicloud_feedback = "com.aliyun.ams:alicloud-android-feedback:3.3.7"
+        const val alicloud_analysis = "com.aliyun.ams:alicloud-android-man:1.2.0"
     }
 
     object AndroidX {

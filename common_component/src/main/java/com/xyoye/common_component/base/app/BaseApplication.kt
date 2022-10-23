@@ -8,6 +8,7 @@ import com.tencent.bugly.Bugly
 import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.utils.SecurityHelper
+import com.xyoye.common_component.utils.aliyun.EMASHelper
 
 /**
  * Created by xyoye on 2020/4/13.
@@ -45,5 +46,6 @@ open class BaseApplication : Application() {
             SecurityHelper.getInstance().buglyId,
             BuildConfig.DEBUG
         )
+        EMASHelper.init(this)
     }
 }

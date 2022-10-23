@@ -16,7 +16,6 @@ import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.FragmentPersonalBinding
 import com.xyoye.user_component.ui.dialog.UserCoverDialog
-import com.xyoye.user_component.utils.FeedbackHelper
 
 /**
  * Created by xyoye on 2020/7/28.
@@ -34,8 +33,6 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
 
     override fun initView() {
         dataBinding.userCoverIv.setImageResource(getDefaultCoverResId())
-
-        FeedbackHelper.init(requireActivity().application)
 
         initClick()
 

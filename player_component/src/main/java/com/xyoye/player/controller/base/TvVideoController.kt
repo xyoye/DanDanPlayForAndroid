@@ -22,12 +22,14 @@ abstract class TvVideoController(
             KeyEvent.KEYCODE_DPAD_DOWN -> onActionDown()
             KeyEvent.KEYCODE_DPAD_LEFT -> onActionLeft()
             KeyEvent.KEYCODE_DPAD_RIGHT -> onActionRight()
-            else -> false
+            else -> null
         }
-        return if (intercept) {
+        return if (intercept == null) {
+            false
+        } else if (intercept) {
             true
         } else {
-            super.onKeyDown(keyCode, event)
+            mControlWrapper.onKeyDown(keyCode, event)
         }
     }
 

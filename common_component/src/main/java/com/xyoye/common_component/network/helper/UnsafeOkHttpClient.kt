@@ -31,14 +31,21 @@ object UnsafeOkHttpClient {
         }
     }
 
-    private val sslContext = SSLContext.getInstance("TLS")
-
-    init {
-        sslContext.init(null, arrayOf(unSafeTrustManager), null)
+    private val sslContext = SSLContext.getInstance("TLS").apply {
+        init(null, arrayOf(unSafeTrustManager), null)
     }
 
-    val client: OkHttpClient = OkHttpClient.Builder()
-        .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
-        .hostnameVerifier { _, _ -> true }
-        .build()
+    val client: OkHttpClient by lazy {
+        val baseClient: OkHttpClient = OkHttpClient.Builder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .retryOnConnectionFailure(false)
+            .build()
+        baseClient.newBuilder()
+            .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
+            .hostnameVerifier { _, _ -> true }
+            .addInterceptor(LoggerInterceptor().webDav())
+            .addInterceptor(CustomRetryAndFollowUpInterceptor(baseClient))
+            .build()
+    }
 }

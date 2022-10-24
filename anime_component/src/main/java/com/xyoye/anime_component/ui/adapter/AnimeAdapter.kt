@@ -26,7 +26,7 @@ import com.xyoye.data_component.data.AnimeData
  * Created by xyoye on 2020/10/4.
  */
 
-class AnimeAdapter : BaseAdapter() {
+class AnimeAdapter {
 
     companion object {
         fun getAdapter(activity: Activity) = buildAdapter {
@@ -51,7 +51,7 @@ class AnimeAdapter : BaseAdapter() {
                         animeNameTv.text = data.animeTitle
                         itemLayout.setOnClickListener {
                             //防止快速点击
-                            if(FastClickFilter.isNeedFilter()){
+                            if (FastClickFilter.isNeedFilter()) {
                                 return@setOnClickListener
                             }
 
@@ -73,7 +73,15 @@ class AnimeAdapter : BaseAdapter() {
     }
 }
 
-fun BaseAdapter.setNewAnimeData(newData: MutableList<AnimeData>) {
+fun BaseAdapter.setNewAnimeData(animeData: MutableList<AnimeData>) {
+    val newData = mutableListOf<Any>().apply {
+        if (animeData.isNotEmpty()) {
+            addAll(animeData)
+        } else {
+            add(BaseAdapter.EMPTY_ITEM)
+        }
+    }
+
     val calculateResult = DiffUtil.calculateDiff(
         AnimeDiffCallBack(this.items, newData)
     )

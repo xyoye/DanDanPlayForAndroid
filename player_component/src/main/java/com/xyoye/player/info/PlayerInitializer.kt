@@ -20,7 +20,7 @@ object PlayerInitializer {
     var selectSourceDirectory: String? = null
 
     object Player {
-        const val DEFAULT_SPEED = 25
+        const val DEFAULT_SPEED = 1f
 
         var isMediaCodeCEnabled = false
         var isMediaCodeCH265Enabled = false
@@ -41,7 +41,7 @@ object PlayerInitializer {
         const val DEFAULT_MOBILE_ENABLE = true
         const val DEFAULT_TOP_ENABLE = true
         const val DEFAULT_BOTTOM_ENABLE = true
-        const val DEFAULT_MAX_LINE = -1
+        const val DEFAULT_MAX_LINE = 0
         const val DEFAULT_MAX_NUM = 0
 
         var offsetPosition = DEFAULT_POSITION
@@ -53,17 +53,26 @@ object PlayerInitializer {
         var topDanmu = DEFAULT_TOP_ENABLE
         var bottomDanmu = DEFAULT_BOTTOM_ENABLE
         var maxLine = DEFAULT_MAX_LINE
+        var maxScrollLine = DEFAULT_MAX_LINE
+        var maxTopLine = DEFAULT_MAX_LINE
+        var maxBottomLine = DEFAULT_MAX_LINE
         var maxNum = DEFAULT_MAX_NUM
         var cloudBlock = false
         var updateInChoreographer = true
     }
 
     object Subtitle {
-        var offsetPosition = 0L
+        const val DEFAULT_POSITION = 0L
+        const val DEFAULT_SIZE = 50
+        const val DEFAULT_STROKE = 50
+        const val DEFAULT_TEXT_COLOR = Color.WHITE
+        const val DEFAULT_STROKE_COLOR = Color.BLACK
 
-        var textSize = 20
-        var strokeWidth = 5
-        var textColor = Color.WHITE
-        var strokeColor = Color.BLACK
+        var offsetPosition = DEFAULT_POSITION
+
+        var textSize = DEFAULT_SIZE
+        var strokeWidth = DEFAULT_STROKE
+        var textColor = DEFAULT_TEXT_COLOR
+        var strokeColor = DEFAULT_STROKE_COLOR
     }
 }

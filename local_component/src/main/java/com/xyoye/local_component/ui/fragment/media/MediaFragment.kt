@@ -1,6 +1,8 @@
 package com.xyoye.local_component.ui.fragment.media
 
 import android.Manifest
+import androidx.core.view.isVisible
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
@@ -10,6 +12,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -20,7 +23,7 @@ import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaLibraryBinding
-import com.xyoye.local_component.utils.MediaTypeUtil
+import com.xyoye.local_component.utils.getCover
 
 /**
  * Created by xyoye on 2020/7/27.
@@ -33,11 +36,15 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         private const val ACTION_ADD_SMB_LIBRARY = 2
         private const val ACTION_ADD_WEBDAV_LIBRARY = 3
         private const val ACTION_ADD_REMOTE_LIBRARY = 4
+        private const val ACTION_ADD_SCREENCAST_DEVICE = 5
 
 
         private const val ACTION_EDIT_STORAGE = 11
         private const val ACTION_DELETE_STORAGE = 12
     }
+
+    @Autowired
+    lateinit var provideService: ScreencastProvideService
 
     override fun initViewModel() = ViewModelInit(
         BR.viewModel,
@@ -47,6 +54,8 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
     override fun getLayoutId() = R.layout.fragment_media
 
     override fun initView() {
+        ARouter.getInstance().inject(this)
+
         viewModel.initLocalStorage()
 
         initRv()
@@ -55,7 +64,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             addMediaStorage()
         }
 
-        viewModel.mediaLibLiveData.observe(this) {
+        viewModel.mediaLibWithStatusLiveData.observe(this) {
             dataBinding.mediaLibRv.setData(it)
         }
     }
@@ -76,9 +85,13 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 MediaType.SMB_SERVER -> data.describe
                                 else -> data.url
                             }
-                            libraryCoverIv.setImageResource(
-                                MediaTypeUtil.getCover(data.mediaType)
-                            )
+                            libraryCoverIv.setImageResource(data.mediaType.getCover())
+
+                            screencastStatusTv.isVisible = data.mediaType == MediaType.SCREEN_CAST && data.running
+                            screencastStatusTv.setOnClickListener {
+                                showStopServiceDialog()
+                            }
+
                             itemLayout.setOnClickListener {
                                 requestPermissions(
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -91,13 +104,13 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                         ToastCenter.showError("获取文件读取权限失败，无法打开媒体库")
                                     }
                                 }
-
                             }
                             itemLayout.setOnLongClickListener {
                                 if (data.mediaType == MediaType.WEBDAV_SERVER
                                     || data.mediaType == MediaType.FTP_SERVER
                                     || data.mediaType == MediaType.SMB_SERVER
                                     || data.mediaType == MediaType.REMOTE_STORAGE
+                                    || data.mediaType == MediaType.SCREEN_CAST
                                 ) {
                                     showEditStorageDialog(data)
                                 }
@@ -117,22 +130,27 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 SheetActionBean(
                     ACTION_ADD_FTP_LIBRARY,
                     "FTP媒体库",
-                    R.drawable.ic_ftp_storage
+                    MediaType.FTP_SERVER.getCover()
                 ),
                 SheetActionBean(
                     ACTION_ADD_SMB_LIBRARY,
                     "SMB媒体库",
-                    R.drawable.ic_smb_storage
+                    MediaType.SMB_SERVER.getCover()
                 ),
                 SheetActionBean(
                     ACTION_ADD_WEBDAV_LIBRARY,
                     "WebDav媒体库",
-                    R.drawable.ic_webdav_storage
+                    MediaType.WEBDAV_SERVER.getCover()
                 ),
                 SheetActionBean(
                     ACTION_ADD_REMOTE_LIBRARY,
                     "远程媒体库",
-                    R.drawable.ic_remote_storage
+                    MediaType.REMOTE_STORAGE.getCover()
+                ),
+                SheetActionBean(
+                    ACTION_ADD_SCREENCAST_DEVICE,
+                    "投屏设备",
+                    MediaType.SCREEN_CAST.getCover()
                 )
             ),
             "新增网络媒体库"
@@ -142,6 +160,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 ACTION_ADD_FTP_LIBRARY -> RouteTable.Stream.FTPLogin
                 ACTION_ADD_SMB_LIBRARY -> RouteTable.Stream.SmbLogin
                 ACTION_ADD_REMOTE_LIBRARY -> RouteTable.Stream.RemoteLogin
+                ACTION_ADD_SCREENCAST_DEVICE -> RouteTable.Stream.ScreencastConnect
                 else -> throw IllegalArgumentException()
             }
 
@@ -190,6 +209,9 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .withParcelable("remoteData", data)
                     .navigation()
             }
+            MediaType.SCREEN_CAST -> {
+                viewModel.checkScreenDeviceRunning(data)
+            }
         }
     }
 
@@ -215,6 +237,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     MediaType.FTP_SERVER -> RouteTable.Stream.FTPLogin
                     MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
                     MediaType.REMOTE_STORAGE -> RouteTable.Stream.RemoteLogin
+                    MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
                     else -> throw IllegalArgumentException()
                 }
                 ARouter.getInstance()
@@ -236,6 +259,19 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 addPositive { dialog ->
                     dialog.dismiss()
                     viewModel.deleteStorage(data)
+                }
+                addNegative()
+            }.build().show()
+    }
+
+    private fun showStopServiceDialog() {
+        CommonDialog.Builder(requireActivity())
+            .apply {
+                content = "确认停止投屏投送服务？"
+                positiveText = "确认"
+                addPositive { dialog ->
+                    dialog.dismiss()
+                    provideService.stopService(requireActivity())
                 }
                 addNegative()
             }.build().show()

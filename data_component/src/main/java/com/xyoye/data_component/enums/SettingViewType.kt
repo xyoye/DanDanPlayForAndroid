@@ -7,10 +7,6 @@ package com.xyoye.data_component.enums
 enum class SettingViewType {
     PLAYER_SETTING,
 
-    DANMU_SETTING,
-
-    SUBTITLE_SETTING,
-
     SWITCH_SOURCE,
 
     KEYWORD_BLOCK,
@@ -19,9 +15,27 @@ enum class SettingViewType {
 
     SWITCH_VIDEO_SOURCE,
 
-    DANMU_SETTING_CONFIG,
+    SEARCH_DANMU,
 
-    DANMU_SETTING_BLOCK,
+    VIDEO_SPEED,
 
-    SEARCH_DANMU
+    VIDEO_ASPECT,
+
+    AUDIO_STREAM,
+
+    LOAD_DANMU_SOURCE,
+
+    LOAD_SUBTITLE_SOURCE,
+
+    DANMU_CONFIGURE,
+
+    DANMU_STYLE,
+
+    DANMU_OFFSET_TIME,
+
+    SUBTITLE_STREAM,
+
+    SUBTITLE_STYLE,
+
+    SUBTITLE_OFFSET_TIME
 }

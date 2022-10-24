@@ -36,7 +36,7 @@ interface InterDanmuController {
     /**
      * 更新弹幕偏移时间
      */
-    fun updateOffsetTime()
+    fun updateDanmuOffsetTime()
 
     /**
      * 更新滚动弹幕状态

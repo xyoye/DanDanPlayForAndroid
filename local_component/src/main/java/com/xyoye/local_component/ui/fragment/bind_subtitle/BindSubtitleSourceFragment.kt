@@ -9,6 +9,8 @@ import com.xyoye.common_component.adapter.paging.addItem
 import com.xyoye.common_component.adapter.paging.buildPagingAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
@@ -186,6 +188,10 @@ class BindSubtitleSourceFragment :
             requireActivity(),
             FileManagerAction.ACTION_SELECT_SUBTITLE
         ) {
+            if (it.toFile().isInvalid()) {
+                ToastCenter.showError("绑定字幕失败，字幕不存在或内容为空")
+                return@FileManagerDialog
+            }
             viewModel.databaseSubtitle(it)
         }.show()
     }

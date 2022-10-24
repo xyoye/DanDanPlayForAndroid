@@ -20,7 +20,7 @@ class SubtitleController(context: Context) : InterSubtitleController {
         subtitleImageView
     )
 
-    override fun setDanmuLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
+    override fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
         subtitleTextView.getSubtitleManager().observerOnSubtitleLoad(callback)
     }
 
@@ -60,7 +60,7 @@ class SubtitleController(context: Context) : InterSubtitleController {
         subtitleTextView.updateStrokeColor()
     }
 
-    override fun updateOffsetTime() {
+    override fun updateSubtitleOffsetTime() {
         subtitleTextView.updateOffsetTime()
     }
 

@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.bridge.LoginObserver
+import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.setTextColorRes
@@ -46,6 +47,10 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
 
         UserInfoHelper.loginLiveData.observe(this) {
             applyLoginData(it)
+        }
+
+        ServiceLifecycleBridge.getScreencastReceiveObserver().observe(this) {
+            dataBinding.screencastStatusTv.isVisible = it
         }
 
         if (mAttachActivity is LoginObserver) {
@@ -161,6 +166,12 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
         dataBinding.shooterSubtitleLl.setOnClickListener {
             ARouter.getInstance()
                 .build(RouteTable.Local.ShooterSubtitle)
+                .navigation()
+        }
+
+        dataBinding.screencastReceiverLl.setOnClickListener {
+            ARouter.getInstance()
+                .build(RouteTable.Stream.ScreencastReceiver)
                 .navigation()
         }
 

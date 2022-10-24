@@ -8,9 +8,12 @@ import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.FTPSourceFactory
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.ftp.FTPException
 import com.xyoye.common_component.utils.ftp.FTPManager
+import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.isSubtitleFile
+import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.server.FTPPlayServer
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -27,6 +30,7 @@ class FTPFileViewModel : BaseViewModel() {
     val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val pathLiveData = MutableLiveData<MutableList<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
+    val castLiveData = MutableLiveData<MediaLibraryEntity>()
 
     private var openedDirectoryList = mutableListOf<String>()
     private var curDirectoryFiles = mutableListOf<FTPFile>()
@@ -152,49 +156,60 @@ class FTPFileViewModel : BaseViewModel() {
         return true
     }
 
-    /**
-     * 打开视频文件
-     */
-    fun openVideoFile(uniqueKey: String) {
+    fun playItem(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val playServer = FTPPlayServer.getInstance()
-                if (!playServer.isAlive) playServer.start()
-            } catch (e: Exception) {
-                ToastCenter.showError("启动FTP播放服务失败，请重试\n${e.message}")
-                return@launch
+            if (setupVideoSource(uniqueKey)) {
+                playLiveData.postValue(Any())
             }
-
-            val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
-            val index = videoSources.indexOfFirst {
-                FTPSourceFactory.generateUniqueKey(getOpenedDirPath(), it) == uniqueKey
-            }
-            if (videoSources.isNullOrEmpty() || index < 0) {
-                ToastCenter.showError("播放失败，不支持播放的资源")
-                return@launch
-            }
-
-            //同文件夹内的弹幕和字幕资源
-            val extSources = curDirectoryFiles.filter {
-                isDanmuFile(it.name) || isSubtitleFile(it.name)
-            }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(videoSources)
-                .setExtraSource(extSources)
-                .setRootPath(getOpenedDirPath())
-                .setIndex(index)
-                .create(MediaType.FTP_SERVER)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    fun castItem(uniqueKey: String, device: MediaLibraryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupVideoSource(uniqueKey)) {
+                castLiveData.postValue(device)
+            }
+        }
+    }
+
+    private suspend fun setupVideoSource(uniqueKey: String): Boolean{
+        try {
+            val playServer = FTPPlayServer.getInstance()
+            if (!playServer.isAlive) playServer.start()
+        } catch (e: Exception) {
+            ToastCenter.showError("启动FTP播放服务失败，请重试\n${e.message}")
+            return false
+        }
+
+        val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
+        val index = videoSources.indexOfFirst {
+            FTPSourceFactory.generateUniqueKey(getOpenedDirPath(), it) == uniqueKey
+        }
+        if (videoSources.isEmpty() || index < 0) {
+            ToastCenter.showError("播放失败，不支持播放的资源")
+            return false
+        }
+
+        //同文件夹内的弹幕和字幕资源
+        val extSources = curDirectoryFiles.filter {
+            isDanmuFile(it.name) || isSubtitleFile(it.name)
+        }
+
+        showLoading()
+        val mediaSource = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setExtraSource(extSources)
+            .setRootPath(getOpenedDirPath())
+            .setIndex(index)
+            .create(MediaType.FTP_SERVER)
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 
     /**

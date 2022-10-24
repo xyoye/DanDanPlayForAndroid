@@ -45,5 +45,12 @@ interface ExtRetrofitService {
 
     @GET
     @Streaming
+    suspend fun downloadResourceWithHeader(
+        @Url url: String,
+        @HeaderMap header: Map<String, String> = mapOf()
+    ): retrofit2.Response<ResponseBody>
+
+    @GET
+    @Streaming
     suspend fun getCidInfo(@Url url: String): BiliBiliCidData
 }

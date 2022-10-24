@@ -1,7 +1,7 @@
 package com.xyoye.subtitle.format;
 
-import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.exception.FatalParsingException;
+import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Style;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;
@@ -13,9 +13,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,10 +66,10 @@ public class FormatTTML implements TimedTextFileFormat {
 			dBuilder = dbFactory.newDocumentBuilder();
 			//creating a reader with correct encoding
 			Charset defaultCharset = Charset.forName("GBK");
-			InputStreamReader isr = (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
-			Document doc = dBuilder.parse(new InputSource(isr));
+			BufferedReader br = ReaderFactory.createBufferedReader(file, defaultCharset);
+			Document doc = dBuilder.parse(new InputSource(br));
 			doc.getDocumentElement().normalize();
-			
+
 			//we recover the metadata
 			Node node = doc.getElementsByTagName("ttm:title").item(0);
 			if (node != null) tto.title = node.getTextContent();

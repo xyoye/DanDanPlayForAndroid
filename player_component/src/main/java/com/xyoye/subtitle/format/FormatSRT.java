@@ -1,7 +1,5 @@
 package com.xyoye.subtitle.format;
 
-import android.text.TextUtils;
-
 import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;
@@ -11,7 +9,6 @@ import org.mozilla.universalchardet.ReaderFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,8 +56,7 @@ public class FormatSRT implements TimedTextFileFormat {
 		//first lets load the file
 		//creating a reader with correct encoding
 		Charset defaultCharset = Charset.forName("GBK");
-		InputStreamReader in= (InputStreamReader) ReaderFactory.createReaderFromFile(file, defaultCharset);
-		BufferedReader br = new BufferedReader(in);
+		BufferedReader br = ReaderFactory.createBufferedReader(file, defaultCharset);
 
 		//the file name is saved
 		tto.fileName = file.getName();
@@ -139,7 +135,7 @@ public class FormatSRT implements TimedTextFileFormat {
 			tto.warnings+= "unexpected end of file, maybe last caption is not complete.\n\n";
 		} finally{
 	        //we close the reader
-	       in.close();
+			br.close();
 	     }
 		
 		tto.built = true;

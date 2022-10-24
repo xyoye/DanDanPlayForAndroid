@@ -36,7 +36,7 @@ class DanmuController(context: Context) : InterDanmuController {
         danmuView.updateDanmuStoke()
     }
 
-    override fun updateOffsetTime() {
+    override fun updateDanmuOffsetTime() {
         danmuView.updateOffsetTime()
     }
 

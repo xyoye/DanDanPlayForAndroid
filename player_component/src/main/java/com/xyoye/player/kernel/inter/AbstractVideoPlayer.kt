@@ -1,8 +1,7 @@
 package com.xyoye.player.kernel.inter
 
 import android.view.Surface
-import com.xyoye.data_component.bean.VideoTrackBean
-import com.xyoye.player.utils.TrackHelper
+import com.xyoye.data_component.bean.VideoStreamBean
 
 /**
  * Created by xyoye on 2020/10/29.
@@ -12,14 +11,12 @@ abstract class AbstractVideoPlayer {
 
     //播放器事件回调
     protected lateinit var mPlayerEventListener: VideoPlayerEventListener
-    protected lateinit var mTrackHelper: TrackHelper
 
     /**
      * 设置播放器回调
      */
     fun setPlayerEventListener(playerEventListener: VideoPlayerEventListener) {
         mPlayerEventListener = playerEventListener
-        mTrackHelper = TrackHelper(mPlayerEventListener)
     }
 
     /**
@@ -95,9 +92,9 @@ abstract class AbstractVideoPlayer {
     abstract fun setLooping(isLooping: Boolean)
 
     /**
-     * 选中资源流
+     * 字幕时间调节
      */
-    abstract fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?)
+    abstract fun setSubtitleOffset(offsetMs: Long)
 
     /*------------播放器状态-------------------*/
 
@@ -130,6 +127,21 @@ abstract class AbstractVideoPlayer {
      * 获取网络加载速度
      */
     abstract fun getTcpSpeed(): Long
+
+    /**
+     * 获取音轨
+     */
+    abstract fun getAudioStream(): List<VideoStreamBean>
+
+    /**
+     * 获取字幕轨
+     */
+    abstract fun getSubtitleStream(): List<VideoStreamBean>
+
+    /**
+     * 选择音/字幕轨
+     */
+    abstract fun selectStream(stream: VideoStreamBean)
 
     /**
      * 是否由播放器处理外挂弹幕

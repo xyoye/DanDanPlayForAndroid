@@ -19,7 +19,9 @@ enum class MediaType(val value: String, val storageName: String) {
 
     SMB_SERVER("smb_server", "SMB媒体库"),
 
-    REMOTE_STORAGE("remote_storage", "远程媒体库");
+    REMOTE_STORAGE("remote_storage", "远程媒体库"),
+
+    SCREEN_CAST("screen_cast", "远程投屏");
 
     companion object {
         fun fromValue(value: String): MediaType {
@@ -31,6 +33,7 @@ enum class MediaType(val value: String, val storageName: String) {
                 "webdav_server" -> WEBDAV_SERVER
                 "smb_server" -> SMB_SERVER
                 "remote_storage" -> REMOTE_STORAGE
+                "screen_cast" -> SCREEN_CAST
                 else -> OTHER_STORAGE
             }
         }

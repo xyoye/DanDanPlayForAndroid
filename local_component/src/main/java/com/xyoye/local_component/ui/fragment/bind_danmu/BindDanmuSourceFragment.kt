@@ -9,8 +9,11 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.bean.DanmuSourceContentBean
@@ -170,6 +173,10 @@ class BindDanmuSourceFragment :
             requireActivity(),
             FileManagerAction.ACTION_SELECT_DANMU
         ) {
+            if (it.toFile().isInvalid()) {
+                ToastCenter.showError("绑定弹幕失败，弹幕不存在或内容为空")
+                return@FileManagerDialog
+            }
             viewModel.bindLocalDanmu(it)
         }.show()
     }

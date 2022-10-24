@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/background_player_setting_text"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:tag="@string/focusable_item"
+        android:textColor="@color/text_white_immutable"
+        android:textSize="14sp" />
+</layout>

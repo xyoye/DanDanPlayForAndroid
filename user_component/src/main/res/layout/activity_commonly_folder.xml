@@ -172,7 +172,8 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/last_open_folder_sw"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
             </LinearLayout>
 
             <LinearLayout

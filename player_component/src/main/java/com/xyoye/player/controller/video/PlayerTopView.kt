@@ -48,14 +48,6 @@ class PlayerTopView(
         viewBinding.playerSettingsIv.setOnClickListener {
             mControlWrapper.showSettingView(SettingViewType.PLAYER_SETTING)
         }
-
-        viewBinding.danmuSettingsTv.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.DANMU_SETTING)
-        }
-
-        viewBinding.subtitleSettingsIv.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.SUBTITLE_SETTING)
-        }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {

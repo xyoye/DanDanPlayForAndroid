@@ -306,8 +306,8 @@ object DanmuUtils {
 
             var line = 0
             while (line < MAX_DANMU_CHECK_LINE) {
-                val content = bufferReader.readLine().trim()
-                if (content.startsWith(DANMU_TAG))
+                val content = bufferReader.readLine()?.trim()
+                if (content != null && content.startsWith(DANMU_TAG))
                     return false
                 line++
             }

@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="scan_background_color">#88000000</color>
+
+    <color name="radar_scan_line_color">#552095f4</color>
+    <color name="radar_scan_frame_color">#5582bcf3</color>
+    <color name="radar_scan_point_color">#5582bcf3</color>
+    <color name="radar_background_line_color">#15096dbe</color>
+
+    <color name="background_screencast_device">#44cccccc</color>
 </resources>

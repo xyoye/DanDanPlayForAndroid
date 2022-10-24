@@ -29,7 +29,8 @@
             android:layout_marginTop="10dp"
             android:text="@string/text_advanced_link"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/link_input_et" />
+            app:layout_constraintTop_toBottomOf="@id/link_input_et"
+            app:theme="@style/Theme.DanDanPlay.CheckBox" />
 
         <TextView
             android:id="@+id/header_input_tips"

@@ -9,7 +9,7 @@ interface InterSubtitleController {
     /**
      * 设置字幕加载完成的回调
      */
-    fun setDanmuLoadedCallback(callback: ((String, Boolean) -> Unit)?)
+    fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?)
 
     /**
      * 设置图片字幕开关
@@ -59,7 +59,7 @@ interface InterSubtitleController {
     /**
      * 更新字幕偏移时间
      */
-    fun updateOffsetTime()
+    fun updateSubtitleOffsetTime()
 
     fun subtitleRelease()
 }

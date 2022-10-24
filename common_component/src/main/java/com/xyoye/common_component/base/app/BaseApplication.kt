@@ -7,6 +7,8 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
+import com.xyoye.common_component.notification.Notifications
+import com.xyoye.common_component.utils.ActivityHelper
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.utils.aliyun.EMASHelper
 
@@ -46,6 +48,8 @@ open class BaseApplication : Application() {
             SecurityHelper.getInstance().buglyId,
             BuildConfig.DEBUG
         )
+        Notifications.setupNotificationChannels(this)
+        ActivityHelper.instance.init(this)
         EMASHelper.init(this)
     }
 }

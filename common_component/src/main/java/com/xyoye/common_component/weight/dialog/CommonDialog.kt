@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogCommonBinding
 import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResString
 
 /**
  * Created by xyoye on 2020/10/28.
@@ -43,7 +44,9 @@ open class CommonDialog private constructor(
         var positiveText: String? = null
         var positiveClickListener: ((CommonDialog) -> Unit)? = null
         var noShowAgain: Boolean = false
+        var noShowAgainTips: String = ""
         var noShowAgainListener: ((Boolean) -> Unit)? = null
+        var doOnDismiss: (() -> Unit)? = null
 
         open fun addNegative(
             negativeText: String = "取消",
@@ -63,9 +66,18 @@ open class CommonDialog private constructor(
             return this
         }
 
-        open fun addNoShowAgain(listener: (Boolean) -> Unit): Builder {
+        open fun addNoShowAgain(
+            tips: String = R.string.check_not_show_again.toResString(),
+            listener: (Boolean) -> Unit
+        ): Builder {
             noShowAgain = true
+            noShowAgainTips = tips
             noShowAgainListener = listener
+            return this
+        }
+
+        open fun doOnDismiss(action: () -> Unit): Builder {
+            doOnDismiss = action
             return this
         }
 
@@ -96,6 +108,7 @@ open class CommonDialog private constructor(
                 setPositiveText(it)
             }
 
+            binding.noShowAgainCb.text = noShowAgainTips
             binding.noShowAgainCb.isVisible = noShowAgain
             binding.noShowAgainCb.setOnCheckedChangeListener { _, isChecked ->
                 noShowAgainListener?.invoke(isChecked)
@@ -105,7 +118,10 @@ open class CommonDialog private constructor(
 
             setPositiveListener { positiveClickListener?.invoke(this@CommonDialog) }
 
-            setOnDismissListener { delayTimer.cancel() }
+            setOnDismissListener {
+                delayTimer.cancel()
+                doOnDismiss?.invoke()
+            }
 
             if (delayConfirm) {
                 delayTimer.start()

@@ -14,6 +14,10 @@ android {
             jniLibs.srcDir("libs")
         }
     }
+
+    defaultConfig {
+        buildConfigField("String", "APPLICATION_ID", "\"${Versions.applicationId}\"")
+    }
 }
 
 kapt {
@@ -30,7 +34,7 @@ dependencies {
     api(project(":repository:immersion_bar"))
     api(project(":repository:thunder"))
 
-    api(files("libs/sardine-1.0.1.jar"))
+    api(files("libs/sardine-1.0.2.jar"))
     api(files("libs/simple-xml-2.7.1.jar"))
     implementation(files("libs/mmkv-annotation.jar"))
 

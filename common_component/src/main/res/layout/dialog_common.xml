@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
@@ -7,23 +8,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical">
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/content_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center_vertical"
+            android:gravity="center"
             android:textColor="@color/text_black"
             android:textSize="16sp"
             tools:text="测试" />
-
 
         <CheckBox
             android:id="@+id/no_show_again_cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:text="@string/check_not_show_again"
+            android:textColor="@color/text_gray"
+            android:textSize="14sp"
             android:visibility="gone"
-            android:text="@string/check_not_show_again" />
+            app:theme="@style/Theme.DanDanPlay.CheckBox" />
     </LinearLayout>
 </layout>

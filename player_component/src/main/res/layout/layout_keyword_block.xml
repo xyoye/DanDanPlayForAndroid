@@ -8,6 +8,7 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:background="@color/player_item_bg_color"
+        android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
@@ -46,16 +47,18 @@
         <TextView
             android:id="@+id/keyword_block_add_tv"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_player_setting_text_transparent"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
             android:text="@string/action_add_block_keyword"
             android:textColor="@color/text_theme"
             android:textSize="14sp"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="@id/keyword_block_add_et"
             app:layout_constraintBottom_toBottomOf="@id/keyword_block_add_et"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/keyword_block_add_et" />
 
         <TextView
             android:id="@+id/keyword_block_input_tips"
@@ -75,7 +78,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             app:isIndicator="true"
-            app:labelBackground="@drawable/background_keyword_block"
+            app:labelBackground="@drawable/background_player_setting_text"
             app:labelTextColor="@drawable/selecter_keyword_block_color"
             app:labelTextPaddingBottom="5dp"
             app:labelTextPaddingLeft="10dp"

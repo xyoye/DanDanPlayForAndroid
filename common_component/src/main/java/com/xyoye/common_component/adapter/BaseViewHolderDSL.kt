@@ -49,7 +49,7 @@ class BaseViewHolderDSL<T : Any, V : ViewDataBinding>(
         creator: BaseViewHolderCreator<out ViewDataBinding>
     ) {
         //空布局
-        if (position == -1 && data == null) {
+        if (data == BaseAdapter.EMPTY_ITEM) {
             emptyViewHolder?.invoke()
             return
         }

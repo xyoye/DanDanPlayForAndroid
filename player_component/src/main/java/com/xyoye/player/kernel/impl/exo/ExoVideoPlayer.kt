@@ -9,16 +9,13 @@ import com.google.android.exoplayer2.analytics.DefaultAnalyticsCollector
 import com.google.android.exoplayer2.ext.FfmpegRenderersFactory
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.text.Cue
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
-import com.google.android.exoplayer2.trackselection.TrackSelector
+import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoSize
-import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
@@ -169,8 +166,8 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         exoplayer.playWhenReady = true
     }
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mTrackHelper.selectExoTrack(mContext, mTrackSelector, select, exoplayer.currentTracks)
+    //not support
+    override fun setSubtitleOffset(offsetMs: Long) {
     }
 
     override fun isPlaying(): Boolean {
@@ -199,6 +196,30 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
 
     //not support
     override fun getTcpSpeed(): Long = 0L
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return getStreams(true)
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return getStreams(false)
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
+        val mediaTrackGroup = exoplayer.currentTracks
+            .groups.getOrNull(stream.trackGroupId)
+            ?.mediaTrackGroup
+            ?: return
+        val override = TrackSelectionOverride(mediaTrackGroup, stream.trackId)
+
+        val trackParams = TrackSelectionParameters.Builder(mContext)
+            .setTrackTypeDisabled(streamType, false)
+            .clearOverridesOfType(mediaTrackGroup.type)
+            .addOverride(override)
+            .build()
+        mTrackSelector.parameters = trackParams
+    }
 
     override fun onVideoSizeChanged(videoSize: VideoSize) {
         mPlayerEventListener.onVideoSizeChange(videoSize.width, videoSize.height)
@@ -253,8 +274,6 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
 
     override fun onTracksChanged(tracks: Tracks) {
         subtitleType = SubtitleType.UN_KNOW
-        val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
-        mTrackHelper.initExoTrack(tracks, trackNameProvider)
     }
 
     override fun onPlayerError(error: PlaybackException) {
@@ -313,6 +332,37 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             }
         }
         exoplayer.addListener(this)
+    }
+
+    private fun getStreams(isAudio: Boolean): List<VideoStreamBean> {
+        val targetType = if (isAudio)
+            C.TRACK_TYPE_AUDIO
+        else
+            C.TRACK_TYPE_TEXT
+
+        val streams = mutableListOf<VideoStreamBean>()
+        val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
+
+        for (trackGroupIndex in 0 until exoplayer.currentTracks.groups.size) {
+            val trackGroup = exoplayer.currentTracks.groups[trackGroupIndex]
+            if (trackGroup.type != targetType) {
+                continue
+            }
+
+            for (index in 0 until trackGroup.length) {
+                val isSelected = trackGroup.isTrackSelected(index)
+                val trackFormat = trackGroup.getTrackFormat(index)
+                val stream = VideoStreamBean(
+                    trackName = trackNameProvider.getTrackName(trackFormat),
+                    isAudio = isAudio,
+                    trackId = index,
+                    isChecked = isSelected,
+                    trackGroupId = trackGroupIndex
+                )
+                streams.add(stream)
+            }
+        }
+        return streams
     }
 
     fun setTrackSelector(trackSelector: TrackSelector) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@+id/track_ll"
@@ -10,7 +11,8 @@
         <RadioButton
             android:id="@+id/track_select_cb"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:theme="@style/Theme.DanDanPlay.RadioButton" />
 
         <TextView
             android:id="@+id/track_name_tv"

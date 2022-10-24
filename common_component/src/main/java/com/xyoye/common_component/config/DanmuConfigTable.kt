@@ -46,6 +46,18 @@ object DanmuConfigTable {
     @MMKVFiled
     const val danmuMaxLine = -1
 
+    //滚动弹幕最大显示行数
+    @MMKVFiled
+    const val danmuScrollMaxLine = -1
+
+    //顶部弹幕最大显示行数
+    @MMKVFiled
+    const val danmuTopMaxLine = -1
+
+    //底部弹幕最大显示行数
+    @MMKVFiled
+    const val danmuBottomMaxLine = -1
+
     //开启弹幕云屏蔽
     @MMKVFiled
     const val cloudDanmuBlock = true

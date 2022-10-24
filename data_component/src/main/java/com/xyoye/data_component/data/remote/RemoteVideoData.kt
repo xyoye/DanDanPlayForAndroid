@@ -35,9 +35,6 @@ data class RemoteVideoData(
 ) : Parcelable {
 
     fun getEpisodeName(): String{
-        return if (EpisodeTitle.isEmpty())
-            Name
-        else
-            EpisodeTitle
+        return EpisodeTitle.ifEmpty { Name }
     }
 }

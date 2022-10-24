@@ -28,7 +28,7 @@ private val commonVideoExtension = arrayOf(
     "m4v", "mkv", "mov", "mpeg",
     "mpg", "mpe", "rm", "rmvb",
     "wmv", "asf", "asx", "dat",
-    "vob", "m3u8"
+    "vob", "m3u8", "m2ts"
 )
 
 val supportSubtitleExtension = arrayOf(

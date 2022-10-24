@@ -25,6 +25,9 @@ import java.util.regex.Pattern
 class AnimeEpisodeFragment :
     BaseFragment<AnimeEpisodeFragmentViewModel, FragmentAnimeEpisodeBinding>() {
 
+    private var episodeAsc = true
+    private val episodes = mutableListOf<EpisodeData>()
+
     companion object {
         fun newInstance(bangumiData: BangumiData): AnimeEpisodeFragment {
             val episodeFragment = AnimeEpisodeFragment()
@@ -100,20 +103,24 @@ class AnimeEpisodeFragment :
 
     private fun initObserver() {
         viewModel.episodeLiveData.observe(this) {
-            dataBinding.episodeRv.setData(it)
+            episodeAsc = true
+            episodes.clear()
+            episodes.addAll(it)
+            dataBinding.episodeRv.setData(episodes)
         }
 
-        viewModel.episodeSortLiveData.observe(this) { asc ->
-            val color = if (asc) R.color.text_gray else R.color.text_blue
+        viewModel.episodeSortLiveData.observe(this) {
+            episodeAsc = !episodeAsc
+            val color = if (episodeAsc) R.color.text_gray else R.color.text_blue
 
             val colorState = AppCompatResources.getColorStateList(mAttachActivity, color)
             ImageViewCompat.setImageTintList(dataBinding.sortIv, colorState)
 
-            dataBinding.sortTv.text = if (asc) "正序" else "倒序"
+            dataBinding.sortTv.text = if (episodeAsc) "正序" else "倒序"
             dataBinding.sortTv.setTextColorRes(color)
 
-            episodeAdapter.items.reverse()
-            dataBinding.episodeRv.setData(episodeAdapter.items)
+            episodes.reverse()
+            dataBinding.episodeRv.setData(episodes)
         }
     }
 

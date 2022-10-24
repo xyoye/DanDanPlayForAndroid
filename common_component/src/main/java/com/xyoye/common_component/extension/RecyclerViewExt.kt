@@ -1,8 +1,10 @@
 package com.xyoye.common_component.extension
 
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.BaseAdapter
 
 /**
@@ -25,21 +27,37 @@ fun RecyclerView.gridEmpty(spanCount: Int): GridLayoutManager {
     return GridLayoutManager(context, spanCount).also {
         it.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                if (adapter is RecyclerView.Adapter<RecyclerView.ViewHolder>) {
-                    if ((adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>)
-                            .getItemViewType(position) == BaseAdapter.VIEW_TYPE_EMPTY
-                    ) return spanCount
+                if (position == RecyclerView.NO_POSITION) {
+                    return 1
                 }
-                return 1
+                val viewType = adapter?.getItemViewType(position)
+                if (viewType != BaseAdapter.VIEW_TYPE_EMPTY) {
+                    return 1
+                }
+                return spanCount
             }
         }
     }
 }
 
 fun RecyclerView.setData(items: List<Any>) {
-    adapter?.apply {
-        if (this is BaseAdapter) {
-            this.setData(items)
-        }
+    (adapter as? BaseAdapter)?.setData(items)
+}
+
+fun RecyclerView.requestIndexChildFocus(index: Int): Boolean {
+    scrollToPosition(index)
+
+    val targetTag = R.string.focusable_item.toResString()
+    val indexView = layoutManager?.findViewByPosition(index)
+    if (indexView != null) {
+        indexView.findViewWithTag<View>(targetTag)?.requestFocus()
+        return true
     }
+
+    post {
+        layoutManager?.findViewByPosition(index)
+            ?.findViewWithTag<View>(targetTag)
+            ?.requestFocus()
+    }
+    return true
 }

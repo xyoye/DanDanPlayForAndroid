@@ -24,7 +24,10 @@ inline fun BaseAdapter.addEmptyView(
     resourceId: Int,
     init: (BaseViewHolderDSL<Any, LayoutEmptyBinding>.() -> Unit) = {}
 ) {
-    val creator = BaseViewHolderDSL<Any, LayoutEmptyBinding>(resourceId, Any::class)
-    creator.apply(init)
-    registerEmptyView(creator)
+    register(
+        BaseViewHolderDSL<Any, LayoutEmptyBinding>(resourceId, Any::class).apply { init() },
+        customViewType = BaseAdapter.VIEW_TYPE_EMPTY
+    )
+
+    setData(listOf(BaseAdapter.EMPTY_ITEM))
 }

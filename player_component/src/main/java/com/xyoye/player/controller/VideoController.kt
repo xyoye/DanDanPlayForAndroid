@@ -12,9 +12,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.SendDanmuBean
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import com.xyoye.data_component.enums.LoadDanmuState
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.base.GestureVideoController
@@ -31,7 +29,6 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.subtitle.MixedSubtitle
-import kotlin.math.max
 
 /**
  * Created by xyoye on 2020/11/3.
@@ -59,7 +56,7 @@ class VideoController(
     private val loadingView = LoadingView(context)
 
     private var lastPlayPosition = 0L
-    private var lastVideoSpeed = 0
+    private var lastVideoSpeed: Float? = null
 
     private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
@@ -221,7 +218,7 @@ class VideoController(
     /**
      * 设置上次播放速度
      */
-    fun setLastPlaySpeed(speed: Int) {
+    fun setLastPlaySpeed(speed: Float) {
         lastVideoSpeed = speed
     }
 
@@ -310,20 +307,6 @@ class VideoController(
         mSubtitleController.updateSubtitle(subtitle)
     }
 
-    /**
-     * 更新音频/字幕流
-     */
-    fun updateTrack(isAudio: Boolean, trackData: MutableList<VideoTrackBean>) {
-        mSettingController.updateTrack(isAudio, trackData)
-    }
-
-    /**
-     * 更新自动匹配弹幕状态
-     */
-    fun updateLoadDanmuState(state: LoadDanmuState) {
-        mSettingController.updateLoadDanmuState(state)
-    }
-
     private fun updateShotVisible(isVisible: Boolean) {
         if (isVisible) {
             controllerBinding.playerShotIv.isVisible = true
@@ -352,13 +335,9 @@ class VideoController(
     }
 
     private fun considerSetVideoSpeed() {
-        if (lastVideoSpeed <= 0) {
-            return
+        lastVideoSpeed?.let {
+            mControlWrapper.setSpeed(it)
         }
-
-        var speed = 4.0f * lastVideoSpeed / 100f
-        speed = max(0.25f, speed)
-        mControlWrapper.setSpeed(speed)
-        lastVideoSpeed = 0
+        lastVideoSpeed = null
     }
 }

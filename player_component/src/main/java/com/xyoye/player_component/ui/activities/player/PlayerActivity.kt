@@ -4,8 +4,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.view.KeyEvent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -23,6 +23,7 @@ import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.enums.*
@@ -39,9 +40,14 @@ import java.io.File
 
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
-    PlayerReceiverListener {
+    PlayerReceiverListener, ScreencastHandler {
 
-    private val danmuViewModel: PlayerDanmuViewModel by viewModels()
+    private val danmuViewModel: PlayerDanmuViewModel by lazy {
+        ViewModelProvider(
+            viewModelStore,
+            ViewModelProvider.AndroidViewModelFactory(application)
+        )[PlayerDanmuViewModel::class.java]
+    }
 
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
@@ -119,6 +125,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         dataBinding.danDanPlayer.pause()
     }
 
+    override fun playScreencast(videoSource: BaseVideoSource) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            applyPlaySource(videoSource)
+        }
+    }
+
     private fun checkPlayParams(source: BaseVideoSource?): Boolean {
         if (source == null || source.getVideoUrl().isEmpty()) {
             CommonDialog.Builder(this).run {
@@ -143,7 +155,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@observe
             }
 
-            videoController.updateLoadDanmuState(it.state)
             if (it.state == LoadDanmuState.MATCH_SUCCESS){
                 val danmuPath = it.danmuPath!!
                 videoController.showMessage(it.state.msg)
@@ -227,7 +238,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())
-            setLastPlaySpeed(PlayerConfig.getVideoSpeed())
+            setLastPlaySpeed(PlayerConfig.getNewVideoSpeed())
         }
 
         dataBinding.danDanPlayer.apply {
@@ -310,7 +321,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.surfaceType =
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
         //视频速度
-        PlayerInitializer.Player.videoSpeed = PlayerConfig.getVideoSpeed()
+        PlayerInitializer.Player.videoSpeed = PlayerConfig.getNewVideoSpeed()
         //自动播放下一集
         PlayerInitializer.Player.isAutoPlayNext = PlayerConfig.isAutoPlayNext()
 
@@ -328,15 +339,16 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.Danmu.topDanmu = DanmuConfig.isShowTopDanmu()
         PlayerInitializer.Danmu.mobileDanmu = DanmuConfig.isShowMobileDanmu()
         PlayerInitializer.Danmu.bottomDanmu = DanmuConfig.isShowBottomDanmu()
-        PlayerInitializer.Danmu.maxLine = DanmuConfig.getDanmuMaxLine()
+        PlayerInitializer.Danmu.maxScrollLine = DanmuConfig.getDanmuScrollMaxLine()
+        PlayerInitializer.Danmu.maxTopLine = DanmuConfig.getDanmuTopMaxLine()
+        PlayerInitializer.Danmu.maxBottomLine = DanmuConfig.getDanmuBottomMaxLine()
         PlayerInitializer.Danmu.maxNum = DanmuConfig.getDanmuMaxCount()
         PlayerInitializer.Danmu.cloudBlock = DanmuConfig.isCloudDanmuBlock()
         PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
 
         //字幕配置
-        PlayerInitializer.Subtitle.textSize = (40f * SubtitleConfig.getTextSize() / 100f).toInt()
-        PlayerInitializer.Subtitle.strokeWidth =
-            (10f * SubtitleConfig.getStrokeWidth() / 100f).toInt()
+        PlayerInitializer.Subtitle.textSize = SubtitleConfig.getTextSize()
+        PlayerInitializer.Subtitle.strokeWidth = SubtitleConfig.getStrokeWidth()
         PlayerInitializer.Subtitle.textColor = SubtitleConfig.getTextColor()
         PlayerInitializer.Subtitle.strokeColor = SubtitleConfig.getStrokeColor()
     }

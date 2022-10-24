@@ -30,7 +30,9 @@
     <string name="action_scan_manager">扫描目录管理</string>
     <string name="action_bilibili_danmu_download">BiliBili弹幕下载</string>
     <string name="action_shooter_subtitle_download">射手(伪)字幕下载</string>
+    <string name="action_screencast_receiver">投屏接收端</string>
     <string name="action_app_setting">应用设置</string>
+    <string name="action_feedback">意见反馈</string>
     <string name="action_cache_manager">缓存目录管理</string>
     <string name="text_system_cache">系统缓存</string>
     <string name="text_file_cache">文件缓存</string>
@@ -66,6 +68,7 @@
     <string name="tips_last_choose_folder">上次选择目录</string>
     <string name="tips_current_open_folder">本次打开目录</string>
     <string name="action_commonly_folder_manager">常用目录管理</string>
+    <string name="tips_screencast_receiving">运行中</string>
 
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>

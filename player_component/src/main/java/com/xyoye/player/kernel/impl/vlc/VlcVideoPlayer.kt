@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
-import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.SurfaceType
 import com.xyoye.data_component.enums.VLCHWDecode
 import com.xyoye.player.info.PlayerInitializer
@@ -147,14 +147,8 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         libVlc = LibVLC(mContext, options)
     }
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        if (select != null && isPlayerAvailable()) {
-            if (select.isAudio) {
-                mMediaPlayer.audioTrack = select.trackId
-            } else {
-                mMediaPlayer.spuTrack = select.trackId
-            }
-        }
+    override fun setSubtitleOffset(offsetMs: Long) {
+        mMediaPlayer.spuDelay = offsetMs * 1000
     }
 
     override fun isPlaying(): Boolean {
@@ -179,6 +173,38 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun getTcpSpeed(): Long {
         return 0
+    }
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return mMediaPlayer.audioTracks?.map {
+            VideoStreamBean(
+                it.name,
+                true,
+                it.id,
+                it.id == mMediaPlayer.audioTrack
+            )
+        } ?: emptyList()
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return mMediaPlayer.spuTracks?.map {
+            VideoStreamBean(
+                it.name,
+                false,
+                it.id,
+                it.id == mMediaPlayer.spuTrack
+            )
+        } ?: emptyList()
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        if (isPlayerAvailable()) {
+            if (stream.isAudio) {
+                mMediaPlayer.audioTrack = stream.trackId
+            } else {
+                mMediaPlayer.spuTrack = stream.trackId
+            }
+        }
     }
 
     fun attachRenderView(vlcVideoLayout: VLCVideoLayout) {
@@ -245,21 +271,6 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.EndReached -> {
                     mPlayerEventListener.onCompletion()
                     VideoLog.d("$TAG--listener--onInfo--> onCompletion")
-                }
-                //流选中
-                MediaPlayer.Event.ESSelected -> {
-                    val isAudio = it.esChangedType == IMedia.Track.Type.Audio
-                    val isSubtitle = it.esChangedType == IMedia.Track.Type.Text
-                    if (isAudio || isSubtitle) {
-                        mTrackHelper.selectVLCTrack(isAudio, it.esChangedID)
-                    }
-                }
-                //流添加
-                MediaPlayer.Event.ESAdded -> {
-                    mTrackHelper.initVLCTrack(
-                        mMediaPlayer.audioTracks,
-                        mMediaPlayer.spuTracks
-                    )
                 }
             }
         }

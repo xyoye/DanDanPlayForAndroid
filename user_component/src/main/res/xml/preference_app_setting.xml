@@ -37,9 +37,5 @@
             android:key="about_us"
             android:title="关于我们"
             app:icon="@drawable/ic_app_setting_about_us" />
-        <Preference
-            android:key="feedback"
-            android:title="意见反馈"
-            app:icon="@drawable/ic_app_setting_feedback" />
     </PreferenceCategory>
 </PreferenceScreen>

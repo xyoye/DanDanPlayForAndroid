@@ -37,6 +37,7 @@ class WebDavFileViewModel : BaseViewModel() {
     val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val pathLiveData = MutableLiveData<List<FilePathBean>>()
     val playLiveData = MutableLiveData<Any>()
+    val castLiveData = MutableLiveData<MediaLibraryEntity>()
 
     private lateinit var sardine: OkHttpSardine
 
@@ -130,41 +131,55 @@ class WebDavFileViewModel : BaseViewModel() {
 
     fun playItem(uniqueKey: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
-            val index = videoSources.indexOfFirst {
-                WebDavSourceFactory.generateUniqueKey(addressUrl, it) == uniqueKey
+            if (setupVideoSource(uniqueKey)) {
+                playLiveData.postValue(Any())
             }
-            if (videoSources.isEmpty() || index < 0) {
-                ToastCenter.showError("播放失败，不支持播放的资源")
-                return@launch
-            }
-
-            //同文件夹内的弹幕和字幕资源
-            val extSources = curDirectoryFiles
-                .filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
-            //身份验证请求头
-            val header: HashMap<String, String> = hashMapOf()
-            if (this@WebDavFileViewModel::credentials.isInitialized) {
-                header["Authorization"] = credentials
-            }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(videoSources)
-                .setExtraSource(extSources)
-                .setRootPath(addressUrl)
-                .setHttpHeaders(header)
-                .setIndex(index)
-                .create(MediaType.WEBDAV_SERVER)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    fun castItem(uniqueKey: String, device: MediaLibraryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupVideoSource(uniqueKey)) {
+                castLiveData.postValue(device)
+            }
+        }
+    }
+
+    private suspend fun setupVideoSource(uniqueKey: String): Boolean {
+        val videoSources = curDirectoryFiles.filter { isVideoFile(it.name) }
+        val index = videoSources.indexOfFirst {
+            WebDavSourceFactory.generateUniqueKey(addressUrl, it) == uniqueKey
+        }
+        if (videoSources.isEmpty() || index < 0) {
+            ToastCenter.showError("播放失败，不支持播放的资源")
+            return false
+        }
+
+        //同文件夹内的弹幕和字幕资源
+        val extSources = curDirectoryFiles
+            .filter { isDanmuFile(it.name) || isSubtitleFile(it.name) }
+        //身份验证请求头
+        val header: HashMap<String, String> = hashMapOf()
+        if (this@WebDavFileViewModel::credentials.isInitialized) {
+            header["Authorization"] = credentials
+        }
+
+        showLoading()
+        val mediaSource = VideoSourceFactory.Builder()
+            .setVideoSources(videoSources)
+            .setExtraSource(extSources)
+            .setRootPath(addressUrl)
+            .setHttpHeaders(header)
+            .setIndex(index)
+            .create(MediaType.WEBDAV_SERVER)
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 
     private fun parseAddress(serverUrl: String): Boolean {

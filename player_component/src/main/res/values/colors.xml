@@ -4,6 +4,7 @@
     <color name="player_bg_color">#000000</color>
 
     <color name="player_item_bg_color">#bb000000</color>
+    <color name="player_item_bg_color_light">#77000000</color>
 
     <color name="seek_background">#809e9e9e</color>
     <color name="seek_progress">#2095f4</color>
@@ -23,4 +24,5 @@
     <color name="edit_offset_gray">#33ffffff</color>
 
     <color name="player_view_divider">#a5a5a5</color>
+    <color name="player_item_selected_theme">#772095f4</color>
 </resources>

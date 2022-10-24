@@ -1,6 +1,5 @@
 package com.xyoye.stream_component.utils.remote
 
-import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.data_component.data.remote.RemoteVideoData
 
 /**
@@ -12,6 +11,28 @@ object RemoteFileHelper {
     private const val TAG_FILE = "#"
 
     private const val separator = "/"
+
+
+    /**
+     * 将远端数据按AnimeId分组
+     */
+    fun convertGroupData(videoData: List<RemoteVideoData>): MutableList<RemoteVideoData> {
+        return videoData.asSequence()
+            .filter { it.AnimeId != 0 }
+            .groupBy { it.AnimeId }
+            .entries
+            .map { entry ->
+                val dirName = videoData.find { it.AnimeId == entry.key }!!.AnimeTitle
+                RemoteVideoData(
+                    entry.key,
+                    Name = dirName,
+                    Path = dirName,
+                    isFolder = true,
+                    childData = entry.value.toMutableList(),
+                    absolutePath = dirName
+                )
+            }.toMutableList()
+    }
 
     /**
      * 将PC数据转换为树行形数据
@@ -69,16 +90,6 @@ object RemoteFileHelper {
                 treeList.add(videoBean)
             }
         }
-
-        treeList.sortWith(FileComparator(
-            value = {
-                it.Name
-            },
-            isDirectory = {
-                it.isFolder
-            }
-        ))
-
         return treeList
     }
 

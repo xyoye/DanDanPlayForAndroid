@@ -44,11 +44,11 @@ object AppConfigTable {
 
     @MMKVFiled
     //上次打开目录
-    var lastOpenFolder : String? = null
+    var lastOpenFolder: String? = null
 
     @MMKVFiled
     //上次打开目录开关
-    var lastOpenFolderEnable : Boolean = true
+    var lastOpenFolderEnable: Boolean = true
 
     @MMKVFiled
     //上次搜索弹幕记录

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.VideoScreenScale
 
 /**
@@ -109,12 +109,27 @@ interface InterVideoPlayer {
     fun setRotation(rotation: Float)
 
     /**
-     *  选中字幕流或音频流
-     */
-    fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?)
-
-    /**
      *  是否由播放器处理外挂弹幕
      */
     fun interceptSubtitle(subtitlePath: String): Boolean
+
+    /**
+     * 更新字幕偏移时间
+     */
+    fun updateSubtitleOffsetTime()
+
+    /**
+     * 获取音轨
+     */
+    fun getAudioStream(): List<VideoStreamBean>
+
+    /**
+     * 获取字幕轨道
+     */
+    fun getSubtitleStream(): List<VideoStreamBean>
+
+    /**
+     * 选择音/字幕轨
+     */
+    fun selectStream(stream: VideoStreamBean)
 }

@@ -1,6 +1,5 @@
 package com.xyoye.player.kernel.inter
 
-import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.subtitle.MixedSubtitle
 
 /**
@@ -19,6 +18,4 @@ interface VideoPlayerEventListener {
     fun onInfo(what: Int, extra: Int)
 
     fun onSubtitleTextOutput(subtitle: MixedSubtitle)
-
-    fun updateTrack(isAudio: Boolean, trackData : MutableList<VideoTrackBean>)
 }

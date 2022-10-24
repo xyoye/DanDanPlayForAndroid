@@ -1,7 +1,9 @@
 package com.xyoye.local_component.ui.activities.local_media
 
 import android.text.TextUtils
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
@@ -9,7 +11,9 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.enums.MediaType
@@ -32,8 +36,6 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
     override fun getLayoutId() = R.layout.activity_local_media
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
-
         title = "本地媒体库"
 
         initRv()
@@ -97,6 +99,10 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
                     mSearchView?.clearFocus()
                     viewModel.openDirectory(it.filePath)
                 },
+                castFile = { data, device ->
+                    mSearchView?.clearFocus()
+                    viewModel.castFile(data, device)
+                },
                 moreAction = {
                     mSearchView?.clearFocus()
                     false
@@ -140,6 +146,12 @@ class LocalMediaActivity : BaseActivity<LocalMediaViewModel, ActivityLocalMediaB
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()
+        }
+
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(this, it)
         }
     }
 

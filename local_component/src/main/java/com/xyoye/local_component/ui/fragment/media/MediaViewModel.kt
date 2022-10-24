@@ -1,10 +1,16 @@
 package com.xyoye.local_component.ui.fragment.media
 
 import android.provider.MediaStore
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.getFileName
+import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +22,25 @@ import kotlinx.coroutines.launch
 
 class MediaViewModel : BaseViewModel() {
 
-    val mediaLibLiveData = DatabaseManager.instance.getMediaLibraryDao().getAll()
+    val mediaLibWithStatusLiveData = MediatorLiveData<MutableList<MediaLibraryEntity>>().apply {
+        val mediaLibrariesLiveData = DatabaseManager.instance.getMediaLibraryDao().getAll()
+        val serviceStatusLiveData = ServiceLifecycleBridge.getScreencastProvideLiveData()
+        //媒体库数据源
+        addSource(mediaLibrariesLiveData) { libraries ->
+            libraries.onEach {
+                it.running =
+                    it.mediaType == MediaType.SCREEN_CAST && it == serviceStatusLiveData.value
+            }
+            this.postValue(libraries)
+        }
+        //投屏服务状态数据源
+        addSource(serviceStatusLiveData) { running ->
+            val newData = this.value?.onEach {
+                it.running = it.mediaType == MediaType.SCREEN_CAST && it == running
+            } ?: mutableListOf()
+            this.postValue(newData)
+        }
+    }
 
     fun initLocalStorage() {
         val localStorageEntity = MediaLibraryEntity(
@@ -85,6 +109,35 @@ class MediaViewModel : BaseViewModel() {
         viewModelScope.launch(context = Dispatchers.IO) {
             DatabaseManager.instance.getMediaLibraryDao()
                 .delete(data.url, data.mediaType)
+        }
+    }
+
+    fun checkScreenDeviceRunning(receiver: MediaLibraryEntity) {
+        httpRequest<CommonJsonData>(viewModelScope) {
+
+            api {
+                Retrofit.screencastService.init(
+                    host = receiver.screencastAddress,
+                    port = receiver.port,
+                    authorization = receiver.password,
+                )
+            }
+
+            onStart { showLoading() }
+
+            onSuccess {
+                if (it.success) {
+                    ToastCenter.showSuccess("投屏设备连接正常，请前往其它媒体库选择文件投屏")
+                } else {
+                    ToastCenter.showError(it.errorMessage ?: "连接至投屏设备失败，请确认投屏设备已启用接收服务")
+                }
+            }
+
+            onError {
+                ToastCenter.showError("连接至投屏设备失败，请确认投屏设备已启用接收服务")
+            }
+
+            onComplete { hideLoading() }
         }
     }
 }

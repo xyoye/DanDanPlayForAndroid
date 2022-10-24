@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/player_item_bg_color"
+        android:clickable="true"
+        android:focusable="true"
+        android:translationX="300dp"
+        tools:translationX="0dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_stream"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/tv_empty_stream"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</layout>

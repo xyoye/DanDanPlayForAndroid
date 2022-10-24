@@ -12,6 +12,7 @@ public class SecurityHelper {
     private static final String ERROR_RESULT = "error";
     private static final int KEY_DANDAN = 0xC1000001;
     private static final int KEY_BUGLY = 0xC1000002;
+    private static final int KEY_ALIYUN = 0xC1000003;
 
     private final Context appContext;
 
@@ -37,6 +38,10 @@ public class SecurityHelper {
 
     public String getAppId() {
         return getKey(KEY_DANDAN, appContext);
+    }
+
+    public String getAliyunSecret() {
+        return getKey(KEY_ALIYUN, appContext);
     }
 
     public String buildHash(String hashInfo) {

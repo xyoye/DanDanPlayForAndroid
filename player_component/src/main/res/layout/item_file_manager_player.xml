@@ -7,7 +7,11 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="46dp">
+        android:background="@drawable/background_player_setting_text_transparent"
+        android:focusable="true"
+        android:minHeight="46dp"
+        android:paddingHorizontal="5dp"
+        android:tag="@string/focusable_item">
 
         <ImageView
             android:id="@+id/file_iv"

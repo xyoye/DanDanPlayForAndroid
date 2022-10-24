@@ -1,8 +1,8 @@
 object Versions {
     const val applicationId = "com.xyoye.dandanplay"
-    const val compileSdkVersion = 31
+    const val compileSdkVersion = 32
     const val minSdkVersion = 21
     const val targetSdkVersion = 29
-    const val versionCode = 54
-    const val versionName = "4.0.7"
+    const val versionCode = 55
+    const val versionName = "4.0.8"
 }

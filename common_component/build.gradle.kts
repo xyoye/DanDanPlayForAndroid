@@ -9,16 +9,14 @@ plugins {
 moduleSetup()
 
 android {
-    buildTypes {
-        all {
-            buildConfigField("Boolean", "IS_DEBUG_MODE", "${Config.isDebug}")
-        }
-    }
-
     sourceSets {
         named("main").configure {
             jniLibs.srcDir("libs")
         }
+    }
+
+    defaultConfig {
+        buildConfigField("String", "APPLICATION_ID", "\"${Versions.applicationId}\"")
     }
 }
 
@@ -36,7 +34,7 @@ dependencies {
     api(project(":repository:immersion_bar"))
     api(project(":repository:thunder"))
 
-    api(files("libs/sardine-1.0.1.jar"))
+    api(files("libs/sardine-1.0.2.jar"))
     api(files("libs/simple-xml-2.7.1.jar"))
     implementation(files("libs/mmkv-annotation.jar"))
 
@@ -63,8 +61,7 @@ dependencies {
     api(Dependencies.Apache.commons_net)
 
     api(Dependencies.Tencent.mmkv)
-    api(Dependencies.Tencent.bugly)
-    api(Dependencies.Tencent.bugly_native)
+    implementation(Dependencies.Tencent.bugly)
 
     api(Dependencies.Square.retrofit)
     implementation(Dependencies.Square.retrofit_moshi)
@@ -73,6 +70,10 @@ dependencies {
     api(Dependencies.Github.nano_http)
     api(Dependencies.Github.smbj)
     api(Dependencies.Github.dcerpc)
+
+    api(Dependencies.Alibaba.alicloud_update)
+    api(Dependencies.Alibaba.alicloud_feedback)
+    implementation(Dependencies.Alibaba.alicloud_analysis)
 
     kapt(files("libs/mmkv-compiler.jar"))
     kapt(Dependencies.AndroidX.room_compiler)

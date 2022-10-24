@@ -5,8 +5,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.4")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20")
+        classpath("com.android.tools.build:gradle:7.2.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
     }
 }
 
@@ -19,6 +19,7 @@ allprojects {
         google()
         mavenCentral()
         maven("https://developer.huawei.com/repo/")
+        maven("https://maven.aliyun.com/nexus/content/repositories/releases/")
     }
 }
 

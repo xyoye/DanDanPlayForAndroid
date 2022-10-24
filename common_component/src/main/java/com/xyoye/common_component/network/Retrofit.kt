@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class Retrofit private constructor() {
     companion object {
-        private const val baseUrl = "https://api.dandanplay.net/"
+        const val baseUrl = "https://api.dandanplay.net/"
         private const val resUrl = "http://res.acplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
         private const val torrentUrl = "https://m2t.dandanplay.net/"
@@ -26,6 +26,7 @@ class Retrofit private constructor() {
         val extService = Holder.instance.extRetrofitService
         val torrentService = Holder.instance.torrentRetrofitService
         val remoteService = Holder.instance.remoteRetrofitService
+        val screencastService = Holder.instance.screencastService
     }
 
     private var retrofitService: RetrofitService
@@ -33,6 +34,7 @@ class Retrofit private constructor() {
     private var extRetrofitService: ExtRetrofitService
     private var torrentRetrofitService: TorrentRetrofitService
     private var remoteRetrofitService: RemoteService
+    private var screencastService: ScreencastService
 
     private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
 
@@ -71,6 +73,13 @@ class Retrofit private constructor() {
             .baseUrl(remoteUrl)
             .build()
             .create(RemoteService::class.java)
+
+        screencastService = Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(getOkHttpClient(screencast = true))
+            .baseUrl(remoteUrl)
+            .build()
+            .create(ScreencastService::class.java)
     }
 
     private object Holder {
@@ -80,7 +89,8 @@ class Retrofit private constructor() {
     private fun getOkHttpClient(
         needAuth: Boolean = false,
         resDomain: Boolean = false,
-        isRemote: Boolean = false
+        isRemote: Boolean = false,
+        screencast: Boolean = false,
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.connectTimeout(10, TimeUnit.SECONDS)
@@ -101,8 +111,12 @@ class Retrofit private constructor() {
         if (resDomain) {
             builder.addInterceptor(ResDomainInterceptor())
         }
+        //投屏连接
+        if (screencast) {
+            builder.addInterceptor(ScreencastInterceptor())
+        }
         //日志输出
-        if (BuildConfig.IS_DEBUG_MODE) {
+        if (BuildConfig.DEBUG) {
             builder.addInterceptor(LoggerInterceptor().retrofit())
         }
         return builder.build()

@@ -3,7 +3,8 @@ package com.xyoye.download_component.ui.activities.play_selection
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xunlei.downloadlib.XLTaskHelper
-import com.xunlei.downloadlib.parameter.*
+import com.xunlei.downloadlib.parameter.TorrentFileInfo
+import com.xunlei.downloadlib.parameter.TorrentInfo
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.isValid
@@ -16,14 +17,17 @@ import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.StorageFileBean
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class PlaySelectionViewModel : BaseViewModel() {
     val finishLiveData = MutableLiveData<Boolean>()
     val fileLiveData = MutableLiveData<List<StorageFileBean>>()
     val playLiveData = MutableLiveData<Any>()
+    val castLiveData = MutableLiveData<MediaLibraryEntity>()
 
     private lateinit var mTorrentPath: String
 
@@ -86,33 +90,47 @@ class PlaySelectionViewModel : BaseViewModel() {
 
     fun playItem(uniqueKey: String) {
         viewModelScope.launch {
-            var targetIndex = -1
-            for (index in curDirectoryFiles.indices) {
-                if (TorrentSourceFactory.generateUniqueKey(mTorrentPath, index) == uniqueKey) {
-                    targetIndex = index
-                    break
-                }
+            if (setupVideoSource(uniqueKey)) {
+                playLiveData.postValue(Any())
             }
-            if (targetIndex < 0) {
-                ToastCenter.showError("播放失败，找不到播放资源")
-                return@launch
-            }
-
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setRootPath(mTorrentPath)
-                .setIndex(targetIndex)
-                .create(MediaType.MAGNET_LINK)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("资源无法播放，请更换其它资源")
-                return@launch
-            }
-
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    fun castItem(uniqueKey: String, device: MediaLibraryEntity) {
+        viewModelScope.launch {
+            if (setupVideoSource(uniqueKey)) {
+                castLiveData.postValue(device)
+            }
+        }
+    }
+
+    private suspend fun setupVideoSource(uniqueKey: String): Boolean {
+        var targetIndex = -1
+        for (index in curDirectoryFiles.indices) {
+            if (TorrentSourceFactory.generateUniqueKey(mTorrentPath, index) == uniqueKey) {
+                targetIndex = index
+                break
+            }
+        }
+        if (targetIndex < 0) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+
+        showLoading()
+        val mediaSource = VideoSourceFactory.Builder()
+            .setRootPath(mTorrentPath)
+            .setIndex(targetIndex)
+            .create(MediaType.MAGNET_LINK)
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("资源无法播放，请更换其它资源")
+            return false
+        }
+
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 
     private fun readTorrentInfoFormFile() {

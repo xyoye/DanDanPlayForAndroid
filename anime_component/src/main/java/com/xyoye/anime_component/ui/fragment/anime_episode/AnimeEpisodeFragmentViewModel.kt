@@ -12,7 +12,7 @@ class AnimeEpisodeFragmentViewModel : BaseViewModel() {
     val episodeCountField = ObservableField<String>()
 
     val episodeLiveData = MutableLiveData<MutableList<EpisodeData>>()
-    val episodeSortLiveData = MutableLiveData<Boolean>()
+    val episodeSortLiveData = MutableLiveData<Any>()
 
     private lateinit var bangumiData: BangumiData
 
@@ -27,7 +27,6 @@ class AnimeEpisodeFragmentViewModel : BaseViewModel() {
     }
 
     fun changeSort() {
-        val asc = episodeSortLiveData.value ?: true
-        episodeSortLiveData.postValue(!asc)
+        episodeSortLiveData.postValue(Any())
     }
 }

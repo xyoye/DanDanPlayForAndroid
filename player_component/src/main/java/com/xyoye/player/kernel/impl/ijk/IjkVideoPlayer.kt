@@ -5,7 +5,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.net.Uri
 import android.view.Surface
-import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -204,17 +204,8 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     }
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        var needSeek = false
-        if (deselect != null) {
-            mMediaPlayer.deselectTrack(deselect.trackId)
-            needSeek = true
-        }
-        if(select != null){
-            mMediaPlayer.selectTrack(select.trackId)
-            needSeek = true
-        }
-        if (needSeek) seekTo(getCurrentPosition())
+    //not support
+    override fun setSubtitleOffset(offsetMs: Long) {
     }
 
     override fun isPlaying() = mMediaPlayer.isPlaying
@@ -229,20 +220,23 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun getTcpSpeed() = mMediaPlayer.tcpSpeed
 
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return getStreams(true)
+    }
+
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return getStreams(false)
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        mMediaPlayer.selectTrack(stream.trackId)
+        mMediaPlayer.seekTo(getCurrentPosition())
+    }
+
     private fun initIjkEventListener() {
         mMediaPlayer.apply {
             //视频播放准备完成检查
             setOnPreparedListener {
-                val selectedAudioId =
-                    mMediaPlayer.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO)
-                val selectedSubtitleId =
-                    mMediaPlayer.getSelectedTrack(IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT)
-                mTrackHelper.initIjkTrack(
-                    mMediaPlayer.trackInfo,
-                    selectedAudioId,
-                    selectedSubtitleId
-                )
-
                 mPlayerEventListener.onPrepared()
                 VideoLog.d("$TAG--listener--onPrepared--> STATE_PREPARED")
             }
@@ -296,5 +290,31 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
             setOnNativeInvokeListener { _, _ -> true }
         }
+    }
+
+    private fun getStreams(isAudio: Boolean): List<VideoStreamBean> {
+        val targetType = if (isAudio)
+            IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO
+        else
+            IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE
+
+        val streams = mutableListOf<VideoStreamBean>()
+        val selectedStreamId = mMediaPlayer.getSelectedTrack(targetType)
+
+        for ((index, info) in mMediaPlayer.trackInfo.withIndex()) {
+            if (info.trackType != targetType) {
+                continue
+            }
+            val trackName = "${info.title}[${info.language}, ${info.codecName}]"
+
+            val stream = VideoStreamBean(
+                trackName = trackName,
+                isAudio = isAudio,
+                trackId = index,
+                isChecked = index == selectedStreamId
+            )
+            streams.add(stream)
+        }
+        return streams
     }
 }

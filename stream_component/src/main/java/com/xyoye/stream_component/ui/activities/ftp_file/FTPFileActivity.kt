@@ -12,7 +12,8 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.services.ScreencastProvideService
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.common_component.weight.ToastCenter
@@ -39,6 +40,9 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
         MediaType.FTP_SERVER,
         refreshDirectory = { viewModel.refreshDirectoryWithHistory() },
         openFile = { openVideo(it.uniqueKey ?: "") },
+        castFile = { data, device ->
+            openVideo(data.uniqueKey ?: "", device)
+        },
         openDirectory = { viewModel.openChildDirectory(it.filePath) }
     )
 
@@ -158,12 +162,24 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
                 .build(RouteTable.Player.Player)
                 .navigation(this, PLAY_REQUEST_CODE)
         }
+        viewModel.castLiveData.observe(this) {
+            ARouter.getInstance()
+                .navigation(ScreencastProvideService::class.java)
+                .startService(this, it)
+        }
     }
 
-    private fun openVideo(uniqueKey: String) {
+    private fun openVideo(
+        uniqueKey: String,
+        device: MediaLibraryEntity? = null
+    ) {
         val showTips = AppConfig.isShowFTPVideoTips()
         if (!showTips) {
-            viewModel.openVideoFile(uniqueKey)
+            if (device == null) {
+                viewModel.playItem(uniqueKey)
+            } else {
+                viewModel.castItem(uniqueKey, device)
+            }
             return
         }
 
@@ -172,7 +188,11 @@ class FTPFileActivity : BaseActivity<FTPFileViewModel, ActivityFtpFileBinding>()
             addNegative()
             addPositive {
                 it.dismiss()
-                viewModel.openVideoFile(uniqueKey)
+                if (device == null) {
+                    viewModel.playItem(uniqueKey)
+                } else {
+                    viewModel.castItem(uniqueKey, device)
+                }
             }
             addNoShowAgain { AppConfig.putShowFTPVideoTips(!it) }
             build()

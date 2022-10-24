@@ -44,4 +44,5 @@
     <string name="search">搜索</string>
     <string name="tips_search_danmu">搜索弹幕：番剧名+空格+集数</string>
     <string name="tips_search_subtitle">搜索字幕：番剧名</string>
+    <string name="tips_screencast_providing">投屏中</string>
 </resources>

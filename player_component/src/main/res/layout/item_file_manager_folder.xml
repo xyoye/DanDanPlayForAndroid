@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/background_player_setting_text_transparent"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="3dp"
+        android:tag="@string/focusable_item"
+        android:textColor="@color/text_white_immutable"
+        android:textSize="10sp"
+        tools:background="@color/player_item_bg_color"
+        tools:ignore="SmallSp"
+        tools:text="测试" />
+</layout>

@@ -1,8 +1,9 @@
 package com.xyoye.player.wrapper
 
 import android.graphics.PointF
+import android.view.KeyEvent
 import com.xyoye.data_component.bean.SendDanmuBean
-import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.utils.MessageTime
@@ -92,11 +93,20 @@ class ControlWrapper(
         mVideoPlayer.setRotation(rotation)
     }
 
-    override fun selectTrack(select: VideoTrackBean?, deselect: VideoTrackBean?) {
-        mVideoPlayer.selectTrack(select, deselect)
+    override fun interceptSubtitle(subtitlePath: String) =
+        mVideoPlayer.interceptSubtitle(subtitlePath)
+
+    override fun getAudioStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getAudioStream()
     }
 
-    override fun interceptSubtitle(subtitlePath: String) = mVideoPlayer.interceptSubtitle(subtitlePath)
+    override fun getSubtitleStream(): List<VideoStreamBean> {
+        return mVideoPlayer.getSubtitleStream()
+    }
+
+    override fun selectStream(stream: VideoStreamBean) {
+        return mVideoPlayer.selectStream(stream)
+    }
 
     /**
      * ------------------Video Controller----------------------
@@ -178,8 +188,8 @@ class ControlWrapper(
         mDanmuController.updateDanmuStoke()
     }
 
-    override fun updateOffsetTime() {
-        mDanmuController.updateOffsetTime()
+    override fun updateDanmuOffsetTime() {
+        mDanmuController.updateDanmuOffsetTime()
     }
 
     override fun danmuRelease() {
@@ -240,8 +250,8 @@ class ControlWrapper(
      * ------------------Subtitle Controller----------------------
      */
 
-    override fun setDanmuLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
-        mSubtitleController.setDanmuLoadedCallback(callback)
+    override fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
+        mSubtitleController.setSubtitleLoadedCallback(callback)
     }
 
     override fun setImageSubtitleEnable(enable: Boolean) {
@@ -284,6 +294,11 @@ class ControlWrapper(
         mSubtitleController.updateStrokeColor()
     }
 
+    override fun updateSubtitleOffsetTime() {
+        mSubtitleController.updateSubtitleOffsetTime()
+        mVideoPlayer.updateSubtitleOffsetTime()
+    }
+
     override fun subtitleRelease() {
         mSubtitleController.subtitleRelease()
     }
@@ -291,12 +306,6 @@ class ControlWrapper(
     /**
      * ------------------Setting Controller----------------------
      */
-
-    override fun switchSource(isSwitchSubtitle: Boolean) {
-        mSettingController.switchSource(isSwitchSubtitle)
-        showSettingView(SettingViewType.SWITCH_SOURCE)
-    }
-
     override fun isSettingViewShowing() = mSettingController.isSettingViewShowing()
 
     override fun hideSettingView() {
@@ -309,6 +318,10 @@ class ControlWrapper(
 
     override fun onSubtitleSourceChanged() {
         mSettingController.onSubtitleSourceChanged()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return mSettingController.onKeyDown(keyCode, event)
     }
 
     override fun showSettingView(viewType: SettingViewType) {

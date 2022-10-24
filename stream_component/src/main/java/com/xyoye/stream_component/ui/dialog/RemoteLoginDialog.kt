@@ -48,6 +48,8 @@ class RemoteLoginDialog(
         setTitle(if (isEditStorage) "编辑远程连接帐号" else "添加远程连接帐号")
         binding.remoteData = remoteData
 
+        setGroupMode(remoteData.remoteAnimeGrouping)
+
         binding.scanLl.setOnClickListener {
             scanQRCode.invoke()
         }
@@ -56,6 +58,16 @@ class RemoteLoginDialog(
             if (checkParams(remoteData)) {
                 testConnect.invoke(remoteData)
             }
+        }
+
+        binding.tvGroupByFile.setOnClickListener {
+            remoteData.remoteAnimeGrouping = false
+            setGroupMode(false)
+        }
+
+        binding.tvGroupByAnime.setOnClickListener {
+            remoteData.remoteAnimeGrouping = true
+            setGroupMode(true)
         }
 
         testConnectResult.observe(activity) {
@@ -103,5 +115,17 @@ class RemoteLoginDialog(
             return false
         }
         return true
+    }
+
+    private fun setGroupMode(isGroupByAnime: Boolean) {
+        binding.tvGroupByAnime.isSelected = isGroupByAnime
+        binding.tvGroupByAnime.setTextColorRes(
+            if (isGroupByAnime) R.color.text_white else R.color.text_black
+        )
+
+        binding.tvGroupByFile.isSelected = !isGroupByAnime
+        binding.tvGroupByFile.setTextColorRes(
+            if (!isGroupByAnime) R.color.text_white else R.color.text_black
+        )
     }
 }

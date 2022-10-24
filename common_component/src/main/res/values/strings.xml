@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">弹弹play 概念版</string>
     <string name="text_dialog_config">确定</string>
     <string name="text_dialog_cancel">取消</string>
     <string name="title_common_dialog">提示</string>
@@ -14,6 +15,12 @@
     <string name="tips_bound_danmu">弹</string>
     <string name="tips_bound_subtitle">字</string>
 
-    <item name="labels_key_data" type="id"/>
-    <item name="labels_key_position" type="id"/>
+    <item name="labels_key_data" type="id" />
+    <item name="labels_key_position" type="id" />
+
+    <!-- 标记为可处理焦点事件的Item -->
+    <string name="focusable_item">tag_focusable_item</string>
+
+    <string name="text_click_update">立即更新</string>
+    <string name="text_click_install">点击安装</string>
 </resources>

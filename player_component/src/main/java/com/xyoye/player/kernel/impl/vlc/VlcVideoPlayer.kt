@@ -1,5 +1,6 @@
 package com.xyoye.player.kernel.impl.vlc
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
@@ -52,27 +53,13 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun setDataSource(path: String, headers: Map<String, String>?) {
-        if (path.isEmpty()) {
+        val vlcMedia = createVlcMedia(path, headers)
+        if (vlcMedia == null) {
             mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_URL_EMPTY, 0)
             return
         }
 
-        var videoUri = if (path.startsWith("/") || path.startsWith("content://")) {
-            Uri.fromFile(File(path))
-        } else {
-            Uri.parse(path)
-        }
-        //VLC播放器通过代理服务实现请求头设置
-        if (headers?.isNotEmpty() == true) {
-            val proxyServer = VlcProxyServer.getInstance()
-            if (!proxyServer.isAlive) {
-                proxyServer.start()
-            }
-            val proxyUrl = proxyServer.getInputStreamUrl(path, headers)
-            videoUri = Uri.parse(proxyUrl)
-        }
-
-        mMedia = Media(libVlc, videoUri)
+        mMedia = vlcMedia
 
         //是否开启硬件加速
         if (PlayerInitializer.Player.vlcHWDecode == VLCHWDecode.HW_ACCELERATION_DISABLE) {
@@ -286,6 +273,42 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                     VideoLog.d("$TAG--listener--onInfo--> onCompletion")
                 }
             }
+        }
+    }
+
+    private fun createVlcMedia(path: String, headers: Map<String, String>?): Media? {
+        if (path.isEmpty()) {
+            return null
+        }
+
+        //VLC播放器通过代理服务实现请求头设置
+        if (headers?.isNotEmpty() == true) {
+            val proxyServer = VlcProxyServer.getInstance()
+            if (!proxyServer.isAlive) {
+                proxyServer.start()
+            }
+            val proxyUrl = proxyServer.getInputStreamUrl(path, headers)
+            return Media(libVlc, Uri.parse(proxyUrl))
+        }
+
+        val videoUri = if (path.startsWith("/")) {
+            Uri.fromFile(File(path))
+        } else {
+            Uri.parse(path)
+        }
+
+        // content://
+        return if (videoUri.scheme == ContentResolver.SCHEME_CONTENT) {
+            val fd = try {
+                mContext.contentResolver.openAssetFileDescriptor(videoUri, "r")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+
+            fd?.run { Media(libVlc, this) }
+        } else {
+            Media(libVlc, videoUri)
         }
     }
 

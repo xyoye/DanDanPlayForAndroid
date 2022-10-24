@@ -2,7 +2,6 @@ package com.xyoye.local_component.ui.dialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.utils.StreamHeaderUtil
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
@@ -41,7 +40,7 @@ class StreamLinkDialog(
             val headerText = binding.headerInputEt.text.toString()
             val header = StreamHeaderUtil.string2Header(headerText)
 
-            callback.invoke(result.decodeUrl(), header)
+            callback.invoke(result, header)
             dismiss()
         }
 

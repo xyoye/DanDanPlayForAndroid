@@ -1,7 +1,7 @@
 package com.xyoye.common_component.utils
 
 import androidx.core.content.pm.PackageInfoCompat
-import com.tencent.bugly.beta.Beta
+import com.taobao.update.datasource.UpdateDataSource
 import com.xyoye.common_component.base.app.BaseApplication
 
 /**
@@ -30,6 +30,6 @@ object AppUtils {
     }
 
     fun checkUpdate() {
-        Beta.checkUpgrade(true, false)
+        UpdateDataSource.getInstance().startManualUpdate(false)
     }
 }

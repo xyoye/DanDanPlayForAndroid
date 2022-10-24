@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-cache-path
+        name="external_apk_update"
+        path="apkupdate/" />
+    <cache-path
+        name="apk_update"
+        path="apkupdate/" />
+    <root-path
+        name="root_apk_update"
+        path="storage/" />
+</paths>

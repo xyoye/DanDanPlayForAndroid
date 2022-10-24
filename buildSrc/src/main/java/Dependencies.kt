@@ -16,6 +16,7 @@ object Dependencies {
         const val arouter_compiler = "com.alibaba:arouter-compiler:${Versions.arouter}"
         const val alicloud_feedback = "com.aliyun.ams:alicloud-android-feedback:3.3.7"
         const val alicloud_analysis = "com.aliyun.ams:alicloud-android-man:1.2.0"
+        const val alicloud_update = "com.taobao.android:update-main:1.1.14-open"
     }
 
     object AndroidX {
@@ -105,8 +106,7 @@ object Dependencies {
 
     object Tencent {
         const val mmkv = "com.tencent:mmkv-static:1.2.14"
-        const val bugly = "com.tencent.bugly:crashreport_upgrade:1.6.1"
-        const val bugly_native = "com.tencent.bugly:nativecrashreport:3.9.2"
+        const val bugly = "com.tencent.bugly:crashreport:4.1.9"
     }
 
     object VLC {

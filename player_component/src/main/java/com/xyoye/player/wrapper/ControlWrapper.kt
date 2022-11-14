@@ -132,6 +132,12 @@ class ControlWrapper(
 
     override fun isLocked() = mController.isLocked()
 
+    override fun setPopupMode(isPopup: Boolean) {
+        mController.setPopupMode(isPopup)
+    }
+
+    override fun isPopupMode() = mController.isPopupMode()
+
     override fun startProgress() {
         mController.startProgress()
     }

@@ -183,6 +183,10 @@ class PlayerBottomView(
 
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         if (!fromUser)
             return

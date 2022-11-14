@@ -24,4 +24,6 @@ interface InterControllerView {
     fun onLockStateChanged(isLocked: Boolean)
 
     fun onVideoSizeChanged(videoSize: Point)
+
+    fun onPopupModeChanged(isPopup: Boolean)
 }

@@ -112,6 +112,10 @@ abstract class BaseSettingView<V : ViewDataBinding> @JvmOverloads constructor(
 
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     override fun onVideoSizeChanged(videoSize: Point) {
 
     }

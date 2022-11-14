@@ -33,12 +33,17 @@ class SettingController(
     private lateinit var subtitleStyleView: SettingSubtitleStyleView
 
     private val showingSettingViews = mutableListOf<InterSettingView>()
+    private var isPopupMode = false
 
     override fun isSettingViewShowing(): Boolean {
         return showingSettingViews.find { it.isSettingShowing() } != null
     }
 
     override fun showSettingView(viewType: SettingViewType) {
+        if (isPopupMode) {
+            return
+        }
+
         val settingView = getSettingView(viewType)
         if (settingView.isSettingShowing().not()) {
             showingSettingViews.add(settingView)
@@ -214,6 +219,13 @@ class SettingController(
                 }
                 return subtitleStyleView
             }
+        }
+    }
+
+    fun setPopupMode(isPopupMode: Boolean) {
+        this.isPopupMode = isPopupMode
+        if (isPopupMode) {
+            hideSettingView()
         }
     }
 }

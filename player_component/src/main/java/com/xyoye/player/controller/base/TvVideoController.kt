@@ -16,6 +16,9 @@ abstract class TvVideoController(
 ) : BaseVideoController(context, attrs, defStyleAttr) {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (isPopupMode()) {
+            return false
+        }
         val intercept = when (keyCode) {
             KeyEvent.KEYCODE_DPAD_CENTER -> onActionCenter()
             KeyEvent.KEYCODE_DPAD_UP -> onActionUp()

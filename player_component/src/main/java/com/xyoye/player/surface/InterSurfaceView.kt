@@ -23,5 +23,7 @@ interface InterSurfaceView {
 
     fun doScreenShot(): Bitmap?
 
+    fun refresh()
+
     fun release()
 }

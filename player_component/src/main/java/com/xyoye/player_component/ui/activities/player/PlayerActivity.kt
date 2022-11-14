@@ -27,12 +27,14 @@ import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.enums.*
+import com.xyoye.player.DanDanVideoPlayer
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
 import com.xyoye.player_component.utils.BatteryHelper
+import com.xyoye.player_component.widgets.popup.PlayerPopupManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -49,13 +51,24 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         )[PlayerDanmuViewModel::class.java]
     }
 
+    private val videoController: VideoController by lazy {
+        VideoController(this)
+    }
+
+    private val danDanPlayer: DanDanVideoPlayer by lazy {
+        DanDanVideoPlayer(this)
+    }
+
+    //悬浮窗
+    private val popupManager: PlayerPopupManager by lazy {
+        PlayerPopupManager(this)
+    }
+
     //锁屏广播
     private lateinit var screenLockReceiver: ScreenBroadcastReceiver
 
     //耳机广播
     private lateinit var headsetReceiver: HeadsetBroadcastReceiver
-
-    private lateinit var videoController: VideoController
 
     private var videoSource: BaseVideoSource? = null
 
@@ -88,33 +101,56 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
         initListener()
 
+        danDanPlayer.setController(videoController)
+        dataBinding.playerContainer.removeAllViews()
+        dataBinding.playerContainer.addView(danDanPlayer)
+
         applyPlaySource(VideoSourceManager.getInstance().getSource())
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (popupManager.isShowing()) {
+            popupManager.dismiss()
+
+            dataBinding.playerContainer.removeAllViews()
+            dataBinding.playerContainer.addView(danDanPlayer)
+
+            val newSource = VideoSourceManager.getInstance().getSource()
+            if (newSource != null && newSource != videoSource) {
+                applyPlaySource(newSource)
+            }
+
+            danDanPlayer.exitPopupMode()
+        }
+    }
+
     override fun onPause() {
-        dataBinding.danDanPlayer.pause()
-        dataBinding.danDanPlayer.recordPlayInfo()
+        if (popupManager.isShowing().not()) {
+            danDanPlayer.pause()
+        }
+        danDanPlayer.recordPlayInfo()
         super.onPause()
     }
 
     override fun onDestroy() {
         beforePlayExit()
         unregisterReceiver()
-        dataBinding.danDanPlayer.release()
+        danDanPlayer.release()
         batteryHelper.release()
         super.onDestroy()
     }
 
     override fun onBackPressed() {
-        if (dataBinding.danDanPlayer.onBackPressed()) {
+        if (danDanPlayer.onBackPressed()) {
             return
         }
-        dataBinding.danDanPlayer.recordPlayInfo()
+        danDanPlayer.recordPlayInfo()
         finish()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return dataBinding.danDanPlayer.onKeyDown(keyCode, event) or super.onKeyDown(keyCode, event)
+        return danDanPlayer.onKeyDown(keyCode, event) or super.onKeyDown(keyCode, event)
     }
 
     override fun onScreenLocked() {
@@ -122,7 +158,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun onHeadsetRemoved() {
-        dataBinding.danDanPlayer.pause()
+        danDanPlayer.pause()
     }
 
     override fun playScreencast(videoSource: BaseVideoSource) {
@@ -149,13 +185,13 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun initListener() {
         danmuViewModel.loadDanmuLiveData.observe(this) {
-            val curVideoSource = dataBinding.danDanPlayer.getVideoSource()
+            val curVideoSource = danDanPlayer.getVideoSource()
             val curVideoUrl = curVideoSource.getVideoUrl()
-            if (curVideoUrl != it.videoUrl){
+            if (curVideoUrl != it.videoUrl) {
                 return@observe
             }
 
-            if (it.state == LoadDanmuState.MATCH_SUCCESS){
+            if (it.state == LoadDanmuState.MATCH_SUCCESS) {
                 val danmuPath = it.danmuPath!!
                 videoController.showMessage(it.state.msg)
                 videoController.setDanmuPath(danmuPath)
@@ -169,12 +205,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         danmuViewModel.downloadDanmuLiveData.observe(this) {
-            if (it == null){
+            if (it == null) {
                 videoController.showMessage("下载弹幕失败")
                 return@observe
             }
 
-            val curVideoSource = dataBinding.danDanPlayer.getVideoSource()
+            val curVideoSource = danDanPlayer.getVideoSource()
             videoController.setDanmuPath(it.first)
 
             curVideoSource.setDanmuPath(it.first)
@@ -186,9 +222,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun initPlayer() {
-        videoController = VideoController(this)
-        dataBinding.danDanPlayer.setController(videoController)
-
         videoController.apply {
             setBatteryHelper(batteryHelper)
 
@@ -198,8 +231,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //退出播放
             observerPlayExit {
-                dataBinding.danDanPlayer.recordPlayInfo()
+                danDanPlayer.recordPlayInfo()
                 finish()
+            }
+            //切换悬浮窗模式
+            observerSwitchPopup {
+                switchPopupMode()
             }
             //弹幕屏蔽
             observerDanmuBlock(
@@ -214,13 +251,25 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 download = { danmuViewModel.downloadDanmu(it) },
                 searchResult = { danmuViewModel.danmuSearchLiveData }
             )
+            observerPopupDismiss {
+                danDanPlayer.recordPlayInfo()
+                popupManager.dismiss()
+                finish()
+            }
+
+            observerPopupExpand {
+                ARouter.getInstance()
+                    .build(RouteTable.Player.PlayerCenter)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .navigation(this@PlayerActivity)
+            }
         }
     }
 
     private fun applyPlaySource(newSource: BaseVideoSource?) {
-        dataBinding.danDanPlayer.recordPlayInfo()
-        dataBinding.danDanPlayer.pause()
-        dataBinding.danDanPlayer.release()
+        danDanPlayer.recordPlayInfo()
+        danDanPlayer.pause()
+        danDanPlayer.release()
         videoController.release()
 
         videoSource = newSource
@@ -241,7 +290,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             setLastPlaySpeed(PlayerConfig.getNewVideoSpeed())
         }
 
-        dataBinding.danDanPlayer.apply {
+        danDanPlayer.apply {
             setVideoSource(source)
             start()
         }
@@ -394,7 +443,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun switchVideoSource(index: Int) {
         showLoading()
-        dataBinding.danDanPlayer.pause()
+        danDanPlayer.pause()
         lifecycleScope.launch(Dispatchers.IO) {
             val targetSource = videoSource?.indexSource(index)
             if (targetSource == null) {
@@ -406,5 +455,15 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 applyPlaySource(targetSource)
             }
         }
+    }
+
+    private fun switchPopupMode() {
+        if (popupManager.isShowing()) {
+            return
+        }
+        dataBinding.playerContainer.removeAllViews()
+        popupManager.show(danDanPlayer)
+        danDanPlayer.enterPopupMode()
+        moveTaskToBack(true)
     }
 }

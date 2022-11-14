@@ -69,6 +69,10 @@ class SubtitleImageView(
         }
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     fun setSubtitleEnable(enable: Boolean) {
         if (!enable) {
             setSubtitle(null)

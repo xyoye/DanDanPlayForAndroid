@@ -2,31 +2,20 @@ package com.xyoye.player.controller
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
-import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
+import com.xyoye.player.controller.video.PlayerPopupControlView
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
-import com.xyoye.player.controller.video.LoadingView
-import com.xyoye.player.controller.video.PlayerBottomView
-import com.xyoye.player.controller.video.PlayerGestureView
-import com.xyoye.player.controller.video.PlayerTopView
+import com.xyoye.player.controller.video.*
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
-import com.xyoye.player_component.R
-import com.xyoye.player_component.databinding.LayoutPlayerControllerBinding
 import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.subtitle.MixedSubtitle
 
@@ -55,19 +44,15 @@ class VideoController(
     private val gestureView = PlayerGestureView(context)
     private val loadingView = LoadingView(context)
 
+    private val playerControlView = PlayerControlView(context)
+    private val playerPopupControlView = PlayerPopupControlView(context)
+
     private var lastPlayPosition = 0L
     private var lastVideoSpeed: Float? = null
 
     private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
-
-    private val controllerBinding = DataBindingUtil.inflate<LayoutPlayerControllerBinding>(
-        LayoutInflater.from(context),
-        R.layout.layout_player_controller,
-        this,
-        true
-    )
 
     init {
         addControlComponent(mDanmuController.getView())
@@ -76,14 +61,7 @@ class VideoController(
         addControlComponent(playerTopView)
         addControlComponent(playerBotView)
         addControlComponent(loadingView)
-
-        controllerBinding.playerLockIv.setOnClickListener {
-            mControlWrapper.toggleLockState()
-        }
-
-        controllerBinding.playerShotIv.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.SCREEN_SHOT)
-        }
+        addControlComponent(playerControlView)
     }
 
     override fun getDanmuController() = mDanmuController
@@ -93,7 +71,7 @@ class VideoController(
     override fun getSettingController() = mSettingController
 
     override fun showMessage(text: String, time: MessageTime) {
-        controllerBinding.messageContainer.showMessage(text, time)
+        playerControlView.showMessage(text, time)
     }
 
     override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
@@ -114,32 +92,25 @@ class VideoController(
         mSubtitleSourceChanged?.invoke(subtitlePath)
     }
 
-    override fun onLockStateChanged(isLocked: Boolean) {
-        controllerBinding.playerLockIv.isSelected = isLocked
-        updateShotVisible(!isLocked)
-    }
+    override fun onPopupModeChanged(isPopup: Boolean) {
+        super.onPopupModeChanged(isPopup)
+        mSettingController.setPopupMode(isPopup)
 
-    override fun onVisibilityChanged(isVisible: Boolean) {
-        if (isVisible) {
-            if (isLocked()) {
-                controllerBinding.playerLockIv.postDelayed({
-                    controllerBinding.playerLockIv.requestFocus()
-                }, 100)
-            }
-            controllerBinding.playerLockIv.isVisible = true
-            ViewCompat.animate(controllerBinding.playerLockIv).translationX(0f).setDuration(300)
-                .start()
+        if (isPopup) {
+            addControlComponent(playerPopupControlView)
+
+            removeControlComponent(gestureView)
+            removeControlComponent(playerTopView)
+            removeControlComponent(playerBotView)
+            removeControlComponent(playerControlView)
         } else {
-            playerTopView.findViewById<TextView>(R.id.video_title_tv).requestFocus()
-            val translateX = dp2px(60).toFloat()
-            ViewCompat.animate(controllerBinding.playerLockIv).translationX(-translateX)
-                .setDuration(300).start()
-        }
+            removeControlComponent(playerPopupControlView)
 
-        if (isLocked()) {
-            return
+            addControlComponent(gestureView)
+            addControlComponent(playerTopView)
+            addControlComponent(playerBotView)
+            addControlComponent(playerControlView)
         }
-        updateShotVisible(isVisible)
     }
 
     override fun onPlayStateChanged(playState: PlayState) {
@@ -178,7 +149,7 @@ class VideoController(
     override fun release() {
         super.release()
         lastPlayPosition = 0
-        controllerBinding.messageContainer.clearMessage()
+        playerControlView.clearMessage()
     }
 
     override fun destroy() {
@@ -245,6 +216,27 @@ class VideoController(
     }
 
     /**
+     * 切换至悬浮窗模式回调
+     */
+    fun observerSwitchPopup(block: () -> Unit) {
+        playerTopView.setSwitchPopupObserver(block)
+    }
+
+    /**
+     * 关闭悬浮窗
+     */
+    fun observerPopupDismiss(block: () -> Unit) {
+        playerPopupControlView.setPopupDismissObserver(block)
+    }
+
+    /**
+     * 展开悬浮窗
+     */
+    fun observerPopupExpand(block: () -> Unit) {
+        playerPopupControlView.setPopupExpandObserver(block)
+    }
+
+    /**
      * 弹幕资源更新回调
      */
     fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: Int) -> Unit) {
@@ -305,18 +297,6 @@ class VideoController(
      */
     fun updateSubtitle(subtitle: MixedSubtitle) {
         mSubtitleController.updateSubtitle(subtitle)
-    }
-
-    private fun updateShotVisible(isVisible: Boolean) {
-        if (isVisible) {
-            controllerBinding.playerShotIv.isVisible = true
-            ViewCompat.animate(controllerBinding.playerShotIv).translationX(0f).setDuration(300)
-                .start()
-        } else {
-            val translateX = dp2px(60).toFloat()
-            ViewCompat.animate(controllerBinding.playerShotIv).translationX(translateX)
-                .setDuration(300).start()
-        }
     }
 
     private fun considerSeekToLastPlay() {

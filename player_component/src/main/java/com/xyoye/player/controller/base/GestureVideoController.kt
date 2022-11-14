@@ -35,6 +35,8 @@ abstract class GestureVideoController(
         GestureDetector(getContext(), this)
     }
 
+    private var mPopupGestureHandler: OnTouchListener? = null
+
     private var mCurrentPlayState = PlayState.STATE_IDLE
 
     private var mStreamVolume = 0
@@ -65,11 +67,12 @@ abstract class GestureVideoController(
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        mPopupGestureHandler?.onTouch(v, event)
         return mGestureDetector.onTouchEvent(event)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (!mGestureDetector.onTouchEvent(event)) {
+        if (mGestureDetector.onTouchEvent(event).not() && isPopupMode().not()) {
             when (event?.action) {
                 MotionEvent.ACTION_UP -> {
                     longPressAccelerator.disable()
@@ -139,6 +142,9 @@ abstract class GestureVideoController(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
+        if (isPopupMode().not()) {
+            return false
+        }
         if (!isNormalPlayState() or isLocked() or context.isScreenEdge(e1)) {
             return true
         }
@@ -268,6 +274,10 @@ abstract class GestureVideoController(
                 view.onStopSlide()
             }
         }
+    }
+
+    fun setPopupGestureHandler(handler: OnTouchListener?) {
+        mPopupGestureHandler = handler
     }
 
     private fun stopSlide() {

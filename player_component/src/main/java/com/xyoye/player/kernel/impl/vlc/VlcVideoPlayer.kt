@@ -2,6 +2,7 @@ package com.xyoye.player.kernel.impl.vlc
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Point
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
@@ -45,6 +46,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     private var mCurrentDuration = 0L
     private var seekable = true
     private var isBufferEnd = false
+    private val mVideoSize = Point(0, 0)
 
     override fun initPlayer() {
         setOptions()
@@ -167,6 +169,10 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         return mMediaPlayer.rate
     }
 
+    override fun getVideoSize(): Point {
+        return mVideoSize
+    }
+
     override fun getBufferedPercentage(): Int {
         return 0
     }
@@ -208,6 +214,9 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     fun attachRenderView(vlcVideoLayout: VLCVideoLayout) {
+        if (mMediaPlayer.vlcVout.areViewsAttached()) {
+            mMediaPlayer.detachViews()
+        }
         val isTextureView = PlayerInitializer.surfaceType == SurfaceType.VIEW_TEXTURE
         mMediaPlayer.attachViews(vlcVideoLayout, null, true, isTextureView)
     }
@@ -254,6 +263,14 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 //时长输出
                 MediaPlayer.Event.LengthChanged -> {
                     mCurrentDuration = it.lengthChanged
+                }
+                MediaPlayer.Event.ESSelected -> {
+                    if (it.esChangedType == IMedia.Track.Type.Video) {
+                        mMediaPlayer.currentVideoTrack?.let { track ->
+                            mVideoSize.x = track.width
+                            mVideoSize.y = track.height
+                        }
+                    }
                 }
                 //视频输出
                 MediaPlayer.Event.Vout -> {

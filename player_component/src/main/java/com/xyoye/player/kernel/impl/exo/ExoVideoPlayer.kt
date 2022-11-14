@@ -1,6 +1,7 @@
 package com.xyoye.player.kernel.impl.exo
 
 import android.content.Context
+import android.graphics.Point
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
@@ -190,6 +191,13 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         } else {
             1f
         }
+    }
+
+    override fun getVideoSize(): Point {
+        return Point(
+            exoplayer.videoSize.width,
+            exoplayer.videoSize.height
+        )
     }
 
     override fun getBufferedPercentage() = exoplayer.bufferedPercentage

@@ -20,10 +20,10 @@
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
             android:nextFocusLeft="@+id/player_settings_iv"
-            android:nextFocusRight="@+id/player_settings_iv"
+            android:nextFocusRight="@+id/iv_switch_popup"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="10dp"
-            android:src="@mipmap/ic_return_back"
+            android:src="@drawable/ic_arrow_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,8 +39,8 @@
             android:focusableInTouchMode="true"
             android:marqueeRepeatLimit="marquee_forever"
             android:nextFocusLeft="@+id/back_iv"
-            android:nextFocusRight="@+id/player_settings_iv"
-            android:nextFocusDown="@+id/player_settings_iv"
+            android:nextFocusRight="@+id/iv_switch_popup"
+            android:nextFocusDown="@+id/iv_switch_popup"
             android:singleLine="true"
             android:textColor="@color/text_white_immutable"
             android:textSize="16sp"
@@ -84,7 +84,22 @@
             android:textColor="@color/text_white_immutable"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@id/back_iv"
-            app:layout_constraintEnd_toStartOf="@id/player_settings_iv"
+            app:layout_constraintEnd_toStartOf="@id/iv_switch_popup"
+            app:layout_constraintTop_toTopOf="@id/back_iv" />
+
+        <ImageView
+            android:id="@+id/iv_switch_popup"
+            android:layout_width="@dimen/settings_btn_width"
+            android:layout_height="0dp"
+            android:background="@drawable/background_video_action_item"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/back_iv"
+            android:nextFocusRight="@+id/player_settings_iv"
+            android:nextFocusDown="@+id/player_lock_iv"
+            android:padding="12dp"
+            android:src="@drawable/ic_float_play"
+            app:layout_constraintBottom_toBottomOf="@id/back_iv"
+            app:layout_constraintEnd_toStartOf="@+id/player_settings_iv"
             app:layout_constraintTop_toTopOf="@id/back_iv" />
 
         <ImageView
@@ -94,7 +109,7 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/background_video_action_item"
             android:focusable="true"
-            android:nextFocusLeft="@+id/back_iv"
+            android:nextFocusLeft="@+id/iv_switch_popup"
             android:nextFocusRight="@+id/back_iv"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="12dp"

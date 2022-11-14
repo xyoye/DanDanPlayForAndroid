@@ -2,7 +2,6 @@ package com.xyoye.player
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Point
 import android.graphics.PointF
 import android.media.AudioManager
 import android.util.AttributeSet
@@ -70,21 +69,11 @@ class DanDanVideoPlayer(
     //当前视图缩放类型
     private var mScreenScale = PlayerInitializer.screenScale
 
-    //当前播放器宽高
-    private var mVideoSize = Point(0, 0)
-
     init {
         val audioManager = context.applicationContext
             .getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val lifecycleScope = (context as AppCompatActivity).lifecycleScope
         mAudioFocusHelper = AudioFocusHelper(this, audioManager, lifecycleScope)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        mVideoController?.destroy()
-        CacheManager.release()
-        release()
     }
 
     override fun start() {
@@ -183,17 +172,16 @@ class DanDanVideoPlayer(
         return mRenderView?.doScreenShot()
     }
 
-    override fun getVideoSize() = mVideoSize
+    override fun getVideoSize() = mVideoPlayer.getVideoSize()
 
     override fun interceptSubtitle(subtitlePath: String): Boolean {
         return mVideoPlayer.interceptSubtitle(subtitlePath)
     }
 
     override fun onVideoSizeChange(width: Int, height: Int) {
-        mVideoSize = Point(width, height)
         mRenderView?.setScaleType(mScreenScale)
         mRenderView?.setVideoSize(width, height)
-        mVideoController?.setVideoSize(mVideoSize)
+        mVideoController?.setVideoSize(mVideoPlayer.getVideoSize())
     }
 
     override fun onPrepared() {
@@ -317,6 +305,10 @@ class DanDanVideoPlayer(
 
     fun release() {
         if (mCurrentPlayState != PlayState.STATE_IDLE) {
+            //释放缓存
+            CacheManager.release()
+            //释放播放器控制器
+            mVideoController?.destroy()
             //释放播放器
             mVideoPlayer.release()
             //关闭常亮
@@ -362,6 +354,20 @@ class DanDanVideoPlayer(
             it.setMediaPlayer(this)
             addView(it, mDefaultLayoutParams)
         }
+    }
+
+    fun enterPopupMode() {
+        mVideoController?.setPopupMode(true)
+        post { mRenderView?.refresh() }
+    }
+
+    fun exitPopupMode() {
+        mVideoController?.setPopupMode(false)
+        post { mRenderView?.refresh() }
+    }
+
+    fun setPopupGestureHandler(handler: OnTouchListener?) {
+        mVideoController?.setPopupGestureHandler(handler)
     }
 
     override fun updateSubtitleOffsetTime() {

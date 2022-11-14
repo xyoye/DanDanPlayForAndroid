@@ -12,6 +12,7 @@ import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.ControlWrapper
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerTopBinding
+import com.xyoye.player_component.ui.activities.overlay_permission.OverlayPermissionActivity
 import com.xyoye.player_component.utils.BatteryHelper
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,6 +38,8 @@ class PlayerTopView(
 
     private var playExitObserver: (() -> Unit)? = null
 
+    private var switchPopupBlock: (() -> Unit)? = null
+
     private lateinit var mControlWrapper: ControlWrapper
 
     init {
@@ -47,6 +50,14 @@ class PlayerTopView(
 
         viewBinding.playerSettingsIv.setOnClickListener {
             mControlWrapper.showSettingView(SettingViewType.PLAYER_SETTING)
+        }
+
+        viewBinding.ivSwitchPopup.setOnClickListener {
+            if (OverlayPermissionActivity.hasOverlayPermission().not()) {
+                OverlayPermissionActivity.requestOverlayPermission(context)
+                return@setOnClickListener
+            }
+            switchPopupBlock?.invoke()
         }
     }
 
@@ -89,6 +100,10 @@ class PlayerTopView(
 
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     fun setBatteryHelper(helper: BatteryHelper) {
         helper.bindBatteryView(viewBinding.batteryView)
     }
@@ -99,5 +114,9 @@ class PlayerTopView(
 
     fun setExitObserver(block: () -> Unit) {
         playExitObserver = block
+    }
+
+    fun setSwitchPopupObserver(block: () -> Unit) {
+        switchPopupBlock = block
     }
 }

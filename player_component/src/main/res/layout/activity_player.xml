@@ -10,8 +10,8 @@
             type="com.xyoye.player_component.ui.activities.player.PlayerViewModel" />
     </data>
 
-    <com.xyoye.player.DanDanVideoPlayer
-        android:id="@+id/dan_dan_player"
+    <FrameLayout
+        android:id="@+id/player_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/player_bg_color"/>

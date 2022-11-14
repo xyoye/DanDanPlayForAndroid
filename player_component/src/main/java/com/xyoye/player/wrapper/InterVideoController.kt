@@ -41,6 +41,16 @@ interface InterVideoController {
     fun isLocked(): Boolean
 
     /**
+     * 设置播放器弹窗
+     */
+    fun setPopupMode(isPopup: Boolean)
+
+    /**
+     * 播放器是否处于弹窗状态
+     */
+    fun isPopupMode(): Boolean
+
+    /**
      * 开启进度更新线程
      */
     fun startProgress()

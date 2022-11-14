@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/setting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:background="@color/player_bg_color"
+        tools:layout_height="133dp"
+        tools:layout_width="200dp">
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_dialog_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_expand"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:padding="5dp"
+            android:rotation="45"
+            android:src="@drawable/ic_float_expand"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_danmu_control"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_danmaku_control"
+            app:layout_constraintEnd_toStartOf="@id/iv_expand"
+            app:layout_constraintTop_toTopOf="@id/iv_expand" />
+
+        <ImageView
+            android:id="@+id/iv_play"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginBottom="5dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_play_bt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_seek_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_seek_back"
+            app:layout_constraintBottom_toBottomOf="@id/iv_play"
+            app:layout_constraintEnd_toStartOf="@id/iv_play"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_play" />
+
+        <ImageView
+            android:id="@+id/iv_seek_forward"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_seek_forward"
+            app:layout_constraintBottom_toBottomOf="@id/iv_play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_play"
+            app:layout_constraintTop_toTopOf="@id/iv_play" />
+
+        <SeekBar
+            android:id="@+id/play_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:max="100"
+            android:padding="0dp"
+            android:progressDrawable="@drawable/background_seek_progress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:progress="50" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

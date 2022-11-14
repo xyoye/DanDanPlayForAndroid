@@ -33,6 +33,7 @@ abstract class BaseVideoController(
 
     protected var mIsLocked = false
     protected var mIsShowing = false
+    protected var mIsPopupMode = false
     protected var mDefaultTimeOutMs = 5000L
     protected val mControlComponents = LinkedHashMap<InterControllerView, Boolean>()
     protected val mOrientationHelper = OrientationHelper(context)
@@ -155,6 +156,13 @@ abstract class BaseVideoController(
 
     override fun isLocked() = mIsLocked
 
+    override fun setPopupMode(isPopup: Boolean) {
+        mIsPopupMode = isPopup
+        handlePopupModeChanged(isPopup)
+    }
+
+    override fun isPopupMode() = mIsPopupMode
+
     override fun startProgress() {
         if (mIsStartProgress)
             return
@@ -236,6 +244,10 @@ abstract class BaseVideoController(
 
     }
 
+    open fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     open fun onProgressChanged(duration: Long, position: Long) {
 
     }
@@ -277,6 +289,13 @@ abstract class BaseVideoController(
             entry.key.onLockStateChanged(isLocked)
         }
         onLockStateChanged(isLocked)
+    }
+
+    private fun handlePopupModeChanged(isPopup: Boolean) {
+        for (entry in mControlComponents.entries) {
+            entry.key.onPopupModeChanged(isPopup)
+        }
+        onPopupModeChanged(isPopup)
     }
 
     private fun handleProgressChanged(duration: Long, position: Long) {

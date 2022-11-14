@@ -62,6 +62,10 @@ class PlayerGestureView(
 
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+
+    }
+
     override fun onStartSlide() {
         removeCallbacks(mFadeGestureOut)
         mControlWrapper.hideController()

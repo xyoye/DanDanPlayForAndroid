@@ -1,5 +1,6 @@
 package com.xyoye.player.kernel.inter
 
+import android.graphics.Point
 import android.view.Surface
 import com.xyoye.data_component.bean.VideoStreamBean
 
@@ -117,6 +118,11 @@ abstract class AbstractVideoPlayer {
      * 获取当前倍速
      */
     abstract fun getSpeed(): Float
+
+    /**
+     * 获取当前视频大小
+     */
+    abstract fun getVideoSize(): Point
 
     /**
      * 获取缓冲进度

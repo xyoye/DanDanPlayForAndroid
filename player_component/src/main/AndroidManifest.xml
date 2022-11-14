@@ -2,17 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xyoye.player_component">
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application>
         <activity
             android:name=".ui.activities.player.PlayerActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|screenLayout" />
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape" />
 
-        <activity android:name=".ui.activities.player_interceptor.PlayerInterceptorActivity"
+        <activity
+            android:name=".ui.activities.player_interceptor.PlayerInterceptorActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/DialogActivityTheme"/>
+            android:theme="@style/DialogActivityTheme" />
 
-        <activity android:name=".ui.activities.player_intent.PlayerIntentActivity"
+        <activity
+            android:name=".ui.activities.player_intent.PlayerIntentActivity"
             android:configChanges="orientation|screenSize">
             <!-- http -->
             <intent-filter>
@@ -1128,6 +1133,10 @@
                 <data android:mimeType="video/*"></data>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activities.overlay_permission.OverlayPermissionActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

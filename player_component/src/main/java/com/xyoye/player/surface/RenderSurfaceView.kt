@@ -68,6 +68,10 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
         return drawingCache
     }
 
+    override fun refresh() {
+        requestLayout()
+    }
+
     override fun release() {
         holder.removeCallback(mSurfaceCallback)
     }

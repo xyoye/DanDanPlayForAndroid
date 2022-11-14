@@ -145,6 +145,23 @@ class DanmuView(
 
     }
 
+    override fun onPopupModeChanged(isPopup: Boolean) {
+        //悬浮窗状态下，将弹幕文字大小与描边缩小为原来的50%
+        val sizeProgress = PlayerInitializer.Danmu.size / 100f
+        var size = sizeProgress * DANMU_MAX_TEXT_SIZE
+        if (isPopup) {
+            size *= 0.5f
+        }
+        mDanmakuContext.setScaleTextSize(size)
+
+        val strokeProgress = PlayerInitializer.Danmu.stoke / 100f
+        var stroke = strokeProgress * DANMU_MAX_TEXT_STOKE
+        if (isPopup) {
+            stroke *= 0.5f
+        }
+        mDanmakuContext.setDanmakuStyle(DANMAKU_STYLE_STROKEN, stroke)
+    }
+
     override fun resume() {
         if (mSeekPosition != INVALID_VALUE) {
             seekTo(mSeekPosition)

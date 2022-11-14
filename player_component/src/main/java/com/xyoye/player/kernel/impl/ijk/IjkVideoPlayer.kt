@@ -2,6 +2,7 @@ package com.xyoye.player.kernel.impl.ijk
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Point
 import android.media.AudioManager
 import android.net.Uri
 import android.view.Surface
@@ -215,6 +216,13 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     override fun getDuration() = mMediaPlayer.duration
 
     override fun getSpeed() = mMediaPlayer.speed
+
+    override fun getVideoSize(): Point {
+        return Point(
+            mMediaPlayer.videoWidth,
+            mMediaPlayer.videoHeight
+        )
+    }
 
     override fun getBufferedPercentage() = mBufferPercent
 

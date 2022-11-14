@@ -54,6 +54,12 @@ class RenderVLCView(
         return null
     }
 
+    override fun refresh() {
+        if (this::mVideoPlayer.isInitialized) {
+            attachPlayer(mVideoPlayer)
+        }
+    }
+
     override fun release() {
 
     }

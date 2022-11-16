@@ -10,12 +10,10 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.xyoye.common_component.extension.toResDrawable
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.getScreenHeight
 import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.player.DanDanVideoPlayer
-import com.xyoye.player_component.R
 
 /**
  * Created by xyoye on 2022/11/3
@@ -30,10 +28,7 @@ class PlayerPopupManager(
 
     private val appContext = context.applicationContext
 
-    private var mPosition = Point(
-        (appContext.getScreenWidth() * 0.8f).toInt(),
-        (appContext.getScreenHeight() * 0.3f).toInt()
-    )
+    private var mPosition = Point(0, 0)
 
     private val mPlayerLayoutParams = ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -43,8 +38,6 @@ class PlayerPopupManager(
     private val mWindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
     private val mWindowLayoutParams = WindowManager.LayoutParams().apply {
-        x = mPosition.x
-        y = mPosition.y
 
         type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -64,6 +57,11 @@ class PlayerPopupManager(
 
     private var isShowing = false
 
+    init {
+        outlineProvider = PopupOutlineProvider(dp2px(5).toFloat())
+        clipToOutline = true
+    }
+
     override fun setPosition(point: Point) {
         mPosition = point
 
@@ -82,15 +80,22 @@ class PlayerPopupManager(
         player.setPopupGestureHandler(mGestureHandler)
 
         removeAllViews()
-        player.background = R.drawable.background_player_popup.toResDrawable()
         addView(player, mPlayerLayoutParams)
 
+        //悬浮窗尺寸
         val popupSize = computerPopupSize(player.getVideoSize())
-        mWindowLayoutParams.width = popupSize.x
-        mWindowLayoutParams.height = popupSize.y
-        mWindowLayoutParams.format = PixelFormat.RGBA_8888
+        //悬浮窗位置
+        mPosition = Point(
+            appContext.getScreenWidth() - popupSize.x - PopupGestureHandler.POPUP_MARGIN,
+            ((appContext.getScreenHeight() - popupSize.y) * 0.5).toInt()
+        )
 
-        background = R.drawable.background_player_popup.toResDrawable()
+        mWindowLayoutParams.apply {
+            width = popupSize.x
+            height = popupSize.y
+            x = mPosition.x
+            y = mPosition.y
+        }
         mWindowManager.addView(this, mWindowLayoutParams)
 
         isShowing = true

@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.addListener
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.getScreenWidth
 
 
@@ -18,7 +19,11 @@ import com.xyoye.common_component.utils.getScreenWidth
 @SuppressLint("ClickableViewAccessibility")
 class PopupGestureHandler(
     private val viewPosition: PopupPositionListener
-): View.OnTouchListener {
+) : View.OnTouchListener {
+
+    companion object {
+        val POPUP_MARGIN = dp2px(10)
+    }
 
     private var lastX = 0f
     private var lastY = 0f
@@ -57,7 +62,11 @@ class PopupGestureHandler(
                 val screenWidth = v.context.applicationContext.getScreenWidth()
 
                 val startX = viewPosition.getPosition().x
-                val endX = if (startX * 2 + v.width > screenWidth) screenWidth - v.width else 0
+                var endX = POPUP_MARGIN
+                if (startX * 2 + v.width > screenWidth) {
+                    endX = screenWidth - v.width - POPUP_MARGIN
+                }
+
                 mAnimator = ObjectAnimator.ofInt(startX, endX).apply {
                     addUpdateListener {
                         val x = it.animatedValue as Int

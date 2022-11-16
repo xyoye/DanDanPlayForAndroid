@@ -213,6 +213,7 @@ class VideoController(
     fun observerPlayExit(block: () -> Unit) {
         mPlayCompletionBlock = block
         playerTopView.setExitObserver(block)
+        playerPopupControlView.setPopupDismissObserver(block)
     }
 
     /**
@@ -220,13 +221,6 @@ class VideoController(
      */
     fun observerSwitchPopup(block: () -> Unit) {
         playerTopView.setSwitchPopupObserver(block)
-    }
-
-    /**
-     * 关闭悬浮窗
-     */
-    fun observerPopupDismiss(block: () -> Unit) {
-        playerPopupControlView.setPopupDismissObserver(block)
     }
 
     /**

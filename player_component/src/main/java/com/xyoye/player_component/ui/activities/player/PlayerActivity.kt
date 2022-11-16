@@ -232,6 +232,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             //退出播放
             observerPlayExit {
                 danDanPlayer.recordPlayInfo()
+                popupManager.dismiss()
                 finish()
             }
             //切换悬浮窗模式
@@ -251,11 +252,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 download = { danmuViewModel.downloadDanmu(it) },
                 searchResult = { danmuViewModel.danmuSearchLiveData }
             )
-            observerPopupDismiss {
-                danDanPlayer.recordPlayInfo()
-                popupManager.dismiss()
-                finish()
-            }
 
             observerPopupExpand {
                 ARouter.getInstance()
@@ -276,6 +272,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         if (checkPlayParams(videoSource).not()) {
             return
         }
+        VideoSourceManager.getInstance().setSource(videoSource!!)
 
         updatePlayer(videoSource!!)
 
@@ -328,8 +325,11 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
         }
 
-        //自动匹配弹幕
-        if (DanmuConfig.isAutoMatchDanmu() && videoSource!!.getMediaType() != MediaType.FTP_SERVER) {
+        //自动匹配弹幕，弹窗模式不执行匹配
+        if (DanmuConfig.isAutoMatchDanmu()
+            && videoSource!!.getMediaType() != MediaType.FTP_SERVER
+            && popupManager.isShowing().not()
+        ) {
             danmuViewModel.loadDanmu(videoSource!!)
         } else {
             videoController.setDanmuPath(videoSource!!.getDanmuPath())

@@ -76,16 +76,17 @@
             app:layout_constraintStart_toEndOf="@id/iv_play"
             app:layout_constraintTop_toTopOf="@id/iv_play" />
 
-        <SeekBar
-            android:id="@+id/play_seek_bar"
-            android:layout_width="match_parent"
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/play_progress"
+            android:layout_width="0dp"
             android:layout_height="2dp"
             android:max="100"
-            android:padding="0dp"
-            android:progressDrawable="@drawable/background_seek_progress"
+            android:theme="@style/Theme.DanDanPlay.SeekBar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:trackColor="@color/transparent"
+            app:trackThickness="2dp"
             tools:progress="50" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

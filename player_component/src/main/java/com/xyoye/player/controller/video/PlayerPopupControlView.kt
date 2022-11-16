@@ -103,8 +103,8 @@ class PlayerPopupControlView(
     override fun onPlayStateChanged(playState: PlayState) {
         when (playState) {
             PlayState.STATE_IDLE -> {
-                viewBinding.playSeekBar.progress = 0
-                viewBinding.playSeekBar.secondaryProgress = 0
+                viewBinding.playProgress.progress = 0
+                viewBinding.playProgress.secondaryProgress = 0
             }
             PlayState.STATE_PREPARING -> {
                 viewBinding.ivPlay.isSelected = false
@@ -133,17 +133,14 @@ class PlayerPopupControlView(
 
     override fun onProgressChanged(duration: Long, position: Long) {
         if (duration > 0) {
-            viewBinding.playSeekBar.isEnabled = true
-            viewBinding.playSeekBar.progress =
-                (position.toFloat() / duration * viewBinding.playSeekBar.max).toInt()
-        } else {
-            viewBinding.playSeekBar.isEnabled = false
+            viewBinding.playProgress.progress =
+                (position.toFloat() / duration * viewBinding.playProgress.max).toInt()
         }
 
         var bufferedPercent = mControlWrapper.getBufferedPercentage()
         if (bufferedPercent > 95)
             bufferedPercent = 100
-        viewBinding.playSeekBar.secondaryProgress = bufferedPercent
+        viewBinding.playProgress.secondaryProgress = bufferedPercent
     }
 
     override fun onLockStateChanged(isLocked: Boolean) {

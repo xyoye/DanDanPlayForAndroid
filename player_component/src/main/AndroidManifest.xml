@@ -9,7 +9,8 @@
             android:name=".ui.activities.player.PlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:launchMode="singleInstance"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.DanDanPlay.PlayerActivity" />
 
         <activity
             android:name=".ui.activities.player_interceptor.PlayerInterceptorActivity"

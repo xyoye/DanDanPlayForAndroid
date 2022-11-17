@@ -7,6 +7,7 @@ import android.graphics.Point
 import android.os.Build
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.OrientationEventListener
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,6 +15,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.getScreenHeight
 import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.player.DanDanVideoPlayer
+import com.xyoye.player.utils.OrientationHelper
 
 /**
  * Created by xyoye on 2022/11/3
@@ -24,7 +26,9 @@ class PlayerPopupManager(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr), PopupPositionListener {
+) : ConstraintLayout(context, attrs, defStyleAttr),
+    PopupPositionListener,
+    OrientationHelper.OnOrientationChangeListener {
 
     private val appContext = context.applicationContext
 
@@ -55,11 +59,16 @@ class PlayerPopupManager(
 
     private val mGestureHandler = PopupGestureHandler(this)
 
+    private var mOrientation: Int? = null
+    private val mOrientationHelper = OrientationHelper(appContext)
+
     private var isShowing = false
 
     init {
         outlineProvider = PopupOutlineProvider(dp2px(5).toFloat())
         clipToOutline = true
+
+        mOrientationHelper.mOnOrientationChangeListener = this
     }
 
     override fun setPosition(point: Point) {
@@ -76,6 +85,7 @@ class PlayerPopupManager(
         if (isShowing) {
             return
         }
+        mOrientationHelper.enable()
         mGestureHandler.reset()
         player.setPopupGestureHandler(mGestureHandler)
 
@@ -86,7 +96,7 @@ class PlayerPopupManager(
         val popupSize = computerPopupSize(player.getVideoSize())
         //悬浮窗位置
         mPosition = Point(
-            appContext.getScreenWidth() - popupSize.x - PopupGestureHandler.POPUP_MARGIN,
+            appContext.getScreenWidth(false) - popupSize.x - PopupGestureHandler.POPUP_MARGIN,
             ((appContext.getScreenHeight() - popupSize.y) * 0.5).toInt()
         )
 
@@ -105,6 +115,7 @@ class PlayerPopupManager(
         if (isShowing.not()) {
             return
         }
+        mOrientationHelper.disable()
         mGestureHandler.reset()
         if (childCount > 0) {
             val player = getChildAt(0)
@@ -134,5 +145,25 @@ class PlayerPopupManager(
         val present = defaultWidth / videoSize.x.toFloat()
         val height = videoSize.y * present
         return Point(defaultWidth, height.toInt())
+    }
+
+    override fun onOrientationChanged(orientation: Int) {
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN){
+            return
+        }
+
+        if (isShowing.not()) {
+            return
+        }
+
+        if (width == 0) {
+            return
+        }
+
+        val currentOrientation = appContext.resources.configuration.orientation
+        if (currentOrientation != mOrientation) {
+            mOrientation = currentOrientation
+            mGestureHandler.correctPosition(appContext, width)
+        }
     }
 }

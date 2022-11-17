@@ -3,6 +3,7 @@ package com.xyoye.player_component.widgets.popup
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Point
 import android.view.MotionEvent
 import android.view.View
@@ -59,23 +60,7 @@ class PopupGestureHandler(
                 lastY = event.rawY
             }
             MotionEvent.ACTION_UP -> {
-                val screenWidth = v.context.applicationContext.getScreenWidth()
-
-                val startX = viewPosition.getPosition().x
-                var endX = POPUP_MARGIN
-                if (startX * 2 + v.width > screenWidth) {
-                    endX = screenWidth - v.width - POPUP_MARGIN
-                }
-
-                mAnimator = ObjectAnimator.ofInt(startX, endX).apply {
-                    addUpdateListener {
-                        val x = it.animatedValue as Int
-                        val position = viewPosition.getPosition()
-                        val newPosition = Point(x, position.y)
-                        viewPosition.setPosition(newPosition)
-                    }
-                }
-                startAnimator()
+                correctPosition(v.context, v.width)
             }
 
         }
@@ -96,6 +81,29 @@ class PopupGestureHandler(
             removeAllListeners()
         }
         mAnimator = null
+    }
+
+    /**
+     * 位置修正
+     */
+    fun correctPosition(context: Context, viewWidth: Int) {
+        val screenWidth = context.applicationContext.getScreenWidth(false)
+
+        val startX = viewPosition.getPosition().x
+        var endX = POPUP_MARGIN
+        if (startX * 2 + viewWidth > screenWidth) {
+            endX = screenWidth - viewWidth - POPUP_MARGIN
+        }
+
+        mAnimator = ObjectAnimator.ofInt(startX, endX).apply {
+            addUpdateListener {
+                val x = it.animatedValue as Int
+                val position = viewPosition.getPosition()
+                val newPosition = Point(x, position.y)
+                viewPosition.setPosition(newPosition)
+            }
+        }
+        startAnimator()
     }
 
     private fun startAnimator() {

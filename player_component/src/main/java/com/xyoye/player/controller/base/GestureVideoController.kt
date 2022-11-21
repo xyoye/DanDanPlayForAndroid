@@ -142,7 +142,7 @@ abstract class GestureVideoController(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if (isPopupMode().not()) {
+        if (isPopupMode()) {
             return false
         }
         if (!isNormalPlayState() or isLocked() or context.isScreenEdge(e1)) {

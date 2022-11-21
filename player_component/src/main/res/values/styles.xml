@@ -22,7 +22,7 @@
     </style>
 
     <style name="Theme.DanDanPlay.PlayerActivity" parent="AppTheme">
-        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowBackground">@color/player_bg_color</item>
     </style>
 
 </resources>

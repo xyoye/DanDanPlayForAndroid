@@ -1,11 +1,11 @@
 object Dependencies {
     private object Versions {
-        const val kotlin = "1.7.10"
+        const val kotlin = "1.7.21"
         const val kotlin_coroutines = "1.6.4"
         const val arouter = "1.5.2"
         const val room = "2.4.3"
         const val retrofit = "2.9.0"
-        const val moshi = "1.13.0"
+        const val moshi = "1.14.0"
         const val exoplayer = "2.18.1"
         const val lifecycle = "2.5.1"
         const val navigation = "2.3.0"
@@ -14,22 +14,24 @@ object Dependencies {
     object Alibaba {
         const val arouter_api = "com.alibaba:arouter-api:${Versions.arouter}"
         const val arouter_compiler = "com.alibaba:arouter-compiler:${Versions.arouter}"
-        const val alicloud_feedback = "com.aliyun.ams:alicloud-android-feedback:3.3.7"
-        const val alicloud_analysis = "com.aliyun.ams:alicloud-android-man:1.2.0"
+        const val alicloud_feedback = "com.aliyun.ams:alicloud-android-feedback:3.4.0"
+        const val alicloud_analysis = "com.aliyun.ams:alicloud-android-man:1.2.7"
         const val alicloud_update = "com.taobao.android:update-main:1.1.14-open"
     }
 
     object AndroidX {
-        const val junit_ext = "androidx.test.ext:junit:1.1.1"
-        const val espresso = "androidx.test.espresso:espresso-core:3.2.0"
+        const val junit_ext = "androidx.test.ext:junit:1.1.4"
+        const val espresso = "androidx.test.espresso:espresso-core:3.5.0"
 
-        const val core = "androidx.core:core-ktx:1.8.0"
-        const val lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
-        const val lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+        const val core = "androidx.core:core-ktx:1.9.0"
+        const val lifecycle_viewmodel =
+            "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+        const val lifecycle_runtime =
+            "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
 
-        const val activity_ktx = "androidx.activity:activity-ktx:1.5.1"
+        const val activity_ktx = "androidx.activity:activity-ktx:1.6.1"
 
-        const val appcompat = "androidx.appcompat:appcompat:1.5.0"
+        const val appcompat = "androidx.appcompat:appcompat:1.5.1"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.4"
         const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
@@ -42,10 +44,6 @@ object Dependencies {
         const val room_ktx = "androidx.room:room-ktx:${Versions.room}"
         const val room = "androidx.room:room-runtime:${Versions.room}"
         const val room_compiler = "androidx.room:room-compiler:${Versions.room}"
-
-        const val navigation_fragment_ktx =
-            "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
-        const val navigation_ui_ktx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     }
 
     object Apache {
@@ -54,15 +52,17 @@ object Dependencies {
 
     object Github {
         const val banner = "io.github.youth5201314:banner:2.2.2"
-        const val glide = "com.github.bumptech.glide:glide:4.13.2"
+        const val glide = "com.github.bumptech.glide:glide:4.14.2"
+
         //ftp
         const val nano_http = "org.nanohttpd:nanohttpd:2.3.1"
         //smb
         const val smbj = "com.hierynomus:smbj:0.10.0"
         const val dcerpc = "com.rapid7.client:dcerpc:0.10.0"
+
         //switch keyboard panel
         const val keyboard_panel = "com.github.albfernandez:juniversalchardet:2.4.0"
-        const val jsoup = "org.jsoup:jsoup:1.11.2"
+        const val jsoup = "org.jsoup:jsoup:1.15.3"
     }
 
     object Google {
@@ -84,7 +84,7 @@ object Dependencies {
     }
 
     object Junit {
-        const val junit = "junit:junit:4.12"
+        const val junit = "junit:junit:4.13.2"
     }
 
     object Kotlin {
@@ -97,7 +97,7 @@ object Dependencies {
     }
 
     object Square {
-        const val leakcanary = "com.squareup.leakcanary:leakcanary-android:2.9.1"
+        const val leakcanary = "com.squareup.leakcanary:leakcanary-android:2.10"
         const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
         const val retrofit_moshi = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
         const val moshi = "com.squareup.moshi:moshi:${Versions.moshi}"

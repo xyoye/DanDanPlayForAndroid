@@ -66,14 +66,14 @@ abstract class GestureVideoController(
         mCurrentPlayState = playState
     }
 
-    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+    override fun onTouch(v: View?, event: MotionEvent): Boolean {
         mPopupGestureHandler?.onTouch(v, event)
         return mGestureDetector.onTouchEvent(event)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         if (mGestureDetector.onTouchEvent(event).not() && isPopupMode().not()) {
-            when (event?.action) {
+            when (event.action) {
                 MotionEvent.ACTION_UP -> {
                     longPressAccelerator.disable()
                     stopSlide()
@@ -92,23 +92,25 @@ abstract class GestureVideoController(
     }
 
     override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
-    ) = false
+    ): Boolean {
+        return false
+    }
 
-    override fun onLongPress(e: MotionEvent?) {
+    override fun onLongPress(e: MotionEvent) {
         longPressAccelerator.enable()
     }
 
-    override fun onShowPress(e: MotionEvent?) {}
+    override fun onShowPress(e: MotionEvent) {}
 
-    override fun onDoubleTapEvent(e: MotionEvent?) = false
+    override fun onDoubleTapEvent(e: MotionEvent) = false
 
-    override fun onSingleTapUp(e: MotionEvent?) = false
+    override fun onSingleTapUp(e: MotionEvent) = false
 
-    override fun onDown(e: MotionEvent?): Boolean {
+    override fun onDown(e: MotionEvent): Boolean {
         if (!isNormalPlayState() or context.isScreenEdge(e)) {
             return true
         }
@@ -122,14 +124,14 @@ abstract class GestureVideoController(
         return true
     }
 
-    override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         if (isNormalPlayState()) {
             mControlWrapper.toggleVisible()
         }
         return true
     }
 
-    override fun onDoubleTap(e: MotionEvent?): Boolean {
+    override fun onDoubleTap(e: MotionEvent): Boolean {
         if (!isLocked() and isNormalPlayState()) {
             togglePlay()
         }
@@ -137,8 +139,8 @@ abstract class GestureVideoController(
     }
 
     override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
@@ -149,10 +151,10 @@ abstract class GestureVideoController(
             return true
         }
 
-        val eventX1 = e1?.x ?: 0f
-        val eventX2 = e2?.x ?: 0f
-        val eventY1 = e1?.y ?: 0f
-        val eventY2 = e2?.y ?: 0f
+        val eventX1 = e1.x
+        val eventX2 = e2.x
+        val eventY1 = e1.y
+        val eventY2 = e2.y
 
         val deltaX = eventX1 - eventX2
         val deltaY = eventY1 - eventY2

@@ -50,4 +50,5 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    namespace = "com.xyoye.dandanplay"
 }

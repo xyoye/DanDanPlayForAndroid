@@ -22,3 +22,6 @@ dependencies {
 
     kapt(Dependencies.Alibaba.arouter_compiler)
 }
+android {
+    namespace = "com.xyoye.anime_component"
+}

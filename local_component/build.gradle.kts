@@ -21,3 +21,6 @@ dependencies {
 
     kapt(Dependencies.Alibaba.arouter_compiler)
 }
+android {
+    namespace = "com.xyoye.local_component"
+}

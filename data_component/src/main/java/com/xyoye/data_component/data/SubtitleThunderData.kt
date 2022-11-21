@@ -6,6 +6,7 @@ import com.squareup.moshi.JsonClass
  * Created by xyoye on 2020/11/30.
  */
 
+@JsonClass(generateAdapter = true)
 data class SubtitleThunderData(
     val sublist: MutableList<ThunderData>?
 )

@@ -27,3 +27,6 @@ dependencies {
     kapt(Dependencies.Square.moshi_codegen)
     kapt(Dependencies.Alibaba.arouter_compiler)
 }
+android {
+    namespace = "com.xyoye.data_component"
+}

@@ -18,6 +18,7 @@ android {
     defaultConfig {
         buildConfigField("String", "APPLICATION_ID", "\"${Versions.applicationId}\"")
     }
+    namespace = "com.xyoye.common_component"
 }
 
 kapt {

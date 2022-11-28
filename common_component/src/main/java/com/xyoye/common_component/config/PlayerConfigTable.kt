@@ -52,4 +52,8 @@ object PlayerConfigTable {
     //自动播放下一集
     @MMKVFiled
     val autoPlayNext = true
+
+    //后台播放
+    @MMKVFiled
+    val backgroundPlay = false
 }

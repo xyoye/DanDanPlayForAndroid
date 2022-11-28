@@ -9,6 +9,8 @@ enum class SettingAction(val type: SettingActionType, val display: String, val i
 
     AUDIO_STREAM(SettingActionType.VIDEO, "音轨", R.drawable.ic_setting_audio_stream),
 
+    BACKGROUND_PLAY(SettingActionType.VIDEO, "后台播放", R.drawable.ic_setting_background_play),
+
     DANMU_LOAD(SettingActionType.DANMU, "装载", R.drawable.ic_setting_add_source),
 
     DANMU_CONFIG(SettingActionType.DANMU, "配置", R.drawable.ic_setting_danmu_block),

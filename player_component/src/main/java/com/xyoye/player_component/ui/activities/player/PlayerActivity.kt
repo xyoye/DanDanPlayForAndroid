@@ -126,7 +126,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun onPause() {
-        if (popupManager.isShowing().not()) {
+        val popupNotShowing = popupManager.isShowing().not()
+        val backgroundPlayDisable = PlayerConfig.isBackgroundPlay().not()
+        if (popupNotShowing && backgroundPlayDisable) {
             danDanPlayer.pause()
         }
         danDanPlayer.recordPlayInfo()

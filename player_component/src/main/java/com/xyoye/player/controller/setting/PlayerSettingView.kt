@@ -216,6 +216,9 @@ class PlayerSettingView(
                 selected =
                     PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
             }
+            SettingAction.BACKGROUND_PLAY -> {
+                selected = PlayerConfig.isBackgroundPlay()
+            }
             SettingAction.DANMU_LOAD -> {
                 selected = TextUtils.isEmpty(mControlWrapper.getDanmuUrl()).not()
             }
@@ -257,6 +260,12 @@ class PlayerSettingView(
                 val newStatus = !PlayerInitializer.isOrientationEnabled
                 PlayerInitializer.isOrientationEnabled = newStatus
                 PlayerConfig.putAllowOrientationChange(newStatus)
+                item.selected = newStatus
+                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+            }
+            SettingAction.BACKGROUND_PLAY -> {
+                val newStatus = PlayerConfig.isBackgroundPlay().not()
+                PlayerConfig.putBackgroundPlay(newStatus)
                 item.selected = newStatus
                 viewBinding.settingRv.adapter?.notifyItemChanged(position)
             }

@@ -13,7 +13,6 @@ import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.VideoLog
-import com.xyoye.player.utils.VlcEventLog
 import com.xyoye.player.utils.VlcProxyServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -232,7 +231,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     private fun initVLCEventListener() {
         mMediaPlayer.setEventListener {
-            VlcEventLog.log(it)
+            //VlcEventLog.log(it)
             when (it.type) {
                 //缓冲
                 MediaPlayer.Event.Buffering -> {

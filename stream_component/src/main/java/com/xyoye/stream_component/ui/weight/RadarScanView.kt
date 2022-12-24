@@ -218,20 +218,20 @@ class RadarScanView : View {
                     postInvalidate()
                 }
                 addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(p0: Animator?) {
+                    override fun onAnimationStart(p0: Animator) {
                         //创建点信息
                         createPoints()
                     }
 
-                    override fun onAnimationEnd(p0: Animator?) {
+                    override fun onAnimationEnd(p0: Animator) {
 
                     }
 
-                    override fun onAnimationCancel(p0: Animator?) {
+                    override fun onAnimationCancel(p0: Animator) {
 
                     }
 
-                    override fun onAnimationRepeat(p0: Animator?) {
+                    override fun onAnimationRepeat(p0: Animator) {
                         //重置点信息
                         createPoints()
                     }

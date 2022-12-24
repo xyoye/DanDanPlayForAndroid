@@ -14,6 +14,7 @@ android {
             jniLibs.srcDir("libs")
         }
     }
+    namespace = "com.xyoye.player_component"
 }
 
 kapt {

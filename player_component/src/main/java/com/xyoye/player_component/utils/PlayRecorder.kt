@@ -89,14 +89,14 @@ object PlayRecorder {
                 recordSurfaceView(key, view)
             }
             is TextureView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && view.surfaceTexture != null) {
                     recordTextureView(key, view)
                 }
             }
             is VLCVideoLayout -> {
                 val textureView = view.findViewById<TextureView>(R.id.texture_video)
                 val surfaceView = view.findViewById<SurfaceView>(R.id.surface_video)
-                if (textureView != null) {
+                if (textureView != null && textureView.surfaceTexture != null) {
                     recordTextureView(key, textureView)
                 } else if (surfaceView != null) {
                     recordSurfaceView(key, surfaceView)

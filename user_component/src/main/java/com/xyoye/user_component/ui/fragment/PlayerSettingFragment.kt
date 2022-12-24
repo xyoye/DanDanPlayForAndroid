@@ -2,7 +2,10 @@ package com.xyoye.user_component.ui.fragment
 
 import android.os.Bundle
 import android.view.View
-import androidx.preference.*
+import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceDataStore
+import androidx.preference.PreferenceFragmentCompat
 import com.xyoye.common_component.config.PlayerConfig
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.data_component.enums.PlayerType
@@ -74,7 +77,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 playerData.forEach {
                     if (it.value == newValue) {
                         summary = it.key
-                        updateVisible(newValue)
+                        updateVisible(newValue.toString())
                     }
                 }
                 return@setOnPreferenceChangeListener true

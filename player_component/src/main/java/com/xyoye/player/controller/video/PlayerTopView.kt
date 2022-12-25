@@ -36,16 +36,16 @@ class PlayerTopView(
         true
     )
 
-    private var playExitObserver: (() -> Unit)? = null
+    private var exitPlayerObserver: (() -> Unit)? = null
 
-    private var switchPopupBlock: (() -> Unit)? = null
+    private var enterPopupModeBlock: (() -> Unit)? = null
 
     private lateinit var mControlWrapper: ControlWrapper
 
     init {
 
         viewBinding.backIv.setOnClickListener {
-            playExitObserver?.invoke()
+            exitPlayerObserver?.invoke()
         }
 
         viewBinding.playerSettingsIv.setOnClickListener {
@@ -57,7 +57,7 @@ class PlayerTopView(
                 OverlayPermissionActivity.requestOverlayPermission(context)
                 return@setOnClickListener
             }
-            switchPopupBlock?.invoke()
+            enterPopupModeBlock?.invoke()
         }
     }
 
@@ -112,11 +112,11 @@ class PlayerTopView(
         viewBinding.videoTitleTv.text = title
     }
 
-    fun setExitObserver(block: () -> Unit) {
-        playExitObserver = block
+    fun setExitPlayerObserver(block: () -> Unit) {
+        exitPlayerObserver = block
     }
 
-    fun setSwitchPopupObserver(block: () -> Unit) {
-        switchPopupBlock = block
+    fun setEnterPopupModeObserver(block: () -> Unit) {
+        enterPopupModeBlock = block
     }
 }

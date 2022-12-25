@@ -24,10 +24,10 @@ class PlayerPopupControlView(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr), InterControllerView {
     //悬浮窗关闭回调
-    private var mPopupDismissBlock: (() -> Unit)? = null
+    private var mExitPlayerBlock: (() -> Unit)? = null
 
-    //悬浮窗展开回调
-    private var mPopupExpandBlock:(() -> Unit)? = null
+    //退出悬浮窗模式回调
+    private var mExitPopupModeBlock:(() -> Unit)? = null
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerPopupControlBinding>(
         LayoutInflater.from(context),
@@ -40,7 +40,7 @@ class PlayerPopupControlView(
 
     init {
         viewBinding.ivClose.setOnClickListener {
-            mPopupDismissBlock?.invoke()
+            mExitPlayerBlock?.invoke()
         }
 
         viewBinding.ivDanmuControl.setOnClickListener {
@@ -49,7 +49,7 @@ class PlayerPopupControlView(
         }
 
         viewBinding.ivExpand.setOnClickListener {
-            mPopupExpandBlock?.invoke()
+            mExitPopupModeBlock?.invoke()
         }
 
         viewBinding.ivPlay.setOnClickListener {
@@ -155,11 +155,11 @@ class PlayerPopupControlView(
 
     }
 
-    fun setPopupDismissObserver(block: () -> Unit) {
-        mPopupDismissBlock = block
+    fun setExitPlayerObserver(block: () -> Unit) {
+        mExitPlayerBlock = block
     }
 
-    fun setPopupExpandObserver(block: () -> Unit) {
-        mPopupExpandBlock = block
+    fun setExitPopupModeObserver(block: () -> Unit) {
+        mExitPopupModeBlock = block
     }
 }

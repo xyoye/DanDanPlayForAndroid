@@ -1,5 +1,7 @@
 package com.xyoye.player_component.ui.activities.player
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
@@ -111,18 +113,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (popupManager.isShowing()) {
-            popupManager.dismiss()
 
-            dataBinding.playerContainer.removeAllViews()
-            dataBinding.playerContainer.addView(danDanPlayer)
+        exitPopupMode()
 
-            val newSource = VideoSourceManager.getInstance().getSource()
-            if (newSource != null && newSource != videoSource) {
-                applyPlaySource(newSource)
-            }
-
-            danDanPlayer.exitPopupMode()
+        val newSource = VideoSourceManager.getInstance().getSource()
+        if (newSource != null && newSource.getUniqueKey() != videoSource?.getUniqueKey()) {
+            applyPlaySource(newSource)
         }
     }
 
@@ -243,14 +239,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 showPlayErrorDialog()
             }
             //退出播放
-            observerPlayExit {
+            observerExitPlayer {
                 danDanPlayer.recordPlayInfo()
                 popupManager.dismiss()
                 finish()
-            }
-            //切换悬浮窗模式
-            observerSwitchPopup {
-                switchPopupMode()
             }
             //弹幕屏蔽
             observerDanmuBlock(
@@ -265,12 +257,15 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 download = { danmuViewModel.downloadDanmu(it) },
                 searchResult = { danmuViewModel.danmuSearchLiveData }
             )
-
-            observerPopupExpand {
-                ARouter.getInstance()
-                    .build(RouteTable.Player.PlayerCenter)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation(this@PlayerActivity)
+            //进入悬浮窗模式
+            observerEnterPopupMode {
+                enterPopupMode()
+                enterTaskBackground()
+            }
+            //退出悬浮窗模式
+            observerExitPopupMode {
+                exitPopupMode()
+                exitTaskBackground()
             }
         }
     }
@@ -470,14 +465,35 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    private fun switchPopupMode() {
+    private fun enterPopupMode() {
         if (popupManager.isShowing()) {
             return
         }
         dataBinding.playerContainer.removeAllViews()
         popupManager.show(danDanPlayer)
+
         danDanPlayer.enterPopupMode()
+    }
+
+    private fun exitPopupMode() {
+        if (popupManager.isShowing().not()) {
+            return
+        }
+        popupManager.dismiss()
+
+        dataBinding.playerContainer.removeAllViews()
+        dataBinding.playerContainer.addView(danDanPlayer)
+
+        danDanPlayer.exitPopupMode()
+    }
+
+    private fun enterTaskBackground() {
         moveTaskToBack(true)
         PlayerLaunchHelper.instance.onEnterPopupMode()
+    }
+
+    private fun exitTaskBackground() {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        activityManager.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_WITH_HOME)
     }
 }

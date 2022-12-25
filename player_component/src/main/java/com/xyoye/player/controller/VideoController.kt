@@ -210,24 +210,24 @@ class VideoController(
     /**
      * 退出播放回调
      */
-    fun observerPlayExit(block: () -> Unit) {
+    fun observerExitPlayer(block: () -> Unit) {
         mPlayCompletionBlock = block
-        playerTopView.setExitObserver(block)
-        playerPopupControlView.setPopupDismissObserver(block)
+        playerTopView.setExitPlayerObserver(block)
+        playerPopupControlView.setExitPlayerObserver(block)
     }
 
     /**
-     * 切换至悬浮窗模式回调
+     * 进入悬浮窗模式回调
      */
-    fun observerSwitchPopup(block: () -> Unit) {
-        playerTopView.setSwitchPopupObserver(block)
+    fun observerEnterPopupMode(block: () -> Unit) {
+        playerTopView.setEnterPopupModeObserver(block)
     }
 
     /**
-     * 展开悬浮窗
+     * 退出悬浮窗模式回调
      */
-    fun observerPopupExpand(block: () -> Unit) {
-        playerPopupControlView.setPopupExpandObserver(block)
+    fun observerExitPopupMode(block: () -> Unit) {
+        playerPopupControlView.setExitPopupModeObserver(block)
     }
 
     /**

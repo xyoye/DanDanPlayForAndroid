@@ -12,12 +12,11 @@ import com.xyoye.common_component.source.media.TorrentMediaSource
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.player.surface.InterSurfaceView
 import com.xyoye.player_component.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
@@ -31,7 +30,7 @@ object PlayRecorder {
     private const val HEIGHT = 150f
 
     fun recordProgress(source: BaseVideoSource, position: Long, duration: Long) {
-        GlobalScope.launch(context = Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             var torrentPath: String? = null
             var torrentIndex = -1
             if (source is TorrentMediaSource) {
@@ -145,7 +144,7 @@ object PlayRecorder {
     }
 
     private fun saveBitmap(key: String, bitmap: Bitmap) {
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             val bitmapFile = File(PathHelper.getVideoCoverDirectory(), key)
             MediaUtils.saveImage(bitmapFile, bitmap)
             bitmap.recycle()

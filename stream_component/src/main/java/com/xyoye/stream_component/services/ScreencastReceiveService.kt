@@ -38,7 +38,7 @@ interface ScreencastReceiveHandler {
 
 class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
     private var httpServer: HttpServer? = null
-    private lateinit var ioScope: CoroutineScope
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var notifier: ScreencastReceiverNotifier
     private lateinit var multicastLock: WifiManager.MulticastLock
@@ -75,8 +75,6 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
         val manager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         multicastLock = manager.createMulticastLock("udp_multicast")
         multicastLock.acquire()
-
-        ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         notifier = ScreencastReceiverNotifier(this)
         startForeground(Notifications.Id.SCREENCAST_RECEIVE, notifier.notificationBuilder.build())

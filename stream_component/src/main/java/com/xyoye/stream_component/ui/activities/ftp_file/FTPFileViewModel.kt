@@ -8,12 +8,9 @@ import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.FTPSourceFactory
-import com.xyoye.common_component.utils.FileComparator
+import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.ftp.FTPException
 import com.xyoye.common_component.utils.ftp.FTPManager
-import com.xyoye.common_component.utils.isDanmuFile
-import com.xyoye.common_component.utils.isSubtitleFile
-import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.server.FTPPlayServer
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.FilePathBean
@@ -21,7 +18,6 @@ import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.apache.commons.net.ftp.FTPFile
 
@@ -216,7 +212,7 @@ class FTPFileViewModel : BaseViewModel() {
      * 关闭FTP连接
      */
     fun closeFTP() {
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             try {
                 FTPPlayServer.getInstance().closeIO()
                 FTPPlayServer.getInstance().stop()

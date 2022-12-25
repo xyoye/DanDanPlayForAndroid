@@ -6,8 +6,7 @@ import com.xunlei.downloadlib.parameter.XLConstant
 import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.PathHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import com.xyoye.common_component.utils.SupervisorScope
 import kotlinx.coroutines.launch
 
 /**
@@ -48,7 +47,7 @@ object PlayTaskManager {
     }
 
     private fun onPlayTaskRemove(taskId: Long) {
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             val playCacheDir = PathHelper.getPlayCacheDirectory()
             XLTaskHelper.getInstance().stopTask(taskId)
             XLTaskHelper.getInstance().deleteTask(taskId, playCacheDir.absolutePath)

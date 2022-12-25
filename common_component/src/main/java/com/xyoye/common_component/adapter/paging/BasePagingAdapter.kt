@@ -77,7 +77,7 @@ class BasePagingAdapter<T : Any>(pagingItemCallback: PagingItemCallback<T> = Pag
             ?: throw RuntimeException("no holder added for view type: $viewType")
     }
 
-    open fun submitPagingData(lifecycle: Lifecycle, pagingData: PagingData<T>) {
+    fun submitPagingData(lifecycle: Lifecycle, pagingData: PagingData<T>) {
         submitData(lifecycle, pagingData)
     }
 

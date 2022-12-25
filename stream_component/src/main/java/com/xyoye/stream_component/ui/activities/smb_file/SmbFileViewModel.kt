@@ -8,10 +8,7 @@ import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.SmbSourceFactory
-import com.xyoye.common_component.utils.FileComparator
-import com.xyoye.common_component.utils.isDanmuFile
-import com.xyoye.common_component.utils.isSubtitleFile
-import com.xyoye.common_component.utils.isVideoFile
+import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.server.SMBPlayServer
 import com.xyoye.common_component.utils.smb.SMBException
 import com.xyoye.common_component.utils.smb.SMBFile
@@ -22,7 +19,6 @@ import com.xyoye.data_component.bean.StorageFileBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class SmbFileViewModel : BaseViewModel() {
@@ -224,7 +220,7 @@ class SmbFileViewModel : BaseViewModel() {
      * 关闭SMB连接
      */
     fun closeSMB() {
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             try {
                 SMBPlayServer.getInstance().closeIO()
                 SMBJManager.getInstance().disConnect()

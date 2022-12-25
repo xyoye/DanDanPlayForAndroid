@@ -6,6 +6,7 @@ import android.graphics.Point
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
+import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.SurfaceType
 import com.xyoye.data_component.enums.VLCHWDecode
@@ -14,8 +15,6 @@ import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.VideoLog
 import com.xyoye.player.utils.VlcProxyServer
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -116,7 +115,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             setEventListener(null)
             release()
         }
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             mMediaPlayer.release()
         }
     }

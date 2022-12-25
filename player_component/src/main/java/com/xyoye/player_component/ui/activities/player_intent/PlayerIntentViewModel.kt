@@ -8,12 +8,11 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.utils.MediaUtils
+import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.utils.getDirPath
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.ExtendFolderEntity
 import com.xyoye.data_component.enums.MediaType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -26,7 +25,7 @@ class PlayerIntentViewModel : BaseViewModel() {
      * 未识别的视频，将其目录添加至扩展扫描目录
      */
     fun addUnrecognizedFile(filePath: String) {
-        GlobalScope.launch(Dispatchers.IO) {
+        SupervisorScope.IO.launch {
             val videoFile = File(filePath)
             if (videoFile.exists().not())
                 return@launch

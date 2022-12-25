@@ -65,7 +65,6 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
 
     override fun onCreate() {
         super.onCreate()
-        ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         notifier = ScreencastProvideNotifier(this)
 

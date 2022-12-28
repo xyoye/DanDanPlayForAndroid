@@ -1,22 +1,18 @@
 package com.xyoye.stream_component.ui.activities.screencast_connect
 
-import android.Manifest
 import android.content.Intent
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.data_component.entity.MediaLibraryEntity
-
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityScreencastConnectBinding
-import com.xyoye.stream_component.ui.activities.remote_login.RemoteLoginActivity
-import com.xyoye.stream_component.ui.dialog.RemoteLoginDialog
 import com.xyoye.stream_component.ui.dialog.ScreencastConnectDialog
 
 @Route(path = RouteTable.Stream.ScreencastConnect)
@@ -72,7 +68,7 @@ class ScreencastConnectActivity :
     }
 
     private fun launchScanActivity() {
-        requestPermissions(Manifest.permission.CAMERA, Manifest.permission.VIBRATE) {
+        DanDanPlay.permission.camera.request(this) {
             onGranted {
                 ARouter.getInstance()
                     .build(RouteTable.Stream.RemoteScan)
@@ -81,7 +77,7 @@ class ScreencastConnectActivity :
                         REQUEST_CODE_REMOTE_SCAN
                     )
             }
-            onDenied { _, _ ->
+            onDenied {
                 ToastCenter.showError("获取相机权限失败，无法进行扫码")
             }
         }

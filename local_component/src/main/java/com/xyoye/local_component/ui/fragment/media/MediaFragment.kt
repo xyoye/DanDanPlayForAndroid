@@ -1,15 +1,14 @@
 package com.xyoye.local_component.ui.fragment.media
 
-import android.Manifest
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.permission.requestPermissions
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.services.ScreencastProvideService
@@ -93,14 +92,11 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                             }
 
                             itemLayout.setOnClickListener {
-                                requestPermissions(
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                ) {
+                                DanDanPlay.permission.storage.request(this@MediaFragment) {
                                     onGranted {
                                         launchMediaStorage(data)
                                     }
-                                    onDenied { _, _ ->
+                                    onDenied {
                                         ToastCenter.showError("获取文件读取权限失败，无法打开媒体库")
                                     }
                                 }

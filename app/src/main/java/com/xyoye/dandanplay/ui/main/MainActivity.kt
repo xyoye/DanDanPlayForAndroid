@@ -2,6 +2,7 @@ package com.xyoye.dandanplay.ui.main
 
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.launcher.ARouter
@@ -10,7 +11,6 @@ import com.xyoye.common_component.bridge.LoginObserver
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.config.UserConfig
-import com.xyoye.common_component.extension.addFragment
 import com.xyoye.common_component.extension.findAndRemoveFragment
 import com.xyoye.common_component.extension.hideFragment
 import com.xyoye.common_component.extension.showFragment
@@ -145,11 +145,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                 if (fragment == null) {
                     //根据TAG无法找到页面，通过路由寻找页面，找到页面则添加
                     getFragment(RouteTable.Anime.HomeFragment)?.also {
-                        supportFragmentManager.addFragment(
-                            R.id.fragment_container,
-                            it,
-                            TAG_FRAGMENT_HOME
-                        )
+                        addFragment(it, TAG_FRAGMENT_HOME)
                         homeFragment = it
                         previousFragment = it
                         fragmentTag = tag
@@ -166,11 +162,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                 val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT_MEDIA)
                 if (fragment == null) {
                     getFragment(RouteTable.Local.MediaFragment)?.also {
-                        supportFragmentManager.addFragment(
-                            R.id.fragment_container,
-                            it,
-                            TAG_FRAGMENT_MEDIA
-                        )
+                        addFragment(it, TAG_FRAGMENT_MEDIA)
                         mediaFragment = it
                         previousFragment = it
                         fragmentTag = tag
@@ -186,11 +178,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                 val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT_PERSONAL)
                 if (fragment == null) {
                     getFragment(RouteTable.User.PersonalFragment)?.also {
-                        supportFragmentManager.addFragment(
-                            R.id.fragment_container,
-                            it,
-                            TAG_FRAGMENT_PERSONAL
-                        )
+                        addFragment(it, TAG_FRAGMENT_PERSONAL)
                         personalFragment = it
                         previousFragment = it
                         fragmentTag = tag
@@ -206,6 +194,14 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                 throw RuntimeException("no match fragment")
             }
         }
+    }
+
+    private fun addFragment(fragment: Fragment, tag: String) {
+        supportFragmentManager
+            .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .add(R.id.fragment_container, fragment, tag)
+            .commit()
     }
 
     private fun getFragment(path: String) =

@@ -27,30 +27,23 @@ fun FragmentManager.showFragment(fragment: Fragment) {
 fun FragmentManager.addFragment(
     @IdRes viewId: Int,
     fragment: Fragment,
-    tag: String,
-    withAnimation: Boolean = false
+    tag: String
 ) {
-    val transaction = beginTransaction()
-    if (withAnimation) {
-        transaction.setCustomAnimations(
-            R.anim.anime_frament_enter_right,
-            R.anim.anime_frament_exit_left
-        )
+    beginTransaction().apply {
+        setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        add(viewId, fragment, tag)
+        commit()
     }
-    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        .add(viewId, fragment, tag)
-        .commit()
 }
 
-fun FragmentManager.removeFragment(fragment: Fragment, withAnimation: Boolean = false) {
-    val transaction = beginTransaction()
-    if (withAnimation) {
-        transaction
-            .setCustomAnimations(R.anim.anime_frament_enter_left, R.anim.anime_frament_exit_right)
+fun FragmentManager.removeFragment(vararg fragment: Fragment) {
+    beginTransaction().apply {
+        setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+        fragment.forEach { remove(it) }
+        commit()
     }
-    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-        .remove(fragment)
-        .commit()
 }
 
 fun FragmentManager.findAndHideFragment(vararg tags: String) {

@@ -138,7 +138,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
                             pathList.removeAt(index)
                             dataBinding.pathRv.setData(pathList)
                         }
-                        supportFragmentManager.removeFragment(fragment, true)
+                        supportFragmentManager.removeFragment(fragment)
                         fragmentStack.pop()
                     } else {
                         break
@@ -148,7 +148,7 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
             }
             fragmentStack.size > 1 -> {
                 val fragment = fragmentStack.pop()
-                supportFragmentManager.removeFragment(fragment, true)
+                supportFragmentManager.removeFragment(fragment)
 
                 pathList.removeLast()
                 dataBinding.pathRv.setData(pathList)
@@ -168,6 +168,6 @@ class RemoteFileActivity : BaseActivity<RemoteFileViewModel, ActivityRemoteFileB
 
         val childFragment = RemoteFileFragment.newInstance(remoteData, fileData)
         fragmentStack.push(childFragment)
-        supportFragmentManager.addFragment(R.id.container, childFragment, path, true)
+        supportFragmentManager.addFragment(R.id.container, childFragment, path)
     }
 }

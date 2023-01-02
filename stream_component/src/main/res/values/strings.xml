@@ -1,4 +1,6 @@
 <resources>
+    <string name="storage_file_scroll_behavior">com.xyoye.stream_component.ui.weight.StorageFileBehavior</string>
+
     <string name="app_name">stream_component</string>
     <string name="hint_web_dav_address">服务器名称或IP地址</string>
     <string name="hint_display_name">显示名称（可空）</string>
@@ -51,4 +53,6 @@
     <string name="tips_group_mode">分组模式</string>
     <string name="text_group_by_file">原始文件</string>
     <string name="text_group_by_anime">番剧ID</string>
+
+    <string name="text_empty_video">视频文件为空</string>
 </resources>

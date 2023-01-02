@@ -21,7 +21,9 @@ enum class MediaType(val value: String, val storageName: String) {
 
     REMOTE_STORAGE("remote_storage", "远程媒体库"),
 
-    SCREEN_CAST("screen_cast", "远程投屏");
+    SCREEN_CAST("screen_cast", "远程投屏"),
+
+    EXTERNAL_STORAGE("external_storage", "设备存储库");
 
     companion object {
         fun fromValue(value: String): MediaType {
@@ -34,6 +36,7 @@ enum class MediaType(val value: String, val storageName: String) {
                 "smb_server" -> SMB_SERVER
                 "remote_storage" -> REMOTE_STORAGE
                 "screen_cast" -> SCREEN_CAST
+                "external_storage" -> EXTERNAL_STORAGE
                 else -> OTHER_STORAGE
             }
         }

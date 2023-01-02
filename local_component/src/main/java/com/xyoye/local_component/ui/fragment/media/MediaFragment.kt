@@ -36,6 +36,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         private const val ACTION_ADD_WEBDAV_LIBRARY = 3
         private const val ACTION_ADD_REMOTE_LIBRARY = 4
         private const val ACTION_ADD_SCREENCAST_DEVICE = 5
+        private const val ACTION_ADD_EXTERNAL_LIBRARY = 6
 
 
         private const val ACTION_EDIT_STORAGE = 11
@@ -81,7 +82,8 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 MediaType.STREAM_LINK,
                                 MediaType.MAGNET_LINK,
                                 MediaType.REMOTE_STORAGE,
-                                MediaType.SMB_SERVER -> data.describe
+                                MediaType.SMB_SERVER,
+                                MediaType.EXTERNAL_STORAGE -> data.describe
                                 else -> data.url
                             }
                             libraryCoverIv.setImageResource(data.mediaType.getCover())
@@ -107,6 +109,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                     || data.mediaType == MediaType.SMB_SERVER
                                     || data.mediaType == MediaType.REMOTE_STORAGE
                                     || data.mediaType == MediaType.SCREEN_CAST
+                                    || data.mediaType == MediaType.EXTERNAL_STORAGE
                                 ) {
                                     showEditStorageDialog(data)
                                 }
@@ -147,6 +150,11 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     ACTION_ADD_SCREENCAST_DEVICE,
                     "投屏设备",
                     MediaType.SCREEN_CAST.getCover()
+                ),
+                SheetActionBean(
+                    ACTION_ADD_EXTERNAL_LIBRARY,
+                    "设备存储库",
+                    MediaType.EXTERNAL_STORAGE.getCover()
                 )
             ),
             "新增网络媒体库"
@@ -157,6 +165,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 ACTION_ADD_SMB_LIBRARY -> RouteTable.Stream.SmbLogin
                 ACTION_ADD_REMOTE_LIBRARY -> RouteTable.Stream.RemoteLogin
                 ACTION_ADD_SCREENCAST_DEVICE -> RouteTable.Stream.ScreencastConnect
+                ACTION_ADD_EXTERNAL_LIBRARY -> RouteTable.Stream.DocumentTree
                 else -> throw IllegalArgumentException()
             }
 
@@ -208,25 +217,34 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             MediaType.SCREEN_CAST -> {
                 viewModel.checkScreenDeviceRunning(data)
             }
+            MediaType.EXTERNAL_STORAGE -> {
+                ARouter.getInstance()
+                    .build(RouteTable.Stream.StorageFile)
+                    .withParcelable("storageLibrary", data)
+                    .navigation()
+            }
         }
     }
 
     private fun showEditStorageDialog(data: MediaLibraryEntity) {
-        BottomActionDialog(
-            requireActivity(),
-            mutableListOf(
+        val actions = mutableListOf<SheetActionBean>()
+        if (data.mediaType != MediaType.EXTERNAL_STORAGE) {
+            actions.add(
                 SheetActionBean(
                     ACTION_EDIT_STORAGE,
                     "编辑媒体库",
                     R.drawable.ic_edit_storage
-                ),
-                SheetActionBean(
-                    ACTION_DELETE_STORAGE,
-                    "删除媒体库",
-                    R.drawable.ic_delete_storage
                 )
             )
-        ) {
+        }
+        actions.add(
+            SheetActionBean(
+                ACTION_DELETE_STORAGE,
+                "删除媒体库",
+                R.drawable.ic_delete_storage
+            )
+        )
+        BottomActionDialog(requireActivity(), actions) {
             if (it == ACTION_EDIT_STORAGE) {
                 val routePath = when (data.mediaType) {
                     MediaType.WEBDAV_SERVER -> RouteTable.Stream.WebDavLogin

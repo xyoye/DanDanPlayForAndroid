@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.stream_component.ui.activities.storage_file.StorageFileViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.stream_component.ui.activities.storage_file.StorageFileViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:elevation="0dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:titleTextColor="@color/text_theme" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/path_rv"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/storage_file_scroll_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -18,5 +18,6 @@ fun MediaType.getCover() : Int {
         MediaType.REMOTE_STORAGE -> R.drawable.ic_remote_storage
         MediaType.OTHER_STORAGE -> R.drawable.ic_play_history
         MediaType.SCREEN_CAST -> R.drawable.ic_screencast
+        MediaType.EXTERNAL_STORAGE -> R.drawable.ic_external_storage
     }
 }

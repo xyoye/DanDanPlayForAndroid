@@ -54,7 +54,6 @@ object RouteTable {
     object Download {
         const val DownloadSelection = "/download/selection"
         const val DownloadList = "/download/list"
-        const val DownloadDetail = "/download/detail"
         const val PlaySelection = "/play/selection"
     }
 
@@ -73,5 +72,8 @@ object RouteTable {
         const val ScreencastConnect = "/stream/screencast_connect"
         const val ScreencastProvide = "/stream/screencast_provide"
         const val ScreencastReceive = "/stream/screencast_receive"
+
+        const val DocumentTree = "/stream/document_tree"
+        const val StorageFile = "/stream/storage_file"
     }
 }

@@ -101,6 +101,12 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE play_history ADD COLUMN is_last_play INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -120,7 +126,8 @@ class DatabaseManager private constructor() {
         MIGRATION_5_6,
         MIGRATION_6_7,
         MIGRATION_7_8,
-        MIGRATION_8_9
+        MIGRATION_8_9,
+        MIGRATION_9_10
     ).build()
 
 }

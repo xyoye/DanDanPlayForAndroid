@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Created by xyoye on 2020/7/7.
  */
 
-class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BaseAdapter : AnimatedAdapter<RecyclerView.ViewHolder>() {
 
     companion object {
         //空布局数据
@@ -54,6 +54,7 @@ class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         position: Int,
         payloads: MutableList<Any>
     ) {
+        bindViewHolderAnimation(viewHolder)
         getHolderCreator(viewHolder.itemViewType).apply {
             initItemBinding(viewHolder.itemView)
             onBindViewHolder(items[position], position, this)
@@ -98,13 +99,14 @@ class BaseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(list: List<Any>) {
+    override fun setData(data: List<Any>) {
+        super.setData(data)
         // TODO: 2022/10/21 暂时无法使用DiffUtil做数据刷新，
         //  在List中仅修改数据内容时，无法进行刷新，因为修改与比较的都是同一个对象
         //  可尝试的方案：修改内容时对数据做深拷贝，修改后替换掉List中原数据
 
         items.clear()
-        items.addAll(list)
+        items.addAll(data)
 
         //数据为空时，显示空布局
         if (items.isEmpty() && typeHolders.contains(VIEW_TYPE_EMPTY)) {

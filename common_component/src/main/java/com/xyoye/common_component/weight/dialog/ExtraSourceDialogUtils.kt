@@ -22,12 +22,6 @@ import kotlin.coroutines.resume
  * Created by xyoye on 2022/1/18
  */
 object ExtraSourceDialogUtils {
-    private const val ACTION_BIND_DANMU = 1
-    private const val ACTION_BIND_SUBTITLE = 2
-    private const val ACTION_UNBIND_DANMU = 3
-    private const val ACTION_UNBIND_SUBTITLE = 4
-    private const val ACTION_SCREENCAST = 5
-
     fun show(
         activity: BaseActivity<*, *>,
         mediaType: MediaType,
@@ -44,34 +38,28 @@ object ExtraSourceDialogUtils {
         val viewModelScope = activity.getOwnerViewModel().viewModelScope
         val actionList = createActionList(castFile != null, data)
         BottomActionDialog(activity, actionList) {
-            when (it) {
-                ACTION_BIND_DANMU -> bindExtraSource(
-                    activity,
-                    mediaType,
-                    data,
-                    options,
-                    true
-                )
-                ACTION_BIND_SUBTITLE -> bindExtraSource(
-                    activity,
-                    mediaType,
-                    data,
-                    options,
-                    false
-                )
-                ACTION_UNBIND_DANMU -> unbindDanmu(
-                    viewModelScope,
-                    mediaType,
-                    uniqueKey,
-                    onSourceChanged
-                )
-                ACTION_UNBIND_SUBTITLE -> unbindSubtitle(
-                    viewModelScope,
-                    mediaType,
-                    uniqueKey,
-                    onSourceChanged
-                )
-                ACTION_SCREENCAST -> provideVideo(
+            when (it.actionId) {
+                ManageAction.BIND_DANMU,
+                ManageAction.BIND_SUBTITLE -> {
+                    bindExtraSource(
+                        activity,
+                        mediaType,
+                        data,
+                        options,
+                        it.actionId == ManageAction.BIND_DANMU
+                    )
+                }
+                ManageAction.UNBIND_DANMU,
+                ManageAction.UNBIND_SUBTITLE -> {
+                    unbindExtraSource(
+                        viewModelScope,
+                        mediaType,
+                        uniqueKey,
+                        onSourceChanged,
+                        it.actionId == ManageAction.UNBIND_DANMU
+                    )
+                }
+                ManageAction.SCREENCAST -> provideVideo(
                     viewModelScope,
                     activity,
                     data,
@@ -90,46 +78,15 @@ object ExtraSourceDialogUtils {
     ): MutableList<SheetActionBean> {
         val actionList = mutableListOf<SheetActionBean>()
         if (hasScreencast) {
-            actionList.add(
-                0,
-                SheetActionBean(
-                    ACTION_SCREENCAST,
-                    "投屏",
-                    R.drawable.ic_video_cast
-                )
-            )
+            actionList.add(ManageAction.SCREENCAST.toAction())
         }
-        actionList.add(
-            SheetActionBean(
-                ACTION_BIND_DANMU,
-                "手动查找弹幕",
-                R.drawable.ic_bind_danmu_manual
-            )
-        )
-        actionList.add(
-            SheetActionBean(
-                ACTION_BIND_SUBTITLE,
-                "手动查找字幕",
-                R.drawable.ic_bind_subtitle
-            )
-        )
+        actionList.add(ManageAction.BIND_DANMU.toAction())
+        actionList.add(ManageAction.BIND_SUBTITLE.toAction())
         if (!data.danmuPath.isNullOrEmpty()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_DANMU,
-                    "移除弹幕绑定",
-                    R.drawable.ic_unbind_danmu
-                )
-            )
+            actionList.add(ManageAction.UNBIND_DANMU.toAction())
         }
         if (!data.subtitlePath.isNullOrEmpty()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_SUBTITLE,
-                    "移除字幕绑定",
-                    R.drawable.ic_unbind_subtitle
-                )
-            )
+            actionList.add(ManageAction.UNBIND_SUBTITLE.toAction())
         }
         return actionList
     }
@@ -159,6 +116,23 @@ object ExtraSourceDialogUtils {
             .withString("fileCoverUrl", data.fileCoverUrl)
             .withOptionsCompat(options)
             .navigation(activity)
+    }
+
+    /**
+     * 解绑字幕或弹幕
+     */
+    private fun unbindExtraSource(
+        scope: CoroutineScope,
+        mediaType: MediaType,
+        uniqueKey: String,
+        onSourceChanged: () -> Unit,
+        isUnbindDanmu: Boolean
+    ) {
+        if (isUnbindDanmu) {
+            unbindDanmu(scope, mediaType, uniqueKey, onSourceChanged)
+        } else {
+            unbindSubtitle(scope, mediaType, uniqueKey, onSourceChanged)
+        }
     }
 
     /**
@@ -250,7 +224,7 @@ object ExtraSourceDialogUtils {
                 )
             }.toMutableList()
         ) {
-            val device = devices.firstOrNull { device -> device.id == it }
+            val device = devices.firstOrNull { device -> device.id == it.actionId }
             continuation.resume(device)
             return@BottomActionDialog true
         }.apply {
@@ -259,5 +233,15 @@ object ExtraSourceDialogUtils {
             }
             show()
         }
+    }
+
+    private enum class ManageAction(val title: String, val icon: Int) {
+        SCREENCAST("投屏", R.drawable.ic_video_cast),
+        BIND_DANMU("手动查找弹幕", R.drawable.ic_bind_danmu_manual),
+        BIND_SUBTITLE("手动查找字幕", R.drawable.ic_bind_subtitle),
+        UNBIND_DANMU("移除弹幕绑定", R.drawable.ic_unbind_danmu),
+        UNBIND_SUBTITLE("移除字幕绑定", R.drawable.ic_unbind_subtitle);
+
+        fun toAction() = SheetActionBean(this, title, icon)
     }
 }

@@ -66,14 +66,11 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
             forgotTv.setOnClickListener {
                 BottomActionDialog(
                     this@LoginActivity,
-                    arrayListOf(
-                        SheetActionBean(1, "重置密码", R.drawable.ic_forgot_password),
-                        SheetActionBean(2, "找回帐号", R.drawable.ic_forgot_account)
-                    )
+                    ForgotType.values().map { it.toAction() }
                 ) {
                     ARouter.getInstance()
                         .build(RouteTable.User.UserForgot)
-                        .withBoolean("isForgotPassword", it == 1)
+                        .withBoolean("isForgotPassword", it.actionId == ForgotType.Password)
                         .navigation()
                     return@BottomActionDialog true
                 }.show()
@@ -107,5 +104,12 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
                 finish()
             }
         }.build().show()
+    }
+
+    private enum class ForgotType(val title: String, val icon: Int) {
+        Password("重置密码", R.drawable.ic_forgot_password),
+        Account("找回帐号", R.drawable.ic_forgot_account);
+
+        fun toAction() = SheetActionBean(this, title, icon)
     }
 }

@@ -33,9 +33,6 @@ class SearchMagnetFragment :
     BaseFragment<SearchMagnetFragmentViewModel, FragmentSearchMagnetBinding>(), SearchListener {
 
     companion object {
-        private const val ACTION_COPY_MAGNET = 3
-        private const val ACTION_COPY_MAGNET_CONTENT = 4
-
         fun newInstance(searchWord: String?): SearchMagnetFragment {
             val argument = Bundle()
             argument.putString("search_word", searchWord)
@@ -45,18 +42,7 @@ class SearchMagnetFragment :
         }
     }
 
-    private val actionData = mutableListOf(
-        SheetActionBean(
-            ACTION_COPY_MAGNET,
-            "复制磁链",
-            R.drawable.ic_magnet_copy
-        ),
-        SheetActionBean(
-            ACTION_COPY_MAGNET_CONTENT,
-            "复制完整磁链",
-            R.drawable.ic_magnet_copy_content
-        )
-    )
+    private val actionData = ManageMagnet.values().map { it.toSheetActionBean() }
 
     override fun initViewModel() =
         ViewModelInit(
@@ -206,29 +192,32 @@ class SearchMagnetFragment :
     private fun showActionDialog(data: MagnetData) {
         BottomActionDialog(requireActivity(), actionData) {
             val magnetHash = MagnetUtils.getMagnetHash(data.Magnet)
-            if (it != ACTION_COPY_MAGNET_CONTENT && magnetHash.isEmpty()){
+            if (data.Magnet.isNullOrEmpty()) {
+                ToastCenter.showError("磁链信息为空，无法复制")
+                return@BottomActionDialog true
+            }
+            if (it.actionId == ManageMagnet.Copy && magnetHash.isEmpty()) {
                 ToastCenter.showError("错误，磁链为空或无法解析")
                 return@BottomActionDialog true
             }
-
-            val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
-
-            when (it) {
-                ACTION_COPY_MAGNET -> {
-                    magnetLink.addToClipboard()
+            when (it.actionId) {
+                ManageMagnet.Copy -> {
+                    "magnet:?xt=urn:btih:$magnetHash".addToClipboard()
                     ToastCenter.showSuccess("磁链已复制！")
                 }
-                ACTION_COPY_MAGNET_CONTENT -> {
-                    val magnet = data.Magnet
-                    if (magnet.isNullOrEmpty()) {
-                        ToastCenter.showError("磁链信息为空，无法复制")
-                        return@BottomActionDialog true
-                    }
-                    magnet.addToClipboard()
+                ManageMagnet.CopyContent -> {
+                    data.Magnet?.addToClipboard()
                     ToastCenter.showSuccess("磁链信息已复制！")
                 }
             }
             return@BottomActionDialog true
         }.show()
+    }
+
+    private enum class ManageMagnet(val title: String, val icon: Int) {
+        Copy("复制磁链", R.drawable.ic_magnet_copy),
+        CopyContent("复制完整磁链", R.drawable.ic_magnet_copy_content);
+
+        fun toSheetActionBean() = SheetActionBean(this, title, icon)
     }
 }

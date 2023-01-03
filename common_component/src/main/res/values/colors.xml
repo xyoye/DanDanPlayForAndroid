@@ -16,12 +16,6 @@
     <color name="search_edit_text_bg_color">#4ea9f4</color>
     <!-- 普通item边界线颜色 -->
     <color name="item_border_color">#08000000</color>
-    <!-- 普通icon中灰色（353535）路径的填充颜色 -->
-    <color name="icon_gray_path_fill_color">#000000</color>
-    <!-- 普通icon中浅灰色路径（333）的填充颜色 -->
-    <color name="icon_light_gray_path_fill_color">#000000</color>
-    <!-- 谱图icon中主题色路径的填充颜色 -->
-    <color name="icon_primary_path_fill_color">#2095f4</color>
 
     <!-- 普通layout背景色-浅色 -->
     <color name="layout_bg_color_light">#77f3f3f3</color>

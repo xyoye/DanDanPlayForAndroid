@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 普通icon中灰色路径（353535）的填充颜色 -->
+    <color name="icon_gray_path_fill_color">#ffffff</color>
+    <!-- 普通icon中浅灰色路径（333）的填充颜色 -->
+    <color name="icon_light_gray_path_fill_color">#ffffff</color>
+</resources>

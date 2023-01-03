@@ -9,6 +9,8 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.deletable
+import com.xyoye.common_component.extension.editRoute
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.services.ScreencastProvideService
@@ -22,7 +24,6 @@ import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentMediaBinding
 import com.xyoye.local_component.databinding.ItemMediaLibraryBinding
-import com.xyoye.local_component.utils.getCover
 
 /**
  * Created by xyoye on 2020/7/27.
@@ -30,18 +31,6 @@ import com.xyoye.local_component.utils.getCover
 
 @Route(path = RouteTable.Local.MediaFragment)
 class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
-    companion object {
-        private const val ACTION_ADD_FTP_LIBRARY = 1
-        private const val ACTION_ADD_SMB_LIBRARY = 2
-        private const val ACTION_ADD_WEBDAV_LIBRARY = 3
-        private const val ACTION_ADD_REMOTE_LIBRARY = 4
-        private const val ACTION_ADD_SCREENCAST_DEVICE = 5
-        private const val ACTION_ADD_EXTERNAL_LIBRARY = 6
-
-
-        private const val ACTION_EDIT_STORAGE = 11
-        private const val ACTION_DELETE_STORAGE = 12
-    }
 
     @Autowired
     lateinit var provideService: ScreencastProvideService
@@ -61,7 +50,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         initRv()
 
         dataBinding.addMediaStorageBt.setOnClickListener {
-            addMediaStorage()
+            showAddStorageDialog()
         }
 
         viewModel.mediaLibWithStatusLiveData.observe(this) {
@@ -86,9 +75,10 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 MediaType.EXTERNAL_STORAGE -> data.describe
                                 else -> data.url
                             }
-                            libraryCoverIv.setImageResource(data.mediaType.getCover())
+                            libraryCoverIv.setImageResource(data.mediaType.cover)
 
-                            screencastStatusTv.isVisible = data.mediaType == MediaType.SCREEN_CAST && data.running
+                            screencastStatusTv.isVisible =
+                                data.mediaType == MediaType.SCREEN_CAST && data.running
                             screencastStatusTv.setOnClickListener {
                                 showStopServiceDialog()
                             }
@@ -104,14 +94,8 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 }
                             }
                             itemLayout.setOnLongClickListener {
-                                if (data.mediaType == MediaType.WEBDAV_SERVER
-                                    || data.mediaType == MediaType.FTP_SERVER
-                                    || data.mediaType == MediaType.SMB_SERVER
-                                    || data.mediaType == MediaType.REMOTE_STORAGE
-                                    || data.mediaType == MediaType.SCREEN_CAST
-                                    || data.mediaType == MediaType.EXTERNAL_STORAGE
-                                ) {
-                                    showEditStorageDialog(data)
+                                if (data.mediaType.editRoute != null || data.mediaType.deletable) {
+                                    showManageStorageDialog(data)
                                 }
                                 true
                             }
@@ -120,61 +104,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 }
             }
         }
-    }
-
-    private fun addMediaStorage() {
-        BottomActionDialog(
-            requireActivity(),
-            mutableListOf(
-                SheetActionBean(
-                    ACTION_ADD_FTP_LIBRARY,
-                    "FTP媒体库",
-                    MediaType.FTP_SERVER.getCover()
-                ),
-                SheetActionBean(
-                    ACTION_ADD_SMB_LIBRARY,
-                    "SMB媒体库",
-                    MediaType.SMB_SERVER.getCover()
-                ),
-                SheetActionBean(
-                    ACTION_ADD_WEBDAV_LIBRARY,
-                    "WebDav媒体库",
-                    MediaType.WEBDAV_SERVER.getCover()
-                ),
-                SheetActionBean(
-                    ACTION_ADD_REMOTE_LIBRARY,
-                    "远程媒体库",
-                    MediaType.REMOTE_STORAGE.getCover()
-                ),
-                SheetActionBean(
-                    ACTION_ADD_SCREENCAST_DEVICE,
-                    "投屏设备",
-                    MediaType.SCREEN_CAST.getCover()
-                ),
-                SheetActionBean(
-                    ACTION_ADD_EXTERNAL_LIBRARY,
-                    "设备存储库",
-                    MediaType.EXTERNAL_STORAGE.getCover()
-                )
-            ),
-            "新增网络媒体库"
-        ) {
-            val routePath = when (it) {
-                ACTION_ADD_WEBDAV_LIBRARY -> RouteTable.Stream.WebDavLogin
-                ACTION_ADD_FTP_LIBRARY -> RouteTable.Stream.FTPLogin
-                ACTION_ADD_SMB_LIBRARY -> RouteTable.Stream.SmbLogin
-                ACTION_ADD_REMOTE_LIBRARY -> RouteTable.Stream.RemoteLogin
-                ACTION_ADD_SCREENCAST_DEVICE -> RouteTable.Stream.ScreencastConnect
-                ACTION_ADD_EXTERNAL_LIBRARY -> RouteTable.Stream.DocumentTree
-                else -> throw IllegalArgumentException()
-            }
-
-            ARouter.getInstance()
-                .build(routePath)
-                .navigation()
-
-            return@BottomActionDialog true
-        }.show()
     }
 
     private fun launchMediaStorage(data: MediaLibraryEntity) {
@@ -226,39 +155,40 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         }
     }
 
-    private fun showEditStorageDialog(data: MediaLibraryEntity) {
+    private fun showAddStorageDialog() {
+        val actionList = MediaType.values()
+            .filter { it.editRoute != null }
+            .map { it.toAction() }
+
+        BottomActionDialog(
+            requireActivity(),
+            actionList,
+            "新增网络媒体库"
+        ) {
+            val mediaType = it.actionId as MediaType
+            ARouter.getInstance()
+                .build(mediaType.editRoute!!)
+                .navigation()
+            return@BottomActionDialog true
+        }.show()
+    }
+
+    private fun showManageStorageDialog(data: MediaLibraryEntity) {
         val actions = mutableListOf<SheetActionBean>()
-        if (data.mediaType != MediaType.EXTERNAL_STORAGE) {
-            actions.add(
-                SheetActionBean(
-                    ACTION_EDIT_STORAGE,
-                    "编辑媒体库",
-                    R.drawable.ic_edit_storage
-                )
-            )
+        if (data.mediaType.editRoute != null) {
+            actions.add(ManageStorage.Edit.toAction())
         }
-        actions.add(
-            SheetActionBean(
-                ACTION_DELETE_STORAGE,
-                "删除媒体库",
-                R.drawable.ic_delete_storage
-            )
-        )
+        if (data.mediaType.deletable) {
+            actions.add(ManageStorage.Delete.toAction())
+        }
+
         BottomActionDialog(requireActivity(), actions) {
-            if (it == ACTION_EDIT_STORAGE) {
-                val routePath = when (data.mediaType) {
-                    MediaType.WEBDAV_SERVER -> RouteTable.Stream.WebDavLogin
-                    MediaType.FTP_SERVER -> RouteTable.Stream.FTPLogin
-                    MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
-                    MediaType.REMOTE_STORAGE -> RouteTable.Stream.RemoteLogin
-                    MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
-                    else -> throw IllegalArgumentException()
-                }
+            if (it.actionId == ManageStorage.Edit) {
                 ARouter.getInstance()
-                    .build(routePath)
+                    .build(data.mediaType.editRoute!!)
                     .withParcelable("editData", data)
                     .navigation()
-            } else if (it == ACTION_DELETE_STORAGE) {
+            } else if (it.actionId == ManageStorage.Delete) {
                 showDeleteStorageDialog(data)
             }
             return@BottomActionDialog true
@@ -289,5 +219,12 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                 }
                 addNegative()
             }.build().show()
+    }
+
+    private enum class ManageStorage(val title: String, val icon: Int) {
+        Edit("编辑媒体库", R.drawable.ic_edit_storage),
+        Delete("删除媒体库", R.drawable.ic_delete_storage);
+
+        fun toAction() = SheetActionBean(this, title, icon)
     }
 }

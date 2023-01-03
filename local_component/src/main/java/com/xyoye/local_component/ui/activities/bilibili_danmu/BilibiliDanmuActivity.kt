@@ -16,11 +16,6 @@ import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
 @Route(path = RouteTable.Local.BiliBiliDanmu)
 class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilibiliDanmuBinding>() {
     companion object {
-        private const val DOWNLOAD_BY_LINK = 1
-        private const val DOWNLOAD_BY_URL = 2
-        private const val DOWNLOAD_BY_AV_CODE = 3
-        private const val DOWNLOAD_BY_BV_CODE = 4
-
         private const val REQUEST_CODE_SELECT_URL = 1001
     }
 
@@ -68,45 +63,48 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
     private fun showActionDialog() {
         BottomActionDialog(
             this,
-            mutableListOf(
-                SheetActionBean(DOWNLOAD_BY_LINK, "选取链接下载", R.drawable.ic_select_link),
-                SheetActionBean(DOWNLOAD_BY_URL, "输入链接下载", R.drawable.ic_input_code),
-                SheetActionBean(DOWNLOAD_BY_AV_CODE, "输入av号下载", R.drawable.ic_input_code),
-                SheetActionBean(DOWNLOAD_BY_BV_CODE, "输入bv号下载", R.drawable.ic_input_code)
-            ), "下载弹幕"
+            DownloadType.values().map { it.toAction() },
+            "下载弹幕"
         ) {
-            when (it) {
-                DOWNLOAD_BY_LINK -> {
-                    ARouter.getInstance().build(RouteTable.User.WebView)
-                        .withString("titleText", "选择链接")
-                        .withString("url", "http://www.bilibili.com")
-                        .withBoolean("isSelectMode", true)
-                        .navigation(this, REQUEST_CODE_SELECT_URL)
-                }
-                else -> showInputDialog(it)
+            if (it.actionId == DownloadType.SELECT) {
+                ARouter.getInstance().build(RouteTable.User.WebView)
+                    .withString("titleText", "选择链接")
+                    .withString("url", "http://www.bilibili.com")
+                    .withBoolean("isSelectMode", true)
+                    .navigation(this, REQUEST_CODE_SELECT_URL)
+            } else {
+                showInputDialog(it.actionId as DownloadType)
             }
             return@BottomActionDialog true
         }.show()
     }
 
-    private fun showInputDialog(action: Int) {
-        val (title, wranning, hint) = when (action) {
-            DOWNLOAD_BY_URL -> Triple("输入链接下载", "链接不能为空", "番剧链接")
-            DOWNLOAD_BY_AV_CODE -> Triple("输入AV号下载", "AV号不能为空", "纯数字AV号")
-            DOWNLOAD_BY_BV_CODE -> Triple("输入BV号下载", "BV号不能为空", "完整BV号")
+    private fun showInputDialog(type: DownloadType) {
+        val editBean = when (type) {
+            DownloadType.URL -> EditBean("输入链接下载", "链接不能为空", "番剧链接")
+            DownloadType.AV_CODE -> EditBean("输入AV号下载", "AV号不能为空", "纯数字AV号")
+            DownloadType.BV_CODE -> EditBean("输入BV号下载", "BV号不能为空", "完整BV号")
             else -> return
         }
 
         CommonEditDialog(
-            this,
-            EditBean(title, wranning, hint),
-            inputOnlyDigit = action == DOWNLOAD_BY_AV_CODE
+            this, editBean, type == DownloadType.AV_CODE
         ) {
-            when (action) {
-                DOWNLOAD_BY_URL -> viewModel.downloadByUrl(it)
-                DOWNLOAD_BY_AV_CODE -> viewModel.downloadByCode(it, true)
-                DOWNLOAD_BY_BV_CODE -> viewModel.downloadByCode(it, false)
+            when (type) {
+                DownloadType.URL -> viewModel.downloadByUrl(it)
+                DownloadType.AV_CODE -> viewModel.downloadByCode(it, true)
+                DownloadType.BV_CODE -> viewModel.downloadByCode(it, false)
+                else -> {}
             }
         }.show()
+    }
+
+    private enum class DownloadType(val title: String, val icon: Int) {
+        SELECT("选取链接下载", R.drawable.ic_select_link),
+        URL("输入链接下载", R.drawable.ic_input_code),
+        AV_CODE("输入av号下载", R.drawable.ic_input_code),
+        BV_CODE("输入bv号下载", R.drawable.ic_input_code);
+
+        fun toAction() = SheetActionBean(this, title, icon)
     }
 }

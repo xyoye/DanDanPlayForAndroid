@@ -14,7 +14,9 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.FastClickFilter
+import com.xyoye.common_component.utils.PlayHistoryUtils
+import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -40,13 +42,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     private lateinit var mediaType: MediaType
     private lateinit var mTitleText: String
     private val mHistoryList = mutableListOf<PlayHistoryEntity>()
-
-    companion object {
-        private const val ACTION_UNBIND_DANMU = 1
-        private const val ACTION_UNBIND_SUBTITLE = 2
-        private const val ACTION_COPY_URL = 3
-        private const val ACTION_DELETE_HISTORY = 4
-    }
 
     override fun initViewModel() =
         ViewModelInit(
@@ -214,45 +209,21 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     }
 
     private fun showEditDialog(history: PlayHistoryEntity) {
-        val actionList = mutableListOf<SheetActionBean>()
+        val actions = mutableListOf<SheetActionBean>()
         if (history.danmuPath.isNullOrEmpty().not()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_DANMU,
-                    "移除弹幕绑定",
-                    R.drawable.ic_unbind_danmu
-                )
-            )
+            actions.add(EditHistory.REMOVE_DANMU.toAction())
         }
         if (history.subtitlePath.isNullOrEmpty().not()) {
-            actionList.add(
-                SheetActionBean(
-                    ACTION_UNBIND_SUBTITLE,
-                    "移除字幕绑定",
-                    R.drawable.ic_unbind_subtitle
-                )
-            )
+            actions.add(EditHistory.REMOVE_SUBTITLE.toAction())
         }
-        actionList.add(
-            SheetActionBean(
-                ACTION_COPY_URL,
-                "复制播放链接",
-                R.drawable.ic_copy_url
-            )
-        )
-        actionList.add(
-            SheetActionBean(
-                ACTION_DELETE_HISTORY,
-                "删除播放记录",
-                R.drawable.ic_delete_history
-            )
-        )
-        BottomActionDialog(this, actionList) {
-            when (it) {
-                ACTION_UNBIND_DANMU -> viewModel.unbindDanmu(history)
-                ACTION_UNBIND_SUBTITLE -> viewModel.unbindSubtitle(history)
-                ACTION_DELETE_HISTORY -> viewModel.removeHistory(history)
-                ACTION_COPY_URL -> {
+        actions.add(EditHistory.COPY_URL.toAction())
+        actions.add(EditHistory.DELETE_HISTORY.toAction())
+        BottomActionDialog(this, actions) {
+            when (it.actionId) {
+                EditHistory.REMOVE_DANMU -> viewModel.unbindDanmu(history)
+                EditHistory.REMOVE_SUBTITLE -> viewModel.unbindSubtitle(history)
+                EditHistory.DELETE_HISTORY -> viewModel.removeHistory(history)
+                EditHistory.COPY_URL -> {
                     history.url.addToClipboard()
                     ToastCenter.showSuccess("链接已复制！")
                 }
@@ -286,5 +257,14 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
         } else {
             ""
         }
+    }
+
+    private enum class EditHistory(val title: String, val icon: Int) {
+        REMOVE_DANMU("移除弹幕绑定", R.drawable.ic_unbind_danmu),
+        REMOVE_SUBTITLE("移除字幕绑定", R.drawable.ic_unbind_subtitle),
+        COPY_URL("复制播放链接", R.drawable.ic_copy_url),
+        DELETE_HISTORY("删除播放记录", R.drawable.ic_delete_history);
+
+        fun toAction() = SheetActionBean(this, title, icon)
     }
 }

@@ -73,7 +73,7 @@ object RouteTable {
         const val ScreencastProvide = "/stream/screencast_provide"
         const val ScreencastReceive = "/stream/screencast_receive"
 
-        const val DocumentTree = "/stream/document_tree"
+        const val ExternalStorageEdit = "/stream/external_storage/edit"
         const val StorageFile = "/stream/storage_file"
     }
 }

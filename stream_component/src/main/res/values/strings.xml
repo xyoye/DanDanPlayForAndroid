@@ -55,4 +55,7 @@
     <string name="text_group_by_anime">番剧ID</string>
 
     <string name="text_empty_video">视频文件为空</string>
+
+    <string name="hint_root_path">根目录路径</string>
+    <string name="action_select_root">选择根目录</string>
 </resources>

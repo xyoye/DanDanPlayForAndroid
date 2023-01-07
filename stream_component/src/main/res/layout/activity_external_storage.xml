@@ -3,11 +3,11 @@
 
     <data>
 
-        <import type="com.xyoye.stream_component.ui.activities.document_tree.DocumentTreeViewModel" />
+        <import type="com.xyoye.stream_component.ui.activities.external_storage.ExternalStorageViewModel" />
 
         <variable
             name="viewModel"
-            type="com.xyoye.stream_component.ui.activities.document_tree.DocumentTreeViewModel" />
+            type="com.xyoye.stream_component.ui.activities.external_storage.ExternalStorageViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

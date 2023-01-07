@@ -14,6 +14,7 @@ val MediaType.editRoute: String?
         MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
         MediaType.REMOTE_STORAGE -> RouteTable.Stream.RemoteLogin
         MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
+        MediaType.EXTERNAL_STORAGE -> RouteTable.Stream.ExternalStorageEdit
         else -> null
     }
 

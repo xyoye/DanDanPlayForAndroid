@@ -51,19 +51,19 @@ abstract class AbstractStorage(
     /**
      * 获取文件的播放记录
      */
-    protected suspend fun getPlayHistory(
-        storageFile: StorageFile
+    override suspend fun getPlayHistory(
+        file: StorageFile
     ): PlayHistoryEntity? {
-        if (storageFile.isDirectory()) {
+        if (file.isDirectory()) {
             return null
         }
-        if (isVideoFile(storageFile.fileName()).not()) {
+        if (isVideoFile(file.fileName()).not()) {
             return null
         }
         return DatabaseManager.instance
             .getPlayHistoryDao()
             .getPlayHistory(
-                storageFile.uniqueKey(),
+                file.uniqueKey(),
                 library.mediaType
             )
     }

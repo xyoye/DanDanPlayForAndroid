@@ -61,6 +61,11 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         super.onCreate(savedInstanceState)
     }
 
+    override fun onResume() {
+        super.onResume()
+        (mRouteFragmentMap.values.last() as? StorageFileFragment)?.updateHistory()
+    }
+
     override fun initView() {
         mToolbarStyleHelper.observerChildScroll()
         title = storageLibrary!!.displayName

@@ -12,12 +12,16 @@ abstract class AbstractStorageFile(
     val storage: AbstractStorage
 ) : StorageFile {
 
+    private val uniqueKey: String by lazy {
+        val libraryId = storage.library.id
+        val filePath = fileUrl()
+        "$libraryId-$filePath".toMd5String()
+    }
+
     override var playHistory: PlayHistoryEntity? = null
 
     override fun uniqueKey(): String {
-        val libraryId = storage.library.id
-        val filePath = fileUrl()
-        return "$libraryId-$filePath".toMd5String()
+        return uniqueKey
     }
 
     override fun isFile(): Boolean {

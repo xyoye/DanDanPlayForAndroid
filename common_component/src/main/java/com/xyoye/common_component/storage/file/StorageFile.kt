@@ -69,6 +69,11 @@ interface StorageFile {
     fun <T> getFile(): T?
 
     /**
+     * 克隆一个对象
+     */
+    fun clone(): StorageFile
+
+    /**
      * 关闭文件
      */
     fun close()

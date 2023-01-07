@@ -4,6 +4,7 @@ import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.extension.fileNameAndMineType
 import com.xyoye.common_component.storage.file.AbstractStorageFile
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.impl.DocumentFileStorage
 
 /**
@@ -12,12 +13,14 @@ import com.xyoye.common_component.storage.impl.DocumentFileStorage
 
 class DocumentStorageFile(
     private val documentFile: DocumentFile,
-    storage: DocumentFileStorage
+    storage: DocumentFileStorage,
+    fileNameAndMimeType: Pair<String, String>? = null
 ) : AbstractStorageFile(storage) {
 
     //查询文件名与文件类型
     //自定义只查询一次，如果使用DocumentFile的方法，会执行两次查询
-    private val mFileNameAndMimeType = documentFile.fileNameAndMineType()
+    private val mFileNameAndMimeType = fileNameAndMimeType
+        ?: documentFile.fileNameAndMineType()
 
     override fun getRealFile(): Any {
         return documentFile
@@ -45,5 +48,13 @@ class DocumentStorageFile(
 
     override fun canRead(): Boolean {
         return documentFile.canRead()
+    }
+
+    override fun clone(): StorageFile {
+        return DocumentStorageFile(
+            documentFile,
+            storage as DocumentFileStorage,
+            mFileNameAndMimeType
+        ).also { it.playHistory = playHistory }
     }
 }

@@ -1,21 +1,20 @@
 package com.xyoye.stream_component.ui.fragment.storage_file
 
 import androidx.core.view.isVisible
-import com.xyoye.common_component.adapter.BaseViewHolderCreator
-import com.xyoye.common_component.adapter.addEmptyView
-import com.xyoye.common_component.adapter.addItem
-import com.xyoye.common_component.adapter.buildAdapter
+import androidx.recyclerview.widget.DiffUtil
+import com.xyoye.common_component.adapter.*
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.FragmentStorageFileBinding
 import com.xyoye.stream_component.ui.activities.storage_file.StorageFileActivity
-import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.stream_component.utils.storage.StorageFileDiffCallback
 
 class StorageFileFragment :
     BaseFragment<StorageFileFragmentViewModel, FragmentStorageFileBinding>() {
@@ -43,9 +42,13 @@ class StorageFileFragment :
         viewModel.fileLiveData.observe(this) {
             dataBinding.loading.isVisible = false
             dataBinding.storageFileRv.isVisible = true
-            dataBinding.storageFileRv.setData(it)
+            updateStorageFileData(it)
         }
         viewModel.listFile(ownerActivity.storage, ownerActivity.directory)
+    }
+
+    fun updateHistory() {
+        viewModel.updateHistory(ownerActivity.storage)
     }
 
     private fun initRecyclerView() {
@@ -155,6 +158,17 @@ class StorageFileFragment :
 
     private fun isShowLastPlay(file: StorageFile): Boolean {
         return file.playHistory?.isLastPlay == true
+    }
+
+    private fun updateStorageFileData(newData: List<StorageFile>) {
+        val adapter = dataBinding.storageFileRv.adapter as BaseAdapter
+        val oldData = adapter.items
+        val calculateResult = DiffUtil.calculateDiff(
+            StorageFileDiffCallback(oldData, newData)
+        )
+        oldData.clear()
+        oldData.addAll(newData)
+        calculateResult.dispatchUpdatesTo(adapter)
     }
 
     private fun showMoreAction(data: StorageFile, binding: ItemStorageVideoBinding) {

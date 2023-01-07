@@ -5,6 +5,7 @@ import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.common_component.utils.isSubtitleFile
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
 
 /**
@@ -58,6 +59,11 @@ interface Storage {
      * 创建播放链接
      */
     suspend fun createPlayUrl(file: StorageFile): String?
+
+    /**
+     * 获取播放记录
+     */
+    suspend fun getPlayHistory(file: StorageFile): PlayHistoryEntity?
 
     /**
      * 获取根目录路径

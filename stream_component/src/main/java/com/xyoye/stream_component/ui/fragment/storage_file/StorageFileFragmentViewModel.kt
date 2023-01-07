@@ -35,6 +35,21 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
     }
 
+    fun updateHistory(storage: Storage) {
+        val fileList = _fileLiveData.value ?: return
+        viewModelScope.launch {
+            val newFileList = fileList.map {
+                val history = storage.getPlayHistory(it)
+                if (it.playHistory == history) {
+                    return@map it
+                }
+                //历史记录不一致时，返回拷贝的新对象
+                it.clone().apply { playHistory = history }
+            }
+            _fileLiveData.postValue(newFileList)
+        }
+    }
+
     /**
      * 是否可展示的文件
      */

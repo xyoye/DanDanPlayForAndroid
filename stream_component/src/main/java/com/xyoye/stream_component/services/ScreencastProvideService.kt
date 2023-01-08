@@ -21,8 +21,8 @@ import com.xyoye.data_component.data.screeencast.ScreencastVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.stream_component.utils.screencast.provider.HttpServer
 import kotlinx.coroutines.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.coroutines.resume
 
 /**
@@ -180,7 +180,7 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
                 val screencastData = createScreencastData(videoSource, port)
                 val json = JsonHelper.toJson(screencastData)
                     ?: throw JsonDataException("投屏数据异常")
-                val requestBody = RequestBody.create(MediaType.parse("application/json"), json)
+                val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
 
                 Retrofit.screencastService.play(
                     host = receiver.screencastAddress,

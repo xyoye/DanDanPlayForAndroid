@@ -12,10 +12,10 @@ import okhttp3.ResponseBody
 class GzipInterceptor : Interceptor{
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        val responseBody = response.body();
-        if (response.code() == 200 && responseBody != null){
+        val responseBody = response.body
+        if (response.code == 200 && responseBody != null){
             var data : ByteArray? = null
-            if (GZIPUtils.isGzip(response.headers())){
+            if (GZIPUtils.isGzip(response.headers)){
                 data = GZIPUtils.uncompress(responseBody.bytes())
             }
             if (data != null){

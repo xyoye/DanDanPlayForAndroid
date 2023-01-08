@@ -52,7 +52,8 @@ object Dependencies {
 
     object Github {
         const val banner = "io.github.youth5201314:banner:2.2.2"
-        const val glide = "com.github.bumptech.glide:glide:4.14.2"
+        const val coil = "io.coil-kt:coil:2.2.2"
+        const val coil_video = "io.coil-kt:coil-video:2.2.2"
 
         //ftp
         const val nano_http = "org.nanohttpd:nanohttpd:2.3.1"

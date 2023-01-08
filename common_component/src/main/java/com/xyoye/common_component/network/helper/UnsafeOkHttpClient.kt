@@ -45,7 +45,8 @@ object UnsafeOkHttpClient {
             .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(LoggerInterceptor().webDav())
-            .addInterceptor(CustomRetryAndFollowUpInterceptor(baseClient))
+                //todo 重定向时不能移除 Authorization
+            //.addInterceptor(CustomRetryAndFollowUpInterceptor(baseClient))
             .build()
     }
 }

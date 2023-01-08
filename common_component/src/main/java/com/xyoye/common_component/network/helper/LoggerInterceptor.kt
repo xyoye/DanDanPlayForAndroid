@@ -1,7 +1,7 @@
 package com.xyoye.common_component.network.helper
 
 import okhttp3.*
-import okhttp3.internal.http.HttpHeaders
+import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -9,7 +9,6 @@ import java.io.InputStream
 import java.nio.charset.Charset
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
@@ -74,19 +73,18 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
     ) {
         val logBody = printLevel == Level.BODY
         val logHeaders = printLevel == Level.BODY || printLevel == Level.HEADERS
-        val requestBody = request.body()
-        val protocol =
-            if (connection != null) connection.protocol() else Protocol.HTTP_1_1
+        val requestBody = request.body
+        val protocol = connection?.protocol() ?: Protocol.HTTP_1_1
         try {
-            log("--> " + request.method() + ' ' + request.url() + ' ' + protocol)
+            log("--> " + request.method + ' ' + request.url + ' ' + protocol)
             if (logHeaders) {
                 requestBody?.apply {
                     log("\tContent-Type: " + contentType())
                     log("\tContent-Length: " + contentLength())
                 }
-                val headers = request.headers()
+                val headers = request.headers
                 var i = 0
-                val count = headers.size()
+                val count = headers.size
                 while (i < count) {
                     val name = headers.name(i)
                     if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(
@@ -115,30 +113,30 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
-            log("--> END " + request.method())
+            log("--> END " + request.method)
         }
     }
 
     private fun logForResponse(response: Response, tookMs: Long): Response {
         val builder = response.newBuilder()
         val clone = builder.build()
-        var responseBody = clone.body()
+        var responseBody = clone.body
         val logBody =
             printLevel == Level.BODY
         val logHeaders =
             printLevel == Level.BODY || printLevel == Level.HEADERS
         try {
-            log("<-- " + clone.code() + ' ' + clone.message() + ' ' + clone.request().url() + " (" + tookMs + "ms）")
+            log("<-- " + clone.code + ' ' + clone.message + ' ' + clone.request.url + " (" + tookMs + "ms）")
             if (logHeaders) {
-                val e = clone.headers()
+                val e = clone.headers
                 var bytes = 0
-                val contentType = e.size()
+                val contentType = e.size
                 while (bytes < contentType) {
                     log("\t" + e.name(bytes) + ": " + e.value(bytes))
                     ++bytes
                 }
                 log(" ")
-                if (logBody && HttpHeaders.hasBody(clone)) {
+                if (logBody && clone.promisesBody()) {
                     if (responseBody == null) {
                         return response
                     }
@@ -175,7 +173,7 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
     private fun bodyToString(request: Request) {
         try {
             val e = request.newBuilder().build()
-            val body = e.body() ?: return
+            val body = e.body ?: return
             val buffer = Buffer()
             body.writeTo(buffer)
             val charset =
@@ -214,9 +212,9 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
         private fun isPlaintext(mediaType: MediaType?): Boolean {
             return when {
                 mediaType == null -> false
-                mediaType.type() == "text" -> true
+                mediaType.type == "text" -> true
                 else -> {
-                    mediaType.subtype().lowercase(Locale.getDefault()).run {
+                    mediaType.subtype.lowercase(Locale.getDefault()).run {
                         contains("x-www-form-urlencoded")
                                 || contains("json")
                                 || contains("xml")

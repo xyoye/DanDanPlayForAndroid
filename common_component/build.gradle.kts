@@ -67,7 +67,8 @@ dependencies {
     api(Dependencies.Square.retrofit)
     implementation(Dependencies.Square.retrofit_moshi)
 
-    api(Dependencies.Github.glide)
+    api(Dependencies.Github.coil)
+    api(Dependencies.Github.coil_video)
     api(Dependencies.Github.nano_http)
     api(Dependencies.Github.smbj)
     api(Dependencies.Github.dcerpc)

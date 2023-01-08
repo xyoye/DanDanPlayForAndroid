@@ -1,6 +1,5 @@
 package com.xyoye.anime_component.ui.activities.anime_detail
 
-import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -10,15 +9,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.google.android.material.appbar.AppBarLayout
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
@@ -29,7 +19,6 @@ import com.xyoye.anime_component.ui.fragment.anime_recommend.AnimeRecommendFragm
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiData
 import kotlin.math.abs
@@ -70,7 +59,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             return
         }
 
-        dataBinding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        dataBinding.appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             //用于计算的偏移及高度，从1/2位置开始计算
             val calcRange = appBarLayout.totalScrollRange / 2f
             val calcOffset = max(0f, abs(verticalOffset) - calcRange)
@@ -79,7 +68,10 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             //返回图标颜色
             val color = getBackIconColor(offsetPercent)
             val colorFilter =
-                    BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color, BlendModeCompat.SRC_IN)
+                BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                    color,
+                    BlendModeCompat.SRC_IN
+                )
             dataBinding.toolbar.navigationIcon?.colorFilter = colorFilter
 
             //标题颜色
@@ -98,10 +90,10 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             //tips: MIUI深色模式下状态栏字体颜色不受此控制
             val isDarkFont = calcOffset > 0 && !isNightMode()
             ImmersionBar.with(this)
-                    .transparentBar()
-                    .statusBarDarkFont(isDarkFont)
-                    .init()
-        })
+                .transparentBar()
+                .statusBarDarkFont(isDarkFont)
+                .init()
+        }
 
         dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)
 
@@ -150,39 +142,13 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             bangumiData.apply {
                 dataBinding.collapsingToolbarLayout.title = animeTitle
 
-                dataBinding.backgroundCoverIv.setGlideImage(imageUrl)
+                dataBinding.backgroundCoverIv.loadImage(imageUrl)
 
-                Glide.with(dataBinding.coverIv)
-                    .asBitmap()
-                    .load(imageUrl)
-                    .error(R.drawable.ic_load_image_failed)
-                    .transition((BitmapTransitionOptions.withCrossFade()))
-                    .transform(CenterCrop(), RoundedCorners(dp2px(3)))
-                    .addListener(object : RequestListener<Bitmap> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Bitmap>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            supportStartPostponedEnterTransition()
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Bitmap?,
-                            model: Any?,
-                            target: Target<Bitmap>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            dataBinding.coverIv.setImageBitmap(resource)
-                            supportStartPostponedEnterTransition()
-                            return true
-                        }
-
-                    })
-                    .into(dataBinding.coverIv)
+                dataBinding.coverIv.loadImageWithCallback(
+                    source = imageUrl,
+                    dpRadius = 3f,
+                    errorRes = R.drawable.ic_load_image_failed
+                ) { supportStartPostponedEnterTransition() }
 
                 dataBinding.viewpager.apply {
                     adapter = AnimeDetailAdapter(supportFragmentManager, bangumiData)

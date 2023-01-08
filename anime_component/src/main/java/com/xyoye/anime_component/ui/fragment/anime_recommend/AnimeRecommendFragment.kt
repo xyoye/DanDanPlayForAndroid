@@ -15,8 +15,8 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.loadImage
 import com.xyoye.common_component.extension.setData
-import com.xyoye.common_component.extension.setGlideImage
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
@@ -76,7 +76,7 @@ class AnimeRecommendFragment :
                 addItem<AnimeData, ItemAnimeRecommendBinding>(R.layout.item_anime_recommend) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            animeCoverIv.setGlideImage(data.imageUrl, 3)
+                            animeCoverIv.loadImage(data.imageUrl, 3)
                             animeTitleTv.text = data.animeTitle
                             animeStatusTv.text = if (data.isOnAir) "连载中" else "已完结"
                             itemLayout.setOnClickListener {

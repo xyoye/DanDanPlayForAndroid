@@ -95,7 +95,7 @@ class StorageFileFragment :
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem() =
         { data: StorageFile ->
-            itemBinding.coverIv.setVideoCover(data.uniqueKey(), data.fileUrl())
+            itemBinding.coverIv.loadImage(data)
             itemBinding.titleTv.setTextColor(getTitleColor(data))
 
             itemBinding.titleTv.text = data.fileName()

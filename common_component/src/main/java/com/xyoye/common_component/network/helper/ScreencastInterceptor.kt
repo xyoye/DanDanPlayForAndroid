@@ -38,7 +38,7 @@ class ScreencastInterceptor : Interceptor {
             }
 
 
-            val newUrl = oldRequest.url()
+            val newUrl = oldRequest.url
                 .newBuilder()
                 .host(host)
                 .port(port.toIntOrNull() ?: 0)

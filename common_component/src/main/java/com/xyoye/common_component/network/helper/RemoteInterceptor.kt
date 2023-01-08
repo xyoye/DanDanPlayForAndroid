@@ -1,7 +1,7 @@
 package com.xyoye.common_component.network.helper
 
 import com.xyoye.common_component.utils.RemoteHelper
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -15,15 +15,13 @@ class RemoteInterceptor() : Interceptor {
         val oldRequest = chain.request()
         var newRequest = oldRequest.newBuilder()
         //替换URL
-        val newBaseUrl = RemoteHelper.getInstance().remoteUrl?.run {
-            HttpUrl.parse(this)
-        }
+        val newBaseUrl = RemoteHelper.getInstance().remoteUrl?.toHttpUrlOrNull()
         if (newBaseUrl != null) {
-            val newUrl = oldRequest.url()
+            val newUrl = oldRequest.url
                 .newBuilder()
-                .scheme(newBaseUrl.scheme())
-                .host(newBaseUrl.host())
-                .port(newBaseUrl.port())
+                .scheme(newBaseUrl.scheme)
+                .host(newBaseUrl.host)
+                .port(newBaseUrl.port)
                 .build()
             newRequest = newRequest.url(newUrl)
             //设置密钥

@@ -50,12 +50,11 @@
             app:autoSizeMinTextSize="9sp"
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
-            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toBottomOf="@+id/cover_iv"
             app:layout_constraintEnd_toEndOf="@+id/cover_iv"
-            app:layout_constraintHorizontal_bias="100"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="@+id/cover_iv"
-            app:layout_constraintWidth_default="wrap"
+            app:layout_constraintWidth="wrap_content"
             tools:text="00:00"
             tools:visibility="visible" />
 

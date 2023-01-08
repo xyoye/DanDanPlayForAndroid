@@ -38,10 +38,6 @@ class DocumentStorageFile(
         return mFileNameAndMimeType.second == DocumentsContract.Document.MIME_TYPE_DIR
     }
 
-    override fun pathSegments(): List<String> {
-        return documentFile.uri.pathSegments
-    }
-
     override fun fileName(): String {
         return mFileNameAndMimeType.first
     }

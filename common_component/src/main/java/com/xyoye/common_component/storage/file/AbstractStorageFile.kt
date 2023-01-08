@@ -29,7 +29,7 @@ abstract class AbstractStorageFile(
     }
 
     override fun isRootFile(): Boolean {
-        return fileUrl() == storage.getRootUrl()
+        return fileUrl() == storage.rootUri.toString()
     }
 
     override fun childFileCount(): Int {

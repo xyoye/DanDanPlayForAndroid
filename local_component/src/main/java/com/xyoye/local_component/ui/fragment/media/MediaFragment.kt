@@ -119,12 +119,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .withSerializable("typeValue", data.mediaType.value)
                     .navigation()
             }
-            MediaType.WEBDAV_SERVER -> {
-                ARouter.getInstance()
-                    .build(RouteTable.Stream.WebDavFile)
-                    .withParcelable("webDavData", data)
-                    .navigation()
-            }
             MediaType.FTP_SERVER -> {
                 ARouter.getInstance()
                     .build(RouteTable.Stream.FTPFile)
@@ -146,6 +140,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             MediaType.SCREEN_CAST -> {
                 viewModel.checkScreenDeviceRunning(data)
             }
+            MediaType.WEBDAV_SERVER,
             MediaType.EXTERNAL_STORAGE -> {
                 ARouter.getInstance()
                     .build(RouteTable.Stream.StorageFile)

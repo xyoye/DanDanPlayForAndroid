@@ -1,6 +1,5 @@
 package com.xyoye.common_component.storage.impl
 
-import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.storage.AbstractStorage
@@ -20,8 +19,7 @@ class DocumentFileStorage(
     private val context = BaseApplication.getAppContext()
 
     override suspend fun getRootFile(): StorageFile? {
-        val documentTreeUri = Uri.parse(getRootUrl())
-        val documentFile = DocumentFile.fromTreeUri(context, documentTreeUri)
+        val documentFile = DocumentFile.fromTreeUri(context, rootUri)
             ?: return null
         return DocumentStorageFile(documentFile, this)
     }

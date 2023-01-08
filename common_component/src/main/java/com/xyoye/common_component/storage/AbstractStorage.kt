@@ -22,9 +22,7 @@ abstract class AbstractStorage(
 
     override var directoryFiles: List<StorageFile> = emptyList()
 
-    override fun getRootUrl(): String {
-        return Uri.parse(library.url).toString()
-    }
+    override var rootUri: Uri = Uri.parse(libraryEntity.url)
 
     override suspend fun openDirectory(file: StorageFile): List<StorageFile> {
         this.directory = file
@@ -40,7 +38,6 @@ abstract class AbstractStorage(
      * 在根路径中定位到相对路径或绝对路径
      */
     protected fun resolvePath(path: String): Uri {
-        val rootUri = Uri.parse(getRootUrl())
         return if (path.startsWith(File.separator)) {
             rootUri.buildUpon().path(path).build()
         } else {

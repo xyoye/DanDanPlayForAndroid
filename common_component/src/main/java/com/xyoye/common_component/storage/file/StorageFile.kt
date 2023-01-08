@@ -34,11 +34,6 @@ interface StorageFile {
     fun isFile(): Boolean
 
     /**
-     * 文件路径片段
-     */
-    fun pathSegments(): List<String>
-
-    /**
      * 文件名
      */
     fun fileName(): String

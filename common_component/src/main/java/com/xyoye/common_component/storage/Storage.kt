@@ -1,5 +1,6 @@
 package com.xyoye.common_component.storage
 
+import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.common_component.utils.isSubtitleFile
@@ -28,6 +29,8 @@ interface Storage {
      * 当前所在文件夹文件列表
      */
     var directoryFiles: List<StorageFile>
+
+    var rootUri: Uri
 
     /**
      * 获取根目录文件
@@ -64,11 +67,6 @@ interface Storage {
      * 获取播放记录
      */
     suspend fun getPlayHistory(file: StorageFile): PlayHistoryEntity?
-
-    /**
-     * 获取根目录路径
-     */
-    fun getRootUrl(): String
 
     /**
      * 关闭媒体库

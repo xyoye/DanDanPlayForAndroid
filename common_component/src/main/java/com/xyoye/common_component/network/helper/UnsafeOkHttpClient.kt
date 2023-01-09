@@ -2,6 +2,7 @@ package com.xyoye.common_component.network.helper
 
 import android.annotation.SuppressLint
 import okhttp3.OkHttpClient
+import redirect.RedirectAuthorizationInterceptor
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
@@ -45,8 +46,7 @@ object UnsafeOkHttpClient {
             .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(LoggerInterceptor().webDav())
-                //todo 重定向时不能移除 Authorization
-            //.addInterceptor(CustomRetryAndFollowUpInterceptor(baseClient))
+            .addNetworkInterceptor(RedirectAuthorizationInterceptor())
             .build()
     }
 }

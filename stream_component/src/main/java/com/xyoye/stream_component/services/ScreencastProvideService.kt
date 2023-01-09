@@ -39,7 +39,7 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
 
     private lateinit var notifier: ScreencastProvideNotifier
     private lateinit var receiver: MediaLibraryEntity
-    private lateinit var ioScope: CoroutineScope
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
         private const val KEY_SCREENCAST_RECEIVER = "key_screencast_receiver"

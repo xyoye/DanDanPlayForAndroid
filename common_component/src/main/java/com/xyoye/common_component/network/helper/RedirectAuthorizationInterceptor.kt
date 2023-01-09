@@ -1,4 +1,4 @@
-package redirect
+package com.xyoye.common_component.network.helper
 
 import okhttp3.Interceptor
 import okhttp3.Request

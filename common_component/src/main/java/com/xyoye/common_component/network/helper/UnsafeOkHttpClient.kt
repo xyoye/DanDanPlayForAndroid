@@ -2,7 +2,6 @@ package com.xyoye.common_component.network.helper
 
 import android.annotation.SuppressLint
 import okhttp3.OkHttpClient
-import redirect.RedirectAuthorizationInterceptor
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
@@ -37,15 +36,10 @@ object UnsafeOkHttpClient {
     }
 
     val client: OkHttpClient by lazy {
-        val baseClient: OkHttpClient = OkHttpClient.Builder()
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .retryOnConnectionFailure(false)
-            .build()
-        baseClient.newBuilder()
+        OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
             .hostnameVerifier { _, _ -> true }
-            .addInterceptor(LoggerInterceptor().webDav())
+            .addNetworkInterceptor(LoggerInterceptor().webDav())
             .addNetworkInterceptor(RedirectAuthorizationInterceptor())
             .build()
     }

@@ -68,6 +68,8 @@ interface Storage {
      */
     suspend fun getPlayHistory(file: StorageFile): PlayHistoryEntity?
 
+    fun getNetworkHeaders(): Map<String, String>?
+
     /**
      * 关闭媒体库
      */

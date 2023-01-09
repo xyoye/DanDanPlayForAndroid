@@ -79,4 +79,8 @@ class StorageVideoSource(
     override fun getUniqueKey(): String {
         return file.uniqueKey()
     }
+
+    override fun getHttpHeader(): Map<String, String>? {
+        return storage.getNetworkHeaders()
+    }
 }

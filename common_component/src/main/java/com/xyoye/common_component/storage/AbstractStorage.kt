@@ -65,5 +65,9 @@ abstract class AbstractStorage(
             )
     }
 
+    override fun getNetworkHeaders(): Map<String, String>? {
+        return null
+    }
+
     abstract suspend fun listFiles(file: StorageFile): List<StorageFile>
 }

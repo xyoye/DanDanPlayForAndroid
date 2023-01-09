@@ -9,6 +9,7 @@ import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.sardine.DavResource
 import com.xyoye.sardine.impl.OkHttpSardine
 import com.xyoye.sardine.util.SardineConfig
+import okhttp3.Credentials
 import java.io.File
 import java.io.InputStream
 import java.net.URI
@@ -26,7 +27,7 @@ class WebDavStorage(
 
     init {
         SardineConfig.isXmlStrictMode = this.library.webDavStrict
-        getCredentials()?.let {
+        getAccountInfo()?.let {
             sardine.setCredentials(it.first, it.second)
         }
     }
@@ -81,7 +82,14 @@ class WebDavStorage(
         return file.fileUrl()
     }
 
-    private fun getCredentials(): Pair<String, String>? {
+    override fun getNetworkHeaders(): Map<String, String>? {
+        val accountInfo = getAccountInfo()
+            ?: return null
+        val credential = Credentials.basic(accountInfo.first, accountInfo.second)
+        return mapOf(Pair("Authorization", credential))
+    }
+
+    private fun getAccountInfo(): Pair<String, String>? {
         if (library.account.isNullOrEmpty()) {
             return null
         }

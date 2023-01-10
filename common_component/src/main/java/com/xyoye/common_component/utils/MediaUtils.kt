@@ -36,6 +36,14 @@ val supportSubtitleExtension = arrayOf(
     "ttml"
 )
 
+private val supportNetworkScheme = arrayOf(
+    "http", "https", "smb", "ftp"
+)
+
+fun isNetworkScheme(scheme: String?): Boolean {
+    return scheme != null && supportNetworkScheme.contains(scheme.lowercase(Locale.ROOT))
+}
+
 fun isVideoFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
     return commonVideoExtension.contains(extension.lowercase(Locale.ROOT))

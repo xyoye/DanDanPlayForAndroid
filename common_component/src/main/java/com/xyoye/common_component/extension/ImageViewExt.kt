@@ -82,8 +82,6 @@ fun ImageView.loadImage(file: StorageFile) {
         diskCachePolicy(cachePolicy)
         memoryCachePolicy(cachePolicy)
         videoFramePercent(0.1)
-
-        // todo 加载URL视频的第一帧
     }
 }
 

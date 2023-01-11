@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.FileComparator
@@ -32,6 +33,21 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                     FileComparator({ it.fileName() }, { it.isDirectory() })
                 )
             _fileLiveData.postValue(childFiles)
+        }
+    }
+
+    fun unbindExtraSource(storage: Storage, file: StorageFile, unbindDanmu: Boolean) {
+        viewModelScope.launch {
+            if (unbindDanmu) {
+                DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
+                    file.uniqueKey(), storage.library.mediaType, null, 0
+                )
+            } else {
+                DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
+                    file.uniqueKey(), storage.library.mediaType, null
+                )
+            }
+            updateHistory(storage)
         }
     }
 

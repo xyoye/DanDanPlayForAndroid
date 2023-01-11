@@ -73,3 +73,17 @@ interface StorageFile {
      */
     fun close()
 }
+
+val StorageFile.danmu: Pair<String, Int>?
+    get() = if (playHistory?.danmuPath.isNullOrEmpty()) {
+        null
+    } else {
+        playHistory!!.danmuPath!! to playHistory!!.episodeId
+    }
+
+val StorageFile.subtitle: String?
+    get() = if (playHistory?.subtitlePath.isNullOrEmpty()) {
+        null
+    } else {
+        playHistory!!.subtitlePath!!
+    }

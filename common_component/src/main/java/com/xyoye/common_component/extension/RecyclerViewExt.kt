@@ -12,11 +12,11 @@ import com.xyoye.common_component.adapter.BaseAdapter
  */
 
 fun RecyclerView.vertical(reverse: Boolean = false): LinearLayoutManager {
-    return LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    return LinearLayoutManager(context, LinearLayoutManager.VERTICAL, reverse)
 }
 
 fun RecyclerView.horizontal(reverse: Boolean = false): LinearLayoutManager {
-    return LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+    return LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, reverse)
 }
 
 fun RecyclerView.grid(spanCount: Int): GridLayoutManager {

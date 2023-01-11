@@ -1,5 +1,6 @@
 package com.xyoye.common_component.network.helper
 
+import com.xyoye.common_component.extension.toMd5String
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -32,7 +33,7 @@ class RedirectAuthorizationInterceptor : Interceptor {
      * 在当前请求加上已缓存的Authorization请求头，并移除此缓存
      */
     private fun considerUseCacheHeader(request: Request): Request {
-        val requestUrl = request.url.toString()
+        val requestUrl = request.url.toString().toMd5String()
         val requestAuthorization = request.header(TAG_HEADER)
         if (authorizationCache.containsKey(requestUrl) && requestAuthorization == null) {
             val authorization = authorizationCache.remove(requestUrl)
@@ -55,7 +56,7 @@ class RedirectAuthorizationInterceptor : Interceptor {
         val redirectUrl = response.header("Location")
         val authorization = response.request.header(TAG_HEADER)
         if (redirectUrl != null && authorization != null) {
-            authorizationCache[redirectUrl] = authorization
+            authorizationCache[redirectUrl.toMd5String()] = authorization
         }
     }
 
@@ -63,6 +64,6 @@ class RedirectAuthorizationInterceptor : Interceptor {
      * HttpCode为301、302、303时，视为重定向请求
      */
     private fun isRedirectResponse(response: Response): Boolean {
-        return response.code in 301..303
+        return response.code in 301..308
     }
 }

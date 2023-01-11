@@ -52,7 +52,7 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
         this.url = url
         this.headers = headers
         val encodeFileName = URLEncoder.encode(getFileName(url), "utf-8")
-        return  "http://127.0.0.1:$listeningPort/$encodeFileName"
+        return "http://127.0.0.1:$listeningPort/$encodeFileName"
     }
 
     private fun getProxyResponse(session: IHTTPSession): okhttp3.Response {
@@ -62,6 +62,12 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
         }
         session.headers.forEach {
             requestBuilder.header(it.key, it.value)
+        }
+        //移除VLC到本地服务器的部分请求头，这部分会影响后续请求
+        requestBuilder.apply {
+            removeHeader("host")
+            removeHeader("remote-addr")
+            removeHeader("http-client-ip")
         }
         val request = requestBuilder.url(url).build()
 

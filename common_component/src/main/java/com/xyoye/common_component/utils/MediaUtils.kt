@@ -11,11 +11,11 @@ import android.os.Build
 import android.provider.MediaStore
 import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.extension.toText
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -186,8 +186,7 @@ object MediaUtils {
     }
 
     private fun getShotImageName(): String {
-        val currentTimeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-        val curTime: String = currentTimeFormat.format(Date())
+        val curTime = Date().toText("yyyyMMdd_HHmmss")
         return "SHOT_$curTime.jpg"
     }
 

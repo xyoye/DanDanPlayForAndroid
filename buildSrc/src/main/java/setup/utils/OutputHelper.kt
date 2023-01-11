@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object OutputHelper {
-    private val format = SimpleDateFormat("MMddHHmm", Locale.CHINA)
+    private val format = SimpleDateFormat("MMddHHmm", Locale.getDefault())
 
     fun outputFileName(variant: BaseVariantOutput): String {
         val time = format.format(Date())

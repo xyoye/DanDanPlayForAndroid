@@ -1,7 +1,8 @@
 package com.xyoye.subtitle.format;
 
-import com.xyoye.subtitle.info.Caption;
+import com.xyoye.common_component.extension.DateExtKt;
 import com.xyoye.subtitle.exception.FatalParsingException;
+import com.xyoye.subtitle.info.Caption;
 import com.xyoye.subtitle.info.Style;
 import com.xyoye.subtitle.info.Time;
 import com.xyoye.subtitle.info.TimedTextObject;
@@ -11,8 +12,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -237,9 +236,8 @@ public class FormatSTL implements TimedTextFileFormat {
 
 		}
 		//other info
-		DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
 		Date date = new Date();
-		String aux = dateFormat.format(date);
+		String aux = DateExtKt.toText(date, "yyMMdd");
 		aux +=  aux + "00"; //revision number
 		String aux2 =""+tto.captions.size();
 		while (aux2.length()<5) aux2="0"+aux2;

@@ -66,12 +66,13 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     override fun onResume() {
         super.onResume()
-        (mRouteFragmentMap.values.last() as? StorageFileFragment)?.updateHistory()
+        notifyFragmentReappear()
     }
 
     override fun initView() {
         mToolbarStyleHelper.observerChildScroll()
         title = storageLibrary!!.displayName
+        updateToolbarSubtitle(0, 0)
 
         initPathRv()
         initListener()
@@ -122,6 +123,16 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         return super.onKeyDown(keyCode, event)
     }
 
+    private fun checkBundle(): Boolean {
+        storageLibrary
+            ?: return false
+        val storage = StorageFactory.createStorage(storageLibrary!!)
+            ?: return false
+
+        this.storage = storage
+        return true
+    }
+
     private fun pushFragment(path: StorageFilePath) {
         val fragment = StorageFileFragment.newInstance()
         mRouteFragmentMap[path] = fragment
@@ -131,7 +142,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             fragment,
             path.route
         )
-        notifyFragmentChanged()
+        onDisplayFragmentChanged()
     }
 
     private fun popFragment(): Boolean {
@@ -142,17 +153,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         val fragment = mRouteFragmentMap.remove(lastRoute)
             ?: return true
         supportFragmentManager.removeFragment(fragment)
-        notifyFragmentChanged()
-        return true
-    }
-
-    private fun checkBundle(): Boolean {
-        storageLibrary
-            ?: return false
-        val storage = StorageFactory.createStorage(storageLibrary!!)
-            ?: return false
-
-        this.storage = storage
+        onDisplayFragmentChanged()
+        notifyFragmentReappear()
         return true
     }
 
@@ -167,10 +169,11 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             }
         }
         supportFragmentManager.removeFragment(*fragments.toTypedArray())
-        notifyFragmentChanged()
+        onDisplayFragmentChanged()
+        notifyFragmentReappear()
     }
 
-    private fun notifyFragmentChanged() {
+    private fun onDisplayFragmentChanged() {
         val newPathData = StorageFilePathAdapter.buildPathData(mRouteFragmentMap)
         dataBinding.pathRv.setData(newPathData)
         dataBinding.pathRv.post {
@@ -195,12 +198,41 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         }.show()
     }
 
+    private fun notifyFragmentReappear() {
+        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
+            ?: return
+        fragment.onReappear()
+    }
+
+    private fun updateToolbarSubtitle(videoCount: Int, directoryCount: Int) {
+        supportActionBar?.subtitle = when {
+            videoCount == 0 && directoryCount == 0 -> {
+                "0视频"
+            }
+            directoryCount == 0 -> {
+                "${videoCount}视频"
+            }
+            videoCount == 0 -> {
+                "${directoryCount}文件夹"
+            }
+            else -> {
+                "${videoCount}视频  ${directoryCount}文件夹"
+            }
+        }
+    }
+
     fun openDirectory(file: StorageFile?) {
         directory = file
 
         val route = file?.filePath() ?: "/"
         val name = file?.fileName() ?: "根目录"
         pushFragment(StorageFilePath(name, route))
+    }
+
+    fun onDirectoryOpened(fileList: List<StorageFile>) {
+        val videoCount = fileList.count { it.isFile() }
+        val directoryCount = fileList.count { it.isDirectory() }
+        updateToolbarSubtitle(videoCount, directoryCount)
     }
 
     fun openFile(file: StorageFile) {

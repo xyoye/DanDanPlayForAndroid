@@ -51,13 +51,10 @@ class StorageFileFragment :
         viewModel.fileLiveData.observe(this) {
             dataBinding.loading.isVisible = false
             dataBinding.storageFileRv.isVisible = true
+            ownerActivity.onDirectoryOpened(it)
             updateStorageFileData(it)
         }
         viewModel.listFile(ownerActivity.storage, ownerActivity.directory)
-    }
-
-    fun updateHistory() {
-        viewModel.updateHistory(ownerActivity.storage)
     }
 
     private fun initRecyclerView() {
@@ -254,6 +251,17 @@ class StorageFileFragment :
             Pair(binding.coverIv, binding.coverIv.transitionName),
             Pair(binding.titleTv, binding.titleTv.transitionName)
         )
+    }
+
+    /**
+     * 再次展示再界面上
+     */
+    fun onReappear() {
+        //更新视频关联的播放记录
+        viewModel.updateHistory(ownerActivity.storage)
+        //更新副标题文案
+        val fileList = viewModel.fileLiveData.value ?: emptyList()
+        ownerActivity.onDirectoryOpened(fileList)
     }
 
     private enum class ManageAction(val title: String, val icon: Int) {

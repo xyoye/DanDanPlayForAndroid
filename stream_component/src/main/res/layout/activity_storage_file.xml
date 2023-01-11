@@ -28,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
+                app:subtitleTextAppearance="@style/Theme.DanDanPlay.Toolbar.Subtitle"
                 app:titleTextColor="@color/text_theme" />
 
             <androidx.recyclerview.widget.RecyclerView

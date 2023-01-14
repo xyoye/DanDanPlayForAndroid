@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterControllerView
+import com.xyoye.player.controller.video.PlayerControlView
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.OrientationHelper
 import com.xyoye.player.wrapper.*
@@ -276,8 +277,10 @@ abstract class BaseVideoController(
     }
 
     private fun handleVisibilityChanged(isVisible: Boolean) {
-        if (!mIsLocked) {
-            for (entry in mControlComponents.entries) {
+        for (entry in mControlComponents.entries) {
+            if (entry.key is PlayerControlView) {
+                entry.key.onVisibilityChanged(isVisible)
+            } else if (mIsLocked.not()) {
                 entry.key.onVisibilityChanged(isVisible)
             }
         }

@@ -79,7 +79,7 @@ abstract class AnimatedAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adap
         }
     }
 
-    private fun resetAnimation() {
+    open fun resetAnimation() {
         clearAnimation()
         val layoutManager = recyclerView?.layoutManager as? LinearLayoutManager
         isAnimating = layoutManager?.orientation == RecyclerView.VERTICAL

@@ -167,6 +167,12 @@ class StorageFileFragment :
     }
 
     private fun updateStorageFileData(newData: List<StorageFile>) {
+        //通过setData实现空布局加载和动画
+        if (newData.isEmpty()) {
+            dataBinding.storageFileRv.setData(newData)
+            return
+        }
+
         val adapter = dataBinding.storageFileRv.adapter as BaseAdapter
         val oldData = adapter.items
         val calculateResult = DiffUtil.calculateDiff(
@@ -174,6 +180,7 @@ class StorageFileFragment :
         )
         oldData.clear()
         oldData.addAll(newData)
+        adapter.resetAnimation()
         calculateResult.dispatchUpdatesTo(adapter)
     }
 

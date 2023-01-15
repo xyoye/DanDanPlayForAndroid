@@ -7,12 +7,15 @@ import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
 import com.rapid7.client.dcerpc.mssrvs.ServerService
 import com.rapid7.client.dcerpc.transport.SMBTransportFactories
+import com.xyoye.common_component.extension.open
+import com.xyoye.common_component.extension.openDirectory
+import com.xyoye.common_component.extension.openFile
+import com.xyoye.common_component.extension.standardFileInfo
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.SmbPlayServer
 import com.xyoye.common_component.storage.file.impl.SmbStorageFile
 import com.xyoye.common_component.utils.IOUtils
-import com.xyoye.common_component.utils.smb.v2.SMBFileHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import java.io.InputStream
@@ -26,6 +29,8 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     private var mSmbClient = SMBClient()
     private var mSmbSession: Session? = null
     private var mDiskShare: DiskShare? = null
+
+    override var rootUri: Uri = Uri.parse("smb://${library.url}")
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         //检测SMB通讯是否正常
@@ -78,7 +83,7 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             return null
         }
         return try {
-            SMBFileHelper.openFile(mDiskShare!!, file.filePath()).inputStream
+            mDiskShare?.openFile(file.filePath())?.inputStream
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -95,8 +100,7 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         }
         val shareName = diskShare.smbPath.shareName
         return try {
-            val fileInfo = SMBFileHelper.getFileInfo(diskShare, path)
-                ?: return null
+            val fileInfo = diskShare.open(path).standardFileInfo()
             val isDirectory = fileInfo.isDirectory
             val fileLength = if (isDirectory) 0L else fileInfo.endOfFile
             return SmbStorageFile(this, shareName, path, fileLength, isDirectory)
@@ -178,25 +182,28 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     /**
      * 展示文件夹
      */
-    private fun listDirectory(filePath: String): List<SmbStorageFile> {
+    private suspend fun listDirectory(filePath: String): List<SmbStorageFile> {
         val diskShare = mDiskShare ?: return emptyList()
         val shareName = diskShare.smbPath.shareName
 
         return try {
-            SMBFileHelper.openDirectory(diskShare, filePath)
+            diskShare.openDirectory(filePath)
                 .list()
                 .filter { it.fileName != "." && it.fileName != ".." }
                 .map {
-                    val childPath = generateChildPath(filePath, it.fileName)
-
-                    val fileInfo = SMBFileHelper.getFileInfo(diskShare, childPath)
-                        ?: return@map SmbStorageFile(this, shareName, "")
-
-                    val isDirectory = fileInfo.isDirectory
-                    val fileLength = if (isDirectory) 0L else fileInfo.endOfFile
-                    return@map SmbStorageFile(this, shareName, childPath, fileLength, isDirectory)
+                    try {
+                        val childPath = generateChildPath(filePath, it.fileName)
+                        val fileInfo = diskShare.open(childPath).standardFileInfo()
+                        val isDirectory = fileInfo.isDirectory
+                        val fileLength = if (isDirectory) 0L else fileInfo.endOfFile
+                        return@map SmbStorageFile(this, shareName, childPath, fileLength, isDirectory)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        return@map SmbStorageFile(this, shareName, "")
+                    }
                 }
                 .filter { it.filePath().isNotEmpty() }
+                .onEach { it.playHistory = getPlayHistory(it) }
         } catch (e: Exception) {
             e.printStackTrace()
             showErrorToast("获取文件列表失败", e)

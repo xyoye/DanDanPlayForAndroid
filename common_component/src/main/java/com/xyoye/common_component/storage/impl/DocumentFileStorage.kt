@@ -46,12 +46,6 @@ class DocumentFileStorage(
             .onEach { it.playHistory = getPlayHistory(it) }
     }
 
-    override suspend fun parentFile(file: StorageFile): StorageFile? {
-        val parentFile = file.getFile<DocumentFile>()?.parentFile
-            ?: return null
-        return DocumentStorageFile(parentFile, this)
-    }
-
     override suspend fun pathFile(path: String): StorageFile? {
         val documentFile = DocumentFile.fromTreeUri(
             context,

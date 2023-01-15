@@ -10,7 +10,6 @@ import com.xyoye.sardine.DavResource
 import com.xyoye.sardine.impl.OkHttpSardine
 import com.xyoye.sardine.util.SardineConfig
 import okhttp3.Credentials
-import java.io.File
 import java.io.InputStream
 import java.net.URI
 import java.util.*
@@ -58,18 +57,6 @@ class WebDavStorage(
             e.printStackTrace()
             emptyList()
         }
-    }
-
-    override suspend fun parentFile(file: StorageFile): StorageFile? {
-        val davResource = file.getFile<DavResource>()
-            ?: return null
-        val href = davResource.href
-        val parentHref = if (href.path.endsWith(File.separator)) {
-            href.resolve("..")
-        } else {
-            href.resolve(".")
-        }
-        return pathFile(parentHref.toString())
     }
 
     override suspend fun pathFile(path: String): StorageFile {

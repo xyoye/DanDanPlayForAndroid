@@ -48,11 +48,6 @@ interface Storage {
     suspend fun openDirectory(file: StorageFile): List<StorageFile>
 
     /**
-     * 获取父文件
-     */
-    suspend fun parentFile(file: StorageFile): StorageFile?
-
-    /**
      * 通过路径获取文件
      * @param path 文件路径，以'/'开头为绝对路径，否则为相对路径
      */

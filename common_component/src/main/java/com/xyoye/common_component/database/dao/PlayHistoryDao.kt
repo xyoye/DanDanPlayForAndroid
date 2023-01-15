@@ -26,13 +26,10 @@ interface PlayHistoryDao {
 
     @Query("SELECT history.*,(last_play.unique_key IS NOT NULL) as is_last_play" +
             " FROM (" +
-            "SELECT * FROM play_history " +
-            "WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)" +
+            "SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)" +
             ") as history" +
-            " LEFT JOIN" +
-            "(SELECT unique_key FROM play_history " +
-            "ORDER BY play_time " +
-            "DESC LIMIT 1" +
+            " LEFT JOIN (" +
+            "SELECT unique_key FROM play_history WHERE media_type = (:mediaType) ORDER BY play_time DESC LIMIT 1" +
             ") as last_play" +
             " ON history.unique_key == last_play.unique_key")
     @TypeConverters(MediaTypeConverter::class)

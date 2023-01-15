@@ -39,9 +39,6 @@
             android:name=".ui.activities.remote_control.RemoteControlActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name=".ui.activities.web_dav_file.WebDavFileActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
             android:name=".ui.activities.ftp_file.FTPFileActivity"
             android:configChanges="orientation|screenSize" />
         <activity

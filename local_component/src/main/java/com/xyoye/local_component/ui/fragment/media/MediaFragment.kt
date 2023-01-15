@@ -125,12 +125,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     .withParcelable("ftpData", data)
                     .navigation()
             }
-            MediaType.SMB_SERVER -> {
-                ARouter.getInstance()
-                    .build(RouteTable.Stream.SmbFile)
-                    .withParcelable("smbData", data)
-                    .navigation()
-            }
             MediaType.REMOTE_STORAGE -> {
                 ARouter.getInstance()
                     .build(RouteTable.Stream.RemoteFile)
@@ -140,6 +134,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             MediaType.SCREEN_CAST -> {
                 viewModel.checkScreenDeviceRunning(data)
             }
+            MediaType.SMB_SERVER,
             MediaType.WEBDAV_SERVER,
             MediaType.EXTERNAL_STORAGE -> {
                 ARouter.getInstance()

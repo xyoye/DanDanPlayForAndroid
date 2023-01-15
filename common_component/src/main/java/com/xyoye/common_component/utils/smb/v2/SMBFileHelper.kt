@@ -20,9 +20,8 @@ import java.util.*
 object SMBFileHelper {
 
     fun openDirectory(share: DiskShare, filePath: String): Directory {
-        val childPath = getShareChildPath(share, filePath)
         return share.openDirectory(
-            childPath,
+            filePath,
             EnumSet.of(AccessMask.FILE_LIST_DIRECTORY),
             setOf(FileAttributes.FILE_ATTRIBUTE_DIRECTORY),
             setOf(SMB2ShareAccess.FILE_SHARE_READ),
@@ -32,9 +31,8 @@ object SMBFileHelper {
     }
 
     fun openFile(share: DiskShare, filePath: String): File {
-        val childPath = getShareChildPath(share, filePath)
         return share.openFile(
-            childPath,
+            filePath,
             setOf(AccessMask.FILE_READ_DATA),
             setOf(FileAttributes.FILE_ATTRIBUTE_READONLY),
             setOf(SMB2ShareAccess.FILE_SHARE_READ),
@@ -50,27 +48,19 @@ object SMBFileHelper {
         return standardInformation.isDirectory
     }
 
+    fun getFileInfo(diskShare: DiskShare, filePath: String): FileStandardInformation? {
+        return openDiskEntry(diskShare, filePath)
+            ?.getFileInformation(FileStandardInformation::class.java)
+    }
+
     private fun openDiskEntry(share: DiskShare, filePath: String): DiskEntry? {
-        val childPath = getShareChildPath(share, filePath)
         return share.open(
-            childPath,
+            filePath,
             EnumSet.of(AccessMask.GENERIC_READ),
             null,
             SMB2ShareAccess.ALL,
             SMB2CreateDisposition.FILE_OPEN,
             null
         )
-    }
-
-    private fun getShareChildPath(diskShare: DiskShare, filePath: String): String {
-        val shareName = diskShare.smbPath.shareName
-        if (filePath.startsWith("\\$shareName\\")){
-            return filePath.substring(shareName.length + 2)
-        }
-
-        if (filePath == "\\$shareName")
-            return shareName
-
-        return filePath
     }
 }

@@ -16,6 +16,7 @@ import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageFactory
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.StorageFilePath
@@ -26,6 +27,7 @@ import com.xyoye.stream_component.databinding.ActivityStorageFileBinding
 import com.xyoye.stream_component.ui.fragment.storage_file.StorageFileFragment
 import com.xyoye.stream_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.stream_component.utils.storage.StorageFileStyleHelper
+import kotlinx.coroutines.launch
 
 @Route(path = RouteTable.Stream.StorageFile)
 class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFileBinding>() {
@@ -39,6 +41,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     var directory: StorageFile? = null
         private set
+
+    private val releaseScope = SupervisorScope.IO
 
     private val mRouteFragmentMap = mutableMapOf<StorageFilePath, Fragment>()
 
@@ -121,6 +125,15 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onDestroy() {
+        if (this::storage.isInitialized) {
+            releaseScope.launch {
+                storage.close()
+            }
+        }
+        super.onDestroy()
     }
 
     private fun checkBundle(): Boolean {

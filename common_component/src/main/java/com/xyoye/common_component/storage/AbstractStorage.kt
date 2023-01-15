@@ -30,6 +30,10 @@ abstract class AbstractStorage(
         return directoryFiles
     }
 
+    override suspend fun parentFile(file: StorageFile): StorageFile? {
+        return null
+    }
+
     override fun close() {
         //do nothing
     }

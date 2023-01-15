@@ -42,8 +42,6 @@ class DocumentFileStorage(
             .map { DocumentStorageFile(it, this) }
             //过滤文件名为空的文件
             .filter { it.fileName().isNotEmpty() }
-            //绑定播放记录
-            .onEach { it.playHistory = getPlayHistory(it) }
     }
 
     override suspend fun pathFile(path: String): StorageFile? {

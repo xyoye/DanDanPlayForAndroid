@@ -111,7 +111,6 @@ class StorageFileFragment :
             itemBinding.durationTv.isVisible = isShowDuration(data)
             itemBinding.danmuTipsTv.isVisible = isShowDanmu(data)
             itemBinding.subtitleTipsTv.isVisible = isShowSubtitle(data)
-            itemBinding.lastPlayTimeTv.isVisible = isShowLastPlay(data)
 
             itemBinding.mainActionFl.setOnClickListener {
                 ownerActivity.openFile(data)
@@ -160,10 +159,6 @@ class StorageFileFragment :
 
     private fun isShowSubtitle(file: StorageFile): Boolean {
         return file.playHistory?.subtitlePath?.isNotEmpty() == true
-    }
-
-    private fun isShowLastPlay(file: StorageFile): Boolean {
-        return file.playHistory?.isLastPlay == true
     }
 
     private fun updateStorageFileData(newData: List<StorageFile>) {

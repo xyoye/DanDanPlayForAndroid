@@ -155,14 +155,13 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/text_gray"
                 android:textSize="10sp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:drawableStartCompat="@drawable/ic_last_play_time"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="SmallSp"
-                tools:text="今天 16:20"
-                tools:visibility="visible" />
+                tools:text="今天 16:20" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

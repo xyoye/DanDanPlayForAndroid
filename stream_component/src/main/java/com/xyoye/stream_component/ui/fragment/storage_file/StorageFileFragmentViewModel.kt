@@ -9,6 +9,7 @@ import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.isVideoFile
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,7 +32,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                     isDisplayFile(it)
                 }.sortedWith(
                     FileComparator({ it.fileName() }, { it.isDirectory() })
-                )
+                ).onEach {
+                    it.playHistory = getHistory(storage, it)
+                }
             _fileLiveData.postValue(childFiles)
         }
     }
@@ -55,7 +58,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         val fileList = _fileLiveData.value ?: return
         viewModelScope.launch {
             val newFileList = fileList.map {
-                val history = storage.getPlayHistory(it)
+                val history = getHistory(storage, it)
                 if (it.playHistory == history) {
                     return@map it
                 }
@@ -64,6 +67,21 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             }
             _fileLiveData.postValue(newFileList)
         }
+    }
+
+    private suspend fun getHistory(storage: Storage, file: StorageFile): PlayHistoryEntity? {
+        if (file.isDirectory()) {
+            return null
+        }
+        if (isVideoFile(file.fileName()).not()) {
+            return null
+        }
+        return DatabaseManager.instance
+            .getPlayHistoryDao()
+            .getPlayHistory(
+                file.uniqueKey(),
+                storage.library.mediaType
+            )
     }
 
     /**

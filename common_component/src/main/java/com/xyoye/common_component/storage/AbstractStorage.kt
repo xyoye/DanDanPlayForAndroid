@@ -1,11 +1,8 @@
 package com.xyoye.common_component.storage
 
 import android.net.Uri
-import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
-import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.File
 
 /**
@@ -43,26 +40,6 @@ abstract class AbstractStorage(
         } else {
             rootUri.buildUpon().appendPath(path).build()
         }
-    }
-
-    /**
-     * 获取文件的播放记录
-     */
-    override suspend fun getPlayHistory(
-        file: StorageFile
-    ): PlayHistoryEntity? {
-        if (file.isDirectory()) {
-            return null
-        }
-        if (isVideoFile(file.fileName()).not()) {
-            return null
-        }
-        return DatabaseManager.instance
-            .getPlayHistoryDao()
-            .getPlayHistory(
-                file.uniqueKey(),
-                library.mediaType
-            )
     }
 
     override fun getNetworkHeaders(): Map<String, String>? {

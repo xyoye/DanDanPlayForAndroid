@@ -49,10 +49,7 @@ class WebDavStorage(
         return try {
             sardine.list(file.fileUrl())
                 .filter { isChildFile(file.fileUrl(), it.href) }
-                .map {
-                    val childFile = WebDavStorageFile(it, this)
-                    childFile.apply { playHistory = getPlayHistory(childFile) }
-                }
+                .map { WebDavStorageFile(it, this) }
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()

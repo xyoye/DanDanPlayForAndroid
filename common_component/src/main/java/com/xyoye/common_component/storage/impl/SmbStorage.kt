@@ -182,7 +182,7 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     /**
      * 展示文件夹
      */
-    private suspend fun listDirectory(filePath: String): List<SmbStorageFile> {
+    private fun listDirectory(filePath: String): List<SmbStorageFile> {
         val diskShare = mDiskShare ?: return emptyList()
         val shareName = diskShare.smbPath.shareName
 
@@ -203,7 +203,6 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
                     }
                 }
                 .filter { it.filePath().isNotEmpty() }
-                .onEach { it.playHistory = getPlayHistory(it) }
         } catch (e: Exception) {
             e.printStackTrace()
             showErrorToast("获取文件列表失败", e)

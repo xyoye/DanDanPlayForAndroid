@@ -13,7 +13,7 @@ class SmbStorageFile(
     storage: SmbStorage,
     private val shareName: String?,
     private val filePath: String,
-    val fileLength: Long = 0L,
+    private val fileLength: Long = 0L,
     private val isDirectory: Boolean = true
 ) : AbstractStorageFile(storage) {
     override fun getRealFile(): Any {
@@ -37,6 +37,10 @@ class SmbStorageFile(
             return shareName ?: "unknown"
         }
         return Uri.parse(filePath).lastPathSegment ?: "unknown"
+    }
+
+    override fun fileLength(): Long {
+        return fileLength
     }
 
     override fun canRead(): Boolean {

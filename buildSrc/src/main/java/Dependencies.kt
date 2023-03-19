@@ -47,7 +47,7 @@ object Dependencies {
     }
 
     object Apache {
-        const val commons_net = "commons-net:commons-net:3.7.2"
+        const val commons_net = "commons-net:commons-net:3.9.0"
     }
 
     object Github {

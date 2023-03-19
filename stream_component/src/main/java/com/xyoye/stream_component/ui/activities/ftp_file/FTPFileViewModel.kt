@@ -55,7 +55,7 @@ class FTPFileViewModel : BaseViewModel() {
             }
 
             //打开根目录
-            openChildDirectory("")
+            openChildDirectory("/")
         }
     }
 

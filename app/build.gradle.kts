@@ -9,6 +9,7 @@ plugins {
 applicationSetup()
 
 android {
+    namespace = "com.xyoye.dandanplay"
     compileSdk = Versions.compileSdkVersion
     defaultConfig {
         applicationId = Versions.applicationId
@@ -20,9 +21,28 @@ android {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters.add("armeabi-v7a")
-            abiFilters.add("arm64-v8a")
+//        ndk {
+//            abiFilters.add("armeabi-v7a")
+//            abiFilters.add("arm64-v8a")
+//        }
+    }
+
+    flavorDimensions.add("dandanplay")
+
+    productFlavors {
+        create("arm64") {
+            dimension = "dandanplay"
+            ndk {
+                abiFilters.clear()
+                abiFilters.add("arm64-v8a")
+            }
+        }
+        create("armeabi") {
+            dimension = "dandanplay"
+            ndk {
+                abiFilters.clear()
+                abiFilters.add("armeabi-v7a")
+            }
         }
     }
 }
@@ -43,12 +63,4 @@ dependencies {
     implementation(project(":stream_component"))
 
     kapt(Dependencies.Alibaba.arouter_compiler)
-}
-android {
-    buildTypes {
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
-    namespace = "com.xyoye.dandanplay"
 }

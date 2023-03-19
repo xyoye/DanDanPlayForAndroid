@@ -39,6 +39,11 @@ interface StorageFile {
     fun fileName(): String
 
     /**
+     * 文件长度
+     */
+    fun fileLength(): Long
+
+    /**
      * 文件在所有媒体库中的唯一值
      */
     fun uniqueKey(): String

@@ -20,6 +20,10 @@ abstract class AbstractStorageFile(
 
     override var playHistory: PlayHistoryEntity? = null
 
+    override fun fileLength(): Long {
+        return 0
+    }
+
     override fun uniqueKey(): String {
         return uniqueKey
     }

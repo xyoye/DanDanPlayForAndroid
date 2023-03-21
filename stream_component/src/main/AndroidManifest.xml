@@ -39,9 +39,6 @@
             android:name=".ui.activities.remote_control.RemoteControlActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name=".ui.activities.ftp_file.FTPFileActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
             android:name=".ui.activities.screencast_connect.ScreencastConnectActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme" />

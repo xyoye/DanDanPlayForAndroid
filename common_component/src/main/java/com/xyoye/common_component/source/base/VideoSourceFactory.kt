@@ -58,7 +58,6 @@ object VideoSourceFactory {
         suspend fun create(mediaType: MediaType): BaseVideoSource? {
             this.mediaType = mediaType
             return when (mediaType) {
-                MediaType.FTP_SERVER -> FTPSourceFactory.create(this)
                 MediaType.MAGNET_LINK -> TorrentSourceFactory.create(this)
                 MediaType.REMOTE_STORAGE -> RemoteSourceFactory.create(this)
                 MediaType.LOCAL_STORAGE -> LocalSourceFactory.create(this)

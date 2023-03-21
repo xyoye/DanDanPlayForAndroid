@@ -3,7 +3,6 @@ package com.xyoye.stream_component.ui.activities.storage_file
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -17,7 +16,6 @@ import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageFactory
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.storage.impl.FtpStorage
 import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
@@ -29,7 +27,6 @@ import com.xyoye.stream_component.databinding.ActivityStorageFileBinding
 import com.xyoye.stream_component.ui.fragment.storage_file.StorageFileFragment
 import com.xyoye.stream_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.stream_component.utils.storage.StorageFileStyleHelper
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Route(path = RouteTable.Stream.StorageFile)
@@ -74,11 +71,6 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     override fun onResume() {
         super.onResume()
         notifyFragmentReappear()
-        if (storage is FtpStorage){
-            lifecycleScope.launch(Dispatchers.IO) {
-                (storage as FtpStorage).completePending()
-            }
-        }
     }
 
     override fun initView() {
@@ -147,7 +139,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     private fun checkBundle(): Boolean {
         storageLibrary
             ?: return false
-        val storage = StorageFactory.createStorage(storageLibrary!!)
+        val storage = StorageFactory.createStorage(storageLibrary!!, lifecycle)
             ?: return false
 
         this.storage = storage

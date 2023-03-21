@@ -1,5 +1,7 @@
 package com.xyoye.stream_component.ui.fragment.storage_file
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
@@ -10,21 +12,19 @@ import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 
 class StorageFileFragmentViewModel : BaseViewModel() {
     private val hidePointFile = AppConfig.isShowHiddenFile().not()
 
-    private val _fileLiveData = MutableSharedFlow<List<StorageFile>>()
-    val fileLiveData = _fileLiveData
+    private val _fileLiveData = MutableLiveData<List<StorageFile>>()
+    val fileLiveData: LiveData<List<StorageFile>> = _fileLiveData
 
     fun listFile(storage: Storage, directory: StorageFile?) {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
             if (target == null) {
-                _fileLiveData.emit(emptyList())
+                _fileLiveData.postValue(emptyList())
                 return@launch
             }
 
@@ -36,7 +36,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 ).onEach {
                     it.playHistory = getHistory(storage, it)
                 }
-            _fileLiveData.emit(childFiles)
+            _fileLiveData.postValue(childFiles)
         }
     }
 
@@ -57,7 +57,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
 
     fun updateHistory(storage: Storage) {
         viewModelScope.launch {
-            val fileList = _fileLiveData.lastOrNull() ?: return@launch
+            val fileList = _fileLiveData.value ?: return@launch
             val newFileList = fileList.map {
                 val history = getHistory(storage, it)
                 if (it.playHistory == history) {
@@ -66,7 +66,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 //历史记录不一致时，返回拷贝的新对象
                 it.clone().apply { playHistory = history }
             }
-            _fileLiveData.emit(newFileList)
+            _fileLiveData.postValue(newFileList)
         }
     }
 

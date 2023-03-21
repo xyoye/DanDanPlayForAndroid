@@ -3,7 +3,6 @@ package com.xyoye.stream_component.ui.fragment.storage_file
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.*
@@ -25,8 +24,6 @@ import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.FragmentStorageFileBinding
 import com.xyoye.stream_component.ui.activities.storage_file.StorageFileActivity
 import com.xyoye.stream_component.utils.storage.StorageFileDiffCallback
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.launch
 
 class StorageFileFragment :
     BaseFragment<StorageFileFragmentViewModel, FragmentStorageFileBinding>() {
@@ -51,7 +48,7 @@ class StorageFileFragment :
     override fun initView() {
         initRecyclerView()
 
-        viewModel.fileLiveData.launchAndCollectIn(this) {
+        viewModel.fileLiveData.observe(this) {
             dataBinding.loading.isVisible = false
             dataBinding.storageFileRv.isVisible = true
             ownerActivity.onDirectoryOpened(it)
@@ -109,7 +106,10 @@ class StorageFileFragment :
 
             itemBinding.titleTv.text = data.fileName()
             itemBinding.durationTv.text = getProgress(data)
-            itemBinding.lastPlayTimeTv.text = getPlayTime(data)
+
+            val lastPlayTime = getPlayTime(data)
+            itemBinding.lastPlayTimeTv.text = lastPlayTime
+            itemBinding.lastPlayTimeTv.isVisible = lastPlayTime.isNotEmpty()
 
             itemBinding.durationTv.isVisible = isShowDuration(data)
             itemBinding.danmuTipsTv.isVisible = isShowDanmu(data)
@@ -264,11 +264,6 @@ class StorageFileFragment :
     fun onReappear() {
         //更新视频关联的播放记录
         viewModel.updateHistory(ownerActivity.storage)
-        //更新副标题文案
-        lifecycleScope.launch {
-            val fileList = viewModel.fileLiveData.lastOrNull()?: emptyList()
-            ownerActivity.onDirectoryOpened(fileList)
-        }
     }
 
     private enum class ManageAction(val title: String, val icon: Int) {

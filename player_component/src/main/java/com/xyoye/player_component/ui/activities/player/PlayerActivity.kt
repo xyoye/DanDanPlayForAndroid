@@ -300,7 +300,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
-        // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
         videoController.setSubtitlePath(source.getSubtitlePath())
         //当弹幕绑定更新，保存变更
         videoController.observeDanmuSourceChanged { danmuPath, episodeId ->

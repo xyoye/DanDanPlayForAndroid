@@ -14,7 +14,6 @@ import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.utils.VideoLog
 import com.xyoye.subtitle.MixedSubtitle
-import com.xyoye.subtitle.SubtitleType
 import kotlinx.coroutines.launch
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import tv.danmaku.ijk.media.player.misc.ITrackInfo
@@ -238,10 +237,12 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun selectStream(stream: VideoStreamBean) {
-        if (stream.isDisableStream) {
+        if (stream.isExternalStream) {
+            // 使用外挂流时，禁用内部流
             disableStream(stream)
             return
         }
+
         mMediaPlayer.selectTrack(stream.trackId)
         mMediaPlayer.seekTo(getCurrentPosition())
     }
@@ -296,7 +297,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
             //视频字幕输出监听
             setOnTimedTextListener { _, timedText ->
-                val subtitle = MixedSubtitle(SubtitleType.TEXT, timedText?.text ?: "")
+                val subtitle = MixedSubtitle.fromText(timedText?.text)
                 mPlayerEventListener.onSubtitleTextOutput(subtitle)
                 VideoLog.d("$TAG--listener--onTextOutput--> ${subtitle.text}")
             }

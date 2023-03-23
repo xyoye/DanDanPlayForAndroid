@@ -23,15 +23,18 @@ data class VideoStreamBean(
     //分组ID（exo）
     val trackGroupId: Int = 0,
 
-    //是否为自定义的禁用流
-    val isDisableStream: Boolean = false
+    //是否为外挂流
+    val isExternalStream: Boolean = false,
+
+    //外挂流路径
+    val externalStreamPath: String = ""
 ) {
     companion object {
         //音频禁用流
-        private val DISABLE_AUDIO = VideoStreamBean(trackName = "Disable", isAudio = true, isDisableStream = true)
+        private val DISABLE_AUDIO = VideoStreamBean(trackName = "Disable", isAudio = true, isExternalStream = true)
 
         //字幕禁用流
-        private val DISABLE_SUBTITLE = VideoStreamBean(trackName = "Disable", isAudio = false, isDisableStream = true)
+        private val DISABLE_SUBTITLE = VideoStreamBean(trackName = "Disable", isAudio = false, isExternalStream = true)
 
         fun disableStream(isAudio: Boolean): VideoStreamBean {
             return if (isAudio) DISABLE_AUDIO else DISABLE_SUBTITLE

@@ -223,7 +223,7 @@ class DanDanVideoPlayer(
     }
 
     override fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
-        mVideoController?.updateSubtitle(subtitle)
+        mVideoController?.onSubtitleTextOutput(subtitle)
     }
 
     private fun initPlayer() {

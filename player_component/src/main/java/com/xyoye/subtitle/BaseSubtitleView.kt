@@ -101,7 +101,7 @@ open class BaseSubtitleView @JvmOverloads constructor(
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
     }
 
-    protected fun showSubtitle(subtitleList: MutableList<SubtitleText>) {
+    fun showSubtitle(subtitleList: List<SubtitleText>) {
         val subtitleMap = subtitleList.groupBy { it.top }
 
         mBottomSubtitles.clear()

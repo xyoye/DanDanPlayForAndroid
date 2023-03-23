@@ -1,16 +1,9 @@
 package com.xyoye.subtitle
 
-import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.subtitle.exception.FatalParsingException
 import com.xyoye.subtitle.format.FormatFactory
 import com.xyoye.subtitle.info.TimedTextObject
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.max
 import kotlin.math.min
@@ -22,93 +15,21 @@ import kotlin.math.min
  */
 
 class ExternalSubtitleManager {
-
-    companion object {
-        private const val UPDATE_SUBTITLE_MSG = 0x1
-        private const val UPDATE_SUBTITLE_INTERVAL_MS = 500L
-    }
-
-    private lateinit var lifecycleScope: LifecycleCoroutineScope
-    private lateinit var output: SubtitleOutput
-    private lateinit var handler: Handler
-    private var onSubtitleLoaded: ((sourceUrl: String, isLoaded: Boolean) -> Unit)? = null
-
-    private var offsetTimeMs: Long = 0L
     private var mTimedTextObject: TimedTextObject? = null
 
-    private val handlerCallback = Handler.Callback {
-        if (it.what == UPDATE_SUBTITLE_MSG) {
-            //停止前发送一个空字幕
-            if (!mRunning) {
-                output.onSubtitleOutput(arrayListOf())
-                mStopped = true
-                return@Callback true
-            }
+    fun loadSubtitle(subtitlePath: String) {
+        mTimedTextObject = parserSource(subtitlePath)
+    }
 
-            //字幕提前500ms出现，以减少延迟感
-            val curPosition = output.getCurrentPosition() + offsetTimeMs + 500L
-            output.onSubtitleOutput(findSubtitle(curPosition))
-            handler.apply {
-                sendMessageDelayed(obtainMessage(UPDATE_SUBTITLE_MSG), UPDATE_SUBTITLE_INTERVAL_MS)
-            }
+    fun getSubtitle(position: Long): MixedSubtitle? {
+        if (mTimedTextObject == null) {
+            return null
         }
-        return@Callback true
-    }
-
-    @Volatile
-    private var mRunning = false
-
-    @Volatile
-    private var mStopped = true
-
-    fun bindOutput(lifecycleScope: LifecycleCoroutineScope, output: SubtitleOutput) {
-        this.lifecycleScope = lifecycleScope
-        this.output = output
-        handler = Handler(Looper.getMainLooper(), handlerCallback)
-    }
-
-    fun bindSource(subtitlePath: String, playWhenReady: Boolean = false) {
-        lifecycleScope.launch(context = Dispatchers.Main) {
-            mTimedTextObject = lifecycleScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-                parserSource(subtitlePath)
-            }.await()
-
-            if (mTimedTextObject != null && playWhenReady) {
-                start()
-            }
-            onSubtitleLoaded?.invoke(subtitlePath, mTimedTextObject != null)
-        }
-    }
-
-    fun start() {
-        if (mRunning)
-            return
-        if (!mRunning && !mStopped) {
-            mRunning = true
-            return
-        }
-        mRunning = true
-        handler.sendEmptyMessage(UPDATE_SUBTITLE_MSG)
-    }
-
-    fun stop() {
-        mRunning = false
+        return MixedSubtitle(SubtitleType.TEXT, findSubtitle(position))
     }
 
     fun release() {
-        stop()
         mTimedTextObject = null
-        handler.removeMessages(UPDATE_SUBTITLE_MSG)
-    }
-
-    fun setOffset(offsetMs: Long) {
-        offsetTimeMs = offsetMs
-        if (mRunning)
-            handler.sendEmptyMessage(UPDATE_SUBTITLE_MSG)
-    }
-
-    fun observerOnSubtitleLoad(loadedCallback: ((sourceUrl: String, isLoaded: Boolean) -> Unit)?) {
-        this.onSubtitleLoaded = loadedCallback
     }
 
     /**

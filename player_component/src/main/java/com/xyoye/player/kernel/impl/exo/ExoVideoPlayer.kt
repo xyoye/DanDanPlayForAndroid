@@ -214,7 +214,8 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     }
 
     override fun selectStream(stream: VideoStreamBean) {
-        if (stream.isDisableStream) {
+        if (stream.isExternalStream) {
+            // 使用外挂流时，禁用内部流
             disableStream(stream)
             return
         }
@@ -309,13 +310,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
 
         if (subtitleType == SubtitleType.BITMAP) {
             //以图片输出字幕
-            mPlayerEventListener.onSubtitleTextOutput(
-                MixedSubtitle(
-                    SubtitleType.BITMAP,
-                    null,
-                    cues
-                )
-            )
+            mPlayerEventListener.onSubtitleTextOutput(MixedSubtitle.fromBitmap(cues))
         } else {
             //以文字输出字幕
             val textBuilder = StringBuilder()
@@ -327,7 +322,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             else
                 textBuilder.toString()
             mPlayerEventListener.onSubtitleTextOutput(
-                MixedSubtitle(SubtitleType.TEXT, subtitleText)
+                MixedSubtitle.fromText(subtitleText)
             )
         }
     }

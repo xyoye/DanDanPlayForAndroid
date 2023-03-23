@@ -220,7 +220,8 @@ class SwitchSourceView(
         }
 
         if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
-            mControlWrapper.setSubtitlePath(data.filePath, playWhenReady = true)
+            mControlWrapper.addSubtitleStream(data.filePath)
+            mControlWrapper.onSubtitleSourceUpdate(data.filePath)
         } else {
             mControlWrapper.onDanmuSourceChanged(data.filePath)
         }

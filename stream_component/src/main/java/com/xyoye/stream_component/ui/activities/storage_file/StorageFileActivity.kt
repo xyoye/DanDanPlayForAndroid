@@ -62,6 +62,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         ARouter.getInstance().inject(this)
 
         if (checkBundle().not()) {
+            super.onCreate(savedInstanceState)
             finish()
             return
         }
@@ -75,7 +76,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     override fun initView() {
         mToolbarStyleHelper.observerChildScroll()
-        title = storageLibrary!!.displayName
+        title = storageLibrary?.displayName
         updateToolbarSubtitle(0, 0)
 
         initPathRv()

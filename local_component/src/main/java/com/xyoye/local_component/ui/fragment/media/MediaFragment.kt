@@ -108,11 +108,6 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun launchMediaStorage(data: MediaLibraryEntity) {
         when (data.mediaType) {
-            MediaType.LOCAL_STORAGE -> {
-                ARouter.getInstance()
-                    .build(RouteTable.Local.LocalMediaStorage)
-                    .navigation()
-            }
             MediaType.STREAM_LINK, MediaType.MAGNET_LINK, MediaType.OTHER_STORAGE -> {
                 ARouter.getInstance()
                     .build(RouteTable.Local.PlayHistory)
@@ -128,6 +123,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             MediaType.SCREEN_CAST -> {
                 viewModel.checkScreenDeviceRunning(data)
             }
+            MediaType.LOCAL_STORAGE,
             MediaType.FTP_SERVER,
             MediaType.SMB_SERVER,
             MediaType.WEBDAV_SERVER,

@@ -39,10 +39,6 @@ class WebDavStorageFile(
         return davResource.name
     }
 
-    override fun canRead(): Boolean {
-        return true
-    }
-
     override fun clone(): StorageFile {
         return WebDavStorageFile(
             davResource,

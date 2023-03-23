@@ -1,10 +1,7 @@
 package com.xyoye.common_component.storage
 
 import androidx.lifecycle.Lifecycle
-import com.xyoye.common_component.storage.impl.DocumentFileStorage
-import com.xyoye.common_component.storage.impl.FtpStorage
-import com.xyoye.common_component.storage.impl.SmbStorage
-import com.xyoye.common_component.storage.impl.WebDavStorage
+import com.xyoye.common_component.storage.impl.*
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 
@@ -20,6 +17,7 @@ object StorageFactory {
             MediaType.WEBDAV_SERVER -> WebDavStorage(library)
             MediaType.SMB_SERVER -> SmbStorage(library)
             MediaType.FTP_SERVER -> FtpStorage(library, lifecycle)
+            MediaType.LOCAL_STORAGE -> VideoStorage(library)
             else -> null
         }
     }

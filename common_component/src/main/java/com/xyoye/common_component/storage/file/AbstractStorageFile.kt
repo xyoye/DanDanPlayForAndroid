@@ -1,8 +1,8 @@
 package com.xyoye.common_component.storage.file
 
 import com.xyoye.common_component.extension.toMd5String
-import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.common_component.storage.AbstractStorage
+import com.xyoye.data_component.entity.PlayHistoryEntity
 
 /**
  * Created by xyoye on 2022/12/29
@@ -46,6 +46,14 @@ abstract class AbstractStorageFile(
 
     override fun close() {
         //do nothing
+    }
+
+    override fun canRead(): Boolean {
+        return true
+    }
+
+    override fun isVideoFile(): Boolean {
+        return com.xyoye.common_component.utils.isVideoFile(fileName())
     }
 
     abstract fun getRealFile(): Any

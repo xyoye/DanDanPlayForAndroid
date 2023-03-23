@@ -9,7 +9,6 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.FileComparator
-import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,7 +73,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         if (file.isDirectory()) {
             return null
         }
-        if (isVideoFile(file.fileName()).not()) {
+        if (file.isVideoFile().not()) {
             return null
         }
         return DatabaseManager.instance
@@ -98,6 +97,6 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             return true
         }
         //视频文件，展示
-        return isVideoFile(storageFile.fileName())
+        return storageFile.isVideoFile()
     }
 }

@@ -73,6 +73,8 @@ interface StorageFile {
      */
     fun clone(): StorageFile
 
+    fun isVideoFile(): Boolean
+
     /**
      * 关闭文件
      */

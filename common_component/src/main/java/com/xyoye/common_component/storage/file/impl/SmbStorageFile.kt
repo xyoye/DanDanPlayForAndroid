@@ -43,12 +43,12 @@ class SmbStorageFile(
         return fileLength
     }
 
-    override fun canRead(): Boolean {
-        return true
-    }
-
     override fun clone(): StorageFile {
-        return SmbStorageFile(storage as SmbStorage, shareName, filePath, fileLength, isDirectory)
+        return SmbStorageFile(
+            storage as SmbStorage, shareName, filePath, fileLength, isDirectory
+        ).also {
+            it.playHistory = playHistory
+        }
     }
 
     override fun isRootFile(): Boolean {

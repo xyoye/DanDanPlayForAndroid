@@ -48,11 +48,11 @@ class FtpStorageFile(
         return ftpFile.size
     }
 
-    override fun canRead(): Boolean {
-        return true
-    }
-
     override fun clone(): StorageFile {
-        return FtpStorageFile(storage as FtpStorage, parentPath, ftpFile)
+        return FtpStorageFile(
+            storage as FtpStorage, parentPath, ftpFile
+        ).also {
+            it.playHistory = playHistory
+        }
     }
 }

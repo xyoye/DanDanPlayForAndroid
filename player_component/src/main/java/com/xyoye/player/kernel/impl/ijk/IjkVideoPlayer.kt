@@ -17,6 +17,7 @@ import com.xyoye.subtitle.MixedSubtitle
 import com.xyoye.subtitle.SubtitleType
 import kotlinx.coroutines.launch
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
+import tv.danmaku.ijk.media.player.misc.ITrackInfo
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
 
 /**
@@ -237,6 +238,10 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun selectStream(stream: VideoStreamBean) {
+        if (stream.isDisableStream) {
+            disableStream(stream)
+            return
+        }
         mMediaPlayer.selectTrack(stream.trackId)
         mMediaPlayer.seekTo(getCurrentPosition())
     }
@@ -323,6 +328,19 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             )
             streams.add(stream)
         }
+        // 添加自定义的禁用流
+        streams.add(0, VideoStreamBean.disableStream(isAudio))
         return streams
+    }
+
+    /**
+     * 禁用流
+     */
+    private fun disableStream(stream: VideoStreamBean) {
+        val type = if (stream.isAudio) ITrackInfo.MEDIA_TRACK_TYPE_AUDIO else ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT
+        val selectedTrackId = mMediaPlayer.getSelectedTrack(type)
+        if (selectedTrackId >= 0) {
+            mMediaPlayer.deselectTrack(selectedTrackId)
+        }
     }
 }

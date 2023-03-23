@@ -214,6 +214,11 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     }
 
     override fun selectStream(stream: VideoStreamBean) {
+        if (stream.isDisableStream) {
+            disableStream(stream)
+            return
+        }
+
         val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
         val mediaTrackGroup = exoplayer.currentTracks
             .groups.getOrNull(stream.trackGroupId)
@@ -370,7 +375,20 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                 streams.add(stream)
             }
         }
+        // 添加自定义的禁用流
+        streams.add(0, VideoStreamBean.disableStream(isAudio))
         return streams
+    }
+
+    /**
+     * 禁用流
+     */
+    private fun disableStream(stream: VideoStreamBean) {
+        val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
+        val trackParams = TrackSelectionParameters.Builder(mContext)
+            .setTrackTypeDisabled(streamType, true)
+            .build()
+        mTrackSelector.parameters = trackParams
     }
 
     fun setTrackSelector(trackSelector: TrackSelector) {

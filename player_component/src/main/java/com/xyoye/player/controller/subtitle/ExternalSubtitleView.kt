@@ -126,6 +126,7 @@ class ExternalSubtitleView(
         }
         lifecycleScope.launch(Dispatchers.IO) {
             mSubtitleManager.loadSubtitle(stream.externalStreamPath)
+            mControlWrapper.onSubtitleSourceUpdate(stream.externalStreamPath)
         }
     }
 

@@ -7,10 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.data_component.enums.PixelFormat
-import com.xyoye.data_component.enums.PlayerType
-import com.xyoye.data_component.enums.VLCHWDecode
-import com.xyoye.data_component.enums.VLCPixelFormat
+import com.xyoye.data_component.enums.*
 import com.xyoye.user_component.R
 
 /**
@@ -49,6 +46,11 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
             Pair("完全加速", VLCHWDecode.HW_ACCELERATION_FULL.value.toString())
         )
 
+        val vlcAudioOutput = mapOf(
+            Pair("自动", VLCAudioOutput.AUTO.value),
+            Pair("OpenSL ES", VLCAudioOutput.OPEN_SL_ES.value),
+        )
+
         val ijkPreference = arrayOf(
             "media_code_c",
             "media_code_c_h265",
@@ -58,7 +60,9 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
 
         val vlcPreference = arrayOf(
             "vlc_pixel_format_type",
-            "vlc_hardware_acceleration"
+            "vlc_hardware_acceleration",
+            "vlc_audio_output",
+            "vlc_accelerate_optimize"
         )
     }
 
@@ -113,20 +117,29 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
             entryValues = vlcHWDecode.values.toTypedArray()
         }
 
+        //VLC音频输出
+        findPreference<ListPreference>("vlc_audio_output")?.apply {
+            entries = vlcAudioOutput.keys.toTypedArray()
+            entryValues = vlcAudioOutput.values.toTypedArray()
+        }
+
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun updateVisible(playerType: String){
-        //初始化IJK配置的显示
-        ijkPreference.forEach { key ->
-            findPreference<Preference>(key)?.isVisible =
-                playerType == PlayerType.TYPE_IJK_PLAYER.value.toString()
-        }
-
-        //初始化VLC配置的显示
-        vlcPreference.forEach { key ->
-            findPreference<Preference>(key)?.isVisible =
-                playerType == PlayerType.TYPE_VLC_PLAYER.value.toString()
+    private fun updateVisible(playerType: String) {
+        when (playerType) {
+            PlayerType.TYPE_IJK_PLAYER.value.toString() -> {
+                vlcPreference.forEach { findPreference<Preference>(it)?.isVisible = false }
+                ijkPreference.forEach { findPreference<Preference>(it)?.isVisible = true }
+            }
+            PlayerType.TYPE_VLC_PLAYER.value.toString() -> {
+                ijkPreference.forEach { findPreference<Preference>(it)?.isVisible = false }
+                vlcPreference.forEach { findPreference<Preference>(it)?.isVisible = true }
+            }
+            else -> {
+                vlcPreference.forEach { findPreference<Preference>(it)?.isVisible = false }
+                ijkPreference.forEach { findPreference<Preference>(it)?.isVisible = false }
+            }
         }
     }
 
@@ -138,6 +151,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 "pixel_format_type" -> PlayerConfig.getUsePixelFormat()
                 "vlc_pixel_format_type" -> PlayerConfig.getUseVLCPixelFormat()
                 "vlc_hardware_acceleration" -> PlayerConfig.getUseVLCHWDecoder().toString()
+                "vlc_audio_output" -> PlayerConfig.getUseVLCAudioOutput()
                 else -> super.getString(key, defValue)
             }
         }
@@ -149,6 +163,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                     "pixel_format_type" -> PlayerConfig.putUsePixelFormat(value)
                     "vlc_pixel_format_type" -> PlayerConfig.putUseVLCPixelFormat(value)
                     "vlc_hardware_acceleration" -> PlayerConfig.putUseVLCHWDecoder(value.toInt())
+                    "vlc_audio_output" -> PlayerConfig.putUseVLCAudioOutput(value)
                     else -> super.putString(key, value)
                 }
             } else {
@@ -162,6 +177,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 "media_code_c_h265" -> PlayerConfig.isUseMediaCodeCH265()
                 "open_sl_es" -> PlayerConfig.isUseOpenSlEs()
                 "surface_renders" -> PlayerConfig.isUseSurfaceView()
+                "vlc_accelerate_optimize" -> PlayerConfig.isVlcAccelerateOptimize()
                 else -> super.getBoolean(key, defValue)
             }
         }
@@ -172,6 +188,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 "media_code_c_h265" -> PlayerConfig.putUseMediaCodeCH265(value)
                 "open_sl_es" -> PlayerConfig.putUseOpenSlEs(value)
                 "surface_renders" -> PlayerConfig.putUseSurfaceView(value)
+                "vlc_accelerate_optimize" -> PlayerConfig.putVlcAccelerateOptimize(value)
                 else -> super.putBoolean(key, value)
             }
         }

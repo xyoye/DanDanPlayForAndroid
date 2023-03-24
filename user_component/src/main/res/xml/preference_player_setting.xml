@@ -20,8 +20,8 @@
         app:icon="@drawable/ic_player_setting_codec" />
     <ListPreference
         android:key="vlc_hardware_acceleration"
-        android:title="硬件加速"
         android:summary="禁用：稳定性更高\n解码：可能提升性能\n完全：可能进一步提升性能"
+        android:title="硬件加速"
         app:icon="@drawable/ic_player_setting_codec" />
     <SwitchPreference
         android:key="media_code_c_h265"
@@ -32,6 +32,16 @@
         android:summary="只要播放器还有声音，就不要打开这个设置"
         android:title="OpenSL ES"
         app:icon="@drawable/ic_player_setting_opensl" />
+    <ListPreference
+        android:key="vlc_audio_output"
+        android:summary="更改VLC输出音频的方式"
+        android:title="音频输出"
+        app:icon="@drawable/ic_player_setting_opensl" />
+    <SwitchPreference
+        android:key="vlc_accelerate_optimize"
+        android:summary="优化VLC开启倍速音频异常 (实验性)"
+        android:title="倍速音频优化"
+        app:icon="@drawable/ic_player_setting_vlc_audio" />
     <SwitchPreference
         android:key="surface_renders"
         android:summary="使用后视频渲染性能更高，但不支持截图"

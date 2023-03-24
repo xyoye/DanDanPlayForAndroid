@@ -310,7 +310,7 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         val targetType = if (isAudio)
             IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO
         else
-            IjkTrackInfo.MEDIA_TRACK_TYPE_SUBTITLE
+            IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT
 
         val streams = mutableListOf<VideoStreamBean>()
         val selectedStreamId = mMediaPlayer.getSelectedTrack(targetType)

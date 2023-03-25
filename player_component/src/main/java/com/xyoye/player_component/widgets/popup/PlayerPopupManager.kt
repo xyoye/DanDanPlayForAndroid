@@ -96,7 +96,7 @@ class PlayerPopupManager(
         val popupSize = computerPopupSize(player.getVideoSize())
         //悬浮窗位置
         mPosition = Point(
-            appContext.getScreenWidth(false) - popupSize.x - PopupGestureHandler.POPUP_MARGIN,
+            appContext.getScreenWidth(false) - popupSize.x - PopupGestureHandler.POPUP_MARGIN_X,
             ((appContext.getScreenHeight() - popupSize.y) * 0.5).toInt()
         )
 
@@ -163,7 +163,7 @@ class PlayerPopupManager(
         val currentOrientation = appContext.resources.configuration.orientation
         if (currentOrientation != mOrientation) {
             mOrientation = currentOrientation
-            mGestureHandler.correctPosition(appContext, width)
+            mGestureHandler.correctPosition(appContext, width, height)
         }
     }
 }

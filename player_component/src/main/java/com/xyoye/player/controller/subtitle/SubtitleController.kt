@@ -1,6 +1,7 @@
 package com.xyoye.player.controller.subtitle
 
 import android.content.Context
+import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.wrapper.InterSubtitleController
 import com.xyoye.subtitle.MixedSubtitle
@@ -11,37 +12,30 @@ import com.xyoye.subtitle.SubtitleType
  */
 
 class SubtitleController(context: Context) : InterSubtitleController {
-
     private val subtitleTextView = SubtitleTextView(context)
     private val subtitleImageView = SubtitleImageView(context)
+    private val externalSubtitleView = ExternalSubtitleView(context)
 
-    private val subtitleViews : Array<InterControllerView> = arrayOf(
+    private val subtitleViews: Array<InterControllerView> = arrayOf(
         subtitleTextView,
-        subtitleImageView
+        subtitleImageView,
+        externalSubtitleView
     )
 
-    override fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
-        subtitleTextView.getSubtitleManager().observerOnSubtitleLoad(callback)
+    override fun addSubtitleStream(filePath: String) {
+        externalSubtitleView.addSubtitleStream(filePath)
     }
 
-    override fun setImageSubtitleEnable(enable: Boolean) {
-        subtitleImageView.setSubtitleEnable(true)
+    override fun updateSubtitleOffsetTime() {
+        externalSubtitleView.updateOffsetTime()
     }
 
-    override fun setTextSubtitleDisable() {
-        subtitleTextView.setSubtitleDisable()
+    override fun getExternalSubtitleStream(): List<VideoStreamBean> {
+        return externalSubtitleView.getExternalSubtitleStream()
     }
 
-    override fun showExternalTextSubtitle() {
-        subtitleTextView.showExternalSubtitle()
-    }
-
-    override fun showInnerTextSubtitle() {
-        subtitleTextView.showInnerSubtitle()
-    }
-
-    override fun setSubtitlePath(subtitlePath: String, playWhenReady: Boolean) {
-        subtitleTextView.setSubtitlePath(subtitlePath, playWhenReady)
+    override fun selectSubtitleStream(stream: VideoStreamBean) {
+        externalSubtitleView.selectSubtitleStream(stream)
     }
 
     override fun updateTextSize() {
@@ -60,20 +54,7 @@ class SubtitleController(context: Context) : InterSubtitleController {
         subtitleTextView.updateStrokeColor()
     }
 
-    override fun updateSubtitleOffsetTime() {
-        subtitleTextView.updateOffsetTime()
-    }
-
-    override fun subtitleRelease() {
-        subtitleImageView.release()
-        subtitleTextView.release()
-    }
-
-    fun getViews(): Array<InterControllerView> {
-        return subtitleViews
-    }
-
-    fun updateSubtitle(subtitle: MixedSubtitle) {
+    override fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
         when (subtitle.type) {
             SubtitleType.TEXT -> {
                 //显示文字字幕前，清空图片字幕
@@ -93,5 +74,9 @@ class SubtitleController(context: Context) : InterSubtitleController {
 
             }
         }
+    }
+
+    fun getViews(): Array<InterControllerView> {
+        return subtitleViews
     }
 }

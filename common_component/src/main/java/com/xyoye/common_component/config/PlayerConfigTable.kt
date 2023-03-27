@@ -1,9 +1,6 @@
 package com.xyoye.common_component.config
 
-import com.xyoye.data_component.enums.PixelFormat
-import com.xyoye.data_component.enums.PlayerType
-import com.xyoye.data_component.enums.VLCHWDecode
-import com.xyoye.data_component.enums.VLCPixelFormat
+import com.xyoye.data_component.enums.*
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -44,6 +41,14 @@ object PlayerConfigTable {
     //VLC内核硬件加速
     @MMKVFiled
     val useVLCHWDecoder = VLCHWDecode.HW_ACCELERATION_AUTO.value
+
+    //VLC音频输出
+    @MMKVFiled
+    val useVLCAudioOutput = VLCAudioOutput.AUTO.value
+
+    //VLC加速优化
+    @MMKVFiled
+    val vlcAccelerateOptimize = true
 
     //视频倍速
     @MMKVFiled

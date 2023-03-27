@@ -81,7 +81,7 @@ interface InterVideoController {
     fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int)
 
     /**
-     * 弹幕文件更新
+     * 字幕文件更新
      */
     fun onSubtitleSourceUpdate(subtitlePath: String)
 

@@ -54,7 +54,7 @@ abstract class BaseVideoController(
         override fun run() {
             val position = mControlWrapper.getCurrentPosition()
             handleProgressChanged(mControlWrapper.getDuration(), position)
-            postDelayed(this, 1000L)
+            postDelayed(this, 500L)
         }
     }
 
@@ -261,7 +261,6 @@ abstract class BaseVideoController(
 
     open fun release() {
         getDanmuController().danmuRelease()
-        getSubtitleController().subtitleRelease()
         getSettingController().settingRelease()
     }
 

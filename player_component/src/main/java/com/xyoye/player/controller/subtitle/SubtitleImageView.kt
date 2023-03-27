@@ -27,7 +27,6 @@ class SubtitleImageView(
     private val subtitleView = SubtitleView(context)
 
     private var lastCues: List<Cue>? = null
-    private var mSubtitleEnable = false
 
     init {
         subtitleView.setUserDefaultStyle()
@@ -73,24 +72,10 @@ class SubtitleImageView(
 
     }
 
-    fun setSubtitleEnable(enable: Boolean) {
-        if (!enable) {
-            setSubtitle(null)
-        }
-        mSubtitleEnable = enable
-    }
-
     fun isEmptySubtitle() = lastCues.isNullOrEmpty()
 
     fun setSubtitle(cues: List<Cue>?) {
-        if (mSubtitleEnable) {
-            lastCues = cues
-            subtitleView.setCues(cues)
-        }
-    }
-
-    fun release() {
-        lastCues = null
-        mSubtitleEnable = false
+        lastCues = cues
+        subtitleView.setCues(cues)
     }
 }

@@ -214,6 +214,12 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     }
 
     override fun selectStream(stream: VideoStreamBean) {
+        if (stream.isExternalStream) {
+            // 使用外挂流时，禁用内部流
+            disableStream(stream)
+            return
+        }
+
         val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
         val mediaTrackGroup = exoplayer.currentTracks
             .groups.getOrNull(stream.trackGroupId)
@@ -304,13 +310,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
 
         if (subtitleType == SubtitleType.BITMAP) {
             //以图片输出字幕
-            mPlayerEventListener.onSubtitleTextOutput(
-                MixedSubtitle(
-                    SubtitleType.BITMAP,
-                    null,
-                    cues
-                )
-            )
+            mPlayerEventListener.onSubtitleTextOutput(MixedSubtitle.fromBitmap(cues))
         } else {
             //以文字输出字幕
             val textBuilder = StringBuilder()
@@ -322,7 +322,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             else
                 textBuilder.toString()
             mPlayerEventListener.onSubtitleTextOutput(
-                MixedSubtitle(SubtitleType.TEXT, subtitleText)
+                MixedSubtitle.fromText(subtitleText)
             )
         }
     }
@@ -370,7 +370,20 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                 streams.add(stream)
             }
         }
+        // 添加自定义的禁用流
+        streams.add(0, VideoStreamBean.disableStream(isAudio))
         return streams
+    }
+
+    /**
+     * 禁用流
+     */
+    private fun disableStream(stream: VideoStreamBean) {
+        val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
+        val trackParams = TrackSelectionParameters.Builder(mContext)
+            .setTrackTypeDisabled(streamType, true)
+            .build()
+        mTrackSelector.parameters = trackParams
     }
 
     fun setTrackSelector(trackSelector: TrackSelector) {

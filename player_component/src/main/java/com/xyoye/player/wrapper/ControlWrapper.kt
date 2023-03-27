@@ -4,9 +4,12 @@ import android.graphics.PointF
 import android.view.KeyEvent
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
+import com.xyoye.subtitle.MixedSubtitle
 
 /**
  * Created by xyoye on 2020/11/1.
@@ -101,11 +104,29 @@ class ControlWrapper(
     }
 
     override fun getSubtitleStream(): List<VideoStreamBean> {
-        return mVideoPlayer.getSubtitleStream()
+        val subtitleStream = mutableListOf<VideoStreamBean>()
+        //内嵌字幕流
+        val embeddedSubtitle = mVideoPlayer.getSubtitleStream()
+        subtitleStream.addAll(embeddedSubtitle)
+
+        //非VLC内核时，添加外挂字幕流。VLC内核会处理外挂字幕流
+        if (PlayerInitializer.playerType != PlayerType.TYPE_VLC_PLAYER) {
+            //外挂字幕流
+            val externalSubtitle = mSubtitleController.getExternalSubtitleStream()
+            //任意外挂字幕是选中状态，内嵌字幕全部取消选中
+            if (externalSubtitle.any { it.isChecked }) {
+                subtitleStream.forEach { it.isChecked = false }
+            }
+            subtitleStream.addAll(externalSubtitle)
+        }
+        return subtitleStream
     }
 
     override fun selectStream(stream: VideoStreamBean) {
-        return mVideoPlayer.selectStream(stream)
+        mVideoPlayer.selectStream(stream)
+        if (stream.isAudio.not()) {
+            mSubtitleController.selectSubtitleStream(stream)
+        }
     }
 
     /**
@@ -256,32 +277,12 @@ class ControlWrapper(
      * ------------------Subtitle Controller----------------------
      */
 
-    override fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?) {
-        mSubtitleController.setSubtitleLoadedCallback(callback)
-    }
-
-    override fun setImageSubtitleEnable(enable: Boolean) {
-        mSubtitleController.setImageSubtitleEnable(enable)
-    }
-
-    override fun setTextSubtitleDisable() {
-        mSubtitleController.setTextSubtitleDisable()
-    }
-
-    override fun showExternalTextSubtitle() {
-        mSubtitleController.showExternalTextSubtitle()
-    }
-
-    override fun showInnerTextSubtitle() {
-        mSubtitleController.showInnerTextSubtitle()
-    }
-
-    override fun setSubtitlePath(subtitlePath: String, playWhenReady: Boolean) {
+    override fun addSubtitleStream(filePath: String) {
         //是否由播放器处理外挂字幕
-        if (interceptSubtitle(subtitlePath))
+        if (interceptSubtitle(filePath))
             return
         //由字幕控件处理外挂字幕
-        mSubtitleController.setSubtitlePath(subtitlePath, playWhenReady)
+        mSubtitleController.addSubtitleStream(filePath)
     }
 
     override fun updateTextSize() {
@@ -305,8 +306,16 @@ class ControlWrapper(
         mVideoPlayer.updateSubtitleOffsetTime()
     }
 
-    override fun subtitleRelease() {
-        mSubtitleController.subtitleRelease()
+    override fun getExternalSubtitleStream(): List<VideoStreamBean> {
+        return mSubtitleController.getExternalSubtitleStream()
+    }
+
+    override fun selectSubtitleStream(stream: VideoStreamBean) {
+        mSubtitleController.selectSubtitleStream(stream)
+    }
+
+    override fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
+        mSubtitleController.onSubtitleTextOutput(subtitle)
     }
 
     /**

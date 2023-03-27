@@ -10,7 +10,6 @@ import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
-import com.xyoye.player.controller.video.PlayerPopupControlView
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
 import com.xyoye.player.controller.video.*
@@ -176,7 +175,7 @@ class VideoController(
     fun setSubtitlePath(url: String?) {
         if (url.isNullOrEmpty())
             return
-        mControlWrapper.setSubtitlePath(url)
+        mControlWrapper.addSubtitleStream(url)
     }
 
     /**
@@ -289,8 +288,8 @@ class VideoController(
      *
      * 由播放器调用
      */
-    fun updateSubtitle(subtitle: MixedSubtitle) {
-        mSubtitleController.updateSubtitle(subtitle)
+    fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
+        mSubtitleController.onSubtitleTextOutput(subtitle)
     }
 
     private fun considerSeekToLastPlay() {

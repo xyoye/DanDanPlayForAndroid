@@ -1,5 +1,8 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.subtitle.MixedSubtitle
+
 /**
  * Created by xyoye on 2021/4/15.
  */
@@ -7,34 +10,14 @@ package com.xyoye.player.wrapper
 interface InterSubtitleController {
 
     /**
-     * 设置字幕加载完成的回调
+     * 添加字幕流
      */
-    fun setSubtitleLoadedCallback(callback: ((String, Boolean) -> Unit)?)
+    fun addSubtitleStream(filePath: String)
 
     /**
-     * 设置图片字幕开关
+     * 更新字幕偏移时间
      */
-    fun setImageSubtitleEnable(enable: Boolean)
-
-    /**
-     * 设置文字字幕开关
-     */
-    fun setTextSubtitleDisable()
-
-    /**
-     * 是否显示外挂字幕
-     */
-    fun showExternalTextSubtitle()
-
-    /**
-     * 是否显示内置字幕
-     */
-    fun showInnerTextSubtitle()
-
-    /**
-     * 设置字幕路径
-     */
-    fun setSubtitlePath(subtitlePath: String, playWhenReady: Boolean = false)
+    fun updateSubtitleOffsetTime()
 
     /**
      * 更新字幕文字大小
@@ -57,9 +40,17 @@ interface InterSubtitleController {
     fun updateStrokeColor()
 
     /**
-     * 更新字幕偏移时间
+     * 获取外挂字幕流
      */
-    fun updateSubtitleOffsetTime()
+    fun getExternalSubtitleStream(): List<VideoStreamBean>
 
-    fun subtitleRelease()
+    /**
+     * 选择字幕流
+     */
+    fun selectSubtitleStream(stream: VideoStreamBean)
+
+    /**
+     * 字幕输出
+     */
+    fun onSubtitleTextOutput(subtitle: MixedSubtitle)
 }

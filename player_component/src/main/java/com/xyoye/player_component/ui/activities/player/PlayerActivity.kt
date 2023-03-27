@@ -36,7 +36,6 @@ import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
 import com.xyoye.player_component.utils.BatteryHelper
-import com.xyoye.player_component.utils.PlayerLaunchHelper
 import com.xyoye.player_component.widgets.popup.PlayerPopupManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -111,20 +110,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         applyPlaySource(VideoSourceManager.getInstance().getSource())
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+    override fun onResume() {
+        super.onResume()
 
         exitPopupMode()
-
-        val newSource = VideoSourceManager.getInstance().getSource()
-        if (newSource != null && newSource.getUniqueKey() != videoSource?.getUniqueKey()) {
-            applyPlaySource(newSource)
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        PlayerLaunchHelper.instance.register(this)
     }
 
     override fun onPause() {
@@ -145,6 +134,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         super.onDestroy()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (danDanPlayer.onBackPressed()) {
             return
@@ -155,11 +145,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return danDanPlayer.onKeyDown(keyCode, event) or super.onKeyDown(keyCode, event)
-    }
-
-    override fun finish() {
-        PlayerLaunchHelper.instance.unregister(this)
-        super.finish()
     }
 
     override fun onScreenLocked() {
@@ -300,7 +285,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
-        // TODO: 2021/11/16 逻辑有问题，应该在Player实例化之前就可以执行
         videoController.setSubtitlePath(source.getSubtitlePath())
         //当弹幕绑定更新，保存变更
         videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
@@ -387,6 +371,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             VLCPixelFormat.valueOf(PlayerConfig.getUseVLCPixelFormat())
         PlayerInitializer.Player.vlcHWDecode =
             VLCHWDecode.valueOf(PlayerConfig.getUseVLCHWDecoder())
+        PlayerInitializer.Player.vlcAudioOutput =
+            VLCAudioOutput.valueOf(PlayerConfig.getUseVLCAudioOutput())
+        PlayerInitializer.Player.vlcAccelerateOptimize =
+            PlayerConfig.isVlcAccelerateOptimize()
 
         //弹幕配置
         PlayerInitializer.Danmu.size = DanmuConfig.getDanmuSize()
@@ -489,7 +477,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun enterTaskBackground() {
         moveTaskToBack(true)
-        PlayerLaunchHelper.instance.onEnterPopupMode()
     }
 
     private fun exitTaskBackground() {

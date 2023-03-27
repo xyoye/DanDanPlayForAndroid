@@ -6,9 +6,12 @@
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:background="@drawable/background_player_setting_text"
+        android:ellipsize="marquee"
         android:focusable="true"
         android:gravity="center_vertical"
+        android:minLines="1"
         android:paddingHorizontal="20dp"
+        android:singleLine="true"
         android:tag="@string/focusable_item"
         android:textColor="@color/text_white_immutable"
         android:textSize="14sp" />

@@ -29,6 +29,8 @@ object PlayerInitializer {
         var vlcPixelFormat = VLCPixelFormat.PIXEL_RGB_32
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
         var videoSpeed = DEFAULT_SPEED
+        var vlcAudioOutput = VLCAudioOutput.AUTO
+        var vlcAccelerateOptimize = true
         var isAutoPlayNext = true
     }
 
@@ -52,7 +54,6 @@ object PlayerInitializer {
         var mobileDanmu = DEFAULT_MOBILE_ENABLE
         var topDanmu = DEFAULT_TOP_ENABLE
         var bottomDanmu = DEFAULT_BOTTOM_ENABLE
-        var maxLine = DEFAULT_MAX_LINE
         var maxScrollLine = DEFAULT_MAX_LINE
         var maxTopLine = DEFAULT_MAX_LINE
         var maxBottomLine = DEFAULT_MAX_LINE

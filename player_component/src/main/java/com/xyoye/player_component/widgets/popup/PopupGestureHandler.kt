@@ -1,6 +1,5 @@
 package com.xyoye.player_component.widgets.popup
 
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +9,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.addListener
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.getScreenHeight
 import com.xyoye.common_component.utils.getScreenWidth
 
 
@@ -23,7 +23,8 @@ class PopupGestureHandler(
 ) : View.OnTouchListener {
 
     companion object {
-        val POPUP_MARGIN = dp2px(10)
+        val POPUP_MARGIN_X = dp2px(10)
+        val POPUP_MARGIN_Y = dp2px(50)
     }
 
     private var lastX = 0f
@@ -60,7 +61,7 @@ class PopupGestureHandler(
                 lastY = event.rawY
             }
             MotionEvent.ACTION_UP -> {
-                correctPosition(v.context, v.width)
+                correctPosition(v.context, v.width, v.height)
             }
 
         }
@@ -86,21 +87,34 @@ class PopupGestureHandler(
     /**
      * 位置修正
      */
-    fun correctPosition(context: Context, viewWidth: Int) {
+    fun correctPosition(context: Context, viewWidth: Int, viewHeight: Int) {
         val screenWidth = context.applicationContext.getScreenWidth(false)
+        val screenHeight = context.applicationContext.getScreenHeight(false)
 
         val startX = viewPosition.getPosition().x
-        var endX = POPUP_MARGIN
-        if (startX * 2 + viewWidth > screenWidth) {
-            endX = screenWidth - viewWidth - POPUP_MARGIN
+        val endX = if (startX * 2 + viewWidth > screenWidth) {
+            // 超出屏幕一半时靠右
+            screenWidth - viewWidth - POPUP_MARGIN_X
+        } else {
+            // 靠左
+            POPUP_MARGIN_X
         }
 
-        mAnimator = ObjectAnimator.ofInt(startX, endX).apply {
+        val startY = viewPosition.getPosition().y
+        var endY = startY
+        if (endY > screenHeight - viewHeight - POPUP_MARGIN_Y) {
+            // 与底部需要有一定的间距
+            endY = screenHeight - viewHeight - POPUP_MARGIN_Y
+        } else if (endY < POPUP_MARGIN_Y) {
+            // 与顶部需要有一定的间距
+            endY = POPUP_MARGIN_Y
+        }
+        val startPoint = Point(startX, startY)
+        val endPoint = Point(endX, endY)
+
+        mAnimator = ValueAnimator.ofObject(PointEvaluator(), startPoint, endPoint).apply {
             addUpdateListener {
-                val x = it.animatedValue as Int
-                val position = viewPosition.getPosition()
-                val newPosition = Point(x, position.y)
-                viewPosition.setPosition(newPosition)
+                viewPosition.setPosition(it.animatedValue as Point)
             }
         }
         startAnimator()

@@ -2,10 +2,12 @@ package com.xyoye.player.kernel.impl.vlc
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import android.graphics.Point
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.Surface
+import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.SurfaceType
@@ -40,6 +42,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     private lateinit var libVlc: LibVLC
     private lateinit var mMediaPlayer: MediaPlayer
     private lateinit var mMedia: Media
+    private var videoSourceFd: AssetFileDescriptor? = null
 
     private var mCurrentDuration = 0L
     private var seekable = true
@@ -49,6 +52,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     override fun initPlayer() {
         setOptions()
         mMediaPlayer = MediaPlayer(libVlc)
+        mMediaPlayer.setAudioOutput(PlayerInitializer.Player.vlcAudioOutput.value)
         initVLCEventListener()
     }
 
@@ -107,6 +111,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun release() {
         stop()
+        IOUtils.closeIO(videoSourceFd)
         mMediaPlayer.setEventListener(null)
         if (isVideoPlaying()) {
             mMediaPlayer.vlcVout.detachViews()
@@ -128,6 +133,12 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun setSpeed(speed: Float) {
         mMediaPlayer.rate = speed
+
+        // 通过调整播放位置以达到更快输出音频的效果
+        // 缺点是会使倍速切换过渡不流畅，且出现loading
+        if (PlayerInitializer.Player.vlcAccelerateOptimize) {
+            seekTo(mMediaPlayer.time)
+        }
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {
@@ -314,14 +325,15 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
         // content://
         return if (videoUri.scheme == ContentResolver.SCHEME_CONTENT) {
-            val fd = try {
+            IOUtils.closeIO(videoSourceFd)
+            videoSourceFd = try {
                 mContext.contentResolver.openAssetFileDescriptor(videoUri, "r")
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
             }
 
-            fd?.run { Media(libVlc, this) }
+            videoSourceFd?.run { Media(libVlc, this) }
         } else {
             Media(libVlc, videoUri)
         }

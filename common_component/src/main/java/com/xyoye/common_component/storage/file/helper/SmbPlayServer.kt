@@ -137,7 +137,7 @@ class SmbPlayServer private constructor() : NanoHTTPD(randomPort()) {
 
     suspend fun startSync(timeoutMs: Long = 5000): Boolean {
         if (wasStarted()) {
-            return true
+            release()
         }
         return withTimeout(timeoutMs) {
             start()

@@ -18,6 +18,7 @@ import com.xyoye.common_component.storage.file.impl.SmbStorageFile
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
 
 /**
@@ -46,11 +47,9 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             return emptyList()
         }
         //切换共享目录
-        if (file.isShareDirectory()) {
-            val switchSuccess = switchShareDisk(file.getShareName()!!)
-            if (switchSuccess.not()) {
-                return emptyList()
-            }
+        val switchSuccess = switchShareDisk(file.getShareName()!!, showToast = true)
+        if (switchSuccess.not()) {
+            return emptyList()
         }
         //展开文件夹
         return listDirectory(file.filePath())
@@ -82,6 +81,12 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         if (mDiskShare?.isConnected != true) {
             return null
         }
+        val shareName = (file as SmbStorageFile).getShareName()
+            ?: return null
+        if (switchShareDisk(shareName).not()) {
+            return null
+        }
+
         return try {
             mDiskShare?.openFile(file.filePath())?.inputStream
         } catch (e: Exception) {
@@ -90,8 +95,15 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         }
     }
 
-    override suspend fun pathFile(path: String): StorageFile? {
+    override suspend fun pathFile(path: String, isDirectory: Boolean): StorageFile? {
         if (checkConnection().not()) {
+            return null
+        }
+        val pathSegments = Uri.parse(path).pathSegments
+        val targetShare = pathSegments.firstOrNull()
+            ?: return null
+        val switchShare = switchShareDisk(targetShare)
+        if (switchShare.not()) {
             return null
         }
         val diskShare = mDiskShare ?: return null
@@ -99,15 +111,23 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             return null
         }
         val shareName = diskShare.smbPath.shareName
+        val filePath = pathSegments.takeLast(pathSegments.size - 1).joinToString(separator = "/")
         return try {
-            val fileInfo = diskShare.open(path).standardFileInfo()
-            val isDirectory = fileInfo.isDirectory
-            val fileLength = if (isDirectory) 0L else fileInfo.endOfFile
-            return SmbStorageFile(this, shareName, path, fileLength, isDirectory)
+            val fileInfo = diskShare.open(filePath).standardFileInfo()
+            val directory = fileInfo.isDirectory
+            val fileLength = if (directory) 0L else fileInfo.endOfFile
+            return SmbStorageFile(this, shareName, filePath, fileLength, directory)
         } catch (e: Exception) {
             e.printStackTrace()
             showErrorToast("获取文件信息失败", e)
             null
+        }
+    }
+
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val storagePath = history.storagePath ?: return null
+        return pathFile(storagePath, false)?.also {
+            it.playHistory = history
         }
     }
 
@@ -213,7 +233,7 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     /**
      * 切换共享目录
      */
-    private fun switchShareDisk(shareName: String): Boolean {
+    private fun switchShareDisk(shareName: String, showToast: Boolean = false): Boolean {
         val currentShareName = mDiskShare?.smbPath?.shareName
         if (shareName == currentShareName) {
             return true
@@ -229,7 +249,21 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            showErrorToast("打开共享目录失败", e)
+            if (showToast) {
+                showErrorToast("切换共享目录失败", e)
+            }
+
+            // 切换共享目录失败时，如果旧的共享目录不为空，切换回旧的共享目录
+            if (currentShareName != null) {
+                try {
+                    val diskShare = mSmbSession?.connectShare(shareName) as? DiskShare?
+                    if (diskShare?.isConnected == true) {
+                        mDiskShare = diskShare
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
         return false
     }

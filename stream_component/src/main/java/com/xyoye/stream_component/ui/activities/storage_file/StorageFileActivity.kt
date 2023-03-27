@@ -101,6 +101,10 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             }
         }
 
+        dataBinding.quicklyPlayBt.setOnClickListener {
+            viewModel.quicklyPlay(storage)
+        }
+
         viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)

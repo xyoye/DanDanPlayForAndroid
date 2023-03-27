@@ -20,4 +20,8 @@ interface VideoSource {
     fun getHttpHeader(): Map<String, String>?
 
     fun getUniqueKey(): String
+
+    fun getStorageId(): Int
+
+    fun getStoragePath(): String?
 }

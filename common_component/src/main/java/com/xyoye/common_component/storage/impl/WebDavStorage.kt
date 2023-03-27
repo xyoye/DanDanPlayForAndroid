@@ -6,6 +6,7 @@ import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.WebDavStorageFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.sardine.DavResource
 import com.xyoye.sardine.impl.OkHttpSardine
 import com.xyoye.sardine.util.SardineConfig
@@ -33,7 +34,7 @@ class WebDavStorage(
 
     override suspend fun getRootFile(): StorageFile {
         val rootPath = Uri.parse(library.url).path ?: "/"
-        return pathFile(rootPath)
+        return pathFile(rootPath, true)
     }
 
     override suspend fun openFile(file: StorageFile): InputStream? {
@@ -56,10 +57,17 @@ class WebDavStorage(
         }
     }
 
-    override suspend fun pathFile(path: String): StorageFile {
+    override suspend fun pathFile(path: String, isDirectory: Boolean): StorageFile {
         val hrefUrl = resolvePath(path).toString()
         val davResource = CustomDavResource(hrefUrl)
         return WebDavStorageFile(davResource, this)
+    }
+
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val storagePath = history.storagePath ?: return null
+        return pathFile(storagePath, false).also {
+            it.playHistory = history
+        }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String {

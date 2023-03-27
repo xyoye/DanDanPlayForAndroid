@@ -24,6 +24,11 @@ interface StorageFile {
     fun fileUrl(): String
 
     /**
+     * 在Storage中的路径
+     */
+    fun storagePath(): String
+
+    /**
      * 是否为文件夹
      */
     fun isDirectory(): Boolean

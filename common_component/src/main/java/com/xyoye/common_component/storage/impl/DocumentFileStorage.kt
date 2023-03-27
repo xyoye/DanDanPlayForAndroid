@@ -1,11 +1,13 @@
 package com.xyoye.common_component.storage.impl
 
+import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.DocumentStorageFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
 
 /**
@@ -44,12 +46,24 @@ class DocumentFileStorage(
             .filter { it.fileName().isNotEmpty() }
     }
 
-    override suspend fun pathFile(path: String): StorageFile? {
+    override suspend fun pathFile(path: String, isDirectory: Boolean): StorageFile? {
         val documentFile = DocumentFile.fromTreeUri(
             context,
             resolvePath(path)
         ) ?: return null
         return DocumentStorageFile(documentFile, this)
+    }
+
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val storagePath = history.storagePath ?: return null
+        val documentFile = DocumentFile.fromSingleUri(
+            context,
+            Uri.parse(storagePath)
+        ) ?: return null
+
+        return DocumentStorageFile(documentFile, this).also {
+            it.playHistory = history
+        }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String {

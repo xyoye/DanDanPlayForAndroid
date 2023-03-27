@@ -83,4 +83,12 @@ class StorageVideoSource(
     override fun getHttpHeader(): Map<String, String>? {
         return storage.getNetworkHeaders()
     }
+
+    override fun getStorageId(): Int {
+        return storage.library.id
+    }
+
+    override fun getStoragePath(): String {
+        return file.storagePath()
+    }
 }

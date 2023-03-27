@@ -28,6 +28,10 @@ class SmbStorageFile(
         return storage.rootUri.buildUpon().path(filePath).build().toString()
     }
 
+    override fun storagePath(): String {
+        return "$shareName/$filePath"
+    }
+
     override fun isDirectory(): Boolean {
         return isDirectory
     }

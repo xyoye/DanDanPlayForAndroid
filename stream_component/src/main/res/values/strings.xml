@@ -58,4 +58,6 @@
 
     <string name="hint_root_path">根目录路径</string>
     <string name="action_select_root">选择根目录</string>
+
+    <string name="action_play_last_video">播放上一次观看</string>
 </resources>

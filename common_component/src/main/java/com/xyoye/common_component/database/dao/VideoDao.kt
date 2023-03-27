@@ -20,6 +20,9 @@ interface VideoDao {
     @Query("SELECT * FROM video WHERE folder_path = (:folderPath)")
     suspend fun getVideoInFolder(folderPath: String): List<VideoEntity>
 
+    @Query("SELECT * FROM video WHERE file_path = (:filePath)")
+    suspend fun getVideo(filePath: String): VideoEntity?
+
     @Query("SELECT * FROM video WHERE folder_path = (SELECT folder_path FROM video WHERE file_path = (:filePath))")
     suspend fun getFolderVideoByFilePath(filePath: String): MutableList<VideoEntity>
 

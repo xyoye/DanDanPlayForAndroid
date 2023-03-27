@@ -55,6 +55,26 @@ class StorageFileViewModel : BaseViewModel() {
         }
     }
 
+    fun quicklyPlay(storage: Storage) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val history = DatabaseManager.instance.getPlayHistoryDao().gitStorageLastPlay(
+                storageId = storage.library.id
+            )
+            if (history == null) {
+                ToastCenter.showError("当前媒体库暂无播放记录")
+                return@launch
+            }
+
+            val storageFile = storage.historyFile(history)
+            if (storageFile == null) {
+                ToastCenter.showError("播放失败，找不到上一次观看记录")
+                return@launch
+            }
+
+            playItem(storage, storageFile)
+        }
+    }
+
     private suspend fun setupVideoSource(storage: Storage, file: StorageFile): Boolean {
         showLoading()
         val mediaSource = StorageVideoSourceFactory.create(file, storage)

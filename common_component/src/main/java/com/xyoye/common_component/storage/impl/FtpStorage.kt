@@ -10,6 +10,7 @@ import com.xyoye.common_component.storage.file.impl.FtpStorageFile
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.commons.net.ftp.FTP
@@ -83,15 +84,35 @@ class FtpStorage(library: MediaLibraryEntity, lifecycle: Lifecycle) : AbstractSt
         return openFile(file)
     }
 
-    override suspend fun pathFile(path: String): StorageFile {
+    override suspend fun pathFile(path: String, isDirectory: Boolean): StorageFile? {
+        if (checkConnection().not()) {
+            return null
+        }
+
         val pathUri = Uri.parse(path)
         val fileName = pathUri.lastPathSegment
         val parentPath = pathUri.path?.removeSuffix("/$fileName") ?: "/"
+
+        try {
+            val ftpFile = mFtpClient.mlistFile(path)
+            return FtpStorageFile(this, parentPath, ftpFile)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        val fileType = if (isDirectory) FTPFile.DIRECTORY_TYPE else FTPFile.FILE_TYPE
         val ftpFile = FTPFile().apply {
             name = fileName
-            type = FTPFile.DIRECTORY_TYPE
+            type = fileType
         }
         return FtpStorageFile(this, parentPath, ftpFile)
+    }
+
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val storagePath = history.storagePath ?: return null
+        return pathFile(storagePath, false)?.also {
+            it.playHistory = history
+        }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String? {

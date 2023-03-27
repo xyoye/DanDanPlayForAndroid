@@ -53,7 +53,9 @@ object PlayRecorder {
                 torrentIndex,
                 JsonHelper.toJson(source.getHttpHeader()),
                 null,
-                source.getUniqueKey()
+                source.getUniqueKey(),
+                source.getStoragePath(),
+                source.getStorageId()
             )
 
             DatabaseManager.instance.getPlayHistoryDao()

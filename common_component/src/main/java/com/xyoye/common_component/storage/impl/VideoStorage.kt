@@ -6,6 +6,7 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
 
 /**
@@ -37,8 +38,20 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return null
     }
 
-    override suspend fun pathFile(path: String): StorageFile? {
+    override suspend fun pathFile(path: String, isDirectory: Boolean): StorageFile? {
+        if (isDirectory.not()) {
+            val videoEntity = DatabaseManager.instance.getVideoDao().getVideo(path)
+                ?: return null
+            return VideoStorageFile(this, videoEntity)
+        }
         return null
+    }
+
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val storagePath = history.storagePath ?: return null
+        return pathFile(storagePath, false)?.also {
+            it.playHistory = history
+        }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String {

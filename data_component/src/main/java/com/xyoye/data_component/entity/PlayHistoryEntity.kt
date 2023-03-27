@@ -60,6 +60,12 @@ data class PlayHistoryEntity(
     @ColumnInfo(name = "unique_key")
     var uniqueKey: String = "",
 
+    @ColumnInfo(name = "storage_path")
+    var storagePath: String? = null,
+
+    @ColumnInfo(name = "storage_id")
+    var storageId: Int = 0,
+
     @ColumnInfo(name = "is_last_play")
     var isLastPlay: Boolean = false
 ) {

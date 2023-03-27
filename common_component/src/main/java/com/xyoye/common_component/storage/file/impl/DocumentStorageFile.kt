@@ -34,6 +34,10 @@ class DocumentStorageFile(
         return documentFile.uri.toString()
     }
 
+    override fun storagePath(): String {
+        return fileUrl()
+    }
+
     override fun isDirectory(): Boolean {
         return mFileNameAndMimeType.second == DocumentsContract.Document.MIME_TYPE_DIR
     }

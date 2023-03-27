@@ -57,7 +57,7 @@ jobs:
       # 7.如果测试版Tag已存在，删除
       - name: delete old tag
         if: steps.check_tag_exist.outputs.tag
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        uses: dev-drprasad/delete-tag-and-release@v0.2.1
         with:
           delete_release: true
           tag_name: ${{ steps.check_tag_exist.outputs.tag }}

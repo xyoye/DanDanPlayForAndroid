@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.ui.fragment.storage_file
 
+import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     private val _fileLiveData = MutableLiveData<List<StorageFile>>()
     val fileLiveData: LiveData<List<StorageFile>> = _fileLiveData
 
+    //当前媒体库中最后一次播放记录
+    private var storageLastPlay: PlayHistoryEntity? = null
+
     fun listFile(storage: Storage, directory: StorageFile?) {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
@@ -27,13 +31,14 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
+            refreshStorageLastPlay(storage)
             val childFiles = storage.openDirectory(target)
                 .filter {
                     isDisplayFile(it)
                 }.sortedWith(
                     FileComparator({ it.fileName() }, { it.isDirectory() })
                 ).onEach {
-                    it.playHistory = getHistory(storage, it)
+                    it.playHistory = getHistory(it)
                 }
             _fileLiveData.postValue(childFiles)
         }
@@ -56,10 +61,12 @@ class StorageFileFragmentViewModel : BaseViewModel() {
 
     fun updateHistory(storage: Storage) {
         viewModelScope.launch {
+            refreshStorageLastPlay(storage)
+
             val fileList = _fileLiveData.value ?: return@launch
             val newFileList = fileList.map {
-                val history = getHistory(storage, it)
-                if (it.playHistory == history) {
+                val history = getHistory(it)
+                if (it.playHistory?.id == history?.id) {
                     return@map it
                 }
                 //历史记录不一致时，返回拷贝的新对象
@@ -69,19 +76,59 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun getHistory(storage: Storage, file: StorageFile): PlayHistoryEntity? {
+    private suspend fun getHistory(file: StorageFile): PlayHistoryEntity? {
         if (file.isDirectory()) {
-            return null
+            return lastPlayDirectoryHistory(file)
         }
         if (file.isVideoFile().not()) {
             return null
         }
-        return DatabaseManager.instance
+        var history = DatabaseManager.instance
             .getPlayHistoryDao()
-            .getPlayHistory(
-                file.uniqueKey(),
-                storage.library.mediaType
-            )
+            .getPlayHistory(file.uniqueKey(), file.storage.library.id)
+        if (history == null) {
+            //这是一步补救措施，数据库11版本之前，没有存储storageId字段
+            //因此为了避免弹幕等历史数据展示，依旧需要通过mediaType查询
+            history = DatabaseManager.instance
+                .getPlayHistoryDao()
+                .getPlayHistory(file.uniqueKey(), file.storage.library.mediaType)
+        }
+        if (history != null && storageLastPlay != null) {
+            history.isLastPlay = history.id == storageLastPlay!!.id
+        }
+        return history
+    }
+
+    /**
+     * 刷新最后一次播放记录
+     */
+    private suspend fun refreshStorageLastPlay(storage: Storage) {
+        storageLastPlay = DatabaseManager.instance
+            .getPlayHistoryDao()
+            .gitStorageLastPlay(storage.library.id)
+        storageLastPlay?.isLastPlay = true
+    }
+
+    /**
+     * 文件夹是否为最后一次播放记录的父文件夹
+     * 是：返回最后播放的标签
+     * 否：null
+     */
+    private fun lastPlayDirectoryHistory(file: StorageFile): PlayHistoryEntity? {
+        val lastPlayStoragePath = storageLastPlay?.storagePath
+            ?: return null
+        if (TextUtils.isEmpty(lastPlayStoragePath)) {
+            return null
+        }
+        if (file.isStoragePathParent(lastPlayStoragePath).not()) {
+            return null
+        }
+        return PlayHistoryEntity(
+            url = "",
+            mediaType = storageLastPlay!!.mediaType,
+            videoName = "",
+            isLastPlay = true
+        )
     }
 
     /**

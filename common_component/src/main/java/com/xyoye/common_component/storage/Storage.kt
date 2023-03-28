@@ -30,6 +30,9 @@ interface Storage {
      */
     var directoryFiles: List<StorageFile>
 
+    /**
+     * 根Uri
+     */
     var rootUri: Uri
 
     /**

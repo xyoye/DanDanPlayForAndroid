@@ -28,14 +28,13 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitStorageLastPlay(storageId: Int): PlayHistoryEntity?
 
-    @Query(
-        "SELECT history.*,(last_play.unique_key IS NOT NULL) as is_last_play" +
-                " FROM (SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)) as history" +
-                " LEFT JOIN (SELECT unique_key FROM play_history WHERE media_type = (:mediaType) ORDER BY play_time DESC LIMIT 1) as last_play" +
-                " ON history.unique_key == last_play.unique_key"
-    )
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?
+
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun getPlayHistory(uniqueKey: String, storageId: Int): PlayHistoryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)

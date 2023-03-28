@@ -5,6 +5,7 @@ import com.xyoye.common_component.storage.file.AbstractStorageFile
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.impl.VideoStorage
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.getDirPath
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.VideoEntity
@@ -98,5 +99,9 @@ class VideoStorageFile(
 
     override fun isVideoFile(): Boolean {
         return isFile()
+    }
+
+    override fun isStoragePathParent(childPath: String): Boolean {
+        return filePath() == getDirPath(childPath)
     }
 }

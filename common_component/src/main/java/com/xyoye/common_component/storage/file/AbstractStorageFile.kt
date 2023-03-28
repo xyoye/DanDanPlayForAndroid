@@ -2,6 +2,7 @@ package com.xyoye.common_component.storage.file
 
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.storage.AbstractStorage
+import com.xyoye.common_component.storage.Storage
 import com.xyoye.data_component.entity.PlayHistoryEntity
 
 /**
@@ -9,7 +10,7 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
  */
 
 abstract class AbstractStorageFile(
-    val storage: AbstractStorage
+    abstractStorage: AbstractStorage
 ) : StorageFile {
 
     private val uniqueKey: String by lazy {
@@ -17,6 +18,8 @@ abstract class AbstractStorageFile(
         val filePath = fileUrl()
         "$libraryId-$filePath".toMd5String()
     }
+
+    override var storage: Storage = abstractStorage
 
     override var playHistory: PlayHistoryEntity? = null
 
@@ -58,6 +61,10 @@ abstract class AbstractStorageFile(
 
     override fun isVideoFile(): Boolean {
         return com.xyoye.common_component.utils.isVideoFile(fileName())
+    }
+
+    override fun isStoragePathParent(childPath: String): Boolean {
+        return childPath.startsWith(storagePath())
     }
 
     abstract fun getRealFile(): Any

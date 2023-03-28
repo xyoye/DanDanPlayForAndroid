@@ -1,5 +1,6 @@
 package com.xyoye.common_component.storage.file
 
+import com.xyoye.common_component.storage.Storage
 import com.xyoye.data_component.entity.PlayHistoryEntity
 
 /**
@@ -7,6 +8,11 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
  */
 
 interface StorageFile {
+
+    /**
+     * 所属媒体库
+     */
+    var storage: Storage
 
     /**
      * 播放记录
@@ -78,7 +84,15 @@ interface StorageFile {
      */
     fun clone(): StorageFile
 
+    /**
+     * 是否为视频文件
+     */
     fun isVideoFile(): Boolean
+
+    /**
+     * 是否为媒体库路径的父级路径
+     */
+    fun isStoragePathParent(childPath: String): Boolean
 
     /**
      * 关闭文件

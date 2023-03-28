@@ -6,7 +6,6 @@ import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.extraSources
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
 
@@ -50,12 +49,9 @@ object StorageVideoSourceFactory {
             it.fileName() == danmuFileName
         } ?: return danmuNotFound
 
-
-        //是否成功保存弹幕文件
-        val danmuPath = storage.openFile(danmuFile)?.run {
-            DanmuUtils.saveDanmu(danmuFileName, this)
-        } ?: return danmuNotFound
-
+        //缓存弹幕文件到本地
+        val danmuPath = storage.cacheDanmu(danmuFile)
+            ?: return danmuNotFound
         return Pair(0, danmuPath)
     }
 
@@ -78,12 +74,8 @@ object StorageVideoSourceFactory {
             SubtitleUtils.isSameNameSubtitle(it.fileName(), videoFileName)
         } ?: return subtitleNotFound
 
-
-        //是否成功保存字幕文件
-        val subtitlePath = storage.openFile(subtitleFile)?.run {
-            SubtitleUtils.saveSubtitle(subtitleFile.fileName(), this)
-        } ?: return subtitleNotFound
-
-        return subtitlePath
+        //缓存字幕文件到本地
+        return storage.cacheSubtitle(subtitleFile)
+            ?: return subtitleNotFound
     }
 }

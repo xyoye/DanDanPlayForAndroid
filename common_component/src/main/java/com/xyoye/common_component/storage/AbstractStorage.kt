@@ -2,6 +2,9 @@ package com.xyoye.common_component.storage
 
 import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.utils.DanmuUtils
+import com.xyoye.common_component.utils.SubtitleUtils
+import com.xyoye.common_component.utils.getParentFolderName
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import java.io.File
 
@@ -47,4 +50,18 @@ abstract class AbstractStorage(
     }
 
     abstract suspend fun listFiles(file: StorageFile): List<StorageFile>
+
+    override suspend fun cacheDanmu(file: StorageFile): String? {
+        val inputStream = openFile(file) ?: return null
+        val fileName = file.fileName()
+        val directoryName = getParentFolderName(file.filePath())
+        return DanmuUtils.saveDanmu(fileName, inputStream, directoryName)
+    }
+
+    override suspend fun cacheSubtitle(file: StorageFile): String? {
+        val inputStream = openFile(file) ?: return null
+        val fileName = file.fileName()
+        val directoryName = getParentFolderName(file.filePath())
+        return SubtitleUtils.saveSubtitle(fileName, inputStream, directoryName)
+    }
 }

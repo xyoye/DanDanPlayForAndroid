@@ -6,7 +6,7 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.impl.VideoStorage
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.getDirPath
-import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.utils.getFileName
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.VideoEntity
 
@@ -57,10 +57,10 @@ class VideoStorageFile(
     override fun fileName(): String {
         return when (entity) {
             is FolderBean -> {
-                getFileNameNoExtension(entity.folderPath)
+                getFileName(entity.folderPath)
             }
             is VideoEntity -> {
-                getFileNameNoExtension(entity.filePath)
+                getFileName(entity.filePath)
             }
             else -> {
                 ""
@@ -98,7 +98,7 @@ class VideoStorageFile(
     }
 
     override fun isVideoFile(): Boolean {
-        return isFile()
+        return entity is VideoEntity && com.xyoye.common_component.utils.isVideoFile(fileName())
     }
 
     override fun isStoragePathParent(childPath: String): Boolean {

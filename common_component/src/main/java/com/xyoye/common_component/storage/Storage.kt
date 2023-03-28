@@ -4,7 +4,6 @@ import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.common_component.utils.isSubtitleFile
-import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
@@ -66,6 +65,19 @@ interface Storage {
      */
     suspend fun createPlayUrl(file: StorageFile): String?
 
+    /**
+     * 缓存弹幕文件到本地
+     */
+    suspend fun cacheDanmu(file: StorageFile): String?
+
+    /**
+     * 缓存字幕文件到本地
+     */
+    suspend fun cacheSubtitle(file: StorageFile): String?
+
+    /**
+     * 获取网络请求头
+     */
     fun getNetworkHeaders(): Map<String, String>?
 
     /**
@@ -75,9 +87,7 @@ interface Storage {
 }
 
 val Storage.videoSources: List<StorageFile>
-    get() = directoryFiles.filter {
-        it.isFile() && isVideoFile(it.fileName())
-    }
+    get() = directoryFiles.filter { it.isVideoFile() }
 
 val Storage.extraSources: List<StorageFile>
     get() = directoryFiles.filter {

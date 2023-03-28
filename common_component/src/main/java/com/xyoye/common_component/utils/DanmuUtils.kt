@@ -20,8 +20,18 @@ object DanmuUtils {
     private const val MAX_DANMU_CHECK_LINE = 15
     private const val DANMU_TAG = "<d p="
 
-    fun saveDanmu(fileName: String, inputStream: InputStream): String? {
-        val danmuFile = File(PathHelper.getDanmuDirectory(), fileName.formatFileName())
+    fun saveDanmu(fileName: String, inputStream: InputStream, directoryName: String? = null): String? {
+        val directory = if (directoryName != null && directoryName.isNotEmpty()) {
+            val directory = File(PathHelper.getDanmuDirectory(), directoryName)
+            if (directory.exists().not()) {
+                directory.mkdirs()
+            }
+            directory
+        } else {
+            PathHelper.getDanmuDirectory()
+        }
+
+        val danmuFile = File(directory, fileName.formatFileName())
         if (danmuFile.exists()) {
             danmuFile.delete()
         }

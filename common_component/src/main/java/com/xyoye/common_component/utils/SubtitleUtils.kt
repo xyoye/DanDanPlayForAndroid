@@ -52,10 +52,21 @@ object SubtitleUtils {
 
     fun saveSubtitle(
         fileName: String,
-        inputStream: InputStream
+        inputStream: InputStream,
+        directoryName: String? = null,
     ): String? {
+        val directory = if (directoryName != null && directoryName.isNotEmpty()) {
+            val directory = File(PathHelper.getSubtitleDirectory(), directoryName)
+            if (directory.exists().not()) {
+                directory.mkdirs()
+            }
+            directory
+        } else {
+            PathHelper.getSubtitleDirectory()
+        }
+
         val subtitleFileName = fileName.formatFileName()
-        val subtitleFile = File(PathHelper.getSubtitleDirectory(), subtitleFileName)
+        val subtitleFile = File(directory, subtitleFileName)
         if (subtitleFile.exists()) {
             subtitleFile.delete()
         }

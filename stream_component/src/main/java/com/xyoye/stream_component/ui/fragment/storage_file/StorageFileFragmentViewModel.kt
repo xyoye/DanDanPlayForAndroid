@@ -66,7 +66,12 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             val fileList = _fileLiveData.value ?: return@launch
             val newFileList = fileList.map {
                 val history = getHistory(it)
-                if (it.playHistory?.id == history?.id) {
+                val isSameHistory = if (it.isFile()) {
+                    it.playHistory == history
+                } else {
+                    it.playHistory?.id == history?.id
+                }
+                if (isSameHistory) {
                     return@map it
                 }
                 //历史记录不一致时，返回拷贝的新对象
@@ -88,7 +93,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             .getPlayHistory(file.uniqueKey(), file.storage.library.id)
         if (history == null) {
             //这是一步补救措施，数据库11版本之前，没有存储storageId字段
-            //因此为了避免弹幕等历史数据展示，依旧需要通过mediaType查询
+            //因此为了避免弹幕等历史数据无法展示，依旧需要通过mediaType查询
             history = DatabaseManager.instance
                 .getPlayHistoryDao()
                 .getPlayHistory(file.uniqueKey(), file.storage.library.mediaType)

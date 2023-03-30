@@ -68,6 +68,9 @@ interface VideoDao {
     @Query("DELETE FROM video WHERE file_path = (:filePath)")
     suspend fun deleteByPath(filePath: String)
 
+    @Query("DELETE FROM video WHERE file_path in (:paths)")
+    suspend fun deleteByPaths(paths: List<String>)
+
     @Query("DELETE FROM video WHERE extend = (:isExtend)")
     suspend fun deleteExtend(isExtend: Boolean = true)
 

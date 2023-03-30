@@ -11,10 +11,20 @@ import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class StorageFileFragmentViewModel : BaseViewModel() {
+    companion object {
+        private val lastPlayDirectory = PlayHistoryEntity(
+            url = "",
+            mediaType = MediaType.OTHER_STORAGE,
+            videoName = "",
+            isLastPlay = true
+        )
+    }
+
     private val hidePointFile = AppConfig.isShowHiddenFile().not()
 
     private val _fileLiveData = MutableLiveData<List<StorageFile>>()
@@ -23,7 +33,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     //当前媒体库中最后一次播放记录
     private var storageLastPlay: PlayHistoryEntity? = null
 
-    fun listFile(storage: Storage, directory: StorageFile?) {
+    fun listFile(storage: Storage, directory: StorageFile?, refresh: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
             if (target == null) {
@@ -32,7 +42,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             }
 
             refreshStorageLastPlay(storage)
-            val childFiles = storage.openDirectory(target)
+            val childFiles = storage.openDirectory(target, refresh)
                 .filter {
                     isDisplayFile(it)
                 }.sortedWith(
@@ -128,12 +138,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         if (file.isStoragePathParent(lastPlayStoragePath).not()) {
             return null
         }
-        return PlayHistoryEntity(
-            url = "",
-            mediaType = storageLastPlay!!.mediaType,
-            videoName = "",
-            isLastPlay = true
-        )
+        return lastPlayDirectory
     }
 
     /**

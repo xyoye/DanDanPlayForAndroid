@@ -11,6 +11,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.danmu
 import com.xyoye.common_component.storage.file.subtitle
@@ -27,6 +28,10 @@ import com.xyoye.stream_component.utils.storage.StorageFileDiffCallback
 
 class StorageFileFragment :
     BaseFragment<StorageFileFragmentViewModel, FragmentStorageFileBinding>() {
+
+    private val storage: Storage by lazy { ownerActivity.storage }
+
+    private val directory: StorageFile? by lazy { ownerActivity.directory }
 
     companion object {
 
@@ -50,11 +55,18 @@ class StorageFileFragment :
 
         viewModel.fileLiveData.observe(this) {
             dataBinding.loading.isVisible = false
-            dataBinding.storageFileRv.isVisible = true
+            dataBinding.refreshLayout.isVisible = true
+            dataBinding.refreshLayout.isRefreshing = false
             ownerActivity.onDirectoryOpened(it)
             updateStorageFileData(it)
         }
-        viewModel.listFile(ownerActivity.storage, ownerActivity.directory)
+
+        dataBinding.refreshLayout.setColorSchemeResources(R.color.theme)
+        dataBinding.refreshLayout.setOnRefreshListener {
+            viewModel.listFile(storage, directory, refresh = true)
+        }
+
+        viewModel.listFile(storage, directory)
     }
 
     private fun initRecyclerView() {
@@ -223,7 +235,7 @@ class StorageFileFragment :
         options: ActivityOptionsCompat,
         bindDanmu: Boolean
     ) {
-        val mediaType = ownerActivity.storage.library.mediaType
+        val mediaType = storage.library.mediaType
         var videoPath: String? = null
         if (mediaType == MediaType.LOCAL_STORAGE || mediaType == MediaType.EXTERNAL_STORAGE) {
             videoPath = file.fileUrl()
@@ -247,7 +259,7 @@ class StorageFileFragment :
     }
 
     private fun unbindExtraSource(data: StorageFile, unbindDanmu: Boolean) {
-        viewModel.unbindExtraSource(ownerActivity.storage, data, unbindDanmu)
+        viewModel.unbindExtraSource(storage, data, unbindDanmu)
     }
 
     private fun createShareOptions(binding: ItemStorageVideoBinding): ActivityOptionsCompat {
@@ -263,7 +275,7 @@ class StorageFileFragment :
      */
     fun onReappear() {
         //更新视频关联的播放记录
-        viewModel.updateHistory(ownerActivity.storage)
+        viewModel.updateHistory(storage)
     }
 
     private enum class ManageAction(val title: String, val icon: Int) {

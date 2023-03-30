@@ -47,7 +47,7 @@ interface Storage {
     /**
      * 打开文件夹
      */
-    suspend fun openDirectory(file: StorageFile): List<StorageFile>
+    suspend fun openDirectory(file: StorageFile, refresh: Boolean): List<StorageFile>
 
     /**
      * 通过路径获取文件

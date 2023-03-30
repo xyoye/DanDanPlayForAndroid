@@ -1,9 +1,11 @@
 package com.xyoye.common_component.storage.impl
 
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
+import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
@@ -20,9 +22,13 @@ import java.io.InputStream
 
 class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
-    override suspend fun openDirectory(file: StorageFile): List<StorageFile> {
+    override suspend fun openDirectory(file: StorageFile, refresh: Boolean): List<StorageFile> {
         directory = file
         directoryFiles = listFiles(file)
+
+        if (refresh) {
+            deepRefresh()
+        }
 
         return if (file.isRootFile()) {
             DatabaseManager.instance
@@ -88,5 +94,26 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override suspend fun cacheSubtitle(file: StorageFile): String {
         return file.filePath()
+    }
+
+    private suspend fun deepRefresh() {
+        //系统视频数据 = 自定义扫描目录视频 + MediaStore中系统视频
+        val systemVideos = DatabaseManager.instance.getExtendFolderDao().getAll()
+            .flatMap { MediaUtils.scanVideoFile(it.folderPath) }
+            .plus(MediaResolver.queryVideo())
+            .distinctBy { it.filePath }
+
+        //数据库视频数据
+        val databaseVideos = DatabaseManager.instance.getVideoDao().getAll()
+
+        //从数据库中移除，不在系统视频数据中的数据库视频
+        databaseVideos
+            .map { it.filePath }
+            .filterNot { filePath -> systemVideos.any { it.filePath == filePath } }
+            .let { DatabaseManager.instance.getVideoDao().deleteByPaths(it) }
+
+        //往数据库中添加，不在数据库视频中的系统视频数据
+        systemVideos.filterNot { video -> databaseVideos.any { it.filePath == video.filePath } }
+            .let { DatabaseManager.instance.getVideoDao().insert(*it.toTypedArray()) }
     }
 }

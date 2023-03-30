@@ -31,6 +31,8 @@ class StorageFileDiffCallback(
 
         val newItem = newData[newItemPosition]
         return oldItem.fileUrl() == newItem.fileUrl()
+                && oldItem.fileName() == newItem.fileName()
+                && oldItem.childFileCount() == newItem.childFileCount()
                 && oldItem.playHistory == newItem.playHistory
     }
 }

@@ -22,6 +22,8 @@ class DocumentStorageFile(
     private val mFileNameAndMimeType = fileNameAndMimeType
         ?: documentFile.fileNameAndMineType()
 
+    private val mFileLength = documentFile.length()
+
     override fun getRealFile(): Any {
         return documentFile
     }
@@ -44,6 +46,10 @@ class DocumentStorageFile(
 
     override fun fileName(): String {
         return mFileNameAndMimeType.first
+    }
+
+    override fun fileLength(): Long {
+        return mFileLength
     }
 
     override fun canRead(): Boolean {

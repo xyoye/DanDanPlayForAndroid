@@ -27,10 +27,6 @@ abstract class AbstractStorageFile(
         return filePath()
     }
 
-    override fun fileLength(): Long {
-        return 0
-    }
-
     override fun uniqueKey(): String {
         return uniqueKey
     }

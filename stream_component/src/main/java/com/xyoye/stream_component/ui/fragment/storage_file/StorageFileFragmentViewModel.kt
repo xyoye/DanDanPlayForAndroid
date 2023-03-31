@@ -9,7 +9,6 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.storage.StorageSortOption
@@ -45,20 +44,17 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             }
 
             refreshStorageLastPlay()
-            val childFiles = storage.openDirectory(target, refresh)
-                .filter {
-                    isDisplayFile(it)
-                }.sortedWith(
-                    FileComparator({ it.fileName() }, { it.isDirectory() })
-                ).onEach {
-                    it.playHistory = getHistory(it)
-                }
-            _fileLiveData.postValue(childFiles)
+            emitterFiles(storage.openDirectory(target, refresh))
         }
     }
 
     fun changeSortOption(option: StorageSortOption) {
         sortOption = option
+        viewModelScope.launch(Dispatchers.IO) {
+            mutableListOf<StorageFile>()
+                .apply { _fileLiveData.value?.let { addAll(it) } }
+                .let { emitterFiles(it) }
+        }
     }
 
     fun searchByText(word: String) {
@@ -100,6 +96,14 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             }
             _fileLiveData.postValue(newFileList)
         }
+    }
+
+    private suspend fun emitterFiles(files: List<StorageFile>) {
+        files.filter { isDisplayFile(it) }
+            .run { this }
+            .sortedWith(sortOption.createComparator())
+            .onEach { it.playHistory = getHistory(it) }
+            .let { _fileLiveData.postValue(it) }
     }
 
     private suspend fun getHistory(file: StorageFile): PlayHistoryEntity? {

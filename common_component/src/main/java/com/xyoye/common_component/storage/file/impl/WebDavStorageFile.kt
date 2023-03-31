@@ -39,6 +39,10 @@ class WebDavStorageFile(
         return davResource.name
     }
 
+    override fun fileLength(): Long {
+        return davResource.contentLength
+    }
+
     override fun clone(): StorageFile {
         return WebDavStorageFile(
             davResource,

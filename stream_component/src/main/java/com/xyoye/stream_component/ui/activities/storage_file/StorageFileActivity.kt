@@ -2,6 +2,8 @@ package com.xyoye.stream_component.ui.activities.storage_file
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -25,8 +27,10 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityStorageFileBinding
 import com.xyoye.stream_component.ui.fragment.storage_file.StorageFileFragment
+import com.xyoye.stream_component.ui.weight.StorageFileMenus
 import com.xyoye.stream_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.stream_component.utils.storage.StorageFileStyleHelper
+import com.xyoye.stream_component.utils.storage.StorageSortOption
 import kotlinx.coroutines.launch
 
 @Route(path = RouteTable.Stream.StorageFile)
@@ -42,7 +46,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     var directory: StorageFile? = null
         private set
 
-    private val releaseScope = SupervisorScope.IO
+    private lateinit var mMenus: StorageFileMenus
 
     private val mRouteFragmentMap = mutableMapOf<StorageFilePath, Fragment>()
 
@@ -122,9 +126,24 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        mMenus = StorageFileMenus.inflater(this, menu)
+        mMenus.onSearchTextChanged { onSearchTextChanged(it) }
+        mMenus.onSortTypeChanged { onSortOptionChanged(it) }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        mMenus.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode != KeyEvent.KEYCODE_BACK) {
             return super.onKeyDown(keyCode, event)
+        }
+        if (mMenus.onKeyDown()) {
+            return true
         }
         if (popFragment()) {
             return true
@@ -134,7 +153,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     override fun onDestroy() {
         if (this::storage.isInitialized) {
-            releaseScope.launch {
+            SupervisorScope.IO.launch {
                 storage.close()
             }
         }
@@ -237,6 +256,18 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
                 "${videoCount}视频  ${directoryCount}文件夹"
             }
         }
+    }
+
+    private fun onSearchTextChanged(text: String) {
+        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
+            ?: return
+        fragment.search(text)
+    }
+
+    private fun onSortOptionChanged(option: StorageSortOption) {
+        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
+            ?: return
+        fragment.sort(option)
     }
 
     fun openDirectory(file: StorageFile?) {

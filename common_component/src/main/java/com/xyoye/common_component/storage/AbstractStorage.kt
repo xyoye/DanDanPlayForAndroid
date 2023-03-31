@@ -64,4 +64,8 @@ abstract class AbstractStorage(
         val directoryName = getParentFolderName(file.filePath())
         return SubtitleUtils.saveSubtitle(fileName, inputStream, directoryName)
     }
+
+    override fun supportGlobalSearch(): Boolean {
+        return false
+    }
 }

@@ -81,6 +81,11 @@ interface Storage {
     fun getNetworkHeaders(): Map<String, String>?
 
     /**
+     * 是否支持全局搜索
+     */
+    fun supportGlobalSearch(): Boolean
+
+    /**
      * 关闭媒体库
      */
     fun close()

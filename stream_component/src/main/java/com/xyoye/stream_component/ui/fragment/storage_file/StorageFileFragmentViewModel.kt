@@ -12,6 +12,7 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.FileComparator
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.stream_component.utils.storage.StorageSortOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -25,7 +26,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         )
     }
 
+    lateinit var storage: Storage
     private val hidePointFile = AppConfig.isShowHiddenFile().not()
+    private var sortOption = StorageSortOption()
 
     private val _fileLiveData = MutableLiveData<List<StorageFile>>()
     val fileLiveData: LiveData<List<StorageFile>> = _fileLiveData
@@ -33,7 +36,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     //当前媒体库中最后一次播放记录
     private var storageLastPlay: PlayHistoryEntity? = null
 
-    fun listFile(storage: Storage, directory: StorageFile?, refresh: Boolean = false) {
+    fun listFile(directory: StorageFile?, refresh: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
             if (target == null) {
@@ -41,7 +44,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
-            refreshStorageLastPlay(storage)
+            refreshStorageLastPlay()
             val childFiles = storage.openDirectory(target, refresh)
                 .filter {
                     isDisplayFile(it)
@@ -54,7 +57,15 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
     }
 
-    fun unbindExtraSource(storage: Storage, file: StorageFile, unbindDanmu: Boolean) {
+    fun changeSortOption(option: StorageSortOption) {
+        sortOption = option
+    }
+
+    fun searchByText(word: String) {
+
+    }
+
+    fun unbindExtraSource(file: StorageFile, unbindDanmu: Boolean) {
         viewModelScope.launch {
             if (unbindDanmu) {
                 DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
@@ -65,13 +76,13 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                     file.uniqueKey(), storage.library.mediaType, null
                 )
             }
-            updateHistory(storage)
+            updateHistory()
         }
     }
 
-    fun updateHistory(storage: Storage) {
+    fun updateHistory() {
         viewModelScope.launch {
-            refreshStorageLastPlay(storage)
+            refreshStorageLastPlay()
 
             val fileList = _fileLiveData.value ?: return@launch
             val newFileList = fileList.map {
@@ -117,7 +128,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     /**
      * 刷新最后一次播放记录
      */
-    private suspend fun refreshStorageLastPlay(storage: Storage) {
+    private suspend fun refreshStorageLastPlay() {
         storageLastPlay = DatabaseManager.instance
             .getPlayHistoryDao()
             .gitStorageLastPlay(storage.library.id)

@@ -1,2 +1,13 @@
 <resources>
+
+    <style name="StorageFileActivityStyle" parent="AppTheme">
+        <item name="searchViewStyle">@style/StorageFileSearchView</item>
+    </style>
+
+    <style name="StorageFileSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@null</item>
+        <item name="submitBackground">@null</item>
+    </style>
 </resources>

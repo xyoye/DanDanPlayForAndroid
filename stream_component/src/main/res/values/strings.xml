@@ -60,4 +60,11 @@
     <string name="action_select_root">选择根目录</string>
 
     <string name="action_play_last_video">播放上一次观看</string>
+
+    <string name="text_file_search">搜索</string>
+    <string name="text_file_sort">排序</string>
+    <string name="text_sort_by_name">名称</string>
+    <string name="text_sort_by_size">大小</string>
+    <string name="text_sort_order_asc">升序</string>
+    <string name="text_sort_directory_first">目录在前</string>
 </resources>

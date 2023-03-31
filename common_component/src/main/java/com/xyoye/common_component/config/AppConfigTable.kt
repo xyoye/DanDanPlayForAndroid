@@ -1,6 +1,7 @@
 package com.xyoye.common_component.config
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.xyoye.data_component.enums.StorageSort
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -53,4 +54,16 @@ object AppConfigTable {
     @MMKVFiled
     //上次搜索弹幕记录
     var lastSearchDanmuJson: String? = null
+
+    @MMKVFiled
+    //文件排序类型
+    var storageSortType: Int = StorageSort.NAME.value
+
+    @MMKVFiled
+    //文件排序升序
+    var storageSortAsc: Boolean = true
+
+    @MMKVFiled
+    //文件排序文件夹优先
+    var storageSortDirectoryFirst: Boolean = true
 }

@@ -11,7 +11,7 @@ import com.xyoye.common_component.extension.isValid
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.TorrentSourceFactory
-import com.xyoye.common_component.utils.FileComparator
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.thunder.ThunderManager
@@ -143,8 +143,8 @@ class PlaySelectionViewModel : BaseViewModel() {
         val torrentInfoFiles = torrentInfo.mSubFileInfo
             .filter {
                 isVideoFile(it.mFileName)
-            }.sortedWith(FileComparator<TorrentFileInfo>(
-                value = { it.mFileName },
+            }.sortedWith(FileNameComparator<TorrentFileInfo>(
+                getName = { it.mFileName },
                 isDirectory = { false }
             )).map {
                 it.apply { it.checked = false }

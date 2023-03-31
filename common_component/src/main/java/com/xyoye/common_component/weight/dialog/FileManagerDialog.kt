@@ -11,6 +11,7 @@ import com.xyoye.common_component.databinding.ItemFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
@@ -252,8 +253,8 @@ class FileManagerDialog(
             }
         }
 
-        fileManagerData.sortWith(FileComparator(
-            value = { it.fileName },
+        fileManagerData.sortWith(FileNameComparator(
+            getName = { it.fileName },
             isDirectory = { it.isDirectory }
         ))
         return fileManagerData

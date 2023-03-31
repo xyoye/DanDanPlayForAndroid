@@ -4,6 +4,7 @@ import com.xunlei.downloadlib.XLDownloadManager
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.*
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
@@ -83,8 +84,8 @@ class ThunderManager private constructor() {
         val videoFileInfoList = getTaskInfo(torrentPath).mSubFileInfo
             .filter {
                 isVideoFile(it.mFileName)
-            }.sortedWith(FileComparator<TorrentFileInfo>(
-                value = { it.mFileName },
+            }.sortedWith(FileNameComparator<TorrentFileInfo>(
+                getName = { it.mFileName },
                 isDirectory = { false }
             ))
         val (selectedIndexes, deSelectIndexes) = createDownloadIndex(

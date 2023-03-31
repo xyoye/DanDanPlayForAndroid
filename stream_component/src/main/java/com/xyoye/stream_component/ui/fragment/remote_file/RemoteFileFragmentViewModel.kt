@@ -7,7 +7,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.RemoteSourceFactory
-import com.xyoye.common_component.utils.FileComparator
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.weight.ToastCenter
@@ -47,8 +47,8 @@ class RemoteFileFragmentViewModel : BaseViewModel() {
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch(Dispatchers.IO) {
             val storageFiles = curDirectoryFiles
-                .sortedWith(FileComparator(
-                    value = { getSortName(it) },
+                .sortedWith(FileNameComparator(
+                    getName = { getSortName(it) },
                     isDirectory = { it.isFolder }
                 )).map {
                     return@map if (it.isFolder) {

@@ -8,6 +8,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.bean.DanmuSourceContentBean
@@ -246,8 +247,8 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     ): List<DanmuSourceHeaderBean> {
         val danmuData = mutableListOf<DanmuSourceHeaderBean>()
 
-        animeData.sortedWith(FileComparator(
-            value = { it.animeTitle ?: "" },
+        animeData.sortedWith(FileNameComparator(
+            getName = { it.animeTitle ?: "" },
             isDirectory = { false }
         )).forEach { anime ->
             val animeName = anime.animeTitle ?: return@forEach

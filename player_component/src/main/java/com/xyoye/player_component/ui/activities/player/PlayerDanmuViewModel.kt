@@ -9,7 +9,7 @@ import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.FileComparator
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.FileHashUtils
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.data_component.bean.DanmuSourceContentBean
@@ -147,8 +147,8 @@ class PlayerDanmuViewModel : BaseViewModel() {
     private fun mapDanmuSourceData(animeData: MutableList<DanmuAnimeData>): List<DanmuSourceContentBean> {
         val danmuData = mutableListOf<DanmuSourceContentBean>()
 
-        animeData.sortedWith(FileComparator(
-            value = { it.animeTitle ?: "" },
+        animeData.sortedWith(FileNameComparator(
+            getName = { it.animeTitle ?: "" },
             isDirectory = { false }
         )).forEach { anime ->
             val animeName = anime.animeTitle ?: return@forEach

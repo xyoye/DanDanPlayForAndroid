@@ -25,16 +25,23 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         )
     }
 
-    lateinit var storage: Storage
-    private val hidePointFile = AppConfig.isShowHiddenFile().not()
-    private var sortOption = StorageSortOption()
-
     private val _fileLiveData = MutableLiveData<List<StorageFile>>()
     val fileLiveData: LiveData<List<StorageFile>> = _fileLiveData
+
+    lateinit var storage: Storage
 
     //当前媒体库中最后一次播放记录
     private var storageLastPlay: PlayHistoryEntity? = null
 
+    // 是否隐藏.开头的文件
+    private val hidePointFile = AppConfig.isShowHiddenFile().not()
+
+    // 文件排序选项
+    private var sortOption = StorageSortOption()
+
+    /**
+     * 展开文件夹
+     */
     fun listFile(directory: StorageFile?, refresh: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
@@ -44,23 +51,38 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             }
 
             refreshStorageLastPlay()
-            emitterFiles(storage.openDirectory(target, refresh))
+            storage.openDirectory(target, refresh)
+                .filter { isDisplayFile(it) }
+                .sortedWith(sortOption.createComparator())
+                .onEach { it.playHistory = getHistory(it) }
+                .let { _fileLiveData.postValue(it) }
         }
     }
 
+    /**
+     * 修改文件排序
+     */
     fun changeSortOption(option: StorageSortOption) {
         sortOption = option
         viewModelScope.launch(Dispatchers.IO) {
+            val currentFiles = _fileLiveData.value ?: return@launch
             mutableListOf<StorageFile>()
-                .apply { _fileLiveData.value?.let { addAll(it) } }
-                .let { emitterFiles(it) }
+                .plus(currentFiles)
+                .sortedWith(sortOption.createComparator())
+                .let { _fileLiveData.postValue(it) }
         }
     }
 
+    /**
+     * 搜索文件
+     */
     fun searchByText(word: String) {
 
     }
 
+    /**
+     * 解绑资源文件
+     */
     fun unbindExtraSource(file: StorageFile, unbindDanmu: Boolean) {
         viewModelScope.launch {
             if (unbindDanmu) {
@@ -76,11 +98,14 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
     }
 
+    /**
+     * 更新文件相关的播放历史
+     */
     fun updateHistory() {
         viewModelScope.launch {
-            refreshStorageLastPlay()
-
             val fileList = _fileLiveData.value ?: return@launch
+
+            refreshStorageLastPlay()
             val newFileList = fileList.map {
                 val history = getHistory(it)
                 val isSameHistory = if (it.isFile()) {
@@ -98,14 +123,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
     }
 
-    private suspend fun emitterFiles(files: List<StorageFile>) {
-        files.filter { isDisplayFile(it) }
-            .run { this }
-            .sortedWith(sortOption.createComparator())
-            .onEach { it.playHistory = getHistory(it) }
-            .let { _fileLiveData.postValue(it) }
-    }
-
+    /**
+     * 获取文件播放历史
+     */
     private suspend fun getHistory(file: StorageFile): PlayHistoryEntity? {
         if (file.isDirectory()) {
             return lastPlayDirectoryHistory(file)

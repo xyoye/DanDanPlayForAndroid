@@ -43,13 +43,17 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     lateinit var storage: Storage
         private set
 
+    // 当前所处文件夹
     var directory: StorageFile? = null
         private set
 
+    // 标题栏菜单管理器
     private lateinit var mMenus: StorageFileMenus
 
-    private val mRouteFragmentMap = mutableMapOf<StorageFilePath, Fragment>()
+    // 文件Fragment列表
+    private val mRouteFragmentMap = mutableMapOf<StorageFilePath, StorageFileFragment>()
 
+    // 标题栏样式工具
     private val mToolbarStyleHelper: StorageFileStyleHelper by lazy {
         StorageFileStyleHelper(this, dataBinding)
     }
@@ -235,12 +239,16 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         }.show()
     }
 
+    /**
+     * 通知当前展示的Fragment重新出现在界面上
+     */
     private fun notifyFragmentReappear() {
-        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
-            ?: return
-        fragment.onReappear()
+        mRouteFragmentMap.values.lastOrNull()?.onReappear()
     }
 
+    /**
+     * 更新标题栏副标题
+     */
     private fun updateToolbarSubtitle(videoCount: Int, directoryCount: Int) {
         supportActionBar?.subtitle = when {
             videoCount == 0 && directoryCount == 0 -> {
@@ -258,16 +266,18 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         }
     }
 
+    /**
+     * 搜索文案
+     */
     private fun onSearchTextChanged(text: String) {
-        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
-            ?: return
-        fragment.search(text)
+        mRouteFragmentMap.values.lastOrNull()?.search(text)
     }
 
+    /**
+     * 改变文件排序
+     */
     private fun onSortOptionChanged(option: StorageSortOption) {
-        val fragment = mRouteFragmentMap.values.lastOrNull() as? StorageFileFragment
-            ?: return
-        fragment.sort(option)
+        mRouteFragmentMap.values.onEach { it.sort(option) }
     }
 
     fun openDirectory(file: StorageFile?) {

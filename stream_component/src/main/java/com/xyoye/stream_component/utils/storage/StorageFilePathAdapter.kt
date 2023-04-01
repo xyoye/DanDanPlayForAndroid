@@ -1,6 +1,5 @@
 package com.xyoye.stream_component.utils.storage
 
-import androidx.fragment.app.Fragment
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.extension.toResColor
@@ -8,6 +7,7 @@ import com.xyoye.data_component.bean.StorageFilePath
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ItemStoragePathBinding
 import com.xyoye.stream_component.databinding.ItemStoragePathDividerBinding
+import com.xyoye.stream_component.ui.fragment.storage_file.StorageFileFragment
 
 /**
  * Created by xyoye on 2023/1/1.
@@ -42,7 +42,7 @@ object StorageFilePathAdapter {
         }
     }
 
-    fun buildPathData(routeFragments: MutableMap<StorageFilePath, Fragment>): List<Any> {
+    fun buildPathData(routeFragments: MutableMap<StorageFilePath, StorageFileFragment>): List<Any> {
         val pathList = mutableListOf<Any>(marginDivider)
         val lastIndex = routeFragments.keys.size - 1
         routeFragments.keys.forEachIndexed { index, path ->

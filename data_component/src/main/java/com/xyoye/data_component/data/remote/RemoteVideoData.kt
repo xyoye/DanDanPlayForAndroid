@@ -15,7 +15,7 @@ data class RemoteVideoData(
     val AnimeId: Int = 0,
     @NullToEmptyString
     val AnimeTitle: String = "",
-    val Duration: Long? = 0,
+    val Duration: Long = 0,
     @NullToEmptyString
     val EpisodeTitle: String = "",
     @NullToEmptyString
@@ -27,6 +27,7 @@ data class RemoteVideoData(
     val Name: String = "",
     @NullToEmptyString
     val Path: String = "",
+    val Size: Long = 0,
 
     @NullToEmptyString
     var absolutePath: String = "",

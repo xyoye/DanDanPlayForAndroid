@@ -18,6 +18,7 @@ object StorageFactory {
             MediaType.SMB_SERVER -> SmbStorage(library)
             MediaType.FTP_SERVER -> FtpStorage(library, lifecycle)
             MediaType.LOCAL_STORAGE -> VideoStorage(library)
+            MediaType.REMOTE_STORAGE -> RemoteStorage(library)
             else -> null
         }
     }

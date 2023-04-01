@@ -7,7 +7,7 @@ import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.RemoteFileHelper
 import com.xyoye.common_component.storage.file.impl.RemoteStorageFile
-import com.xyoye.common_component.utils.RemoteHelper
+import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -64,6 +64,37 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     override suspend fun createPlayUrl(file: StorageFile): String {
         val videoId = (file as RemoteStorageFile).getRealFile().Id
         return RemoteHelper.getInstance().buildVideoUrl(videoId)
+    }
+
+    override suspend fun cacheDanmu(file: StorageFile): String? {
+        try {
+            val videoData = (file as RemoteStorageFile).getRealFile()
+            return DanmuUtils.saveDanmu(
+                fileName = getFileNameNoExtension(videoData.getEpisodeName()) + ".xml",
+                inputStream = Retrofit.remoteService.downloadDanmu(videoData.Hash).byteStream(),
+                directoryName = getParentFolderName(videoData.absolutePath)
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    override suspend fun cacheSubtitle(file: StorageFile): String? {
+        try {
+            val videoData = (file as RemoteStorageFile).getRealFile()
+            val subtitleData = Retrofit.remoteService.searchSubtitle(videoData.Id)
+            if (subtitleData.subtitles.isNotEmpty()) {
+                val fileName = subtitleData.subtitles.first().fileName
+                return SubtitleUtils.saveSubtitle(
+                    fileName,
+                    Retrofit.remoteService.downloadSubtitle(videoData.Id, fileName).byteStream(),
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     override fun supportSearch(): Boolean {

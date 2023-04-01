@@ -4,10 +4,7 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.Storage
-import com.xyoye.common_component.storage.extraSources
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.SubtitleUtils
-import com.xyoye.common_component.utils.getFileNameNoExtension
 
 /**
  * Created by xyoye on 2023/1/2.
@@ -39,20 +36,12 @@ object StorageVideoSourceFactory {
         }
 
         //是否匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadSameNameDanmu().not()) {
-            return danmuNotFound
+        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
+            return storage.cacheDanmu(file)?.run { Pair(0, this) }
+                ?: danmuNotFound
         }
 
-        //是否存在同名弹幕文件
-        val danmuFileName = getFileNameNoExtension(file.fileName()) + ".xml"
-        val danmuFile = storage.extraSources.find {
-            it.fileName() == danmuFileName
-        } ?: return danmuNotFound
-
-        //缓存弹幕文件到本地
-        val danmuPath = storage.cacheDanmu(danmuFile)
-            ?: return danmuNotFound
-        return Pair(0, danmuPath)
+        return danmuNotFound
     }
 
     private suspend fun getSubtitlePath(file: StorageFile, storage: Storage): String? {
@@ -64,18 +53,11 @@ object StorageVideoSourceFactory {
         }
 
         //是否匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSameNameSubtitle().not()) {
-            return subtitleNotFound
+        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
+            return storage.cacheSubtitle(file)
+                ?: subtitleNotFound
         }
 
-        //是否存在同名字幕文件
-        val videoFileName = getFileNameNoExtension(file.fileName()) + "."
-        val subtitleFile = storage.extraSources.find {
-            SubtitleUtils.isSameNameSubtitle(it.fileName(), videoFileName)
-        } ?: return subtitleNotFound
-
-        //缓存字幕文件到本地
-        return storage.cacheSubtitle(subtitleFile)
-            ?: return subtitleNotFound
+        return subtitleNotFound
     }
 }

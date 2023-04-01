@@ -6,6 +6,9 @@ import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
 import com.xyoye.common_component.utils.MediaUtils
+import com.xyoye.common_component.utils.SubtitleUtils
+import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
@@ -89,12 +92,18 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return file.filePath()
     }
 
-    override suspend fun cacheDanmu(file: StorageFile): String {
-        return file.filePath()
+    override suspend fun cacheDanmu(file: StorageFile): String? {
+        val danmuFileName = getFileNameNoExtension(file.fileName()) + ".xml"
+        return directoryFiles.find {
+            it.isFile() && isDanmuFile(it.fileName()) && it.fileName() == danmuFileName
+        }?.filePath()
     }
 
-    override suspend fun cacheSubtitle(file: StorageFile): String {
-        return file.filePath()
+    override suspend fun cacheSubtitle(file: StorageFile): String? {
+        val videoFileName = getFileNameNoExtension(file.fileName()) + "."
+        return directoryFiles.find {
+            it.isFile() && SubtitleUtils.isSameNameSubtitle(it.fileName(), videoFileName)
+        }?.filePath()
     }
 
     override fun supportSearch(): Boolean {

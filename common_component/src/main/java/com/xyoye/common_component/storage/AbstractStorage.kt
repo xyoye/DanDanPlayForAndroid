@@ -2,9 +2,7 @@ package com.xyoye.common_component.storage
 
 import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.SubtitleUtils
-import com.xyoye.common_component.utils.getParentFolderName
+import com.xyoye.common_component.utils.*
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import java.io.File
 
@@ -52,17 +50,25 @@ abstract class AbstractStorage(
     abstract suspend fun listFiles(file: StorageFile): List<StorageFile>
 
     override suspend fun cacheDanmu(file: StorageFile): String? {
-        val inputStream = openFile(file) ?: return null
-        val fileName = file.fileName()
-        val directoryName = getParentFolderName(file.filePath())
-        return DanmuUtils.saveDanmu(fileName, inputStream, directoryName)
+        val danmuFileName = getFileNameNoExtension(file.fileName()) + ".xml"
+        val danmuFile = directoryFiles.find {
+            it.isFile() && isDanmuFile(it.fileName()) && it.fileName() == danmuFileName
+        } ?: return null
+
+        val inputStream = openFile(danmuFile) ?: return null
+        val directoryName = getParentFolderName(danmuFile.filePath())
+        return DanmuUtils.saveDanmu(danmuFileName, inputStream, directoryName)
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {
-        val inputStream = openFile(file) ?: return null
-        val fileName = file.fileName()
-        val directoryName = getParentFolderName(file.filePath())
-        return SubtitleUtils.saveSubtitle(fileName, inputStream, directoryName)
+        val videoFileName = getFileNameNoExtension(file.fileName()) + "."
+        val subtitleFile = directoryFiles.find {
+            it.isFile() && SubtitleUtils.isSameNameSubtitle(it.fileName(), videoFileName)
+        } ?: return null
+
+        val inputStream = openFile(subtitleFile) ?: return null
+        val directoryName = getParentFolderName(subtitleFile.filePath())
+        return SubtitleUtils.saveSubtitle(subtitleFile.fileName(), inputStream, directoryName)
     }
 
     override fun supportSearch(): Boolean {

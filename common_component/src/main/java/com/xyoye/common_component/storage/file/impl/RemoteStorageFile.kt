@@ -61,4 +61,8 @@ class RemoteStorageFile(
     override fun childFileCount(): Int {
         return videoData.childData.size
     }
+
+    override fun isVideoFile(): Boolean {
+        return isFile()
+    }
 }

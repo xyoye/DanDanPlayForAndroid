@@ -2,8 +2,6 @@ package com.xyoye.common_component.storage
 
 import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.isDanmuFile
-import com.xyoye.common_component.utils.isSubtitleFile
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
@@ -98,8 +96,3 @@ interface Storage {
 
 val Storage.videoSources: List<StorageFile>
     get() = directoryFiles.filter { it.isVideoFile() }
-
-val Storage.extraSources: List<StorageFile>
-    get() = directoryFiles.filter {
-        it.isFile() && (isDanmuFile(it.fileName()) || isSubtitleFile(it.fileName()))
-    }

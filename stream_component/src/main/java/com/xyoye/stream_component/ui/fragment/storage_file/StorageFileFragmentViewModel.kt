@@ -39,6 +39,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     // 文件排序选项
     private var sortOption = StorageSortOption()
 
+    // 文件列表快照
+    private var filesSnapshot = listOf<StorageFile>()
+
     /**
      * 展开文件夹
      */
@@ -46,7 +49,9 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val target = directory ?: storage.getRootFile()
             if (target == null) {
-                _fileLiveData.postValue(emptyList())
+                emptyList<StorageFile>()
+                    .apply { _fileLiveData.postValue(this) }
+                    .also { filesSnapshot = it }
                 return@launch
             }
 
@@ -55,7 +60,8 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 .filter { isDisplayFile(it) }
                 .sortedWith(sortOption.createComparator())
                 .onEach { it.playHistory = getHistory(it) }
-                .let { _fileLiveData.postValue(it) }
+                .apply { _fileLiveData.postValue(this) }
+                .also { filesSnapshot = it }
         }
     }
 
@@ -69,22 +75,47 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             mutableListOf<StorageFile>()
                 .plus(currentFiles)
                 .sortedWith(sortOption.createComparator())
-                .let { _fileLiveData.postValue(it) }
+                .apply { _fileLiveData.postValue(this) }
+                .also { filesSnapshot = it }
         }
     }
 
     /**
      * 搜索文件
      */
-    fun searchByText(word: String) {
+    fun searchByText(text: String) {
+        //媒体库支持文件搜索，由媒体库处理搜索
+        if (storage.supportSearch()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                refreshStorageLastPlay()
+                storage.search(text)
+                    .filter { isDisplayFile(it) }
+                    .sortedWith(sortOption.createComparator())
+                    .onEach { it.playHistory = getHistory(it) }
+                    .let { _fileLiveData.postValue(it) }
+            }
+            return
+        }
 
+        //搜索条件为空，返回文件列表快照
+        if (text.isEmpty()) {
+            _fileLiveData.postValue(filesSnapshot)
+            return
+        }
+
+        //在当前文件列表进行搜索
+        val currentFiles = _fileLiveData.value ?: return
+        mutableListOf<StorageFile>()
+            .plus(currentFiles)
+            .filter { it.fileName().contains(text) }
+            .let { _fileLiveData.postValue(it) }
     }
 
     /**
      * 解绑资源文件
      */
     fun unbindExtraSource(file: StorageFile, unbindDanmu: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (unbindDanmu) {
                 DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
                     file.uniqueKey(), storage.library.mediaType, null, 0
@@ -102,24 +133,25 @@ class StorageFileFragmentViewModel : BaseViewModel() {
      * 更新文件相关的播放历史
      */
     fun updateHistory() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val fileList = _fileLiveData.value ?: return@launch
 
             refreshStorageLastPlay()
-            val newFileList = fileList.map {
-                val history = getHistory(it)
-                val isSameHistory = if (it.isFile()) {
-                    it.playHistory == history
-                } else {
-                    it.playHistory?.id == history?.id
-                }
-                if (isSameHistory) {
-                    return@map it
-                }
-                //历史记录不一致时，返回拷贝的新对象
-                it.clone().apply { playHistory = history }
-            }
-            _fileLiveData.postValue(newFileList)
+            fileList
+                .map {
+                    val history = getHistory(it)
+                    val isSameHistory = if (it.isFile()) {
+                        it.playHistory == history
+                    } else {
+                        it.playHistory?.id == history?.id
+                    }
+                    if (isSameHistory) {
+                        return@map it
+                    }
+                    //历史记录不一致时，返回拷贝的新对象
+                    it.clone().apply { playHistory = history }
+                }.apply { _fileLiveData.postValue(this) }
+                .also { filesSnapshot = it }
         }
     }
 

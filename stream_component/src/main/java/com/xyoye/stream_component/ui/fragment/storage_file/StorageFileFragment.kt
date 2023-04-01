@@ -274,7 +274,6 @@ class StorageFileFragment :
      * 再次展示再界面上
      */
     fun onReappear() {
-        //更新视频关联的播放记录
         viewModel.updateHistory()
     }
 
@@ -282,6 +281,8 @@ class StorageFileFragment :
      * 搜索
      */
     fun search(text: String) {
+        //存在搜索条件时，不允许下拉刷新
+        dataBinding.refreshLayout.isEnabled = text.isEmpty()
         viewModel.searchByText(text)
     }
 

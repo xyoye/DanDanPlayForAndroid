@@ -53,7 +53,8 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             return emptyList()
         }
         return directory.listFiles()?.map {
-            VideoStorageFile(this, VideoEntity(fileId = 0, filePath = it.absolutePath, folderPath = filePath))
+            val entity = VideoEntity(fileId = 0, filePath = it.absolutePath, folderPath = filePath)
+            VideoStorageFile(this, entity)
         } ?: emptyList()
     }
 
@@ -94,6 +95,19 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override suspend fun cacheSubtitle(file: StorageFile): String {
         return file.filePath()
+    }
+
+    override fun supportSearch(): Boolean {
+        return true
+    }
+
+    override suspend fun search(keyword: String): List<StorageFile> {
+        if (keyword.isEmpty()) {
+            return openDirectory(directory ?: getRootFile(), false)
+        }
+        return DatabaseManager.instance.getVideoDao().getAll()
+            .filter { it.filePath.contains(keyword) }
+            .map { VideoStorageFile(this, it) }
     }
 
     private suspend fun deepRefresh() {

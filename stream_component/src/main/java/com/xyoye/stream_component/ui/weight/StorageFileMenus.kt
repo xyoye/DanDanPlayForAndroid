@@ -76,7 +76,7 @@ class StorageFileMenus private constructor(
     }
 
     private fun getSearchHintText(): String {
-        if (activity.storage.supportGlobalSearch()) {
+        if (activity.storage.supportSearch()) {
             return "搜索当前媒体库"
         }
         return "搜索当前目录"

@@ -65,7 +65,11 @@ abstract class AbstractStorage(
         return SubtitleUtils.saveSubtitle(fileName, inputStream, directoryName)
     }
 
-    override fun supportGlobalSearch(): Boolean {
+    override fun supportSearch(): Boolean {
         return false
+    }
+
+    override suspend fun search(keyword: String): List<StorageFile> {
+        return emptyList()
     }
 }

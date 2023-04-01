@@ -81,9 +81,14 @@ interface Storage {
     fun getNetworkHeaders(): Map<String, String>?
 
     /**
-     * 是否支持全局搜索
+     * 是否支持搜索
      */
-    fun supportGlobalSearch(): Boolean
+    fun supportSearch(): Boolean
+
+    /**
+     * 关键字搜索
+     */
+    suspend fun search(keyword: String): List<StorageFile>
 
     /**
      * 关闭媒体库

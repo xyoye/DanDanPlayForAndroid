@@ -59,8 +59,6 @@ object VideoSourceFactory {
             this.mediaType = mediaType
             return when (mediaType) {
                 MediaType.MAGNET_LINK -> TorrentSourceFactory.create(this)
-                MediaType.REMOTE_STORAGE -> RemoteSourceFactory.create(this)
-                MediaType.LOCAL_STORAGE -> LocalSourceFactory.create(this)
                 MediaType.SCREEN_CAST -> ScreencastSourceFactory.create(this)
                 MediaType.STREAM_LINK,
                 MediaType.OTHER_STORAGE -> StreamSourceFactory.create(this)

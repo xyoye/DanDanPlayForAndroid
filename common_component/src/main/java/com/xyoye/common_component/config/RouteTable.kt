@@ -62,7 +62,6 @@ object RouteTable {
         const val SmbLogin = "/stream/smb_login"
         const val RemoteLogin = "/stream/remote_login"
         const val RemoteScan = "/stream/remote_scan"
-        const val RemoteFile = "/stream/remote_file"
         const val RemoteControl = "/stream/remote_control"
         const val ScreencastReceiver = "/stream/screencast_receiver"
         const val ScreencastConnect = "/stream/screencast_connect"

@@ -2,7 +2,7 @@ package com.xyoye.common_component.database.migration
 
 import com.xyoye.common_component.config.DatabaseConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.source.factory.LocalSourceFactory
+import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +44,7 @@ object ManualMigration {
                         danmuPath = it.danmuPath,
                         episodeId = it.danmuId,
                         subtitlePath = it.subtitlePath,
-                        uniqueKey = LocalSourceFactory.generateUniqueKey(it)
+                        uniqueKey = it.filePath.toMd5String()
                     )
                 }
             }

@@ -34,9 +34,6 @@
             android:name=".ui.activities.remote_scan.RemoteScanActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name=".ui.activities.remote_file.RemoteFileActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
             android:name=".ui.activities.remote_control.RemoteControlActivity"
             android:configChanges="orientation|screenSize" />
         <activity

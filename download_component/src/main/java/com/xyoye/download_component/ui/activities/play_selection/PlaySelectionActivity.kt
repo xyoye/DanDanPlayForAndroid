@@ -8,12 +8,12 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.services.ScreencastProvideService
+import com.xyoye.common_component.storage.file.helper.PlayTaskManager
 import com.xyoye.common_component.weight.StorageAdapter
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.download_component.BR
 import com.xyoye.download_component.R
 import com.xyoye.download_component.databinding.ActivityPlaySelectionBinding
-import com.xyoye.download_component.utils.PlayTaskManager
 
 @Route(path = RouteTable.Download.PlaySelection)
 class PlaySelectionActivity : BaseActivity<PlaySelectionViewModel, ActivityPlaySelectionBinding>() {

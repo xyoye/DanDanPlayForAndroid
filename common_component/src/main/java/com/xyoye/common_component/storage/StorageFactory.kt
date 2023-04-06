@@ -19,6 +19,7 @@ object StorageFactory {
             MediaType.FTP_SERVER -> FtpStorage(library, lifecycle)
             MediaType.LOCAL_STORAGE -> VideoStorage(library)
             MediaType.REMOTE_STORAGE -> RemoteStorage(library)
+            MediaType.MAGNET_LINK -> TorrentStorage(library)
             else -> null
         }
     }

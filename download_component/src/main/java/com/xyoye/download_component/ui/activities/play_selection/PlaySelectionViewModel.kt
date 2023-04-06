@@ -12,7 +12,6 @@ import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.TorrentSourceFactory
 import com.xyoye.common_component.utils.comparator.FileNameComparator
-import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.common_component.weight.ToastCenter
@@ -48,10 +47,7 @@ class PlaySelectionViewModel : BaseViewModel() {
                 return@launch
             }
 
-            val torrentFilePath = ThunderManager.getInstance().downloadTorrentFile(
-                magnetLink,
-                PathHelper.getTorrentDirectory()
-            )
+            val torrentFilePath = ThunderManager.getInstance().downloadTorrentFile(magnetLink)
             if (torrentFilePath.isNullOrEmpty()) {
                 ToastCenter.showError("种子文件下载失败，请重试")
                 finishLiveData.postValue(true)

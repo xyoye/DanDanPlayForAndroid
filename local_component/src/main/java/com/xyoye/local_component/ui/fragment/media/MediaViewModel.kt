@@ -1,6 +1,5 @@
 package com.xyoye.local_component.ui.fragment.media
 
-import android.provider.MediaStore
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
@@ -43,40 +42,6 @@ class MediaViewModel : BaseViewModel() {
     }
 
     fun initLocalStorage() {
-        val localStorageEntity = MediaLibraryEntity(
-            1,
-            "本地媒体库",
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString(),
-            MediaType.LOCAL_STORAGE
-        )
-        val streamEntity = MediaLibraryEntity(
-            2,
-            "串流播放",
-            "url://dandanplay_steam_link",
-            MediaType.STREAM_LINK,
-            null,
-            null,
-            true,
-            0,
-            "https://"
-        )
-        val magnetEntity = MediaLibraryEntity(
-            3,
-            "磁链播放",
-            "url://dandanplay_magnet_link",
-            MediaType.MAGNET_LINK,
-            null,
-            null,
-            true,
-            0,
-            "magnet:?xt=urn:btih:"
-        )
-        val historyEntity = MediaLibraryEntity(
-            4,
-            "播放历史",
-            "",
-            MediaType.OTHER_STORAGE
-        )
         viewModelScope.launch(context = Dispatchers.IO) {
             //播放历史首条记录
             DatabaseManager.instance.getPlayHistoryDao().gitLastPlay(
@@ -87,21 +52,26 @@ class MediaViewModel : BaseViewModel() {
                 MediaType.REMOTE_STORAGE,
                 MediaType.WEBDAV_SERVER
             )?.apply {
-                historyEntity.url = url
+                MediaLibraryEntity.HISTORY.url = url
             }
 
             //磁链播放首条记录
             DatabaseManager.instance.getPlayHistoryDao().gitLastPlay(MediaType.MAGNET_LINK)?.apply {
-                magnetEntity.describe = getFileName(torrentPath)
+                MediaLibraryEntity.TORRENT.describe = getFileName(torrentPath)
             }
 
             //串流播放首条记录
             DatabaseManager.instance.getPlayHistoryDao().gitLastPlay(MediaType.STREAM_LINK)?.apply {
-                streamEntity.describe = url
+                MediaLibraryEntity.STREAM.describe = url
             }
 
             DatabaseManager.instance.getMediaLibraryDao()
-                .insert(localStorageEntity, streamEntity, magnetEntity, historyEntity)
+                .insert(
+                    MediaLibraryEntity.LOCAL,
+                    MediaLibraryEntity.STREAM,
+                    MediaLibraryEntity.TORRENT,
+                    MediaLibraryEntity.HISTORY
+                )
         }
     }
 

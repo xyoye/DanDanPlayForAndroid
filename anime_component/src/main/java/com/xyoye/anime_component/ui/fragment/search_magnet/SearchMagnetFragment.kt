@@ -26,6 +26,7 @@ import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.MagnetData
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MagnetScreenType
 
 
@@ -119,9 +120,10 @@ class SearchMagnetFragment :
                                     return@setOnClickListener
                                 }
                                 val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
+                                val library = MediaLibraryEntity.TORRENT.apply { url = magnetLink }
                                 ARouter.getInstance()
-                                    .build(RouteTable.Download.PlaySelection)
-                                    .withString("magnetLink", magnetLink)
+                                    .build(RouteTable.Stream.StorageFile)
+                                    .withParcelable("storageLibrary", library)
                                     .navigation()
                             }
 

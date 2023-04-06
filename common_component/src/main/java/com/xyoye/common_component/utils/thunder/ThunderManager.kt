@@ -3,10 +3,10 @@ package com.xyoye.common_component.utils.thunder
 import com.xunlei.downloadlib.XLDownloadManager
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.*
+import com.xyoye.common_component.storage.file.helper.TorrentBean
 import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.comparator.FileNameComparator
 import kotlinx.coroutines.*
-import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -16,6 +16,12 @@ import java.util.concurrent.atomic.AtomicInteger
 class ThunderManager private constructor() {
     private val mAtomicInteger = AtomicInteger(0)
     private val mTaskList = hashMapOf<String, Long>()
+
+    // 种子文件存储文件夹
+    private val torrentDirectory = PathHelper.getTorrentDirectory()
+
+    // 缓存文件存储文件夹
+    private val cacheDirectory = PathHelper.getPlayCacheDirectory()
 
     companion object {
         private const val INVALID_ID = -1L
@@ -39,10 +45,9 @@ class ThunderManager private constructor() {
     /**
      * 下载种子文件
      * @param magnet 磁链
-     * @param torrentDirectory 保存文件夹
      * @return 种子文件路径
      */
-    suspend fun downloadTorrentFile(magnet: String, torrentDirectory: File): String? {
+    suspend fun downloadTorrentFile(magnet: String): String? {
         val hash = MagnetUtils.getMagnetHash(magnet)
         if (hash.isEmpty())
             return null
@@ -70,12 +75,11 @@ class ThunderManager private constructor() {
      */
     suspend fun torrent2PlayUrl(
         torrentPath: String,
-        saveDirectory: File,
         selectIndex: Int
     ): Pair<String?, List<TorrentFileInfo>> {
         val btTaskParam = BtTaskParam().apply {
             setCreateMode(1)
-            setFilePath(saveDirectory.absolutePath)
+            setFilePath(cacheDirectory.absolutePath)
             setMaxConcurrent(1)
             setSeqId(mAtomicInteger.incrementAndGet())
             setTorrentPath(torrentPath)
@@ -111,9 +115,31 @@ class ThunderManager private constructor() {
         return Pair(playUrl.mStrUrl, videoFileInfoList)
     }
 
+    suspend fun generatePlayUrl(
+        torrent: TorrentBean,
+        index: Int
+    ): String? {
+        // 停止其它任务
+        stopAllTask()
+
+        //启动下载任务
+        val taskId = createPlayTask(torrent, index)
+        if (taskId == INVALID_ID) {
+            return null
+        }
+
+        // 保存任务ID
+        mTaskList[torrent.torrentPath] = taskId
+
+        val fileName = torrent.mSubFileInfo.find { it.mFileIndex == index }?.mFileName ?: "temp.mp4"
+        val filePath = "${cacheDirectory.absolutePath}/$fileName"
+        val playUrl = XLTaskLocalUrl()
+        XLDownloadManager.getInstance().getLocalUrl(filePath, playUrl)
+        return playUrl.mStrUrl
+    }
+
     fun stopTask(taskId: Long) {
-        val playCacheDir = PathHelper.getPlayCacheDirectory()
-        XLTaskHelper.getInstance().deleteTask(taskId, playCacheDir.absolutePath)
+        XLTaskHelper.getInstance().deleteTask(taskId, cacheDirectory.absolutePath)
 
         mTaskList.entries.find { it.value == taskId }?.let {
             mTaskList.remove(it.key)
@@ -123,10 +149,9 @@ class ThunderManager private constructor() {
 
     private fun stopAllTask() {
         val iterator = mTaskList.iterator()
-        val playCacheDir = PathHelper.getPlayCacheDirectory()
         while (iterator.hasNext()) {
             val entity = iterator.next()
-            XLTaskHelper.getInstance().deleteTask(entity.value, playCacheDir.absolutePath)
+            XLTaskHelper.getInstance().deleteTask(entity.value, cacheDirectory.absolutePath)
             iterator.remove()
         }
     }
@@ -155,6 +180,33 @@ class ThunderManager private constructor() {
                 null
             }
         }
+    }
+
+    private suspend fun createPlayTask(
+        torrent: TorrentBean,
+        index: Int,
+    ): Long {
+        val btTaskParam = BtTaskParam().apply {
+            setCreateMode(1)
+            setFilePath(cacheDirectory.absolutePath)
+            setMaxConcurrent(1)
+            setSeqId(mAtomicInteger.incrementAndGet())
+            setTorrentPath(torrent.torrentPath)
+        }
+
+        val deselectedIndexes = torrent.mSubFileInfo
+            .filter { it.mFileIndex != index }
+            .map { it.mFileIndex }
+            .toIntArray()
+
+        val selectedIndexSet = BtIndexSet(1).apply {
+            mIndexSet = IntArray(index)
+        }
+        val deselectIndexSet = BtIndexSet(deselectedIndexes.size).apply {
+            mIndexSet = deselectedIndexes
+        }
+
+        return createTorrentTask(btTaskParam, selectedIndexSet, deselectIndexSet)
     }
 
     /**

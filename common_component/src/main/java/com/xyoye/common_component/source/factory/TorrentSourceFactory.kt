@@ -3,7 +3,6 @@ package com.xyoye.common_component.source.factory
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.media.TorrentMediaSource
-import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.thunder.ThunderManager
@@ -18,7 +17,6 @@ object TorrentSourceFactory {
     suspend fun create(builder: VideoSourceFactory.Builder): TorrentMediaSource? {
         val (playUrl, torrentFileInfoList) = ThunderManager.getInstance().torrent2PlayUrl(
             builder.rootPath,
-            PathHelper.getPlayCacheDirectory(),
             builder.index
         )
         if (playUrl.isNullOrEmpty())

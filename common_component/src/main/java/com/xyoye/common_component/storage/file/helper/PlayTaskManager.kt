@@ -1,4 +1,4 @@
-package com.xyoye.download_component.utils
+package com.xyoye.common_component.storage.file.helper
 
 import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.ErrorCodeToMsg.ErrCodeToMsg

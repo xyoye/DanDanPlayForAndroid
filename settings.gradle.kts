@@ -8,7 +8,6 @@ include(":stream_component")
 include(":player_component")
 include(":common_component")
 include(":data_component")
-include(":download_component")
 
 include(":repository:danmaku")
 include(":repository:immersion_bar")

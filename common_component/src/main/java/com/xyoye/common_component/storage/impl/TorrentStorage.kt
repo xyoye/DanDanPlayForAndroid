@@ -1,7 +1,6 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
-import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.TorrentFileInfo
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
@@ -35,7 +34,7 @@ class TorrentStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         }
         val torrent = TorrentBean.formInfo(
             torrentPath,
-            XLTaskHelper.getInstance().getTorrentInfo(torrentPath)
+            ThunderManager.getInstance().getTaskInfo(torrentPath)
         ).also { torrentBean = it }
         if (torrent.mSubFileInfo.isNullOrEmpty()) {
             ToastCenter.showError("解析种子文件失败")

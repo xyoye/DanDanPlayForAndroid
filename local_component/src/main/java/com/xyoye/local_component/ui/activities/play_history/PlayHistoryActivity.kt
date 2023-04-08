@@ -192,18 +192,18 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     private fun showMagnetDialog() {
         MagnetPlayDialog(this, magnetCallback = {
             //磁链选择播放
-            ARouter.getInstance()
-                .build(RouteTable.Download.PlaySelection)
-                .withString("magnetLink", it)
-                .navigation()
+//            ARouter.getInstance()
+//                .build(RouteTable.Download.PlaySelection)
+//                .withString("magnetLink", it)
+//                .navigation()
         }, torrentCallback = {
             //选择本地种子文件
             FileManagerDialog(this, FileManagerAction.ACTION_SELECT_TORRENT) {
                 //磁链选择播放
-                ARouter.getInstance()
-                    .build(RouteTable.Download.PlaySelection)
-                    .withString("torrentPath", it)
-                    .navigation()
+//                ARouter.getInstance()
+//                    .build(RouteTable.Download.PlaySelection)
+//                    .withString("torrentPath", it)
+//                    .navigation()
             }.show()
         }).show()
     }

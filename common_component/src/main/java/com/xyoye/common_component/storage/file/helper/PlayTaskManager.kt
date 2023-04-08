@@ -1,12 +1,11 @@
 package com.xyoye.common_component.storage.file.helper
 
-import com.xunlei.downloadlib.XLTaskHelper
 import com.xunlei.downloadlib.parameter.ErrorCodeToMsg.ErrCodeToMsg
 import com.xunlei.downloadlib.parameter.XLConstant
 import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.utils.JsonHelper
-import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.SupervisorScope
+import com.xyoye.common_component.utils.thunder.ThunderManager
 import kotlinx.coroutines.launch
 
 /**
@@ -38,7 +37,7 @@ object PlayTaskManager {
         }
 
         PlayTaskBridge.taskInfoQuery = { id ->
-            val taskInfo = XLTaskHelper.getInstance().getTaskInfo(id)
+            val taskInfo = ThunderManager.getInstance().getTaskInfo(id)
             val status = TASK_STATUS_MSG[taskInfo.mTaskStatus] ?: "Unknown_${taskInfo.mTaskStatus}"
             val code = taskInfo.mErrorCode.toString()
             val msg = TASK_ERROR_MSG[code]?.trim() ?: ""
@@ -48,10 +47,7 @@ object PlayTaskManager {
 
     private fun onPlayTaskRemove(taskId: Long) {
         SupervisorScope.IO.launch {
-            val playCacheDir = PathHelper.getPlayCacheDirectory()
-            XLTaskHelper.getInstance().stopTask(taskId)
-            XLTaskHelper.getInstance().deleteTask(taskId, playCacheDir.absolutePath)
-            playCacheDir.delete()
+            ThunderManager.getInstance().stopTask(taskId)
         }
     }
 }

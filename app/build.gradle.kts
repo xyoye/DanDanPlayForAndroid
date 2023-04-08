@@ -55,7 +55,6 @@ kapt {
 
 dependencies {
     implementation(project(":common_component"))
-    implementation(project(":download_component"))
     implementation(project(":player_component"))
     implementation(project(":anime_component"))
     implementation(project(":user_component"))

@@ -8,7 +8,7 @@ import android.view.*
 import androidx.annotation.RequiresApi
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.PathHelper
@@ -33,7 +33,8 @@ object PlayRecorder {
         SupervisorScope.IO.launch {
             var torrentPath: String? = null
             var torrentIndex = -1
-            if (source is TorrentMediaSource) {
+
+            if (source is StorageVideoSource) {
                 torrentPath = source.getTorrentPath()
                 torrentIndex = source.getTorrentIndex()
             }

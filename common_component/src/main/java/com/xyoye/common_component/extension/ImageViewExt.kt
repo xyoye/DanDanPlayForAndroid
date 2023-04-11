@@ -67,6 +67,22 @@ fun ImageView.loadImageWithCallback(
     }
 }
 
+fun ImageView.loadImageByKey(uniqueKey: String?) {
+    val source = uniqueKey.toCoverFile()
+    if (source == null || !source.exists()) {
+        return
+    }
+    load(source) {
+        scale(Scale.FILL)
+        crossfade(true)
+        error(R.drawable.ic_dandanplay)
+        transformations(RoundedCornersTransformation(5f.px()))
+        diskCachePolicy(CachePolicy.DISABLED)
+        memoryCachePolicy(CachePolicy.DISABLED)
+        videoFramePercent(0.1)
+    }
+}
+
 fun ImageView.loadImage(file: StorageFile) {
     val source = getImageSource(file)
     val cachePolicy = if (source is File)

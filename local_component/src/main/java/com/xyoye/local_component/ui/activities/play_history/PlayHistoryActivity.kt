@@ -124,7 +124,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.historyItem() =
         { data: PlayHistoryEntity ->
-            getCoverUrl(data)?.let { itemBinding.coverIv.loadImage(it) }
+            itemBinding.coverIv.loadImageByKey(data.uniqueKey)
 
             itemBinding.durationTv.text =
                 getProgress(data.videoPosition, data.videoDuration)
@@ -168,14 +168,6 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
                 return@setOnLongClickListener true
             }
         }
-
-    private fun getCoverUrl(data: PlayHistoryEntity): String? {
-        var coverUrl = data.uniqueKey.toCoverFile()?.absolutePath
-        if (coverUrl.isNullOrEmpty() && data.mediaType == MediaType.LOCAL_STORAGE) {
-            coverUrl = data.url
-        }
-        return coverUrl
-    }
 
     private fun isHistoryInvalid(entity: PlayHistoryEntity): Boolean {
         return when (entity.mediaType) {

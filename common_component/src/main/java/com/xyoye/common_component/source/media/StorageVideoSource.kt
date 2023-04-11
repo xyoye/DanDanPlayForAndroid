@@ -2,7 +2,6 @@ package com.xyoye.common_component.source.media
 
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
-import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.TorrentStorageFile
 import com.xyoye.common_component.storage.videoSources
@@ -17,13 +16,12 @@ import com.xyoye.data_component.enums.MediaType
 class StorageVideoSource(
     private val playUrl: String,
     private val file: StorageFile,
-    private val storage: Storage,
     private var episodeId: Int,
     private var danmuPath: String?,
     private var subtitlePath: String?,
 ) : BaseVideoSource(
-    storage.videoSources.indexOf(file),
-    storage.videoSources
+    file.storage.videoSources.indexOf(file),
+    file.storage.videoSources
 ) {
 
     override fun getDanmuPath(): String? {
@@ -51,14 +49,13 @@ class StorageVideoSource(
     }
 
     override fun indexTitle(index: Int): String {
-        val fileName = storage.videoSources[index].fileName()
+        val fileName = file.storage.videoSources[index].fileName()
         return getFileName(fileName)
     }
 
     override suspend fun indexSource(index: Int): BaseVideoSource? {
         return StorageVideoSourceFactory.create(
-            storage.videoSources[index],
-            storage
+            file.storage.videoSources[index]
         )
     }
 
@@ -75,7 +72,7 @@ class StorageVideoSource(
     }
 
     override fun getMediaType(): MediaType {
-        return storage.library.mediaType
+        return file.storage.library.mediaType
     }
 
     override fun getUniqueKey(): String {
@@ -83,11 +80,11 @@ class StorageVideoSource(
     }
 
     override fun getHttpHeader(): Map<String, String>? {
-        return storage.getNetworkHeaders()
+        return file.storage.getNetworkHeaders()
     }
 
     override fun getStorageId(): Int {
-        return storage.library.id
+        return file.storage.library.id
     }
 
     override fun getStoragePath(): String {

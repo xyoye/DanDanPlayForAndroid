@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.coroutineScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -18,6 +19,7 @@ import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageFactory
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.storage.impl.FtpStorage
 import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
@@ -31,7 +33,9 @@ import com.xyoye.stream_component.ui.weight.StorageFileMenus
 import com.xyoye.stream_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.stream_component.utils.storage.StorageFileStyleHelper
 import com.xyoye.stream_component.utils.storage.StorageSortOption
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Route(path = RouteTable.Stream.StorageFile)
 class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFileBinding>() {
@@ -128,6 +132,14 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         viewModel.selectDeviceLiveData.observe(this) {
             showSelectDeviceDialog(it.first, it.second)
         }
+
+        if (storage is FtpStorage) {
+            lifecycle.coroutineScope.launchWhenResumed {
+                withContext(Dispatchers.IO) {
+                    (storage as FtpStorage).completePending()
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -167,7 +179,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     private fun checkBundle(): Boolean {
         storageLibrary
             ?: return false
-        val storage = StorageFactory.createStorage(storageLibrary!!, lifecycle)
+        val storage = StorageFactory.createStorage(storageLibrary!!)
             ?: return false
 
         this.storage = storage
@@ -233,7 +245,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             actionData = actionData
         ) { action ->
             devices.firstOrNull { it.id == action.actionId }?.let {
-                viewModel.castItem(storage, file, it)
+                viewModel.castItem(file, it)
             }
             return@BottomActionDialog true
         }.show()
@@ -295,10 +307,10 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     }
 
     fun openFile(file: StorageFile) {
-        viewModel.playItem(storage, file)
+        viewModel.playItem(file)
     }
 
     fun castFile(file: StorageFile) {
-        viewModel.castItem(storage, file)
+        viewModel.castItem(file)
     }
 }

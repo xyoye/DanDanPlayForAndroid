@@ -20,15 +20,15 @@ class StorageFileViewModel : BaseViewModel() {
 
     val selectDeviceLiveData = MutableLiveData<Pair<StorageFile, List<MediaLibraryEntity>>>()
 
-    fun playItem(storage: Storage, file: StorageFile) {
+    fun playItem(file: StorageFile) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (setupVideoSource(storage, file)) {
+            if (setupVideoSource(file)) {
                 playLiveData.postValue(Any())
             }
         }
     }
 
-    fun castItem(storage: Storage, file: StorageFile) {
+    fun castItem(file: StorageFile) {
         viewModelScope.launch(Dispatchers.IO) {
             //获取所有可用的投屏设备
             val devices = DatabaseManager.instance.getMediaLibraryDao()
@@ -39,7 +39,7 @@ class StorageFileViewModel : BaseViewModel() {
                 return@launch
             }
             if (devices.size == 1) {
-                castItem(storage, file, devices.first())
+                castItem(file, devices.first())
                 return@launch
             }
 
@@ -47,9 +47,9 @@ class StorageFileViewModel : BaseViewModel() {
         }
     }
 
-    fun castItem(storage: Storage, file: StorageFile, device: MediaLibraryEntity) {
-        viewModelScope.launch {
-            if (setupVideoSource(storage, file)) {
+    fun castItem(file: StorageFile, device: MediaLibraryEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupVideoSource(file)) {
                 castLiveData.postValue(device)
             }
         }
@@ -71,13 +71,13 @@ class StorageFileViewModel : BaseViewModel() {
                 return@launch
             }
 
-            playItem(storage, storageFile)
+            playItem(storageFile)
         }
     }
 
-    private suspend fun setupVideoSource(storage: Storage, file: StorageFile): Boolean {
+    private suspend fun setupVideoSource(file: StorageFile): Boolean {
         showLoading()
-        val mediaSource = StorageVideoSourceFactory.create(file, storage)
+        val mediaSource = StorageVideoSourceFactory.create(file)
         hideLoading()
 
         if (mediaSource == null) {

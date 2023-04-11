@@ -1,6 +1,7 @@
 package com.xyoye.common_component.config
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.xyoye.data_component.enums.HistorySort
 import com.xyoye.data_component.enums.StorageSort
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
@@ -66,4 +67,12 @@ object AppConfigTable {
     @MMKVFiled
     //文件排序文件夹优先
     var storageSortDirectoryFirst: Boolean = true
+
+    @MMKVFiled
+    //播放历史排序类型
+    var historySortType: Int = HistorySort.TIME.value
+
+    @MMKVFiled
+    //播放历史排序升序
+    var historySortAsc: Boolean = false
 }

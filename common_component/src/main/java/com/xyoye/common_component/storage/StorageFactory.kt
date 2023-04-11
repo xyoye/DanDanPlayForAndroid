@@ -1,6 +1,5 @@
 package com.xyoye.common_component.storage
 
-import androidx.lifecycle.Lifecycle
 import com.xyoye.common_component.storage.impl.*
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
@@ -11,12 +10,12 @@ import com.xyoye.data_component.enums.MediaType
 
 object StorageFactory {
 
-    fun createStorage(library: MediaLibraryEntity, lifecycle: Lifecycle): Storage? {
+    fun createStorage(library: MediaLibraryEntity): Storage? {
         return when (library.mediaType) {
             MediaType.EXTERNAL_STORAGE -> DocumentFileStorage(library)
             MediaType.WEBDAV_SERVER -> WebDavStorage(library)
             MediaType.SMB_SERVER -> SmbStorage(library)
-            MediaType.FTP_SERVER -> FtpStorage(library, lifecycle)
+            MediaType.FTP_SERVER -> FtpStorage(library)
             MediaType.LOCAL_STORAGE -> VideoStorage(library)
             MediaType.REMOTE_STORAGE -> RemoteStorage(library)
             MediaType.MAGNET_LINK -> TorrentStorage(library)

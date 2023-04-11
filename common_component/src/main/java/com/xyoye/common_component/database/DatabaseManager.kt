@@ -110,7 +110,7 @@ class DatabaseManager private constructor() {
         val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE play_history ADD COLUMN storage_path TEXT")
-                database.execSQL("ALTER TABLE play_history ADD COLUMN storage_id INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE play_history ADD COLUMN storage_id INTEGER")
             }
         }
 

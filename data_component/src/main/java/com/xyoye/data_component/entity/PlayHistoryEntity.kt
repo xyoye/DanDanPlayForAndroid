@@ -64,7 +64,7 @@ data class PlayHistoryEntity(
     var storagePath: String? = null,
 
     @ColumnInfo(name = "storage_id")
-    var storageId: Int = 0,
+    var storageId: Int? = null,
 
     @ColumnInfo(name = "is_last_play")
     var isLastPlay: Boolean = false

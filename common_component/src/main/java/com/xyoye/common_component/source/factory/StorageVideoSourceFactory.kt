@@ -12,14 +12,14 @@ import com.xyoye.common_component.storage.file.StorageFile
 
 object StorageVideoSourceFactory {
 
-    suspend fun create(file: StorageFile, storage: Storage): StorageVideoSource? {
+    suspend fun create(file: StorageFile): StorageVideoSource? {
+        val storage = file.storage
         val playUrl = storage.createPlayUrl(file) ?: return null
         val danmuInfo = getDanmuInfo(file, storage)
         val subtitlePath = getSubtitlePath(file, storage)
         return StorageVideoSource(
             playUrl,
             file,
-            storage,
             danmuInfo.first,
             danmuInfo.second,
             subtitlePath

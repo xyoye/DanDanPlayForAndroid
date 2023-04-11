@@ -50,12 +50,6 @@ object RouteTable {
         const val PlayerCenter = "/player/player"
     }
 
-    object Download {
-        const val DownloadSelection = "/download/selection"
-        const val DownloadList = "/download/list"
-        const val PlaySelection = "/play/selection"
-    }
-
     object Stream {
         const val WebDavLogin = "/stream/web_dav_login"
         const val FTPLogin = "/stream/ftp_login"

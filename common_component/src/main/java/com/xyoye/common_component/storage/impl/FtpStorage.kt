@@ -1,8 +1,6 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.FtpPlayServer
@@ -11,8 +9,6 @@ import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
@@ -22,17 +18,9 @@ import java.io.InputStream
  * Created by XYJ on 2023/1/16.
  */
 
-class FtpStorage(library: MediaLibraryEntity, lifecycle: Lifecycle) : AbstractStorage(library) {
+class FtpStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     private val mFtpClient = FTPClient()
     private var playingInputStream: InputStream? = null
-
-    init {
-        lifecycle.coroutineScope.launchWhenResumed {
-            withContext(Dispatchers.IO) {
-                completePending()
-            }
-        }
-    }
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         //检测FTP通讯是否正常

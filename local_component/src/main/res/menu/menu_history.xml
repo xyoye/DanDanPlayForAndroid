@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/clear_history_item"
-        android:title="@string/action_clear"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/item_sort"
+        android:icon="@drawable/ic_sort"
+        android:orderInCategory="100"
+        android:title="@string/text_file_sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_sort_by_time"
+                    android:title="@string/text_sort_by_time" />
+                <item
+                    android:id="@+id/action_sort_by_name"
+                    android:title="@string/text_sort_by_name" />
+            </group>
+            <item
+                android:id="@+id/action_sort_order_asc"
+                android:checkable="true"
+                android:title="@string/text_sort_order_asc" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/item_clear_history"
+        android:orderInCategory="100"
+        android:title="@string/action_clear_history"
+        app:showAsAction="never" />
 </menu>

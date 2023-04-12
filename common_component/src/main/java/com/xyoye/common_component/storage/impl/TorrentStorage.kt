@@ -70,7 +70,7 @@ class TorrentStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
                 mFileIndex = -1
                 mSubPath = history.torrentPath
             }
-        )
+        ).also { it.playHistory = history }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String? {

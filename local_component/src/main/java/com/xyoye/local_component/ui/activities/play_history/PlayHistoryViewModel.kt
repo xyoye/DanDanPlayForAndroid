@@ -6,10 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
 import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
 import com.xyoye.common_component.storage.StorageFactory
+import com.xyoye.common_component.storage.impl.LinkStorage
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.utils.HistorySortOption
@@ -84,36 +85,44 @@ class PlayHistoryViewModel : BaseViewModel() {
 
     fun openHistory(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (setupVideoSource(history)) {
+            if (setupHistorySource(history)) {
                 playLiveData.postValue(Any())
             }
         }
     }
 
-    fun openStreamLink(url: String, headers: Map<String, String>?) {
+    fun openStreamLink(link: String, headers: Map<String, String>?) {
         viewModelScope.launch(Dispatchers.IO) {
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(listOf(url))
-                .setHttpHeaders(headers ?: emptyMap())
-                .create(MediaType.STREAM_LINK)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，无法打开播放资源")
-                return@launch
+            if (setupLinkSource(link, headers)) {
+                playLiveData.postValue(Any())
             }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
     }
 
-    private suspend fun setupVideoSource(history: PlayHistoryEntity): Boolean {
+    private suspend fun setupHistorySource(history: PlayHistoryEntity): Boolean {
         showLoading()
         val mediaSource = history.storageId
             ?.run { DatabaseManager.instance.getMediaLibraryDao().getById(this) }
             ?.run { StorageFactory.createStorage(this) }
             ?.run { historyFile(history) }
+            ?.run { StorageVideoSourceFactory.create(this) }
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
+    }
+
+    private suspend fun setupLinkSource(link: String, headers: Map<String, String>?): Boolean {
+        showLoading()
+        val mediaSource = MediaLibraryEntity.STREAM.copy(url = link)
+            .run { StorageFactory.createStorage(this) }
+            ?.run { this as? LinkStorage }
+            ?.apply { this.setupHttpHeader(headers) }
+            ?.run { getRootFile() }
             ?.run { StorageVideoSourceFactory.create(this) }
         hideLoading()
 

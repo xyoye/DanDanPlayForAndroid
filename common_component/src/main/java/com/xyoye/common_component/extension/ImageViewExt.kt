@@ -68,11 +68,7 @@ fun ImageView.loadImageWithCallback(
 }
 
 fun ImageView.loadImageByKey(uniqueKey: String?) {
-    val source = uniqueKey.toCoverFile()
-    if (source == null || !source.exists()) {
-        return
-    }
-    load(source) {
+    load(uniqueKey.toCoverFile()) {
         scale(Scale.FILL)
         crossfade(true)
         error(R.drawable.ic_dandanplay)

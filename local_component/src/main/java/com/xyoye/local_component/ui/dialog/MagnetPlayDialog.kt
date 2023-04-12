@@ -51,7 +51,7 @@ class MagnetPlayDialog(
     }
 
     private fun launchStorageFileActivity(link: String) {
-        val library = MediaLibraryEntity.TORRENT.apply { url = link }
+        val library = MediaLibraryEntity.TORRENT.copy(url = link)
         ARouter.getInstance()
             .build(RouteTable.Stream.StorageFile)
             .withParcelable("storageLibrary", library)

@@ -120,7 +120,7 @@ class SearchMagnetFragment :
                                     return@setOnClickListener
                                 }
                                 val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
-                                val library = MediaLibraryEntity.TORRENT.apply { url = magnetLink }
+                                val library = MediaLibraryEntity.TORRENT.copy(url = magnetLink)
                                 ARouter.getInstance()
                                     .build(RouteTable.Stream.StorageFile)
                                     .withParcelable("storageLibrary", library)

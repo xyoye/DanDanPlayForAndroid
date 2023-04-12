@@ -59,6 +59,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return storageFilesSnapshot
             .firstOrNull { it.Id == videoId }
             ?.run { RemoteStorageFile(this@RemoteStorage, this) }
+            ?.also { it.playHistory = history }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String {

@@ -64,7 +64,7 @@ class StorageVideoSource(
     }
 
     override fun getVideoTitle(): String {
-        return getFileName(file.fileName())
+        return file.fileName()
     }
 
     override fun getCurrentPosition(): Long {

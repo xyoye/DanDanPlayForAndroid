@@ -20,6 +20,7 @@ object StorageFactory {
             MediaType.REMOTE_STORAGE -> RemoteStorage(library)
             MediaType.MAGNET_LINK -> TorrentStorage(library)
             MediaType.STREAM_LINK -> LinkStorage(library)
+            MediaType.OTHER_STORAGE -> LinkStorage(library)
             else -> null
         }
     }

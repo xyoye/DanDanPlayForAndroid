@@ -6,13 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
+import com.xyoye.common_component.storage.StorageFactory
+import com.xyoye.common_component.storage.impl.LinkStorage
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.utils.getDirPath
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.ExtendFolderEntity
-import com.xyoye.data_component.enums.MediaType
+import com.xyoye.data_component.entity.MediaLibraryEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -44,21 +47,28 @@ class PlayerIntentViewModel : BaseViewModel() {
         }
     }
 
-    fun openIntentUrl(url: String) {
-        viewModelScope.launch {
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(listOf(url))
-                .create(MediaType.OTHER_STORAGE)
-            hideLoading()
-
-            if (mediaSource == null) {
-                isParseError.set(true)
-                ToastCenter.showError("播放失败，无法打开播放资源")
-                return@launch
+    fun openIntentUrl(link: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupLinkSource(link)) {
+                playLiveData.postValue(Any())
             }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    private suspend fun setupLinkSource(link: String): Boolean {
+        showLoading()
+        val mediaSource = MediaLibraryEntity.HISTORY.copy(url = link)
+            .run { StorageFactory.createStorage(this) }
+            ?.run { this as? LinkStorage }
+            ?.run { getRootFile() }
+            ?.run { StorageVideoSourceFactory.create(this) }
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 }

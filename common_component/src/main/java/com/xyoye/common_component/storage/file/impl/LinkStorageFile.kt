@@ -32,7 +32,7 @@ class LinkStorageFile(
     }
 
     override fun fileName(): String {
-        return getFileName(url)
+        return Uri.parse(url).lastPathSegment ?: getFileName(url)
     }
 
     override fun fileLength(): Long {

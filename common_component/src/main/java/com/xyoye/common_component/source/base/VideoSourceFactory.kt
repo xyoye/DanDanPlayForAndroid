@@ -1,9 +1,7 @@
 package com.xyoye.common_component.source.base
 
 import androidx.annotation.CheckResult
-import com.xyoye.common_component.source.factory.HistorySourceFactory
 import com.xyoye.common_component.source.factory.ScreencastSourceFactory
-import com.xyoye.common_component.source.factory.StreamSourceFactory
 import com.xyoye.data_component.enums.MediaType
 
 
@@ -61,14 +59,8 @@ object VideoSourceFactory {
             this.mediaType = mediaType
             return when (mediaType) {
                 MediaType.SCREEN_CAST -> ScreencastSourceFactory.create(this)
-                MediaType.STREAM_LINK,
-                MediaType.OTHER_STORAGE -> StreamSourceFactory.create(this)
                 else -> null
             }
-        }
-
-        fun createHistory(): BaseVideoSource? {
-            return HistorySourceFactory.create(this)
         }
     }
 }

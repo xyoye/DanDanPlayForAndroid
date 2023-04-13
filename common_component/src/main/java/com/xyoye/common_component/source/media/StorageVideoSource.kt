@@ -20,7 +20,7 @@ class StorageVideoSource(
     private var danmuPath: String?,
     private var subtitlePath: String?,
 ) : BaseVideoSource(
-    file.storage.videoSources.indexOf(file),
+    file.storage.videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
     file.storage.videoSources
 ) {
 

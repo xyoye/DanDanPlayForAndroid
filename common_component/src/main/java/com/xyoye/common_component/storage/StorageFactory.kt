@@ -21,6 +21,7 @@ object StorageFactory {
             MediaType.MAGNET_LINK -> TorrentStorage(library)
             MediaType.STREAM_LINK -> LinkStorage(library)
             MediaType.OTHER_STORAGE -> LinkStorage(library)
+            MediaType.SCREEN_CAST -> ScreencastStorage(library)
             else -> null
         }
     }

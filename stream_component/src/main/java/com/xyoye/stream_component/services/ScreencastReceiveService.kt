@@ -16,12 +16,15 @@ import com.xyoye.common_component.extension.isServiceRunning
 import com.xyoye.common_component.extension.resumeWhenAlive
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
+import com.xyoye.common_component.storage.StorageFactory
+import com.xyoye.common_component.storage.impl.ScreencastStorage
 import com.xyoye.common_component.utils.ActivityHelper
 import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.utils.screencast.receiver.HttpServer
 import com.xyoye.stream_component.utils.screencast.receiver.UdpServer
@@ -137,11 +140,13 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             }
 
             //创建投屏资源
-            val videoSource = VideoSourceFactory.Builder()
-                .setVideoSources(listOf(screencastData))
-                .setIndex(screencastData.playIndex)
-                .create(MediaType.SCREEN_CAST)
-            if (videoSource == null) {
+            val mediaSource = MediaLibraryEntity.HISTORY.copy(mediaType = MediaType.SCREEN_CAST)
+                .run { StorageFactory.createStorage(this) }
+                .run { this as? ScreencastStorage }
+                ?.apply { setupScreencastData(screencastData) }
+                ?.run { getRootFile() }
+                ?.run { StorageVideoSourceFactory.create(this) }
+            if (mediaSource == null) {
                 ToastCenter.showError("播放失败，无法打开播放资源")
                 return@launch
             }
@@ -151,11 +156,11 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             //正在播放器页面时，不打开新的播放器
             val topActivity = ActivityHelper.instance.getTopActivity()
             if (topActivity != null && topActivity is ScreencastHandler) {
-                topActivity.playScreencast(videoSource)
+                topActivity.playScreencast(mediaSource)
                 return@launch
             }
 
-            VideoSourceManager.getInstance().setSource(videoSource)
+            VideoSourceManager.getInstance().setSource(mediaSource)
             ARouter.getInstance()
                 .build(RouteTable.Player.Player)
                 .navigation()

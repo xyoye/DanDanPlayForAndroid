@@ -75,94 +75,23 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:transitionName="title_text"
-            app:layout_constraintBottom_toTopOf="@id/extra_source_cl"
+            app:layout_constraintBottom_toTopOf="@id/tag_rv"
             app:layout_constraintEnd_toStartOf="@+id/more_action_iv"
             app:layout_constraintStart_toEndOf="@+id/cover_iv"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread_inside"
             tools:text="测试" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/extra_source_cl"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tag_rv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/title_tv"
             app:layout_constraintStart_toStartOf="@id/title_tv"
-            app:layout_constraintTop_toBottomOf="@id/title_tv">
-
-            <TextView
-                android:id="@+id/danmu_tips_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/background_text_circle_theme"
-                android:paddingStart="4dp"
-                android:paddingTop="2dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="2dp"
-                android:text="@string/tips_bound_danmu"
-                android:textColor="@color/text_theme"
-                android:textSize="8sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="SmallSp"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/subtitle_tips_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/background_text_circle_orange"
-                android:paddingStart="4dp"
-                android:paddingTop="2dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="2dp"
-                android:text="@string/tips_bound_subtitle"
-                android:textColor="@color/text_orange"
-                android:textSize="8sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/danmu_tips_tv"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="0dp"
-                tools:ignore="SmallSp"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/media_type_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="38dp"
-                android:textColor="@color/text_gray"
-                android:textSize="10sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/last_play_time_tv"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="SmallSp"
-                tools:text="本地媒体库"
-                tools:visibility="visible" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/last_play_time_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:textColor="@color/text_gray"
-                android:textSize="10sp"
-                android:visibility="visible"
-                app:drawableStartCompat="@drawable/ic_last_play_time"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="SmallSp"
-                tools:text="今天 16:20" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/title_tv"
+            tools:layout_height="20dp" />
 
         <ImageView
             android:id="@+id/more_action_iv"

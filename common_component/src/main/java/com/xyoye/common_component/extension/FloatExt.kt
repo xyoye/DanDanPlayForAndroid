@@ -7,7 +7,7 @@ import android.content.res.Resources
  */
 
 
-fun Float.px(): Float {
+fun Float.dp(): Float {
     val scale = Resources.getSystem().displayMetrics.density
     return this * scale + 0.5f
 }

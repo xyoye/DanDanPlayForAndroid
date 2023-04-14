@@ -52,7 +52,7 @@ fun ImageView.loadImageWithCallback(
     onComplete: () -> Unit
 ) {
     val transformation = if (dpRadius > 0)
-        RoundedCornersTransformation(dpRadius.px())
+        RoundedCornersTransformation(dpRadius.dp())
     else
         null
 
@@ -72,7 +72,7 @@ fun ImageView.loadImageByKey(uniqueKey: String?) {
         scale(Scale.FILL)
         crossfade(true)
         error(R.drawable.ic_dandanplay)
-        transformations(RoundedCornersTransformation(5f.px()))
+        transformations(RoundedCornersTransformation(5f.dp()))
         diskCachePolicy(CachePolicy.DISABLED)
         memoryCachePolicy(CachePolicy.DISABLED)
         videoFramePercent(0.1)
@@ -90,7 +90,7 @@ fun ImageView.loadImage(file: StorageFile) {
         scale(Scale.FILL)
         crossfade(true)
         error(R.drawable.ic_dandanplay)
-        transformations(RoundedCornersTransformation(5f.px()))
+        transformations(RoundedCornersTransformation(5f.dp()))
         diskCachePolicy(cachePolicy)
         memoryCachePolicy(cachePolicy)
         videoFramePercent(0.1)

@@ -5,9 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.utils.DanmuUtils
+import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.DanmuSourceBean
@@ -21,8 +24,6 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
 
 
 /**
@@ -30,9 +31,7 @@ import java.io.File
  */
 class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
-    lateinit var uniqueKey: String
-    lateinit var mediaType: MediaType
-    var videoPath: String? = null
+    lateinit var storageFile: StorageFile
 
     val danmuHeaderLiveData = MutableLiveData<List<DanmuSourceHeaderBean>>()
     val danmuContentLiveData = MutableLiveData<List<DanmuSourceContentBean>>()
@@ -44,20 +43,24 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     private var history: PlayHistoryEntity? = null
     private var currentTab: Int = 0
 
-    fun matchDanmu(videoPath: String) {
+    fun matchDanmu() {
+        if (storageFile.storage.library.mediaType != MediaType.LOCAL_STORAGE) {
+            return
+        }
+        val videoFile = storageFile.filePath().toFile()
         httpRequest<Unit>(viewModelScope) {
             onStart { showLoading() }
 
             api {
                 val params = HashMap<String, String>()
-                params["fileName"] = getFileName(videoPath)
-                params["fileHash"] = IOUtils.getFileHash(videoPath) ?: ""
-                params["fileSize"] = File(videoPath).length().toString()
+                params["fileName"] = videoFile!!.name
+                params["fileHash"] = IOUtils.getFileHash(videoFile.absolutePath) ?: ""
+                params["fileSize"] = videoFile.length().toString()
                 params["videoDuration"] = "0"
                 params["matchMode"] = "hashOnly"
 
                 history = DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(
-                    uniqueKey, mediaType
+                    storageFile.uniqueKey(), storageFile.storage.library.id
                 )
 
                 val matchData = Retrofit.service.matchDanmu(params)
@@ -101,7 +104,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun getDanmuThirdSource(contentBean: DanmuSourceContentBean) {
-        httpRequest<DanmuRelatedData>(viewModelScope) {
+        httpRequest(viewModelScope) {
             onStart { showLoading() }
 
             api {
@@ -119,7 +122,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun downloadDanmu(contentBean: DanmuSourceContentBean) {
-        httpRequest<Unit>(viewModelScope) {
+        httpRequest(viewModelScope) {
             onStart { showLoading() }
 
             api {
@@ -129,8 +132,11 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                     true,
                     language
                 )
-                val danmuFileName = contentBean.animeTitle + "_" + contentBean.episodeTitle + ".xml"
-                val danmuPath = saveDanmuFile(videoPath, danmuFileName, danmuData)
+                val danmuPath = DanmuUtils.saveDanmu(
+                    danmuData,
+                    contentBean.animeTitle,
+                    "${contentBean.episodeTitle}.xml"
+                )
                 if (danmuPath.isNullOrEmpty()) {
                     ToastCenter.showError("保存弹幕失败")
                 } else {
@@ -166,7 +172,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             return
         }
 
-        httpRequest<Unit>(viewModelScope) {
+        httpRequest(viewModelScope) {
             onStart { showLoading() }
 
             api {
@@ -182,8 +188,12 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                     allDanmuData.comments.addAll(danmuData.comments)
                 }
 
-                val danmuFileName = contentBean.animeTitle + "_" + contentBean.episodeTitle + ".xml"
-                val danmuPath = saveDanmuFile(videoPath, danmuFileName, allDanmuData)
+
+                val danmuPath = DanmuUtils.saveDanmu(
+                    allDanmuData,
+                    contentBean.animeTitle,
+                    "${contentBean.episodeTitle}.xml"
+                )
                 if (danmuPath.isNullOrEmpty()) {
                     ToastCenter.showError("保存弹幕失败")
                 } else {
@@ -302,27 +312,13 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
         return null
     }
 
-    private suspend fun saveDanmuFile(
-        videoPath: String?,
-        danmuFileName: String,
-        danmuData: DanmuData
-    ): String? {
-        return withContext(Dispatchers.IO) {
-            //保存弹幕
-            val folderName = videoPath?.run { getParentFolderName(videoPath) }
-            //视频路径存在（即本地视频），将弹幕文件重命名为视频文件名，否则按弹幕标题命名
-            val fileName =
-                if (videoPath == null) danmuFileName else "${getFileNameNoExtension(videoPath)}.xml"
-            return@withContext DanmuUtils.saveDanmu(danmuData, folderName, fileName)
-        }
-    }
-
     private suspend fun databaseDanmu(
         danmuPath: String?,
         episodeId: Int
     ) {
+        val storageId = storageFile.storage.library.id
         val history = DatabaseManager.instance.getPlayHistoryDao()
-            .getPlayHistory(uniqueKey, mediaType)
+            .getPlayHistory(storageFile.uniqueKey(), storageId)
         if (history != null) {
             history.danmuPath = danmuPath
             history.episodeId = episodeId
@@ -336,10 +332,11 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             0,
             "",
             "",
-            mediaType,
-            uniqueKey = uniqueKey,
+            mediaType = storageFile.storage.library.mediaType,
+            uniqueKey = storageFile.uniqueKey(),
             danmuPath = danmuPath,
-            episodeId = episodeId
+            episodeId = episodeId,
+            storageId = storageId,
         )
         this.history = newHistory
         DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)

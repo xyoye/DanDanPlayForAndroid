@@ -1,6 +1,5 @@
 package com.xyoye.local_component.ui.fragment.bind_subtitle
 
-import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
@@ -16,7 +15,6 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.data.SubtitleSourceBean
 import com.xyoye.data_component.enums.FileManagerAction
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentBindSubtitleSourceBinding
@@ -38,23 +36,7 @@ class BindSubtitleSourceFragment :
     private lateinit var subtitleAdapter: BasePagingAdapter<SubtitleSourceBean>
 
     companion object {
-        private const val TAG_VIDEO_PATH = "tag_video_path"
-        private const val TAG_UNIQUE_KEY = "tag_unique_key"
-        private const val TAG_MEDIA_TYPE = "tag_media_type"
-
-        fun newInstance(
-            videoPath: String?,
-            uniqueKey: String,
-            mediaType: String
-        ): BindSubtitleSourceFragment {
-            val args = Bundle()
-            args.putString(TAG_VIDEO_PATH, videoPath)
-            args.putString(TAG_UNIQUE_KEY, uniqueKey)
-            args.putString(TAG_MEDIA_TYPE, mediaType)
-            val fragment = BindSubtitleSourceFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = BindSubtitleSourceFragment()
     }
 
     override fun initViewModel() = ViewModelInit(
@@ -65,22 +47,13 @@ class BindSubtitleSourceFragment :
     override fun getLayoutId() = R.layout.fragment_bind_subtitle_source
 
     override fun initView() {
-        val videoPath: String? = arguments?.getString(TAG_VIDEO_PATH)
-        val uniqueKey = arguments?.getString(TAG_UNIQUE_KEY)
-        val mediaTypeValue = arguments?.getString(TAG_MEDIA_TYPE)
-
-        if (uniqueKey.isNullOrEmpty() || mediaTypeValue.isNullOrEmpty())
-            return
-
-        viewModel.uniqueKey = uniqueKey
-        viewModel.mediaType = MediaType.fromValue(mediaTypeValue)
-        viewModel.videoPath = videoPath
+        viewModel.storageFile = (activity as BindExtraSourceActivity).storageFile
 
         initRv()
 
         initObserver()
 
-        videoPath?.let { viewModel.matchSubtitle(it) }
+        viewModel.matchSubtitle()
     }
 
     private fun initRv() {

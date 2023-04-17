@@ -25,7 +25,10 @@ import java.io.File
  * Created by xyoye on 2023/4/14
  */
 
-object PlayHistoryAdapter {
+class PlayHistoryAdapter(
+    private val activity: PlayHistoryActivity,
+    private val viewModel: PlayHistoryViewModel
+) {
 
     private enum class EditHistory(val title: String, val icon: Int) {
         REMOVE_DANMU("移除弹幕绑定", R.drawable.ic_unbind_danmu),
@@ -38,7 +41,7 @@ object PlayHistoryAdapter {
 
     private val tagDecoration = ItemDecorationOrientation(5.dp(), 0, RecyclerView.HORIZONTAL)
 
-    fun createAdapter(activity: PlayHistoryActivity, viewModel: PlayHistoryViewModel): BaseAdapter {
+    fun createAdapter(): BaseAdapter {
         return buildAdapter {
             addEmptyView(R.layout.layout_empty) {
                 initEmptyView {
@@ -57,7 +60,7 @@ object PlayHistoryAdapter {
         viewModel: PlayHistoryViewModel
     ) =
         { data: PlayHistoryEntity ->
-            itemBinding.coverIv.loadImageByKey(data.uniqueKey)
+            itemBinding.coverIv.loadVideoCover(data.uniqueKey.toCoverFile())
 
             itemBinding.durationTv.text = getDuration(data)
             itemBinding.durationTv.isVisible = data.videoDuration > 0

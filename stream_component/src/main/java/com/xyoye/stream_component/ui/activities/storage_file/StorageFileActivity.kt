@@ -62,6 +62,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         StorageFileStyleHelper(this, dataBinding)
     }
 
+    var shareStorageFile: StorageFile? = null
+
     override fun initViewModel() =
         ViewModelInit(
             BR.viewModel,
@@ -168,6 +170,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     }
 
     override fun onDestroy() {
+        shareStorageFile = null
         if (this::storage.isInitialized) {
             SupervisorScope.IO.launch {
                 storage.close()

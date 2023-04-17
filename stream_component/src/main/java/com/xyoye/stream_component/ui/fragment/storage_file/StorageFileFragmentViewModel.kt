@@ -174,6 +174,11 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             history = DatabaseManager.instance
                 .getPlayHistoryDao()
                 .getPlayHistory(file.uniqueKey(), file.storage.library.mediaType)
+            //补充storageId字段
+            if (history != null) {
+                history.storageId = file.storage.library.id
+                DatabaseManager.instance.getPlayHistoryDao().insert(history)
+            }
         }
         if (history != null && storageLastPlay != null) {
             history.isLastPlay = history.id == storageLastPlay!!.id

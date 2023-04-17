@@ -61,7 +61,7 @@ class StorageFileFragment :
         dataBinding.storageFileRv.apply {
             layoutManager = vertical()
 
-            adapter = StorageFileAdapter.create(ownerActivity, viewModel)
+            adapter = StorageFileAdapter(ownerActivity, viewModel).create()
         }
     }
 

@@ -1,7 +1,5 @@
 package com.xyoye.local_component.ui.fragment.bind_danmu
 
-import android.os.Bundle
-import android.text.TextUtils
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
@@ -19,7 +17,6 @@ import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.DanmuSourceHeaderBean
 import com.xyoye.data_component.enums.FileManagerAction
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentBindDanmuSourceBinding
@@ -39,23 +36,7 @@ class BindDanmuSourceFragment :
     private var danmuDownloadDialog: DanmuDownloadDialog? = null
 
     companion object {
-        private const val TAG_VIDEO_PATH = "tag_video_path"
-        private const val TAG_UNIQUE_KEY = "tag_unique_key"
-        private const val TAG_MEDIA_TYPE = "tag_media_type"
-
-        fun newInstance(
-            videoPath: String?,
-            uniqueKey: String,
-            mediaType: String
-        ): BindDanmuSourceFragment {
-            val args = Bundle()
-            args.putString(TAG_VIDEO_PATH, videoPath)
-            args.putString(TAG_UNIQUE_KEY, uniqueKey)
-            args.putString(TAG_MEDIA_TYPE, mediaType)
-            val fragment = BindDanmuSourceFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = BindDanmuSourceFragment()
     }
 
     override fun getLayoutId() = R.layout.fragment_bind_danmu_source
@@ -66,24 +47,13 @@ class BindDanmuSourceFragment :
     )
 
     override fun initView() {
-        val videoPath: String? = arguments?.getString(TAG_VIDEO_PATH)
-        val uniqueKey = arguments?.getString(TAG_UNIQUE_KEY)
-        val mediaTypeValue = arguments?.getString(TAG_MEDIA_TYPE)
-
-        if (uniqueKey.isNullOrEmpty() || mediaTypeValue.isNullOrEmpty())
-            return
-
-        viewModel.uniqueKey = uniqueKey
-        viewModel.mediaType = MediaType.fromValue(mediaTypeValue)
-        viewModel.videoPath = videoPath
+        viewModel.storageFile = (activity as BindExtraSourceActivity).storageFile
 
         initRv()
 
         initObserver()
 
-        if (TextUtils.isEmpty(videoPath).not()) {
-            viewModel.matchDanmu(videoPath!!)
-        }
+        viewModel.matchDanmu()
     }
 
     private fun initRv() {

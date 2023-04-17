@@ -1,9 +1,8 @@
 package com.xyoye.local_component.ui.activities.bind_source
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -13,10 +12,10 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.setVideoCover
+import com.xyoye.common_component.services.StorageFileProvider
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.utils.showKeyboard
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBindExtraSourceBinding
@@ -34,30 +33,13 @@ class BindExtraSourceActivity :
     BaseActivity<BindExtraSourceViewModel, ActivityBindExtraSourceBinding>() {
 
     @Autowired
-    @JvmField
-    var videoTitle: String? = null
-
-    @Autowired
-    @JvmField
-    var fileCoverUrl: String? = null
-
-    @Autowired
-    @JvmField
-    var uniqueKey: String? = null
-
-    @Autowired
-    @JvmField
-    var mediaType: String? = null
-
-    @Autowired
-    @JvmField
-    var videoPath: String? = null
+    lateinit var storageFileProvider: StorageFileProvider
 
     @Autowired
     @JvmField
     var isSearchDanmu: Boolean = true
 
-    private lateinit var mMediaType: MediaType
+    lateinit var storageFile: StorageFile
 
     override fun initViewModel() = ViewModelInit(
         BR.viewModel, BindExtraSourceViewModel::class.java
@@ -68,12 +50,13 @@ class BindExtraSourceActivity :
     override fun initView() {
         ARouter.getInstance().inject(this)
 
-        if (uniqueKey == null || mediaType == null) {
+        val storageFile = storageFileProvider.getShareStorageFile()
+        if (storageFile == null) {
             finish()
             return
         }
-
-        mMediaType = MediaType.fromValue(mediaType!!)
+        this.storageFile = storageFile
+        VideoItemLayout.initVideoLayout(dataBinding, storageFile)
 
         dataBinding.viewpager.apply {
             adapter = BindSourcePageAdapter(supportFragmentManager)
@@ -82,12 +65,7 @@ class BindExtraSourceActivity :
 
         dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)
 
-        dataBinding.coverIv.setVideoCover(uniqueKey, fileCoverUrl)
-        dataBinding.titleTv.text = videoTitle
-
         initListener()
-
-        viewModel.updateSourceChanged(uniqueKey!!, mMediaType)
     }
 
     private fun initListener() {
@@ -107,24 +85,14 @@ class BindExtraSourceActivity :
             return@setOnEditorActionListener false
         }
 
-        dataBinding.searchEt.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(editable: Editable?) {
-                val textLength = editable?.length ?: 0
-                if (textLength > 0) {
-                    if (dataBinding.searchEt.isFocused) {
-                        dataBinding.clearTextIv.isVisible = true
-                    }
-                } else {
-                    dataBinding.clearTextIv.isVisible = false
+        dataBinding.searchEt.addTextChangedListener(afterTextChanged = {
+            val textLength = it?.length ?: 0
+            if (textLength > 0) {
+                if (dataBinding.searchEt.isFocused) {
+                    dataBinding.clearTextIv.isVisible = true
                 }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
+            } else {
+                dataBinding.clearTextIv.isVisible = false
             }
         })
 
@@ -140,21 +108,8 @@ class BindExtraSourceActivity :
         }
 
         dataBinding.clearTextIv.setOnClickListener {
-            viewModel.searchText.set("")
+            dataBinding.searchEt.setText("")
             showKeyboard(dataBinding.searchEt)
-        }
-
-        dataBinding.sourceCl.setOnClickListener {
-            viewModel.searchText.set(videoTitle)
-            showKeyboard(dataBinding.searchEt)
-        }
-
-        dataBinding.danmuTipsTv.setOnClickListener {
-            childPage(0)?.unbindDanmu()
-        }
-
-        dataBinding.subtitleTipsTv.setOnClickListener {
-            childPage(1)?.unbindSubtitle()
         }
 
         dataBinding.settingTv.setOnClickListener {
@@ -183,8 +138,11 @@ class BindExtraSourceActivity :
                     else -> ""
                 }
             }
-
         })
+
+        viewModel.historyChangedLiveData.observe(this) {
+            VideoItemLayout.initVideoLayout(dataBinding, it)
+        }
     }
 
     private fun childPage(index: Int? = null): ExtraSourceListener? {
@@ -194,7 +152,7 @@ class BindExtraSourceActivity :
     }
 
     fun onSourceChanged() {
-        viewModel.updateSourceChanged(uniqueKey!!, mMediaType)
+        viewModel.updateSourceChanged(storageFile)
     }
 
     inner class BindSourcePageAdapter(
@@ -207,8 +165,8 @@ class BindExtraSourceActivity :
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> BindDanmuSourceFragment.newInstance(videoPath, uniqueKey!!, mediaType!!)
-                1 -> BindSubtitleSourceFragment.newInstance(videoPath, uniqueKey!!, mediaType!!)
+                0 -> BindDanmuSourceFragment.newInstance()
+                1 -> BindSubtitleSourceFragment.newInstance()
                 else -> throw IndexOutOfBoundsException("only 2 fragment, but position : $position")
 
             }

@@ -67,8 +67,8 @@ fun ImageView.loadImageWithCallback(
     }
 }
 
-fun ImageView.loadImageByKey(uniqueKey: String?) {
-    load(uniqueKey.toCoverFile()) {
+fun ImageView.loadVideoCover(image: Any?) {
+    load(image) {
         scale(Scale.FILL)
         crossfade(true)
         error(R.drawable.ic_dandanplay)

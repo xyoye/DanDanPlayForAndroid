@@ -26,8 +26,10 @@ class PlayHistoryViewModel : BaseViewModel() {
     // 文件排序选项
     private var sortOption = HistorySortOption()
 
-    fun updatePlayHistory(mediaType: MediaType) {
-        viewModelScope.launch {
+    var mediaType = MediaType.OTHER_STORAGE
+
+    fun updatePlayHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
             val historyData = if (mediaType == MediaType.OTHER_STORAGE) {
                 DatabaseManager.instance.getPlayHistoryDao().getAll()
             } else {
@@ -40,10 +42,11 @@ class PlayHistoryViewModel : BaseViewModel() {
     fun removeHistory(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             DatabaseManager.instance.getPlayHistoryDao().delete(history.id)
+            updatePlayHistory()
         }
     }
 
-    fun clearHistory(mediaType: MediaType) {
+    fun clearHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             val historyDao = DatabaseManager.instance.getPlayHistoryDao()
             if (mediaType == MediaType.STREAM_LINK || mediaType == MediaType.MAGNET_LINK) {
@@ -51,6 +54,7 @@ class PlayHistoryViewModel : BaseViewModel() {
             } else {
                 historyDao.deleteAll()
             }
+            updatePlayHistory()
         }
     }
 
@@ -70,16 +74,17 @@ class PlayHistoryViewModel : BaseViewModel() {
 
     fun unbindDanmu(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            history.danmuPath = null
-            history.episodeId = 0
-            DatabaseManager.instance.getPlayHistoryDao().insert(history)
+            val newHistory = history.copy(danmuPath = null, episodeId = 0)
+            DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+            updatePlayHistory()
         }
     }
 
     fun unbindSubtitle(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            history.subtitlePath = null
-            DatabaseManager.instance.getPlayHistoryDao().insert(history)
+            val newHistory = history.copy(subtitlePath = null)
+            DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+            updatePlayHistory()
         }
     }
 

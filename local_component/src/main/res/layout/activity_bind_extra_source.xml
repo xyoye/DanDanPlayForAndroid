@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -78,7 +77,6 @@
                     android:inputType="text"
                     android:minLines="1"
                     android:singleLine="true"
-                    android:text="@{viewModel.searchText}"
                     android:textColor="@color/text_black"
                     android:textColorHint="@color/text_gray"
                     android:textSize="14sp"
@@ -143,102 +141,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tab_layout" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/source_cl"
+        <include
+            android:id="@+id/video_layout"
+            layout="@layout/item_storage_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/item_bg_color"
-            app:layout_constraintTop_toBottomOf="@id/tab_layout">
-
-            <ImageView
-                android:id="@+id/cover_iv"
-                android:layout_width="88dp"
-                android:layout_height="66dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/background_media_cover_placeholder"
-                android:transitionName="cover_image"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_dandanplay" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/title_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="5dp"
-                android:ellipsize="end"
-                android:gravity="top"
-                android:includeFontPadding="false"
-                android:maxLines="3"
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:transitionName="title_text"
-                app:layout_constraintEnd_toStartOf="@id/extra_source_cl"
-                app:layout_constraintStart_toEndOf="@+id/cover_iv"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="spread_inside"
-                tools:text="测试" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/extra_source_cl"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/cover_iv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cover_iv">
-
-                <TextView
-                    android:id="@+id/danmu_tips_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/background_text_circle_theme"
-                    android:paddingStart="4dp"
-                    android:paddingTop="2dp"
-                    android:paddingEnd="4dp"
-                    android:paddingBottom="2dp"
-                    android:text="弹・移除"
-                    android:textColor="@color/text_theme"
-                    android:textSize="10sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/subtitle_tips_tv"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:visible="@{viewModel.boundDanmu}"
-                    tools:ignore="SmallSp"
-                    tools:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/subtitle_tips_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/background_text_circle_orange"
-                    android:paddingStart="4dp"
-                    android:paddingTop="2dp"
-                    android:paddingEnd="4dp"
-                    android:paddingBottom="2dp"
-                    android:text="字・移除"
-                    android:textColor="@color/text_orange"
-                    android:textSize="10sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/danmu_tips_tv"
-                    app:layout_constraintTop_toBottomOf="@id/danmu_tips_tv"
-                    app:layout_goneMarginStart="0dp"
-                    app:visible="@{viewModel.boundSubtitle}"
-                    tools:ignore="SmallSp"
-                    tools:visibility="visible" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
@@ -248,7 +156,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/source_cl" />
+            app:layout_constraintTop_toBottomOf="@id/video_layout" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/local_file_bt"
@@ -263,10 +171,10 @@
             app:elevation="5dp"
             app:fabCustomSize="52dp"
             app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:maxImageSize="26dp"
             app:pressedTranslationZ="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:rippleColor="@color/float_button_ripple_color" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

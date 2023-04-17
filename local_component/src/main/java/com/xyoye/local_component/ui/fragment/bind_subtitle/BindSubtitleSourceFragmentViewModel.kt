@@ -9,6 +9,7 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.weight.ToastCenter
@@ -31,9 +32,7 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
 
     private val searchSubtitleRepository = SubtitleSearchHelper(viewModelScope)
 
-    lateinit var uniqueKey: String
-    lateinit var mediaType: MediaType
-    var videoPath: String? = null
+    lateinit var storageFile: StorageFile
 
     val subtitleSearchLiveData = searchSubtitleRepository.subtitleLiveData
     val subtitleMatchLiveData = MutableLiveData<PagingData<SubtitleSourceBean>>()
@@ -41,10 +40,13 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     val sourceRefreshLiveData = MutableLiveData<Any>()
     val unzipResultLiveData = MutableLiveData<String>()
 
-    fun matchSubtitle(videoPath: String) {
+    fun matchSubtitle() {
+        if (storageFile.storage.library.mediaType != MediaType.LOCAL_STORAGE) {
+            return
+        }
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
-            val subtitleSources = SubtitleMatchHelper.matchSubtitle(videoPath)
+            val subtitleSources = SubtitleMatchHelper.matchSubtitle(storageFile.filePath())
             val matchPagingData = PagingData.from(subtitleSources)
             hideLoading()
             subtitleMatchLiveData.postValue(matchPagingData)
@@ -56,7 +58,7 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun detailSearchSubtitle(sourceBean: SubtitleSourceBean) {
-        val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
+        val shooterSecret = SubtitleConfig.getShooterSecret().orEmpty()
         httpRequest<SubtitleSubData>(viewModelScope) {
             onStart { showLoading() }
 
@@ -82,16 +84,12 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun downloadSearchSubtitle(fileName: String?, sourceUrl: String, unzip: Boolean = false) {
-        httpRequest<Unit>(viewModelScope) {
+        httpRequest(viewModelScope) {
             onStart { showLoading() }
 
             api {
                 val name = if (TextUtils.isEmpty(fileName)) {
-                    if (TextUtils.isEmpty(videoPath)) {
-                        "$uniqueKey.ass"
-                    } else {
-                        "${getFileNameNoExtension(videoPath)}.ass"
-                    }
+                    "${getFileNameNoExtension(storageFile.filePath())}.ass"
                 } else {
                     fileName!!
                 }
@@ -115,12 +113,12 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     private suspend fun unzipSaveSubtitle(fileName: String, responseBody: ResponseBody) {
-        val unzipDirPath = SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream())
-        if (unzipDirPath.isNullOrEmpty()) {
+        val unzipDirPath = SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()).orEmpty()
+        if (unzipDirPath.isEmpty()) {
             ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-        } else {
-            unzipResultLiveData.postValue(unzipDirPath)
+            return
         }
+        unzipResultLiveData.postValue(unzipDirPath)
     }
 
     private fun saveSubtitle(fileName: String, responseBody: ResponseBody) {
@@ -139,8 +137,9 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
 
     fun databaseSubtitle(filePath: String?) {
         viewModelScope.launch(Dispatchers.IO) {
+            val storageId = storageFile.storage.library.id
             val history = DatabaseManager.instance.getPlayHistoryDao()
-                .getPlayHistory(uniqueKey, mediaType)
+                .getPlayHistory(storageFile.uniqueKey(), storageId)
 
             if (history != null) {
                 history.subtitlePath = filePath
@@ -148,13 +147,15 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
                 sourceRefreshLiveData.postValue(Any())
                 return@launch
             }
+
             val newHistory = PlayHistoryEntity(
                 0,
                 "",
                 "",
-                mediaType,
-                uniqueKey = uniqueKey,
-                subtitlePath = filePath
+                mediaType = storageFile.storage.library.mediaType,
+                uniqueKey = storageFile.uniqueKey(),
+                subtitlePath = filePath,
+                storageId = storageId,
             )
             DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
             sourceRefreshLiveData.postValue(Any())

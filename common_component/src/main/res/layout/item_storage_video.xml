@@ -6,7 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
-        android:layout_height="86dp">
+        android:layout_height="86dp"
+        android:transitionName="video_item_layout">
 
         <FrameLayout
             android:id="@+id/main_action_fl"
@@ -26,7 +27,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/background_media_cover_placeholder"
-            android:transitionName="cover_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -74,7 +74,6 @@
             android:textColor="@color/text_black"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:transitionName="title_text"
             app:layout_constraintBottom_toTopOf="@id/tag_rv"
             app:layout_constraintEnd_toStartOf="@+id/more_action_iv"
             app:layout_constraintStart_toEndOf="@+id/cover_iv"

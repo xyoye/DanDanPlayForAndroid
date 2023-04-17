@@ -19,11 +19,11 @@ interface PlayHistoryDao {
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getSingleMediaType(mediaType: MediaType): MutableList<PlayHistoryEntity>
 
-    @Query("SELECT * FROM play_history WHERE media_type IN (:mediaTypes) ORDER BY play_time DESC LIMIT 1")
+    @Query("SELECT * FROM play_history WHERE media_type IN (:mediaTypes) AND url != '' ORDER BY play_time DESC LIMIT 1")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitLastPlay(vararg mediaTypes: MediaType): PlayHistoryEntity?
 
-    @Query("SELECT * FROM play_history WHERE storage_id = (:storageId) ORDER BY play_time DESC LIMIT 1")
+    @Query("SELECT * FROM play_history WHERE storage_id = (:storageId) AND url != '' ORDER BY play_time DESC LIMIT 1")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitStorageLastPlay(storageId: Int): PlayHistoryEntity?
 

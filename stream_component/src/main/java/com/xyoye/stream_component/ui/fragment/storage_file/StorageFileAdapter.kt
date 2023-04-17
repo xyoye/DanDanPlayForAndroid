@@ -2,6 +2,8 @@ package com.xyoye.stream_component.ui.fragment.storage_file
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.text.TextUtils
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.isVisible
@@ -22,7 +24,6 @@ import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.VideoTagBean
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.ui.activities.storage_file.StorageFileActivity
 
@@ -30,7 +31,10 @@ import com.xyoye.stream_component.ui.activities.storage_file.StorageFileActivity
  * Created by xyoye on 2023/4/13
  */
 
-object StorageFileAdapter {
+class StorageFileAdapter(
+    private val activity: StorageFileActivity,
+    private val viewModel: StorageFileFragmentViewModel
+) {
 
     private enum class ManageAction(val title: String, val icon: Int) {
         SCREENCAST("投屏", com.xyoye.common_component.R.drawable.ic_video_cast),
@@ -44,7 +48,7 @@ object StorageFileAdapter {
 
     private val tagDecoration = ItemDecorationOrientation(5.dp(), 0, RecyclerView.HORIZONTAL)
 
-    fun create(activity: StorageFileActivity, viewModel: StorageFileFragmentViewModel): BaseAdapter {
+    fun create(): BaseAdapter {
         return buildAdapter {
             addEmptyView(R.layout.layout_empty) {
                 initEmptyView {
@@ -86,29 +90,34 @@ object StorageFileAdapter {
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem(
         activity: StorageFileActivity,
         viewModel: StorageFileFragmentViewModel
-    ) =
-        { data: StorageFile ->
-            itemBinding.coverIv.loadImage(data)
-            itemBinding.titleTv.setTextColor(getTitleColor(data))
+    ) = { data: StorageFile ->
+        itemBinding.run {
+            coverIv.loadImage(data)
 
-            itemBinding.titleTv.text = data.fileName()
+            titleTv.text = data.fileName()
+            titleTv.setTextColor(getTitleColor(data))
 
-            itemBinding.durationTv.text = getDuration(data)
-            itemBinding.durationTv.isVisible = isShowDuration(data)
+            durationTv.text = getDuration(data)
+            durationTv.isVisible = isShowDuration(data)
 
-            setupVideoTag(itemBinding.tagRv, data)
+            setupVideoTag(tagRv, data)
 
-            itemBinding.mainActionFl.setOnClickListener {
+            mainActionFl.setOnClickListener {
                 activity.openFile(data)
             }
-            itemBinding.moreActionIv.setOnClickListener {
-                showMoreAction(data, itemBinding, activity, viewModel)
+
+            moreActionIv.setOnClickListener {
+                val options = createShareOptions(activity, itemLayout)
+                showMoreAction(data, options, activity, viewModel)
             }
-            itemBinding.mainActionFl.setOnLongClickListener {
-                showMoreAction(data, itemBinding, activity, viewModel)
+
+            mainActionFl.setOnLongClickListener {
+                val options = createShareOptions(activity, itemLayout)
+                showMoreAction(data, options, activity, viewModel)
                 return@setOnLongClickListener true
             }
         }
+    }
 
     private fun setupVideoTag(tagRv: RecyclerView, data: StorageFile) {
         tagRv.apply {
@@ -183,6 +192,10 @@ object StorageFileAdapter {
     }
 
     private fun getPlayTime(file: StorageFile): String {
+        // Url为空，意味着该历史记录为资源绑定记录，非播放记录
+        if (TextUtils.isEmpty(file.playHistory?.url)) {
+            return ""
+        }
         return file.playHistory?.playTime?.run {
             PlayHistoryUtils.formatPlayTime(this)
         } ?: ""
@@ -202,28 +215,17 @@ object StorageFileAdapter {
 
     private fun showMoreAction(
         file: StorageFile,
-        binding: ItemStorageVideoBinding,
+        options: ActivityOptionsCompat,
         activity: StorageFileActivity,
         viewModel: StorageFileFragmentViewModel,
     ) {
         BottomActionDialog(activity, getMoreActions(file)) {
             when (it.actionId) {
-                ManageAction.BIND_DANMU,
-                ManageAction.BIND_SUBTITLE -> {
-                    bindExtraSource(
-                        file,
-                        it.actionId == ManageAction.BIND_DANMU,
-                        createShareOptions(binding, activity),
-                        activity,
-                    )
-                }
-                ManageAction.UNBIND_DANMU,
-                ManageAction.UNBIND_SUBTITLE -> {
-                    viewModel.unbindExtraSource(file, it.actionId == ManageAction.UNBIND_DANMU)
-                }
-                ManageAction.SCREENCAST -> {
-                    activity.castFile(file)
-                }
+                ManageAction.BIND_DANMU -> bindExtraSource(file, true, options, activity)
+                ManageAction.BIND_SUBTITLE -> bindExtraSource(file, false, options, activity)
+                ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, true)
+                ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, false)
+                ManageAction.SCREENCAST -> activity.castFile(file)
             }
             return@BottomActionDialog true
         }.show()
@@ -249,35 +251,19 @@ object StorageFileAdapter {
         options: ActivityOptionsCompat,
         activity: StorageFileActivity
     ) {
-        val mediaType = activity.storage.library.mediaType
-        var videoPath: String? = null
-        if (mediaType == MediaType.LOCAL_STORAGE || mediaType == MediaType.EXTERNAL_STORAGE) {
-            videoPath = file.fileUrl()
-        }
-        var coverUrl: String? = null
-        val cover = file.uniqueKey().toCoverFile()
-        if (file.uniqueKey().toCoverFile().isValid()) {
-            coverUrl = cover!!.absolutePath
-        }
-
+        activity.shareStorageFile = file
         ARouter.getInstance()
             .build(RouteTable.Local.BindExtraSource)
             .withBoolean("isSearchDanmu", bindDanmu)
-            .withString("videoPath", videoPath)
-            .withString("videoTitle", file.fileName())
-            .withString("uniqueKey", file.uniqueKey())
-            .withString("mediaType", mediaType.value)
-            .withString("fileCoverUrl", coverUrl)
             .withOptionsCompat(options)
             .navigation(activity)
     }
 
     private fun createShareOptions(
-        binding: ItemStorageVideoBinding,
-        activity: StorageFileActivity
+        activity: StorageFileActivity,
+        itemLayout: ConstraintLayout,
     ) = ActivityOptionsCompat.makeSceneTransitionAnimation(
         activity,
-        Pair(binding.coverIv, binding.coverIv.transitionName),
-        Pair(binding.titleTv, binding.titleTv.transitionName)
+        Pair(itemLayout, itemLayout.transitionName),
     )
 }

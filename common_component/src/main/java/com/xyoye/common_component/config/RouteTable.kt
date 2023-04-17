@@ -64,5 +64,6 @@ object RouteTable {
 
         const val ExternalStorageEdit = "/stream/external_storage/edit"
         const val StorageFile = "/stream/storage_file"
+        const val StorageFileProvider = "/stream/storage_file/provider"
     }
 }

@@ -58,11 +58,11 @@ class StorageFileAdapter(
 
             addItem(R.layout.item_storage_folder) {
                 checkType { data -> isDirectoryItem(data) }
-                initView(directoryItem(activity))
+                initView(directoryItem())
             }
             addItem(R.layout.item_storage_video) {
                 checkType { data -> isVideoItem(data) }
-                initView(videoItem(activity, viewModel))
+                initView(videoItem())
             }
         }
     }
@@ -72,7 +72,7 @@ class StorageFileAdapter(
 
     private fun isVideoItem(data: Any) = data is StorageFile && data.isFile()
 
-    private fun BaseViewHolderCreator<ItemStorageFolderBinding>.directoryItem(activity: StorageFileActivity) =
+    private fun BaseViewHolderCreator<ItemStorageFolderBinding>.directoryItem() =
         { data: StorageFile ->
             val childFileCount = data.childFileCount()
             val fileCount = if (childFileCount > 0)
@@ -87,18 +87,16 @@ class StorageFileAdapter(
             }
         }
 
-    private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem(
-        activity: StorageFileActivity,
-        viewModel: StorageFileFragmentViewModel
-    ) = { data: StorageFile ->
+    private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem() = { data: StorageFile ->
         itemBinding.run {
             coverIv.loadImage(data)
 
             titleTv.text = data.fileName()
             titleTv.setTextColor(getTitleColor(data))
 
-            durationTv.text = getDuration(data)
-            durationTv.isVisible = isShowDuration(data)
+            val duration = getDuration(data)
+            durationTv.text = duration
+            durationTv.isVisible = duration.isNotEmpty()
 
             setupVideoTag(tagRv, data)
 
@@ -107,13 +105,11 @@ class StorageFileAdapter(
             }
 
             moreActionIv.setOnClickListener {
-                val options = createShareOptions(activity, itemLayout)
-                showMoreAction(data, options, activity, viewModel)
+                showMoreAction(data, createShareOptions(itemLayout))
             }
 
             mainActionFl.setOnLongClickListener {
-                val options = createShareOptions(activity, itemLayout)
-                showMoreAction(data, options, activity, viewModel)
+                showMoreAction(data, createShareOptions(itemLayout))
                 return@setOnLongClickListener true
             }
         }
@@ -181,7 +177,10 @@ class StorageFileAdapter(
 
     private fun getDuration(file: StorageFile): String {
         val position = file.playHistory?.videoPosition ?: 0
-        val duration = file.playHistory?.videoDuration ?: 0
+        var duration = file.playHistory?.videoDuration ?: 0
+        if (duration == 0L) {
+            duration = file.videoDuration()
+        }
         return if (position > 0 && duration > 0) {
             "${formatDuration(position)}/${formatDuration(duration)}"
         } else if (duration > 0) {
@@ -201,10 +200,6 @@ class StorageFileAdapter(
         } ?: ""
     }
 
-    private fun isShowDuration(file: StorageFile): Boolean {
-        return (file.playHistory?.videoDuration ?: 0) > 0
-    }
-
     private fun isShowDanmu(file: StorageFile): Boolean {
         return file.playHistory?.danmuPath?.isNotEmpty() == true
     }
@@ -213,16 +208,11 @@ class StorageFileAdapter(
         return file.playHistory?.subtitlePath?.isNotEmpty() == true
     }
 
-    private fun showMoreAction(
-        file: StorageFile,
-        options: ActivityOptionsCompat,
-        activity: StorageFileActivity,
-        viewModel: StorageFileFragmentViewModel,
-    ) {
+    private fun showMoreAction(file: StorageFile, options: ActivityOptionsCompat) {
         BottomActionDialog(activity, getMoreActions(file)) {
             when (it.actionId) {
-                ManageAction.BIND_DANMU -> bindExtraSource(file, true, options, activity)
-                ManageAction.BIND_SUBTITLE -> bindExtraSource(file, false, options, activity)
+                ManageAction.BIND_DANMU -> bindExtraSource(file, true, options)
+                ManageAction.BIND_SUBTITLE -> bindExtraSource(file, false, options)
                 ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, true)
                 ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, false)
                 ManageAction.SCREENCAST -> activity.castFile(file)
@@ -248,8 +238,7 @@ class StorageFileAdapter(
     private fun bindExtraSource(
         file: StorageFile,
         bindDanmu: Boolean,
-        options: ActivityOptionsCompat,
-        activity: StorageFileActivity
+        options: ActivityOptionsCompat
     ) {
         activity.shareStorageFile = file
         ARouter.getInstance()
@@ -260,7 +249,6 @@ class StorageFileAdapter(
     }
 
     private fun createShareOptions(
-        activity: StorageFileActivity,
         itemLayout: ConstraintLayout,
     ) = ActivityOptionsCompat.makeSceneTransitionAnimation(
         activity,

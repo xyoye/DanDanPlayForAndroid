@@ -63,5 +63,9 @@ abstract class AbstractStorageFile(
         return childPath.startsWith(storagePath())
     }
 
+    override fun videoDuration(): Long {
+        return 0
+    }
+
     abstract fun getRealFile(): Any
 }

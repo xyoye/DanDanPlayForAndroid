@@ -104,4 +104,11 @@ class VideoStorageFile(
     override fun isStoragePathParent(childPath: String): Boolean {
         return filePath() == getDirPath(childPath)
     }
+
+    override fun videoDuration(): Long {
+        if (entity is VideoEntity) {
+            return entity.videoDuration
+        }
+        return 0
+    }
 }

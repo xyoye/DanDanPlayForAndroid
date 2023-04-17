@@ -65,4 +65,8 @@ class RemoteStorageFile(
     override fun isVideoFile(): Boolean {
         return isFile()
     }
+
+    override fun videoDuration(): Long {
+        return videoData.Duration
+    }
 }

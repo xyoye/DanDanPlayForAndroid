@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -140,7 +141,7 @@ object MediaUtils {
                         folderPath,
                         null,
                         null,
-                        0,
+                        getVideoDuration(it),
                         it.length(),
                         isFilter = false,
                         isExtend = true
@@ -218,5 +219,13 @@ object MediaUtils {
             IOUtils.closeIO(fileOutputStream)
         }
         return false
+    }
+
+    private fun getVideoDuration(videoFile: File): Long {
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(BaseApplication.getAppContext(), Uri.fromFile(videoFile))
+        val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        retriever.release()
+        return time?.toLongOrNull() ?: 0
     }
 }

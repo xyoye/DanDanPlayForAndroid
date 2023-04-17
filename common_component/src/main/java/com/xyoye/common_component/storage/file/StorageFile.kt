@@ -98,6 +98,11 @@ interface StorageFile {
      * 关闭文件
      */
     fun close()
+
+    /**
+     * 视频时长
+     */
+    fun videoDuration(): Long
 }
 
 val StorageFile.danmu: Pair<String, Int>?

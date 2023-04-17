@@ -50,15 +50,12 @@ class PlayHistoryAdapter(
             }
 
             addItem(R.layout.item_storage_video) {
-                initView(historyItem(activity, viewModel))
+                initView(historyItem())
             }
         }
     }
 
-    private fun BaseViewHolderCreator<ItemStorageVideoBinding>.historyItem(
-        activity: PlayHistoryActivity,
-        viewModel: PlayHistoryViewModel
-    ) =
+    private fun BaseViewHolderCreator<ItemStorageVideoBinding>.historyItem() =
         { data: PlayHistoryEntity ->
             itemBinding.coverIv.loadVideoCover(data.uniqueKey.toCoverFile())
 
@@ -89,10 +86,10 @@ class PlayHistoryAdapter(
             }
 
             itemBinding.moreActionIv.setOnClickListener {
-                showEditDialog(data, activity, viewModel)
+                showEditDialog(data)
             }
             itemBinding.itemLayout.setOnLongClickListener {
-                showEditDialog(data, activity, viewModel)
+                showEditDialog(data)
                 return@setOnLongClickListener true
             }
         }
@@ -175,11 +172,7 @@ class PlayHistoryAdapter(
         }
     }
 
-    private fun showEditDialog(
-        history: PlayHistoryEntity,
-        activity: PlayHistoryActivity,
-        viewModel: PlayHistoryViewModel
-    ) {
+    private fun showEditDialog(history: PlayHistoryEntity) {
         val actions = mutableListOf<SheetActionBean>()
         if (history.danmuPath.isNullOrEmpty().not()) {
             actions.add(EditHistory.REMOVE_DANMU.toAction())

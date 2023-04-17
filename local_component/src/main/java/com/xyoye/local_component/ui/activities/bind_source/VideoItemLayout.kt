@@ -35,18 +35,22 @@ object VideoItemLayout {
 
             titleTv.text = data.fileName()
 
-            durationTv.text = getDuration(data)
-            durationTv.isVisible = (data.playHistory?.videoDuration ?: 0) > 0
+            val duration = getDuration(data)
+            durationTv.text = duration
+            durationTv.isVisible = duration.isNotEmpty()
 
             setupVideoTag(tagRv, data)
 
-            mainActionFl.isVisible = false
+            moreActionIv.isVisible = false
         }
     }
 
     private fun getDuration(file: StorageFile): String {
         val position = file.playHistory?.videoPosition ?: 0
-        val duration = file.playHistory?.videoDuration ?: 0
+        var duration = file.playHistory?.videoDuration ?: 0
+        if (duration == 0L) {
+            duration = file.videoDuration()
+        }
         return if (position > 0 && duration > 0) {
             "${formatDuration(position)}/${formatDuration(duration)}"
         } else if (duration > 0) {

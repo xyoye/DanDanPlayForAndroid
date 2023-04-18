@@ -1,5 +1,7 @@
 package com.xyoye.local_component.listener
 
+import com.xyoye.common_component.storage.file.StorageFile
+
 /**
  * Created by xyoye on 2020/10/20.
  */
@@ -7,11 +9,5 @@ package com.xyoye.local_component.listener
 interface ExtraSourceListener {
     fun search(searchText: String)
 
-    fun setting()
-
-    fun localFile()
-
-    fun unbindDanmu()
-
-    fun unbindSubtitle()
+    fun onStorageFileChanged(storageFile: StorageFile)
 }

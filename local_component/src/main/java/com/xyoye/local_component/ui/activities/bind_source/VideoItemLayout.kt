@@ -42,6 +42,7 @@ object VideoItemLayout {
             setupVideoTag(tagRv, data)
 
             moreActionIv.isVisible = false
+            dividerView.isVisible = false
         }
     }
 

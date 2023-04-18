@@ -6,33 +6,101 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/layout_bg_color">
+        android:background="@color/item_bg_color">
+
+        <LinearLayout
+            android:id="@+id/action_layout"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_unbind_danmu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_unbind_danmu"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_select_local_danmu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_select_danmu_file"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_setting_danmu_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_danmu_source_setting"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/horizontal_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/layout_bg_color"
+            app:layout_constraintTop_toBottomOf="@id/action_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/header_rv"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@color/layout_bg_color"
+            android:layout_height="0dp"
+            android:background="@color/item_bg_color"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_divider"
             app:layout_constraintWidth_percent="0.382"
             tools:visibility="visible" />
+
+        <View
+            android:id="@+id/vertical_divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/layout_bg_color"
+            app:layout_constraintBottom_toBottomOf="@id/header_rv"
+            app:layout_constraintStart_toEndOf="@id/header_rv"
+            app:layout_constraintTop_toTopOf="@id/header_rv" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/content_rv"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@color/item_bg_color"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/header_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/header_rv"
+            app:layout_constraintStart_toEndOf="@id/vertical_divider"
+            app:layout_constraintTop_toTopOf="@id/header_rv"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/empty_cl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_divider"
             tools:visibility="gone">
 
             <ImageView

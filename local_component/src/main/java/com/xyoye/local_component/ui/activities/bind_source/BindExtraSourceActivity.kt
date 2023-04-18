@@ -112,14 +112,6 @@ class BindExtraSourceActivity :
             showKeyboard(dataBinding.searchEt)
         }
 
-        dataBinding.settingTv.setOnClickListener {
-            childPage()?.setting()
-        }
-
-        dataBinding.localFileBt.setOnClickListener {
-            childPage()?.localFile()
-        }
-
         dataBinding.viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
@@ -142,6 +134,8 @@ class BindExtraSourceActivity :
 
         viewModel.historyChangedLiveData.observe(this) {
             VideoItemLayout.initVideoLayout(dataBinding, it)
+            childPage(0)?.onStorageFileChanged(it)
+            childPage(1)?.onStorageFileChanged(it)
         }
     }
 

@@ -90,6 +90,9 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                 val animeData = searchResult.animes ?: mutableListOf()
 
                 val animeList = mapDanmuAnimeData(animeData)
+                if (danmuMatchBean != null) {
+                    animeList.add(0, danmuMatchBean!!)
+                }
 
                 curAnimeList.clear()
                 curAnimeList.addAll(animeList)
@@ -217,12 +220,14 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     fun unbindDanmu() {
         viewModelScope.launch(Dispatchers.IO) {
             databaseDanmu(null, 0)
+            sourceRefreshLiveData.postValue(Any())
         }
     }
 
     fun bindLocalDanmu(filePath: String) {
         viewModelScope.launch(Dispatchers.IO) {
             databaseDanmu(filePath, 0)
+            sourceRefreshLiveData.postValue(Any())
         }
     }
 
@@ -254,7 +259,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
     private fun mapDanmuAnimeData(
         animeData: MutableList<DanmuAnimeData>
-    ): List<DanmuSourceHeaderBean> {
+    ): MutableList<DanmuSourceHeaderBean> {
         val danmuData = mutableListOf<DanmuSourceHeaderBean>()
 
         animeData.sortedWith(FileNameComparator(
@@ -264,14 +269,12 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             val animeName = anime.animeTitle ?: return@forEach
             val episodes = anime.episodes ?: return@forEach
 
-            val matchEpisode = danmuMatchBean?.episodeData?.getOrNull(0)
-
             val contentData = episodes.map {
                 DanmuSourceContentBean(
                     animeName,
                     it.episodeTitle,
                     it.episodeId,
-                    isRecommend = it.episodeId != 0 && it.episodeId == matchEpisode?.episodeId
+                    false
                 )
             }
 
@@ -280,7 +283,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                     anime.animeId,
                     animeName,
                     contentData,
-                    isRecommend = anime.animeId != 0 && anime.animeId == danmuMatchBean?.animeId
+                    false
                 )
             )
         }
@@ -291,25 +294,25 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     private fun mapDanmuMatchData(
         matchData: DanmuMatchData?
     ): DanmuSourceHeaderBean? {
-        matchData ?: return null
-
-        if (matchData.success && matchData.isMatched) {
-            matchData.matches?.getOrNull(0)?.let {
-                val contentBean = DanmuSourceContentBean(
-                    it.animeTitle ?: "",
-                    it.episodeTitle ?: "",
-                    it.episodeId,
-                    isRecommend = true
-                )
-                return DanmuSourceHeaderBean(
-                    it.animeId,
-                    it.animeTitle ?: "",
-                    arrayListOf(contentBean),
-                    isRecommend = true
-                )
-            }
+        if (matchData == null || matchData.success.not() || matchData.isMatched.not()) {
+            return null
         }
-        return null
+
+        val danmuContents = matchData.matches?.map {
+            DanmuSourceContentBean(
+                it.animeTitle ?: "",
+                it.episodeTitle ?: "",
+                it.episodeId,
+                isRecommend = true
+            )
+        } ?: return null
+
+        return DanmuSourceHeaderBean(
+            0,
+            "推荐弹幕",
+            danmuContents,
+            isRecommend = true
+        )
     }
 
     private suspend fun databaseDanmu(

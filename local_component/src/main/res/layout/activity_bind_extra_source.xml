@@ -127,20 +127,6 @@
             app:tabSelectedTextColor="@color/text_theme"
             app:tabTextColor="@color/indicator_uncheck_color" />
 
-        <TextView
-            android:id="@+id/setting_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:paddingStart="12dp"
-            android:paddingEnd="10dp"
-            android:text="设置"
-            android:textColor="@color/text_theme"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/tab_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tab_layout" />
-
         <include
             android:id="@+id/video_layout"
             layout="@layout/item_storage_video"
@@ -152,30 +138,10 @@
             android:id="@+id/viewpager"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/video_layout" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/local_file_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="40dp"
-            android:contentDescription="@string/action_play_last_video"
-            android:src="@drawable/ic_local_file"
-            app:backgroundTint="@color/float_button_bg_color"
-            app:borderWidth="0dp"
-            app:elevation="5dp"
-            app:fabCustomSize="52dp"
-            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:maxImageSize="26dp"
-            app:pressedTranslationZ="2dp"
-            app:rippleColor="@color/float_button_ripple_color" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

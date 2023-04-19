@@ -81,4 +81,5 @@ dependencies {
     kapt(files("libs/mmkv-compiler.jar"))
     kapt(Dependencies.AndroidX.room_compiler)
     kapt(Dependencies.Alibaba.arouter_compiler)
+    implementation(kotlin("reflect"))
 }

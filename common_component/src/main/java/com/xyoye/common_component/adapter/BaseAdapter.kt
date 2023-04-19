@@ -7,6 +7,7 @@ import androidx.collection.SparseArrayCompat
 import androidx.collection.contains
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -28,6 +29,9 @@ class BaseAdapter : AnimatedAdapter<RecyclerView.ViewHolder>() {
 
     //数据源
     val items: MutableList<Any> = mutableListOf()
+
+    //数据差异比较器
+    var diffCreator: AdapterDiffCreator? = AdapterDiffCreator()
 
     //viewHolder集合
     private val typeHolders = SparseArrayCompat<BaseViewHolderCreator<out ViewDataBinding>>()
@@ -98,13 +102,37 @@ class BaseAdapter : AnimatedAdapter<RecyclerView.ViewHolder>() {
             ?: throw RuntimeException("no holder added for view type: $viewType")
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun setData(data: List<Any>) {
         super.setData(data)
-        // TODO: 2022/10/21 暂时无法使用DiffUtil做数据刷新，
-        //  在List中仅修改数据内容时，无法进行刷新，因为修改与比较的都是同一个对象
-        //  可尝试的方案：修改内容时对数据做深拷贝，修改后替换掉List中原数据
 
+        if (diffCreator != null) {
+            setDiffData(data, diffCreator!!)
+        } else {
+            setNotifyData(data)
+        }
+    }
+
+    /**
+     * 使用DiffUtil刷新数据
+     */
+    private fun setDiffData(data: List<Any>, diffCreator: AdapterDiffCreator) {
+        val newItems = data.map { diffCreator.createNewData(it) }.toMutableList()
+        //数据为空时，显示空布局
+        if (newItems.isEmpty() && typeHolders.contains(VIEW_TYPE_EMPTY)) {
+            newItems.add(EMPTY_ITEM)
+        }
+        val diffCallBack = AdapterDiffCallBack(items, newItems, diffCreator)
+        val diffResult = DiffUtil.calculateDiff(diffCallBack)
+        items.clear()
+        items.addAll(newItems)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    /**
+     * 使用notifyDataSetChanged刷新数据
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setNotifyData(data: List<Any>) {
         items.clear()
         items.addAll(data)
 
@@ -112,7 +140,6 @@ class BaseAdapter : AnimatedAdapter<RecyclerView.ViewHolder>() {
         if (items.isEmpty() && typeHolders.contains(VIEW_TYPE_EMPTY)) {
             items.add(EMPTY_ITEM)
         }
-
         notifyDataSetChanged()
     }
 

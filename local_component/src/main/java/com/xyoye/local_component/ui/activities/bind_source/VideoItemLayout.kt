@@ -65,7 +65,9 @@ object VideoItemLayout {
         tagRv.apply {
             layoutManager = horizontal()
             adapter = buildAdapter {
-                addItem(R.layout.item_storage_video_tag) { initView(tagItem()) }
+                addItem(R.layout.item_storage_video_tag) {
+                    initView(tagItem())
+                }
             }
             removeItemDecoration(tagDecoration)
             addItemDecoration(tagDecoration)

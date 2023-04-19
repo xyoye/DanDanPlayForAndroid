@@ -1,8 +1,6 @@
 package com.xyoye.stream_component.ui.fragment.storage_file
 
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DiffUtil
-import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
@@ -11,7 +9,6 @@ import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.FragmentStorageFileBinding
 import com.xyoye.stream_component.ui.activities.storage_file.StorageFileActivity
-import com.xyoye.stream_component.utils.storage.StorageFileDiffCallback
 import com.xyoye.stream_component.utils.storage.StorageSortOption
 
 class StorageFileFragment :
@@ -46,7 +43,7 @@ class StorageFileFragment :
             dataBinding.refreshLayout.isVisible = true
             dataBinding.refreshLayout.isRefreshing = false
             ownerActivity.onDirectoryOpened(it)
-            updateStorageFileData(it)
+            dataBinding.storageFileRv.setData(it)
         }
 
         dataBinding.refreshLayout.setColorSchemeResources(R.color.theme)
@@ -63,24 +60,6 @@ class StorageFileFragment :
 
             adapter = StorageFileAdapter(ownerActivity, viewModel).create()
         }
-    }
-
-    private fun updateStorageFileData(newData: List<StorageFile>) {
-        //通过setData实现空布局加载和动画
-        if (newData.isEmpty()) {
-            dataBinding.storageFileRv.setData(newData)
-            return
-        }
-
-        val adapter = dataBinding.storageFileRv.adapter as BaseAdapter
-        val oldData = adapter.items
-        val calculateResult = DiffUtil.calculateDiff(
-            StorageFileDiffCallback(oldData, newData)
-        )
-        oldData.clear()
-        oldData.addAll(newData)
-        adapter.resetAnimation()
-        calculateResult.dispatchUpdatesTo(adapter)
     }
 
     /**

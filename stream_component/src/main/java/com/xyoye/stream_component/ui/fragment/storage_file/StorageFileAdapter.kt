@@ -50,6 +50,12 @@ class StorageFileAdapter(
 
     fun create(): BaseAdapter {
         return buildAdapter {
+            setupDiffUtil {
+                newDataInstance { it }
+                areItemsTheSame(isSameStorageFileItem())
+                areContentsTheSame(isSameStorageFileContent())
+            }
+
             addEmptyView(R.layout.layout_empty) {
                 initEmptyView {
                     itemBinding.emptyTv.text = R.string.text_empty_video.toResString()
@@ -67,6 +73,18 @@ class StorageFileAdapter(
         }
     }
 
+    private fun isSameStorageFileItem() = { old: Any, new: Any ->
+        (old as? StorageFile)?.uniqueKey() == (new as? StorageFile)?.uniqueKey()
+    }
+
+    private fun isSameStorageFileContent() = { old: Any, new: Any ->
+        val oldItem = old as? StorageFile?
+        val newItem = new as? StorageFile?
+        oldItem?.fileUrl() == newItem?.fileUrl()
+                && oldItem?.fileName() == newItem?.fileName()
+                && oldItem?.childFileCount() == newItem?.childFileCount()
+                && oldItem?.playHistory == newItem?.playHistory
+    }
 
     private fun isDirectoryItem(data: Any) = data is StorageFile && data.isDirectory()
 

@@ -6,7 +6,6 @@ import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeSeasonBinding
 import com.xyoye.anime_component.databinding.ItemCommonScreenBinding
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
-import com.xyoye.anime_component.ui.adapter.setNewAnimeData
 import com.xyoye.anime_component.ui.dialog.date_picker.DatePickerDialog
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -43,6 +42,8 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
 
     private fun initRv() {
         dataBinding.yearRv.run {
+            itemAnimator = null
+
             layoutManager = grid(4)
 
             adapter = buildAdapter {
@@ -70,6 +71,8 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         }
 
         dataBinding.seasonRv.apply {
+            itemAnimator = null
+
             layoutManager = grid(4)
 
             adapter = buildAdapter {
@@ -96,6 +99,8 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         }
 
         dataBinding.sortRv.apply {
+            itemAnimator = null
+
             layoutManager = grid(4)
 
             adapter = buildAdapter {
@@ -148,7 +153,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         viewModel.animeLiveData.observe(this) {
             //保留recycler view位置，避免滚动
             val recyclerSaveState = dataBinding.animeRv.layoutManager?.onSaveInstanceState()
-            animeAdapter.setNewAnimeData(it)
+            dataBinding.animeRv.setData(it)
             dataBinding.animeRv.layoutManager?.onRestoreInstanceState(recyclerSaveState)
         }
 

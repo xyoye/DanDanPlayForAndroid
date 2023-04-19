@@ -8,7 +8,6 @@ import com.xyoye.anime_component.databinding.ItemCommonScreenBinding
 import com.xyoye.anime_component.listener.SearchListener
 import com.xyoye.anime_component.ui.activities.search.SearchActivity
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
-import com.xyoye.anime_component.ui.adapter.setNewAnimeData
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -167,7 +166,7 @@ class SearchAnimeFragment :
         viewModel.animeLiveData.observe(this) {
             //保留recycler view位置，避免滚动
             val recyclerSaveState = dataBinding.animeRv.layoutManager?.onSaveInstanceState()
-            animeAdapter.setNewAnimeData(it)
+            dataBinding.animeRv.setData(it)
             dataBinding.animeRv.layoutManager?.onRestoreInstanceState(recyclerSaveState)
         }
 

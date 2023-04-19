@@ -43,6 +43,11 @@ class PlayHistoryAdapter(
 
     fun createAdapter(): BaseAdapter {
         return buildAdapter {
+
+            setupDiffUtil {
+                areItemsTheSame(isSameHistoryItem())
+            }
+
             addEmptyView(R.layout.layout_empty) {
                 initEmptyView {
                     itemBinding.emptyTv.text = "暂无播放记录"
@@ -53,6 +58,12 @@ class PlayHistoryAdapter(
                 initView(historyItem())
             }
         }
+    }
+
+    private fun isSameHistoryItem() = { old: Any, new: Any ->
+        val oldItem = old as? PlayHistoryEntity
+        val newItem = new as? PlayHistoryEntity
+        oldItem?.uniqueKey == newItem?.uniqueKey && oldItem?.storageId == newItem?.storageId
     }
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.historyItem() =

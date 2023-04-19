@@ -4,12 +4,9 @@ import android.app.Activity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
-import androidx.recyclerview.widget.DiffUtil
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ItemAnimeBinding
-import com.xyoye.anime_component.utils.AnimeDiffCallBack
-import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -61,21 +58,4 @@ class AnimeAdapter {
             }
         }
     }
-}
-
-fun BaseAdapter.setNewAnimeData(animeData: MutableList<AnimeData>) {
-    val newData = mutableListOf<Any>().apply {
-        if (animeData.isNotEmpty()) {
-            addAll(animeData)
-        } else {
-            add(BaseAdapter.EMPTY_ITEM)
-        }
-    }
-
-    val calculateResult = DiffUtil.calculateDiff(
-        AnimeDiffCallBack(this.items, newData)
-    )
-    this.items.clear()
-    this.items.addAll(newData)
-    calculateResult.dispatchUpdatesTo(this)
 }

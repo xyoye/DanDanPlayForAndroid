@@ -5,6 +5,7 @@ import android.os.Environment
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.DialogFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerBinding
@@ -117,6 +118,8 @@ class FileManagerDialog(
 
     private fun initRv() {
         binding.pathRv.apply {
+            itemAnimator = null
+
             layoutManager = horizontal()
 
             adapter = buildAdapter {
@@ -146,9 +149,13 @@ class FileManagerDialog(
         }
 
         binding.fileRv.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
+                setupVerticalAnimation()
+
                 addItem<FileManagerBean, ItemFileManagerBinding>(R.layout.item_file_manager) {
                     initView { data, _, _ ->
                         itemBinding.apply {

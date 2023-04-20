@@ -10,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
@@ -182,6 +183,8 @@ class SwitchSourceView(
             layoutManager = vertical()
 
             adapter = buildAdapter {
+                setupVerticalAnimation()
+
                 addItem<FileManagerBean, ItemFileManagerPlayerBinding>(R.layout.item_file_manager_player) {
                     initView { data, _, _ ->
                         itemBinding.apply {

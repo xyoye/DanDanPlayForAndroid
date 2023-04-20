@@ -4,7 +4,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
 import androidx.annotation.CallSuper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.xyoye.common_component.R
 
@@ -14,17 +13,26 @@ import com.xyoye.common_component.R
 
 abstract class AnimatedAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adapter<VH>() {
 
+    enum class AnimationType(val resId: Int) {
+        VERTICAL(R.anim.anime_adapter_vertical),
+
+        HORIZONTAL(R.anim.anime_adapter_horizontal),
+
+        SCALE(R.anim.anime_adapter_scale)
+    }
+
     companion object {
         private const val ANIMATION_STAGGER_MILLIS = 20
     }
 
-    private var isAnimating = false
+    private var isAnimating = true
 
     private var animationStartOffset = 0
 
     private val stopAnimationHandler = Handler(Looper.getMainLooper())
     private val stopAnimationRunnable = Runnable { stopAnimation() }
 
+    private var animationType = AnimationType.SCALE
 
     private var recyclerView: RecyclerView? = null
     private val clearAnimationListener = object : RecyclerView.OnScrollListener() {
@@ -51,7 +59,7 @@ abstract class AnimatedAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adap
         holder.itemView.clearAnimation()
         if (isAnimating) {
             val animation = AnimationUtils.loadAnimation(
-                holder.itemView.context, R.anim.recycler_view_item
+                holder.itemView.context, animationType.resId
             ).apply { startOffset = animationStartOffset.toLong() }
             animationStartOffset += ANIMATION_STAGGER_MILLIS
             holder.itemView.startAnimation(animation)
@@ -79,14 +87,13 @@ abstract class AnimatedAdapter<VH : RecyclerView.ViewHolder> : RecyclerView.Adap
         }
     }
 
-    open fun resetAnimation() {
-        clearAnimation()
-        val layoutManager = recyclerView?.layoutManager as? LinearLayoutManager
-        isAnimating = layoutManager?.orientation == RecyclerView.VERTICAL
+    fun setAnimationType(type: AnimationType) {
+        this.animationType = type
     }
 
     @CallSuper
     open fun setData(data: List<Any>) {
-        resetAnimation()
+        clearAnimation()
+        isAnimating = true
     }
 }

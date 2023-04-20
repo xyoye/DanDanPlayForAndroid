@@ -12,6 +12,7 @@ import android.os.Build
 import android.provider.MediaStore
 import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toText
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
@@ -222,10 +223,20 @@ object MediaUtils {
     }
 
     private fun getVideoDuration(videoFile: File): Long {
+        if (videoFile.isInvalid()) {
+            return 0
+        }
         val retriever = MediaMetadataRetriever()
-        retriever.setDataSource(BaseApplication.getAppContext(), Uri.fromFile(videoFile))
-        val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        retriever.release()
-        return time?.toLongOrNull() ?: 0
+        return try {
+            retriever.setDataSource(BaseApplication.getAppContext(), Uri.fromFile(videoFile))
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                ?.toLongOrNull()
+                ?: 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
+        } finally {
+            retriever.release()
+        }
     }
 }

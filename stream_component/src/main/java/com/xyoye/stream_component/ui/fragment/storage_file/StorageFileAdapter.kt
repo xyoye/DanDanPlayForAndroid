@@ -50,6 +50,8 @@ class StorageFileAdapter(
 
     fun create(): BaseAdapter {
         return buildAdapter {
+            setupVerticalAnimation()
+
             setupDiffUtil {
                 newDataInstance { it }
                 areItemsTheSame(isSameStorageFileItem())

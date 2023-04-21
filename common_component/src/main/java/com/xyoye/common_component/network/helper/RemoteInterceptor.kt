@@ -9,7 +9,7 @@ import okhttp3.Response
  * Created by xyoye on 2021/3/28.
  */
 
-class RemoteInterceptor() : Interceptor {
+class RemoteInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val oldRequest = chain.request()

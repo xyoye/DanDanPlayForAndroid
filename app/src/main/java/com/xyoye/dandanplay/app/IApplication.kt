@@ -2,8 +2,6 @@ package com.xyoye.dandanplay.app
 
 import android.content.Context
 import androidx.multidex.MultiDex
-import com.alibaba.android.arouter.launcher.ARouter
-import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.base.app.BaseApplication
 
 /**
@@ -17,7 +15,4 @@ class IApplication : BaseApplication(){
         MultiDex.install(this)
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
 }

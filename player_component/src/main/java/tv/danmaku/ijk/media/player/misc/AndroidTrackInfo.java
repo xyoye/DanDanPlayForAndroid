@@ -36,7 +36,7 @@ public class AndroidTrackInfo implements ITrackInfo {
         if (trackInfos == null)
             return null;
 
-        AndroidTrackInfo androidTrackInfo[] = new AndroidTrackInfo[trackInfos.length];
+        AndroidTrackInfo[] androidTrackInfo = new AndroidTrackInfo[trackInfos.length];
         for (int i = 0; i < trackInfos.length; ++i) {
             androidTrackInfo[i] = new AndroidTrackInfo(trackInfos[i]);
         }
@@ -100,7 +100,7 @@ public class AndroidTrackInfo implements ITrackInfo {
         out.append(getClass().getSimpleName());
         out.append('{');
         if (mTrackInfo != null) {
-            out.append(mTrackInfo.toString());
+            out.append(mTrackInfo);
         } else {
             out.append("null");
         }

@@ -7,5 +7,5 @@ package com.xyoye.anime_component.listener
 interface SearchListener {
     fun search(searchText: String)
 
-    fun onTextClear();
+    fun onTextClear()
 }

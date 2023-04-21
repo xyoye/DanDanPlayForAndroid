@@ -1,6 +1,7 @@
 package com.xyoye.common_component.network.helper
 
 import okhttp3.*
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import java.io.ByteArrayOutputStream
@@ -156,7 +157,7 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
                             )
                         )
                         log("\tbody:$body")
-                        responseBody = ResponseBody.create(responseBody.contentType(), byteArray)
+                        responseBody = byteArray.toResponseBody(responseBody.contentType())
                         return response.newBuilder().body(responseBody).build()
                     }
                     log("\tbody: maybe [binary body], omitted!")

@@ -17,7 +17,6 @@ package com.xyoye.dandanplay.utils.image_anim.svg
 
 import android.graphics.Path
 import android.util.Log
-import java.util.*
 import kotlin.math.*
 
 /**
@@ -295,7 +294,7 @@ internal object PathParser {
         result.mEndPosition = currentIndex
     }
 
-    private class ExtractFloatResult internal constructor() {
+    private class ExtractFloatResult() {
         // We need to return the position of the next separator and whether the
         // next float starts with a '-' or a '.'.
         var mEndPosition = 0

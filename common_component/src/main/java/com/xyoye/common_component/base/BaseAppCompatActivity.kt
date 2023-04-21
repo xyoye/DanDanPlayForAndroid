@@ -1,6 +1,5 @@
 package com.xyoye.common_component.base
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -63,10 +62,6 @@ abstract class BaseAppCompatActivity<V : ViewDataBinding> : AppCompatActivity() 
 
     open fun hideLoading() {
         loadingReference?.get()?.dismiss()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
     }
 
     override fun onDestroy() {

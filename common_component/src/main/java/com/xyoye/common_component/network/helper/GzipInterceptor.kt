@@ -3,7 +3,7 @@ package com.xyoye.common_component.network.helper
 import com.xyoye.common_component.utils.GZIPUtils
 import okhttp3.Interceptor
 import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 
 /**
  * Created by xyoye on 2020/8/20.
@@ -20,7 +20,7 @@ class GzipInterceptor : Interceptor{
             }
             if (data != null){
                 return response.newBuilder()
-                    .body(ResponseBody.create(responseBody.contentType(), data))
+                    .body(data.toResponseBody(responseBody.contentType()))
                     .build()
             }
         }

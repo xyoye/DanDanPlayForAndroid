@@ -36,6 +36,7 @@
     <color name="gray_light">#cccccc</color>
     <color name="division">#f3f3f3</color>
     <color name="division_dark">#e3e3e3</color>
+    <color name="black_alpha">#55000000</color>
 
     <color name="text_white_immutable">#ffffff</color>
     <color name="text_black_immutable">#353535</color>

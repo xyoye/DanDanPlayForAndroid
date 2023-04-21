@@ -79,7 +79,7 @@ class PlayHistoryAdapter(
             else
                 R.color.text_black
 
-            itemBinding.titleTv.setTextColor(titleTextColor.toResColor())
+            itemBinding.titleTv.setTextColor(titleTextColor.toResColor(activity))
             itemBinding.titleTv.text = data.videoName
 
             setupVideoTag(itemBinding.tagRv, data)
@@ -135,10 +135,10 @@ class PlayHistoryAdapter(
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.gray_40.toResColor()))
+            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
         }
-        tagList.add(VideoTagBean(data.mediaType.storageName, R.color.gray_40.toResColor()))
-        tagList.add(VideoTagBean(PlayHistoryUtils.formatPlayTime(data.playTime), R.color.gray_40.toResColor()))
+        tagList.add(VideoTagBean(data.mediaType.storageName, R.color.black_alpha.toResColor()))
+        tagList.add(VideoTagBean(PlayHistoryUtils.formatPlayTime(data.playTime), R.color.black_alpha.toResColor()))
         return tagList
     }
 

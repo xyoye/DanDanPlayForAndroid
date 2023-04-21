@@ -165,19 +165,19 @@ class StorageFileAdapter(
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.gray_40.toResColor()))
+            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
         }
         val lastPlayTime = getPlayTime(data)
         if (lastPlayTime.isNotEmpty()) {
-            tagList.add(VideoTagBean(lastPlayTime, R.color.gray_40.toResColor()))
+            tagList.add(VideoTagBean(lastPlayTime, R.color.black_alpha.toResColor()))
         }
         return tagList
     }
 
     private fun getTitleColor(file: StorageFile): Int {
         return when (file.playHistory?.isLastPlay == true) {
-            true -> com.xyoye.common_component.R.color.text_theme.toResColor()
-            else -> com.xyoye.common_component.R.color.text_black.toResColor()
+            true -> com.xyoye.common_component.R.color.text_theme.toResColor(activity)
+            else -> com.xyoye.common_component.R.color.text_black.toResColor(activity)
         }
     }
 

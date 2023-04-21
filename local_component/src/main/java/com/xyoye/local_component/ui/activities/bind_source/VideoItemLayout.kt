@@ -1,6 +1,5 @@
 package com.xyoye.local_component.ui.activities.bind_source
 
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.text.TextUtils
@@ -29,7 +28,7 @@ object VideoItemLayout {
 
     fun initVideoLayout(dataBinding: ActivityBindExtraSourceBinding, data: StorageFile) {
         dataBinding.videoLayout.run {
-            itemLayout.setBackgroundColor(Color.WHITE)
+            itemLayout.setBackgroundColor(R.color.item_bg_color.toResColor())
 
             coverIv.loadImage(data)
 
@@ -93,11 +92,11 @@ object VideoItemLayout {
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.gray_40.toResColor()))
+            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
         }
         val lastPlayTime = getPlayTime(data)
         if (lastPlayTime.isNotEmpty()) {
-            tagList.add(VideoTagBean(lastPlayTime, R.color.gray_40.toResColor()))
+            tagList.add(VideoTagBean(lastPlayTime, R.color.black_alpha.toResColor()))
         }
         return tagList
     }

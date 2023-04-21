@@ -25,10 +25,10 @@ class StorageFileStyleHelper(
     private var mToolbarCollapsed: Boolean = false
 
     //标题栏折叠后颜色
-    private val mToolbarCollapsedColor = R.color.layout_bg_color.toResColor()
+    private val mToolbarCollapsedColor = R.color.layout_bg_color.toResColor(activity)
 
     //标题栏展开后颜色
-    private val mToolbarExpandedColor = R.color.item_bg_color.toResColor()
+    private val mToolbarExpandedColor = R.color.item_bg_color.toResColor(activity)
 
     //标题栏颜色动画
     private var mColorAnimator: ValueAnimator? = null

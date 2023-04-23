@@ -21,28 +21,18 @@ android {
         multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-//        ndk {
-//            abiFilters.add("armeabi-v7a")
-//            abiFilters.add("arm64-v8a")
-//        }
+        ndk {
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
+        }
     }
 
-    flavorDimensions.add("dandanplay")
-
-    productFlavors {
-        create("arm64") {
-            dimension = "dandanplay"
-            ndk {
-                abiFilters.clear()
-                abiFilters.add("arm64-v8a")
-            }
-        }
-        create("armeabi") {
-            dimension = "dandanplay"
-            ndk {
-                abiFilters.clear()
-                abiFilters.add("armeabi-v7a")
-            }
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
         }
     }
 }

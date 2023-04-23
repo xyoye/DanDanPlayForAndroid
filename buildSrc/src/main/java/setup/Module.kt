@@ -5,6 +5,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByName
 import setup.utils.setupDefaultDependencies
+import setup.utils.currentCommit
 import setup.utils.setupKotlinOptions
 
 @Suppress("UnstableApiUsage")
@@ -31,6 +32,10 @@ fun Project.moduleSetup() {
 
             create("beta") {
                 initWith(buildTypes.getByName("beta"))
+            }
+
+            buildTypes.forEach {
+                it.buildConfigField("String", "BUILD_COMMIT", "\"${currentCommit()}\"")
             }
         }
 

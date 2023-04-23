@@ -33,17 +33,13 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             deepRefresh()
         }
 
-        return if (file.isRootFile()) {
-            DatabaseManager.instance
-                .getVideoDao()
-                .getFolderByFilter()
-                .map { VideoStorageFile(this, it) }
-        } else {
-            DatabaseManager.instance
-                .getVideoDao()
-                .getVideoInFolder(file.filePath())
-                .map { VideoStorageFile(this, it) }
+        var childFiles = openStorageDirectory(file)
+        if (childFiles.isEmpty()) {
+            // 第一次打开媒体库时，文件尚未录入数据库，需要先做一次扫描
+            deepRefresh()
+            childFiles = openStorageDirectory(file)
         }
+        return childFiles
     }
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
@@ -117,6 +113,20 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return DatabaseManager.instance.getVideoDao().getAll()
             .filter { it.filePath.contains(keyword) }
             .map { VideoStorageFile(this, it) }
+    }
+
+    private suspend fun openStorageDirectory(storageFile: StorageFile): List<StorageFile> {
+        return if (storageFile.isRootFile()) {
+            DatabaseManager.instance
+                .getVideoDao()
+                .getFolderByFilter()
+                .map { VideoStorageFile(this, it) }
+        } else {
+            DatabaseManager.instance
+                .getVideoDao()
+                .getVideoInFolder(storageFile.filePath())
+                .map { VideoStorageFile(this, it) }
+        }
     }
 
     private suspend fun deepRefresh() {

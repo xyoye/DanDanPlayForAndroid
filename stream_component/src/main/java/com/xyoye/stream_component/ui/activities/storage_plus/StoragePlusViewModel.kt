@@ -1,4 +1,4 @@
-package com.xyoye.stream_component.ui.activities.external_storage
+package com.xyoye.stream_component.ui.activities.storage_plus
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,8 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import kotlinx.coroutines.launch
 
-class ExternalStorageViewModel : BaseViewModel() {
+class StoragePlusViewModel : BaseViewModel() {
+
     private val _exitLiveData = MutableLiveData<Any>()
     var exitLiveData: LiveData<Any> = _exitLiveData
 

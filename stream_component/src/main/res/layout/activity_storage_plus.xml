@@ -3,11 +3,11 @@
 
     <data>
 
-        <import type="com.xyoye.stream_component.ui.activities.external_storage.ExternalStorageViewModel" />
+        <import type="com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusViewModel" />
 
         <variable
             name="viewModel"
-            type="com.xyoye.stream_component.ui.activities.external_storage.ExternalStorageViewModel" />
+            type="com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

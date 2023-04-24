@@ -1,29 +1,34 @@
 package com.xyoye.stream_component.ui.dialog
 
+import android.content.Intent
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.utils.activity_result.DocumentTreeLifecycleObserver
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.DialogExternalStorageEditBinding
-import com.xyoye.stream_component.ui.activities.external_storage.ExternalStorageActivity
 
 /**
  * Created by xyoye on 2023/1/4
  */
 
 class ExternalStorageEditDialog(
-    private val activity: ExternalStorageActivity,
+    private val activity: AppCompatActivity,
     private val storage: MediaLibraryEntity?,
     private val addStorage: (MediaLibraryEntity) -> Unit
 ) : BaseBottomDialog<DialogExternalStorageEditBinding>(activity) {
 
     private lateinit var binding: DialogExternalStorageEditBinding
     private var mDocumentFile: DocumentFile? = null
+
+    private val externalStorageObserver =
+        DocumentTreeLifecycleObserver(activity, onDocumentTreeResult())
 
     override fun getChildLayoutId() = R.layout.dialog_external_storage_edit
 
@@ -55,7 +60,7 @@ class ExternalStorageEditDialog(
 
     private fun initListener() {
         binding.selectRootTv.setOnClickListener {
-            activity.openDocumentTree()
+            externalStorageObserver.openDocumentTree()
         }
 
         setPositiveListener {
@@ -150,5 +155,34 @@ class ExternalStorageEditDialog(
             return paths[1]
         }
         return null
+    }
+
+    private fun onDocumentTreeResult() = block@{ uri: Uri? ->
+        if (uri == null) {
+            return@block
+        }
+
+        if (takePersistableUriPermission(uri).not()) {
+            ToastCenter.showError("获取文件夹访问权限失败")
+            return@block
+        }
+
+        val documentFile = DocumentFile.fromTreeUri(activity, uri)
+        if (documentFile == null) {
+            ToastCenter.showError("无法访问文件夹")
+            return@block
+        }
+        setDocumentResult(documentFile)
+    }
+
+    private fun takePersistableUriPermission(uri: Uri): Boolean {
+        try {
+            val modeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            activity.contentResolver.takePersistableUriPermission(uri, modeFlags)
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
     }
 }

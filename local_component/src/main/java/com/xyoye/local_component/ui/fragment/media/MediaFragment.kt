@@ -144,6 +144,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             val mediaType = it.actionId as MediaType
             ARouter.getInstance()
                 .build(mediaType.editRoute!!)
+                .withSerializable("mediaType", mediaType)
                 .navigation()
             return@BottomActionDialog true
         }.show()

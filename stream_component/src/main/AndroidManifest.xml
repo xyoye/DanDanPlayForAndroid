@@ -8,9 +8,9 @@
 
     <application>
         <activity
-            android:name=".ui.activities.external_storage.ExternalStorageActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/DialogActivityTheme" />
+            android:name=".ui.activities.storage_plus.StoragePlusActivity"
+            android:theme="@style/DialogActivityTheme"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.storage_file.StorageFileActivity"
             android:configChanges="orientation|screenSize"

@@ -1,6 +1,7 @@
 package setup.utils
 
 import Dependencies
+import Versions
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApkVariantOutput
@@ -11,7 +12,6 @@ import org.gradle.kotlin.dsl.fileTree
 import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import java.io.ByteArrayOutputStream
-import java.io.File
 
 fun BaseExtension.setupKotlinOptions() {
     val extensions = (this as ExtensionAware).extensions
@@ -78,10 +78,10 @@ fun AppExtension.setupSignConfigs(project: Project) = apply {
 
 fun AppExtension.setupOutputApk() = apply {
     applicationVariants.all {
-        outputs.forEach {
-            if (it is ApkVariantOutput) {
-                it.outputFileName = OutputHelper.outputFileName(it)
+        outputs.filter { it is ApkVariantOutput }
+            .map { it as ApkVariantOutput }
+            .onEach {
+                it.outputFileName = "dandanplay_v${Versions.versionName}_${it.name}.apk"
             }
-        }
     }
 }

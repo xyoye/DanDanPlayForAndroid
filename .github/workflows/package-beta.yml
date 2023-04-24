@@ -50,7 +50,7 @@ jobs:
       # 7.移动文件到根目录
       - name: move file
         run: |
-          abis=(arm64-v8a armeabi-v7a universal x86 x86_64)
+          abis=(arm64-v8a armeabi-v7a universal)
           for abi in ${abis[@]}
           do
             file_name="dandanplay_v${{ env.BUILD_VERSION }}_${abi}-${{ env.BUILD_TYPE }}.apk"
@@ -70,7 +70,5 @@ jobs:
             dandanplay_v${{ env.BUILD_VERSION }}_arm64-v8a-${{ env.BUILD_TYPE }}.apk
             dandanplay_v${{ env.BUILD_VERSION }}_armeabi-v7a-${{ env.BUILD_TYPE }}.apk
             dandanplay_v${{ env.BUILD_VERSION }}_universal-${{ env.BUILD_TYPE }}.apk
-            dandanplay_v${{ env.BUILD_VERSION }}_x86-${{ env.BUILD_TYPE }}.apk
-            dandanplay_v${{ env.BUILD_VERSION }}_x86_64-${{ env.BUILD_TYPE }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

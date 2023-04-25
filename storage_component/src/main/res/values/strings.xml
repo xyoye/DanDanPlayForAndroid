@@ -1,0 +1,70 @@
+<resources>
+    <string name="storage_file_scroll_behavior">com.xyoye.storage_component.ui.weight.StorageFileBehavior</string>
+
+    <string name="app_name">storage_component</string>
+    <string name="hint_web_dav_address">服务器名称或IP地址</string>
+    <string name="hint_display_name">显示名称（可空）</string>
+    <string name="tips_login_mode">登录模式</string>
+    <string name="text_account_login">帐号登录</string>
+    <string name="text_anonymous_login">匿名登录</string>
+    <string name="hint_login_account">帐号</string>
+    <string name="hint_login_password">密码</string>
+    <string name="tips_test_connect">连接状态</string>
+    <string name="hint_ftp_address">FTP地址</string>
+    <string name="hint_port">端口</string>
+    <string name="hint_ftp_encoding">编码</string>
+    <string name="text_ftp_passive_mode">被动连接</string>
+    <string name="text_ftp_active_mode">主动连接</string>
+    <string name="text_ftp_connect_mode">连接模式</string>
+    <string name="hint_remote_secret">API密钥</string>
+    <string name="action_toggle_file_hidden">显示隐藏文件</string>
+    <string name="hint_ip_address">IP地址</string>
+    <string name="hint_smb_path">共享目录（可空）</string>
+    <string name="text_smb_version">SMB版本</string>
+    <string name="text_smb_v2">SMB 2</string>
+    <string name="text_smb_v1">SMB 1</string>
+    <string name="action_remote_scan">扫码快捷录入</string>
+    <string name="action_remote_control">遥控器</string>
+    <string name="action_test_server">测试</string>
+
+    <string name="tips_parse_mode">数据解析</string>
+    <string name="strict_parse_mode">严格模式</string>
+    <string name="normal_parse_mode">宽松模式</string>
+
+    <string name="text_start_screen_cast_server">启动投屏服务</string>
+    <string name="text_stop_screen_cast_server">停止投屏服务</string>
+    <string name="text_screencast_connect_type">连接方式</string>
+    <string name="action_scan_connect_screencast">扫码连接</string>
+    <string name="action_input_connect_screencast">输入连接</string>
+    <string name="action_auto_connect_screencast">搜索连接</string>
+    <string name="tips_connect_mode">连接模式</string>
+    <string name="text_password_connect">密码连接</string>
+    <string name="text_direct_connect">直接连接</string>
+    <string name="text_not_use">不使用</string>
+    <string name="tips_password">密码：</string>
+    <string name="tips_port">端口：</string>
+    <string name="tips_ip">IP：</string>
+    <string name="tips_connect_info">连接信息</string>
+    <string name="tips_connect_qe_code">连接码</string>
+    <string name="tips_screencast_receive_service">投屏接收服务</string>
+    <string name="tips_need_confirm_screencast">投屏接收时，需弹窗确认播放</string>
+    <string name="tips_start_receive_when_start">应用启动时，自动启动接收服务</string>
+
+    <string name="tips_group_mode">分组模式</string>
+    <string name="text_group_by_file">原始文件</string>
+    <string name="text_group_by_anime">番剧ID</string>
+
+    <string name="text_empty_video">视频文件为空</string>
+
+    <string name="hint_root_path">根目录路径</string>
+    <string name="action_select_root">选择根目录</string>
+
+    <string name="action_play_last_video">播放上一次观看</string>
+
+    <string name="text_file_search">搜索</string>
+    <string name="text_file_sort">排序</string>
+    <string name="text_sort_by_name">名称</string>
+    <string name="text_sort_by_size">大小</string>
+    <string name="text_sort_order_asc">升序</string>
+    <string name="text_sort_directory_first">目录在前</string>
+</resources>

@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.xyoye.storage_component.ui.activities.screencast.receiver.ScreencastViewModel" />
+
+        <variable
+            name="viewModel"
+            type="com.xyoye.storage_component.ui.activities.screencast.receiver.ScreencastViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/layout_bg_color">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/server_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/background_item_corner"
+            android:paddingBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@+id/server_switch_layout"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <View
+                android:id="@+id/code_tips_view"
+                android:layout_width="3dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/theme"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/code_info_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/tips_connect_qe_code"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/qr_code_iv"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/code_info_tips" />
+
+            <View
+                android:id="@+id/server_info_tips_view"
+                android:layout_width="3dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/theme"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/qr_code_iv" />
+
+            <TextView
+                android:id="@+id/server_info_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@string/tips_connect_info"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/qr_code_iv"
+                app:layout_constraintTop_toTopOf="@id/code_info_tips" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/tips_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="ip_tips, password_tips" />
+
+            <TextView
+                android:id="@+id/ip_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/tips_ip"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/server_info_tips"
+                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
+
+            <TextView
+                android:id="@+id/ip_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@{viewModel.displayIp}"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tips_barrier"
+                app:layout_constraintTop_toTopOf="@id/ip_tips"
+                tools:text="192.168.1.1\n192.168.1.1" />
+
+            <TextView
+                android:id="@+id/port_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/tips_port"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/ip_tips"
+                app:layout_constraintTop_toBottomOf="@id/ip_tv" />
+
+            <TextView
+                android:id="@+id/port_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_gray"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/port_tips"
+                app:layout_constraintStart_toEndOf="@id/port_tips"
+                app:layout_constraintTop_toTopOf="@id/port_tips"
+                tools:text="8080" />
+
+            <ImageView
+                android:id="@+id/refresh_port_iv"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/background_item_press"
+                android:padding="8dp"
+                android:src="@drawable/ic_password_refresh"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/port_tips"
+                app:layout_constraintStart_toEndOf="@id/port_tv"
+                app:layout_constraintTop_toTopOf="@id/port_tips" />
+
+            <TextView
+                android:id="@+id/password_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/tips_password"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/ip_tips"
+                app:layout_constraintTop_toBottomOf="@id/port_tips" />
+
+            <RadioGroup
+                android:id="@+id/password_radio_gp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@id/password_tips"
+                app:layout_constraintTop_toBottomOf="@id/password_tips">
+
+                <RadioButton
+                    android:id="@+id/no_password_rb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textSize="14sp"
+                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="gone" />
+
+                <RadioButton
+                    android:id="@+id/set_password_rb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:checked="false"
+                    android:textSize="14sp"
+                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/no_use_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/text_not_use"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/password_et"
+                app:layout_constraintStart_toEndOf="@id/password_radio_gp"
+                app:layout_constraintTop_toTopOf="@id/password_radio_gp"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
+
+            <EditText
+                android:id="@+id/password_et"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:maxLength="8"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/password_radio_gp"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/password_radio_gp"
+                app:layout_constraintTop_toBottomOf="@+id/no_use_tv" />
+
+            <ImageView
+                android:id="@+id/refresh_password_iv"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/background_item_press"
+                android:padding="8dp"
+                android:src="@drawable/ic_password_refresh"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/password_et"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/password_et"
+                app:layout_constraintTop_toTopOf="@id/password_et" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/server_switch_layout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_item_corner"
+            app:layout_constraintEnd_toStartOf="@+id/server_info_layout"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <TextView
+                android:id="@+id/server_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/tips_screencast_receive_service"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/server_status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_red"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="未开启" />
+
+            <TextView
+                android:id="@+id/server_switch_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/background_screencast_switch_button"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="启动服务" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_item_corner"
+            app:layout_constraintEnd_toEndOf="@+id/server_switch_layout"
+            app:layout_constraintStart_toStartOf="@+id/server_switch_layout"
+            app:layout_constraintTop_toBottomOf="@id/server_switch_layout">
+
+            <TextView
+                android:id="@+id/tips_confirm_receive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/tips_need_confirm_screencast"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/tips_auto_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/need_confirm_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/tips_confirm_receive"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tips_confirm_receive"
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
+
+            <TextView
+                android:id="@+id/tips_auto_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="@string/tips_start_receive_when_start"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tips_confirm_receive"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/auto_start_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/tips_auto_start"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tips_auto_start"
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

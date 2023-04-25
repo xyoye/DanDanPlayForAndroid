@@ -49,7 +49,7 @@ dependencies {
     implementation(project(":anime_component"))
     implementation(project(":user_component"))
     implementation(project(":local_component"))
-    implementation(project(":stream_component"))
+    implementation(project(":storage_component"))
 
     kapt(Dependencies.Alibaba.arouter_compiler)
 }

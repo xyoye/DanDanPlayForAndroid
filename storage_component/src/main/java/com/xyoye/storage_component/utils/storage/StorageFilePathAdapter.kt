@@ -2,6 +2,7 @@ package com.xyoye.storage_component.utils.storage
 
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.data_component.bean.StorageFilePath
 import com.xyoye.storage_component.R
@@ -21,6 +22,11 @@ object StorageFilePathAdapter {
     private val pathDivider = PathDivider
 
     fun build(onPathClick: (path: StorageFilePath) -> Unit) = buildAdapter {
+
+        setupDiffUtil {
+            areContentsTheSame(isSameStoragePathContent())
+        }
+
         addItem<StorageFilePath, ItemStoragePathBinding>(R.layout.item_storage_path) {
             checkType { data -> data is StorageFilePath }
 
@@ -55,6 +61,14 @@ object StorageFilePathAdapter {
             }
         }
         return pathList
+    }
+
+    private fun isSameStoragePathContent() = { old: Any, new: Any ->
+        val oldItem = old as? StorageFilePath?
+        val newItem = new as? StorageFilePath?
+        oldItem?.name == newItem?.name
+                && oldItem?.route == newItem?.route
+                && oldItem?.isLast == newItem?.isLast
     }
 
     private fun getPathColor(path: StorageFilePath): Int {

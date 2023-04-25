@@ -2,28 +2,23 @@ package com.xyoye.stream_component.ui.dialog
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
-import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.DialogWebDavLoginBinding
+import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
 
 /**
  * Created by xyoye on 2021/1/26.
  */
 
-class WebDavLoginDialog(
-    private val activity: AppCompatActivity,
-    private val originalStorage: MediaLibraryEntity?,
-    private val addMediaStorage: (MediaLibraryEntity) -> Unit,
-    private val testConnect: (MediaLibraryEntity) -> Unit,
-    private val testConnectResult: MutableLiveData<Boolean>
-) : BaseBottomDialog<DialogWebDavLoginBinding>(activity) {
+class WebDavStorageEditDialog(
+    private val activity: StoragePlusActivity,
+    private val originalStorage: MediaLibraryEntity?
+) : StorageEditDialog<DialogWebDavLoginBinding>(activity) {
 
     private lateinit var binding: DialogWebDavLoginBinding
 
@@ -47,17 +42,7 @@ class WebDavLoginDialog(
 
         binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(serverData)) {
-                testConnect.invoke(serverData)
-            }
-        }
-
-        testConnectResult.observe(activity) {
-            if (it) {
-                binding.serverStatusTv.text = "连接成功"
-                binding.serverStatusTv.setTextColorRes(R.color.text_blue)
-            } else {
-                binding.serverStatusTv.text = "连接失败"
-                binding.serverStatusTv.setTextColorRes(R.color.text_red)
+                activity.testStorage(serverData)
             }
         }
 
@@ -95,17 +80,26 @@ class WebDavLoginDialog(
 
         setPositiveListener {
             if (checkParams(serverData)) {
-                addMediaStorage.invoke(serverData)
-                dismiss()
+                if (serverData.displayName.isEmpty()) {
+                    serverData.displayName = "WebDav媒体库"
+                }
+                serverData.describe = serverData.url
+                activity.addStorage(serverData)
             }
         }
 
         setNegativeListener {
-            dismiss()
-        }
-
-        setOnDismissListener {
             activity.finish()
+        }
+    }
+
+    override fun onTestResult(result: Boolean) {
+        if (result) {
+            binding.serverStatusTv.text = "连接成功"
+            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+        } else {
+            binding.serverStatusTv.text = "连接失败"
+            binding.serverStatusTv.setTextColorRes(R.color.text_red)
         }
     }
 

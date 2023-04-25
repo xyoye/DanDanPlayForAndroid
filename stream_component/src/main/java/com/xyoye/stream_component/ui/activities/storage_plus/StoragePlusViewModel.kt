@@ -36,7 +36,9 @@ class StoragePlusViewModel : BaseViewModel() {
     fun testStorage(library: MediaLibraryEntity) {
         val storage = StorageFactory.createStorage(library)
         viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
             val status = storage?.test() ?: false
+            hideLoading()
             _testLiveData.postValue(status)
         }
     }

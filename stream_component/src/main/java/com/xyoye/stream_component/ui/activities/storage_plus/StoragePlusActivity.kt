@@ -10,10 +10,7 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityStoragePlusBinding
-import com.xyoye.stream_component.ui.dialog.ExternalStorageEditDialog
-import com.xyoye.stream_component.ui.dialog.FTPStorageEditDialog
-import com.xyoye.stream_component.ui.dialog.RemoteStorageEditDialog
-import com.xyoye.stream_component.ui.dialog.StorageEditDialog
+import com.xyoye.stream_component.ui.dialog.*
 
 @Route(path = RouteTable.Stream.StoragePlus)
 class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePlusBinding>() {
@@ -76,6 +73,7 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
             MediaType.EXTERNAL_STORAGE -> ExternalStorageEditDialog(this, editData)
             MediaType.REMOTE_STORAGE -> RemoteStorageEditDialog(this, editData)
             MediaType.FTP_SERVER -> FTPStorageEditDialog(this, editData)
+            MediaType.WEBDAV_SERVER -> WebDavStorageEditDialog(this, editData)
             else -> {
                 finish()
                 null

@@ -16,10 +16,6 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/StorageFileActivityStyle" />
         <activity
-            android:name=".ui.activities.web_dav_login.WebDavLoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/DialogActivityTheme" />
-        <activity
             android:name=".ui.activities.smb_login.SmbLoginActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme" />

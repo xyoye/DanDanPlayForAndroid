@@ -5,6 +5,7 @@ import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.WebDavStorageFile
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.sardine.DavResource
@@ -79,6 +80,17 @@ class WebDavStorage(
             ?: return null
         val credential = Credentials.basic(accountInfo.first, accountInfo.second)
         return mapOf(Pair("Authorization", credential))
+    }
+
+    override suspend fun test(): Boolean {
+        return try {
+            sardine.list(getRootFile().fileUrl())
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ToastCenter.showError("连接失败: ${e.message}")
+            false
+        }
     }
 
     private fun getAccountInfo(): Pair<String, String>? {

@@ -51,10 +51,7 @@ class ScreenShotView(
     private var mGenerateImageJob: Job? = null
 
     init {
-        post {
-            val hideY = -((mAttachActivity.getScreenHeight() - height) / 2f + height.toFloat())
-            viewBinding.screenShotLayout.translationY = hideY
-        }
+        viewBinding.screenShotLayout.translationY = -mAttachActivity.getScreenHeight().toFloat()
 
         viewBinding.shotCancelBt.setOnClickListener {
             onSettingVisibilityChanged(false)
@@ -79,12 +76,12 @@ class ScreenShotView(
 
     override fun onSettingVisibilityChanged(isVisible: Boolean) {
         if (isVisible) {
+            prepareScreenShot()
             ViewCompat.animate(viewBinding.screenShotLayout).translationY(0f).setDuration(300)
                 .start()
-            prepareScreenShot()
         } else {
             mGenerateImageJob?.cancel()
-            val hideY = -((mAttachActivity.getScreenHeight() - height) / 2f + height.toFloat())
+            val hideY = -mAttachActivity.getScreenHeight().toFloat()
             ViewCompat.animate(viewBinding.screenShotLayout).translationY(hideY).setDuration(300)
                 .start()
         }

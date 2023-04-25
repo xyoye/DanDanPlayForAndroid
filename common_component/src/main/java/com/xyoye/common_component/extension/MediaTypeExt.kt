@@ -9,7 +9,7 @@ import com.xyoye.data_component.enums.MediaType
 
 val MediaType.editRoute: String?
     get() = when (this) {
-        MediaType.FTP_SERVER -> RouteTable.Stream.FTPLogin
+        MediaType.FTP_SERVER -> RouteTable.Stream.StoragePlus
         MediaType.WEBDAV_SERVER -> RouteTable.Stream.WebDavLogin
         MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
         MediaType.REMOTE_STORAGE -> RouteTable.Stream.StoragePlus

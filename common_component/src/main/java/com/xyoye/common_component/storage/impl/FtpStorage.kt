@@ -127,6 +127,7 @@ class FtpStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             mFtpClient.controlEncoding = library.ftpEncoding
             mFtpClient.connect(library.ftpAddress, library.port)
             if (checkLogin().not()) {
+                showErrorToast("登陆失败，请检查账号密码")
                 return false
             }
             if (library.isActiveFTP) {
@@ -175,7 +176,11 @@ class FtpStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     private fun checkLogin(): Boolean {
         try {
-            return mFtpClient.login(library.account, library.password)
+            return if (library.isAnonymous) {
+                mFtpClient.login("anonymous", "anonymous")
+            } else {
+                mFtpClient.login(library.account, library.password)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             showErrorToast("登录FTP服务失败", e)
@@ -184,6 +189,9 @@ class FtpStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return false
     }
 
+    override suspend fun test(): Boolean {
+        return checkConnection()
+    }
 
     override fun close() {
         if (playingInputStream != null) {
@@ -217,6 +225,10 @@ class FtpStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     }
 
     private fun showErrorToast(message: String, e: Exception? = null) {
-        ToastCenter.showError("$message: ${e?.message}")
+        if (e == null) {
+            ToastCenter.showError(message)
+            return
+        }
+        ToastCenter.showError("$message: ${e.message}")
     }
 }

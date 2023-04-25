@@ -1,5 +1,6 @@
 package com.xyoye.stream_component.ui.dialog
 
+import android.os.Bundle
 import androidx.databinding.ViewDataBinding
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
@@ -9,8 +10,19 @@ import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
  */
 
 abstract class StorageEditDialog<T : ViewDataBinding>(
-    activity: StoragePlusActivity
+    private val activity: StoragePlusActivity
 ) : BaseBottomDialog<T>(activity) {
 
     abstract fun onTestResult(result: Boolean)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setOnDismissListener {
+            if (activity.isFinishing || activity.isDestroyed) {
+                return@setOnDismissListener
+            }
+            activity.finish()
+        }
+    }
 }

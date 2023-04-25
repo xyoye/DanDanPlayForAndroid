@@ -8,6 +8,7 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.StorageFactory
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class StoragePlusViewModel : BaseViewModel() {
@@ -18,7 +19,7 @@ class StoragePlusViewModel : BaseViewModel() {
     var exitLiveData: LiveData<Any> = _exitLiveData
 
     fun addStorage(oldLibrary: MediaLibraryEntity?, newLibrary: MediaLibraryEntity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val duplicateLibrary = DatabaseManager.instance.getMediaLibraryDao()
                 .getByUrl(newLibrary.url, newLibrary.mediaType)
             if (duplicateLibrary != null && duplicateLibrary.id != oldLibrary?.id) {
@@ -34,7 +35,7 @@ class StoragePlusViewModel : BaseViewModel() {
 
     fun testStorage(library: MediaLibraryEntity) {
         val storage = StorageFactory.createStorage(library)
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val status = storage?.test() ?: false
             _testLiveData.postValue(status)
         }

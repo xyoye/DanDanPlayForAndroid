@@ -20,15 +20,7 @@
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme" />
         <activity
-            android:name=".ui.activities.ftp_login.FTPLoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/DialogActivityTheme" />
-        <activity
             android:name=".ui.activities.smb_login.SmbLoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/DialogActivityTheme" />
-        <activity
-            android:name=".ui.activities.remote_login.RemoteLoginActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/DialogActivityTheme" />
         <activity

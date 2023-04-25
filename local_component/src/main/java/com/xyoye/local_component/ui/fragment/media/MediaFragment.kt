@@ -10,7 +10,6 @@ import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.deletable
-import com.xyoye.common_component.extension.editRoute
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.services.ScreencastProvideService
@@ -94,7 +93,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                                 }
                             }
                             itemLayout.setOnLongClickListener {
-                                if (data.mediaType.editRoute != null || data.mediaType.deletable) {
+                                if (data.mediaType.deletable) {
                                     showManageStorageDialog(data)
                                 }
                                 true
@@ -133,7 +132,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun showAddStorageDialog() {
         val actionList = MediaType.values()
-            .filter { it.editRoute != null }
+            .filter { it.deletable }
             .map { it.toAction() }
 
         BottomActionDialog(
@@ -143,7 +142,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
         ) {
             val mediaType = it.actionId as MediaType
             ARouter.getInstance()
-                .build(mediaType.editRoute!!)
+                .build(RouteTable.Stream.StoragePlus)
                 .withSerializable("mediaType", mediaType)
                 .navigation()
             return@BottomActionDialog true
@@ -152,17 +151,13 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
     private fun showManageStorageDialog(data: MediaLibraryEntity) {
         val actions = mutableListOf<SheetActionBean>()
-        if (data.mediaType.editRoute != null) {
-            actions.add(ManageStorage.Edit.toAction())
-        }
-        if (data.mediaType.deletable) {
-            actions.add(ManageStorage.Delete.toAction())
-        }
+        actions.add(ManageStorage.Edit.toAction())
+        actions.add(ManageStorage.Delete.toAction())
 
         BottomActionDialog(requireActivity(), actions) {
             if (it.actionId == ManageStorage.Edit) {
                 ARouter.getInstance()
-                    .build(data.mediaType.editRoute!!)
+                    .build(RouteTable.Stream.StoragePlus)
                     .withSerializable("mediaType", data.mediaType)
                     .withParcelable("editData", data)
                     .navigation()

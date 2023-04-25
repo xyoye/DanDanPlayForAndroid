@@ -1,22 +1,10 @@
 package com.xyoye.common_component.extension
 
-import com.xyoye.common_component.config.RouteTable
 import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2023/1/3
  */
-
-val MediaType.editRoute: String?
-    get() = when (this) {
-        MediaType.FTP_SERVER -> RouteTable.Stream.StoragePlus
-        MediaType.WEBDAV_SERVER -> RouteTable.Stream.StoragePlus
-        MediaType.SMB_SERVER -> RouteTable.Stream.StoragePlus
-        MediaType.REMOTE_STORAGE -> RouteTable.Stream.StoragePlus
-        MediaType.SCREEN_CAST -> RouteTable.Stream.StoragePlus
-        MediaType.EXTERNAL_STORAGE -> RouteTable.Stream.StoragePlus
-        else -> null
-    }
 
 val MediaType.deletable: Boolean
     get() = when (this) {

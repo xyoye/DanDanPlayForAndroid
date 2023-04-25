@@ -11,7 +11,7 @@ val MediaType.editRoute: String?
     get() = when (this) {
         MediaType.FTP_SERVER -> RouteTable.Stream.StoragePlus
         MediaType.WEBDAV_SERVER -> RouteTable.Stream.StoragePlus
-        MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
+        MediaType.SMB_SERVER -> RouteTable.Stream.StoragePlus
         MediaType.REMOTE_STORAGE -> RouteTable.Stream.StoragePlus
         MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
         MediaType.EXTERNAL_STORAGE -> RouteTable.Stream.StoragePlus

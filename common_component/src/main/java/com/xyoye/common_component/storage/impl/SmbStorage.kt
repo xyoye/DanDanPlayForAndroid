@@ -143,6 +143,14 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return playServer.generatePlayUrl(this, file)
     }
 
+    override suspend fun test(): Boolean {
+        if (checkConnection().not()) {
+            return false
+        }
+        val rootFile = getRootFile() ?: return false
+        return listFiles(rootFile).isNotEmpty()
+    }
+
     override fun close() {
         closeDiskShare()
         IOUtils.closeIO(mSmbClient)

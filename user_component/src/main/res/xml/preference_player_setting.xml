@@ -44,7 +44,7 @@
         app:icon="@drawable/ic_player_setting_vlc_audio" />
     <SwitchPreference
         android:key="surface_renders"
-        android:summary="使用后视频渲染性能更高，但不支持截图"
+        android:summary="使用后视频渲染性能更高"
         android:title="SurfaceView"
         app:icon="@drawable/ic_player_setting_surface" />
 </PreferenceScreen>

@@ -1,6 +1,5 @@
 package com.xyoye.player.surface
 
-import android.graphics.Bitmap
 import android.view.View
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
@@ -20,8 +19,6 @@ interface InterSurfaceView {
     fun setScaleType(screenScale: VideoScreenScale)
 
     fun getView(): View
-
-    fun doScreenShot(): Bitmap?
 
     fun refresh()
 

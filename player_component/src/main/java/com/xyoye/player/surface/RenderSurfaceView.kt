@@ -1,7 +1,6 @@
 package com.xyoye.player.surface
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -63,10 +62,6 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     }
 
     override fun getView() = this
-
-    override fun doScreenShot(): Bitmap? {
-        return drawingCache
-    }
 
     override fun refresh() {
         requestLayout()

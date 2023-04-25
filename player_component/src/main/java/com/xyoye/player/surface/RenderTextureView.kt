@@ -69,8 +69,6 @@ class RenderTextureView(context: Context) : TextureView(context), InterSurfaceVi
 
     override fun getView() = this
 
-    override fun doScreenShot() = bitmap
-
     override fun refresh() {
         requestLayout()
     }

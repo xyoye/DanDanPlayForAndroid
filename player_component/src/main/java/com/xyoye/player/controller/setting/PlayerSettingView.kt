@@ -320,6 +320,10 @@ class PlayerSettingView(
                 mControlWrapper.showSettingView(SettingViewType.SUBTITLE_OFFSET_TIME)
                 onSettingVisibilityChanged(false)
             }
+            SettingAction.SCREEN_SHOT -> {
+                mControlWrapper.showSettingView(SettingViewType.SCREEN_SHOT)
+                onSettingVisibilityChanged(false)
+            }
         }
     }
 }

@@ -163,6 +163,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             if (it.actionId == ManageStorage.Edit) {
                 ARouter.getInstance()
                     .build(data.mediaType.editRoute!!)
+                    .withSerializable("mediaType", data.mediaType)
                     .withParcelable("editData", data)
                     .navigation()
             } else if (it.actionId == ManageStorage.Delete) {

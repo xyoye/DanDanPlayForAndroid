@@ -12,7 +12,7 @@ val MediaType.editRoute: String?
         MediaType.FTP_SERVER -> RouteTable.Stream.FTPLogin
         MediaType.WEBDAV_SERVER -> RouteTable.Stream.WebDavLogin
         MediaType.SMB_SERVER -> RouteTable.Stream.SmbLogin
-        MediaType.REMOTE_STORAGE -> RouteTable.Stream.RemoteLogin
+        MediaType.REMOTE_STORAGE -> RouteTable.Stream.StoragePlus
         MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
         MediaType.EXTERNAL_STORAGE -> RouteTable.Stream.StoragePlus
         else -> null

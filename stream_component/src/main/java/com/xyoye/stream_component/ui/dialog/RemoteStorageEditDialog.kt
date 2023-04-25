@@ -1,33 +1,31 @@
 package com.xyoye.stream_component.ui.dialog
 
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
+import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.DialogRemoteLoginBinding
+import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
+import com.xyoye.stream_component.utils.launcher.ScanActivityLauncher
 
 /**
  * Created by xyoye on 2021/3/25.
  */
 
-class RemoteLoginDialog(
-    private val activity: AppCompatActivity,
+class RemoteStorageEditDialog(
+    private val activity: StoragePlusActivity,
     private val originalStorage: MediaLibraryEntity?,
-    private val addMediaStorage: (MediaLibraryEntity) -> Unit,
-    private val testConnect: (MediaLibraryEntity) -> Unit,
-    private val testConnectResult: MutableLiveData<Boolean>,
-    private val scanQRCode: () -> Unit
-) : BaseBottomDialog<DialogRemoteLoginBinding>(activity) {
+) : StorageEditDialog<DialogRemoteLoginBinding>(activity) {
 
     private var remoteData: MediaLibraryEntity
     private var tokenRequired = false
 
     private lateinit var binding: DialogRemoteLoginBinding
+
+    private val scanActivityLauncher = ScanActivityLauncher(activity, onResult())
 
     init {
         remoteData = originalStorage ?: MediaLibraryEntity(
@@ -51,12 +49,19 @@ class RemoteLoginDialog(
         setGroupMode(remoteData.remoteAnimeGrouping)
 
         binding.scanLl.setOnClickListener {
-            scanQRCode.invoke()
+            DanDanPlay.permission.camera.request(activity) {
+                onGranted {
+                    scanActivityLauncher.launch()
+                }
+                onDenied {
+                    ToastCenter.showError("获取相机权限失败，无法进行扫码")
+                }
+            }
         }
 
         binding.serverTestConnectTv.setOnClickListener {
             if (checkParams(remoteData)) {
-                testConnect.invoke(remoteData)
+                activity.testStorage(remoteData)
             }
         }
 
@@ -70,38 +75,29 @@ class RemoteLoginDialog(
             setGroupMode(true)
         }
 
-        testConnectResult.observe(activity) {
-            if (it) {
-                binding.serverStatusTv.text = "连接成功"
-                binding.serverStatusTv.setTextColorRes(R.color.text_blue)
-            } else {
-                binding.serverStatusTv.text = "连接失败"
-                binding.serverStatusTv.setTextColorRes(R.color.text_red)
-            }
-        }
-
         setPositiveListener {
             if (checkParams(remoteData)) {
-                addMediaStorage.invoke(remoteData)
-                dismiss()
+                if (remoteData.displayName.isEmpty()) {
+                    remoteData.displayName = "远程媒体库"
+                }
+                remoteData.describe = "http://${remoteData.url}:${remoteData.port}"
+                activity.addStorage(remoteData)
             }
         }
 
         setNegativeListener {
-            dismiss()
-        }
-
-        setOnDismissListener {
             activity.finish()
         }
     }
 
-    fun setScanResult(remoteScanData: RemoteScanData) {
-        remoteData.url = remoteScanData.selectedIP ?: ""
-        remoteData.port = remoteScanData.port
-        remoteData.displayName = remoteScanData.machineName ?: ""
-        tokenRequired = remoteScanData.tokenRequired
-        binding.remoteData = remoteData
+    override fun onTestResult(result: Boolean) {
+        if (result) {
+            binding.serverStatusTv.text = "连接成功"
+            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+        } else {
+            binding.serverStatusTv.text = "连接失败"
+            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+        }
     }
 
     private fun checkParams(remoteData: MediaLibraryEntity): Boolean {
@@ -127,5 +123,16 @@ class RemoteLoginDialog(
         binding.tvGroupByFile.setTextColorRes(
             if (!isGroupByAnime) R.color.text_white else R.color.text_black
         )
+    }
+
+    private fun onResult() = block@{ data: RemoteScanData? ->
+        if (data == null) {
+            return@block
+        }
+        remoteData.url = data.selectedIP ?: ""
+        remoteData.port = data.port
+        remoteData.displayName = data.machineName ?: ""
+        tokenRequired = data.tokenRequired
+        binding.remoteData = remoteData
     }
 }

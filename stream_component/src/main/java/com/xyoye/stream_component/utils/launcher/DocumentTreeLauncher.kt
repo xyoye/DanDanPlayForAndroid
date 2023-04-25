@@ -1,4 +1,4 @@
-package com.xyoye.common_component.utils.activity_result
+package com.xyoye.stream_component.utils.launcher
 
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
  * Created by xyoye on 2022/12/31.
  */
 
-class DocumentTreeLifecycleObserver(
+class DocumentTreeLauncher(
     private val activity: FragmentActivity,
     private val onResult: (Uri?) -> Unit
 ) : DefaultLifecycleObserver {
@@ -35,7 +35,7 @@ class DocumentTreeLifecycleObserver(
         }
     }
 
-    fun openDocumentTree() {
+    fun launch() {
         openDocumentTree.launch(null)
     }
 }

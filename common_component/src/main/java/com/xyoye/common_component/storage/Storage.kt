@@ -89,6 +89,11 @@ interface Storage {
     suspend fun search(keyword: String): List<StorageFile>
 
     /**
+     * 测试媒体库状态
+     */
+    suspend fun test(): Boolean
+
+    /**
      * 关闭媒体库
      */
     fun close()

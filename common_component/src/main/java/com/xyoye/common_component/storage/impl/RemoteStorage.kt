@@ -35,7 +35,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         return if (file.isRootFile()) {
-            getRemoteRootFiles()
+            getRemoteRootFiles() ?: emptyList()
         } else {
             (file as RemoteStorageFile).getRealFile().childData
         }.map { RemoteStorageFile(this, it) }
@@ -111,7 +111,11 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             .map { RemoteStorageFile(this, it) }
     }
 
-    private suspend fun getRemoteRootFiles(): List<RemoteVideoData> {
+    override suspend fun test(): Boolean {
+        return getRemoteRootFiles() != null
+    }
+
+    private suspend fun getRemoteRootFiles(): List<RemoteVideoData>? {
         return try {
             val videoData = Retrofit.remoteService.openStorage().also {
                 storageFilesSnapshot = it
@@ -131,7 +135,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
                 val error = RequestErrorHandler(e).handlerError()
                 ToastCenter.showWarning("连接失败：${error.msg}")
             }
-            emptyList()
+            null
         }
     }
 

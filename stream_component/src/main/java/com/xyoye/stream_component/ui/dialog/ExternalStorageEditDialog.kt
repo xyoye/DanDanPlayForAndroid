@@ -2,45 +2,42 @@ package com.xyoye.stream_component.ui.dialog
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResDrawable
-import com.xyoye.common_component.utils.activity_result.DocumentTreeLifecycleObserver
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.DialogExternalStorageEditBinding
+import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
+import com.xyoye.stream_component.utils.launcher.DocumentTreeLauncher
 
 /**
  * Created by xyoye on 2023/1/4
  */
 
 class ExternalStorageEditDialog(
-    private val activity: AppCompatActivity,
-    private val storage: MediaLibraryEntity?,
-    private val addStorage: (MediaLibraryEntity) -> Unit
-) : BaseBottomDialog<DialogExternalStorageEditBinding>(activity) {
+    private val activity: StoragePlusActivity,
+    private val library: MediaLibraryEntity?,
+) : StorageEditDialog<DialogExternalStorageEditBinding>(activity) {
 
     private lateinit var binding: DialogExternalStorageEditBinding
     private var mDocumentFile: DocumentFile? = null
 
-    private val externalStorageObserver =
-        DocumentTreeLifecycleObserver(activity, onDocumentTreeResult())
+    private val documentTreeLauncher = DocumentTreeLauncher(activity, onResult())
 
     override fun getChildLayoutId() = R.layout.dialog_external_storage_edit
 
     override fun initView(binding: DialogExternalStorageEditBinding) {
         this.binding = binding
 
-        if (storage == null) {
+        if (library == null) {
             setTitle("添加设备存储库")
         } else {
             setTitle("编辑设备存储库")
-            binding.displayNameEt.setText(storage.displayName)
-            binding.pathTv.text = storage.describe
+            binding.displayNameEt.setText(library.displayName)
+            binding.pathTv.text = library.describe
             binding.selectRootTv.isEnabled = false
             binding.selectRootTv.setTextColor(R.color.text_gray.toResColor(activity))
             binding.selectRootTv.background =
@@ -50,7 +47,11 @@ class ExternalStorageEditDialog(
         initListener()
     }
 
-    fun setDocumentResult(documentFile: DocumentFile) {
+    override fun onTestResult(result: Boolean) {
+
+    }
+
+    private fun setDocumentResult(documentFile: DocumentFile) {
         mDocumentFile = documentFile
         binding.pathTv.text = getDescribe(documentFile)
         if (binding.displayNameEt.text?.toString().isNullOrEmpty()) {
@@ -60,45 +61,39 @@ class ExternalStorageEditDialog(
 
     private fun initListener() {
         binding.selectRootTv.setOnClickListener {
-            externalStorageObserver.openDocumentTree()
+            documentTreeLauncher.launch()
         }
 
         setPositiveListener {
-            if (storage != null) {
-                val newStorage = updateStorage(storage)
-                if (newStorage != null) {
-                    addStorage.invoke(newStorage)
+            if (library != null) {
+                val newLibrary = updateLibrary(library)
+                if (newLibrary != null) {
+                    activity.addStorage(newLibrary)
                 }
-                dismiss()
                 return@setPositiveListener
             }
 
-            val newStorage = createStorage()
+            val newLibrary = createLibrary()
                 ?: return@setPositiveListener
-            addStorage.invoke(newStorage)
-            dismiss()
+            activity.addStorage(newLibrary)
         }
 
         setNegativeListener {
-            dismiss()
-        }
-
-        setOnDismissListener {
             activity.finish()
         }
     }
 
-    private fun updateStorage(storage: MediaLibraryEntity): MediaLibraryEntity? {
-        val newDisplayName = getDisplayNameByEdit(storage)
-        if (newDisplayName == storage.displayName) {
+    private fun updateLibrary(library: MediaLibraryEntity): MediaLibraryEntity? {
+        val newDisplayName = getDisplayNameByEdit(library)
+        if (newDisplayName == library.displayName) {
             return null
         }
 
-        storage.displayName = getDisplayNameByEdit(storage)
-        return storage
+        library.displayName = getDisplayNameByEdit(library)
+        return library
     }
 
-    private fun createStorage(): MediaLibraryEntity? {
+    private fun createLibrary(): MediaLibraryEntity? {
         if (mDocumentFile == null) {
             ToastCenter.showError("请选择设备存储库文件夹")
             return null
@@ -157,7 +152,7 @@ class ExternalStorageEditDialog(
         return null
     }
 
-    private fun onDocumentTreeResult() = block@{ uri: Uri? ->
+    private fun onResult() = block@{ uri: Uri? ->
         if (uri == null) {
             return@block
         }

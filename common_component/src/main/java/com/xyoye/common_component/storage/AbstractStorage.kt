@@ -78,4 +78,8 @@ abstract class AbstractStorage(
     override suspend fun search(keyword: String): List<StorageFile> {
         return emptyList()
     }
+
+    override suspend fun test(): Boolean {
+        return true
+    }
 }

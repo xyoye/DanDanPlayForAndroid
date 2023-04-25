@@ -1,6 +1,5 @@
 package com.xyoye.stream_component.ui.activities.storage_plus
 
-import android.app.Dialog
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -8,11 +7,12 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
-
 import com.xyoye.stream_component.BR
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.ActivityStoragePlusBinding
 import com.xyoye.stream_component.ui.dialog.ExternalStorageEditDialog
+import com.xyoye.stream_component.ui.dialog.RemoteStorageEditDialog
+import com.xyoye.stream_component.ui.dialog.StorageEditDialog
 
 @Route(path = RouteTable.Stream.StoragePlus)
 class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePlusBinding>() {
@@ -25,7 +25,7 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
     @JvmField
     var editData: MediaLibraryEntity? = null
 
-    private var storageEditDialog: Dialog? = null
+    private var storageEditDialog: StorageEditDialog<*>? = null
 
     override fun initViewModel() =
         ViewModelInit(
@@ -48,6 +48,11 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
         showDialog()
     }
 
+    override fun onDestroy() {
+        storageEditDialog?.dismiss()
+        super.onDestroy()
+    }
+
     private fun checkBundle(): Boolean {
         mediaType ?: return false
         return true
@@ -57,11 +62,18 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
         viewModel.exitLiveData.observe(this) {
             finish()
         }
+
+        viewModel.testLiveData.observe(this) {
+            if (storageEditDialog?.isShowing == true) {
+                storageEditDialog?.onTestResult(it)
+            }
+        }
     }
 
     private fun showDialog() {
         val dialog = when (mediaType) {
-            MediaType.EXTERNAL_STORAGE -> createExternalDialog()
+            MediaType.EXTERNAL_STORAGE -> ExternalStorageEditDialog(this, editData)
+            MediaType.REMOTE_STORAGE -> RemoteStorageEditDialog(this, editData)
             else -> null
         } ?: return
 
@@ -69,9 +81,11 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
         storageEditDialog = dialog
     }
 
-    private fun createExternalDialog(): Dialog {
-        return ExternalStorageEditDialog(this, editData) {
-            viewModel.addExternalStorage(it)
-        }
+    fun addStorage(library: MediaLibraryEntity) {
+        viewModel.addStorage(editData, library)
+    }
+
+    fun testStorage(library: MediaLibraryEntity) {
+        viewModel.testStorage(library)
     }
 }

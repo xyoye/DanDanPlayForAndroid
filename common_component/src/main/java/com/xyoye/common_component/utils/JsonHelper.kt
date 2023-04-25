@@ -3,6 +3,9 @@ package com.xyoye.common_component.utils
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.xyoye.common_component.utils.moshi.NullToEmptyStringAdapter
+import com.xyoye.common_component.utils.moshi.NullToIntZeroAdapter
+import com.xyoye.common_component.utils.moshi.NullToLongZeroAdapter
 import java.io.IOException
 
 /**
@@ -13,6 +16,8 @@ object JsonHelper {
 
     val MO_SHI: Moshi = Moshi.Builder()
         .add(NullToEmptyStringAdapter)
+        .add(NullToLongZeroAdapter)
+        .add(NullToIntZeroAdapter)
         .build()
 
     inline fun <reified T> parseJson(jsonStr: String): T? {

@@ -1,9 +1,9 @@
-package com.xyoye.common_component.utils
+package com.xyoye.common_component.utils.moshi
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.ToJson
-import com.xyoye.data_component.helper.NullToEmptyString
+import com.xyoye.data_component.helper.moshi.NullToEmptyString
 
 object NullToEmptyStringAdapter {
 

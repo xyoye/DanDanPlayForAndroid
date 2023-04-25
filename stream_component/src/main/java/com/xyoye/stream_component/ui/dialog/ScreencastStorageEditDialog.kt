@@ -2,15 +2,15 @@ package com.xyoye.stream_component.ui.dialog
 
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
+import com.xyoye.common_component.adapter.BaseViewHolderCreator
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.application.DanDanPlay
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.bean.UDPDeviceBean
 import com.xyoye.data_component.data.RemoteScanData
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -18,21 +18,31 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.stream_component.R
 import com.xyoye.stream_component.databinding.DialogScreencastConnectBinding
 import com.xyoye.stream_component.databinding.ItemScreencastReceiveDeviceBinding
+import com.xyoye.stream_component.ui.activities.storage_plus.StoragePlusActivity
+import com.xyoye.stream_component.utils.launcher.ScanActivityLauncher
+import com.xyoye.stream_component.utils.screencast.provider.UdpClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by xyoye on 2022/7/23.
  */
 
-class ScreencastConnectDialog(
-    private val activity: AppCompatActivity,
-    private val originalStorage: MediaLibraryEntity?,
-    private val devicesLiveData: LiveData<List<UDPDeviceBean>>,
-    private val onConnectDevice: (UDPDeviceBean, String?) -> Unit,
-    private val connectResult: LiveData<Boolean>,
-    private val scanQRCode: () -> Unit,
-) : BaseBottomDialog<DialogScreencastConnectBinding>(activity) {
+class ScreencastStorageEditDialog(
+    private val activity: StoragePlusActivity,
+    private val originalStorage: MediaLibraryEntity?
+) : StorageEditDialog<DialogScreencastConnectBinding>(activity) {
+
     private lateinit var binding: DialogScreencastConnectBinding
     private var isEditStorage: Boolean = false
+
+    private val scanDevices = mutableListOf<UDPDeviceBean>()
+    private var scanDeviceJob: Job? = null
+
+    private val scanActivityLauncher = ScanActivityLauncher(activity, onScanResult())
+    private var testLibrary: MediaLibraryEntity? = null
 
     override fun getChildLayoutId() = R.layout.dialog_screencast_connect
 
@@ -55,22 +65,12 @@ class ScreencastConnectDialog(
 
         initListener()
 
-        initObserver()
-
         initView()
 
         initDeviceRv()
-    }
 
-    private fun initObserver() {
-        devicesLiveData.observe(activity) {
-            binding.deviceRv.setData(it)
-        }
-
-        connectResult.observe(activity) {
-            if (it) {
-                dismiss()
-            }
+        setOnShowListener {
+            startDeviceScan()
         }
     }
 
@@ -84,10 +84,6 @@ class ScreencastConnectDialog(
         }
 
         setNegativeListener {
-            dismiss()
-        }
-
-        setOnDismissListener {
             activity.finish()
         }
 
@@ -100,7 +96,14 @@ class ScreencastConnectDialog(
         }
 
         binding.tvScanConnect.setOnClickListener {
-            scanQRCode.invoke()
+            DanDanPlay.permission.camera.request(activity) {
+                onGranted {
+                    scanActivityLauncher.launch()
+                }
+                onDenied {
+                    ToastCenter.showError("获取相机权限失败，无法进行扫码")
+                }
+            }
         }
 
         binding.passwordConnectTv.setOnClickListener {
@@ -124,6 +127,20 @@ class ScreencastConnectDialog(
         }
     }
 
+    override fun onTestResult(result: Boolean) {
+        if (testLibrary == null) {
+            return
+        }
+        if (result) {
+            activity.addStorage(testLibrary!!)
+        }
+    }
+
+    override fun doBeforeDismiss() {
+        stopDeviceScan()
+        super.doBeforeDismiss()
+    }
+
     private fun initView() {
         if (isEditStorage) {
             binding.tvAutoConnect.isEnabled = false
@@ -140,20 +157,23 @@ class ScreencastConnectDialog(
     private fun initDeviceRv() {
         binding.deviceRv.apply {
             layoutManager = vertical()
+
             adapter = buildAdapter {
-                addItem<UDPDeviceBean, ItemScreencastReceiveDeviceBinding>(R.layout.item_screencast_receive_device) {
-                    initView { data, _, _ ->
-                        itemBinding.device = data
-                        itemBinding.itemLayout.setOnClickListener {
-                            if (data.needPassword) {
-                                inputPassword(data)
-                                ToastCenter.showToast("请输入连接密码")
-                            } else {
-                                connect(data)
-                            }
-                        }
-                    }
+                addItem(R.layout.item_screencast_receive_device) {
+                    initView(deviceItem())
                 }
+            }
+        }
+    }
+
+    private fun BaseViewHolderCreator<ItemScreencastReceiveDeviceBinding>.deviceItem() = { data: UDPDeviceBean ->
+        itemBinding.device = data
+        itemBinding.itemLayout.setOnClickListener {
+            if (data.needPassword) {
+                inputPassword(data)
+                ToastCenter.showToast("请输入连接密码")
+            } else {
+                connect(data)
             }
         }
     }
@@ -227,13 +247,56 @@ class ScreencastConnectDialog(
      * 连接至投屏设备
      */
     private fun connect(device: UDPDeviceBean, password: String? = null) {
-        onConnectDevice.invoke(device, password)
+        val library = MediaLibraryEntity(
+            displayName = device.deviceName,
+            url = "http://${device.ipAddress}:${device.httpPort}",
+            screencastAddress = device.ipAddress ?: "",
+            port = device.httpPort,
+            password = password,
+            mediaType = MediaType.SCREEN_CAST
+        )
+        testLibrary = library
+        activity.testStorage(library)
     }
 
-    /**
-     * 设置扫码结果
-     */
-    fun setScanResult(data: RemoteScanData) {
+    private fun startDeviceScan() {
+        scanDeviceJob?.cancel()
+        scanDeviceJob = activity.lifecycleScope.launch(Dispatchers.IO) {
+            UdpClient.startMulticastReceive {
+                withContext(Dispatchers.Main) {
+                    onDeviceFound(it)
+                }
+            }
+        }
+    }
+
+    private fun stopDeviceScan() {
+        UdpClient.stopMulticastReceive()
+        scanDeviceJob?.cancel()
+    }
+
+    private fun onDeviceFound(device: UDPDeviceBean) {
+        if (isShowing.not() || activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        if (device.ipAddress.isNullOrEmpty() || device.httpPort == 0) {
+            return
+        }
+        val addedDevice = scanDevices.find {
+            it.ipAddress == device.ipAddress && it.httpPort == device.httpPort
+        }
+        if (addedDevice != null) {
+            scanDevices.remove(addedDevice)
+        }
+        scanDevices.add(device)
+        scanDevices.sortBy { it.ipAddress + it.httpPort }
+        binding.deviceRv.setData(scanDevices)
+    }
+
+    private fun onScanResult() = block@{ data: RemoteScanData? ->
+        if (data == null) {
+            return@block
+        }
         switchStyle(editMode = true, needPassword = data.tokenRequired)
 
         binding.ipEt.setText(data.selectedIP)

@@ -75,6 +75,7 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
             MediaType.FTP_SERVER -> FTPStorageEditDialog(this, editData)
             MediaType.WEBDAV_SERVER -> WebDavStorageEditDialog(this, editData)
             MediaType.SMB_SERVER -> SmbStorageEditDialog(this, editData)
+            MediaType.SCREEN_CAST -> ScreencastStorageEditDialog(this, editData)
             else -> {
                 finish()
                 null

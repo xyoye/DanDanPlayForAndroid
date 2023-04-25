@@ -7,6 +7,8 @@ import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.bean.UDPDeviceBean
 import com.xyoye.stream_component.utils.screencast.receiver.UdpServer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -26,14 +28,14 @@ object UdpClient {
 
     private var multicastSocket: MulticastSocket? = null
 
-    private var receiveCallback: ((UDPDeviceBean) -> Unit)? = null
+    private var receiveCallback: (suspend (UDPDeviceBean) -> Unit)? = null
 
     private var isRunning = AtomicBoolean(false)
 
     /**
      * 启动组播接收
      */
-    fun startMulticastReceive(callback: (UDPDeviceBean) -> Unit) {
+    suspend fun startMulticastReceive(callback: suspend (UDPDeviceBean) -> Unit) {
         stopMulticastReceive()
 
         if (initMulticastSocket().not()) {
@@ -84,12 +86,14 @@ object UdpClient {
     /**
      * 接收UDP组播
      */
-    private fun receiveMulticast() {
+    private suspend fun receiveMulticast() {
         val buffer = ByteArray(1024)
         val datagramPacket = DatagramPacket(buffer, buffer.size)
 
         try {
-            multicastSocket?.receive(datagramPacket)
+            withContext(Dispatchers.IO) {
+                multicastSocket?.receive(datagramPacket)
+            }
 
             //组播消息
             val entropyMsg = String(datagramPacket.data, 0, datagramPacket.length)

@@ -2,6 +2,8 @@ package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.request.RequestError
+import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
@@ -9,6 +11,7 @@ import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -103,6 +106,26 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             e.printStackTrace()
         }
         return null
+    }
+
+    override suspend fun test(): Boolean {
+        try {
+            val result = Retrofit.screencastService.init(
+                host = library.screencastAddress,
+                port = library.port,
+                authorization = library.password
+            )
+            if (result.success) {
+                return true
+            }
+            val error = RequestError(result.errorCode, result.errorMessage ?: "未知错误")
+            ToastCenter.showError("x${error.code} ${error.msg}")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val error = RequestErrorHandler(e).handlerError()
+            ToastCenter.showError("x${error.code} ${error.msg}")
+        }
+        return false
     }
 
     fun setupScreencastData(data: ScreencastData) {

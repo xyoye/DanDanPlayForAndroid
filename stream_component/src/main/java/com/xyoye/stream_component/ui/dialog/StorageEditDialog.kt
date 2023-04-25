@@ -19,10 +19,14 @@ abstract class StorageEditDialog<T : ViewDataBinding>(
         super.onCreate(savedInstanceState)
 
         setOnDismissListener {
-            if (activity.isFinishing || activity.isDestroyed) {
-                return@setOnDismissListener
-            }
-            activity.finish()
+            doBeforeDismiss()
         }
+    }
+
+    open fun doBeforeDismiss() {
+        if (activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        activity.finish()
     }
 }

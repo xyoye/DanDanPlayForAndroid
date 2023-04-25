@@ -13,7 +13,7 @@ val MediaType.editRoute: String?
         MediaType.WEBDAV_SERVER -> RouteTable.Stream.StoragePlus
         MediaType.SMB_SERVER -> RouteTable.Stream.StoragePlus
         MediaType.REMOTE_STORAGE -> RouteTable.Stream.StoragePlus
-        MediaType.SCREEN_CAST -> RouteTable.Stream.ScreencastConnect
+        MediaType.SCREEN_CAST -> RouteTable.Stream.StoragePlus
         MediaType.EXTERNAL_STORAGE -> RouteTable.Stream.StoragePlus
         else -> null
     }

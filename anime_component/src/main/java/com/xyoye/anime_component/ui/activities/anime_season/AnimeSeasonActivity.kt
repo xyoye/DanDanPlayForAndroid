@@ -38,6 +38,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
         initRv()
 
         viewModel.getYearsData()
+        viewModel.getSortData()
     }
 
     private fun initRv() {
@@ -114,14 +115,11 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                             typeNameTv.setTextColorRes(if (data.isChecked) R.color.text_theme else R.color.text_black)
                             itemLayout.setOnClickListener {
                                 viewModel.checkSort(position)
-                                notifyItemChanged(position)
                             }
                         }
                     }
                 }
             }
-
-            setData(viewModel.sortTypeData)
         }
 
         dataBinding.animeRv.apply {
@@ -157,8 +155,8 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
             dataBinding.animeRv.layoutManager?.onRestoreInstanceState(recyclerSaveState)
         }
 
-        viewModel.animeSortUpdateLiveData.observe(this) {
-            dataBinding.sortRv.adapter?.notifyItemChanged(it)
+        viewModel.sortLiveData.observe(this) {
+            dataBinding.sortRv.setData(it)
         }
     }
 }

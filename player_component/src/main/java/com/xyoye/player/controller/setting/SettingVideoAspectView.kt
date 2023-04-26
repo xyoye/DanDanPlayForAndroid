@@ -69,6 +69,8 @@ class SettingVideoAspectView(
 
     private fun initView() {
         viewBinding.rvAspect.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
@@ -104,12 +106,11 @@ class SettingVideoAspectView(
                 return
             }
             videoAspectData[selectedIndex].isChecked = false
-            viewBinding.rvAspect.adapter?.notifyItemChanged(selectedIndex)
         }
 
         val currentIndex = videoAspectData.indexOfFirst { it.screenScale == currentAspect }
         videoAspectData[currentIndex].isChecked = true
-        viewBinding.rvAspect.adapter?.notifyItemChanged(currentIndex)
+        viewBinding.rvAspect.setData(videoAspectData)
     }
 
     private fun onClickAspect(aspect: VideoScreenScale) {

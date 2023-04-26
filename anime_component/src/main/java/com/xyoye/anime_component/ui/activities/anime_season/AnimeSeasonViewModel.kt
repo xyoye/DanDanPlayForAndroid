@@ -6,8 +6,8 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.utils.stringCompare
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.CommonTypeData
@@ -22,7 +22,7 @@ class AnimeSeasonViewModel : BaseViewModel() {
         CommonTypeData("1月", "1")
     )
 
-    val sortTypeData = mutableListOf(
+    private val sortTypeData = mutableListOf(
         CommonTypeData("名称", AnimeSortType.NAME.value),
         CommonTypeData("评分", AnimeSortType.RATING.value),
         CommonTypeData("关注", AnimeSortType.FOLLOW.value)
@@ -45,11 +45,15 @@ class AnimeSeasonViewModel : BaseViewModel() {
     val yearsLiveData = MutableLiveData<MutableList<CommonTypeData>>()
     val seasonLiveData = MutableLiveData<MutableList<CommonTypeData>>()
     val animeLiveData = MutableLiveData<MutableList<AnimeData>>()
-    val animeSortUpdateLiveData = MutableLiveData<Int>()
+    val sortLiveData = MutableLiveData<MutableList<CommonTypeData>>()
 
     fun getYearsData() {
         yearsLiveData.postValue(years)
         checkYear(years[0].typeId)
+    }
+
+    fun getSortData() {
+        sortLiveData.postValue(sortTypeData)
     }
 
     fun checkYear(year: String) {
@@ -80,20 +84,20 @@ class AnimeSeasonViewModel : BaseViewModel() {
         yearsLiveData.postValue(years)
     }
 
-    fun checkSeason(seasonId: String){
+    fun checkSeason(seasonId: String) {
         var yearId = years[0].typeId
         for (year in years) {
-            if (year.isChecked){
+            if (year.isChecked) {
                 yearId = year.typeId
                 break
             }
         }
 
         for (season in seasonData) {
-            if (season.typeId == seasonId){
+            if (season.typeId == seasonId) {
                 season.isChecked = true
                 getSeasonAnime(yearId, seasonId)
-            } else{
+            } else {
                 season.isChecked = false
             }
         }
@@ -134,9 +138,9 @@ class AnimeSeasonViewModel : BaseViewModel() {
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
 
                 sortTypeData[checkedIndex].isChecked = false
-                animeSortUpdateLiveData.postValue(checkedIndex)
             }
         }
+        sortLiveData.postValue(sortTypeData)
         showSearchResult()
     }
 
@@ -146,7 +150,7 @@ class AnimeSeasonViewModel : BaseViewModel() {
         for (season in seasonData) {
             season.isEnable = true
             //有已选中月份，直接使用
-            if (season.isChecked){
+            if (season.isChecked) {
                 isSeasonChecked = true
                 getSeasonAnime(year.toString(), season.typeId)
             }
@@ -164,7 +168,7 @@ class AnimeSeasonViewModel : BaseViewModel() {
             val nowMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
             for (season in seasonData) {
                 //可选月份是否大于当前月份
-                if (season.typeId.toInt() > nowMonth){
+                if (season.typeId.toInt() > nowMonth) {
                     season.isEnable = false
                 } else {
                     season.isChecked = true

@@ -8,8 +8,8 @@ import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.utils.stringCompare
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.data.SearchAnimeData
@@ -33,7 +33,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
         CommonTypeData("其 它", "other")
     )
 
-    val sortTypeData = mutableListOf(
+    private val sortTypeData = mutableListOf(
         CommonTypeData("上映日期", AnimeSortType.DATE.value),
         CommonTypeData("名称", AnimeSortType.NAME.value),
         CommonTypeData("评分", AnimeSortType.RATING.value),
@@ -47,13 +47,12 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
     private lateinit var searchAnimeData: SearchAnimeData
 
     val searchText = ObservableField<String>()
-    val isTypeExpanded = ObservableField<Boolean>(false)
-    val isCheckedType = ObservableField<Boolean>(false)
-    val checkedAnimeType = ObservableField<String>("类型: ")
+    val isTypeExpanded = ObservableField(false)
+    val isCheckedType = ObservableField(false)
+    val checkedAnimeType = ObservableField("类型: ")
 
     val animeTypeLiveData = MutableLiveData<MutableList<CommonTypeData>>()
-    val animeTypeUpdateLiveData = MutableLiveData<Int>()
-    val animeSortUpdateLiveData = MutableLiveData<Int>()
+    val animeSortLiveData = MutableLiveData<MutableList<CommonTypeData>>()
     val searchHistoryLiveData = DatabaseManager.instance.getAnimeSearchHistoryDao().getAll()
 
     val animeLiveData = MutableLiveData<MutableList<AnimeData>>()
@@ -71,7 +70,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 .insert(AnimeSearchHistoryEntity(searchText.get()!!))
         }
 
-        httpRequest<SearchAnimeData>(viewModelScope) {
+        httpRequest(viewModelScope) {
             api {
                 Retrofit.service.searchAnime(searchWord, searchType)
             }
@@ -103,6 +102,10 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
         )
     }
 
+    fun getAnimeSort() {
+        animeSortLiveData.postValue(sortTypeData)
+    }
+
     fun checkType(position: Int) {
         var checkedIndex = -1
         for (index in animeTypeData.indices) {
@@ -132,9 +135,9 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 isCheckedType.set(true)
 
                 animeTypeData[checkedIndex].isChecked = false
-                animeTypeUpdateLiveData.postValue(checkedIndex)
             }
         }
+        getAnimeType()
         if (!searchText.get().isNullOrEmpty() && searchText.get()!!.length > 1) {
             search()
         }
@@ -174,9 +177,9 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
 
                 sortTypeData[checkedIndex].isChecked = false
-                animeSortUpdateLiveData.postValue(checkedIndex)
             }
         }
+        getAnimeSort()
         showSearchResult()
     }
 

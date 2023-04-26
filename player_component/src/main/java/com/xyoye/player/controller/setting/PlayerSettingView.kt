@@ -1,6 +1,5 @@
 package com.xyoye.player.controller.setting
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -46,12 +45,11 @@ class PlayerSettingView(
         return SettingViewType.PLAYER_SETTING
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewShow() {
         settingItems.asSequence()
             .filter { it is SettingItem }
             .forEach { applyItemStatus(it as SettingItem) }
-        viewBinding.settingRv.adapter?.notifyDataSetChanged()
+        viewBinding.settingRv.setData(settingItems)
     }
 
     override fun onViewHide() {
@@ -93,13 +91,13 @@ class PlayerSettingView(
             adapter = buildAdapter {
                 addItem<Any, ItemPlayerSettingBinding>(R.layout.item_player_setting) {
                     checkType { data, _ -> data is SettingItem }
-                    initView { data, position, _ ->
+                    initView { data, _, _ ->
                         (data as SettingItem).apply {
                             itemBinding.tvSetting.text = display
                             itemBinding.ivSetting.setImageResource(icon)
                             itemBinding.ivSetting.isSelected = selected
                             itemBinding.ivSetting.setOnClickListener {
-                                onItemClick(position, this)
+                                onItemClick(this)
                             }
                         }
                     }
@@ -118,8 +116,6 @@ class PlayerSettingView(
 
                 addItemDecoration(ItemDecorationSpace(0, dp2px(8)))
             }
-
-            setData(settingItems)
         }
     }
 
@@ -254,27 +250,24 @@ class PlayerSettingView(
         item.selected = selected
     }
 
-    private fun onItemClick(position: Int, item: SettingItem) {
+    private fun onItemClick(item: SettingItem) {
         when (item.action) {
             SettingAction.SCREEN_ORIENTATION -> {
                 val newStatus = !PlayerInitializer.isOrientationEnabled
                 PlayerInitializer.isOrientationEnabled = newStatus
                 PlayerConfig.putAllowOrientationChange(newStatus)
-                item.selected = newStatus
-                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+                updateItemStatus(item.action, newStatus)
             }
             SettingAction.BACKGROUND_PLAY -> {
                 val newStatus = PlayerConfig.isBackgroundPlay().not()
                 PlayerConfig.putBackgroundPlay(newStatus)
-                item.selected = newStatus
-                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+                updateItemStatus(item.action, newStatus)
             }
             SettingAction.NEXT_EPISODE -> {
                 val newStatus = !PlayerInitializer.Player.isAutoPlayNext
                 PlayerInitializer.Player.isAutoPlayNext = newStatus
                 PlayerConfig.putAutoPlayNext(newStatus)
-                item.selected = newStatus
-                viewBinding.settingRv.adapter?.notifyItemChanged(position)
+                updateItemStatus(item.action, newStatus)
             }
             SettingAction.VIDEO_SPEED -> {
                 mControlWrapper.showSettingView(SettingViewType.VIDEO_SPEED)
@@ -325,5 +318,11 @@ class PlayerSettingView(
                 onSettingVisibilityChanged(false)
             }
         }
+    }
+
+    private fun updateItemStatus(action: SettingAction, newStatus: Boolean) {
+        settingItems.find { it is SettingItem && it.action == action }
+            ?.let { (it as SettingItem).selected = newStatus }
+        viewBinding.settingRv.setData(settingItems)
     }
 }

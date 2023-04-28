@@ -1,7 +1,6 @@
 package com.xyoye.user_component.ui.activities.forgot
 
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -61,14 +60,14 @@ class ForgotActivity : BaseActivity<ForgotViewModel, ActivityForgotBinding>() {
             }
         }
 
-        viewModel.accountErrorLiveData.observe(this, {
+        viewModel.accountErrorLiveData.observe(this) {
             dataBinding.userAccountLayout.error = it
-        })
-        viewModel.emailErrorLiveData.observe(this, {
+        }
+        viewModel.emailErrorLiveData.observe(this) {
             dataBinding.userEmailLayout.error = it
-        })
-        viewModel.requestLiveData.observe(this, {
+        }
+        viewModel.requestLiveData.observe(this) {
             finish()
-        })
+        }
     }
 }

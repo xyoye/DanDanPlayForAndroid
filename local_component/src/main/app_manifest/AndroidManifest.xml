@@ -22,9 +22,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.bind_danmu.BindDanmuActivity" />
-        <activity android:name=".ui.activities.bind_subtitle.BindSubtitleActivity" />
-        <activity android:name=".ui.activities.local_media.LocalMediaActivity" />
         <activity android:name=".ui.activities.play_history.PlayHistoryActivity" />
     </application>
 

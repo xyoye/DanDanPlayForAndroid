@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
+import com.xyoye.common_component.extension.toText
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.ControlWrapper
@@ -14,7 +15,6 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerTopBinding
 import com.xyoye.player_component.ui.activities.overlay_permission.OverlayPermissionActivity
 import com.xyoye.player_component.utils.BatteryHelper
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -26,8 +26,6 @@ class PlayerTopView(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr), InterControllerView {
-
-    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     private val viewBinding = DataBindingUtil.inflate<LayoutPlayerTopBinding>(
         LayoutInflater.from(context),
@@ -71,7 +69,7 @@ class PlayerTopView(
         if (isVisible) {
             //不加延迟会导致动画卡顿
             postDelayed({
-                viewBinding.systemTimeTv.text = timeFormat.format(Date())
+                viewBinding.systemTimeTv.text = Date().toText("HH:mm")
             }, 100)
 
             ViewCompat.animate(viewBinding.playerTopLl).translationY(0f).setDuration(300).start()

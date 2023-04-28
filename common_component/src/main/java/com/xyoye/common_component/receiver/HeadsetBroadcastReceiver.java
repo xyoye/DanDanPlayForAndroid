@@ -11,7 +11,7 @@ import android.media.AudioManager;
 
 public class HeadsetBroadcastReceiver extends BroadcastReceiver {
 
-    private PlayerReceiverListener listener;
+    private final PlayerReceiverListener listener;
 
     public HeadsetBroadcastReceiver(PlayerReceiverListener listener) {
         this.listener = listener;

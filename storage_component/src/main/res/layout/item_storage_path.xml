@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_path"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:background="@drawable/background_item_press_corner_40dp"
+        android:textColor="@color/text_black"
+        android:textSize="14sp"
+        tools:text="根目录" />
+</layout>

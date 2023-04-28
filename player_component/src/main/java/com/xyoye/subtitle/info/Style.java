@@ -100,13 +100,13 @@ public class Style {
 			//hex format from SSA
 			if (value.length() == 3){
 				color = value.substring(3) +
-						value.substring(2, 3) +
-						value.substring(1, 2) +
+						value.charAt(2) +
+						value.charAt(1) +
 						"ff";
 			} else {
 				color = value.substring(6) +
-						value.substring(4, 5) +
-						value.substring(2, 3) +
+						value.charAt(4) +
+						value.charAt(2) +
 						"ff";
 			}
 		} else if (format.equalsIgnoreCase("&HAABBGGRR") && value.length() > 8){

@@ -40,9 +40,22 @@
     <string name="tips_danmu_search_file_name">文件名（长按可复制）</string>
 
     <string name="text_search_file">搜索文件</string>
-    <string name="action_clear">清空</string>
+    <string name="action_clear_history">清空播放记录</string>
     <string name="search">搜索</string>
     <string name="tips_search_danmu">搜索弹幕：番剧名+空格+集数</string>
     <string name="tips_search_subtitle">搜索字幕：番剧名</string>
     <string name="tips_screencast_providing">投屏中</string>
+
+    <string name="text_file_sort">排序</string>
+    <string name="text_sort_by_time">时间</string>
+    <string name="text_sort_by_name">名称</string>
+    <string name="text_sort_order_asc">升序</string>
+
+    <string name="action_unbind_danmu">移除弹幕绑定</string>
+    <string name="action_select_danmu_file">选取本地弹幕</string>
+    <string name="action_danmu_source_setting">弹幕源设置</string>
+
+    <string name="action_unbind_subtitle">移除字幕绑定</string>
+    <string name="action_select_subtitle_file">选取本地字幕</string>
+    <string name="action_subtitle_key_setting">字幕API密钥</string>
 </resources>

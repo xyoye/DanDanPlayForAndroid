@@ -1,11 +1,12 @@
 package com.xyoye.local_component.ui.fragment.bind_danmu
 
-import android.os.Bundle
-import android.text.TextUtils
+import android.graphics.Typeface
+import android.util.TypedValue
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupHorizontalAnimation
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.RouteTable
@@ -13,13 +14,13 @@ import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.DanmuSourceBean
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.DanmuSourceHeaderBean
 import com.xyoye.data_component.enums.FileManagerAction
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentBindDanmuSourceBinding
@@ -32,30 +33,13 @@ import com.xyoye.local_component.ui.dialog.DanmuDownloadDialog
 /**
  * Created by xyoye on 2022/1/25
  */
-class BindDanmuSourceFragment :
-    BaseFragment<BindDanmuSourceFragmentViewModel, FragmentBindDanmuSourceBinding>(),
+class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, FragmentBindDanmuSourceBinding>(),
     ExtraSourceListener {
 
     private var danmuDownloadDialog: DanmuDownloadDialog? = null
 
     companion object {
-        private const val TAG_VIDEO_PATH = "tag_video_path"
-        private const val TAG_UNIQUE_KEY = "tag_unique_key"
-        private const val TAG_MEDIA_TYPE = "tag_media_type"
-
-        fun newInstance(
-            videoPath: String?,
-            uniqueKey: String,
-            mediaType: String
-        ): BindDanmuSourceFragment {
-            val args = Bundle()
-            args.putString(TAG_VIDEO_PATH, videoPath)
-            args.putString(TAG_UNIQUE_KEY, uniqueKey)
-            args.putString(TAG_MEDIA_TYPE, mediaType)
-            val fragment = BindDanmuSourceFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = BindDanmuSourceFragment()
     }
 
     override fun getLayoutId() = R.layout.fragment_bind_danmu_source
@@ -66,37 +50,38 @@ class BindDanmuSourceFragment :
     )
 
     override fun initView() {
-        val videoPath: String? = arguments?.getString(TAG_VIDEO_PATH)
-        val uniqueKey = arguments?.getString(TAG_UNIQUE_KEY)
-        val mediaTypeValue = arguments?.getString(TAG_MEDIA_TYPE)
+        viewModel.storageFile = (activity as BindExtraSourceActivity).storageFile
 
-        if (uniqueKey.isNullOrEmpty() || mediaTypeValue.isNullOrEmpty())
-            return
-
-        viewModel.uniqueKey = uniqueKey
-        viewModel.mediaType = MediaType.fromValue(mediaTypeValue)
-        viewModel.videoPath = videoPath
+        initActionView()
 
         initRv()
 
-        initObserver()
+        initListener()
 
-        if (TextUtils.isEmpty(videoPath).not()) {
-            viewModel.matchDanmu(videoPath!!)
-        }
+        viewModel.matchDanmu()
+    }
+
+    private fun initActionView() {
+        val boundDanmu = viewModel.storageFile.playHistory?.danmuPath?.isNotEmpty() == true
+        dataBinding.tvUnbindDanmu.isEnabled = boundDanmu
     }
 
     private fun initRv() {
         dataBinding.headerRv.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
                 addItem<DanmuSourceHeaderBean, ItemDanmuHeaderBinding>(R.layout.item_danmu_header) {
                     initView { data, position, _ ->
+                        val animeNameSize = if (data.isRecommend) 14f else 13f
+                        val typeStyle = if (data.isRecommend) Typeface.BOLD else Typeface.NORMAL
                         itemBinding.animeNameTv.text = data.animeName
-                        itemBinding.itemLayout.isSelected = data.isSelected
-                        itemBinding.animeNameTv.isSelected = data.isLoaded
-                        itemBinding.recommendView.isVisible = data.isRecommend
+                        itemBinding.animeNameTv.isSelected = data.isSelected
+                        itemBinding.animeNameTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, animeNameSize)
+                        itemBinding.animeNameTv.setTypeface(Typeface.DEFAULT, typeStyle)
+                        itemBinding.viewRecommend.isVisible = data.isRecommend
                         itemBinding.itemLayout.setOnClickListener {
                             viewModel.selectTab(position)
                         }
@@ -106,15 +91,19 @@ class BindDanmuSourceFragment :
         }
 
         dataBinding.contentRv.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
+                setupHorizontalAnimation()
 
                 addItem<DanmuSourceContentBean, ItemDanmuContentBinding>(R.layout.item_danmu_content) {
                     initView { data, _, _ ->
                         itemBinding.episodeTv.text = data.episodeTitle
+                        itemBinding.animeTitleTv.text = data.animeTitle
+                        itemBinding.animeTitleTv.isVisible = data.isRecommend
                         itemBinding.episodeTv.isSelected = data.isLoaded
-                        itemBinding.recommendView.isVisible = data.isRecommend
                         itemBinding.root.setOnClickListener {
                             if (DanmuConfig.isShowThirdSource()) {
                                 viewModel.getDanmuThirdSource(data)
@@ -128,10 +117,11 @@ class BindDanmuSourceFragment :
         }
     }
 
-    private fun initObserver() {
+    private fun initListener() {
         viewModel.danmuHeaderLiveData.observe(this) {
             dataBinding.headerRv.isVisible = it.isNotEmpty()
             dataBinding.contentRv.isVisible = it.isNotEmpty()
+            dataBinding.verticalDivider.isVisible = it.isNotEmpty()
             dataBinding.emptyCl.isVisible = it.isEmpty()
             dataBinding.headerRv.setData(it)
         }
@@ -156,19 +146,28 @@ class BindDanmuSourceFragment :
             danmuDownloadDialog?.dismiss()
             (mAttachActivity as BindExtraSourceActivity).onSourceChanged()
         }
+
+        dataBinding.tvUnbindDanmu.setOnClickListener {
+            viewModel.unbindDanmu()
+        }
+        dataBinding.tvSelectLocalDanmu.setOnClickListener {
+            selectLocalDanmuFile()
+        }
+        dataBinding.tvSettingDanmuSource.setOnClickListener {
+            settingDanmuSource()
+        }
     }
 
     override fun search(searchText: String) {
         viewModel.searchDanmu(searchText)
     }
 
-    override fun setting() {
-        ARouter.getInstance()
-            .build(RouteTable.User.SettingDanmuSource)
-            .navigation()
+    override fun onStorageFileChanged(storageFile: StorageFile) {
+        viewModel.storageFile = storageFile
+        initActionView()
     }
 
-    override fun localFile() {
+    private fun selectLocalDanmuFile() {
         FileManagerDialog(
             requireActivity(),
             FileManagerAction.ACTION_SELECT_DANMU
@@ -181,11 +180,9 @@ class BindDanmuSourceFragment :
         }.show()
     }
 
-    override fun unbindDanmu() {
-        viewModel.unbindDanmu()
-    }
-
-    override fun unbindSubtitle() {
-
+    private fun settingDanmuSource() {
+        ARouter.getInstance()
+            .build(RouteTable.User.SettingDanmuSource)
+            .navigation()
     }
 }

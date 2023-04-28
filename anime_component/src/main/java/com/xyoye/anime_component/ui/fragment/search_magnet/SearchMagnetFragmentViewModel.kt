@@ -8,8 +8,6 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
-import com.xyoye.common_component.storage.platform.AndroidPlatform
-import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.MagnetData
 import com.xyoye.data_component.data.MagnetResourceData
@@ -20,9 +18,6 @@ import com.xyoye.data_component.entity.MagnetSearchHistoryEntity
 import com.xyoye.data_component.enums.MagnetScreenType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import java.io.File
 
 class SearchMagnetFragmentViewModel : BaseViewModel() {
 
@@ -34,7 +29,6 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
     val searchText = ObservableField<String>()
 
     val magnetLiveData = MutableLiveData<MutableList<MagnetData>>()
-    val magnetDownloadLiveData = MutableLiveData<String>()
 
     val searchHistoryLiveData = DatabaseManager.instance.getMagnetSearchHistoryDao().getAll()
 
@@ -105,36 +99,6 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
                 .getMagnetSearchHistoryDao()
                 .deleteAll()
         }
-    }
-
-    fun downloadMagnet(magnet: String) {
-        httpRequest<String>(viewModelScope) {
-            onStart { showLoading() }
-
-            api {
-                val requestBody = RequestBody.create(MediaType.parse("text/plain"), magnet)
-                val responseBody = Retrofit.torrentService.downloadTorrent(requestBody)
-                val torrentFile = File(PathHelper.getTorrentDirectory(), "$magnet.torrent")
-                val saveResult = AndroidPlatform.getInstance().getFileSystem()
-                    .write(torrentFile, responseBody.byteStream())
-
-                if (saveResult) torrentFile.absolutePath else ""
-            }
-
-            onSuccess {
-                if (it.isNotEmpty()) {
-                    magnetDownloadLiveData.postValue(it)
-                } else {
-                    ToastCenter.showError("种子文件下载失败")
-                }
-            }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
-
-        }
-
     }
 
     fun getMagnetSubgroup() {

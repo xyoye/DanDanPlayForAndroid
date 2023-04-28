@@ -38,10 +38,10 @@ class ScreencastInterceptor : Interceptor {
             }
 
 
-            val newUrl = oldRequest.url()
+            val newUrl = oldRequest.url
                 .newBuilder()
                 .host(host)
-                .port(port.toIntOrNull() ?: 0)
+                .port(port.toIntOrNull() ?: 80)
                 .build()
             return chain.proceed(newRequest.url(newUrl).build())
         }

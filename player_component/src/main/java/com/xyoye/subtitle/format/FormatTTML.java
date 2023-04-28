@@ -403,16 +403,14 @@ public class FormatTTML implements TimedTextFileFormat {
 			}
 			
 		} else if (color.startsWith("rgb")){
-			boolean alpha = false;
-			if (color.startsWith("rgba"))
-					alpha = true;
+			boolean alpha = color.startsWith("rgba");
 			try {
 				values = color.split("\\(")[1].split(",");
-				int r,g,b,a=255;
+				int r, g, b, a = 255;
 				r = Integer.parseInt(values[0]);
 				g = Integer.parseInt(values[1]);
-				b = Integer.parseInt(values[2].substring(0,2));
-				if (alpha) a = Integer.parseInt(values[3].substring(0,2));
+				b = Integer.parseInt(values[2].substring(0, 2));
+				if (alpha) a = Integer.parseInt(values[3].substring(0, 2));
 
 				values[0] = Integer.toHexString(r);
 				values[1] = Integer.toHexString(g);

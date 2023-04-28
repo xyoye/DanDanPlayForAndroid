@@ -1,11 +1,11 @@
 package com.xyoye.player.wrapper
 
-import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.VideoScreenScale
+import com.xyoye.player.surface.InterSurfaceView
 
 /**
  * Created by xyoye on 2020/11/1.
@@ -94,9 +94,9 @@ interface InterVideoPlayer {
     fun getTcpSpeed(): Long
 
     /**
-     * 获取视频截图
+     * 获取渲染布局
      */
-    fun doScreenShot(): Bitmap?
+    fun getRenderView(): InterSurfaceView?
 
     /**
      *  获取视频宽高

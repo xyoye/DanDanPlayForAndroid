@@ -2,7 +2,7 @@ package com.xyoye.data_component.data
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
-import com.xyoye.data_component.helper.NullToEmptyString
+import com.xyoye.data_component.helper.moshi.NullToEmptyString
 import kotlinx.parcelize.Parcelize
 
 /**

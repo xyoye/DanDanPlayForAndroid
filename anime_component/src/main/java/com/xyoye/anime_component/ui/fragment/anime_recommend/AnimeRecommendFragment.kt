@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
@@ -16,11 +15,11 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.loadImage
 import com.xyoye.common_component.extension.setData
-import com.xyoye.common_component.extension.setGlideImage
+import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.BangumiData
 
@@ -77,7 +76,7 @@ class AnimeRecommendFragment :
                 addItem<AnimeData, ItemAnimeRecommendBinding>(R.layout.item_anime_recommend) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            animeCoverIv.setGlideImage(data.imageUrl, 3)
+                            animeCoverIv.loadImage(data.imageUrl, 3)
                             animeTitleTv.text = data.animeTitle
                             animeStatusTv.text = if (data.isOnAir) "连载中" else "已完结"
                             itemLayout.setOnClickListener {

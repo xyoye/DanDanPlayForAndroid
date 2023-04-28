@@ -5,12 +5,14 @@ import android.os.Environment
 import com.xyoye.common_component.R
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.DialogFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
@@ -116,6 +118,8 @@ class FileManagerDialog(
 
     private fun initRv() {
         binding.pathRv.apply {
+            itemAnimator = null
+
             layoutManager = horizontal()
 
             adapter = buildAdapter {
@@ -145,9 +149,13 @@ class FileManagerDialog(
         }
 
         binding.fileRv.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
+                setupVerticalAnimation()
+
                 addItem<FileManagerBean, ItemFileManagerBinding>(R.layout.item_file_manager) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -252,8 +260,8 @@ class FileManagerDialog(
             }
         }
 
-        fileManagerData.sortWith(FileComparator(
-            value = { it.fileName },
+        fileManagerData.sortWith(FileNameComparator(
+            getName = { it.fileName },
             isDirectory = { it.isDirectory }
         ))
         return fileManagerData

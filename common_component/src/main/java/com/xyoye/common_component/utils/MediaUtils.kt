@@ -6,16 +6,18 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.toText
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -35,6 +37,14 @@ val supportSubtitleExtension = arrayOf(
     "ass", "scc", "stl", "srt",
     "ttml"
 )
+
+private val supportNetworkScheme = arrayOf(
+    "http", "https", "smb", "ftp"
+)
+
+fun isNetworkScheme(scheme: String?): Boolean {
+    return scheme != null && supportNetworkScheme.contains(scheme.lowercase(Locale.ROOT))
+}
 
 fun isVideoFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
@@ -132,7 +142,7 @@ object MediaUtils {
                         folderPath,
                         null,
                         null,
-                        0,
+                        getVideoDuration(it),
                         it.length(),
                         isFilter = false,
                         isExtend = true
@@ -178,8 +188,7 @@ object MediaUtils {
     }
 
     private fun getShotImageName(): String {
-        val currentTimeFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-        val curTime: String = currentTimeFormat.format(Date())
+        val curTime = Date().toText("yyyyMMdd_HHmmss")
         return "SHOT_$curTime.jpg"
     }
 
@@ -211,5 +220,23 @@ object MediaUtils {
             IOUtils.closeIO(fileOutputStream)
         }
         return false
+    }
+
+    private fun getVideoDuration(videoFile: File): Long {
+        if (videoFile.isInvalid()) {
+            return 0
+        }
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(BaseApplication.getAppContext(), Uri.fromFile(videoFile))
+            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                ?.toLongOrNull()
+                ?: 0
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
+        } finally {
+            retriever.release()
+        }
     }
 }

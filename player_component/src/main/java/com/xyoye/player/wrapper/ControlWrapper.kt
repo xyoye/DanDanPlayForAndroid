@@ -88,7 +88,7 @@ class ControlWrapper(
 
     override fun getTcpSpeed() = mVideoPlayer.getTcpSpeed()
 
-    override fun doScreenShot() = mVideoPlayer.doScreenShot()
+    override fun getRenderView() = mVideoPlayer.getRenderView()
 
     override fun getVideoSize() = mVideoPlayer.getVideoSize()
 

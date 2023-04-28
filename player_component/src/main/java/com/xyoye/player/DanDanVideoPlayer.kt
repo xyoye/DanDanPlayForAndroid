@@ -1,7 +1,6 @@
 package com.xyoye.player
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.PointF
 import android.media.AudioManager
 import android.util.AttributeSet
@@ -168,8 +167,8 @@ class DanDanVideoPlayer(
 
     override fun getTcpSpeed() = mVideoPlayer.getTcpSpeed()
 
-    override fun doScreenShot(): Bitmap? {
-        return mRenderView?.doScreenShot()
+    override fun getRenderView(): InterSurfaceView? {
+        return mRenderView
     }
 
     override fun getVideoSize() = mVideoPlayer.getVideoSize()

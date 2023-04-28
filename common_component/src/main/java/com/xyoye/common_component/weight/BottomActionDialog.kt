@@ -18,9 +18,9 @@ import com.xyoye.data_component.bean.SheetActionBean
 
 class BottomActionDialog(
     activity: Activity,
-    private val actionData: MutableList<SheetActionBean>,
+    private val actionData: List<SheetActionBean>,
     private val title: String? = null,
-    private val callback: (Int) -> Boolean
+    private val callback: (SheetActionBean) -> Boolean
 ) : BaseBottomDialog<DialogBottomActionBinding>(activity) {
 
     var onNegativeCallback: (() -> Unit)? = null
@@ -54,7 +54,7 @@ class BottomActionDialog(
                             actionDescribeTv.isGone = data.describe.isNullOrEmpty()
                             actionDescribeTv.text = data.describe
                             itemLayout.setOnClickListener {
-                                if (callback.invoke(data.actionId)) dismiss()
+                                if (callback.invoke(data)) dismiss()
                             }
                         }
                     }

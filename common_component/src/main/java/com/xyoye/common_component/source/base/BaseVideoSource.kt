@@ -38,4 +38,12 @@ abstract class BaseVideoSource(
     override fun getHttpHeader(): Map<String, String>? {
         return null
     }
+
+    override fun getStorageId(): Int? {
+        return null
+    }
+
+    override fun getStoragePath(): String? {
+        return null
+    }
 }

@@ -1,30 +1,3 @@
 <resources>
 
-    <style name="LocalMediaActivityStyle" parent="AppTheme">
-        <item name="searchViewStyle">@style/LocalMediaSearchView</item>
-    </style>
-
-    <style name="SearchEditDialog">
-        <item name="android:windowMinWidthMajor">65%</item>
-        <item name="android:windowMinWidthMinor">90%</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="colorPrimary">@android:color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowSoftInputMode">adjustPan</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:backgroundDimEnabled">true</item>
-    </style>
-
-    <style name="LocalMediaSearchView" parent="Widget.AppCompat.SearchView">
-        <!--修改搜索框提示文字-->
-        <item name="defaultQueryHint">搜索文件</item>
-        <!--修改打开搜索框的搜索按钮的图标-->
-        <item name="searchIcon">@drawable/ic_danmu_search</item>
-        <!--修改搜索框左边的搜索按钮图标-->
-        <item name="searchHintIcon">@null</item>
-    </style>
-
 </resources>

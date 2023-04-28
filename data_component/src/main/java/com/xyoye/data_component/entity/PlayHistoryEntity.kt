@@ -2,6 +2,7 @@ package com.xyoye.data_component.entity
 
 import androidx.room.*
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.data_component.helper.BooleanConverter
 import com.xyoye.data_component.helper.DateConverter
 import com.xyoye.data_component.helper.MediaTypeConverter
 import java.util.*
@@ -11,7 +12,7 @@ import java.util.*
  */
 
 @Entity(tableName = "play_history", indices = [Index(value = arrayOf("unique_key", "media_type"), unique = true)])
-@TypeConverters(DateConverter::class, MediaTypeConverter::class)
+@TypeConverters(DateConverter::class, MediaTypeConverter::class, BooleanConverter::class)
 data class PlayHistoryEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
@@ -57,7 +58,16 @@ data class PlayHistoryEntity(
     var extra: String? = null,
 
     @ColumnInfo(name = "unique_key")
-    var uniqueKey: String = ""
+    var uniqueKey: String = "",
+
+    @ColumnInfo(name = "storage_path")
+    var storagePath: String? = null,
+
+    @ColumnInfo(name = "storage_id")
+    var storageId: Int? = null,
+
+    @ColumnInfo(name = "is_last_play")
+    var isLastPlay: Boolean = false
 ) {
     @Ignore
     var checked: Boolean = false

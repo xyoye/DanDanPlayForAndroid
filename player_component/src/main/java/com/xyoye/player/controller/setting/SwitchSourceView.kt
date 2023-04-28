@@ -10,9 +10,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.extension.*
 import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.data_component.bean.FileManagerBean
@@ -181,6 +183,8 @@ class SwitchSourceView(
             layoutManager = vertical()
 
             adapter = buildAdapter {
+                setupVerticalAnimation()
+
                 addItem<FileManagerBean, ItemFileManagerPlayerBinding>(R.layout.item_file_manager_player) {
                     initView { data, _, _ ->
                         itemBinding.apply {
@@ -301,8 +305,8 @@ class SwitchSourceView(
         return fileManagerData
             .asSequence()
             .filterHiddenFile { it.fileName }
-            .sortedWith(FileComparator(
-                value = { it.fileName },
+            .sortedWith(FileNameComparator(
+                getName = { it.fileName },
                 isDirectory = { it.isDirectory }
             ))
     }

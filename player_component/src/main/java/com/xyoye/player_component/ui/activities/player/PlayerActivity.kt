@@ -24,7 +24,7 @@ import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.source.media.TorrentMediaSource
+import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
@@ -400,8 +400,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun showPlayErrorDialog() {
         val source = videoSource
+        val isTorrentSource = source?.getMediaType() == MediaType.MAGNET_LINK
 
-        val tips = if (source is TorrentMediaSource) {
+        val tips = if (source is StorageVideoSource && isTorrentSource) {
             val taskLog = PlayTaskBridge.getTaskLog(source.getPlayTaskId())
             "播放失败，资源已失效或暂时无法访问，请尝试切换资源$taskLog"
         } else {
@@ -417,7 +418,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 this@PlayerActivity.finish()
             }
 
-        if (source is TorrentMediaSource) {
+        if (isTorrentSource) {
             builder.setPositiveButton("播放器设置") { dialog, _ ->
                 dialog.dismiss()
                 ARouter.getInstance()
@@ -432,7 +433,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     private fun beforePlayExit() {
         val source = videoSource ?: return
-        if (source is TorrentMediaSource) {
+        if (source is StorageVideoSource && source.getMediaType() == MediaType.MAGNET_LINK) {
             PlayTaskBridge.sendTaskRemoveMsg(source.getPlayTaskId())
         }
     }

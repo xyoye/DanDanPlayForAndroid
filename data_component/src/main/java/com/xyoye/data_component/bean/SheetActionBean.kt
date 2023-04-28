@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
  */
 
 data class SheetActionBean(
-    val actionId: Int,
+    val actionId: Any,
 
     val actionName: String,
 

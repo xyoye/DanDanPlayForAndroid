@@ -1,6 +1,5 @@
 package com.xyoye.player.controller.setting
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
@@ -37,7 +36,6 @@ class SettingSubtitleStreamView(
 
     override fun getSettingViewType() = SettingViewType.SUBTITLE_STREAM
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewShow() {
         subtitleStreamData.clear()
         subtitleStreamData.addAll(mControlWrapper.getSubtitleStream())
@@ -71,6 +69,8 @@ class SettingSubtitleStreamView(
         viewBinding.tvEmptyStream.text = "无数据"
 
         viewBinding.rvStream.apply {
+            itemAnimator = null
+
             layoutManager = vertical()
 
             adapter = buildAdapter {
@@ -104,14 +104,13 @@ class SettingSubtitleStreamView(
                 return
             }
             subtitleStreamData[selectedIndex].isChecked = false
-            viewBinding.rvStream.adapter?.notifyItemChanged(selectedIndex)
         }
 
         val currentIndex = subtitleStreamData.indexOfFirst {
             it.trackId == stream.trackId && it.trackGroupId == stream.trackGroupId
         }
         subtitleStreamData[currentIndex].isChecked = true
-        viewBinding.rvStream.adapter?.notifyItemChanged(currentIndex)
+        viewBinding.rvStream.setData(subtitleStreamData)
 
         mControlWrapper.selectStream(stream)
     }

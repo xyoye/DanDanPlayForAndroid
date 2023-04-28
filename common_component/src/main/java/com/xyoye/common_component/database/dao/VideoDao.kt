@@ -20,6 +20,9 @@ interface VideoDao {
     @Query("SELECT * FROM video WHERE folder_path = (:folderPath)")
     suspend fun getVideoInFolder(folderPath: String): List<VideoEntity>
 
+    @Query("SELECT * FROM video WHERE file_path = (:filePath)")
+    suspend fun getVideo(filePath: String): VideoEntity?
+
     @Query("SELECT * FROM video WHERE folder_path = (SELECT folder_path FROM video WHERE file_path = (:filePath))")
     suspend fun getFolderVideoByFilePath(filePath: String): MutableList<VideoEntity>
 
@@ -64,6 +67,9 @@ interface VideoDao {
 
     @Query("DELETE FROM video WHERE file_path = (:filePath)")
     suspend fun deleteByPath(filePath: String)
+
+    @Query("DELETE FROM video WHERE file_path in (:paths)")
+    suspend fun deleteByPaths(paths: List<String>)
 
     @Query("DELETE FROM video WHERE extend = (:isExtend)")
     suspend fun deleteExtend(isExtend: Boolean = true)

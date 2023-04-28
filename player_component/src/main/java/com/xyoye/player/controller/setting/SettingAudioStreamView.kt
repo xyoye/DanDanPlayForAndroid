@@ -102,14 +102,13 @@ class SettingAudioStreamView(
                 return
             }
             audioStreamData[selectedIndex].isChecked = false
-            viewBinding.rvStream.adapter?.notifyItemChanged(selectedIndex)
         }
 
         val currentIndex = audioStreamData.indexOfFirst {
             it.trackId == stream.trackId && it.trackGroupId == stream.trackGroupId
         }
         audioStreamData[currentIndex].isChecked = true
-        viewBinding.rvStream.adapter?.notifyItemChanged(currentIndex)
+        viewBinding.rvStream.setData(audioStreamData)
 
         mControlWrapper.selectStream(stream)
     }

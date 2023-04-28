@@ -29,13 +29,13 @@ class MainViewModel : BaseViewModel() {
     val reLoginLiveData = MutableLiveData<LoginData>()
 
     fun reLogin() {
-        UserConfig.putUserLoggedIn(false)
         httpRequest<LoginData>(viewModelScope) {
             api {
                 Retrofit.service.reLogin()
             }
 
             onSuccess {
+                UserConfig.putUserLoggedIn(false)
                 if (UserInfoHelper.login(it)) {
                     reLoginLiveData.postValue(it)
                 }

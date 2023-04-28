@@ -1,7 +1,6 @@
 package com.xyoye.player.surface
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.View
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.kernel.impl.vlc.VlcVideoPlayer
@@ -48,10 +47,6 @@ class RenderVLCView(
 
     override fun getView(): View {
         return vlcLayout
-    }
-
-    override fun doScreenShot(): Bitmap? {
-        return null
     }
 
     override fun refresh() {

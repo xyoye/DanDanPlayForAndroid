@@ -404,6 +404,7 @@
                 android:background="@drawable/background_item_press_corner"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/user_follow_cl"
                 app:layout_constraintEnd_toEndOf="@+id/commonly_manager_ll"
                 app:layout_constraintStart_toStartOf="@id/commonly_manager_ll"

@@ -58,7 +58,7 @@ class OkHttpUrlSource : Source {
     override fun open(offset: Long) {
         try {
             val response = openConnection(offset, -1)
-            inputStream = BufferedInputStream(response.body()?.byteStream())
+            inputStream = BufferedInputStream(response.body?.byteStream())
 
             val length = readSourceAvailableBytes(response, offset)
             val mineType = response.header("Content-Type")
@@ -104,13 +104,13 @@ class OkHttpUrlSource : Source {
         try {
             val response = openConnection(0, 10000, true)
             if (response.isSuccessful.not()) {
-                ProxyCacheUtils.close(response.body()?.byteStream())
+                ProxyCacheUtils.close(response.body?.byteStream())
                 throw ProxyCacheException("Fail to fetchContentInfo: ${sourceInfo.url}")
             }
 
-            val length = response.body()?.contentLength() ?: DEFAULT_CONTENT_LENGTH
-            val mineType = response.body()?.contentType().toString()
-            ProxyCacheUtils.close(response.body()?.byteStream())
+            val length = response.body?.contentLength() ?: DEFAULT_CONTENT_LENGTH
+            val mineType = response.body?.contentType().toString()
+            ProxyCacheUtils.close(response.body?.byteStream())
             sourceInfo = SourceInfo(sourceInfo.url, length, mineType)
             sourceInfoStorage.put(sourceInfo.url, sourceInfo)
             Log.d("Source info fetched: $sourceInfo")
@@ -121,7 +121,7 @@ class OkHttpUrlSource : Source {
 
     @Throws(IOException::class, ProxyCacheException::class)
     private fun openConnection(offset: Long, timeout: Long, headerOnly: Boolean = false): Response {
-        if (timeout > 0 && client.readTimeoutMillis().toLong() != timeout) {
+        if (timeout > 0 && client.readTimeoutMillis.toLong() != timeout) {
             client = client.newBuilder()
                 .callTimeout(timeout, TimeUnit.MILLISECONDS)
                 .readTimeout(timeout, TimeUnit.MILLISECONDS)
@@ -179,7 +179,7 @@ class OkHttpUrlSource : Source {
         offset: Long
     ): Long {
         val contentLength: Long = getContentLength(response)
-        return when (response.code()) {
+        return when (response.code) {
             HttpURLConnection.HTTP_OK -> contentLength
             HttpURLConnection.HTTP_PARTIAL -> contentLength + offset
             else -> sourceInfo.length

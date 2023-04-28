@@ -36,16 +36,11 @@ object UnsafeOkHttpClient {
     }
 
     val client: OkHttpClient by lazy {
-        val baseClient: OkHttpClient = OkHttpClient.Builder()
-            .followRedirects(false)
-            .followSslRedirects(false)
-            .retryOnConnectionFailure(false)
-            .build()
-        baseClient.newBuilder()
+        OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
             .hostnameVerifier { _, _ -> true }
-            .addInterceptor(LoggerInterceptor().webDav())
-            .addInterceptor(CustomRetryAndFollowUpInterceptor(baseClient))
+            .addNetworkInterceptor(LoggerInterceptor().webDav())
+            .addNetworkInterceptor(RedirectAuthorizationInterceptor())
             .build()
     }
 }

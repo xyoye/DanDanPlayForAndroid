@@ -1,6 +1,5 @@
 package com.xyoye.common_component.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
@@ -14,19 +13,27 @@ import com.xyoye.data_component.helper.MediaTypeConverter
 interface PlayHistoryDao {
 
     @Query("SELECT * FROM play_history WHERE url != '' ORDER BY play_time DESC")
-    fun getAll(): LiveData<MutableList<PlayHistoryEntity>>
+    suspend fun getAll(): MutableList<PlayHistoryEntity>
 
     @Query("SELECT * FROM play_history WHERE url != '' AND media_type = (:mediaType) ORDER BY play_time DESC")
     @TypeConverters(MediaTypeConverter::class)
-    fun getSingleMediaType(mediaType: MediaType): LiveData<MutableList<PlayHistoryEntity>>
+    suspend fun getSingleMediaType(mediaType: MediaType): MutableList<PlayHistoryEntity>
 
-    @Query("SELECT * FROM play_history WHERE media_type IN (:mediaTypes) ORDER BY play_time DESC LIMIT 1")
+    @Query("SELECT * FROM play_history WHERE media_type IN (:mediaTypes) AND url != '' ORDER BY play_time DESC LIMIT 1")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun gitLastPlay(vararg mediaTypes: MediaType): PlayHistoryEntity?
+
+    @Query("SELECT * FROM play_history WHERE storage_id = (:storageId) AND url != '' ORDER BY play_time DESC LIMIT 1")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun gitStorageLastPlay(storageId: Int): PlayHistoryEntity?
 
     @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity?
+
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun getPlayHistory(uniqueKey: String, storageId: Int): PlayHistoryEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)

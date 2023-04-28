@@ -9,7 +9,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ItemBannerBinding
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.setGlideImage
+import com.xyoye.common_component.extension.loadImage
 import com.xyoye.data_component.data.BannerDetailData
 import com.youth.banner.adapter.BannerAdapter
 
@@ -42,7 +42,7 @@ class HomeBannerAdapter(bannerDetails: MutableList<BannerDetailData>) :
     ) {
         if (holder != null && data != null) {
             DataBindingUtil.getBinding<ItemBannerBinding>(holder.itemView)?.apply {
-                bannerIv.setGlideImage(data.imageUrl)
+                bannerIv.loadImage(data.imageUrl)
                 bannerTitleTv.text = data.title
                 itemLayout.setOnClickListener {
                     ARouter.getInstance().build(RouteTable.User.WebView)

@@ -2,6 +2,7 @@ import setup.moduleSetup
 
 plugins {
     id("com.android.library")
+    id("kotlin-parcelize")
     kotlin("android")
     kotlin("kapt")
 }
@@ -67,7 +68,8 @@ dependencies {
     api(Dependencies.Square.retrofit)
     implementation(Dependencies.Square.retrofit_moshi)
 
-    api(Dependencies.Github.glide)
+    api(Dependencies.Github.coil)
+    api(Dependencies.Github.coil_video)
     api(Dependencies.Github.nano_http)
     api(Dependencies.Github.smbj)
     api(Dependencies.Github.dcerpc)
@@ -79,4 +81,5 @@ dependencies {
     kapt(files("libs/mmkv-compiler.jar"))
     kapt(Dependencies.AndroidX.room_compiler)
     kapt(Dependencies.Alibaba.arouter_compiler)
+    implementation(kotlin("reflect"))
 }

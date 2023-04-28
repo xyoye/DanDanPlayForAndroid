@@ -8,7 +8,6 @@ import com.xyoye.anime_component.databinding.ItemCommonScreenBinding
 import com.xyoye.anime_component.listener.SearchListener
 import com.xyoye.anime_component.ui.activities.search.SearchActivity
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
-import com.xyoye.anime_component.ui.adapter.setNewAnimeData
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -63,6 +62,7 @@ class SearchAnimeFragment :
         }
 
         viewModel.getAnimeType()
+        viewModel.getAnimeSort()
     }
 
     override fun search(searchText: String) {
@@ -80,6 +80,8 @@ class SearchAnimeFragment :
 
     private fun initRv() {
         dataBinding.animeTypeRv.apply {
+            itemAnimator = null
+
             layoutManager = grid(viewModel.screenSpanCount)
 
             addItemDecoration(ItemDecorationSpace(dp2px(2)))
@@ -98,7 +100,6 @@ class SearchAnimeFragment :
                             itemLayout.setOnClickListener {
                                 (mAttachActivity as SearchActivity).hideSearchKeyboard()
                                 viewModel.checkType(position)
-                                notifyItemChanged(position)
                             }
                         }
                     }
@@ -107,6 +108,8 @@ class SearchAnimeFragment :
         }
 
         dataBinding.sortRv.apply {
+            itemAnimator = null
+
             layoutManager = grid(viewModel.screenSpanCount)
 
             adapter = buildAdapter {
@@ -125,14 +128,11 @@ class SearchAnimeFragment :
                             itemLayout.setOnClickListener {
                                 (mAttachActivity as SearchActivity).hideSearchKeyboard()
                                 viewModel.checkSort(position)
-                                notifyItemChanged(position)
                             }
                         }
                     }
                 }
             }
-
-            setData(viewModel.sortTypeData)
         }
 
         dataBinding.animeRv.apply {
@@ -156,18 +156,14 @@ class SearchAnimeFragment :
             dataBinding.animeTypeRv.setData(it)
         }
 
-        viewModel.animeTypeUpdateLiveData.observe(this) {
-            dataBinding.animeTypeRv.adapter?.notifyItemChanged(it)
-        }
-
-        viewModel.animeSortUpdateLiveData.observe(this) {
-            dataBinding.sortRv.adapter?.notifyItemChanged(it)
+        viewModel.animeSortLiveData.observe(this) {
+            dataBinding.sortRv.setData(it)
         }
 
         viewModel.animeLiveData.observe(this) {
             //保留recycler view位置，避免滚动
             val recyclerSaveState = dataBinding.animeRv.layoutManager?.onSaveInstanceState()
-            animeAdapter.setNewAnimeData(it)
+            dataBinding.animeRv.setData(it)
             dataBinding.animeRv.layoutManager?.onRestoreInstanceState(recyclerSaveState)
         }
 

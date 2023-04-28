@@ -26,7 +26,7 @@ import java.util.List;
 
 public class LabelsView extends ViewGroup implements View.OnClickListener, View.OnLongClickListener {
 
-    private Context mContext;
+    private final Context mContext;
 
     private ColorStateList mTextColor;
     private float mTextSize;
@@ -51,12 +51,12 @@ public class LabelsView extends ViewGroup implements View.OnClickListener, View.
     //可聚焦的标志
     private static final int KEY_FOCUSABLE = R.string.focusable_item;
 
-    private ArrayList<Object> mLabels = new ArrayList<>();
+    private final ArrayList<Object> mLabels = new ArrayList<>();
     //保存选中的label的位置
-    private ArrayList<Integer> mSelectLabels = new ArrayList<>();
+    private final ArrayList<Integer> mSelectLabels = new ArrayList<>();
 
     //保存必选项。在多选模式下，可以设置必选项，必选项默认选中，不能反选
-    private ArrayList<Integer> mCompulsorys = new ArrayList<>();
+    private final ArrayList<Integer> mCompulsorys = new ArrayList<>();
 
     private OnLabelClickListener mLabelClickListener;
     private OnLabelLongClickListener mLabelLongClickListener;

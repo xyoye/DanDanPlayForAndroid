@@ -9,6 +9,7 @@ plugins {
 applicationSetup()
 
 android {
+    namespace = "com.xyoye.dandanplay"
     compileSdk = Versions.compileSdkVersion
     defaultConfig {
         applicationId = Versions.applicationId
@@ -25,6 +26,15 @@ android {
             abiFilters.add("arm64-v8a")
         }
     }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a")
+            isUniversalApk = true
+        }
+    }
 }
 
 kapt {
@@ -35,20 +45,11 @@ kapt {
 
 dependencies {
     implementation(project(":common_component"))
-    implementation(project(":download_component"))
     implementation(project(":player_component"))
     implementation(project(":anime_component"))
     implementation(project(":user_component"))
     implementation(project(":local_component"))
-    implementation(project(":stream_component"))
+    implementation(project(":storage_component"))
 
     kapt(Dependencies.Alibaba.arouter_compiler)
-}
-android {
-    buildTypes {
-        getByName("debug") {
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
-    namespace = "com.xyoye.dandanplay"
 }

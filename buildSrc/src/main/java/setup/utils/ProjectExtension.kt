@@ -1,6 +1,7 @@
 package setup.utils
 
 import Dependencies
+import Versions
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApkVariantOutput
@@ -10,6 +11,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.fileTree
 import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import java.io.ByteArrayOutputStream
 
 fun BaseExtension.setupKotlinOptions() {
     val extensions = (this as ExtensionAware).extensions
@@ -27,6 +29,15 @@ fun Project.setupDefaultDependencies() {
         add("androidTestImplementation", Dependencies.AndroidX.junit_ext)
         add("androidTestImplementation", Dependencies.AndroidX.espresso)
     }
+}
+
+fun Project.currentCommit(): String {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine = "git log --pretty=format:%h -1".split(" ")
+        standardOutput = stdout
+    }
+    return stdout.toString()
 }
 
 fun AppExtension.setupSignConfigs(project: Project) = apply {
@@ -67,10 +78,10 @@ fun AppExtension.setupSignConfigs(project: Project) = apply {
 
 fun AppExtension.setupOutputApk() = apply {
     applicationVariants.all {
-        outputs.forEach {
-            if (it is ApkVariantOutput) {
-                it.outputFileName = OutputHelper.outputFileName(it)
+        outputs.filter { it is ApkVariantOutput }
+            .map { it as ApkVariantOutput }
+            .onEach {
+                it.outputFileName = "dandanplay_v${Versions.versionName}_${it.name}.apk"
             }
-        }
     }
 }

@@ -1,6 +1,5 @@
 package com.xyoye.local_component.ui.fragment.bind_subtitle
 
-import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
@@ -12,11 +11,11 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.data.SubtitleSourceBean
 import com.xyoye.data_component.enums.FileManagerAction
-import com.xyoye.data_component.enums.MediaType
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentBindSubtitleSourceBinding
@@ -38,23 +37,7 @@ class BindSubtitleSourceFragment :
     private lateinit var subtitleAdapter: BasePagingAdapter<SubtitleSourceBean>
 
     companion object {
-        private const val TAG_VIDEO_PATH = "tag_video_path"
-        private const val TAG_UNIQUE_KEY = "tag_unique_key"
-        private const val TAG_MEDIA_TYPE = "tag_media_type"
-
-        fun newInstance(
-            videoPath: String?,
-            uniqueKey: String,
-            mediaType: String
-        ): BindSubtitleSourceFragment {
-            val args = Bundle()
-            args.putString(TAG_VIDEO_PATH, videoPath)
-            args.putString(TAG_UNIQUE_KEY, uniqueKey)
-            args.putString(TAG_MEDIA_TYPE, mediaType)
-            val fragment = BindSubtitleSourceFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = BindSubtitleSourceFragment()
     }
 
     override fun initViewModel() = ViewModelInit(
@@ -65,22 +48,20 @@ class BindSubtitleSourceFragment :
     override fun getLayoutId() = R.layout.fragment_bind_subtitle_source
 
     override fun initView() {
-        val videoPath: String? = arguments?.getString(TAG_VIDEO_PATH)
-        val uniqueKey = arguments?.getString(TAG_UNIQUE_KEY)
-        val mediaTypeValue = arguments?.getString(TAG_MEDIA_TYPE)
+        viewModel.storageFile = (activity as BindExtraSourceActivity).storageFile
 
-        if (uniqueKey.isNullOrEmpty() || mediaTypeValue.isNullOrEmpty())
-            return
-
-        viewModel.uniqueKey = uniqueKey
-        viewModel.mediaType = MediaType.fromValue(mediaTypeValue)
-        viewModel.videoPath = videoPath
+        initActionView()
 
         initRv()
 
-        initObserver()
+        initListener()
 
-        videoPath?.let { viewModel.matchSubtitle(it) }
+        viewModel.matchSubtitle()
+    }
+
+    private fun initActionView() {
+        val boundSubtitle = viewModel.storageFile.playHistory?.subtitlePath?.isNotEmpty() == true
+        dataBinding.tvUnbindSubtitle.isEnabled = boundSubtitle
     }
 
     private fun initRv() {
@@ -122,7 +103,7 @@ class BindSubtitleSourceFragment :
         }
     }
 
-    private fun initObserver() {
+    private fun initListener() {
         subtitleAdapter.addLoadStateListener {
             val emptyData = it.refresh is LoadState.NotLoading && subtitleAdapter.itemCount == 0
             dataBinding.emptyCl.isVisible = emptyData
@@ -168,22 +149,37 @@ class BindSubtitleSourceFragment :
                 ToastCenter.showSuccess("绑定字幕成功！")
             }.show()
         }
+
+        dataBinding.tvUnbindSubtitle.setOnClickListener {
+            viewModel.unbindSubtitle()
+        }
+        dataBinding.tvSelectLocalSubtitle.setOnClickListener {
+            selectLocalSubtitleFile()
+        }
+        dataBinding.tvSettingSubtitleKey.setOnClickListener {
+            settingSubtitleKey()
+        }
     }
 
     override fun search(searchText: String) {
         val shooterSecret = SubtitleConfig.getShooterSecret()
         if (shooterSecret.isNullOrEmpty()) {
-            setting()
+            settingSubtitleKey()
         } else {
             viewModel.searchSubtitle(searchText)
         }
     }
 
-    override fun setting() {
+    override fun onStorageFileChanged(storageFile: StorageFile) {
+        viewModel.storageFile = storageFile
+        initActionView()
+    }
+
+    private fun settingSubtitleKey() {
         ShooterSecretDialog(requireActivity()).show()
     }
 
-    override fun localFile() {
+    private fun selectLocalSubtitleFile() {
         FileManagerDialog(
             requireActivity(),
             FileManagerAction.ACTION_SELECT_SUBTITLE
@@ -194,13 +190,5 @@ class BindSubtitleSourceFragment :
             }
             viewModel.databaseSubtitle(it)
         }.show()
-    }
-
-    override fun unbindDanmu() {
-
-    }
-
-    override fun unbindSubtitle() {
-        viewModel.unbindSubtitle()
     }
 }

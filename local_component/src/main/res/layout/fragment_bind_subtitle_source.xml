@@ -3,10 +3,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/layout_bg_color">
+        android:background="@color/item_bg_color"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/action_layout"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@color/item_bg_color"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_unbind_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_unbind_subtitle"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_select_local_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_select_subtitle_file"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_setting_subtitle_key"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/background_source_action"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/action_subtitle_key_setting"
+                android:textColor="@color/selector_action_color"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/layout_bg_color" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/subtitle_rv"
@@ -46,5 +99,5 @@
                 app:layout_constraintTop_toBottomOf="@+id/empty_iv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+    </LinearLayout>
 </layout>

@@ -30,4 +30,6 @@ enum class SettingAction(val type: SettingActionType, val display: String, val i
     SCREEN_ORIENTATION(SettingActionType.OTHER, "屏幕翻转", R.drawable.ic_setting_rotate),
 
     NEXT_EPISODE(SettingActionType.OTHER, "顺序播放", R.drawable.ic_setting_order_play),
+
+    SCREEN_SHOT(SettingActionType.OTHER, "截屏", R.mipmap.ic_video_screenshot),
 }

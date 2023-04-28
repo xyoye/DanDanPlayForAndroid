@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.legacy.widget.Space
+        android:layout_width="52dp"
+        android:layout_height="match_parent" />
+</layout>

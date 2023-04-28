@@ -77,4 +77,8 @@ class ActivityHelper private constructor() : Application.ActivityLifecycleCallba
     private fun isActivityAlive(activity: Activity): Boolean {
         return activity.isFinishing.not() && activity.isDestroyed.not()
     }
+
+    fun findActivity(clazz: Class<*>): Activity? {
+        return mActivityList.lastOrNull { it.javaClass == clazz }
+    }
 }

@@ -23,8 +23,8 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.SurfaceTexture;
 import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.RingtoneManager;
@@ -860,7 +860,7 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
 
         String videoCodecInfo = _getVideoCodecInfo();
         if (!TextUtils.isEmpty(videoCodecInfo)) {
-            String nodes[] = videoCodecInfo.split(",");
+            String[] nodes = videoCodecInfo.split(",");
             if (nodes.length >= 2) {
                 mediaInfo.mVideoDecoder = nodes[0];
                 mediaInfo.mVideoDecoderImpl = nodes[1];
@@ -872,7 +872,7 @@ public final class IjkMediaPlayer extends AbstractMediaPlayer {
 
         String audioCodecInfo = _getAudioCodecInfo();
         if (!TextUtils.isEmpty(audioCodecInfo)) {
-            String nodes[] = audioCodecInfo.split(",");
+            String[] nodes = audioCodecInfo.split(",");
             if (nodes.length >= 2) {
                 mediaInfo.mAudioDecoder = nodes[0];
                 mediaInfo.mAudioDecoderImpl = nodes[1];

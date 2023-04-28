@@ -21,7 +21,6 @@ object RouteTable {
     object Local {
         const val MediaFragment = "/local/media_fragment"
         const val BindExtraSource = "/local/bind_extra_source"
-        const val LocalMediaStorage = "/local/local_media_storage"
         const val PlayHistory = "/local/play_history"
         const val BiliBiliDanmu = "/local/bilibili_danmu"
         const val ShooterSubtitle = "/local/shooter_subtitle"
@@ -51,27 +50,15 @@ object RouteTable {
         const val PlayerCenter = "/player/player"
     }
 
-    object Download {
-        const val DownloadSelection = "/download/selection"
-        const val DownloadList = "/download/list"
-        const val DownloadDetail = "/download/detail"
-        const val PlaySelection = "/play/selection"
-    }
-
     object Stream {
-        const val WebDavLogin = "/stream/web_dav_login"
-        const val WebDavFile = "/stream/web_dav_file"
-        const val FTPLogin = "/stream/ftp_login"
-        const val FTPFile = "/stream/ftp_file"
-        const val SmbLogin = "/stream/smb_login"
-        const val SmbFile = "/stream/smb_file"
-        const val RemoteLogin = "/stream/remote_login"
         const val RemoteScan = "/stream/remote_scan"
-        const val RemoteFile = "/stream/remote_file"
         const val RemoteControl = "/stream/remote_control"
         const val ScreencastReceiver = "/stream/screencast_receiver"
-        const val ScreencastConnect = "/stream/screencast_connect"
         const val ScreencastProvide = "/stream/screencast_provide"
         const val ScreencastReceive = "/stream/screencast_receive"
+
+        const val StorageFile = "/stream/storage_file"
+        const val StorageFileProvider = "/stream/storage_file/provider"
+        const val StoragePlus = "/stream/storage_plus"
     }
 }

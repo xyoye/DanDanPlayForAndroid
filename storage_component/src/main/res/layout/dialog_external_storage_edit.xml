@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.xyoye.data_component.entity.MediaLibraryEntity" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/display_name_et"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_display_name"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/path_tv"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_layout_corner_light"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_root_path"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:textColor="@color/text_gray"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/display_name_et" />
+
+        <TextView
+            android:id="@+id/select_root_tv"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_button_corner_blue"
+            android:gravity="center"
+            android:text="@string/action_select_root"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/path_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

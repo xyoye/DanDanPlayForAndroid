@@ -51,8 +51,8 @@ public class Scroller  {
     private float mDeltaX;
     private float mDeltaY;
     private boolean mFinished;
-    private Interpolator mInterpolator;
-    private boolean mFlywheel;
+    private final Interpolator mInterpolator;
+    private final boolean mFlywheel;
 
     private float mVelocity;
 
@@ -60,10 +60,10 @@ public class Scroller  {
     private static final int SCROLL_MODE = 0;
     private static final int FLING_MODE = 1;
 
-    private static float DECELERATION_RATE = (float) (Math.log(0.75) / Math.log(0.9));
-    private static float ALPHA = 800; // pixels / seconds
-    private static float START_TENSION = 0.4f; // Tension at start: (0.4 * total T, 1.0 * Distance)
-    private static float END_TENSION = 1.0f - START_TENSION;
+    private static final float DECELERATION_RATE = (float) (Math.log(0.75) / Math.log(0.9));
+    private static final float ALPHA = 800; // pixels / seconds
+    private static final float START_TENSION = 0.4f; // Tension at start: (0.4 * total T, 1.0 * Distance)
+    private static final float END_TENSION = 1.0f - START_TENSION;
     private static final int NB_SAMPLES = 100;
     private static final float[] SPLINE = new float[NB_SAMPLES + 1];
 
@@ -96,7 +96,7 @@ public class Scroller  {
         sViscousFluidNormalize = 1.0f / viscousFluid(1.0f);
     }
 
-    private static float sViscousFluidScale;
+    private static final float sViscousFluidScale;
     private static float sViscousFluidNormalize;
 
     /**

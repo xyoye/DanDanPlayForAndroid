@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 普通icon中灰色（353535）路径的填充颜色 -->
+    <color name="icon_gray_path_fill_color">#000000</color>
+    <!-- 普通icon中浅灰色路径（333）的填充颜色 -->
+    <color name="icon_light_gray_path_fill_color">#000000</color>
+    <!-- 谱图icon中主题色路径的填充颜色 -->
+    <color name="icon_primary_path_fill_color">#2095f4</color>
+</resources>

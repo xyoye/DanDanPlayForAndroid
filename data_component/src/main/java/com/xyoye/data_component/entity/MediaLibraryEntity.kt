@@ -1,6 +1,7 @@
 package com.xyoye.data_component.entity
 
 import android.os.Parcelable
+import android.provider.MediaStore
 import androidx.room.*
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.BooleanConverter
@@ -70,6 +71,35 @@ data class MediaLibraryEntity(
     @ColumnInfo(name = "remote_anime_grouping")
     var remoteAnimeGrouping: Boolean = false
 ) : Parcelable {
+
+    companion object {
+        val LOCAL = MediaLibraryEntity(
+            id = 1,
+            displayName = "本地媒体库",
+            url = MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString(),
+            mediaType = MediaType.LOCAL_STORAGE
+        )
+        val STREAM = MediaLibraryEntity(
+            id = 2,
+            displayName = "串流播放",
+            url = "url://dandanplay_steam_link",
+            mediaType = MediaType.STREAM_LINK,
+            describe = "https://"
+        )
+        val TORRENT = MediaLibraryEntity(
+            id = 3,
+            displayName = "磁链播放",
+            url = "url://dandanplay_magnet_link",
+            mediaType = MediaType.MAGNET_LINK,
+            describe = "magnet:?xt=urn:btih:"
+        )
+        val HISTORY = MediaLibraryEntity(
+            id = 4,
+            displayName = "播放历史",
+            url = "",
+            mediaType = MediaType.OTHER_STORAGE
+        )
+    }
 
     @Ignore
     @IgnoredOnParcel

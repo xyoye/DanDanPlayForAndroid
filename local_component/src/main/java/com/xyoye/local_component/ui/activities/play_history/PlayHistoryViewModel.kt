@@ -1,41 +1,52 @@
 package com.xyoye.local_component.ui.activities.play_history
 
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.source.VideoSourceManager
-import com.xyoye.common_component.source.base.VideoSourceFactory
+import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
+import com.xyoye.common_component.storage.StorageFactory
+import com.xyoye.common_component.storage.impl.LinkStorage
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.local_component.utils.HistorySortOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class PlayHistoryViewModel : BaseViewModel() {
 
-    val showAddButton = ObservableBoolean()
-
-    lateinit var playHistoryLiveData: LiveData<MutableList<PlayHistoryEntity>>
+    private val _historyLiveData = MutableLiveData<List<PlayHistoryEntity>>()
+    val historyLiveData: LiveData<List<PlayHistoryEntity>> = _historyLiveData
     val playLiveData = MutableLiveData<Any>()
 
-    fun initHistoryType(mediaType: MediaType) {
-        playHistoryLiveData = if (mediaType == MediaType.OTHER_STORAGE) {
-            DatabaseManager.instance.getPlayHistoryDao().getAll()
-        } else {
-            DatabaseManager.instance.getPlayHistoryDao().getSingleMediaType(mediaType)
+    // 文件排序选项
+    private var sortOption = HistorySortOption()
+
+    var mediaType = MediaType.OTHER_STORAGE
+
+    fun updatePlayHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val historyData = if (mediaType == MediaType.OTHER_STORAGE) {
+                DatabaseManager.instance.getPlayHistoryDao().getAll()
+            } else {
+                DatabaseManager.instance.getPlayHistoryDao().getSingleMediaType(mediaType)
+            }
+            _historyLiveData.postValue(historyData)
         }
     }
 
     fun removeHistory(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             DatabaseManager.instance.getPlayHistoryDao().delete(history.id)
+            updatePlayHistory()
         }
     }
 
-    fun clearHistory(mediaType: MediaType) {
+    fun clearHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             val historyDao = DatabaseManager.instance.getPlayHistoryDao()
             if (mediaType == MediaType.STREAM_LINK || mediaType == MediaType.MAGNET_LINK) {
@@ -43,66 +54,88 @@ class PlayHistoryViewModel : BaseViewModel() {
             } else {
                 historyDao.deleteAll()
             }
+            updatePlayHistory()
+        }
+    }
+
+    /**
+     * 修改文件排序
+     */
+    fun changeSortOption(option: HistorySortOption) {
+        sortOption = option
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentFiles = _historyLiveData.value ?: return@launch
+            mutableListOf<PlayHistoryEntity>()
+                .plus(currentFiles)
+                .sortedWith(sortOption.createComparator())
+                .apply { _historyLiveData.postValue(this) }
         }
     }
 
     fun unbindDanmu(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            history.danmuPath = null
-            history.episodeId = 0
-            DatabaseManager.instance.getPlayHistoryDao().insert(history)
+            val newHistory = history.copy(danmuPath = null, episodeId = 0)
+            DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+            updatePlayHistory()
         }
     }
 
     fun unbindSubtitle(history: PlayHistoryEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            history.subtitlePath = null
-            DatabaseManager.instance.getPlayHistoryDao().insert(history)
+            val newHistory = history.copy(subtitlePath = null)
+            DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+            updatePlayHistory()
         }
     }
 
     fun openHistory(history: PlayHistoryEntity) {
-        viewModelScope.launch {
-            showLoading()
-            val mediaSource = if (
-                history.mediaType == MediaType.MAGNET_LINK && history.torrentPath != null
-            ) {
-                VideoSourceFactory.Builder()
-                    .setRootPath(history.torrentPath!!)
-                    .setIndex(history.torrentIndex)
-                    .create(MediaType.MAGNET_LINK)
-            } else {
-                VideoSourceFactory.Builder()
-                    .setVideoSources(listOf(history))
-                    .createHistory()
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupHistorySource(history)) {
+                playLiveData.postValue(Any())
             }
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，无法打开播放资源")
-                return@launch
-            }
-
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
     }
 
-    fun openStreamLink(url: String, headers: Map<String, String>?) {
-        viewModelScope.launch {
-            showLoading()
-            val mediaSource = VideoSourceFactory.Builder()
-                .setVideoSources(listOf(url))
-                .setHttpHeaders(headers ?: emptyMap())
-                .create(MediaType.STREAM_LINK)
-            hideLoading()
-
-            if (mediaSource == null) {
-                ToastCenter.showError("播放失败，无法打开播放资源")
-                return@launch
+    fun openStreamLink(link: String, headers: Map<String, String>?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (setupLinkSource(link, headers)) {
+                playLiveData.postValue(Any())
             }
-            VideoSourceManager.getInstance().setSource(mediaSource)
-            playLiveData.postValue(Any())
         }
+    }
+
+    private suspend fun setupHistorySource(history: PlayHistoryEntity): Boolean {
+        showLoading()
+        val mediaSource = history.storageId
+            ?.run { DatabaseManager.instance.getMediaLibraryDao().getById(this) }
+            ?.run { StorageFactory.createStorage(this) }
+            ?.run { historyFile(history) }
+            ?.run { StorageVideoSourceFactory.create(this) }
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
+    }
+
+    private suspend fun setupLinkSource(link: String, headers: Map<String, String>?): Boolean {
+        showLoading()
+        val mediaSource = MediaLibraryEntity.STREAM.copy(url = link)
+            .run { StorageFactory.createStorage(this) }
+            ?.run { this as? LinkStorage }
+            ?.apply { this.setupHttpHeader(headers) }
+            ?.run { getRootFile() }
+            ?.run { StorageVideoSourceFactory.create(this) }
+        hideLoading()
+
+        if (mediaSource == null) {
+            ToastCenter.showError("播放失败，找不到播放资源")
+            return false
+        }
+        VideoSourceManager.getInstance().setSource(mediaSource)
+        return true
     }
 }

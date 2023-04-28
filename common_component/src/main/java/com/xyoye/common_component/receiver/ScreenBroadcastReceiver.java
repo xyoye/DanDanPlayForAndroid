@@ -10,7 +10,7 @@ import android.content.Intent;
  * Created by xyoye on 2019/5/7.
  */
 public class ScreenBroadcastReceiver extends BroadcastReceiver {
-    private PlayerReceiverListener listener;
+    private final PlayerReceiverListener listener;
 
     public ScreenBroadcastReceiver(PlayerReceiverListener listener){
         this.listener = listener;

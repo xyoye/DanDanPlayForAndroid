@@ -17,9 +17,10 @@ jobs:
 
       # 2.配置JDK
       - name: set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: 11
+          distribution: adopt
 
       # 3.获取签名密钥
       - name: decrypt key
@@ -28,67 +29,68 @@ jobs:
           --passphrase=${{ secrets.KEY_PASSPHRASE }} \
           --output gradle/assemble/dandanplay.jks gradle/assemble/dandanplay.jks.gpg
 
-      # 4.构建Release包
-      - name: assemb release
+      # 4.配置构建类型
+      - name: setup build type
+        run: echo "BUILD_TYPE=release" >> $GITHUB_ENV
+
+      # 5.构建安装包
+      - name: assemble apk
         env:
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
           ALIAS_NAME: ${{ secrets.ALIAS_NAME }}
           ALIAS_PASS: ${{ secrets.ALIAS_PASS }}
-        run: chmod +x gradlew &&./gradlew clean assembleRelease --stacktrace
+        run: chmod +x gradlew &&./gradlew clean assemble${{ env.BUILD_TYPE }} --stacktrace
 
-      # 5.获取APK文件名及路径
-      - name: apk file info
-        id: apk_file_info
+      # 6.配置构建版本
+      - name: setup build version
         run: |
-          APK_PATH=`find . -name '*.apk' | grep release`
-          echo ::set-output name=apk_path::$APK_PATH
-          APK_NAME=`basename $APK_PATH`
-          echo ::set-output name=apk_name::$APK_NAME
+          apk_version=`egrep -o "[0-9].[0-9].[0-9]" buildSrc/src/main/java/Versions.kt`
+          echo "BUILD_VERSION=$apk_version" >> $GITHUB_ENV
 
-      # 6.获取APK版本信息
-      - name: get apk info
-        id: apk_version_info
-        if: steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
-        uses: JantHsueh/get-apk-info-action@1.0
-        with:
-          apkPath: ${{ steps.apk_file_info.outputs.apk_path }}
+      # 7.移动文件到根目录
+      - name: move file
+        run: |
+          abis=(arm64-v8a armeabi-v7a universal)
+          for abi in ${abis[@]}
+          do
+            file_name="dandanplay_v${{ env.BUILD_VERSION }}_${abi}-${{ env.BUILD_TYPE }}.apk"
+            mv app/build/outputs/apk/${{ env.BUILD_TYPE }}/${file_name} $file_name
+          done
 
-      # 7.提取当前版本更新日志
-      - name: get update log
-        id: update_log
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: change/dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}.txt
+      # 8.配置构建tag
+      - name: Get tag name
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "BUILD_TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
-      # 8.根据当前APK版本号，创建正式版Tag
-      - name: create github release
-        id: create_github_release
-        if: steps.apk_version_info.outputs.versionNum
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 9.创建Release
+      - name: generate release
+        id: generate_release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}
-          draft: false
+          name: 弹弹play概念版 v${{ env.BUILD_VERSION }}
+          tag_name: ${{ env.VERSION_TAG }}
+          body_path: change/dandanplay-v${{ env.BUILD_VERSION }}.txt
           prerelease: false
-          body: |
-            ${{ steps.update_log.outputs.content }}
-
-      # 9.上传正式包到Github Release的Asset中
-      - name: upload release asset
-        if: steps.create_github_release.outputs.upload_url && steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
-        uses: actions/upload-release-asset@v1
+          files: |
+            dandanplay_v${{ env.BUILD_VERSION }}_arm64-v8a-${{ env.BUILD_TYPE }}.apk
+            dandanplay_v${{ env.BUILD_VERSION }}_armeabi-v7a-${{ env.BUILD_TYPE }}.apk
+            dandanplay_v${{ env.BUILD_VERSION }}_universal-${{ env.BUILD_TYPE }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{steps.create_github_release.outputs.upload_url}}
-          asset_path: ${{steps.apk_file_info.outputs.apk_path}}
-          asset_name: ${{steps.apk_file_info.outputs.apk_name}}
-          asset_content_type: application/vnd.android.package-archive
 
-      # 10.推送打包消息到钉钉
+      # 10.提取下载链接
+      - name: extract download links
+        if: steps.generate_release.outputs.assets
+        run: |
+          echo "${{ steps.generate_release.outputs.assets }}" > download_link.txt
+          echo `grep -P -o "(?<=browser_download_url:)\w\S+?(?=})" download_link.txt` > download_link.txt
+          echo 'DOWNLOAD_LINKS<<EOF' >> $GITHUB_ENV
+          cat download_link.txt | sed 's/ /\\n/g' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      # 11.推送打包消息到钉钉
       - name: push package message
-        if: steps.create_github_release.outputs.upload_url && steps.apk_file_info.outputs.apk_name && steps.apk_file_info.outputs.apk_path
+        if: steps.generate_release.outputs.assets
         uses: ghostoy/dingtalk-action@master
         with:
           webhook: ${{ secrets.DINGTALK_WEBHOOK}}
@@ -96,7 +98,7 @@ jobs:
           msgtype: text
           content: |
             {
-              "content": "打包版本：v${{ steps.apk_version_info.outputs.versionNum }}\n下载链接：https://github.com/${{ github.repository }}/releases/download/dandanplay-v${{ steps.apk_version_info.outputs.versionNum }}/${{ steps.apk_file_info.outputs.apk_name }}"
+              "content": "打包版本：v${{ env.BUILD_VERSION }}\n下载链接：\n${{ env.DOWNLOAD_LINKS }}\n"
             }
           at: |
             {

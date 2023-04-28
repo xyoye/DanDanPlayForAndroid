@@ -165,7 +165,8 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         }
 
         try {
-            val session = mSmbClient.connect(library.url)
+            val port = if (library.port == 0) SMBClient.DEFAULT_PORT else library.port
+            val session = mSmbClient.connect(library.url, port)
                 ?.authenticate(getAuthenticationContext())
             if (session?.connection?.isConnected == true) {
                 mSmbSession = session

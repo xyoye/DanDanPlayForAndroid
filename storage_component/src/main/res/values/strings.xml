@@ -19,7 +19,7 @@
     <string name="hint_remote_secret">API密钥</string>
     <string name="action_toggle_file_hidden">显示隐藏文件</string>
     <string name="hint_ip_address">IP地址</string>
-    <string name="hint_smb_path">共享目录（可空）</string>
+    <string name="hint_smb_path">目录（可空）</string>
     <string name="text_smb_version">SMB版本</string>
     <string name="text_smb_v2">SMB 2</string>
     <string name="text_smb_v1">SMB 1</string>

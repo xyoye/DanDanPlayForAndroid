@@ -6,6 +6,8 @@
 
         <import type="com.xyoye.data_component.entity.MediaLibraryEntity" />
 
+        <import type="com.xyoye.common_component.weight.binding.BindingConverter" />
+
         <import type="android.view.View" />
 
         <variable
@@ -43,11 +45,54 @@
                 android:textSize="14sp" />
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/path_et"
-                android:layout_width="0dp"
+                android:id="@+id/port_et"
+                android:layout_width="120dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="5dp"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center"
+                android:hint="@string/hint_port"
+                android:inputType="number"
+                android:maxLength="5"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:text="@={BindingConverter.intToString(serverData.port)}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/display_name_et"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
+                android:background="@drawable/background_dialog_edit"
+                android:gravity="center_vertical"
+                android:hint="@string/hint_display_name"
+                android:maxLines="1"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:text="@={serverData.displayName}"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/path_et"
+                android:layout_width="120dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="5dp"
                 android:background="@drawable/background_dialog_edit"
                 android:gravity="center"
                 android:hint="@string/hint_smb_path"
@@ -59,24 +104,8 @@
                 android:textColor="@color/text_black"
                 android:textColorHint="@color/text_gray"
                 android:textSize="14sp" />
-        </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/display_name_et"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/background_dialog_edit"
-            android:gravity="center_vertical"
-            android:hint="@string/hint_display_name"
-            android:maxLines="1"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:singleLine="true"
-            android:text="@={serverData.displayName}"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_gray"
-            android:textSize="14sp" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/account_et"

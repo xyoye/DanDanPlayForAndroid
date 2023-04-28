@@ -3,6 +3,7 @@ package com.xyoye.storage_component.ui.dialog
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import androidx.core.view.isGone
+import com.hierynomus.smbj.SMBClient
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -36,6 +37,10 @@ class SmbStorageEditDialog(
             "",
             MediaType.SMB_SERVER
         )
+        // SMB默认端口
+        if (serverData.port == 0) {
+            serverData.port = SMBClient.DEFAULT_PORT
+        }
         setSmbV2(serverData.smbV2)
         setAnonymous(serverData.isAnonymous)
         binding.serverData = serverData

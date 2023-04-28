@@ -41,14 +41,14 @@ abstract class GestureVideoController(
 
     private var mStreamVolume = 0
     private var mBrightness = 0f
-    private var mSeekPosition = 0L
+    private var mSeekPosition = -1L
 
     private var mFirstTouch = false
     private var mChangePosition = false
     private var mChangeBrightness = false
     private var mChangeVolume = false
 
-    private val longPressAccelerator : LongPressAccelerator by lazy {
+    private val longPressAccelerator: LongPressAccelerator by lazy {
         LongPressAccelerator(
             mControlWrapper,
             onStart = { speed -> startAccelerate(speed) },
@@ -77,14 +77,14 @@ abstract class GestureVideoController(
                 MotionEvent.ACTION_UP -> {
                     longPressAccelerator.disable()
                     stopSlide()
-                    if (mSeekPosition > 0) {
+                    if (mSeekPosition >= 0) {
                         mControlWrapper.seekTo(mSeekPosition)
-                        mSeekPosition = 0
+                        mSeekPosition = -1L
                     }
                 }
                 MotionEvent.ACTION_CANCEL -> {
                     stopSlide()
-                    mSeekPosition = 0
+                    mSeekPosition = -1L
                 }
             }
         }

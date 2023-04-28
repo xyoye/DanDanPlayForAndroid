@@ -221,7 +221,7 @@ public class FormatASS implements TimedTextFileFormat {
             // parsed styles that are not used should be eliminated
             tto.cleanUnusedStyles();
 
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             tto.warnings += "unexpected end of file, maybe last caption is not complete.\n\n";
         } finally {
             //we close the reader

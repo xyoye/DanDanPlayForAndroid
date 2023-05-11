@@ -1,7 +1,9 @@
-package com.xyoye.common_component.utils
+package com.xyoye.common_component.utils.subtitle
 
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.seven_zip.SevenZipUtils
 import com.xyoye.data_component.data.SubtitleThunderData
 import kotlinx.coroutines.Dispatchers

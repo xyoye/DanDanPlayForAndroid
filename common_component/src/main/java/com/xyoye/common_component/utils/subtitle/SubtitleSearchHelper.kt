@@ -1,4 +1,4 @@
-package com.xyoye.local_component.utils
+package com.xyoye.common_component.utils.subtitle
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow

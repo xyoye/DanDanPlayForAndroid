@@ -1,5 +1,6 @@
-package com.xyoye.common_component.utils
+package com.xyoye.common_component.utils.subtitle
 
+import com.xyoye.common_component.utils.buffer2Hex
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.security.MessageDigest

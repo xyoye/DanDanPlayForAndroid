@@ -40,4 +40,8 @@ object SubtitleConfigTable {
     //自动匹配同名字幕
     @MMKVFiled
     const val autoMatchSubtitle = true
+
+    //字幕优先级
+    @MMKVFiled
+    var subtitlePriority: String? = null
 }

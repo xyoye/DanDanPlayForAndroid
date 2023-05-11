@@ -297,8 +297,9 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             .buildUpon()
             .appendPath(child)
             .build()
-            .toString()
-            .removePrefix("/")
+            .path
+            ?.removePrefix("/")
+            ?: ""
     }
 
     private fun showErrorToast(message: String, e: Exception) {

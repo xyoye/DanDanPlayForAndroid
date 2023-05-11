@@ -9,7 +9,6 @@ import com.xyoye.storage_component.BR
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.FragmentStorageFileBinding
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
-import com.xyoye.storage_component.utils.storage.StorageSortOption
 
 class StorageFileFragment :
     BaseFragment<StorageFileFragmentViewModel, FragmentStorageFileBinding>() {
@@ -81,7 +80,7 @@ class StorageFileFragment :
     /**
      * 修改文件排序
      */
-    fun sort(option: StorageSortOption) {
-        viewModel.changeSortOption(option)
+    fun sort() {
+        viewModel.changeSortOption()
     }
 }

@@ -32,7 +32,6 @@ import com.xyoye.storage_component.ui.fragment.storage_file.StorageFileFragment
 import com.xyoye.storage_component.ui.weight.StorageFileMenus
 import com.xyoye.storage_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.storage_component.utils.storage.StorageFileStyleHelper
-import com.xyoye.storage_component.utils.storage.StorageSortOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -147,7 +146,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         mMenus = StorageFileMenus.inflater(this, menu)
         mMenus.onSearchTextChanged { onSearchTextChanged(it) }
-        mMenus.onSortTypeChanged { onSortOptionChanged(it) }
+        mMenus.onSortTypeChanged { onSortOptionChanged() }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -291,8 +290,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     /**
      * 改变文件排序
      */
-    private fun onSortOptionChanged(option: StorageSortOption) {
-        mRouteFragmentMap.values.onEach { it.sort(option) }
+    private fun onSortOptionChanged() {
+        mRouteFragmentMap.values.onEach { it.sort() }
     }
 
     fun openDirectory(file: StorageFile?) {

@@ -1,13 +1,12 @@
 package com.xyoye.common_component.storage.impl
 
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
-import com.xyoye.common_component.utils.MediaUtils
-import com.xyoye.common_component.utils.getFileNameNoExtension
-import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.*
 import com.xyoye.common_component.utils.subtitle.SubtitleFinder
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -15,7 +14,6 @@ import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
@@ -26,35 +24,20 @@ import java.io.InputStream
 class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override suspend fun openDirectory(file: StorageFile, refresh: Boolean): List<StorageFile> {
-        directory = file
-        directoryFiles = listFiles(file)
-
         if (refresh) {
             deepRefresh()
         }
+        return super.openDirectory(file, refresh)
+    }
 
+    override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         var childFiles = openStorageDirectory(file)
-        if (childFiles.isEmpty()) {
+        if (childFiles.isEmpty() && file.isRootFile()) {
             // 第一次打开媒体库时，文件尚未录入数据库，需要先做一次扫描
             deepRefresh()
             childFiles = openStorageDirectory(file)
         }
         return childFiles
-    }
-
-    override suspend fun listFiles(file: StorageFile): List<StorageFile> {
-        if (file.isFile()) {
-            return emptyList()
-        }
-        val filePath = file.filePath()
-        val directory = File(filePath)
-        if (directory.exists().not() || directory.canRead().not()) {
-            return emptyList()
-        }
-        return directory.listFiles()?.map {
-            val entity = VideoEntity(fileId = 0, filePath = it.absolutePath, folderPath = filePath)
-            VideoStorageFile(this, entity)
-        } ?: emptyList()
     }
 
     override suspend fun getRootFile(): StorageFile {
@@ -90,17 +73,21 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override suspend fun cacheDanmu(file: StorageFile): String? {
         val danmuFileName = getFileNameNoExtension(file.fileName()) + ".xml"
-        return directoryFiles.find {
-            it.isFile() && isDanmuFile(it.fileName()) && it.fileName() == danmuFileName
-        }?.filePath()
+        return file.getFile<VideoEntity>()
+            ?.folderPath.toFile()
+            ?.listFiles()
+            ?.filter { it.isFile && isDanmuFile(it.absolutePath) }
+            ?.find { getFileName(it.absolutePath) == danmuFileName }
+            ?.absolutePath
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {
-        return directoryFiles
-            .filter { it.isFile() }
-            .run {
-                SubtitleFinder.preferred(this, file.fileName()) { it.fileName() }
-            }?.filePath()
+        return file.getFile<VideoEntity>()
+            ?.folderPath.toFile()
+            ?.listFiles()
+            ?.filter { it.isFile && isSubtitleFile(it.absolutePath) }
+            ?.run { SubtitleFinder.preferred(this, file.fileName()) { getFileName(it) } }
+            ?.absolutePath
     }
 
     override fun supportSearch(): Boolean {

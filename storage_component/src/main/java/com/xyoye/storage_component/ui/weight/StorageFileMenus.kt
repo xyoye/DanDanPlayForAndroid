@@ -6,10 +6,10 @@ import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.appcompat.widget.SearchView.SearchAutoComplete
+import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.data_component.enums.StorageSort
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
-import com.xyoye.storage_component.utils.storage.StorageSortOption
 
 /**
  * Created by xyoye on 2023/3/31.
@@ -35,9 +35,7 @@ class StorageFileMenus private constructor(
 
     private var mSearchView = searchItem.actionView as SearchView
     private var onTextChanged: ((String) -> Unit)? = null
-    private var onSortChanged: ((StorageSortOption) -> Unit)? = null
-
-    private val sortOption = StorageSortOption()
+    private var onSortChanged: (() -> Unit)? = null
 
     init {
         initSearchView()
@@ -66,13 +64,13 @@ class StorageFileMenus private constructor(
     }
 
     private fun updateSortItem() {
-        when (sortOption.sort) {
+        when (StorageSortOption.getSort()) {
             StorageSort.NAME -> sortNameItem
             StorageSort.SIZE -> sortSizeItem
         }.isChecked = true
 
-        sortOrderAsc.isChecked = sortOption.asc
-        sortDirectoryFirst.isChecked = sortOption.directoryFirst
+        sortOrderAsc.isChecked = StorageSortOption.isAsc()
+        sortDirectoryFirst.isChecked = StorageSortOption.isDirectoryFirst()
     }
 
     private fun getSearchHintText(): String {
@@ -84,15 +82,15 @@ class StorageFileMenus private constructor(
 
     fun onOptionsItemSelected(item: MenuItem) {
         val changed = when (item.itemId) {
-            R.id.action_sort_by_name -> sortOption.setSort(StorageSort.NAME)
-            R.id.action_sort_by_size -> sortOption.setSort(StorageSort.SIZE)
-            R.id.action_sort_order_asc -> sortOption.changeAsc()
-            R.id.action_sort_directory_first -> sortOption.changeDirectoryFirst()
+            R.id.action_sort_by_name -> StorageSortOption.setSort(StorageSort.NAME)
+            R.id.action_sort_by_size -> StorageSortOption.setSort(StorageSort.SIZE)
+            R.id.action_sort_order_asc -> StorageSortOption.changeAsc()
+            R.id.action_sort_directory_first -> StorageSortOption.changeDirectoryFirst()
             else -> false
         }
         if (changed) {
             updateSortItem()
-            onSortChanged?.invoke(sortOption)
+            onSortChanged?.invoke()
         }
     }
 
@@ -108,7 +106,7 @@ class StorageFileMenus private constructor(
         onTextChanged = block
     }
 
-    fun onSortTypeChanged(block: (StorageSortOption) -> Unit) {
+    fun onSortTypeChanged(block: () -> Unit) {
         onSortChanged = block
     }
 }

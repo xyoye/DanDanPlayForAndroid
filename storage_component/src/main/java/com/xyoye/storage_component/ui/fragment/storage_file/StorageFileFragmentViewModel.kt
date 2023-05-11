@@ -8,10 +8,10 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.storage.Storage
+import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
-import com.xyoye.storage_component.utils.storage.StorageSortOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -36,9 +36,6 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     // 是否隐藏.开头的文件
     private val hidePointFile = AppConfig.isShowHiddenFile().not()
 
-    // 文件排序选项
-    private var sortOption = StorageSortOption()
-
     // 文件列表快照
     private var filesSnapshot = listOf<StorageFile>()
 
@@ -58,7 +55,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             refreshStorageLastPlay()
             storage.openDirectory(target, refresh)
                 .filter { isDisplayFile(it) }
-                .sortedWith(sortOption.createComparator())
+                .sortedWith(StorageSortOption.comparator())
                 .onEach { it.playHistory = getHistory(it) }
                 .apply { _fileLiveData.postValue(this) }
                 .also { filesSnapshot = it }
@@ -68,13 +65,12 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     /**
      * 修改文件排序
      */
-    fun changeSortOption(option: StorageSortOption) {
-        sortOption = option
+    fun changeSortOption() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentFiles = _fileLiveData.value ?: return@launch
             mutableListOf<StorageFile>()
                 .plus(currentFiles)
-                .sortedWith(sortOption.createComparator())
+                .sortedWith(StorageSortOption.comparator())
                 .apply { _fileLiveData.postValue(this) }
                 .also { filesSnapshot = it }
         }
@@ -90,7 +86,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 refreshStorageLastPlay()
                 storage.search(text)
                     .filter { isDisplayFile(it) }
-                    .sortedWith(sortOption.createComparator())
+                    .sortedWith(StorageSortOption.comparator())
                     .onEach { it.playHistory = getHistory(it) }
                     .let { _fileLiveData.postValue(it) }
             }

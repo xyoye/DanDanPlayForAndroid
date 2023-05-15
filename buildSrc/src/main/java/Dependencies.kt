@@ -111,6 +111,6 @@ object Dependencies {
     }
 
     object VLC {
-        const val vlc = "org.videolan.android:libvlc-all:3.5.1"
+        const val vlc = "org.videolan.android:libvlc-all:4.0.0-eap9"
     }
 }

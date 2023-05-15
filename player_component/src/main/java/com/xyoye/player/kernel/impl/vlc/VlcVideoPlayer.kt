@@ -22,6 +22,7 @@ import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.interfaces.IMedia
+import org.videolan.libvlc.interfaces.IMedia.VideoTrack
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
 
@@ -191,34 +192,41 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     }
 
     override fun getAudioStream(): List<VideoStreamBean> {
-        return mMediaPlayer.audioTracks?.map {
-            VideoStreamBean(
-                it.name,
-                true,
-                it.id,
-                it.id == mMediaPlayer.audioTrack
-            )
-        } ?: emptyList()
+        val streams = mutableListOf<VideoStreamBean>()
+
+        mMediaPlayer.getTracks(IMedia.Track.Type.Audio)?.map {
+            VideoStreamBean(it.name, false, vlcTrackId = it.id, isChecked = it.selected)
+        }?.forEach {
+            streams.add(it)
+        }
+
+        // 添加自定义的禁用流
+        streams.add(0, VideoStreamBean.disableStream(true))
+        return streams
     }
 
     override fun getSubtitleStream(): List<VideoStreamBean> {
-        return mMediaPlayer.spuTracks?.map {
-            VideoStreamBean(
-                it.name,
-                false,
-                it.id,
-                it.id == mMediaPlayer.spuTrack
-            )
-        } ?: emptyList()
+        val streams = mutableListOf<VideoStreamBean>()
+
+        mMediaPlayer.getTracks(IMedia.Track.Type.Text)?.map {
+            VideoStreamBean(it.name, false, vlcTrackId = it.id, isChecked = it.selected)
+        }?.forEach {
+            streams.add(it)
+        }
+
+        // 添加自定义的禁用流
+        streams.add(0, VideoStreamBean.disableStream(false))
+        return streams
     }
 
     override fun selectStream(stream: VideoStreamBean) {
+        if (stream.isExternalStream) {
+            // 使用外挂流时，禁用内部流
+            disableStream(stream)
+            return
+        }
         if (isPlayerAvailable()) {
-            if (stream.isAudio) {
-                mMediaPlayer.audioTrack = stream.trackId
-            } else {
-                mMediaPlayer.spuTrack = stream.trackId
-            }
+            mMediaPlayer.selectTrack(stream.vlcTrackId)
         }
     }
 
@@ -275,9 +283,10 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 }
                 MediaPlayer.Event.ESSelected -> {
                     if (it.esChangedType == IMedia.Track.Type.Video) {
-                        mMediaPlayer.currentVideoTrack?.let { track ->
-                            mVideoSize.x = track.width
-                            mVideoSize.y = track.height
+                        val track = mMediaPlayer.getSelectedTrack(IMedia.Track.Type.Video)
+                        (track as? VideoTrack)?.let { videoTrack ->
+                            mVideoSize.x = videoTrack.width
+                            mVideoSize.y = videoTrack.height
                         }
                     }
                 }
@@ -343,4 +352,12 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     private fun isVideoPlaying() =
         !mMediaPlayer.isReleased && mMediaPlayer.vlcVout.areViewsAttached()
+
+    /**
+     * 禁用流
+     */
+    private fun disableStream(stream: VideoStreamBean) {
+        val type = if (stream.isAudio) IMedia.Track.Type.Audio else IMedia.Track.Type.Text
+        mMediaPlayer.unselectTrackType(type)
+    }
 }

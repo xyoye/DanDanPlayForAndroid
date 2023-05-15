@@ -23,21 +23,22 @@ data class VideoStreamBean(
     //分组ID（exo）
     val trackGroupId: Int = 0,
 
-    //是否为外挂流
+    //是否为外挂流(字幕外挂流或禁用流)
     val isExternalStream: Boolean = false,
 
     //外挂流路径
-    val externalStreamPath: String = ""
+    val externalStreamPath: String = "",
+
+    // VLC流ID
+    val vlcTrackId: String = "",
 ) {
     companion object {
-        //音频禁用流
-        private val DISABLE_AUDIO = VideoStreamBean(trackName = "Disable", isAudio = true, isExternalStream = true)
-
-        //字幕禁用流
-        private val DISABLE_SUBTITLE = VideoStreamBean(trackName = "Disable", isAudio = false, isExternalStream = true)
-
         fun disableStream(isAudio: Boolean): VideoStreamBean {
-            return if (isAudio) DISABLE_AUDIO else DISABLE_SUBTITLE
+            return VideoStreamBean(trackName = "Disable", isAudio = isAudio, isExternalStream = true)
         }
+    }
+
+    fun equalsIgnoreChecked(other: VideoStreamBean): Boolean {
+        return this.copy(isChecked = false) == other.copy(isChecked = false)
     }
 }

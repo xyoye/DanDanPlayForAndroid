@@ -96,20 +96,13 @@ class SettingSubtitleStreamView(
     }
 
     private fun onClickStream(stream: VideoStreamBean) {
-        val selectedIndex = subtitleStreamData.indexOfFirst { it.isChecked }
-        if (selectedIndex != -1) {
-            if (subtitleStreamData[selectedIndex].trackId == stream.trackId
-                && subtitleStreamData[selectedIndex].trackGroupId == stream.trackGroupId
-            ) {
-                return
-            }
-            subtitleStreamData[selectedIndex].isChecked = false
+        val selectedTrack = subtitleStreamData.firstOrNull { it.isChecked }
+        val targetTrack = subtitleStreamData.firstOrNull { it.equalsIgnoreChecked(stream) }
+        if (selectedTrack == targetTrack) {
+            return
         }
-
-        val currentIndex = subtitleStreamData.indexOfFirst {
-            it.trackId == stream.trackId && it.trackGroupId == stream.trackGroupId
-        }
-        subtitleStreamData[currentIndex].isChecked = true
+        selectedTrack?.isChecked = false
+        targetTrack?.isChecked = true
         viewBinding.rvStream.setData(subtitleStreamData)
 
         mControlWrapper.selectStream(stream)

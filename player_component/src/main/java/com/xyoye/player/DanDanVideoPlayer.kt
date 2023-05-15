@@ -357,12 +357,12 @@ class DanDanVideoPlayer(
 
     fun enterPopupMode() {
         mVideoController?.setPopupMode(true)
-        post { mRenderView?.refresh() }
+        mRenderView?.refresh()
     }
 
     fun exitPopupMode() {
         mVideoController?.setPopupMode(false)
-        post { mRenderView?.refresh() }
+        mRenderView?.refresh()
     }
 
     fun setPopupGestureHandler(handler: OnTouchListener?) {

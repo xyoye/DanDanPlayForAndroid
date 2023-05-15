@@ -64,7 +64,7 @@ class RenderSurfaceView(context: Context) : SurfaceView(context), InterSurfaceVi
     override fun getView() = this
 
     override fun refresh() {
-        requestLayout()
+        post { requestLayout() }
     }
 
     override fun release() {

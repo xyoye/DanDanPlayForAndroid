@@ -134,12 +134,6 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun setSpeed(speed: Float) {
         mMediaPlayer.rate = speed
-
-        // 通过调整播放位置以达到更快输出音频的效果
-        // 缺点是会使倍速切换过渡不流畅，且出现loading
-        if (PlayerInitializer.Player.vlcAccelerateOptimize) {
-            seekTo(mMediaPlayer.time)
-        }
     }
 
     override fun setVolume(leftVolume: Float, rightVolume: Float) {

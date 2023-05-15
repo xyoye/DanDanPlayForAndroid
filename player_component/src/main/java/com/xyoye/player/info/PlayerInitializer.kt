@@ -30,7 +30,6 @@ object PlayerInitializer {
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
         var videoSpeed = DEFAULT_SPEED
         var vlcAudioOutput = VLCAudioOutput.AUTO
-        var vlcAccelerateOptimize = true
         var isAutoPlayNext = true
     }
 

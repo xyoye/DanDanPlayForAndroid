@@ -373,8 +373,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             VLCHWDecode.valueOf(PlayerConfig.getUseVLCHWDecoder())
         PlayerInitializer.Player.vlcAudioOutput =
             VLCAudioOutput.valueOf(PlayerConfig.getUseVLCAudioOutput())
-        PlayerInitializer.Player.vlcAccelerateOptimize =
-            PlayerConfig.isVlcAccelerateOptimize()
 
         //弹幕配置
         PlayerInitializer.Danmu.size = DanmuConfig.getDanmuSize()

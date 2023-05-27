@@ -1,5 +1,6 @@
 package com.xyoye.common_component.config
 
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -61,6 +62,10 @@ object DanmuConfigTable {
     //开启弹幕云屏蔽
     @MMKVFiled
     const val cloudDanmuBlock = true
+
+    //弹幕语言
+    @MMKVFiled
+    val danmuLanguage: Int = DanmakuLanguage.ORIGINAL.value
 
     /**
      * -------------播放器设置-----------

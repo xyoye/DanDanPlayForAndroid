@@ -2,6 +2,7 @@ package com.xyoye.player.wrapper
 
 import android.graphics.PointF
 import android.view.KeyEvent
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.PlayerType
@@ -271,6 +272,11 @@ class ControlWrapper(
 
     override fun seekTo(timeMs: Long, isPlaying: Boolean) {
         mDanmuController.seekTo(timeMs, isPlaying)
+    }
+
+    override fun setLanguage(language: DanmakuLanguage) {
+        mDanmuController.setLanguage(language)
+        mDanmuController.seekTo(getCurrentPosition(), isPlaying())
     }
 
     /**

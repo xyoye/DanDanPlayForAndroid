@@ -1,6 +1,7 @@
 package com.xyoye.common_component.config
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.enums.HistorySort
 import com.xyoye.data_component.enums.StorageSort
 import com.xyoye.mmkv_annotation.MMKVFiled
@@ -75,4 +76,12 @@ object AppConfigTable {
     @MMKVFiled
     //播放历史排序升序
     var historySortAsc: Boolean = false
+
+    @MMKVFiled
+    //是否启用备用域名
+    var backupDomainEnable: Boolean = false
+
+    @MMKVFiled
+    //备用域名地址
+    var backupDomain: String = Retrofit.backupUrl
 }

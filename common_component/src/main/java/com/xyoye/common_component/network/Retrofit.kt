@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit
 class Retrofit private constructor() {
     companion object {
         const val baseUrl = "https://api.dandanplay.net/"
+        const val backupUrl = "http://139.217.235.62:16001/"
         private const val resUrl = "http://res.acplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
         private const val torrentUrl = "https://m2t.dandanplay.net/"
@@ -41,7 +42,7 @@ class Retrofit private constructor() {
     init {
         retrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(needAuth = true))
+            .client(getOkHttpClient(needAuth = true, backup = true))
             .baseUrl(baseUrl)
             .build()
             .create(RetrofitService::class.java)
@@ -91,6 +92,7 @@ class Retrofit private constructor() {
         resDomain: Boolean = false,
         isRemote: Boolean = false,
         screencast: Boolean = false,
+        backup: Boolean = false,
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
         builder.connectTimeout(10, TimeUnit.SECONDS)
@@ -102,6 +104,10 @@ class Retrofit private constructor() {
         if (needAuth) {
             builder.addInterceptor(AuthInterceptor())
                 .addInterceptor(GzipInterceptor())
+        }
+        //备用服务器
+        if (backup) {
+            builder.addInterceptor(BackupDomainInterceptor())
         }
         //远程连接
         if (isRemote) {

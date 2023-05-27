@@ -1,7 +1,9 @@
-package com.xyoye.common_component.utils
+package com.xyoye.common_component.utils.subtitle
 
 import com.xyoye.common_component.extension.formatFileName
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.seven_zip.SevenZipUtils
 import com.xyoye.data_component.data.SubtitleThunderData
 import kotlinx.coroutines.Dispatchers
@@ -121,60 +123,5 @@ object SubtitleUtils {
             IOUtils.closeIO(outputStream)
         }
         return null
-    }
-
-    fun findLocalSubtitleByVideo(videoPath: String): String? {
-        val videoFile = File(videoPath)
-        if (!videoFile.exists())
-            return null
-        val parentDir = videoFile.parentFile
-            ?: return null
-        if (parentDir.exists().not())
-            return null
-
-        //获取文件名，无后缀
-        val videoNameNotExtension = getFileNameNoExtension(videoFile)
-        val targetVideoName = "$videoNameNotExtension."
-
-        val possibleList = mutableListOf<String>()
-
-        parentDir.listFiles()?.forEach {
-            //同名字幕的文件
-            if (isSameNameSubtitle(it.absolutePath, targetVideoName)) {
-                possibleList.add(it.absolutePath)
-            }
-        }
-
-        if (possibleList.size == 1) {
-            //只存在一个弹幕
-            return possibleList[0]
-        } else if (possibleList.size > 1) {
-            //存在多个匹配的字幕，可能是：xx.sc.ass、xx.tc.ass
-            possibleList.forEach {
-                //存在xx.ass，直接返回
-                supportSubtitleExtension.forEach { extension ->
-                    if ("$videoNameNotExtension.${extension}" == getFileName(it))
-                        return it
-                }
-            }
-            //取第一个
-            return possibleList[0]
-        }
-        return null
-    }
-
-    fun isSameNameSubtitle(subtitlePath: String, targetVideoName: String): Boolean {
-        val subtitleName = getFileNameNoExtension(subtitlePath) + "."
-        val videoName = getFileNameNoExtension(targetVideoName) + "."
-
-        //字幕文件名与视频名相同
-        if (subtitleName.startsWith(videoName)) {
-            val extension: String = getFileExtension(subtitlePath)
-            //支持的字幕格式
-            return supportSubtitleExtension.find {
-                it.equals(extension, true)
-            } != null
-        }
-        return false
     }
 }

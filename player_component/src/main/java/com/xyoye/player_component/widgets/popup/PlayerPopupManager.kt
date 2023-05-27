@@ -1,6 +1,5 @@
 package com.xyoye.player_component.widgets.popup
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Point
@@ -21,7 +20,6 @@ import com.xyoye.player.utils.OrientationHelper
  * Created by xyoye on 2022/11/3
  */
 
-@SuppressLint("ClickableViewAccessibility")
 class PlayerPopupManager(
     context: Context,
     attrs: AttributeSet? = null,

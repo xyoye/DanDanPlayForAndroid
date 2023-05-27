@@ -98,6 +98,3 @@ interface Storage {
      */
     fun close()
 }
-
-val Storage.videoSources: List<StorageFile>
-    get() = directoryFiles.filter { it.isVideoFile() }

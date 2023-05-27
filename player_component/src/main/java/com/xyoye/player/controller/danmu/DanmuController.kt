@@ -2,6 +2,7 @@ package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayerType
@@ -97,6 +98,10 @@ class DanmuController(context: Context) : InterDanmuController {
 
     override fun seekTo(timeMs: Long, isPlaying: Boolean){
         danmuView.seekTo(timeMs, isPlaying)
+    }
+
+    override fun setLanguage(language: DanmakuLanguage) {
+        danmuView.setLanguage(language)
     }
 
     override fun danmuRelease() {

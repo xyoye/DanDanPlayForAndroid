@@ -14,7 +14,79 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:id="@+id/tv_language_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/text_danmu_language_setting"
+                android:textColor="@color/text_white_immutable"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_language_title">
+
+                <TextView
+                    android:id="@+id/tv_language_origin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/background_player_setting_text"
+                    android:focusable="true"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/text_danmu_language_origin"
+                    android:textColor="@color/text_white_immutable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_language_sc"
+                    app:layout_constraintHorizontal_chainStyle="spread_inside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_language_sc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_player_setting_text"
+                    android:focusable="true"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/text_danmu_language_sc"
+                    android:textColor="@color/text_white_immutable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_language_tc"
+                    app:layout_constraintStart_toEndOf="@+id/tv_language_origin"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_language_tc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/background_player_setting_text"
+                    android:focusable="true"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
+                    android:text="@string/text_danmu_language_tc"
+                    android:textColor="@color/text_white_immutable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_language_sc"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/tv_title"
@@ -27,7 +99,7 @@
                 android:textColor="@color/text_white_immutable"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_language" />
 
             <TextView
                 android:id="@+id/tv_keyword_block"
@@ -155,7 +227,8 @@
                 app:layout_constraintBottom_toBottomOf="@id/tv_danmu_enable_tips"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_danmu_enable_tips"
-                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/tv_line_limit_tips"
@@ -177,8 +250,8 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/background_player_setting_text"
                 android:focusable="true"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="@string/text_danmu_line_unlimited"
                 android:textColor="@color/text_white_immutable"
                 app:layout_constraintStart_toStartOf="@id/tv_line_limit_tips"
@@ -226,8 +299,8 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/background_player_setting_text"
                 android:focusable="true"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="@string/text_danmu_screen_count_unlimited"
                 android:textColor="@color/text_white_immutable"
                 app:layout_constraintStart_toStartOf="@id/tv_screen_limit_tips"
@@ -239,13 +312,13 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_player_setting_text"
                 android:focusable="true"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="5dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
                 android:text="@string/text_danmu_screen_count_auto"
                 android:textColor="@color/text_white_immutable"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_screen_no_limit"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_screen_no_limit" />
 
             <EditText

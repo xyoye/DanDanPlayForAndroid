@@ -3,7 +3,6 @@ package com.xyoye.local_component.ui.dialog
 import android.app.Activity
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.startUrlActivity
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogShooterSecretBinding
@@ -26,14 +25,11 @@ class ShooterSecretDialog(
 
         setPositiveListener {
             val secret = binding.shooterSecretEt.text.toString()
-            if (secret.isEmpty()) {
-                ToastCenter.showError("API密钥不能为空")
-                return@setPositiveListener
-            }
-
             SubtitleConfig.putShooterSecret(secret)
             dismiss()
         }
+
+        binding.shooterSecretEt.setText(SubtitleConfig.getShooterSecret() ?: "")
 
         binding.loginShooterTv.setOnClickListener {
             activity.startUrlActivity("https://secure.assrt.net/user/logon.xml")

@@ -4,7 +4,6 @@ import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.TorrentStorageFile
-import com.xyoye.common_component.storage.videoSources
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.enums.MediaType
@@ -16,12 +15,13 @@ import com.xyoye.data_component.enums.MediaType
 class StorageVideoSource(
     private val playUrl: String,
     private val file: StorageFile,
+    private val videoSources: List<StorageFile>,
     private var episodeId: Int,
     private var danmuPath: String?,
     private var subtitlePath: String?,
 ) : BaseVideoSource(
-    file.storage.videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
-    file.storage.videoSources
+    videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
+    videoSources
 ) {
 
     override fun getDanmuPath(): String? {
@@ -49,13 +49,13 @@ class StorageVideoSource(
     }
 
     override fun indexTitle(index: Int): String {
-        val fileName = file.storage.videoSources[index].fileName()
+        val fileName = videoSources[index].fileName()
         return getFileName(fileName)
     }
 
     override suspend fun indexSource(index: Int): BaseVideoSource? {
         return StorageVideoSourceFactory.create(
-            file.storage.videoSources[index]
+            videoSources[index]
         )
     }
 

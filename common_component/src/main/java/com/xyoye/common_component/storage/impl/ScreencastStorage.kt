@@ -9,8 +9,8 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.JsonHelper
-import com.xyoye.common_component.utils.SubtitleUtils
 import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData

@@ -9,6 +9,13 @@
             android:title="自动加载同名字幕"
             app:icon="@drawable/ic_player_setting_subtitle_setting" />
 
+        <EditTextPreference
+            android:dialogMessage="\n优先级规则以,分割，按顺序匹配，如：\n规则：chs,cht\n结果：example.chs.ass > example.cht.ass"
+            android:key="same_name_subtitle_priority"
+            android:summary="未设置"
+            android:title="同名字幕加载优先级"
+            app:icon="@drawable/ic_player_setting_subtitle_priority" />
+
         <SwitchPreference
             android:key="auto_match_subtitle"
             android:summary="未指定字幕时，自动为视频匹配合适的网络字幕（仅支持本地文件）"

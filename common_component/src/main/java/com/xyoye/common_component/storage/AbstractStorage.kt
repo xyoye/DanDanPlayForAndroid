@@ -2,7 +2,12 @@ package com.xyoye.common_component.storage
 
 import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.DanmuUtils
+import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.utils.getParentFolderName
+import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.subtitle.SubtitleFinder
+import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import java.io.File
 
@@ -61,10 +66,11 @@ abstract class AbstractStorage(
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {
-        val videoFileName = getFileNameNoExtension(file.fileName()) + "."
-        val subtitleFile = directoryFiles.find {
-            it.isFile() && SubtitleUtils.isSameNameSubtitle(it.fileName(), videoFileName)
-        } ?: return null
+        val subtitleFile = directoryFiles
+            .filter { it.isFile() }
+            .run {
+                SubtitleFinder.preferred(this, file.fileName()) { it.fileName() }
+            } ?: return null
 
         val inputStream = openFile(subtitleFile) ?: return null
         val directoryName = getParentFolderName(subtitleFile.filePath())

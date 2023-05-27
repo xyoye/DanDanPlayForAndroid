@@ -21,7 +21,7 @@ class RenderVLCView(
     private val vlcLayout = VLCVideoLayout(context)
 
     override fun attachPlayer(player: AbstractVideoPlayer) {
-        mVideoPlayer  = (player as VlcVideoPlayer)
+        mVideoPlayer = (player as VlcVideoPlayer)
         player.attachRenderView(vlcLayout)
     }
 
@@ -34,7 +34,7 @@ class RenderVLCView(
     }
 
     override fun setScaleType(screenScale: VideoScreenScale) {
-        val scale = when(screenScale){
+        val scale = when (screenScale) {
             VideoScreenScale.SCREEN_SCALE_16_9 -> MediaPlayer.ScaleType.SURFACE_16_9
             VideoScreenScale.SCREEN_SCALE_4_3 -> MediaPlayer.ScaleType.SURFACE_4_3
             VideoScreenScale.SCREEN_SCALE_CENTER_CROP -> MediaPlayer.ScaleType.SURFACE_FIT_SCREEN
@@ -51,7 +51,7 @@ class RenderVLCView(
 
     override fun refresh() {
         if (this::mVideoPlayer.isInitialized) {
-            attachPlayer(mVideoPlayer)
+            vlcLayout.postDelayed({ attachPlayer(mVideoPlayer) }, 500)
         }
     }
 

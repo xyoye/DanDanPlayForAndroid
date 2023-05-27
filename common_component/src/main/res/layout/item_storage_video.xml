@@ -97,6 +97,7 @@
             android:id="@+id/more_action_iv"
             android:layout_width="30dp"
             android:layout_height="0dp"
+            android:paddingHorizontal="3dp"
             android:background="@drawable/background_item_press"
             android:src="@drawable/ic_more_video_action"
             app:layout_constraintBottom_toBottomOf="parent"

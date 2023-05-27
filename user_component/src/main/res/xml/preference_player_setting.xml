@@ -38,11 +38,6 @@
         android:title="音频输出"
         app:icon="@drawable/ic_player_setting_opensl" />
     <SwitchPreference
-        android:key="vlc_accelerate_optimize"
-        android:summary="优化VLC开启倍速音频异常 (实验性)"
-        android:title="倍速音频优化"
-        app:icon="@drawable/ic_player_setting_vlc_audio" />
-    <SwitchPreference
         android:key="surface_renders"
         android:summary="使用后视频渲染性能更高"
         android:title="SurfaceView"

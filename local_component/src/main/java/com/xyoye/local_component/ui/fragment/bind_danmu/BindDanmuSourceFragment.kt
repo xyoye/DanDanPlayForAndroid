@@ -3,13 +3,10 @@ package com.xyoye.local_component.ui.fragment.bind_danmu
 import android.graphics.Typeface
 import android.util.TypedValue
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupHorizontalAnimation
 import com.xyoye.common_component.base.BaseFragment
-import com.xyoye.common_component.config.DanmuConfig
-import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toFile
@@ -33,7 +30,8 @@ import com.xyoye.local_component.ui.dialog.DanmuDownloadDialog
 /**
  * Created by xyoye on 2022/1/25
  */
-class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, FragmentBindDanmuSourceBinding>(),
+class BindDanmuSourceFragment :
+    BaseFragment<BindDanmuSourceFragmentViewModel, FragmentBindDanmuSourceBinding>(),
     ExtraSourceListener {
 
     private var danmuDownloadDialog: DanmuDownloadDialog? = null
@@ -79,7 +77,10 @@ class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, F
                         val typeStyle = if (data.isRecommend) Typeface.BOLD else Typeface.NORMAL
                         itemBinding.animeNameTv.text = data.animeName
                         itemBinding.animeNameTv.isSelected = data.isSelected
-                        itemBinding.animeNameTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, animeNameSize)
+                        itemBinding.animeNameTv.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            animeNameSize
+                        )
                         itemBinding.animeNameTv.setTypeface(Typeface.DEFAULT, typeStyle)
                         itemBinding.viewRecommend.isVisible = data.isRecommend
                         itemBinding.itemLayout.setOnClickListener {
@@ -104,12 +105,11 @@ class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, F
                         itemBinding.animeTitleTv.text = data.animeTitle
                         itemBinding.animeTitleTv.isVisible = data.isRecommend
                         itemBinding.episodeTv.isSelected = data.isLoaded
+                        itemBinding.downloadIv.setOnClickListener {
+                            viewModel.getDanmuThirdSource(data)
+                        }
                         itemBinding.root.setOnClickListener {
-                            if (DanmuConfig.isShowThirdSource()) {
-                                viewModel.getDanmuThirdSource(data)
-                            } else {
-                                viewModel.downloadDanmu(data)
-                            }
+                            viewModel.downloadDanmu(data)
                         }
                     }
                 }
@@ -153,9 +153,6 @@ class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, F
         dataBinding.tvSelectLocalDanmu.setOnClickListener {
             selectLocalDanmuFile()
         }
-        dataBinding.tvSettingDanmuSource.setOnClickListener {
-            settingDanmuSource()
-        }
     }
 
     override fun search(searchText: String) {
@@ -178,11 +175,5 @@ class BindDanmuSourceFragment : BaseFragment<BindDanmuSourceFragmentViewModel, F
             }
             viewModel.bindLocalDanmu(it)
         }.show()
-    }
-
-    private fun settingDanmuSource() {
-        ARouter.getInstance()
-            .build(RouteTable.User.SettingDanmuSource)
-            .navigation()
     }
 }

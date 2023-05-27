@@ -1,9 +1,11 @@
 package com.xyoye.common_component.source.factory
 
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.Storage
+import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.common_component.storage.file.StorageFile
 
 /**
@@ -14,12 +16,14 @@ object StorageVideoSourceFactory {
 
     suspend fun create(file: StorageFile): StorageVideoSource? {
         val storage = file.storage
+        val videoSources = getVideoSources(storage)
         val playUrl = storage.createPlayUrl(file) ?: return null
         val danmuInfo = getDanmuInfo(file, storage)
         val subtitlePath = getSubtitlePath(file, storage)
         return StorageVideoSource(
             playUrl,
             file,
+            videoSources,
             danmuInfo.first,
             danmuInfo.second,
             subtitlePath
@@ -59,5 +63,12 @@ object StorageVideoSourceFactory {
         }
 
         return subtitleNotFound
+    }
+
+    private fun getVideoSources(storage: Storage): List<StorageFile> {
+        return storage.directoryFiles
+            .filter { it.isVideoFile() }
+            .filter { AppConfig.isShowHiddenFile() || !it.fileName().startsWith(".") }
+            .sortedWith(StorageSortOption.comparator())
     }
 }

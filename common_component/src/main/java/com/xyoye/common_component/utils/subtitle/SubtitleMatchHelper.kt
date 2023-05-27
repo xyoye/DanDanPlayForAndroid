@@ -1,7 +1,6 @@
-package com.xyoye.local_component.utils
+package com.xyoye.common_component.utils.subtitle
 
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.utils.SubtitleHashUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.data_component.data.SubtitleShooterData

@@ -70,7 +70,7 @@ class RenderTextureView(context: Context) : TextureView(context), InterSurfaceVi
     override fun getView() = this
 
     override fun refresh() {
-        requestLayout()
+        post { requestLayout() }
     }
 
     override fun release() {

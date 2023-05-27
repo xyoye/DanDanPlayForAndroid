@@ -1,5 +1,7 @@
 package com.xyoye.storage_component.utils.storage
 
+import android.view.KeyEvent
+import android.view.View
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupDiffUtil
@@ -8,6 +10,7 @@ import com.xyoye.data_component.bean.StorageFilePath
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.ItemStoragePathBinding
 import com.xyoye.storage_component.databinding.ItemStoragePathDividerBinding
+import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
 import com.xyoye.storage_component.ui.fragment.storage_file.StorageFileFragment
 
 /**
@@ -18,10 +21,10 @@ object StorageFilePathAdapter {
     object PathDivider
     object MarginDivider
 
-    private val marginDivider= MarginDivider
+    private val marginDivider = MarginDivider
     private val pathDivider = PathDivider
 
-    fun build(onPathClick: (path: StorageFilePath) -> Unit) = buildAdapter {
+    fun build(activity: StorageFileActivity, onPathClick: (path: StorageFilePath) -> Unit) = buildAdapter {
 
         setupDiffUtil {
             areContentsTheSame(isSameStoragePathContent())
@@ -36,6 +39,20 @@ object StorageFilePathAdapter {
                 itemBinding.tvPath.setOnClickListener {
                     onPathClick.invoke(data)
                 }
+
+                itemBinding.tvPath.setOnKeyListener(object : View.OnKeyListener {
+                    override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
+                        if (event?.action != KeyEvent.ACTION_DOWN || v?.isFocused != true) {
+                            return false
+                        }
+                        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            //由于系统无法将焦点传递到Fragment，手动处理焦点传递
+                            activity.dispatchFocus()
+                            return true
+                        }
+                        return false
+                    }
+                })
             }
         }
 

@@ -1,5 +1,6 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
 
 /**
@@ -102,6 +103,11 @@ interface InterDanmuController {
      * 弹幕进度跳转
      */
     fun seekTo(timeMs: Long, isPlaying: Boolean)
+
+    /**
+     * 弹幕简繁
+     */
+    fun setLanguage(language: DanmakuLanguage)
 
     fun danmuRelease()
 }

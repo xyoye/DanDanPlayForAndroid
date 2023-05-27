@@ -1,6 +1,7 @@
 package com.xyoye.player.info
 
 import android.graphics.Color
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.*
 
 /**
@@ -30,7 +31,6 @@ object PlayerInitializer {
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
         var videoSpeed = DEFAULT_SPEED
         var vlcAudioOutput = VLCAudioOutput.AUTO
-        var vlcAccelerateOptimize = true
         var isAutoPlayNext = true
     }
 
@@ -45,6 +45,7 @@ object PlayerInitializer {
         const val DEFAULT_BOTTOM_ENABLE = true
         const val DEFAULT_MAX_LINE = 0
         const val DEFAULT_MAX_NUM = 0
+        val DEFAULT_LANGUAGE = DanmakuLanguage.ORIGINAL
 
         var offsetPosition = DEFAULT_POSITION
         var size = DEFAULT_SIZE
@@ -60,6 +61,7 @@ object PlayerInitializer {
         var maxNum = DEFAULT_MAX_NUM
         var cloudBlock = false
         var updateInChoreographer = true
+        var language = DEFAULT_LANGUAGE
     }
 
     object Subtitle {

@@ -10,7 +10,9 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.danmaku.BiliDanmakuLoader
 import com.xyoye.danmaku.BiliDanmakuParser
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.danmaku.filter.KeywordFilter
+import com.xyoye.danmaku.filter.LanguageConverter
 import com.xyoye.danmaku.filter.RegexFilter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
@@ -52,6 +54,7 @@ class DanmuView(
     private val mDanmakuLoader = BiliDanmakuLoader.instance()
     private val mKeywordFilter = KeywordFilter()
     private val mRegexFilter = RegexFilter()
+    private val mLanguageConverter = LanguageConverter()
 
     private var mSeekPosition = INVALID_VALUE
 
@@ -237,6 +240,8 @@ class DanmuView(
             registerFilter(mKeywordFilter)
             //添加正则过滤器
             registerFilter(mRegexFilter)
+            //添加简繁转换器
+            registerFilter(mLanguageConverter)
         }
 
         updateDanmuSize()
@@ -248,6 +253,7 @@ class DanmuView(
         updateBottomDanmuState()
         updateMaxLine()
         updateMaxScreenNum()
+        setLanguage(PlayerInitializer.Danmu.language)
     }
 
     fun updateDanmuSize() {
@@ -376,6 +382,10 @@ class DanmuView(
 
     fun setSpeed(speed: Float) {
         mDanmakuContext.setSpeed(speed)
+    }
+
+    fun setLanguage(language: DanmakuLanguage) {
+        mLanguageConverter.setData(language)
     }
 
     private fun notifyFilterChanged() {

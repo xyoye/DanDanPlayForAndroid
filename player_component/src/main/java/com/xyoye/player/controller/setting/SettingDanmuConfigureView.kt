@@ -7,6 +7,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.utils.hideKeyboard
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
@@ -34,6 +35,7 @@ class SettingDanmuConfigureView(
     override fun getSettingViewType() = SettingViewType.DANMU_CONFIGURE
 
     override fun onViewShow() {
+        updateLanguage(PlayerInitializer.Danmu.language)
         applyDanmuConfigureStatus()
     }
 
@@ -57,6 +59,21 @@ class SettingDanmuConfigureView(
     }
 
     private fun initView() {
+        viewBinding.tvLanguageOrigin.setOnClickListener {
+            updateLanguage(DanmakuLanguage.ORIGINAL)
+            mControlWrapper.setLanguage(DanmakuLanguage.ORIGINAL)
+        }
+
+        viewBinding.tvLanguageSc.setOnClickListener {
+            updateLanguage(DanmakuLanguage.SC)
+            mControlWrapper.setLanguage(DanmakuLanguage.SC)
+        }
+
+        viewBinding.tvLanguageTc.setOnClickListener {
+            updateLanguage(DanmakuLanguage.TC)
+            mControlWrapper.setLanguage(DanmakuLanguage.TC)
+        }
+
         viewBinding.tvKeywordBlock.setOnClickListener {
             onSettingVisibilityChanged(false)
             mControlWrapper.showSettingView(SettingViewType.KEYWORD_BLOCK)
@@ -340,5 +357,14 @@ class SettingDanmuConfigureView(
         } else {
             viewBinding.llScrollDanmu.requestFocus()
         }
+    }
+
+    private fun updateLanguage(language: DanmakuLanguage) {
+        PlayerInitializer.Danmu.language = language
+        DanmuConfig.putDanmuLanguage(language.value)
+
+        viewBinding.tvLanguageOrigin.isSelected = language == DanmakuLanguage.ORIGINAL
+        viewBinding.tvLanguageSc.isSelected = language == DanmakuLanguage.SC
+        viewBinding.tvLanguageTc.isSelected = language == DanmakuLanguage.TC
     }
 }

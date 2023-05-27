@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.coroutineScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -32,7 +33,6 @@ import com.xyoye.storage_component.ui.fragment.storage_file.StorageFileFragment
 import com.xyoye.storage_component.ui.weight.StorageFileMenus
 import com.xyoye.storage_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.storage_component.utils.storage.StorageFileStyleHelper
-import com.xyoye.storage_component.utils.storage.StorageSortOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -102,7 +102,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         dataBinding.pathRv.apply {
             layoutManager = horizontal()
 
-            adapter = StorageFilePathAdapter.build {
+            adapter = StorageFilePathAdapter.build(this@StorageFileActivity) {
                 backToRouteFragment(it)
             }
         }
@@ -118,6 +118,30 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         dataBinding.quicklyPlayBt.setOnClickListener {
             viewModel.quicklyPlay(storage)
         }
+
+        dataBinding.pathRv.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // 将RecyclerView焦点转移到子View
+                currentFocus?.requestFocus(View.FOCUS_UP)
+            }
+        }
+
+        // 系统无法正确分发快速播放按钮的焦点，需要手动分发
+        dataBinding.quicklyPlayBt.setOnKeyListener(object : View.OnKeyListener {
+            override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
+                if (event?.action != KeyEvent.ACTION_DOWN || v?.isFocused != true) {
+                    return false
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    dispatchFocus(reversed = true)
+                    return true
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    dispatchFocus()
+                    return true
+                }
+                return false
+            }
+        })
 
         viewModel.playLiveData.observe(this) {
             ARouter.getInstance()
@@ -147,7 +171,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         mMenus = StorageFileMenus.inflater(this, menu)
         mMenus.onSearchTextChanged { onSearchTextChanged(it) }
-        mMenus.onSortTypeChanged { onSortOptionChanged(it) }
+        mMenus.onSortTypeChanged { onSortOptionChanged() }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -291,8 +315,15 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     /**
      * 改变文件排序
      */
-    private fun onSortOptionChanged(option: StorageSortOption) {
-        mRouteFragmentMap.values.onEach { it.sort(option) }
+    private fun onSortOptionChanged() {
+        mRouteFragmentMap.values.onEach { it.sort() }
+    }
+
+    /**
+     * 分发焦点到最后一个Fragment
+     */
+    fun dispatchFocus(reversed: Boolean = false) {
+        mRouteFragmentMap.values.lastOrNull()?.requestFocus(reversed)
     }
 
     fun openDirectory(file: StorageFile?) {

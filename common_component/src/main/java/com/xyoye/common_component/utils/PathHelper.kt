@@ -1,5 +1,6 @@
 package com.xyoye.common_component.utils
 
+import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.DefaultConfig
 import com.xyoye.data_component.enums.CacheType
@@ -11,10 +12,8 @@ import java.io.File
 
 object PathHelper {
 
-    /**
-     * 私有目录路径
-     */
-    const val PRIVATE_DIRECTORY_PATH = "/Android/data/com.xyoye.dandanplay/"
+    //OpenCC文件夹名
+    private const val OPEN_CC_DIRECTORY = "open_cc"
 
     /**
      * 获取缓存路径
@@ -63,8 +62,21 @@ object PathHelper {
         return getCacheDirectory(CacheType.SCREEN_SHOT_CACHE)
     }
 
+    /**
+     * 获取缓存文件文件夹
+     */
     fun getCacheDirectory(type: CacheType): File {
         return File(getCachePath(), type.dirName).apply {
+            checkDirectory(this)
+        }
+    }
+
+    /**
+     * 获取OpenCC配置文件文件夹
+     */
+    fun getOpenCCDirectory(): File {
+        val fileDir = BaseApplication.getAppContext().filesDir
+        return File(fileDir, OPEN_CC_DIRECTORY).apply {
             checkDirectory(this)
         }
     }

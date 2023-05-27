@@ -94,20 +94,13 @@ class SettingAudioStreamView(
     }
 
     private fun onClickStream(stream: VideoStreamBean) {
-        val selectedIndex = audioStreamData.indexOfFirst { it.isChecked }
-        if (selectedIndex != -1) {
-            if (audioStreamData[selectedIndex].trackId == stream.trackId
-                && audioStreamData[selectedIndex].trackGroupId == stream.trackGroupId
-            ) {
-                return
-            }
-            audioStreamData[selectedIndex].isChecked = false
+        val selectedTrack = audioStreamData.firstOrNull { it.isChecked }
+        val targetTrack = audioStreamData.firstOrNull { it.equalsIgnoreChecked(stream) }
+        if (selectedTrack == targetTrack) {
+            return
         }
-
-        val currentIndex = audioStreamData.indexOfFirst {
-            it.trackId == stream.trackId && it.trackGroupId == stream.trackGroupId
-        }
-        audioStreamData[currentIndex].isChecked = true
+        selectedTrack?.isChecked = false
+        targetTrack?.isChecked = true
         viewBinding.rvStream.setData(audioStreamData)
 
         mControlWrapper.selectStream(stream)

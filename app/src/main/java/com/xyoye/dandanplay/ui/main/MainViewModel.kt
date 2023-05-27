@@ -1,5 +1,6 @@
 package com.xyoye.dandanplay.ui.main
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
@@ -53,12 +54,22 @@ class MainViewModel : BaseViewModel() {
         val lastUpdateTime = AppConfig.getCloudBlockUpdateTime()
         val currentTime = System.currentTimeMillis()
         //7天更新一次
-        if (currentTime - lastUpdateTime > 7 * 24 * 60 * 60) {
+        if (currentTime - lastUpdateTime > 7 * 24 * 60 * 60 * 1000) {
 
             httpRequest<MutableList<String>>(viewModelScope) {
 
                 api {
-                    val filterUrl = "${Retrofit.baseUrl}config/filter.xml"
+                    val baseUrl = if (AppConfig.isBackupDomainEnable()) {
+                        AppConfig.getBackupDomain()
+                    } else {
+                        Retrofit.baseUrl
+                    }
+                    val filterUrl = Uri.parse(baseUrl)
+                        .buildUpon()
+                        .appendPath("config")
+                        .appendPath("filter.xml")
+                        .build()
+                        .toString()
                     val responseBody = Retrofit.extService.downloadResource(filterUrl)
 
                     parseFilterData(responseBody.byteStream())

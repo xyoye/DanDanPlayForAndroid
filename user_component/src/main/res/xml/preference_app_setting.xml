@@ -10,6 +10,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="设置">
+
+        <SwitchPreference
+            android:key="backup_domain_enable"
+            android:summary="无法使用弹弹网络相关服务时，可尝试打开此配置"
+            android:title="备用服务器"
+            app:icon="@drawable/ic_language" />
+
+        <EditTextPreference
+            android:key="backup_domain_address"
+            android:title="备用服务器地址"
+            app:icon="@drawable/ic_domain_url" />
+
         <SwitchPreference
             android:key="hide_file"
             android:summary="在选择文件时，显示系统隐藏文件"

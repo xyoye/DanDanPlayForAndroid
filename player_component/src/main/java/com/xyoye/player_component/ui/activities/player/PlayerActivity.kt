@@ -373,8 +373,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             VLCHWDecode.valueOf(PlayerConfig.getUseVLCHWDecoder())
         PlayerInitializer.Player.vlcAudioOutput =
             VLCAudioOutput.valueOf(PlayerConfig.getUseVLCAudioOutput())
-        PlayerInitializer.Player.vlcAccelerateOptimize =
-            PlayerConfig.isVlcAccelerateOptimize()
 
         //弹幕配置
         PlayerInitializer.Danmu.size = DanmuConfig.getDanmuSize()
@@ -390,6 +388,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         PlayerInitializer.Danmu.maxNum = DanmuConfig.getDanmuMaxCount()
         PlayerInitializer.Danmu.cloudBlock = DanmuConfig.isCloudDanmuBlock()
         PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
+        PlayerInitializer.Danmu.language = DanmakuLanguage.formValue(DanmuConfig.getDanmuLanguage())
 
         //字幕配置
         PlayerInitializer.Subtitle.textSize = SubtitleConfig.getTextSize()

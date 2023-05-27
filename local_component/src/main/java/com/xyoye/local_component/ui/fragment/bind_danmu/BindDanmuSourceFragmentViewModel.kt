@@ -3,7 +3,6 @@ package com.xyoye.local_component.ui.fragment.bind_danmu
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
@@ -129,11 +128,9 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-                val language = DanmuConfig.getDefaultLanguage()
                 val danmuData = Retrofit.service.getDanmuContent(
                     contentBean.episodeId.toString(),
-                    true,
-                    language
+                    true
                 )
                 val danmuPath = DanmuUtils.saveDanmu(
                     danmuData,

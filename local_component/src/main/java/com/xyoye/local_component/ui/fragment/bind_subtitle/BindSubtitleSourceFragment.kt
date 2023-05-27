@@ -1,5 +1,6 @@
 package com.xyoye.local_component.ui.fragment.bind_subtitle
 
+import android.text.TextUtils
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
@@ -62,6 +63,8 @@ class BindSubtitleSourceFragment :
     private fun initActionView() {
         val boundSubtitle = viewModel.storageFile.playHistory?.subtitlePath?.isNotEmpty() == true
         dataBinding.tvUnbindSubtitle.isEnabled = boundSubtitle
+
+        updateKeyActionView()
     }
 
     private fun initRv() {
@@ -176,7 +179,14 @@ class BindSubtitleSourceFragment :
     }
 
     private fun settingSubtitleKey() {
-        ShooterSecretDialog(requireActivity()).show()
+        val dialog = ShooterSecretDialog(requireActivity())
+        dialog.setOnDismissListener { updateKeyActionView() }
+        dialog.show()
+    }
+
+    private fun updateKeyActionView() {
+        dataBinding.tvSettingSubtitleKey.isSelected =
+            TextUtils.isEmpty(SubtitleConfig.getShooterSecret())
     }
 
     private fun selectLocalSubtitleFile() {

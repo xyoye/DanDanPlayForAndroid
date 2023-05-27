@@ -61,8 +61,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
         val vlcPreference = arrayOf(
             "vlc_pixel_format_type",
             "vlc_hardware_acceleration",
-            "vlc_audio_output",
-            "vlc_accelerate_optimize"
+            "vlc_audio_output"
         )
     }
 
@@ -177,7 +176,6 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 "media_code_c_h265" -> PlayerConfig.isUseMediaCodeCH265()
                 "open_sl_es" -> PlayerConfig.isUseOpenSlEs()
                 "surface_renders" -> PlayerConfig.isUseSurfaceView()
-                "vlc_accelerate_optimize" -> PlayerConfig.isVlcAccelerateOptimize()
                 else -> super.getBoolean(key, defValue)
             }
         }
@@ -188,7 +186,6 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 "media_code_c_h265" -> PlayerConfig.putUseMediaCodeCH265(value)
                 "open_sl_es" -> PlayerConfig.putUseOpenSlEs(value)
                 "surface_renders" -> PlayerConfig.putUseSurfaceView(value)
-                "vlc_accelerate_optimize" -> PlayerConfig.putVlcAccelerateOptimize(value)
                 else -> super.putBoolean(key, value)
             }
         }

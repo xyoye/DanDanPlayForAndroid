@@ -46,10 +46,6 @@ object PlayerConfigTable {
     @MMKVFiled
     val useVLCAudioOutput = VLCAudioOutput.AUTO.value
 
-    //VLC加速优化
-    @MMKVFiled
-    val vlcAccelerateOptimize = true
-
     //视频倍速
     @MMKVFiled
     val newVideoSpeed = 1f

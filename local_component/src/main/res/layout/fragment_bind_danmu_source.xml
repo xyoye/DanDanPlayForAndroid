@@ -40,18 +40,6 @@
                 android:textColor="@color/selector_action_color"
                 android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/tv_setting_danmu_source"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/background_source_action"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="@string/action_danmu_source_setting"
-                android:textColor="@color/selector_action_color"
-                android:textSize="12sp" />
-
         </LinearLayout>
 
         <View

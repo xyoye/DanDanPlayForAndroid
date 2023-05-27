@@ -1,4 +1,4 @@
-package com.xyoye.storage_component.utils.storage
+package com.xyoye.common_component.storage
 
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.storage.file.StorageFile
@@ -10,39 +10,40 @@ import com.xyoye.data_component.enums.StorageSort
  * Created by xyoye on 2023/3/31.
  */
 
-class StorageSortOption {
-    var sort = StorageSort.NAME
-        private set
-    var asc = true
-        private set
-    var directoryFirst = true
-        private set
+object StorageSortOption {
 
-    init {
-        sort = StorageSort.formValue(AppConfig.getStorageSortType())
-        asc = AppConfig.isStorageSortAsc()
-        directoryFirst = AppConfig.isStorageSortDirectoryFirst()
+    fun getSort(): StorageSort {
+        return StorageSort.formValue(AppConfig.getStorageSortType())
     }
 
     fun setSort(sort: StorageSort): Boolean {
-        this.sort = sort
         AppConfig.putStorageSortType(sort.value)
         return true
     }
 
+    fun isAsc(): Boolean {
+        return AppConfig.isStorageSortAsc()
+    }
+
     fun changeAsc(): Boolean {
-        this.asc = !asc
-        AppConfig.putStorageSortAsc(asc)
+        AppConfig.putStorageSortAsc(!isAsc())
         return true
+    }
+
+    fun isDirectoryFirst(): Boolean {
+        return AppConfig.isStorageSortDirectoryFirst()
     }
 
     fun changeDirectoryFirst(): Boolean {
-        directoryFirst = !directoryFirst
-        AppConfig.putStorageSortDirectoryFirst(directoryFirst)
+        AppConfig.putStorageSortDirectoryFirst(!isDirectoryFirst())
         return true
     }
 
-    fun createComparator(): Comparator<StorageFile> {
+    fun comparator(): Comparator<StorageFile> {
+        val sort = getSort()
+        val asc = isAsc()
+        val directoryFirst = isDirectoryFirst()
+
         return if (sort == StorageSort.NAME) {
             FileNameComparator(
                 getName = { it.fileName() },

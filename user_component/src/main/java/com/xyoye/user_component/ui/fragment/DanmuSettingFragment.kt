@@ -2,10 +2,12 @@ package com.xyoye.user_component.ui.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.xyoye.common_component.config.DanmuConfig
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.user_component.R
 
 /**
@@ -16,6 +18,12 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
 
     companion object {
         fun newInstance() = DanmuSettingFragment()
+
+        private val languageData = mapOf(
+            Pair("原始", DanmakuLanguage.ORIGINAL.value.toString()),
+            Pair("简体中文", DanmakuLanguage.SC.value.toString()),
+            Pair("繁体中文", DanmakuLanguage.TC.value.toString())
+        )
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -31,7 +39,19 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
                 return@setOnPreferenceChangeListener true
             }
 
-            findPreference<SwitchPreference>("auto_launch_danmu_before_play")?.isVisible = !isChecked
+            findPreference<SwitchPreference>("auto_launch_danmu_before_play")?.isVisible =
+                !isChecked
+        }
+        //播放器类型
+        findPreference<ListPreference>("danmu_language")?.apply {
+            entries = languageData.keys.toTypedArray()
+            entryValues = languageData.values.toTypedArray()
+            summary = "当前配置：$entry，指定播放时的弹幕语言"
+            setOnPreferenceChangeListener { _, newValue ->
+                val key = languageData.entries.first { it.value == newValue }.key
+                summary = "当前配置：$key，指定播放时的弹幕语言"
+                return@setOnPreferenceChangeListener true
+            }
         }
         super.onViewCreated(view, savedInstanceState)
     }
@@ -57,6 +77,20 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
                 "danmu_cloud_block" -> DanmuConfig.putCloudDanmuBlock(value)
                 "danmu_debug" -> DanmuConfig.putDanmuDebug(value)
                 else -> super.putBoolean(key, value)
+            }
+        }
+
+        override fun getString(key: String?, defValue: String?): String? {
+            return when (key) {
+                "danmu_language" -> DanmuConfig.getDanmuLanguage().toString()
+                else -> super.getString(key, defValue)
+            }
+        }
+
+        override fun putString(key: String?, value: String?) {
+            when (key) {
+                "danmu_language" -> DanmuConfig.putDanmuLanguage(value?.toInt() ?: 0)
+                else -> super.putString(key, value)
             }
         }
     }

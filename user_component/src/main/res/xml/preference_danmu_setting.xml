@@ -19,6 +19,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="其它">
+        <ListPreference
+            android:key="danmu_language"
+            android:summary="当前语言：原始，指定播放时的弹幕语言"
+            android:title="弹幕语言"
+            app:icon="@drawable/ic_language" />
+
         <SwitchPreference
             android:key="danmu_update_in_choreographer"
             android:summary="开启后可根据屏幕刷新率自适应的绘制弹幕，观感更佳"

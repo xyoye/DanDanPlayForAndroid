@@ -53,7 +53,7 @@ class MainViewModel : BaseViewModel() {
         val lastUpdateTime = AppConfig.getCloudBlockUpdateTime()
         val currentTime = System.currentTimeMillis()
         //7天更新一次
-        if (currentTime - lastUpdateTime > 7 * 24 * 60 * 60) {
+        if (currentTime - lastUpdateTime > 7 * 24 * 60 * 60 * 1000) {
 
             httpRequest<MutableList<String>>(viewModelScope) {
 

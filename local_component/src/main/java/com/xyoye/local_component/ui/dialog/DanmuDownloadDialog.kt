@@ -1,10 +1,8 @@
 package com.xyoye.local_component.ui.dialog
 
 import android.app.Activity
-import androidx.core.view.isVisible
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.PathHelper
@@ -26,9 +24,6 @@ class DanmuDownloadDialog(
     private val relatedData: DanmuRelatedData,
     private val callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
 ) : BaseBottomDialog<DialogDanmuDowanloadBinding>(activity) {
-
-    private val languageViewIds =
-        arrayOf(R.id.danmu_default_rb, R.id.danmu_simplified_rb, R.id.danmu_traditional_rb)
 
     override fun getChildLayoutId() = R.layout.dialog_danmu_dowanload
 
@@ -65,16 +60,7 @@ class DanmuDownloadDialog(
                             danmuSourceCb.isChecked = data.isChecked
                             danmuSourceCb.text = data.sourceName
                             danmuSourceDescribeTv.text = data.sourceDescribe
-                            danmuFormatRg.isVisible = data.isOfficial
 
-                            val checkedIndex = DanmuConfig.getDefaultLanguage()
-                            danmuFormatRg.check(getLanguageViewId(checkedIndex))
-
-                            danmuFormatRg.setOnCheckedChangeListener { _, checkedId ->
-                                val languageType = languageViewIds.indexOf(checkedId)
-                                data.format = languageType
-                                DanmuConfig.putDefaultLanguage(languageType)
-                            }
                             danmuSourceCb.setOnCheckedChangeListener { _, isChecked ->
                                 data.isChecked = isChecked
                             }
@@ -108,9 +94,5 @@ class DanmuDownloadDialog(
         }
 
         return downloadSources
-    }
-
-    private fun getLanguageViewId(index: Int): Int {
-        return languageViewIds.getOrNull(index) ?: R.id.danmu_default_rb
     }
 }

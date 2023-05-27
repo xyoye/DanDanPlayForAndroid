@@ -14,12 +14,12 @@
             android:id="@+id/episode_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:textColor="@color/selector_black_theme"
             android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@id/anime_title_tv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/download_iv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginStart="10dp"
@@ -42,6 +42,18 @@
             tools:ignore="SmallSp"
             tools:text="测试"
             tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/download_iv"
+            android:layout_width="26dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_item_press"
+            android:paddingHorizontal="3dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_more_video_action"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

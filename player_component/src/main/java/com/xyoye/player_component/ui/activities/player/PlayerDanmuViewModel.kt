@@ -4,14 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.FileHashUtils
 import com.xyoye.common_component.utils.IOUtils
+import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.LoadDanmuBean
 import com.xyoye.data_component.data.DanmuAnimeData
@@ -168,11 +167,9 @@ class PlayerDanmuViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-                val language = DanmuConfig.getDefaultLanguage()
                 val danmuData = Retrofit.service.getDanmuContent(
                     contentBean.episodeId.toString(),
-                    true,
-                    language
+                    true
                 )
                 val danmuFileName = contentBean.animeTitle + "_" + contentBean.episodeTitle + ".xml"
                 val danmuPath = DanmuUtils.saveDanmu(danmuData, null, danmuFileName)

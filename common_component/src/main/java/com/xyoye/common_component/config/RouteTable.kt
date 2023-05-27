@@ -34,7 +34,6 @@ object RouteTable {
         const val UserInfo = "/user/info"
         const val SettingPlayer = "/user/setting_player"
         const val SettingApp = "/user/setting_app"
-        const val SettingDanmuSource = "/user/setting_danmu_source"
         const val WebView = "/user/web_view"
         const val ScanManager = "/user/scan_manager"
         const val CacheManager = "/user/cache_manager"

@@ -133,6 +133,11 @@ object PlayRecorder {
         imageSize: Point?
     ) = suspendCancellableCoroutine {
         val recordBitmap = createBitmap(textureView, imageSize)
+        val surfaceTexture = textureView.surfaceTexture
+        if (surfaceTexture == null) {
+            it.resumeWhenAlive(null)
+            return@suspendCancellableCoroutine
+        }
         val surface = Surface(textureView.surfaceTexture)
         PixelCopy.request(surface, recordBitmap, { result ->
             if (result == PixelCopy.SUCCESS) {

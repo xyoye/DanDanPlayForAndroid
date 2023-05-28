@@ -3,6 +3,7 @@ package com.xyoye.player.utils
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.utils.getFileName
 import fi.iki.elonen.NanoHTTPD
+import fi.iki.elonen.NanoHTTPD.Response.Status
 import okhttp3.Request
 import java.net.URLEncoder
 import kotlin.random.Random
@@ -32,7 +33,7 @@ class VlcProxyServer private constructor() : NanoHTTPD(randomPort()) {
 
         val proxyResponse = getProxyResponse(session)
         val response = newFixedLengthResponse(
-            Response.Status.lookup(proxyResponse.code),
+            Status.lookup(proxyResponse.code) ?: Status.OK,
             proxyResponse.header("Content-Type"),
             proxyResponse.body?.byteStream(),
             proxyResponse.body?.contentLength() ?: 0

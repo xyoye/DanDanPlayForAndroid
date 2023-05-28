@@ -162,6 +162,11 @@ class ScreenShotView(
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
             return null
         }
-        return PlayRecorder.generateRenderImage(renderView, videoSize)
+        return try {
+            PlayRecorder.generateRenderImage(renderView, videoSize)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }

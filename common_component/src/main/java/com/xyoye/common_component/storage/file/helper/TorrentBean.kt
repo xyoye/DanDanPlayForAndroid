@@ -16,7 +16,7 @@ class TorrentBean(
                 mInfoHash = info.mInfoHash
                 mIsMultiFiles = info.mIsMultiFiles
                 mMultiFileBaseFolder = info.mMultiFileBaseFolder
-                mSubFileInfo = info.mSubFileInfo.onEach { it.mSubPath = torrentPath }
+                mSubFileInfo = info.mSubFileInfo?.onEach { it.mSubPath = torrentPath }
             }
         }
     }

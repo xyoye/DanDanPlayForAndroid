@@ -19,23 +19,16 @@ import java.io.InputStream
 
 class TorrentStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
-    private var torrentBean: TorrentBean? = null
-
     init {
         PlayTaskManager.init()
     }
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
-        val directoryInfo = (file as TorrentStorageFile).getRealFile()
-        val torrentPath = torrentPath(directoryInfo.mSubPath)
-        if (torrentPath.isNullOrEmpty()) {
+        val torrent = getTorrentFormFile(file)
+        if (torrent == null) {
             ToastCenter.showError("获取种子文件失败")
             return emptyList()
         }
-        val torrent = TorrentBean.formInfo(
-            torrentPath,
-            ThunderManager.getInstance().getTaskInfo(torrentPath)
-        ).also { torrentBean = it }
         if (torrent.mSubFileInfo.isNullOrEmpty()) {
             ToastCenter.showError("解析种子文件失败")
             return emptyList()
@@ -63,19 +56,30 @@ class TorrentStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return null
     }
 
-    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile {
-        return TorrentStorageFile(
-            this,
-            TorrentFileInfo().apply {
-                mFileIndex = -1
-                mSubPath = history.torrentPath
-            }
-        ).also { it.playHistory = history }
+    override suspend fun historyFile(history: PlayHistoryEntity): StorageFile? {
+        val torrentPath = history.torrentPath
+            ?: return null
+        val torrent = TorrentBean.formInfo(
+            torrentPath,
+            ThunderManager.getInstance().getTaskInfo(torrentPath)
+        )
+
+        val fileInfo = torrent.mSubFileInfo?.find {
+            it.mFileIndex == history.torrentIndex
+        } ?: return null
+
+        return TorrentStorageFile(this, fileInfo).also {
+            it.playHistory = history
+        }
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String? {
-        val torrent = torrentBean ?: return null
+        val torrent = getTorrentFormFile(file)
+            ?: return null
         val fileIndex = (file as TorrentStorageFile).getRealFile().mFileIndex
+        if (fileIndex == -1) {
+            return null
+        }
         return ThunderManager.getInstance().generatePlayUrl(torrent, fileIndex)
     }
 
@@ -94,5 +98,17 @@ class TorrentStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         } else {
             url
         }
+    }
+
+    private suspend fun getTorrentFormFile(file: StorageFile): TorrentBean? {
+        val directoryInfo = (file as TorrentStorageFile).getRealFile()
+        val torrentPath = torrentPath(directoryInfo.mSubPath)
+        if (torrentPath.isNullOrEmpty()) {
+            return null
+        }
+        return TorrentBean.formInfo(
+            torrentPath,
+            ThunderManager.getInstance().getTaskInfo(torrentPath)
+        )
     }
 }

@@ -1,6 +1,7 @@
 package com.xyoye.common_component.network.helper
 
 import android.annotation.SuppressLint
+import com.xyoye.common_component.BuildConfig
 import okhttp3.OkHttpClient
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
@@ -36,11 +37,13 @@ object UnsafeOkHttpClient {
     }
 
     val client: OkHttpClient by lazy {
-        OkHttpClient.Builder()
+        val builder = OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, unSafeTrustManager)
             .hostnameVerifier { _, _ -> true }
-            .addNetworkInterceptor(LoggerInterceptor().webDav())
             .addNetworkInterceptor(RedirectAuthorizationInterceptor())
-            .build()
+        if (BuildConfig.DEBUG) {
+            builder.addNetworkInterceptor(LoggerInterceptor().webDav())
+        }
+        return@lazy builder.build()
     }
 }

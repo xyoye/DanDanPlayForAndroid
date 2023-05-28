@@ -10,4 +10,5 @@ import kotlinx.coroutines.SupervisorJob
 
 object SupervisorScope {
     val IO =  CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    val Main =  CoroutineScope(SupervisorJob() + Dispatchers.Main)
 }

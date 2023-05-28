@@ -32,8 +32,10 @@ object PlayTaskManager {
 
         isInitialed = true
 
-        PlayTaskBridge.taskRemoveLiveData.observeForever {
-            onPlayTaskRemove(it)
+        SupervisorScope.Main.launch {
+            PlayTaskBridge.taskRemoveLiveData.observeForever {
+                onPlayTaskRemove(it)
+            }
         }
 
         PlayTaskBridge.taskInfoQuery = { id ->

@@ -17,7 +17,6 @@
             android:layout_marginHorizontal="20dp"
             android:background="@mipmap/ic_update_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/iv_dialog_close"
             app:layout_constraintDimensionRatio="700:897"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -135,9 +134,8 @@
             android:src="@drawable/ic_dialog_close"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/layout_content"
-            app:layout_constraintStart_toStartOf="@id/layout_content"
-            app:layout_constraintTop_toBottomOf="@id/layout_content" />
+            app:layout_constraintStart_toEndOf="@id/layout_content"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

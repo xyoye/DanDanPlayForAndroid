@@ -112,6 +112,12 @@ class BindExtraSourceActivity :
             showKeyboard(dataBinding.searchEt)
         }
 
+        dataBinding.videoLayout.itemLayout.setOnClickListener {
+            dataBinding.searchEt.setText(storageFile.fileName())
+            dataBinding.searchEt.setSelection(storageFile.fileName().length)
+            showKeyboard(dataBinding.searchEt)
+        }
+
         dataBinding.viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }

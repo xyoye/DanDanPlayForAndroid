@@ -1,7 +1,6 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +16,6 @@ import javax.xml.transform.stream.StreamResult
  */
 
 object DanmuUtils {
-    private const val MAX_DANMU_CHECK_LINE = 15
-    private const val DANMU_TAG = "<d p="
 
     fun saveDanmu(fileName: String, inputStream: InputStream, directoryName: String? = null): String? {
         val directory = if (directoryName != null && directoryName.isNotEmpty()) {
@@ -180,29 +177,6 @@ object DanmuUtils {
         return danmuContent
     }
 
-    fun findLocalDanmuByVideo(videoPath: String): String? {
-        val videoFile = File(videoPath)
-        if (!videoFile.exists())
-            return null
-        val parentDir = videoFile.parentFile
-            ?: return null
-        if (parentDir.exists().not())
-            return null
-
-        //获取文件名，无后缀
-        val videoNameNotExtension = getFileNameNoExtension(videoFile)
-        val targetVideoName = "$videoNameNotExtension."
-
-        //遍历文件夹
-        parentDir.listFiles()?.forEach {
-            //存在可能是同名弹幕的文件
-            isSameNameDanmu(it, targetVideoName)?.let { danmuPath ->
-                return danmuPath
-            }
-        }
-        return null
-    }
-
     fun appendDanmu(danmuPath: String, appendText: String) {
         val danmuFile = File(danmuPath)
         if (!danmuFile.exists())
@@ -294,51 +268,5 @@ object DanmuUtils {
                 return@withContext null
             }
         }
-    }
-
-    /**
-     * 弹幕内容是否为空
-     *
-     * 前15行必须出现以 <d p= 开头的内容，否则视为空弹幕文件
-     */
-    fun isDanmuContentEmpty(danmuPath: String?): Boolean {
-        if (danmuPath.isNullOrEmpty())
-            return true
-        val danmuFile = File(danmuPath)
-        if (danmuFile.isInvalid())
-            return true
-
-        var fileReader: FileReader? = null
-        var bufferReader: BufferedReader? = null
-        try {
-            fileReader = FileReader(danmuFile)
-            bufferReader = BufferedReader(fileReader)
-
-            var line = 0
-            while (line < MAX_DANMU_CHECK_LINE) {
-                val content = bufferReader.readLine()?.trim()
-                if (content != null && content.startsWith(DANMU_TAG))
-                    return false
-                line++
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            IOUtils.closeIO(fileReader)
-            IOUtils.closeIO(bufferReader)
-        }
-        return true
-    }
-
-    private fun isSameNameDanmu(childFile: File, targetVideoName: String): String? {
-        //弹幕文件名与视频名相同
-        if (childFile.name.startsWith(targetVideoName)) {
-            val extension: String = getFileExtension(childFile.name)
-            //xml格式弹幕
-            if (extension.equals("xml", true)) {
-                return childFile.absolutePath
-            }
-        }
-        return null
     }
 }

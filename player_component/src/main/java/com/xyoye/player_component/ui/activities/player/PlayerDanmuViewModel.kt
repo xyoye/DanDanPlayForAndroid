@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.isValid
+import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.source.base.BaseVideoSource
@@ -33,7 +35,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             //如果弹幕内容不为空，则无需匹配弹幕
-            if (DanmuUtils.isDanmuContentEmpty(historyDanmuPath).not()) {
+            if (historyDanmuPath.toFile().isValid()) {
                 loadResult.state = LoadDanmuState.NO_MATCH_REQUIRE
                 loadResult.danmuPath = historyDanmuPath
                 loadResult.episodeId = videoSource.getEpisodeId()

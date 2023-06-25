@@ -71,6 +71,9 @@ class StorageFileFragment :
     }
 
     fun requestFocus(reversed: Boolean = false) {
+        if (isDestroyed()) {
+            return
+        }
         val targetIndex = if (reversed) dataBinding.storageFileRv.childCount - 1 else 0
         dataBinding.storageFileRv.getChildAt(targetIndex)?.requestFocus()
     }

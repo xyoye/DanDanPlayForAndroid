@@ -103,7 +103,9 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     override fun stop() {
         playbackState = PlaybackStateCompat.STATE_STOPPED
 
-        mMediaPlayer.stop()
+        if (mMediaPlayer.hasMedia() && !mMediaPlayer.isReleased) {
+            mMediaPlayer.stop()
+        }
     }
 
     override fun reset() {

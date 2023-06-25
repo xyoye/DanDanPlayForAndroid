@@ -126,7 +126,10 @@ class ExternalSubtitleView(
         }
         lifecycleScope.launch(Dispatchers.IO) {
             mSubtitleManager.loadSubtitle(stream.externalStreamPath)
-            mControlWrapper.onSubtitleSourceUpdate(stream.externalStreamPath)
+            // 仅当外挂流字幕路径不为空时，才通知外部更新字幕源
+            if (stream.externalStreamPath.isNotEmpty()) {
+                mControlWrapper.onSubtitleSourceUpdate(stream.externalStreamPath)
+            }
         }
     }
 

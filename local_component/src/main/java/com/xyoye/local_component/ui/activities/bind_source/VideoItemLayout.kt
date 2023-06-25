@@ -30,6 +30,8 @@ object VideoItemLayout {
         dataBinding.videoLayout.run {
             itemLayout.setBackgroundColor(R.color.item_bg_color.toResColor())
 
+            titleTv.setTextIsSelectable(true)
+
             coverIv.loadImage(data)
 
             titleTv.text = data.fileName()
@@ -40,7 +42,6 @@ object VideoItemLayout {
 
             setupVideoTag(tagRv, data)
 
-            moreActionIv.isVisible = false
             dividerView.isVisible = false
         }
     }

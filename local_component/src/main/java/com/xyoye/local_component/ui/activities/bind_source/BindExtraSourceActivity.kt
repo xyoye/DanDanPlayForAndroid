@@ -20,6 +20,7 @@ import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBindExtraSourceBinding
 import com.xyoye.local_component.listener.ExtraSourceListener
+import com.xyoye.local_component.ui.dialog.SegmentWordDialog
 import com.xyoye.local_component.ui.fragment.bind_danmu.BindDanmuSourceFragment
 import com.xyoye.local_component.ui.fragment.bind_subtitle.BindSubtitleSourceFragment
 
@@ -87,19 +88,8 @@ class BindExtraSourceActivity :
 
         dataBinding.searchEt.addTextChangedListener(afterTextChanged = {
             val textLength = it?.length ?: 0
-            if (textLength > 0) {
-                if (dataBinding.searchEt.isFocused) {
-                    dataBinding.clearTextIv.isVisible = true
-                }
-            } else {
-                dataBinding.clearTextIv.isVisible = false
-            }
+            dataBinding.clearTextIv.isVisible = textLength > 0
         })
-
-        dataBinding.searchEt.setOnFocusChangeListener { _, isFocus ->
-            val searchText = dataBinding.searchEt.text?.toString() ?: ""
-            dataBinding.clearTextIv.isVisible = isFocus && searchText.isNotEmpty()
-        }
 
         dataBinding.searchTv.setOnClickListener {
             hideKeyboard(dataBinding.searchEt)
@@ -116,6 +106,10 @@ class BindExtraSourceActivity :
             dataBinding.searchEt.setText(storageFile.fileName())
             dataBinding.searchEt.setSelection(storageFile.fileName().length)
             showKeyboard(dataBinding.searchEt)
+        }
+
+        dataBinding.videoLayout.moreActionIv.setOnClickListener {
+            viewModel.segmentTitle(storageFile)
         }
 
         dataBinding.viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -142,6 +136,18 @@ class BindExtraSourceActivity :
             VideoItemLayout.initVideoLayout(dataBinding, it)
             childPage(0)?.onStorageFileChanged(it)
             childPage(1)?.onStorageFileChanged(it)
+        }
+
+        viewModel.segmentTitleLiveData.observe(this) {
+            SegmentWordDialog(this, it) { searchText ->
+                dataBinding.searchEt.setText(searchText)
+                dataBinding.searchEt.setSelection(searchText.length)
+
+                hideKeyboard(dataBinding.searchEt)
+                dataBinding.searchCl.requestFocus()
+
+                childPage()?.search(searchText)
+            }.show()
         }
     }
 

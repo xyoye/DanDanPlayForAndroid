@@ -2,6 +2,7 @@ package com.xyoye.storage_component.utils.screencast.provider
 
 import android.net.Uri
 import com.xyoye.common_component.extension.md5
+import com.xyoye.common_component.network.helper.RedirectAuthorizationInterceptor
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.RangeUtils
 import com.xyoye.common_component.utils.getFileExtension
@@ -133,6 +134,7 @@ object ServerController {
             "redirect to real source"
         ).apply {
             addHeader("Location", redirectUrl)
+            addHeader(RedirectAuthorizationInterceptor.TAG_AUTH_REDIRECT, "redirect")
         }
     }
 

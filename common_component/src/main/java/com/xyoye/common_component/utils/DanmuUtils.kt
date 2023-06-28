@@ -94,7 +94,7 @@ object DanmuUtils {
         if (!danmuDir.exists()) {
             danmuDir.mkdirs()
         }
-        val danmuFile = File(danmuDir, fileName.formatFileName())
+        val danmuFile = File(danmuDir, fileNameFormat(fileName))
         if (danmuFile.exists())
             danmuFile.delete()
         danmuFile.createNewFile()
@@ -115,6 +115,16 @@ object DanmuUtils {
         }
 
         return danmuFile.absolutePath
+    }
+
+    private fun fileNameFormat(fileName: String): String {
+        val formatted = fileName.formatFileName()
+        // 文件名超过50个字符，截断
+        if (formatted.length > 50) {
+            val substringName = formatted.removeSuffix(".xml").substring(0, 50)
+            return "$substringName.xml"
+        }
+        return formatted
     }
 
     private fun buildXmlContent(danmuData: DanmuData): String? {

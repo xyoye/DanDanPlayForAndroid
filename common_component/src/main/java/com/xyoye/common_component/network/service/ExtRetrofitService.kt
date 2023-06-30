@@ -1,9 +1,11 @@
 package com.xyoye.common_component.network.service
 
+import com.xyoye.common_component.network.Retrofit
 import com.xyoye.data_component.data.BiliBiliCidData
 import com.xyoye.data_component.data.SubtitleShooterData
 import com.xyoye.data_component.data.SubtitleSubData
 import com.xyoye.data_component.data.SubtitleThunderData
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -53,4 +55,10 @@ interface ExtRetrofitService {
     @GET
     @Streaming
     suspend fun getCidInfo(@Url url: String): BiliBiliCidData
+
+    @POST
+    suspend fun segmentWords(
+        @Url url: String = "${Retrofit.handLPUrl}/api/parse",
+        @Body params: RequestBody
+    ): retrofit2.Response<ResponseBody>
 }

@@ -48,6 +48,10 @@ abstract class BaseAppFragment<V : ViewDataBinding> : Fragment() {
         mAttachActivity.hideLoading()
     }
 
+    protected fun isDestroyed(): Boolean {
+        return _binding == null
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

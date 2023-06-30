@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/search_cl"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/background_search_edit"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="搜索词"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:minLines="1"
+                android:paddingStart="10dp"
+                android:singleLine="true"
+                android:textColor="@color/text_black"
+                android:textColorHint="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toStartOf="@+id/clear_text_iv"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/clear_text_iv"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:padding="9dp"
+                android:src="@drawable/ic_edit_clear"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.xyoye.common_component.weight.LabelsView
+            android:id="@+id/candidate_labels_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            app:labelBackground="@drawable/background_segment_labels"
+            app:labelTextColor="@color/text_black"
+            app:labelTextPaddingBottom="5dp"
+            app:labelTextPaddingLeft="10dp"
+            app:labelTextPaddingRight="10dp"
+            app:labelTextPaddingTop="5dp"
+            app:labelTextSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/search_cl"
+            app:lineMargin="10dp"
+            app:maxSelect="0"
+            app:selectType="MULTI"
+            app:wordMargin="10dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

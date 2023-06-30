@@ -193,7 +193,9 @@ class DanDanVideoPlayer(
     }
 
     override fun onCompletion() {
-        setPlayState(PlayState.STATE_COMPLETED)
+        if (mCurrentPlayState != PlayState.STATE_ERROR) {
+            setPlayState(PlayState.STATE_COMPLETED)
+        }
         keepScreenOn = false
         PlayRecorder.recordProgress(videoSource, 0, getDuration())
     }

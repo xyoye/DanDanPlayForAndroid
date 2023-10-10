@@ -46,6 +46,14 @@ object AppConfigTable {
     var commonlyFolder2: String? = null
 
     @MMKVFiled
+    //上次打开弹幕目录
+    var lastOpenDanmakuFolder: String? = null
+
+    @MMKVFiled
+    //上次打开字幕目录
+    var lastOpenSubtitleFolder: String? = null
+
+    @MMKVFiled
     //上次打开目录
     var lastOpenFolder: String? = null
 

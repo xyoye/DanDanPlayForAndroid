@@ -64,8 +64,17 @@ class SwitchSourceView(
             R.string.select_local_danmu.toResString()
         openDirectory(getDefaultOpenDirectory())
 
+        var lastOpenFolderPath = if (isSwitchSubtitle) {
+            AppConfig.getLastOpenSubtitleFolder()
+        } else {
+            AppConfig.getLastOpenDanmakuFolder()
+        }
+        if (lastOpenFolderPath == null) {
+            lastOpenFolderPath = AppConfig.getLastOpenFolder()
+        }
+
         mCommonDirectoryData.clear()
-        mCommonDirectoryData.addAll(getCommonDirectoryList())
+        mCommonDirectoryData.addAll(getCommonDirectoryList(lastOpenFolderPath))
         viewBinding.rvCommonFolder.setData(mCommonDirectoryData)
 
         viewBinding.removeTv.isVisible = isSwitchSubtitle.not()
@@ -221,6 +230,11 @@ class SwitchSourceView(
 
         File(data.filePath).parentFile?.absolutePath?.let {
             AppConfig.putLastOpenFolder(it)
+            if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
+                AppConfig.putLastOpenSubtitleFolder(it)
+            } else {
+                AppConfig.putLastOpenDanmakuFolder(it)
+            }
         }
 
         if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
@@ -323,7 +337,7 @@ class SwitchSourceView(
     /**
      * 获取常用目录列表
      */
-    private fun getCommonDirectoryList(): MutableList<FilePathBean> {
+    private fun getCommonDirectoryList(lastOpenFolderPath: String?): MutableList<FilePathBean> {
         val commonDirectoryList = mutableListOf<FilePathBean>()
 
         //常用目录1
@@ -342,7 +356,6 @@ class SwitchSourceView(
         commonDirectoryList.add(FilePathBean("默认目录", getDefaultOpenDirectory()))
 
         //上次打开目录
-        val lastOpenFolderPath = AppConfig.getLastOpenFolder()
         if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
             commonDirectoryList.add(FilePathBean("上次使用", lastOpenFolderPath))
         }

@@ -3,7 +3,6 @@ package com.xyoye.common_component.storage.impl
 import android.net.Uri
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
@@ -122,7 +121,7 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             ToastCenter.showError("x${error.code} ${error.msg}")
         } catch (e: Exception) {
             e.printStackTrace()
-            val error = RequestErrorHandler(e).handlerError()
+            val error = RequestError.formException(e)
             ToastCenter.showError("x${error.code} ${error.msg}")
         }
         return false

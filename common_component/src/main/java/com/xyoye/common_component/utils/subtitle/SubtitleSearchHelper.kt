@@ -3,11 +3,14 @@ package com.xyoye.common_component.utils.subtitle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.network.request.RequestErrorHandler
 import com.xyoye.data_component.data.SubtitleSourceBean
 import com.xyoye.data_component.data.SubtitleSubData
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +66,7 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
                     val limitError = RequestError(509, "请求频率过高")
                     LoadResult.Error(limitError)
                 } else {
-                    LoadResult.Error(RequestErrorHandler(e).handlerError())
+                    LoadResult.Error(RequestError.formException(e))
                 }
             }
         }

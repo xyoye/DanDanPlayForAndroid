@@ -19,28 +19,35 @@ class Retrofit private constructor() {
         const val backupUrl = "http://139.217.235.62:16001/"
         private const val resUrl = "http://res.acplay.net/"
         private const val shooterUrl = "http://api.assrt.net/"
-        private const val torrentUrl = "https://m2t.dandanplay.net/"
         private const val remoteUrl = "http://127.0.0.1:80/"
         const val handLPUrl = "https://www.hanlp.com"
+
+        val danDanPlayService = Holder.instance.danDanPlayService
 
         val service = Holder.instance.retrofitService
         val resService = Holder.instance.resRetrofitService
         val extService = Holder.instance.extRetrofitService
-        val torrentService = Holder.instance.torrentRetrofitService
         val remoteService = Holder.instance.remoteRetrofitService
         val screencastService = Holder.instance.screencastService
     }
 
+    private var danDanPlayService: DanDanPlayService
     private var retrofitService: RetrofitService
     private var resRetrofitService: ResRetrofitService
     private var extRetrofitService: ExtRetrofitService
-    private var torrentRetrofitService: TorrentRetrofitService
     private var remoteRetrofitService: RemoteService
     private var screencastService: ScreencastService
 
     private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
 
     init {
+        danDanPlayService = Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(getOkHttpClient(needAuth = true, backup = true))
+            .baseUrl(baseUrl)
+            .build()
+            .create(DanDanPlayService::class.java)
+
         retrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient(needAuth = true, backup = true))
@@ -61,13 +68,6 @@ class Retrofit private constructor() {
             .baseUrl(shooterUrl)
             .build()
             .create(ExtRetrofitService::class.java)
-
-        torrentRetrofitService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient())
-            .baseUrl(torrentUrl)
-            .build()
-            .create(TorrentRetrofitService::class.java)
 
         remoteRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)

@@ -2,7 +2,7 @@ package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestErrorHandler
+import com.xyoye.common_component.network.request.RequestError
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.RemoteFileHelper
@@ -136,7 +136,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             } else if (e is HttpException && e.code() == 401) {
                 ToastCenter.showWarning("连接失败：密钥验证失败")
             } else {
-                val error = RequestErrorHandler(e).handlerError()
+                val error = RequestError.formException(e)
                 ToastCenter.showWarning("连接失败：${error.msg}")
             }
             null

@@ -4,9 +4,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.DanDanPlayRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.BannerData
+import kotlinx.coroutines.launch
 
 /**
  * Created by xyoye on 2020/7/28.
@@ -18,17 +21,17 @@ class HomeFragmentViewModel : BaseViewModel() {
     val bannersLiveData = MutableLiveData<BannerData>()
 
     fun getWeeklyAnime() {
-        httpRequest<BangumiAnimeData>(viewModelScope) {
-            api {
-                Retrofit.service.getWeeklyAnime()
+        viewModelScope.launch {
+            val result = DanDanPlayRepository.getWeeklyAnime()
+
+            if (result is Response.Error) {
+                showNetworkError(result.error)
+                return@launch
             }
 
-            onSuccess {
-                weeklyAnimeLiveData.postValue(splitWeeklyAnime(it))
-            }
-
-            onError {
-                showNetworkError(it)
+            if (result is Response.Success) {
+                val weeklyAnimeData = splitWeeklyAnime(result.data)
+                weeklyAnimeLiveData.postValue(weeklyAnimeData)
             }
         }
     }

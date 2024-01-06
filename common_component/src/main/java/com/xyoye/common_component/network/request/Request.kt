@@ -1,71 +1,88 @@
 package com.xyoye.common_component.network.request
 
+import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 
 /**
- * Created by xyoye on 2020/7/6.
+ * Created by xyoye on 2024/1/5
  */
 
-class Request<T> {
-    lateinit var api: suspend () -> T
+class Request {
+    private val requestParams = hashMapOf<String, Any>()
+    private var retry = 0
 
-    private var onStart: (() -> Unit)? = null
-    private var onSuccess: ((T) -> Unit)? = null
-    private var onError: ((RequestError) -> Unit)? = null
-    private var onComplete: (() -> Unit)? = null
-
-    infix fun api(api: suspend () -> T) {
-        this.api = api
+    fun param(key: String, value: Any): Request {
+        requestParams[key] = value
+        return this
     }
 
-    infix fun onStart(start: () -> Unit) {
-        this.onStart = start
+    fun params(map: Map<String, Any>): Request {
+        requestParams.putAll(map)
+        return this
     }
 
-    infix fun onSuccess(success: (T) -> Unit) {
-        this.onSuccess = success
+    fun retry(count: Int): Request {
+        retry = count
+        return this
     }
 
-    infix fun onError(error: (RequestError) -> Unit) {
-        this.onError = error
-    }
-
-    infix fun onComplete(complete: () -> Unit) {
-        this.onComplete = complete
-    }
-
-    fun doRequest(scope: CoroutineScope) {
-        scope.launch(context = Dispatchers.Main) {
-            onStart?.invoke()
-
+    suspend fun <T> doGet(
+        api: suspend (Map<String, Any>) -> T
+    ): Response<T> {
+        return withContext(Dispatchers.IO) {
             try {
-                val deferred = scope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-                    api()
+                val result = api.invoke(requestParams)
+                if (result is CommonJsonData && result.success.not()) {
+                    return@withContext Response.Error(RequestError.formJsonData(result))
                 }
 
-                val result = deferred.await()
-
-                if (result is CommonJsonData && !result.success) {
-                    onError?.invoke(RequestErrorHandler.handleCommonError(result))
-                } else {
-                    onSuccess?.invoke(result)
-                }
+                return@withContext Response.Success(result)
             } catch (e: Exception) {
-                //忽略页面退出的提示
-                if (e is CancellationException){
-                    return@launch
+                e.printStackTrace()
+                if (considerRetry(e)) {
+                    return@withContext doGet(api)
                 }
-                onError?.invoke(
-                    RequestErrorHandler(e).handlerError()
-                )
-            } finally {
-                onComplete?.invoke()
+                return@withContext Response.Error(RequestError.formException(e))
             }
         }
     }
-}
 
-inline fun <T> httpRequest(scope: CoroutineScope, requester: Request<T>.() -> Unit) {
-    Request<T>().apply(requester).doRequest(scope)
+    suspend fun <T> doPost(
+        api: suspend (RequestBody) -> T
+    ): Response<T> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val result = api.invoke(requestBody())
+                if (result is CommonJsonData && result.success.not()) {
+                    return@withContext Response.Error(RequestError.formJsonData(result))
+                }
+
+                return@withContext Response.Success(result)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (considerRetry(e)) {
+                    return@withContext doPost(api)
+                }
+                return@withContext Response.Error(RequestError.formException(e))
+            }
+        }
+    }
+
+    /**
+     * Post请求体
+     */
+    private fun requestBody(): RequestBody {
+        val params: Map<String, Any> = requestParams
+        val requestJson = JsonHelper.toJson(params).orEmpty()
+        val mediaType = "application/json;charset=utf-8".toMediaType()
+        return requestJson.toRequestBody(mediaType)
+    }
+
+    private fun considerRetry(t: Throwable) = t is IOException && retry-- > 0
 }

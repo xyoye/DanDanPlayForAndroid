@@ -6,6 +6,8 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.DanDanPlayRepository
+import com.xyoye.common_component.network.request.data
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.DanmuUtils
@@ -51,19 +53,13 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             onStart { showLoading() }
 
             api {
-                val params = HashMap<String, String>()
-                params["fileName"] = videoFile!!.name
-                params["fileHash"] = IOUtils.getFileHash(videoFile.absolutePath) ?: ""
-                params["fileSize"] = videoFile.length().toString()
-                params["videoDuration"] = "0"
-                params["matchMode"] = "hashOnly"
-
                 history = DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(
                     storageFile.uniqueKey(), storageFile.storage.library.id
                 )
 
-                val matchData = Retrofit.service.matchDanmu(params)
-                danmuMatchBean = mapDanmuMatchData(matchData)
+                val fileHash = IOUtils.getFileHash(videoFile!!.absolutePath) ?: ""
+                val result = DanDanPlayRepository.matchDanmu(fileHash)
+                danmuMatchBean = mapDanmuMatchData(result.data)
                 danmuMatchBean?.let { curAnimeList.add(it) }
             }
 

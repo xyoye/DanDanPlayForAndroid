@@ -3,10 +3,10 @@ package com.xyoye.anime_component.ui.fragment.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.repository.DanDanPlayRepository
+import com.xyoye.common_component.network.repository.AnimeRepository
+import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.BannerData
 import kotlinx.coroutines.launch
@@ -22,10 +22,10 @@ class HomeFragmentViewModel : BaseViewModel() {
 
     fun getWeeklyAnime() {
         viewModelScope.launch {
-            val result = DanDanPlayRepository.getWeeklyAnime()
+            val result = AnimeRepository.getWeeklyAnime()
 
             if (result is Response.Error) {
-                showNetworkError(result.error)
+                ToastCenter.showError(result.error.toastMsg)
                 return@launch
             }
 
@@ -37,16 +37,16 @@ class HomeFragmentViewModel : BaseViewModel() {
     }
 
     fun getBanners() {
-        httpRequest<BannerData>(viewModelScope) {
-            api {
-                Retrofit.service.getBanners()
-            }
-            onSuccess {
-                bannersLiveData.postValue(it)
+        viewModelScope.launch {
+            val result = OtherRepository.getHomeBanner()
+
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onError {
-                showNetworkError(it)
+            if (result is Response.Success) {
+                bannersLiveData.postValue(result.data)
             }
         }
     }

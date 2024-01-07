@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.network.repository.AnimeRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.stringCompare
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
@@ -17,7 +17,7 @@ import com.xyoye.data_component.entity.AnimeSearchHistoryEntity
 import com.xyoye.data_component.enums.AnimeSortType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Collections
 
 class SearchAnimeFragmentViewModel : BaseViewModel() {
     private val animeTypeData = mutableListOf(
@@ -64,24 +64,20 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
             return
         }
 
-        viewModelScope.launch(context = Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             DatabaseManager.instance
                 .getAnimeSearchHistoryDao()
                 .insert(AnimeSearchHistoryEntity(searchText.get()!!))
-        }
 
-        httpRequest(viewModelScope) {
-            api {
-                Retrofit.service.searchAnime(searchWord, searchType)
+            val result = AnimeRepository.searchAnime(searchWord, searchType)
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onSuccess {
-                searchAnimeData = it
+            if (result is Response.Success) {
+                searchAnimeData = result.data
                 showSearchResult()
-            }
-
-            onError {
-                showNetworkError(it)
             }
         }
     }
@@ -122,12 +118,14 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 checkedAnimeType.set(animeTypeData[position].typeName)
                 isCheckedType.set(true)
             }
+
             position -> {
                 searchType = null
                 animeTypeData[position].isChecked = false
                 checkedAnimeType.set("类型: ")
                 isCheckedType.set(false)
             }
+
             else -> {
                 animeTypeData[position].isChecked = true
                 searchType = animeTypeData[position].typeId
@@ -168,10 +166,12 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
             }
+
             position -> {
                 sortTypeData[position].isChecked = false
                 sortType = AnimeSortType.NONE
             }
+
             else -> {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
@@ -183,7 +183,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
         showSearchResult()
     }
 
-    fun deleteSearchHistory(searchText: String){
+    fun deleteSearchHistory(searchText: String) {
         viewModelScope.launch(context = Dispatchers.Main) {
             DatabaseManager.instance
                 .getAnimeSearchHistoryDao()
@@ -191,7 +191,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
         }
     }
 
-    fun deleteAllSearchHistory(){
+    fun deleteAllSearchHistory() {
         viewModelScope.launch(context = Dispatchers.Main) {
             DatabaseManager.instance
                 .getAnimeSearchHistoryDao()

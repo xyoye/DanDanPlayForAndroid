@@ -47,7 +47,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
         initRv()
 
         if (historyData == null) {
-            viewModel.getUserFollow()
+            viewModel.getCloudHistory()
         } else {
             dataBinding.historyRv.setData(historyData!!.playHistoryAnimes)
         }

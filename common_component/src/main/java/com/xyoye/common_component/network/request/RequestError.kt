@@ -12,6 +12,9 @@ import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 
 data class RequestError(val code: Int, val msg: String): Throwable() {
+
+    val toastMsg: String get() = "x$code $msg"
+
     companion object {
         fun formJsonData(data: CommonJsonData): RequestError {
             return RequestError(data.errorCode, data.errorMessage ?: "服务端处理失败")

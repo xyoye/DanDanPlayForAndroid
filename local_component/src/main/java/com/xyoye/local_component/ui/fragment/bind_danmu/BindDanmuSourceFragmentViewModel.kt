@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.repository.DanDanPlayRepository
-import com.xyoye.common_component.network.request.data
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.Response
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.DanmuUtils
@@ -58,8 +58,8 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                 )
 
                 val fileHash = IOUtils.getFileHash(videoFile!!.absolutePath) ?: ""
-                val result = DanDanPlayRepository.matchDanmu(fileHash)
-                danmuMatchBean = mapDanmuMatchData(result.data)
+                val result = SourceRepository.matchDanmu(fileHash)
+                danmuMatchBean = mapDanmuMatchData(result.dataOrNull)
                 danmuMatchBean?.let { curAnimeList.add(it) }
             }
 
@@ -75,61 +75,55 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
         if (searchText.isEmpty())
             return
 
-        httpRequest<Unit>(viewModelScope) {
-            onStart {
-                showLoading()
+        viewModelScope.launch {
+            showLoading()
+            val result = SourceRepository.searchDanmu(searchText)
+            hideLoading()
+
+            val animeData = result.dataOrNull?.animes ?: mutableListOf()
+            val animeList = mapDanmuAnimeData(animeData)
+            if (danmuMatchBean != null) {
+                animeList.add(0, danmuMatchBean!!)
             }
 
-            api {
-                val searchResult = Retrofit.service.searchDanmu(searchText, "")
-                val animeData = searchResult.animes ?: mutableListOf()
+            curAnimeList.clear()
+            curAnimeList.addAll(animeList)
 
-                val animeList = mapDanmuAnimeData(animeData)
-                if (danmuMatchBean != null) {
-                    animeList.add(0, danmuMatchBean!!)
-                }
-
-                curAnimeList.clear()
-                curAnimeList.addAll(animeList)
-            }
-
-            onSuccess {
-                selectTab(0)
-            }
-
-            onComplete { hideLoading() }
+            selectTab(0)
         }
     }
 
     fun getDanmuThirdSource(contentBean: DanmuSourceContentBean) {
-        httpRequest(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch {
+            showLoading()
+            val result = SourceRepository.getRelatedDanmu(contentBean.episodeId.toString())
+            hideLoading()
 
-            api {
-                Retrofit.service.getDanmuRelated(contentBean.episodeId.toString())
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onSuccess {
-                thirdSourceLiveData.postValue(Pair(contentBean, it))
+            if (result is Response.Success) {
+                thirdSourceLiveData.postValue(contentBean to result.data)
             }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
         }
     }
 
     fun downloadDanmu(contentBean: DanmuSourceContentBean) {
-        httpRequest(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch {
+            showLoading()
+            val result = SourceRepository.getDanmuContent(contentBean.episodeId.toString())
+            hideLoading()
 
-            api {
-                val danmuData = Retrofit.service.getDanmuContent(
-                    contentBean.episodeId.toString(),
-                    true
-                )
+            if(result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
+            }
+
+            if (result is Response.Success) {
                 val danmuPath = DanmuUtils.saveDanmu(
-                    danmuData,
+                    result.data,
                     contentBean.animeTitle,
                     "${contentBean.episodeTitle}.xml"
                 )
@@ -139,17 +133,10 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                     ToastCenter.showSuccess("保存弹幕成功！")
                     databaseDanmu(danmuPath, contentBean.episodeId)
                 }
-            }
 
-            onSuccess {
                 sourceRefreshLiveData.postValue(Any())
             }
 
-            onError {
-                ToastCenter.showError("x${it.code} ${it.msg}")
-            }
-
-            onComplete { hideLoading() }
         }
     }
 
@@ -168,45 +155,41 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             return
         }
 
-        httpRequest(viewModelScope) {
-            onStart { showLoading() }
-
-            api {
-                val allDanmuData = DanmuData(0)
-                //下载并合并所有第三方源弹幕
-                for (source in danmuSources) {
-                    val danmuData = if (source.isOfficial) {
-                        Retrofit.service.getDanmuContent(source.sourceUrl, false, source.format)
-                    } else {
-                        Retrofit.service.getDanmuExtContent(source.sourceUrl)
-                    }
-                    allDanmuData.count += danmuData.count
-                    allDanmuData.comments.addAll(danmuData.comments)
-                }
-
-
-                val danmuPath = DanmuUtils.saveDanmu(
-                    allDanmuData,
-                    contentBean.animeTitle,
-                    "${contentBean.episodeTitle}.xml"
-                )
-                if (danmuPath.isNullOrEmpty()) {
-                    ToastCenter.showError("保存弹幕失败")
+        viewModelScope.launch {
+            val allDanmuData = DanmuData(0)
+            showLoading()
+            for (source in danmuSources) {
+                val result = if (source.isOfficial) {
+                    SourceRepository.getDanmuContent(source.sourceUrl, withRelated = false)
                 } else {
-                    ToastCenter.showSuccess("保存弹幕成功！")
-                    databaseDanmu(danmuPath, contentBean.episodeId)
+                    SourceRepository.getRelatedDanmuContent(source.sourceUrl)
+                }
+
+                if (result is Response.Error) {
+                    hideLoading()
+                    ToastCenter.showError(result.error.toastMsg)
+                    return@launch
+                }
+
+                result.dataOrNull?.let {
+                    allDanmuData.count += it.count
+                    allDanmuData.comments.addAll(it.comments)
                 }
             }
+            hideLoading()
 
-            onSuccess {
-                sourceRefreshLiveData.postValue(Any())
+            val danmuPath = DanmuUtils.saveDanmu(
+                allDanmuData,
+                contentBean.animeTitle,
+                "${contentBean.episodeTitle}.xml"
+            )
+            if (danmuPath.isNullOrEmpty()) {
+                ToastCenter.showError("保存弹幕失败")
+            } else {
+                ToastCenter.showSuccess("保存弹幕成功！")
+                databaseDanmu(danmuPath, contentBean.episodeId)
             }
-
-            onError {
-                ToastCenter.showError("x${it.code} ${it.msg}")
-            }
-
-            onComplete { hideLoading() }
+            sourceRefreshLiveData.postValue(Any())
         }
     }
 

@@ -4,12 +4,13 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.network.repository.UserRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.LoginData
+import kotlinx.coroutines.launch
 
 class RegisterViewModel : BaseViewModel() {
 
@@ -38,41 +39,38 @@ class RegisterViewModel : BaseViewModel() {
         if (!allowRegister)
             return
 
-        httpRequest<LoginData>(viewModelScope) {
-            onStart { showLoading() }
+        val appId = SecurityHelper.getInstance().appId
+        val unixTimestamp = System.currentTimeMillis() / 1000
+        val hashInfo = appId + email + password + screenName + unixTimestamp + account
+        val hash = SecurityHelper.getInstance().buildHash(hashInfo)
 
-            api {
-                val appId = SecurityHelper.getInstance().appId
-                val unixTimestamp = System.currentTimeMillis() / 1000
-                val hashInfo = appId + email + password + screenName + unixTimestamp + account
-                val hash = SecurityHelper.getInstance().buildHash(hashInfo)
+        viewModelScope.launch {
+            showLoading()
+            val result = UserRepository.register(
+                account!!,
+                password!!,
+                screenName!!,
+                email!!,
+                appId,
+                unixTimestamp.toString(),
+                hash
+            )
+            hideLoading()
 
-                val params = HashMap<String, String>()
-                params["appId"] = appId
-                params["userName"] = account!!
-                params["password"] = password!!
-                params["email"] = email!!
-                params["screenName"] = screenName!!
-                params["unixTimestamp"] = unixTimestamp.toString()
-                params["hash"] = hash
-
-                Retrofit.service.register(params)
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onSuccess {
-                if (UserInfoHelper.login(it)){
+            if (result is Response.Success) {
+                if (UserInfoHelper.login(result.data)){
                     ToastCenter.showSuccess("注册成功")
-                    registerLiveData.postValue(it)
+                    registerLiveData.postValue(result.data)
                 } else {
                     ToastCenter.showError("注册错误，请稍后再试")
                 }
             }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
         }
-
     }
 
     private fun checkAccount(account: String?): Boolean {

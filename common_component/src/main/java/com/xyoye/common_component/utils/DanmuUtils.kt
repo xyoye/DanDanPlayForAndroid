@@ -1,12 +1,24 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.xml.sax.helpers.AttributesImpl
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+import java.io.FileWriter
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import java.io.StringWriter
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.sax.SAXTransformerFactory
 import javax.xml.transform.stream.StreamResult
@@ -247,22 +259,15 @@ object DanmuUtils {
     suspend fun matchDanmuSilence(filePath: String, fileHash: String): Pair<String, Int>? {
         return withContext(Dispatchers.IO) {
             try {
-                //提取视频信息
-                val params = HashMap<String, String>()
-
-                params["fileName"] = getFileName(filePath)
-                params["fileHash"] = fileHash
-                params["fileSize"] = "0"
-                params["videoDuration"] = "0"
-                params["matchMode"] = "hashOnly"
-
                 //匹配弹幕
-                val danmuMatchData = Retrofit.service.matchDanmu(params)
+                val danmuMatchData = SourceRepository.matchDanmu(fileHash).dataOrNull
+                    ?: return@withContext null
 
                 //只存在一个匹配的弹幕
                 if (danmuMatchData.isMatched && danmuMatchData.matches!!.size == 1) {
                     val episodeId = danmuMatchData.matches!![0].episodeId
-                    val danmuData = Retrofit.service.getDanmuContent(episodeId.toString(), true)
+                    val danmuData = SourceRepository.getDanmuContent(episodeId.toString()).dataOrNull
+                        ?: return@withContext null
 
                     val folderName = getParentFolderName(filePath)
                     val fileNameNotExt = getFileNameNoExtension(filePath)

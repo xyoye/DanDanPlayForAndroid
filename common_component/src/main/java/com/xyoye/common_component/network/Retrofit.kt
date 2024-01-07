@@ -1,8 +1,19 @@
 package com.xyoye.common_component.network
 
 import com.xyoye.common_component.BuildConfig
-import com.xyoye.common_component.network.helper.*
-import com.xyoye.common_component.network.service.*
+import com.xyoye.common_component.network.helper.AgentInterceptor
+import com.xyoye.common_component.network.helper.AuthInterceptor
+import com.xyoye.common_component.network.helper.BackupDomainInterceptor
+import com.xyoye.common_component.network.helper.GzipInterceptor
+import com.xyoye.common_component.network.helper.LoggerInterceptor
+import com.xyoye.common_component.network.helper.RemoteInterceptor
+import com.xyoye.common_component.network.helper.ResDomainInterceptor
+import com.xyoye.common_component.network.helper.ScreencastInterceptor
+import com.xyoye.common_component.network.service.DanDanPlayService
+import com.xyoye.common_component.network.service.ExtRetrofitService
+import com.xyoye.common_component.network.service.RemoteService
+import com.xyoye.common_component.network.service.ResRetrofitService
+import com.xyoye.common_component.network.service.ScreencastService
 import com.xyoye.common_component.utils.JsonHelper
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -24,7 +35,6 @@ class Retrofit private constructor() {
 
         val danDanPlayService = Holder.instance.danDanPlayService
 
-        val service = Holder.instance.retrofitService
         val resService = Holder.instance.resRetrofitService
         val extService = Holder.instance.extRetrofitService
         val remoteService = Holder.instance.remoteRetrofitService
@@ -32,7 +42,6 @@ class Retrofit private constructor() {
     }
 
     private var danDanPlayService: DanDanPlayService
-    private var retrofitService: RetrofitService
     private var resRetrofitService: ResRetrofitService
     private var extRetrofitService: ExtRetrofitService
     private var remoteRetrofitService: RemoteService
@@ -47,13 +56,6 @@ class Retrofit private constructor() {
             .baseUrl(baseUrl)
             .build()
             .create(DanDanPlayService::class.java)
-
-        retrofitService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(needAuth = true, backup = true))
-            .baseUrl(baseUrl)
-            .build()
-            .create(RetrofitService::class.java)
 
         resRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)

@@ -9,6 +9,8 @@ import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.database.migration.ManualMigration
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.UserRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.data_component.data.LoginData
@@ -18,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.w3c.dom.Element
 import java.io.InputStream
-import java.util.*
+import java.util.Date
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**
@@ -30,15 +32,13 @@ class MainViewModel : BaseViewModel() {
     val reLoginLiveData = MutableLiveData<LoginData>()
 
     fun reLogin() {
-        httpRequest<LoginData>(viewModelScope) {
-            api {
-                Retrofit.service.reLogin()
-            }
+        viewModelScope.launch {
+            val result = UserRepository.refreshToken()
 
-            onSuccess {
+            if (result is Response.Success) {
                 UserConfig.putUserLoggedIn(false)
-                if (UserInfoHelper.login(it)) {
-                    reLoginLiveData.postValue(it)
+                if (UserInfoHelper.login(result.data)) {
+                    reLoginLiveData.postValue(result.data)
                 }
             }
         }

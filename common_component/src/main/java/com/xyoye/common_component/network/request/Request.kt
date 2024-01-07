@@ -7,17 +7,17 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
 
 /**
  * Created by xyoye on 2024/1/5
  */
 
 class Request {
-    private val requestParams = hashMapOf<String, Any>()
-    private var retry = 0
+    private val requestParams: RequestParams = hashMapOf()
 
-    fun param(key: String, value: Any): Request {
+    fun param(key: String, value: Any?): Request {
+        value ?: return this
+
         requestParams[key] = value
         return this
     }
@@ -27,13 +27,14 @@ class Request {
         return this
     }
 
-    fun retry(count: Int): Request {
-        retry = count
-        return this
+    suspend fun <T: Any> doDelete(
+        api: suspend (RequestParams) -> T
+    ): Response<T> {
+        return doGet(api)
     }
 
-    suspend fun <T> doGet(
-        api: suspend (Map<String, Any>) -> T
+    suspend fun <T: Any> doGet(
+        api: suspend (RequestParams) -> T
     ): Response<T> {
         return withContext(Dispatchers.IO) {
             try {
@@ -45,15 +46,12 @@ class Request {
                 return@withContext Response.Success(result)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if (considerRetry(e)) {
-                    return@withContext doGet(api)
-                }
                 return@withContext Response.Error(RequestError.formException(e))
             }
         }
     }
 
-    suspend fun <T> doPost(
+    suspend fun <T: Any> doPost(
         api: suspend (RequestBody) -> T
     ): Response<T> {
         return withContext(Dispatchers.IO) {
@@ -66,9 +64,6 @@ class Request {
                 return@withContext Response.Success(result)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if (considerRetry(e)) {
-                    return@withContext doPost(api)
-                }
                 return@withContext Response.Error(RequestError.formException(e))
             }
         }
@@ -83,6 +78,4 @@ class Request {
         val mediaType = "application/json;charset=utf-8".toMediaType()
         return requestJson.toRequestBody(mediaType)
     }
-
-    private fun considerRetry(t: Throwable) = t is IOException && retry-- > 0
 }

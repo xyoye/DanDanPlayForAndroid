@@ -1,0 +1,18 @@
+package com.xyoye.common_component.network.repository
+
+import com.xyoye.common_component.network.Retrofit
+
+/**
+ * Created by xyoye on 2024/1/6.
+ */
+
+object OtherRepository : BaseRepository() {
+
+    /**
+     * 获取首页Banner列表
+     */
+    suspend fun getHomeBanner() = request()
+        .doGet {
+            Retrofit.danDanPlayService.getHomeBanner()
+        }
+}

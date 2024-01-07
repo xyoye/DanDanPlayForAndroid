@@ -3,16 +3,13 @@ package com.xyoye.player_component.ui.activities.player
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.errorOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
-import com.xyoye.data_component.data.SendDanmuData
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
@@ -67,32 +64,27 @@ class PlayerViewModel : BaseViewModel() {
     }
 
     private fun sendDanmuToServer(sendDanmuBean: SendDanmuBean, episodeId: Int) {
-        httpRequest<SendDanmuData>(viewModelScope) {
+        viewModelScope.launch {
+            val time = BigDecimal(sendDanmuBean.position.toDouble() / 1000)
+                .setScale(2, BigDecimal.ROUND_HALF_UP).toString()
 
-            api {
-                val timeDecimal = BigDecimal(sendDanmuBean.position.toDouble() / 1000)
-                    .setScale(2, BigDecimal.ROUND_HALF_UP)
-
-                val mode = when {
-                    sendDanmuBean.isScroll -> BaseDanmaku.TYPE_SCROLL_RL
-                    sendDanmuBean.isTop -> BaseDanmaku.TYPE_FIX_TOP
-                    else -> BaseDanmaku.TYPE_FIX_BOTTOM
-                }
-                val color = sendDanmuBean.color and 0x00FFFFFF
-
-                val params = hashMapOf<String, String>()
-                params["time"] = timeDecimal.toString()
-                params["mode"] = mode.toString()
-                params["color"] = color.toString()
-                params["comment"] = sendDanmuBean.text
-                Retrofit.service.sendDanmu(episodeId.toString(), params)
+            val mode = when {
+                sendDanmuBean.isScroll -> BaseDanmaku.TYPE_SCROLL_RL
+                sendDanmuBean.isTop -> BaseDanmaku.TYPE_FIX_TOP
+                else -> BaseDanmaku.TYPE_FIX_BOTTOM
             }
 
-            onSuccess {
-                DDLog.i("发送弹幕成功")
-            }
+            val color = sendDanmuBean.color and 0x00FFFFFF
 
-            onError {
+            val result = SourceRepository.sendOneDanmu(
+                episodeId.toString(),
+                time,
+                mode,
+                color,
+                sendDanmuBean.text
+            )
+
+            result.errorOrNull?.let {
                 ToastCenter.showOriginalToast("发送弹幕失败\n x${it.code} ${it.msg}")
             }
         }

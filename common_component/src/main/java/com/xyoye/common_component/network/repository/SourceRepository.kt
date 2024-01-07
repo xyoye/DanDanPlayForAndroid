@@ -73,4 +73,49 @@ object SourceRepository : BaseRepository() {
         .doPost {
             Retrofit.danDanPlayService.sendOneDanmu(episodeId, it)
         }
+
+    /**
+     * 匹配字幕，Thunder
+     */
+    suspend fun matchSubtitleFormThunder(hash: String) = request()
+        .doGet {
+            Retrofit.extService.matchSubtitleFormThunder(hash)
+        }
+
+    /**
+     * 匹配字幕，Shooter
+     */
+    suspend fun matchSubtitleFormShooter(fileHash: String, fileName: String) = request()
+        .param("filehash", fileHash)
+        .param("pathinfo", fileName)
+        .param("format", "json")
+        .param("lang", "Chn")
+        .doPost {
+            Retrofit.extService.matchSubtitleFormShooter(it)
+        }
+
+    /**
+     * 搜索字幕
+     */
+    suspend fun searchSubtitle(
+        token: String,
+        keyword: String,
+        page: Int
+    ) = request()
+        .param("token", token)
+        .param("q", keyword)
+        .param("pos", page)
+        .doGet {
+            Retrofit.extService.searchSubtitle(it)
+        }
+
+    /**
+     * 字幕详情
+     */
+    suspend fun getSubtitleDetail(token: String, id: String) = request()
+        .param("token", token)
+        .param("id", id)
+        .doGet {
+            Retrofit.extService.searchSubtitleDetail(it)
+        }
 }

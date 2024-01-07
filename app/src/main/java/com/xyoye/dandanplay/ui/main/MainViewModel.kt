@@ -9,6 +9,7 @@ import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.database.migration.ManualMigration
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.repository.UserRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.httpRequest
@@ -62,7 +63,7 @@ class MainViewModel : BaseViewModel() {
                     val baseUrl = if (AppConfig.isBackupDomainEnable()) {
                         AppConfig.getBackupDomain()
                     } else {
-                        Retrofit.baseUrl
+                        Api.DAN_DAN_PLAY
                     }
                     val filterUrl = Uri.parse(baseUrl)
                         .buildUpon()

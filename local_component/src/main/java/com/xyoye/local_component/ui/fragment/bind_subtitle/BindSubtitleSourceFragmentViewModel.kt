@@ -8,6 +8,9 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.Response
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.getFileNameNoExtension
@@ -17,7 +20,6 @@ import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
 import com.xyoye.data_component.data.SubtitleSourceBean
-import com.xyoye.data_component.data.SubtitleSubData
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -58,28 +60,26 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun detailSearchSubtitle(sourceBean: SubtitleSourceBean) {
-        val shooterSecret = SubtitleConfig.getShooterSecret().orEmpty()
-        httpRequest<SubtitleSubData>(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch {
+            showLoading()
+            val result = SourceRepository.getSubtitleDetail(
+                SubtitleConfig.getShooterSecret().orEmpty(),
+                sourceBean.id.toString()
+            )
+            hideLoading()
 
-            api {
-                Retrofit.extService.searchSubtitleDetail(
-                    shooterSecret,
-                    sourceBean.id.toString()
-                )
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onSuccess {
-                if (it.sub?.subs == null || it.sub!!.subs!!.size == 0) {
-                    ToastCenter.showError("获取字幕详情失败")
-                    return@onSuccess
-                }
-                searchSubtitleDetailLiveData.postValue(it.sub!!.subs!![0])
+            val subtitle = result.dataOrNull?.sub?.subs?.firstOrNull()
+            if (subtitle == null) {
+                ToastCenter.showError("获取字幕详情失败")
+                return@launch
             }
 
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            searchSubtitleDetailLiveData.postValue(subtitle)
         }
     }
 
@@ -113,7 +113,8 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     private suspend fun unzipSaveSubtitle(fileName: String, responseBody: ResponseBody) {
-        val unzipDirPath = SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()).orEmpty()
+        val unzipDirPath =
+            SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream()).orEmpty()
         if (unzipDirPath.isEmpty()) {
             ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
             return

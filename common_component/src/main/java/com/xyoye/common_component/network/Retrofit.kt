@@ -1,6 +1,7 @@
 package com.xyoye.common_component.network
 
 import com.xyoye.common_component.BuildConfig
+import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.helper.AgentInterceptor
 import com.xyoye.common_component.network.helper.AuthInterceptor
 import com.xyoye.common_component.network.helper.BackupDomainInterceptor
@@ -26,10 +27,8 @@ import java.util.concurrent.TimeUnit
 
 class Retrofit private constructor() {
     companion object {
-        const val baseUrl = "https://api.dandanplay.net/"
         const val backupUrl = "http://139.217.235.62:16001/"
         private const val resUrl = "http://res.acplay.net/"
-        private const val shooterUrl = "http://api.assrt.net/"
         private const val remoteUrl = "http://127.0.0.1:80/"
         const val handLPUrl = "https://www.hanlp.com"
 
@@ -53,7 +52,7 @@ class Retrofit private constructor() {
         danDanPlayService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient(needAuth = true, backup = true))
-            .baseUrl(baseUrl)
+            .baseUrl(Api.DAN_DAN_PLAY)
             .build()
             .create(DanDanPlayService::class.java)
 
@@ -67,7 +66,7 @@ class Retrofit private constructor() {
         extRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient())
-            .baseUrl(shooterUrl)
+            .baseUrl(Api.PLACEHOLDER)
             .build()
             .create(ExtRetrofitService::class.java)
 

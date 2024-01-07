@@ -9,13 +9,13 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestError
+import com.xyoye.common_component.extension.ifEmptyOrNull
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.Response
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.data_component.data.SubtitleSourceBean
-import com.xyoye.data_component.data.SubtitleSubData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flatMapLatest
-import retrofit2.HttpException
 
 /**
  * Created by xyoye on 2021/3/25.
@@ -55,47 +55,27 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
 
             val page = if (params.key == null) 1 else params.key as Int
 
-            return try {
-                val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
-                val subData =
-                    Retrofit.extService.searchSubtitle(shooterSecret, keyword, page)
-                LoadResult.Page(sub2SubtitleSearchData(subData), null, page + 1)
-            } catch (e: Exception) {
-                //处理509异常
-                if (e is HttpException && e.code() == 509) {
-                    val limitError = RequestError(509, "请求频率过高")
-                    LoadResult.Error(limitError)
+            val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
+            val result = SourceRepository.searchSubtitle(shooterSecret, keyword, page)
+            if (result is Response.Error) {
+                return if (result.error.code == 509) {
+                    LoadResult.Error(result.error.copy(msg = "请求频率过高"))
                 } else {
-                    LoadResult.Error(RequestError.formException(e))
+                    LoadResult.Error(result.error)
                 }
             }
-        }
 
-        /**
-         * 搜索字幕转显示数据类型
-         */
-        private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSourceBean> {
-            return mutableListOf<SubtitleSourceBean>().apply {
-                val subList = subData?.sub?.subs
-                if ((subList?.size ?: 0) > 0) {
-                    for (subDetailData in subList!!) {
-                        val subtitleName =
-                            if (subDetailData.native_name.isNullOrEmpty())
-                                subDetailData.videoname
-                            else
-                                subDetailData.native_name
-                        add(
-                            SubtitleSourceBean(
-                                subDetailData.id,
-                                subtitleName,
-                                subDetailData.upload_time,
-                                subDetailData.subtype,
-                                subDetailData.lang?.desc
-                            )
-                        )
-                    }
-                }
-            }
+            val subtitleData = result.dataOrNull?.sub?.subs?.map {
+                SubtitleSourceBean(
+                    it.id,
+                    it.native_name.ifEmptyOrNull { it.videoname.orEmpty() },
+                    it.upload_time,
+                    it.subtype,
+                    it.lang?.desc
+                )
+            } ?: emptyList()
+
+            return LoadResult.Page(subtitleData, null, page + 1)
         }
 
         override fun getRefreshKey(state: PagingState<Int, SubtitleSourceBean>): Int? {

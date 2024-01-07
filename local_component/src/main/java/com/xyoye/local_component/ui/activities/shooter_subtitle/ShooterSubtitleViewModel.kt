@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.Response
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.subtitle.SubtitleSearchHelper
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
-import com.xyoye.data_component.data.SubtitleSubData
+import kotlinx.coroutines.launch
 
 class ShooterSubtitleViewModel : BaseViewModel() {
 
@@ -31,23 +34,26 @@ class ShooterSubtitleViewModel : BaseViewModel() {
      * 获取搜索字幕详情
      */
     fun getSearchSubDetail(subtitleId: Int) {
-        val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
-        httpRequest<SubtitleSubData>(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch {
+            showLoading()
+            val result = SourceRepository.getSubtitleDetail(
+                SubtitleConfig.getShooterSecret().orEmpty(),
+                subtitleId.toString()
+            )
+            hideLoading()
 
-            api { Retrofit.extService.searchSubtitleDetail(shooterSecret, subtitleId.toString()) }
-
-            onSuccess {
-                if (it.sub?.subs == null || it.sub!!.subs!!.size == 0) {
-                    ToastCenter.showError("获取字幕详情失败")
-                    return@onSuccess
-                }
-                searchSubDetailLiveData.postValue(it.sub!!.subs!![0])
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onError { showNetworkError(it) }
+            val subtitle = result.dataOrNull?.sub?.subs?.firstOrNull()
+            if (subtitle == null) {
+                ToastCenter.showError("获取字幕详情失败")
+                return@launch
+            }
 
-            onComplete { hideLoading() }
+            searchSubDetailLiveData.postValue(subtitle)
         }
     }
 

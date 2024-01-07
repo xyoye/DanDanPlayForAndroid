@@ -46,3 +46,6 @@ fun String.decodeUrl(charset: Charset = Charsets.UTF_8): String{
 fun String.formatFileName() = trim().replace("[*>/:\\\\?<|]".toRegex(), "_").replace(" ", "_")
 
 fun String?.toMd5String() = EntropyUtils.string2Md5(this)
+
+inline fun String?.ifEmptyOrNull(defaultValue: () -> String): String =
+    if (this.isNullOrEmpty()) defaultValue() else this

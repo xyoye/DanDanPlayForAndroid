@@ -1,11 +1,10 @@
 package com.xyoye.common_component.utils.subtitle
 
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
-import com.xyoye.data_component.data.SubtitleShooterData
 import com.xyoye.data_component.data.SubtitleSourceBean
-import com.xyoye.data_component.data.SubtitleThunderData
 
 object SubtitleMatchHelper {
 
@@ -16,76 +15,44 @@ object SubtitleMatchHelper {
         return sourceList
     }
 
-    private suspend fun matchThunderSubtitle(videoPath: String): MutableList<SubtitleSourceBean> {
-        val subtitleList = mutableListOf<SubtitleSourceBean>()
+    private suspend fun matchThunderSubtitle(videoPath: String): List<SubtitleSourceBean> {
+        val videoHash = SubtitleHashUtils.getThunderHash(videoPath)
+            ?: return emptyList()
 
-        val videoHash = SubtitleHashUtils.getThunderHash(videoPath) ?: return subtitleList
-
-        val thunderUrl = "http://sub.xmp.sandai.net:8000/subxl/$videoHash.json"
-
-        var subtitleData: SubtitleThunderData? = null
-        try {
-            subtitleData = Retrofit.extService.matchThunderSubtitle(thunderUrl)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        if (subtitleData?.sublist?.size ?: 0 > 0) {
-            for (thunderData in subtitleData!!.sublist!!) {
-                val sourceUrl = thunderData.surl ?: continue
-                val sourceBean = SubtitleSourceBean(
+        return SourceRepository.matchSubtitleFormThunder(videoHash).dataOrNull
+            ?.sublist
+            ?.filter { it.surl != null }
+            ?.map {
+                SubtitleSourceBean(
                     isMatch = true,
-                    name = thunderData.sname,
-                    matchUrl = sourceUrl,
+                    name = it.sname,
+                    matchUrl = it.surl.orEmpty(),
                     source = "迅雷"
                 )
-                subtitleList.add(sourceBean)
-            }
-        }
-        return subtitleList
+            } ?: emptyList()
     }
 
-    private suspend fun matchShooterSubtitle(videoPath: String): MutableList<SubtitleSourceBean> {
-        val subtitleList = mutableListOf<SubtitleSourceBean>()
+    private suspend fun matchShooterSubtitle(videoPath: String): List<SubtitleSourceBean> {
+        val videoHash = SubtitleHashUtils.getShooterHash(videoPath)
+            ?: return emptyList()
 
-        val videoHash = SubtitleHashUtils.getShooterHash(videoPath) ?: return subtitleList
-
-        val shooterParams = HashMap<String, String>()
-        shooterParams["filehash"] = videoHash
-        shooterParams["pathinfo"] = getFileName(videoPath)
-        shooterParams["format"] = "json"
-        shooterParams["lang"] = "Chn"
-
-        val shooterUrl = "https://www.shooter.cn/api/subapi.php"
-
-        var shooterSubtitleList: MutableList<SubtitleShooterData>? = null
-        try {
-            shooterSubtitleList = Retrofit.extService
-                .matchShooterSubtitle(shooterUrl, shooterParams)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-
-        if (shooterSubtitleList != null) {
-            for (subtitleData in shooterSubtitleList) {
-                val subtitleFiles = subtitleData.Files ?: continue
-                for (shooterData in subtitleFiles) {
-                    val downloadUrl = shooterData.Link ?: continue
-
-                    val extension = shooterData.Ext ?: ".ass"
-                    val shooterName = getFileNameNoExtension(videoPath) + "." + extension
-
-                    val sourceBean = SubtitleSourceBean(
-                        isMatch = true,
-                        name = shooterName,
-                        matchUrl = downloadUrl,
-                        source = "射手网"
-                    )
-                    subtitleList.add(sourceBean)
-                }
-            }
-        }
-        return subtitleList
+        return SourceRepository
+            .matchSubtitleFormShooter(videoHash, getFileName(videoPath))
+            .dataOrNull
+            ?.filter { it.Files != null }
+            ?.flatMap { files ->
+                files.Files!!
+                    .filter { it.Link != null }
+                    .map {
+                        val extension = it.Ext ?: ".ass"
+                        val shooterName = getFileNameNoExtension(videoPath) + "." + extension
+                        SubtitleSourceBean(
+                            isMatch = true,
+                            name = shooterName,
+                            matchUrl = it.Link!!,
+                            source = "射手网"
+                        )
+                    }
+            } ?: emptyList()
     }
 }

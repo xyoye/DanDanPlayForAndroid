@@ -1,6 +1,8 @@
 package com.xyoye.common_component.network.service
 
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.config.Api
+import com.xyoye.common_component.network.request.RequestParams
 import com.xyoye.data_component.data.BiliBiliCidData
 import com.xyoye.data_component.data.SubtitleShooterData
 import com.xyoye.data_component.data.SubtitleSubData
@@ -15,28 +17,17 @@ import retrofit2.http.*
 
 interface ExtRetrofitService {
 
-    @GET
-    suspend fun matchThunderSubtitle(@Url url: String): SubtitleThunderData?
+    @GET("${Api.THUNDER_SUB}{hash}.json")
+    suspend fun matchSubtitleFormThunder(@Path("hash") hash: String): SubtitleThunderData
 
-    @FormUrlEncoded
-    @POST
-    suspend fun matchShooterSubtitle(
-        @Url url: String,
-        @FieldMap map: Map<String, String>
-    ): MutableList<SubtitleShooterData>?
+    @POST(Api.SHOOTER_SUB)
+    suspend fun matchSubtitleFormShooter(@Body body: RequestBody): List<SubtitleShooterData>
 
-    @GET("v1/sub/search")
-    suspend fun searchSubtitle(
-        @Query("token") token: String,
-        @Query("q") keyword: String,
-        @Query("pos") page: Int
-    ): SubtitleSubData
+    @GET("${Api.ASSRT_SUB}v1/sub/search")
+    suspend fun searchSubtitle(@QueryMap params: RequestParams): SubtitleSubData
 
-    @GET("v1/sub/detail")
-    suspend fun searchSubtitleDetail(
-        @Query("token") token: String,
-        @Query("id") id: String
-    ): SubtitleSubData
+    @GET("${Api.ASSRT_SUB}v1/sub/detail")
+    suspend fun searchSubtitleDetail(@QueryMap params: RequestParams): SubtitleSubData
 
     @GET
     @Streaming

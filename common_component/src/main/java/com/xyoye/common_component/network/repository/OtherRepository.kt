@@ -15,4 +15,12 @@ object OtherRepository : BaseRepository() {
         .doGet {
             Retrofit.danDanPlayService.getHomeBanner()
         }
+
+    /**
+     * 获取云屏蔽数据
+     */
+    suspend fun getCloudFilters() = request()
+        .doGet {
+            Retrofit.danDanPlayService.getCloudFilters()
+        }
 }

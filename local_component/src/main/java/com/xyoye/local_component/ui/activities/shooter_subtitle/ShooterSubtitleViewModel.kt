@@ -5,15 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.repository.SourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
-import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.utils.subtitle.SubtitleSearchHelper
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.SubDetailData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ShooterSubtitleViewModel : BaseViewModel() {
@@ -58,25 +57,20 @@ class ShooterSubtitleViewModel : BaseViewModel() {
     }
 
     fun downloadSubtitle(fileName: String, downloadUrl: String) {
-        httpRequest<String?>(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
+            val result = SourceRepository.getResourceResponseBody(downloadUrl)
+            val subtitlePath = result.dataOrNull?.byteStream()?.let {
+                SubtitleUtils.saveSubtitle(fileName, it)
+            }
+            hideLoading()
 
-            api {
-                val responseBody = Retrofit.extService.downloadResource(downloadUrl)
-                SubtitleUtils.saveSubtitle(fileName, responseBody.byteStream())
+            if (subtitlePath.isNullOrEmpty()) {
+                ToastCenter.showError("保存字幕失败")
+                return@launch
             }
 
-            onSuccess {
-                if (it != null) {
-                    ToastCenter.showSuccess("字幕下载成功：$it", Toast.LENGTH_LONG)
-                } else {
-                    ToastCenter.showError("保存字幕失败")
-                }
-            }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            ToastCenter.showSuccess("字幕下载成功：$subtitlePath", Toast.LENGTH_LONG)
         }
     }
 
@@ -84,22 +78,20 @@ class ShooterSubtitleViewModel : BaseViewModel() {
      * 下载压缩文件，并解压
      */
     fun downloadAndUnzipFile(fileName: String, url: String) {
-        httpRequest<Any>(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
+            val result = SourceRepository.getResourceResponseBody(url)
+            val unzipDirPath = result.dataOrNull?.byteStream()?.let {
+                SubtitleUtils.saveAndUnzipFile(fileName, it)
+            }
+            hideLoading()
 
-            api {
-                val responseBody = Retrofit.extService.downloadResource(url)
-                val unzipDirPath = SubtitleUtils.saveAndUnzipFile(fileName, responseBody.byteStream())
-                if (unzipDirPath.isNullOrEmpty()) {
-                    ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
-                } else {
-                    ToastCenter.showSuccess("字幕下载成功：$unzipDirPath", Toast.LENGTH_LONG)
-                }
+            if (unzipDirPath.isNullOrEmpty()) {
+                ToastCenter.showError("解压字幕文件失败，请尝试手动解压")
+                return@launch
             }
 
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            ToastCenter.showSuccess("字幕下载成功：$unzipDirPath", Toast.LENGTH_LONG)
         }
     }
 }

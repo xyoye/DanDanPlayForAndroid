@@ -118,4 +118,20 @@ object SourceRepository : BaseRepository() {
         .doGet {
             Retrofit.extService.searchSubtitleDetail(it)
         }
+
+    /**
+     * 获取资源响应
+     */
+    suspend fun getResourceResponse(url: String, headers: Map<String, String> = emptyMap()) = request()
+        .doGet {
+            Retrofit.extService.getResourceResponse(url, headers)
+        }
+
+    /**
+     * 获取资源响应正文
+     */
+    suspend fun getResourceResponseBody(url: String, headers: Map<String, String> = emptyMap()) = request()
+        .doGet {
+            Retrofit.extService.getResourceResponseBody(url, headers)
+        }
 }

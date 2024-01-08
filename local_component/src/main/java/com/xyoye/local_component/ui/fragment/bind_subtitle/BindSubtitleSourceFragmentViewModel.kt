@@ -7,11 +7,9 @@ import androidx.paging.PagingData
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.repository.SourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
-import com.xyoye.common_component.network.request.httpRequest
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.subtitle.SubtitleMatchHelper
@@ -84,31 +82,29 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     }
 
     fun downloadSearchSubtitle(fileName: String?, sourceUrl: String, unzip: Boolean = false) {
-        httpRequest(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch(Dispatchers.IO) {
+            showLoading()
+            val name = if (TextUtils.isEmpty(fileName)) {
+                "${getFileNameNoExtension(storageFile.filePath())}.ass"
+            } else {
+                fileName!!
+            }
 
-            api {
-                val name = if (TextUtils.isEmpty(fileName)) {
-                    "${getFileNameNoExtension(storageFile.filePath())}.ass"
-                } else {
-                    fileName!!
-                }
+            val result = SourceRepository.getResourceResponseBody(sourceUrl)
+            if (result is Response.Error) {
+                hideLoading()
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
+            }
 
-                val responseBody = Retrofit.extService.downloadResource(sourceUrl)
+            if (result is Response.Success) {
                 if (unzip) {
-                    unzipSaveSubtitle(name, responseBody)
+                    unzipSaveSubtitle(name, result.data)
                 } else {
-                    saveSubtitle(name, responseBody)
+                    saveSubtitle(name, result.data)
                 }
+                hideLoading()
             }
-
-            onSuccess {
-
-            }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
         }
     }
 

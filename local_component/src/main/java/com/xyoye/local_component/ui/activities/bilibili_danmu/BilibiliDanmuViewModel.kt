@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
@@ -207,7 +209,8 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
             var xmlContent: String? = null
             try {
-                val responseBody = Retrofit.extService.downloadResource(url, header)
+                val result = SourceRepository.getResourceResponseBody(url, header)
+                val responseBody = result.dataOrNull ?: return@async null
 
                 inputStream = responseBody.byteStream()
                 inflaterInputStream = InflaterInputStream(inputStream, Inflater(true))

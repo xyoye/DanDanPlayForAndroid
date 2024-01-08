@@ -2,7 +2,9 @@ package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
 import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.repository.SourceRepository
 import com.xyoye.common_component.network.request.RequestError
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
@@ -89,7 +91,8 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             ?: return null
 
         try {
-            val response = Retrofit.extService.downloadResourceWithHeader(subtitleUrl)
+            val result = SourceRepository.getResourceResponse(subtitleUrl)
+            val response = result.dataOrNull ?: return null
             if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return null
             val responseBody = response.body() ?: return null
 

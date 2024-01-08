@@ -31,17 +31,17 @@ interface ExtRetrofitService {
 
     @GET
     @Streaming
-    suspend fun downloadResource(
+    suspend fun getResourceResponse(
         @Url url: String,
-        @HeaderMap header: Map<String, String> = mapOf()
-    ): ResponseBody
+        @HeaderMap headers: Map<String, String>
+    ): retrofit2.Response<ResponseBody>
 
     @GET
     @Streaming
-    suspend fun downloadResourceWithHeader(
+    suspend fun getResourceResponseBody(
         @Url url: String,
-        @HeaderMap header: Map<String, String> = mapOf()
-    ): retrofit2.Response<ResponseBody>
+        @HeaderMap headers: Map<String, String>
+    ): ResponseBody
 
     @GET
     @Streaming

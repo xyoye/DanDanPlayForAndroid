@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.isValid
 import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.repository.SourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
@@ -102,13 +101,9 @@ class PlayerDanmuViewModel : BaseViewModel() {
         loadResult.state = LoadDanmuState.COLLECTING
         loadDanmuLiveData.postValue(loadResult)
 
-        var hash: String? = null
-        try {
-            val response = Retrofit.extService.downloadResource(videoSource.getVideoUrl(), headers)
-            hash = FileHashUtils.getHash(response.byteStream())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        val hash = SourceRepository.getResourceResponseBody(videoSource.getVideoUrl(), headers)
+            .dataOrNull
+            ?.let { FileHashUtils.getHash(it.byteStream()) }
 
         if (hash.isNullOrEmpty()) {
             loadResult.state = LoadDanmuState.NOT_SUPPORTED

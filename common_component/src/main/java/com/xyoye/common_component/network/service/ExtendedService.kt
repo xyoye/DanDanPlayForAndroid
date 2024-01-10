@@ -14,7 +14,7 @@ import retrofit2.http.*
  * Created by xyoye on 2020/11/30.
  */
 
-interface ExtRetrofitService {
+interface ExtendedService {
 
     @GET("${Api.THUNDER_SUB}{hash}.json")
     suspend fun matchSubtitleFormThunder(@Path("hash") hash: String): SubtitleThunderData

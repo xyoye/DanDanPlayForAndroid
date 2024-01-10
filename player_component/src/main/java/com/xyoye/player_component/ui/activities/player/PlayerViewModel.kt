@@ -3,7 +3,7 @@ package com.xyoye.player_component.ui.activities.player
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.errorOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
@@ -76,7 +76,7 @@ class PlayerViewModel : BaseViewModel() {
 
             val color = sendDanmuBean.color and 0x00FFFFFF
 
-            val result = SourceRepository.sendOneDanmu(
+            val result = ResourceRepository.sendOneDanmu(
                 episodeId.toString(),
                 time,
                 mode,

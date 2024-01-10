@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.subtitle.SubtitleSearchHelper
@@ -35,7 +35,7 @@ class ShooterSubtitleViewModel : BaseViewModel() {
     fun getSearchSubDetail(subtitleId: Int) {
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.getSubtitleDetail(
+            val result = ResourceRepository.getSubtitleDetail(
                 SubtitleConfig.getShooterSecret().orEmpty(),
                 subtitleId.toString()
             )
@@ -59,7 +59,7 @@ class ShooterSubtitleViewModel : BaseViewModel() {
     fun downloadSubtitle(fileName: String, downloadUrl: String) {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
-            val result = SourceRepository.getResourceResponseBody(downloadUrl)
+            val result = ResourceRepository.getResourceResponseBody(downloadUrl)
             val subtitlePath = result.dataOrNull?.byteStream()?.let {
                 SubtitleUtils.saveSubtitle(fileName, it)
             }
@@ -80,7 +80,7 @@ class ShooterSubtitleViewModel : BaseViewModel() {
     fun downloadAndUnzipFile(fileName: String, url: String) {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
-            val result = SourceRepository.getResourceResponseBody(url)
+            val result = ResourceRepository.getResourceResponseBody(url)
             val unzipDirPath = result.dataOrNull?.byteStream()?.let {
                 SubtitleUtils.saveAndUnzipFile(fileName, it)
             }

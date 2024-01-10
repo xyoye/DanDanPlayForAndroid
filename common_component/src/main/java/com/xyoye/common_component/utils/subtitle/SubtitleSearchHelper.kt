@@ -10,7 +10,7 @@ import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.ifEmptyOrNull
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.data_component.data.SubtitleSourceBean
@@ -56,7 +56,7 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
             val page = if (params.key == null) 1 else params.key as Int
 
             val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
-            val result = SourceRepository.searchSubtitle(shooterSecret, keyword, page)
+            val result = ResourceRepository.searchSubtitle(shooterSecret, keyword, page)
             if (result is Response.Error) {
                 return if (result.error.code == 509) {
                     LoadResult.Error(result.error.copy(msg = "请求频率过高"))

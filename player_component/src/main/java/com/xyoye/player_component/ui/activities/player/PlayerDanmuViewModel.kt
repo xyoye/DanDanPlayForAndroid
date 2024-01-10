@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.isValid
 import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
@@ -101,7 +101,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
         loadResult.state = LoadDanmuState.COLLECTING
         loadDanmuLiveData.postValue(loadResult)
 
-        val hash = SourceRepository.getResourceResponseBody(videoSource.getVideoUrl(), headers)
+        val hash = ResourceRepository.getResourceResponseBody(videoSource.getVideoUrl(), headers)
             .dataOrNull
             ?.let { FileHashUtils.getHash(it.byteStream()) }
 
@@ -131,7 +131,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
             return
 
         viewModelScope.launch {
-            val result = SourceRepository.searchDanmu(searchText)
+            val result = ResourceRepository.searchDanmu(searchText)
             val animeData = result.dataOrNull?.animes ?: mutableListOf()
             val sourceData = mapDanmuSourceData(animeData)
 
@@ -161,7 +161,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
     fun downloadDanmu(contentBean: DanmuSourceContentBean) {
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.getDanmuContent(contentBean.episodeId.toString())
+            val result = ResourceRepository.getDanmuContent(contentBean.episodeId.toString())
 
             if (result is Response.Error) {
                 hideLoading()

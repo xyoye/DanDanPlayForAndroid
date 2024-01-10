@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.network.request.httpRequest
@@ -58,7 +58,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
                 )
 
                 val fileHash = IOUtils.getFileHash(videoFile!!.absolutePath) ?: ""
-                val result = SourceRepository.matchDanmu(fileHash)
+                val result = ResourceRepository.matchDanmu(fileHash)
                 danmuMatchBean = mapDanmuMatchData(result.dataOrNull)
                 danmuMatchBean?.let { curAnimeList.add(it) }
             }
@@ -77,7 +77,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.searchDanmu(searchText)
+            val result = ResourceRepository.searchDanmu(searchText)
             hideLoading()
 
             val animeData = result.dataOrNull?.animes ?: mutableListOf()
@@ -96,7 +96,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     fun getDanmuThirdSource(contentBean: DanmuSourceContentBean) {
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.getRelatedDanmu(contentBean.episodeId.toString())
+            val result = ResourceRepository.getRelatedDanmu(contentBean.episodeId.toString())
             hideLoading()
 
             if (result is Response.Error) {
@@ -113,7 +113,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
     fun downloadDanmu(contentBean: DanmuSourceContentBean) {
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.getDanmuContent(contentBean.episodeId.toString())
+            val result = ResourceRepository.getDanmuContent(contentBean.episodeId.toString())
             hideLoading()
 
             if(result is Response.Error) {
@@ -160,9 +160,9 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             showLoading()
             for (source in danmuSources) {
                 val result = if (source.isOfficial) {
-                    SourceRepository.getDanmuContent(source.sourceUrl, withRelated = false)
+                    ResourceRepository.getDanmuContent(source.sourceUrl, withRelated = false)
                 } else {
-                    SourceRepository.getRelatedDanmuContent(source.sourceUrl)
+                    ResourceRepository.getRelatedDanmuContent(source.sourceUrl)
                 }
 
                 if (result is Response.Error) {

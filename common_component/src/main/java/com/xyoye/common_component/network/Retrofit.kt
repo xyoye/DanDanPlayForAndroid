@@ -11,7 +11,7 @@ import com.xyoye.common_component.network.helper.RemoteInterceptor
 import com.xyoye.common_component.network.helper.ResDomainInterceptor
 import com.xyoye.common_component.network.helper.ScreencastInterceptor
 import com.xyoye.common_component.network.service.DanDanPlayService
-import com.xyoye.common_component.network.service.ExtRetrofitService
+import com.xyoye.common_component.network.service.ExtendedService
 import com.xyoye.common_component.network.service.RemoteService
 import com.xyoye.common_component.network.service.ResRetrofitService
 import com.xyoye.common_component.network.service.ScreencastService
@@ -30,19 +30,19 @@ class Retrofit private constructor() {
         const val backupUrl = "http://139.217.235.62:16001/"
         private const val resUrl = "http://res.acplay.net/"
         private const val remoteUrl = "http://127.0.0.1:80/"
-        const val handLPUrl = "https://www.hanlp.com"
 
         val danDanPlayService = Holder.instance.danDanPlayService
+        val extendedService = Holder.instance.extendedService
 
         val resService = Holder.instance.resRetrofitService
-        val extService = Holder.instance.extRetrofitService
         val remoteService = Holder.instance.remoteRetrofitService
         val screencastService = Holder.instance.screencastService
     }
 
     private var danDanPlayService: DanDanPlayService
+    private var extendedService: ExtendedService
+
     private var resRetrofitService: ResRetrofitService
-    private var extRetrofitService: ExtRetrofitService
     private var remoteRetrofitService: RemoteService
     private var screencastService: ScreencastService
 
@@ -63,12 +63,12 @@ class Retrofit private constructor() {
             .build()
             .create(ResRetrofitService::class.java)
 
-        extRetrofitService = Retrofit.Builder()
+        extendedService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
             .client(getOkHttpClient())
             .baseUrl(Api.PLACEHOLDER)
             .build()
-            .create(ExtRetrofitService::class.java)
+            .create(ExtendedService::class.java)
 
         remoteRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)

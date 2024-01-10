@@ -31,6 +31,6 @@ object OtherRepository : BaseRepository() {
         .param("text", text)
         .param("tasks", listOf("tok"))
         .doPost {
-            Retrofit.extService.segmentWords(it)
+            Retrofit.extendedService.segmentWords(it)
         }
 }

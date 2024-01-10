@@ -1,7 +1,7 @@
 package com.xyoye.common_component.utils
 
 import com.xyoye.common_component.extension.formatFileName
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.data_component.data.DanmuData
 import kotlinx.coroutines.Dispatchers
@@ -260,13 +260,13 @@ object DanmuUtils {
         return withContext(Dispatchers.IO) {
             try {
                 //匹配弹幕
-                val danmuMatchData = SourceRepository.matchDanmu(fileHash).dataOrNull
+                val danmuMatchData = ResourceRepository.matchDanmu(fileHash).dataOrNull
                     ?: return@withContext null
 
                 //只存在一个匹配的弹幕
                 if (danmuMatchData.isMatched && danmuMatchData.matches!!.size == 1) {
                     val episodeId = danmuMatchData.matches!![0].episodeId
-                    val danmuData = SourceRepository.getDanmuContent(episodeId.toString()).dataOrNull
+                    val danmuData = ResourceRepository.getDanmuContent(episodeId.toString()).dataOrNull
                         ?: return@withContext null
 
                     val folderName = getParentFolderName(filePath)

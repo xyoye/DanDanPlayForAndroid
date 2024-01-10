@@ -6,7 +6,7 @@ import com.xyoye.common_component.network.Retrofit
  * Created by xyoye on 2024/1/6.
  */
 
-object SourceRepository : BaseRepository() {
+object ResourceRepository : BaseRepository() {
 
     /**
      * 匹配弹幕
@@ -79,7 +79,7 @@ object SourceRepository : BaseRepository() {
      */
     suspend fun matchSubtitleFormThunder(hash: String) = request()
         .doGet {
-            Retrofit.extService.matchSubtitleFormThunder(hash)
+            Retrofit.extendedService.matchSubtitleFormThunder(hash)
         }
 
     /**
@@ -91,7 +91,7 @@ object SourceRepository : BaseRepository() {
         .param("format", "json")
         .param("lang", "Chn")
         .doPost {
-            Retrofit.extService.matchSubtitleFormShooter(it)
+            Retrofit.extendedService.matchSubtitleFormShooter(it)
         }
 
     /**
@@ -106,7 +106,7 @@ object SourceRepository : BaseRepository() {
         .param("q", keyword)
         .param("pos", page)
         .doGet {
-            Retrofit.extService.searchSubtitle(it)
+            Retrofit.extendedService.searchSubtitle(it)
         }
 
     /**
@@ -116,7 +116,7 @@ object SourceRepository : BaseRepository() {
         .param("token", token)
         .param("id", id)
         .doGet {
-            Retrofit.extService.searchSubtitleDetail(it)
+            Retrofit.extendedService.searchSubtitleDetail(it)
         }
 
     /**
@@ -124,7 +124,7 @@ object SourceRepository : BaseRepository() {
      */
     suspend fun getResourceResponse(url: String, headers: Map<String, String> = emptyMap()) = request()
         .doGet {
-            Retrofit.extService.getResourceResponse(url, headers)
+            Retrofit.extendedService.getResourceResponse(url, headers)
         }
 
     /**
@@ -132,7 +132,7 @@ object SourceRepository : BaseRepository() {
      */
     suspend fun getResourceResponseBody(url: String, headers: Map<String, String> = emptyMap()) = request()
         .doGet {
-            Retrofit.extService.getResourceResponseBody(url, headers)
+            Retrofit.extendedService.getResourceResponseBody(url, headers)
         }
 
     /**
@@ -141,6 +141,6 @@ object SourceRepository : BaseRepository() {
     suspend fun getCidInfo(isAvCode: Boolean, id: String) = request()
         .param(if (isAvCode) "aid" else "bvid", id)
         .doGet {
-            Retrofit.extService.getCidInfo(it)
+            Retrofit.extendedService.getCidInfo(it)
         }
 }

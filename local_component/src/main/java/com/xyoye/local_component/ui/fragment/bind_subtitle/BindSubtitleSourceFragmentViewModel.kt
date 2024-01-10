@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.file.StorageFile
@@ -60,7 +60,7 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     fun detailSearchSubtitle(sourceBean: SubtitleSourceBean) {
         viewModelScope.launch {
             showLoading()
-            val result = SourceRepository.getSubtitleDetail(
+            val result = ResourceRepository.getSubtitleDetail(
                 SubtitleConfig.getShooterSecret().orEmpty(),
                 sourceBean.id.toString()
             )
@@ -90,7 +90,7 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
                 fileName!!
             }
 
-            val result = SourceRepository.getResourceResponseBody(sourceUrl)
+            val result = ResourceRepository.getResourceResponseBody(sourceUrl)
             if (result is Response.Error) {
                 hideLoading()
                 ToastCenter.showError(result.error.toastMsg)

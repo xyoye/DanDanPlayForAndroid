@@ -1,6 +1,5 @@
 package com.xyoye.common_component.network.service
 
-import com.xyoye.common_component.network.Retrofit
 import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.request.RequestParams
 import com.xyoye.data_component.data.BiliBiliCidData
@@ -43,13 +42,10 @@ interface ExtRetrofitService {
         @HeaderMap headers: Map<String, String>
     ): ResponseBody
 
-    @GET
+    @GET("${Api.BILI_BILI}x/web-interface/view")
     @Streaming
-    suspend fun getCidInfo(@Url url: String): BiliBiliCidData
+    suspend fun getCidInfo(@QueryMap params: RequestParams): BiliBiliCidData
 
-    @POST
-    suspend fun segmentWords(
-        @Url url: String = "${Retrofit.handLPUrl}/api/parse",
-        @Body params: RequestBody
-    ): retrofit2.Response<ResponseBody>
+    @POST("${Api.HAN_LP}/api/parse")
+    suspend fun segmentWords(@Body body: RequestBody): retrofit2.Response<ResponseBody>
 }

@@ -3,8 +3,10 @@ package com.xyoye.local_component.ui.activities.bilibili_danmu
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.extension.ifEmptyOrNull
+import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.repository.SourceRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.IOUtils
@@ -19,7 +21,7 @@ import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import java.io.File
 import java.io.InputStream
-import java.util.*
+import java.util.Scanner
 import java.util.regex.Pattern
 import java.util.zip.Inflater
 import java.util.zip.InflaterInputStream
@@ -182,25 +184,25 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
     private suspend fun getCodeCid(isAvCode: Boolean, value: String): Pair<Long, String>? {
         return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-            val key = if (isAvCode) "aid" else "bvid"
-            val apiUrl = "https://api.bilibili.com/x/web-interface/view?$key=$value"
-            try {
-                val cidData = Retrofit.extService.getCidInfo(apiUrl)
-                if (cidData.code == 0 && cidData.data != null) {
-                    val videoTitle = cidData.data!!.title ?: "未知弹幕"
-                    return@async Pair(cidData.data!!.cid, videoTitle)
-                }
-            } catch (t: Throwable) {
-                sendDownloadMessage("错误：${t.message}")
-                t.printStackTrace()
+            val result = SourceRepository.getCidInfo(isAvCode, value)
+            if (result is Response.Error) {
+                sendDownloadMessage("错误：${result.error.toastMsg}")
+                return@async null
             }
-            null
+
+            if (result.dataOrNull?.code != 0) {
+                return@async null
+            }
+
+            return@async result.dataOrNull?.data?.run {
+                cid to title.ifEmptyOrNull { "未知弹幕" }
+            }
         }.await()
     }
 
     private suspend fun getXmlContentByCid(cid: Long): String? {
         return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-            val url = "http://comment.bilibili.com/$cid.xml"
+            val url = "${Api.BILI_BILI_COMMENT}$cid.xml"
             val header = mapOf(Pair("Accept-Encoding", "gzip,deflate"))
 
             var inputStream: InputStream? = null

@@ -20,4 +20,13 @@ object Api {
 
     // Shooter（伪）字幕
     const val ASSRT_SUB = "http://api.assrt.net/"
+
+    // BiliBili
+    const val BILI_BILI = "https://api.bilibili.com/"
+
+    // BiliBili弹幕
+    const val BILI_BILI_COMMENT = "http://comment.bilibili.com/"
+
+    // HanLP
+    const val HAN_LP = "https://www.hanlp.com/"
 }

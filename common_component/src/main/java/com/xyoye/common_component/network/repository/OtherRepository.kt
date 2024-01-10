@@ -23,4 +23,14 @@ object OtherRepository : BaseRepository() {
         .doGet {
             Retrofit.danDanPlayService.getCloudFilters()
         }
+
+    /**
+     * 获取分词结果
+     */
+    suspend fun getSegmentWords(text: String) = request()
+        .param("text", text)
+        .param("tasks", listOf("tok"))
+        .doPost {
+            Retrofit.extService.segmentWords(it)
+        }
 }

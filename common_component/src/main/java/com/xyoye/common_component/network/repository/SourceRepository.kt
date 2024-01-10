@@ -134,4 +134,13 @@ object SourceRepository : BaseRepository() {
         .doGet {
             Retrofit.extService.getResourceResponseBody(url, headers)
         }
+
+    /**
+     * 获取B站视频cid信息
+     */
+    suspend fun getCidInfo(isAvCode: Boolean, id: String) = request()
+        .param(if (isAvCode) "aid" else "bvid", id)
+        .doGet {
+            Retrofit.extService.getCidInfo(it)
+        }
 }

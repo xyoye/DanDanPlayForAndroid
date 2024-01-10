@@ -29,7 +29,9 @@ import javax.xml.transform.stream.StreamResult
 
 object DanmuUtils {
 
-    fun saveDanmu(fileName: String, inputStream: InputStream, directoryName: String? = null): String? {
+    fun saveDanmuStream(fileName: String, inputStream: InputStream?, directoryName: String? = null): String? {
+        inputStream ?: return null
+
         val directory = if (directoryName != null && directoryName.isNotEmpty()) {
             val directory = File(PathHelper.getDanmuDirectory(), directoryName)
             if (directory.exists().not()) {

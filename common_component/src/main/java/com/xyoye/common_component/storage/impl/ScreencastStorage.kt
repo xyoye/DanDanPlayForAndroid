@@ -74,9 +74,9 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
         val danmuUrl = screencastData?.getDanmuUrl(videoData.videoIndex)
             ?: return null
         try {
-            return DanmuUtils.saveDanmu(
+            return DanmuUtils.saveDanmuStream(
                 fileName = getFileNameNoExtension(file.fileName()) + ".xml",
-                inputStream = Retrofit.remoteService.downloadDanmu(danmuUrl).byteStream(),
+                inputStream = ResourceRepository.getResourceResponseBody(danmuUrl).dataOrNull?.byteStream(),
                 directoryName = "screencast"
             )
         } catch (e: Exception) {
@@ -120,8 +120,8 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             if (result.success) {
                 return true
             }
-            val error = RequestError(result.errorCode, result.errorMessage ?: "未知错误")
-            ToastCenter.showError("x${error.code} ${error.msg}")
+            val errorMsg = result.errorMessage ?: "未知错误"
+            ToastCenter.showError("x${result.errorCode} $errorMsg")
         } catch (e: Exception) {
             e.printStackTrace()
             val error = RequestError.formException(e)

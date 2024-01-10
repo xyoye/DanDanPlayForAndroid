@@ -1,14 +1,14 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestError
+import com.xyoye.common_component.network.repository.RemoteRepository
+import com.xyoye.common_component.network.request.Response
+import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.RemoteFileHelper
 import com.xyoye.common_component.storage.file.impl.RemoteStorageFile
 import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.RemoteHelper
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.getParentFolderName
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
@@ -16,7 +16,6 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.remote.RemoteVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
-import retrofit2.HttpException
 import java.io.InputStream
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -27,13 +26,6 @@ import kotlin.coroutines.cancellation.CancellationException
 class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     private var storageFilesSnapshot = listOf<RemoteVideoData>()
-
-    init {
-        val remoteUrl = "http://${library.url}:${library.port}/"
-        val remoteToken = library.remoteSecret
-        RemoteHelper.getInstance().remoteUrl = remoteUrl
-        RemoteHelper.getInstance().remoteToken = remoteToken
-    }
 
     override var rootUri: Uri = Uri.parse("http://${library.url}:${library.port}")
 
@@ -67,16 +59,22 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     }
 
     override suspend fun createPlayUrl(file: StorageFile): String {
-        val videoId = (file as RemoteStorageFile).getRealFile().Id
-        return RemoteHelper.getInstance().buildVideoUrl(videoId)
+        val fileUrl = (file as RemoteStorageFile).fileUrl()
+        val token = library.remoteSecret ?: return fileUrl
+
+        return Uri.parse(fileUrl)
+            .buildUpon()
+            .appendQueryParameter("token", token)
+            .build()
+            .toString()
     }
 
     override suspend fun cacheDanmu(file: StorageFile): String? {
         try {
             val videoData = (file as RemoteStorageFile).getRealFile()
-            return DanmuUtils.saveDanmu(
+            return DanmuUtils.saveDanmuStream(
                 fileName = getFileNameNoExtension(videoData.getEpisodeName()) + ".xml",
-                inputStream = Retrofit.remoteService.downloadDanmu(videoData.Hash).byteStream(),
+                inputStream = RemoteRepository.downloadDanmu(this, videoData.Id).dataOrNull?.byteStream(),
                 directoryName = getParentFolderName(videoData.absolutePath)
             )
         } catch (e: Exception) {
@@ -86,20 +84,16 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {
-        try {
-            val videoData = (file as RemoteStorageFile).getRealFile()
-            val subtitleData = Retrofit.remoteService.searchSubtitle(videoData.Id)
-            if (subtitleData.subtitles.isNotEmpty()) {
-                val fileName = subtitleData.subtitles.first().fileName
-                return SubtitleUtils.saveSubtitle(
-                    fileName,
-                    Retrofit.remoteService.downloadSubtitle(videoData.Id, fileName).byteStream(),
-                )
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
+        val videoData = (file as RemoteStorageFile).getRealFile()
+        val result = RemoteRepository.getRelatedSubtitles(this, videoData.Id)
+
+        val subtitleFileName = result.dataOrNull?.subtitles?.firstOrNull()?.fileName
+            ?: return null
+
+        return RemoteRepository.downloadSubtitle(this, videoData.Id, subtitleFileName)
+            .dataOrNull
+            ?.byteStream()
+            ?.let { SubtitleUtils.saveSubtitle(subtitleFileName, it) }
     }
 
     override fun supportSearch(): Boolean {
@@ -120,27 +114,26 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     }
 
     private suspend fun getRemoteRootFiles(): List<RemoteVideoData>? {
-        return try {
-            val videoData = Retrofit.remoteService.openStorage().also {
-                storageFilesSnapshot = it
-            }
-            return if (library.remoteAnimeGrouping) {
-                RemoteFileHelper.convertGroupData(videoData)
-            } else {
-                RemoteFileHelper.convertTreeData(videoData)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            if (e is CancellationException) {
+        val result = RemoteRepository.getStorageFiles(this)
+        if (result is Response.Error) {
+            if (result.error.original is CancellationException) {
                 // ignore
-            } else if (e is HttpException && e.code() == 401) {
+            } else if (result.error.code == 401) {
                 ToastCenter.showWarning("连接失败：密钥验证失败")
             } else {
-                val error = RequestError.formException(e)
-                ToastCenter.showWarning("连接失败：${error.msg}")
+                ToastCenter.showWarning("连接失败：${result.error.msg}")
             }
-            null
+            return null
+        }
+
+        return result.dataOrNull?.let {
+            storageFilesSnapshot = it
+
+            if (library.remoteAnimeGrouping) {
+                RemoteFileHelper.convertGroupData(it)
+            } else {
+                RemoteFileHelper.convertTreeData(it)
+            }
         }
     }
-
 }

@@ -7,7 +7,7 @@ import com.xyoye.common_component.network.helper.AuthInterceptor
 import com.xyoye.common_component.network.helper.BackupDomainInterceptor
 import com.xyoye.common_component.network.helper.GzipInterceptor
 import com.xyoye.common_component.network.helper.LoggerInterceptor
-import com.xyoye.common_component.network.helper.RemoteInterceptor
+import com.xyoye.common_component.network.helper.DynamicBaseUrlInterceptor
 import com.xyoye.common_component.network.helper.ResDomainInterceptor
 import com.xyoye.common_component.network.helper.ScreencastInterceptor
 import com.xyoye.common_component.network.service.DanDanPlayService
@@ -58,7 +58,7 @@ class Retrofit private constructor() {
 
         resRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(needAuth = false, resDomain = true))
+            .client(getOkHttpClient(resDomain = true))
             .baseUrl(resUrl)
             .build()
             .create(ResRetrofitService::class.java)
@@ -72,8 +72,8 @@ class Retrofit private constructor() {
 
         remoteRetrofitService = Retrofit.Builder()
             .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(needAuth = false, resDomain = false, isRemote = true))
-            .baseUrl(remoteUrl)
+            .client(getOkHttpClient())
+            .baseUrl(Api.PLACEHOLDER)
             .build()
             .create(RemoteService::class.java)
 
@@ -92,7 +92,6 @@ class Retrofit private constructor() {
     private fun getOkHttpClient(
         needAuth: Boolean = false,
         resDomain: Boolean = false,
-        isRemote: Boolean = false,
         screencast: Boolean = false,
         backup: Boolean = false,
     ): OkHttpClient {
@@ -102,6 +101,7 @@ class Retrofit private constructor() {
             .writeTimeout(4, TimeUnit.SECONDS)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(AgentInterceptor())
+            .addInterceptor(DynamicBaseUrlInterceptor())
         //token验证、gzip压缩
         if (needAuth) {
             builder.addInterceptor(AuthInterceptor())
@@ -110,10 +110,6 @@ class Retrofit private constructor() {
         //备用服务器
         if (backup) {
             builder.addInterceptor(BackupDomainInterceptor())
-        }
-        //远程连接
-        if (isRemote) {
-            builder.addInterceptor(RemoteInterceptor())
         }
         //自定义的资源节点
         if (resDomain) {

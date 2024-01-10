@@ -62,7 +62,7 @@ abstract class AbstractStorage(
 
         val inputStream = openFile(danmuFile) ?: return null
         val directoryName = getParentFolderName(danmuFile.filePath())
-        return DanmuUtils.saveDanmu(danmuFileName, inputStream, directoryName)
+        return DanmuUtils.saveDanmuStream(danmuFileName, inputStream, directoryName)
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {

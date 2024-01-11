@@ -1,19 +1,16 @@
 package com.xyoye.common_component.network
 
-import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.helper.AgentInterceptor
 import com.xyoye.common_component.network.helper.AuthInterceptor
 import com.xyoye.common_component.network.helper.BackupDomainInterceptor
+import com.xyoye.common_component.network.helper.DynamicBaseUrlInterceptor
 import com.xyoye.common_component.network.helper.GzipInterceptor
 import com.xyoye.common_component.network.helper.LoggerInterceptor
-import com.xyoye.common_component.network.helper.DynamicBaseUrlInterceptor
-import com.xyoye.common_component.network.helper.ResDomainInterceptor
-import com.xyoye.common_component.network.helper.ScreencastInterceptor
-import com.xyoye.common_component.network.service.DanDanPlayService
+import com.xyoye.common_component.network.service.DanDanService
 import com.xyoye.common_component.network.service.ExtendedService
+import com.xyoye.common_component.network.service.MagnetService
 import com.xyoye.common_component.network.service.RemoteService
-import com.xyoye.common_component.network.service.ResRetrofitService
 import com.xyoye.common_component.network.service.ScreencastService
 import com.xyoye.common_component.utils.JsonHelper
 import okhttp3.OkHttpClient
@@ -27,102 +24,87 @@ import java.util.concurrent.TimeUnit
 
 class Retrofit private constructor() {
     companion object {
-        const val backupUrl = "http://139.217.235.62:16001/"
-        private const val resUrl = "http://res.acplay.net/"
-        private const val remoteUrl = "http://127.0.0.1:80/"
-
-        val danDanPlayService = Holder.instance.danDanPlayService
-        val extendedService = Holder.instance.extendedService
-
-        val resService = Holder.instance.resRetrofitService
-        val remoteService = Holder.instance.remoteRetrofitService
-        val screencastService = Holder.instance.screencastService
-    }
-
-    private var danDanPlayService: DanDanPlayService
-    private var extendedService: ExtendedService
-
-    private var resRetrofitService: ResRetrofitService
-    private var remoteRetrofitService: RemoteService
-    private var screencastService: ScreencastService
-
-    private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
-
-    init {
-        danDanPlayService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(needAuth = true, backup = true))
-            .baseUrl(Api.DAN_DAN_PLAY)
-            .build()
-            .create(DanDanPlayService::class.java)
-
-        resRetrofitService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(resDomain = true))
-            .baseUrl(resUrl)
-            .build()
-            .create(ResRetrofitService::class.java)
-
-        extendedService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient())
-            .baseUrl(Api.PLACEHOLDER)
-            .build()
-            .create(ExtendedService::class.java)
-
-        remoteRetrofitService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient())
-            .baseUrl(Api.PLACEHOLDER)
-            .build()
-            .create(RemoteService::class.java)
-
-        screencastService = Retrofit.Builder()
-            .addConverterFactory(moshiConverterFactory)
-            .client(getOkHttpClient(screencast = true))
-            .baseUrl(remoteUrl)
-            .build()
-            .create(ScreencastService::class.java)
+        val danDanService: DanDanService by lazy { Holder.instance.danDanService }
+        val extendedService: ExtendedService by lazy { Holder.instance.extendedService }
+        val remoteService: RemoteService by lazy { Holder.instance.remoteService }
+        val magnetService: MagnetService by lazy { Holder.instance.magnetService }
+        val screencastService: ScreencastService by lazy { Holder.instance.screencastService }
     }
 
     private object Holder {
         val instance = Retrofit()
     }
 
-    private fun getOkHttpClient(
-        needAuth: Boolean = false,
-        resDomain: Boolean = false,
-        screencast: Boolean = false,
-        backup: Boolean = false,
-    ): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-        builder.connectTimeout(10, TimeUnit.SECONDS)
+    private val danDanClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(4, TimeUnit.SECONDS)
+            .hostnameVerifier { _, _ -> true }
+            .addInterceptor(AgentInterceptor())
+            .addInterceptor(AuthInterceptor())
+            .addInterceptor(GzipInterceptor())
+            .addInterceptor(BackupDomainInterceptor())
+            .addInterceptor(LoggerInterceptor().retrofit())
+            .build()
+    }
+
+    private val commonClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(4, TimeUnit.SECONDS)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(AgentInterceptor())
             .addInterceptor(DynamicBaseUrlInterceptor())
-        //token验证、gzip压缩
-        if (needAuth) {
-            builder.addInterceptor(AuthInterceptor())
-                .addInterceptor(GzipInterceptor())
-        }
-        //备用服务器
-        if (backup) {
-            builder.addInterceptor(BackupDomainInterceptor())
-        }
-        //自定义的资源节点
-        if (resDomain) {
-            builder.addInterceptor(ResDomainInterceptor())
-        }
-        //投屏连接
-        if (screencast) {
-            builder.addInterceptor(ScreencastInterceptor())
-        }
-        //日志输出
-        if (BuildConfig.DEBUG) {
-            builder.addInterceptor(LoggerInterceptor().retrofit())
-        }
-        return builder.build()
+            .addInterceptor(LoggerInterceptor().retrofit())
+            .build()
+    }
+
+    private val moshiConverterFactory = MoshiConverterFactory.create(JsonHelper.MO_SHI)
+
+    private val danDanService: DanDanService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(danDanClient)
+            .baseUrl(Api.DAN_DAN_OPEN)
+            .build()
+            .create(DanDanService::class.java)
+    }
+
+    private val magnetService: MagnetService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(commonClient)
+            .baseUrl(Api.DAN_DAN_RES)
+            .build()
+            .create(MagnetService::class.java)
+    }
+
+    private val extendedService: ExtendedService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(commonClient)
+            .baseUrl(Api.PLACEHOLDER)
+            .build()
+            .create(ExtendedService::class.java)
+    }
+
+    private val remoteService: RemoteService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(commonClient)
+            .baseUrl(Api.PLACEHOLDER)
+            .build()
+            .create(RemoteService::class.java)
+    }
+
+    private val screencastService: ScreencastService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(moshiConverterFactory)
+            .client(commonClient)
+            .baseUrl(Api.PLACEHOLDER)
+            .build()
+            .create(ScreencastService::class.java)
     }
 }

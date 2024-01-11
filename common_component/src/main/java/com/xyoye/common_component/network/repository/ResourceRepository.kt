@@ -18,7 +18,7 @@ object ResourceRepository : BaseRepository() {
         .param("videoDuration", 0)
         .param("matchMode", "hashOnly")
         .doPost {
-            Retrofit.danDanPlayService.matchDanmu(it)
+            Retrofit.danDanService.matchDanmu(it)
         }
 
     /**
@@ -27,7 +27,7 @@ object ResourceRepository : BaseRepository() {
     suspend fun searchDanmu(anime: String) = request()
         .param("anime", anime)
         .doGet {
-            Retrofit.danDanPlayService.searchDanmu(it)
+            Retrofit.danDanService.searchDanmu(it)
         }
 
     /**
@@ -36,7 +36,7 @@ object ResourceRepository : BaseRepository() {
     suspend fun getDanmuContent(episodeId: String, withRelated: Boolean = true) = request()
         .param("withRelated", withRelated)
         .doGet {
-            Retrofit.danDanPlayService.getDanmuContent(episodeId)
+            Retrofit.danDanService.getDanmuContent(episodeId)
         }
 
     /**
@@ -44,7 +44,7 @@ object ResourceRepository : BaseRepository() {
      */
     suspend fun getRelatedDanmu(episodeId: String) = request()
         .doGet {
-            Retrofit.danDanPlayService.getRelatedDanmu(episodeId)
+            Retrofit.danDanService.getRelatedDanmu(episodeId)
         }
 
     /**
@@ -53,7 +53,7 @@ object ResourceRepository : BaseRepository() {
     suspend fun getRelatedDanmuContent(url: String) = request()
         .param("url", url)
         .doGet {
-            Retrofit.danDanPlayService.getRelatedDanmuContent(it)
+            Retrofit.danDanService.getRelatedDanmuContent(it)
         }
 
     /**
@@ -71,7 +71,7 @@ object ResourceRepository : BaseRepository() {
         .param("color", color)
         .param("comment", comment)
         .doPost {
-            Retrofit.danDanPlayService.sendOneDanmu(episodeId, it)
+            Retrofit.danDanService.sendOneDanmu(episodeId, it)
         }
 
     /**
@@ -133,14 +133,5 @@ object ResourceRepository : BaseRepository() {
     suspend fun getResourceResponseBody(url: String, headers: Map<String, String> = emptyMap()) = request()
         .doGet {
             Retrofit.extendedService.getResourceResponseBody(url, headers)
-        }
-
-    /**
-     * 获取B站视频cid信息
-     */
-    suspend fun getCidInfo(isAvCode: Boolean, id: String) = request()
-        .param(if (isAvCode) "aid" else "bvid", id)
-        .doGet {
-            Retrofit.extendedService.getCidInfo(it)
         }
 }

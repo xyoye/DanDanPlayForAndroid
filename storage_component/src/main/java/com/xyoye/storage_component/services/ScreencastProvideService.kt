@@ -5,25 +5,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import com.squareup.moshi.JsonDataException
 import com.xyoye.common_component.bridge.ServiceLifecycleBridge
+import com.xyoye.common_component.extension.aesEncode
+import com.xyoye.common_component.extension.authorizationValue
 import com.xyoye.common_component.extension.isServiceRunning
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.network.repository.ScreencastRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.storage_component.utils.screencast.provider.HttpServer
-import kotlinx.coroutines.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import kotlin.coroutines.resume
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 /**
  * Created by xyoye on 2022/9/14
@@ -151,52 +151,32 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
     /**
      * 确认接收服务已启动
      */
-    private suspend fun isDeviceRunning() = suspendCancellableCoroutine { continuation ->
-        httpRequest<CommonJsonData>(ioScope) {
-            api {
-                Retrofit.screencastService.init(
-                    host = receiver.screencastAddress,
-                    port = receiver.port,
-                    authorization = receiver.password,
-                )
-            }
-
-            onSuccess {
-                continuation.resume(it.success)
-            }
-
-            onError {
-                continuation.resume(false)
-            }
-        }
+    private suspend fun isDeviceRunning(): Boolean {
+        val result = ScreencastRepository.init(
+            "http://${receiver.screencastAddress}:${receiver.port}",
+            receiver.password?.aesEncode()?.authorizationValue()
+        )
+        return result is Response.Success
     }
 
     /**
      * 通知投屏接收端播放视频
      */
     private fun postScreencastDevicePlay(videoSource: BaseVideoSource, port: Int) {
-        httpRequest(ioScope) {
-            api {
-                val screencastData = createScreencastData(videoSource, port)
-                val json = JsonHelper.toJson(screencastData)
-                    ?: throw JsonDataException("投屏数据异常")
-                val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+        ioScope.launch {
+            val screencastData = createScreencastData(videoSource, port)
+            val result = ScreencastRepository.play(
+                "http://${receiver.screencastAddress}:${receiver.port}",
+                receiver.password?.aesEncode()?.authorizationValue(),
+                screencastData
+            )
 
-                Retrofit.screencastService.play(
-                    host = receiver.screencastAddress,
-                    port = receiver.port,
-                    authorization = receiver.password,
-                    data = requestBody
-                )
+            if (result is Response.Error) {
+                ToastCenter.showError(result.error.toastMsg)
+                return@launch
             }
 
-            onSuccess {
-                ToastCenter.showSuccess("资源已投屏")
-            }
-
-            onError {
-                ToastCenter.showError("x${it.code} ${it.msg}")
-            }
+            ToastCenter.showSuccess("资源已投屏")
         }
     }
 

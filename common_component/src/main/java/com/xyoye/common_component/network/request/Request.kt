@@ -1,6 +1,5 @@
 package com.xyoye.common_component.network.request
 
-import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,6 +13,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class Request {
     private val requestParams: RequestParams = hashMapOf()
+    private var requestJson: String? = null
 
     fun param(key: String, value: Any?): Request {
         value ?: return this
@@ -27,13 +27,18 @@ class Request {
         return this
     }
 
-    suspend fun <T: Any> doDelete(
+    fun json(json: String): Request {
+        requestJson = json
+        return this
+    }
+
+    suspend fun <T : Any> doDelete(
         api: suspend (RequestParams) -> T
     ): Response<T> {
         return doGet(api)
     }
 
-    suspend fun <T: Any> doGet(
+    suspend fun <T : Any> doGet(
         api: suspend (RequestParams) -> T
     ): Response<T> {
         return withContext(Dispatchers.IO) {
@@ -51,7 +56,7 @@ class Request {
         }
     }
 
-    suspend fun <T: Any> doPost(
+    suspend fun <T : Any> doPost(
         api: suspend (RequestBody) -> T
     ): Response<T> {
         return withContext(Dispatchers.IO) {
@@ -73,9 +78,8 @@ class Request {
      * Post请求体
      */
     private fun requestBody(): RequestBody {
-        val params: Map<String, Any> = requestParams
-        val requestJson = JsonHelper.toJson(params).orEmpty()
         val mediaType = "application/json;charset=utf-8".toMediaType()
-        return requestJson.toRequestBody(mediaType)
+        return requestJson?.toRequestBody(mediaType)
+            ?: requestParams.toRequestBody(mediaType)
     }
 }

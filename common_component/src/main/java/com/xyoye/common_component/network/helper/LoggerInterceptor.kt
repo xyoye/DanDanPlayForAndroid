@@ -1,5 +1,6 @@
 package com.xyoye.common_component.network.helper
 
+import com.xyoye.common_component.BuildConfig
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.http.promisesBody
@@ -187,14 +188,14 @@ class LoggerInterceptor(tag: String = "OkHttp") : Interceptor {
         }
     }
 
-    fun retrofit(tag: String = "Retrofit") : LoggerInterceptor{
-        printLevel = Level.BODY
+    fun retrofit(tag: String = "Retrofit"): LoggerInterceptor {
+        printLevel = if (BuildConfig.DEBUG) Level.BODY else Level.NONE
         colorLevel = java.util.logging.Level.WARNING
         logger = Logger.getLogger(tag)
         return this
     }
 
-    fun webDav(tag: String = "WebDav") : LoggerInterceptor{
+    fun webDav(tag: String = "WebDav"): LoggerInterceptor {
         printLevel = Level.BODY
         colorLevel = java.util.logging.Level.WARNING
         logger = Logger.getLogger(tag)

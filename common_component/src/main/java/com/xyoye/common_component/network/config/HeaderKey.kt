@@ -6,4 +6,6 @@ package com.xyoye.common_component.network.config
 
 object HeaderKey {
     const val BASE_URL = "Dynamic_Base_url"
+
+    const val AUTHORIZATION = "Authorization"
 }

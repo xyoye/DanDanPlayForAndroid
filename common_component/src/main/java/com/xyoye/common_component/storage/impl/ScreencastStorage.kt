@@ -1,9 +1,11 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.extension.aesEncode
+import com.xyoye.common_component.extension.authorizationValue
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.RequestError
+import com.xyoye.common_component.network.repository.ScreencastRepository
+import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
@@ -111,23 +113,15 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
     }
 
     override suspend fun test(): Boolean {
-        try {
-            val result = Retrofit.screencastService.init(
-                host = library.screencastAddress,
-                port = library.port,
-                authorization = library.password
-            )
-            if (result.success) {
-                return true
-            }
-            val errorMsg = result.errorMessage ?: "未知错误"
-            ToastCenter.showError("x${result.errorCode} $errorMsg")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            val error = RequestError.formException(e)
-            ToastCenter.showError("x${error.code} ${error.msg}")
+        val result = ScreencastRepository.init(
+            "http://${library.screencastAddress}:${library.port}",
+            library.password?.aesEncode()?.authorizationValue()
+        )
+        if (result is Response.Error) {
+            ToastCenter.showError(result.error.toastMsg)
+            return false
         }
-        return false
+        return true
     }
 
     fun setupScreencastData(data: ScreencastData) {

@@ -13,7 +13,7 @@ object OtherRepository : BaseRepository() {
      */
     suspend fun getHomeBanner() = request()
         .doGet {
-            Retrofit.danDanPlayService.getHomeBanner()
+            Retrofit.danDanService.getHomeBanner()
         }
 
     /**
@@ -21,7 +21,7 @@ object OtherRepository : BaseRepository() {
      */
     suspend fun getCloudFilters() = request()
         .doGet {
-            Retrofit.danDanPlayService.getCloudFilters()
+            Retrofit.danDanService.getCloudFilters()
         }
 
     /**
@@ -32,5 +32,14 @@ object OtherRepository : BaseRepository() {
         .param("tasks", listOf("tok"))
         .doPost {
             Retrofit.extendedService.segmentWords(it)
+        }
+
+    /**
+     * 获取B站视频cid信息
+     */
+    suspend fun getCidInfo(isAvCode: Boolean, id: String) = request()
+        .param(if (isAvCode) "aid" else "bvid", id)
+        .doGet {
+            Retrofit.extendedService.getCidInfo(it)
         }
 }

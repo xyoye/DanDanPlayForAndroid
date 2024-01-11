@@ -18,7 +18,7 @@ import com.xyoye.data_component.enums.MagnetScreenType
 
 class MagnetScreenDialog(
     activity: AppCompatActivity,
-    private val screenData: MutableList<MagnetScreenEntity>,
+    private val screenData: List<MagnetScreenEntity>,
     private val screenType: MagnetScreenType,
     private val block: (MagnetScreenEntity) -> Unit
 ) : BaseBottomDialog<DialogMagnetScreenBinding>(activity) {

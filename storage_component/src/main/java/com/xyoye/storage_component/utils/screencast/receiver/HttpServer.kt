@@ -1,8 +1,7 @@
 package com.xyoye.storage_component.utils.screencast.receiver
 
-import android.util.Base64
-import com.xyoye.common_component.network.helper.ScreencastInterceptor
-import com.xyoye.common_component.utils.EntropyUtils
+import com.xyoye.common_component.extension.aesDecode
+import com.xyoye.common_component.network.config.HeaderKey
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.storage_component.services.ScreencastReceiveHandler
@@ -33,9 +32,11 @@ class HttpServer(
                 Method.GET -> {
                     ServerController.handleGetRequest(session)
                 }
+
                 Method.POST -> {
                     ServerController.handlePostRequest(session, handler)
                 }
+
                 else -> {
                     null
                 }
@@ -52,10 +53,7 @@ class HttpServer(
             return true
         }
 
-        var authorization = session.headers["authorization"]
-        if (authorization == null) {
-            authorization = session.headers["Authorization"]
-        }
+        val authorization = session.headers[HeaderKey.AUTHORIZATION]
         if (authorization.isNullOrEmpty()) {
             return false
         }
@@ -63,11 +61,7 @@ class HttpServer(
             return false
         }
         try {
-            return password == EntropyUtils.aesDecode(
-                ScreencastInterceptor.KEY_AUTHORIZATION,
-                authorization.substring("Bearer ".length),
-                Base64.NO_WRAP
-            )
+            return password == authorization.substring("Bearer ".length).aesDecode()
         } catch (e: Exception) {
             e.printStackTrace()
         }

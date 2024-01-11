@@ -10,7 +10,13 @@ object Api {
     const val PLACEHOLDER = "http://127.0.0.1:80/"
 
     // 弹弹play Open
-    const val DAN_DAN_PLAY = "https://api.dandanplay.net/"
+    const val DAN_DAN_OPEN = "https://api.dandanplay.net/"
+
+    // 弹弹play Open 备用
+    const val DAN_DAN_SPARE = "http://139.217.235.62:16001/"
+
+    // 弹弹play Res
+    const val DAN_DAN_RES = "http://res.acplay.net/"
 
     // Thunder字幕
     const val THUNDER_SUB = "http://sub.xmp.sandai.net:8000/subxl/"

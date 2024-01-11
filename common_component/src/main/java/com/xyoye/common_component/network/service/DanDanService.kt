@@ -29,7 +29,7 @@ import retrofit2.http.QueryMap
  * Created by xyoye on 2024/1/6.
  */
 
-interface DanDanPlayService {
+interface DanDanService {
 
     @GET("api/v2/bangumi/shin")
     suspend fun getWeeklyAnime(@QueryMap params: RequestParams): BangumiAnimeData

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.ifEmptyOrNull
 import com.xyoye.common_component.network.config.Api
+import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
@@ -184,7 +185,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
     private suspend fun getCodeCid(isAvCode: Boolean, value: String): Pair<Long, String>? {
         return viewModelScope.async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-            val result = ResourceRepository.getCidInfo(isAvCode, value)
+            val result = OtherRepository.getCidInfo(isAvCode, value)
             if (result is Response.Error) {
                 sendDownloadMessage("错误：${result.error.toastMsg}")
                 return@async null

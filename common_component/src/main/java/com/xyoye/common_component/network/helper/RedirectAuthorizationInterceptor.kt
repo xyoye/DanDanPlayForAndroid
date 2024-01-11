@@ -1,6 +1,7 @@
 package com.xyoye.common_component.network.helper
 
 import com.xyoye.common_component.extension.toMd5String
+import com.xyoye.common_component.network.config.HeaderKey
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -15,7 +16,6 @@ import okhttp3.internal.http.RetryAndFollowUpInterceptor
  */
 class RedirectAuthorizationInterceptor : Interceptor {
     companion object {
-        private const val TAG_HEADER = "Authorization"
         const val TAG_AUTH_REDIRECT = "Authorization-Redirect"
     }
 
@@ -35,12 +35,12 @@ class RedirectAuthorizationInterceptor : Interceptor {
      */
     private fun considerUseCacheHeader(request: Request): Request {
         val requestUrl = request.url.toString().toMd5String()
-        val requestAuthorization = request.header(TAG_HEADER)
+        val requestAuthorization = request.header(HeaderKey.AUTHORIZATION)
         if (authorizationCache.containsKey(requestUrl) && requestAuthorization == null) {
             val authorization = authorizationCache.remove(requestUrl)
                 ?: return request
 
-            return request.newBuilder().addHeader(TAG_HEADER, authorization).build()
+            return request.newBuilder().addHeader(HeaderKey.AUTHORIZATION, authorization).build()
         }
         return request
     }
@@ -55,7 +55,7 @@ class RedirectAuthorizationInterceptor : Interceptor {
         }
 
         val redirectUrl = response.header("Location")
-        val authorization = response.request.header(TAG_HEADER)
+        val authorization = response.request.header(HeaderKey.AUTHORIZATION)
         val redirectAuth = response.header(TAG_AUTH_REDIRECT) == "redirect"
         if (redirectUrl != null && authorization != null && redirectAuth) {
             authorizationCache[redirectUrl.toMd5String()] = authorization

@@ -24,7 +24,7 @@ object UserRepository : BaseRepository() {
         .param("unixTimestamp", timestamp)
         .param("hash", sign)
         .doPost {
-            Retrofit.danDanPlayService.login(it)
+            Retrofit.danDanService.login(it)
         }
 
 
@@ -33,7 +33,7 @@ object UserRepository : BaseRepository() {
      */
     suspend fun refreshToken() = request()
         .doGet {
-            Retrofit.danDanPlayService.refreshToken()
+            Retrofit.danDanService.refreshToken()
         }
 
     /**
@@ -56,7 +56,7 @@ object UserRepository : BaseRepository() {
         .param("unixTimestamp", timestamp)
         .param("hash", sign)
         .doPost {
-            Retrofit.danDanPlayService.register(it)
+            Retrofit.danDanService.register(it)
         }
 
     /**
@@ -75,7 +75,7 @@ object UserRepository : BaseRepository() {
         .param("unixTimestamp", timestamp)
         .param("hash", sign)
         .doPost {
-            Retrofit.danDanPlayService.resetPassword(it)
+            Retrofit.danDanService.resetPassword(it)
         }
 
     /**
@@ -92,7 +92,7 @@ object UserRepository : BaseRepository() {
         .param("unixTimestamp", timestamp)
         .param("hash", sign)
         .doPost {
-            Retrofit.danDanPlayService.retrieveAccount(it)
+            Retrofit.danDanService.retrieveAccount(it)
         }
 
     /**
@@ -101,7 +101,7 @@ object UserRepository : BaseRepository() {
     suspend fun updateScreenName(screenName: String) = request()
         .param("screenName", screenName)
         .doPost {
-            Retrofit.danDanPlayService.updateScreenName(it)
+            Retrofit.danDanService.updateScreenName(it)
         }
 
     /**
@@ -111,6 +111,6 @@ object UserRepository : BaseRepository() {
         .param("oldPassword", oldPassword)
         .param("newPassword", newPassword)
         .doPost {
-            Retrofit.danDanPlayService.updatePassword(it)
+            Retrofit.danDanService.updatePassword(it)
         }
 }

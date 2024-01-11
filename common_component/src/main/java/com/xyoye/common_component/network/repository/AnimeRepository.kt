@@ -14,7 +14,7 @@ object AnimeRepository : BaseRepository() {
     suspend fun getWeeklyAnime() = request()
         .param("filterAdultContent", true)
         .doGet {
-            Retrofit.danDanPlayService.getWeeklyAnime(it)
+            Retrofit.danDanService.getWeeklyAnime(it)
         }
 
     /**
@@ -24,7 +24,7 @@ object AnimeRepository : BaseRepository() {
         .param("keyword", keyword)
         .param("type", type)
         .doGet {
-            Retrofit.danDanPlayService.searchAnime(it)
+            Retrofit.danDanService.searchAnime(it)
         }
 
     /**
@@ -33,7 +33,7 @@ object AnimeRepository : BaseRepository() {
     suspend fun searchAnimeByTag(tags: List<String>) = request()
         .param("tags", tags.joinToString(","))
         .doGet {
-            Retrofit.danDanPlayService.searchAnimeByTag(it)
+            Retrofit.danDanService.searchAnimeByTag(it)
         }
 
     /**
@@ -41,7 +41,7 @@ object AnimeRepository : BaseRepository() {
      */
     suspend fun getSeasonAnime(year: String, month: String) = request()
         .doGet {
-            Retrofit.danDanPlayService.getSeasonAnime(year, month)
+            Retrofit.danDanService.getSeasonAnime(year, month)
         }
 
     /**
@@ -49,7 +49,7 @@ object AnimeRepository : BaseRepository() {
      */
     suspend fun getAnimeDetail(animeId: String) = request()
         .doGet {
-            Retrofit.danDanPlayService.getAnimeDetail(animeId)
+            Retrofit.danDanService.getAnimeDetail(animeId)
         }
 
     /**
@@ -60,7 +60,7 @@ object AnimeRepository : BaseRepository() {
         .param("favoriteStatus", "favorited")
         .param("rating", "0")
         .doPost {
-            Retrofit.danDanPlayService.followAnime(it)
+            Retrofit.danDanService.followAnime(it)
         }
 
     /**
@@ -68,7 +68,7 @@ object AnimeRepository : BaseRepository() {
      */
     suspend fun cancelFollowAnime(animeId: String) = request()
         .doDelete {
-            Retrofit.danDanPlayService.cancelFollowAnime(animeId)
+            Retrofit.danDanService.cancelFollowAnime(animeId)
         }
 
     /**
@@ -77,7 +77,7 @@ object AnimeRepository : BaseRepository() {
     suspend fun getFollowedAnime() = request()
         .param("onlyOnAir", false)
         .doGet {
-            Retrofit.danDanPlayService.getFollowedAnime(it)
+            Retrofit.danDanService.getFollowedAnime(it)
         }
 
     /**
@@ -85,6 +85,6 @@ object AnimeRepository : BaseRepository() {
      */
     suspend fun getPlayHistory() = request()
         .doGet {
-            Retrofit.danDanPlayService.getPlayHistory()
+            Retrofit.danDanService.getPlayHistory()
         }
 }

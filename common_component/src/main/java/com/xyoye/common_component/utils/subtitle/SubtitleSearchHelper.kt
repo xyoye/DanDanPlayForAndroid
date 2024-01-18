@@ -9,7 +9,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.extension.ifEmptyOrNull
+import com.xyoye.common_component.extension.ifNullOrBlank
 import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.network.request.dataOrNull
@@ -68,7 +68,7 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
             val subtitleData = result.dataOrNull?.sub?.subs?.map {
                 SubtitleSourceBean(
                     it.id,
-                    it.native_name.ifEmptyOrNull { it.videoname.orEmpty() },
+                    it.native_name.ifNullOrBlank { it.videoname.orEmpty() },
                     it.upload_time,
                     it.subtype,
                     it.lang?.desc
@@ -79,7 +79,7 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
         }
 
         override fun getRefreshKey(state: PagingState<Int, SubtitleSourceBean>): Int? {
-           return null
+            return null
         }
     }
 }

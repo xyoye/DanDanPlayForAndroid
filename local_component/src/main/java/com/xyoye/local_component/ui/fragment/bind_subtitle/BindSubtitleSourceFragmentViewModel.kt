@@ -37,7 +37,6 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
     val subtitleSearchLiveData = searchSubtitleRepository.subtitleLiveData
     val subtitleMatchLiveData = MutableLiveData<PagingData<SubtitleSourceBean>>()
     val searchSubtitleDetailLiveData = MutableLiveData<SubDetailData>()
-    val sourceRefreshLiveData = MutableLiveData<Any>()
     val unzipResultLiveData = MutableLiveData<String>()
 
     fun matchSubtitle() {
@@ -141,7 +140,6 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
             if (history != null) {
                 history.subtitlePath = filePath
                 DatabaseManager.instance.getPlayHistoryDao().insert(history)
-                sourceRefreshLiveData.postValue(Any())
                 return@launch
             }
 
@@ -155,7 +153,6 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
                 storageId = storageId,
             )
             DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
-            sourceRefreshLiveData.postValue(Any())
         }
     }
 }

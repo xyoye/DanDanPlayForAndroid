@@ -69,7 +69,10 @@ interface DanDanService {
 
     @GET("api/v2/comment/{episodeId}")
     @Headers("accept-encoding: gzip")
-    suspend fun getDanmuContent(@Path("episodeId") episodeId: String): DanmuData
+    suspend fun getDanmuContent(
+        @Path("episodeId") episodeId: String,
+        @QueryMap params: RequestParams
+    ): DanmuData
 
     @POST("api/v2/comment/{episodeId}")
     suspend fun sendOneDanmu(

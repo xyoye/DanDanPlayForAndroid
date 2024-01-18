@@ -1,11 +1,11 @@
 package com.xyoye.common_component.utils.subtitle
 
-import com.xyoye.common_component.utils.buffer2Hex
+import com.xyoye.common_component.extension.toHexString
 import java.io.IOException
 import java.io.RandomAccessFile
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.util.Locale
 
 
 /**
@@ -25,7 +25,7 @@ object SubtitleHashUtils {
                 file.seek(0)
                 file.read(buffer)
                 file.close()
-                return buffer2Hex(messageDigest.digest(buffer)).uppercase(Locale.ROOT)
+                return messageDigest.digest(buffer).toHexString().uppercase(Locale.ROOT)
             }
             val bufferSize = 0x5000
             val positions = longArrayOf(0, fileLength / 3, fileLength - bufferSize)
@@ -36,7 +36,7 @@ object SubtitleHashUtils {
                 file.read(buffer)
                 messageDigest.update(buffer)
             }
-            return buffer2Hex(messageDigest.digest()).uppercase(Locale.ROOT)
+            return messageDigest.digest().toHexString().uppercase(Locale.ROOT)
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: NoSuchAlgorithmException) {
@@ -69,7 +69,7 @@ object SubtitleHashUtils {
                 buffer = buffer.copyOfRange(0, realBufferSize)
                 val messageDigest = MessageDigest.getInstance("MD5")
                 val byteArray = messageDigest.digest(buffer)
-                stringBuilder.append(buffer2Hex(byteArray))
+                stringBuilder.append(byteArray.toHexString())
                 stringBuilder.append(";")
             }
             file.close()

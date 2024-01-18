@@ -34,16 +34,44 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="" />
 
-        <TextView
-            android:id="@+id/source_tips"
-            android:layout_width="wrap_content"
+
+        <RadioGroup
+            android:id="@+id/rg_source"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="选择弹幕源"
-            android:textColor="@color/text_black"
-            android:textSize="16sp"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/download_path_tv" />
+            app:layout_constraintTop_toBottomOf="@id/download_path_tv">
+
+            <TextView
+                android:id="@+id/source_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="弹幕源："
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/download_path_tv" />
+
+            <RadioButton
+                android:id="@+id/rb_all_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:checked="true"
+                android:text="所有"
+                android:theme="@style/Theme.DanDanPlay.CheckBox" />
+
+            <RadioButton
+                android:id="@+id/rb_pick_source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:text="自选"
+                android:theme="@style/Theme.DanDanPlay.CheckBox" />
+
+        </RadioGroup>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/danmu_source_rv"
@@ -51,8 +79,8 @@
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintHeight_max="150dp"
-            app:layout_constraintTop_toBottomOf="@id/source_tips" />
+            app:layout_constraintHeight_max="500dp"
+            app:layout_constraintTop_toBottomOf="@id/rg_source" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

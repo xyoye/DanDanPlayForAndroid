@@ -6,11 +6,16 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.collectable
 import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -27,22 +32,30 @@ class BindExtraSourceViewModel : BaseViewModel() {
         private val segmentCache = LruCache<String, List<String>>(MAX_CACHE_SIZE)
     }
 
-    private val _historyChangedLiveData = MediatorLiveData<StorageFile>()
-    val historyChangedLiveData: LiveData<StorageFile> = _historyChangedLiveData
+    private lateinit var storageFile: StorageFile
+
+    val storageFileFlow: StateFlow<StorageFile> by lazy {
+        DatabaseManager.instance.getPlayHistoryDao().getPlayHistoryFlow(
+            storageFile.uniqueKey(),
+            storageFile.storage.library.id
+        ).map {
+            storageFile.clone().apply { playHistory = it }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, storageFile)
+    }
+
+    private val _searchTextFlow = MutableSharedFlow<String>()
+    val searchTextFlow = _searchTextFlow.collectable
 
     private val _segmentTitleLiveData = MediatorLiveData<List<String>>()
     val segmentTitleLiveData: LiveData<List<String>> = _segmentTitleLiveData
 
-    fun updateSourceChanged(storageFile: StorageFile) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val history = DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(
-                storageFile.uniqueKey(),
-                storageFile.storage.library.id
-            )
-            val newStorageFile = storageFile.clone().apply {
-                playHistory = history
-            }
-            _historyChangedLiveData.postValue(newStorageFile)
+    fun setStorageFile(storageFile: StorageFile) {
+        this.storageFile = storageFile
+    }
+
+    fun setSearchText(text: String) {
+        viewModelScope.launch {
+            _searchTextFlow.emit(text)
         }
     }
 

@@ -28,7 +28,14 @@ import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
-import com.xyoye.data_component.enums.*
+import com.xyoye.data_component.enums.DanmakuLanguage
+import com.xyoye.data_component.enums.MediaType
+import com.xyoye.data_component.enums.PixelFormat
+import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.SurfaceType
+import com.xyoye.data_component.enums.VLCAudioOutput
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
 import com.xyoye.player.DanDanVideoPlayer
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
@@ -185,17 +192,20 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@observe
             }
 
-            if (it.state == LoadDanmuState.MATCH_SUCCESS) {
-                val danmuPath = it.danmuPath!!
-                videoController.showMessage(it.state.msg)
-                videoController.setDanmuPath(danmuPath)
-
-                curVideoSource.setDanmuPath(danmuPath)
-                curVideoSource.setEpisodeId(it.episodeId)
-                viewModel.storeDanmuSourceChange(curVideoSource)
-            } else if (it.state == LoadDanmuState.NO_MATCH_REQUIRE) {
-                videoController.setDanmuPath(it.danmuPath!!)
+            // 历史弹幕，直接加载
+            if (it.isHistoryData) {
+                videoController.setDanmuPath(it.danmuPath)
+                return@observe
             }
+
+            // 新匹配到的弹幕，提示并加载弹幕
+            videoController.showMessage("匹配弹幕成功")
+            videoController.setDanmuPath(it.danmuPath)
+
+            // 更新视频源数据
+            curVideoSource.setDanmuPath(it.danmuPath)
+            curVideoSource.setEpisodeId(it.episodeId)
+            viewModel.storeDanmuSourceChange(curVideoSource)
         }
 
         danmuViewModel.downloadDanmuLiveData.observe(this) {
@@ -205,10 +215,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
 
             val curVideoSource = danDanPlayer.getVideoSource()
-            videoController.setDanmuPath(it.first)
+            videoController.setDanmuPath(it.danmuPath)
 
-            curVideoSource.setDanmuPath(it.first)
-            curVideoSource.setEpisodeId(it.second)
+            curVideoSource.setDanmuPath(it.danmuPath)
+            curVideoSource.setEpisodeId(it.episodeId)
             viewModel.storeDanmuSourceChange(curVideoSource)
 
             videoController.showMessage("加载弹幕成功")

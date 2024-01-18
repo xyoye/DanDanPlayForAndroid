@@ -42,7 +42,7 @@ interface ExtendedService {
         @HeaderMap headers: Map<String, String>
     ): ResponseBody
 
-    @GET("${Api.BILI_BILI}x/web-interface/view")
+    @GET("${Api.BILI_BILI_API}x/web-interface/view")
     @Streaming
     suspend fun getCidInfo(@QueryMap params: RequestParams): BiliBiliCidData
 

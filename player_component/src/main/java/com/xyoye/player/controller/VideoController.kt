@@ -4,15 +4,20 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
-import com.xyoye.player.controller.video.*
+import com.xyoye.player.controller.video.LoadingView
+import com.xyoye.player.controller.video.PlayerBottomView
+import com.xyoye.player.controller.video.PlayerControlView
+import com.xyoye.player.controller.video.PlayerGestureView
+import com.xyoye.player.controller.video.PlayerPopupControlView
+import com.xyoye.player.controller.video.PlayerTopView
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
 import com.xyoye.player_component.utils.BatteryHelper
@@ -277,8 +282,8 @@ class VideoController(
      */
     fun observerDanmuSearch(
         search: (String) -> Unit,
-        download: (DanmuSourceContentBean) -> Unit,
-        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+        download: (DanmuEpisodeData) -> Unit,
+        searchResult: () -> LiveData<List<DanmuEpisodeData>>
     ) {
         mSettingController.setDanmuSearch(search, download, searchResult)
     }

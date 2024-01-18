@@ -1,24 +1,15 @@
 package com.xyoye.player_component.ui.activities.player
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.extension.isValid
-import com.xyoye.common_component.extension.toFile
-import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.common_component.utils.DanmuUtils
-import com.xyoye.common_component.utils.FileHashUtils
-import com.xyoye.common_component.utils.IOUtils
-import com.xyoye.common_component.utils.comparator.FileNameComparator
+import com.xyoye.common_component.utils.danmu.DanmuFinder
+import com.xyoye.common_component.utils.danmu.source.DanmuSourceFactory
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.bean.DanmuSourceContentBean
-import com.xyoye.data_component.bean.LoadDanmuBean
-import com.xyoye.data_component.data.DanmuAnimeData
-import com.xyoye.data_component.enums.LoadDanmuState
+import com.xyoye.data_component.bean.LoadDanmuResult
+import com.xyoye.data_component.bean.LocalDanmuBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -27,103 +18,35 @@ import kotlinx.coroutines.launch
  */
 
 class PlayerDanmuViewModel : BaseViewModel() {
-    val loadDanmuLiveData = MutableLiveData<LoadDanmuBean>()
-    val danmuSearchLiveData = MutableLiveData<List<DanmuSourceContentBean>>()
-    val downloadDanmuLiveData = MutableLiveData<Pair<String, Int>?>()
+    val loadDanmuLiveData = MutableLiveData<LoadDanmuResult>()
+    val danmuSearchLiveData = MutableLiveData<List<DanmuEpisodeData>>()
+    val downloadDanmuLiveData = MutableLiveData<LocalDanmuBean>()
 
     fun loadDanmu(videoSource: BaseVideoSource) {
-        val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
-        val historyDanmuPath = videoSource.getDanmuPath()
-
         viewModelScope.launch(Dispatchers.IO) {
-            //如果弹幕内容不为空，则无需匹配弹幕
-            if (historyDanmuPath.toFile().isValid()) {
-                loadResult.state = LoadDanmuState.NO_MATCH_REQUIRE
-                loadResult.danmuPath = historyDanmuPath
-                loadResult.episodeId = videoSource.getEpisodeId()
+            // 如果视频已经存在弹幕，直接加载
+            val historyDanmuPath = videoSource.getDanmuPath()
+            if (historyDanmuPath?.isNotEmpty() == true) {
+                val loadResult = LoadDanmuResult(
+                    videoSource.getVideoUrl(),
+                    historyDanmuPath,
+                    videoSource.getEpisodeId(),
+                    isHistoryData = true
+                )
                 loadDanmuLiveData.postValue(loadResult)
                 return@launch
             }
 
-            //根据弹幕路径选择合适弹幕匹配方法
-            val videoUrl = videoSource.getVideoUrl()
-            val uri = Uri.parse(videoUrl)
-            when (uri.scheme) {
-                "http", "https" -> {
-                    loadNetworkDanmu(videoSource)
+            // 如果视频不存在弹幕，尝试匹配弹幕
+            DanmuSourceFactory.build(videoSource)
+                ?.let {
+                    DanmuFinder.instance.downloadMatched(it)
+                }?.let {
+                    LoadDanmuResult(videoSource.getVideoUrl(), it.danmuPath, it.episodeId)
+                }?.let {
+                    loadDanmuLiveData.postValue(it)
                 }
-
-                "file", "content" -> {
-                    loadLocalDanmu(videoUrl)
-                }
-
-                else -> {
-                    //本地视频的绝对路径，例：/storage/emulate/0/Download/test.mp4
-                    if (videoUrl.startsWith("/")) {
-                        loadLocalDanmu(videoUrl)
-                    } else {
-                        loadDanmuLiveData.postValue(loadResult)
-                    }
-                }
-            }
         }
-    }
-
-    private suspend fun loadLocalDanmu(videoUrl: String) {
-        val loadResult = LoadDanmuBean(videoUrl)
-
-        val uri = Uri.parse(videoUrl)
-        val fileHash = IOUtils.getFileHash(uri.path)
-        if (fileHash == null) {
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
-
-        loadResult.state = LoadDanmuState.MATCHING
-        loadDanmuLiveData.postValue(loadResult)
-        val danmuInfo = DanmuUtils.matchDanmuSilence(videoUrl, fileHash)
-        if (danmuInfo == null) {
-            loadResult.state = LoadDanmuState.NO_MATCHED
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
-
-        loadResult.state = LoadDanmuState.MATCH_SUCCESS
-        loadResult.danmuPath = danmuInfo.first
-        loadResult.episodeId = danmuInfo.second
-        loadDanmuLiveData.postValue(loadResult)
-    }
-
-    private suspend fun loadNetworkDanmu(videoSource: BaseVideoSource) {
-        val loadResult = LoadDanmuBean(videoSource.getVideoUrl())
-        val headers = videoSource.getHttpHeader() ?: emptyMap()
-
-        loadResult.state = LoadDanmuState.COLLECTING
-        loadDanmuLiveData.postValue(loadResult)
-
-        val hash = ResourceRepository.getResourceResponseBody(videoSource.getVideoUrl(), headers)
-            .dataOrNull
-            ?.let { FileHashUtils.getHash(it.byteStream()) }
-
-        if (hash.isNullOrEmpty()) {
-            loadResult.state = LoadDanmuState.NOT_SUPPORTED
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
-
-        loadResult.state = LoadDanmuState.MATCHING
-        loadDanmuLiveData.postValue(loadResult)
-        val danmuInfo = DanmuUtils.matchDanmuSilence(videoSource.getVideoTitle(), hash)
-        if (danmuInfo == null) {
-            loadResult.state = LoadDanmuState.NO_MATCHED
-            loadDanmuLiveData.postValue(loadResult)
-            return
-        }
-
-        loadResult.state = LoadDanmuState.MATCH_SUCCESS
-        loadResult.danmuPath = danmuInfo.first
-        loadResult.episodeId = danmuInfo.second
-        loadDanmuLiveData.postValue(loadResult)
     }
 
     fun searchDanmu(searchText: String) {
@@ -131,52 +54,23 @@ class PlayerDanmuViewModel : BaseViewModel() {
             return
 
         viewModelScope.launch {
-            val result = ResourceRepository.searchDanmu(searchText)
-            val animeData = result.dataOrNull?.animes ?: mutableListOf()
-            val sourceData = mapDanmuSourceData(animeData)
-
-            danmuSearchLiveData.postValue(sourceData)
+            val result = DanmuFinder.instance.search(searchText).flatMap { it.episodes }
+            danmuSearchLiveData.postValue(result)
         }
     }
 
-    private fun mapDanmuSourceData(animeData: MutableList<DanmuAnimeData>): List<DanmuSourceContentBean> {
-        val danmuData = mutableListOf<DanmuSourceContentBean>()
-
-        animeData.sortedWith(FileNameComparator(
-            getName = { it.animeTitle ?: "" },
-            isDirectory = { false }
-        )).forEach { anime ->
-            val animeName = anime.animeTitle ?: return@forEach
-            val episodes = anime.episodes ?: return@forEach
-
-            val contentData = episodes.map {
-                DanmuSourceContentBean(animeName, it.episodeTitle, it.episodeId)
-            }
-            danmuData.addAll(contentData)
-        }
-
-        return danmuData
-    }
-
-    fun downloadDanmu(contentBean: DanmuSourceContentBean) {
+    fun downloadDanmu(episode: DanmuEpisodeData) {
         viewModelScope.launch {
             showLoading()
-            val result = ResourceRepository.getDanmuContent(contentBean.episodeId.toString())
+            val result = DanmuFinder.instance.downloadEpisode(episode)
+            hideLoading()
 
-            if (result is Response.Error) {
-                hideLoading()
-                ToastCenter.showError(result.error.toastMsg)
-                downloadDanmuLiveData.postValue(null)
+            if (result == null) {
+                ToastCenter.showError("弹幕保存失败")
                 return@launch
             }
 
-            val danmuFileName = contentBean.animeTitle + "_" + contentBean.episodeTitle + ".xml"
-            val saveResult = result.dataOrNull
-                ?.let { DanmuUtils.saveDanmu(it, null, danmuFileName) }
-                ?.let { it to contentBean.episodeId }
-
-            hideLoading()
-            downloadDanmuLiveData.postValue(saveResult)
+            downloadDanmuLiveData.postValue(result)
         }
     }
 }

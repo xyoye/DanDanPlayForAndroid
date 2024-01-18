@@ -2,6 +2,7 @@ package com.xyoye.common_component.storage
 
 import android.net.Uri
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.InputStream
@@ -66,7 +67,7 @@ interface Storage {
     /**
      * 缓存弹幕文件到本地
      */
-    suspend fun cacheDanmu(file: StorageFile): String?
+    suspend fun cacheDanmu(file: StorageFile): LocalDanmuBean?
 
     /**
      * 缓存字幕文件到本地

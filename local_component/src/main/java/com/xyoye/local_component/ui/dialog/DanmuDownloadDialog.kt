@@ -3,13 +3,15 @@ package com.xyoye.local_component.ui.dialog
 import android.app.Activity
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.getDomainFormUrl
 import com.xyoye.common_component.weight.dialog.BaseBottomDialog
 import com.xyoye.data_component.bean.DanmuSourceBean
-import com.xyoye.data_component.data.DanmuRelatedData
+import com.xyoye.data_component.data.DanmuEpisodeData
+import com.xyoye.data_component.data.DanmuRelatedUrlData
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.DialogDanmuDowanloadBinding
 import com.xyoye.local_component.databinding.ItemDanmuSourceSelectBinding
@@ -20,39 +22,77 @@ import com.xyoye.local_component.databinding.ItemDanmuSourceSelectBinding
 
 class DanmuDownloadDialog(
     activity: Activity,
-    private val episodeId: Int,
-    private val relatedData: DanmuRelatedData,
-    private val callback: (MutableList<DanmuSourceBean>, Boolean) -> Unit
+    private val episode: DanmuEpisodeData,
+    private val relatedData: List<DanmuRelatedUrlData>,
+    private val downloadRelated: (List<DanmuRelatedUrlData>) -> Unit,
+    private val downloadOfficial: (withRelated: Boolean) -> Unit
 ) : BaseBottomDialog<DialogDanmuDowanloadBinding>(activity) {
+
+    private val danmuSources: MutableList<DanmuSourceBean> = generateDanmuSources()
 
     override fun getChildLayoutId() = R.layout.dialog_danmu_dowanload
 
     override fun initView(binding: DialogDanmuDowanloadBinding) {
-        val downloadSources = initDownloadSources()
-
         disableSheetDrag()
 
         setTitle("下载弹幕")
 
         binding.downloadPathTv.text = PathHelper.getDanmuDirectory().absolutePath
 
+        initRadioGroup(binding)
+
+        initRecyclerView(binding)
+
         setNegativeListener { dismiss() }
 
         setPositiveListener {
-            val needDownloadUrls = mutableListOf<DanmuSourceBean>()
-            for (sourceBean in downloadSources) {
-                if (sourceBean.isChecked) {
-                    needDownloadUrls.add(sourceBean)
-                }
+            // 选中所有源
+            if (binding.rbAllSource.isChecked) {
+                downloadOfficial.invoke(true)
+                return@setPositiveListener
             }
 
-            callback.invoke(needDownloadUrls, needDownloadUrls == downloadSources)
-        }
+            // 勾选了官方源和所有第三方源都勾选了
+            val checkedSources = danmuSources.filter { it.isChecked }
+            if (checkedSources.size == danmuSources.size) {
+                downloadOfficial.invoke(true)
+                return@setPositiveListener
+            }
 
+            // 只勾选了官方源
+            if (checkedSources.size == 1 && checkedSources.first().isOfficial) {
+                downloadOfficial.invoke(false)
+                return@setPositiveListener
+            }
+
+            // 勾选了部分源
+            downloadRelated.invoke(checkedSources.map { DanmuRelatedUrlData(it.sourceUrl) })
+        }
+    }
+
+    private fun initRadioGroup(binding: DialogDanmuDowanloadBinding) {
+        binding.rgSource.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == binding.rbAllSource.id) {
+                binding.danmuSourceRv.setData(emptyList())
+            } else {
+                binding.danmuSourceRv.setData(danmuSources)
+            }
+        }
+    }
+
+    private fun initRecyclerView(binding: DialogDanmuDowanloadBinding) {
         binding.danmuSourceRv.apply {
+            itemAnimator = null
             layoutManager = vertical()
 
             adapter = buildAdapter {
+
+                setupDiffUtil {
+                    newDataInstance { it }
+                    areItemsTheSame { old, new ->
+                        (old as DanmuSourceBean).sourceUrl == (new as DanmuSourceBean).sourceUrl
+                    }
+                }
 
                 addItem<DanmuSourceBean, ItemDanmuSourceSelectBinding>(R.layout.item_danmu_source_select) {
                     initView { data, _, _ ->
@@ -60,37 +100,50 @@ class DanmuDownloadDialog(
                             danmuSourceCb.isChecked = data.isChecked
                             danmuSourceCb.text = data.sourceName
                             danmuSourceDescribeTv.text = data.sourceDescribe
+                        }
 
-                            danmuSourceCb.setOnCheckedChangeListener { _, isChecked ->
-                                data.isChecked = isChecked
-                            }
+                        itemBinding.root.setOnClickListener {
+                            selectSource(data, binding)
                         }
                     }
                 }
             }
-
-            setData(downloadSources)
         }
     }
 
-    private fun initDownloadSources(): MutableList<DanmuSourceBean> {
+    private fun selectSource(source: DanmuSourceBean, binding: DialogDanmuDowanloadBinding) {
+        val newSources = danmuSources.map {
+            if (it.sourceUrl == source.sourceUrl) {
+                it.copy(isChecked = it.isChecked.not())
+            } else {
+                it
+            }
+        }
+
+        danmuSources.clear()
+        danmuSources.addAll(newSources)
+        binding.danmuSourceRv.setData(newSources)
+    }
+
+    private fun generateDanmuSources(): MutableList<DanmuSourceBean> {
         val downloadSources = mutableListOf<DanmuSourceBean>()
         //弹弹play源
-        downloadSources.add(
-            DanmuSourceBean(
-                "弹弹Play",
-                episodeId.toString(),
-                "www.dandanplay.com",
-                isOfficial = true,
-                isChecked = true,
-                format = 0
-            )
-        )
+        DanmuSourceBean(
+            "弹弹Play",
+            episode.episodeId.toString(),
+            "www.dandanplay.com",
+            isOfficial = true,
+            isChecked = true,
+            format = 0
+        ).let {
+            downloadSources.add(it)
+        }
 
         //第三方源
-        for (related in relatedData.relateds) {
-            val url = related.url ?: continue
-            downloadSources.add(DanmuSourceBean(getDomainFormUrl(url), url, url))
+        relatedData.map {
+            DanmuSourceBean(getDomainFormUrl(it.url), it.url, it.url)
+        }.let {
+            downloadSources.addAll(it)
         }
 
         return downloadSources

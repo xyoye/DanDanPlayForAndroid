@@ -3,7 +3,7 @@ package com.xyoye.player.controller.setting
 import android.content.Context
 import android.view.KeyEvent
 import androidx.lifecycle.LiveData
-import com.xyoye.data_component.bean.DanmuSourceContentBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.wrapper.InterSettingController
@@ -98,8 +98,8 @@ class SettingController(
 
     fun setDanmuSearch(
         search: (String) -> Unit,
-        download: (DanmuSourceContentBean) -> Unit,
-        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+        download: (DanmuEpisodeData) -> Unit,
+        searchResult: () -> LiveData<List<DanmuEpisodeData>>
     ) {
         (getSettingView(SettingViewType.SEARCH_DANMU) as SearchDanmuView)
             .setDanmuSearch(search, download, searchResult)
@@ -119,6 +119,7 @@ class SettingController(
                 }
                 return playerSettingView
             }
+
             SettingViewType.SWITCH_SOURCE -> {
                 if (this::switchSourceView.isInitialized.not()) {
                     switchSourceView = SwitchSourceView(context)
@@ -126,6 +127,7 @@ class SettingController(
                 }
                 return switchSourceView
             }
+
             SettingViewType.SWITCH_VIDEO_SOURCE -> {
                 if (this::switchVideoSourceView.isInitialized.not()) {
                     switchVideoSourceView = SwitchVideoSourceView(context)
@@ -133,6 +135,7 @@ class SettingController(
                 }
                 return switchVideoSourceView
             }
+
             SettingViewType.KEYWORD_BLOCK -> {
                 if (this::keywordBlockView.isInitialized.not()) {
                     keywordBlockView = KeywordBlockView(context)
@@ -140,6 +143,7 @@ class SettingController(
                 }
                 return keywordBlockView
             }
+
             SettingViewType.SCREEN_SHOT -> {
                 if (this::screenShotView.isInitialized.not()) {
                     screenShotView = ScreenShotView(context)
@@ -147,6 +151,7 @@ class SettingController(
                 }
                 return screenShotView
             }
+
             SettingViewType.SEARCH_DANMU -> {
                 if (this::searchDanmuView.isInitialized.not()) {
                     searchDanmuView = SearchDanmuView(context)
@@ -154,6 +159,7 @@ class SettingController(
                 }
                 return searchDanmuView
             }
+
             SettingViewType.VIDEO_SPEED -> {
                 if (this::videoSpeedView.isInitialized.not()) {
                     videoSpeedView = SettingVideoSpeedView(context)
@@ -161,6 +167,7 @@ class SettingController(
                 }
                 return videoSpeedView
             }
+
             SettingViewType.VIDEO_ASPECT -> {
                 if (this::videoAspectView.isInitialized.not()) {
                     videoAspectView = SettingVideoAspectView(context)
@@ -168,6 +175,7 @@ class SettingController(
                 }
                 return videoAspectView
             }
+
             SettingViewType.AUDIO_STREAM -> {
                 if (this::audioStreamView.isInitialized.not()) {
                     audioStreamView = SettingAudioStreamView(context)
@@ -175,6 +183,7 @@ class SettingController(
                 }
                 return audioStreamView
             }
+
             SettingViewType.LOAD_DANMU_SOURCE, SettingViewType.LOAD_SUBTITLE_SOURCE -> {
                 if (this::switchSourceView.isInitialized.not()) {
                     switchSourceView = SwitchSourceView(context)
@@ -183,6 +192,7 @@ class SettingController(
                 switchSourceView.setSwitchType(type)
                 return switchSourceView
             }
+
             SettingViewType.DANMU_STYLE -> {
                 if (this::settingDanmuStyleView.isInitialized.not()) {
                     settingDanmuStyleView = SettingDanmuStyleView(context)
@@ -190,6 +200,7 @@ class SettingController(
                 }
                 return settingDanmuStyleView
             }
+
             SettingViewType.DANMU_CONFIGURE -> {
                 if (this::danmuConfigureView.isInitialized.not()) {
                     danmuConfigureView = SettingDanmuConfigureView(context)
@@ -197,6 +208,7 @@ class SettingController(
                 }
                 return danmuConfigureView
             }
+
             SettingViewType.DANMU_OFFSET_TIME, SettingViewType.SUBTITLE_OFFSET_TIME -> {
                 if (this::offsetTimeView.isInitialized.not()) {
                     offsetTimeView = SettingOffsetTimeView(context)
@@ -205,6 +217,7 @@ class SettingController(
                 offsetTimeView.setSettingType(type)
                 return offsetTimeView
             }
+
             SettingViewType.SUBTITLE_STREAM -> {
                 if (this::subtitleStreamView.isInitialized.not()) {
                     subtitleStreamView = SettingSubtitleStreamView(context)
@@ -212,6 +225,7 @@ class SettingController(
                 }
                 return subtitleStreamView
             }
+
             SettingViewType.SUBTITLE_STYLE -> {
                 if (this::subtitleStyleView.isInitialized.not()) {
                     subtitleStyleView = SettingSubtitleStyleView(context)

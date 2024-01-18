@@ -10,5 +10,7 @@ typealias RequestParams = HashMap<String, @JvmSuppressWildcards Any>
 
 // 请求集合装换为Body
 fun RequestParams.toRequestBody(mediaType: MediaType): RequestBody {
-    return JsonHelper.toJson(this).orEmpty().toRequestBody(mediaType)
+    val map = this as Map<String, @JvmSuppressWildcards Any>
+    val json = JsonHelper.toJson(map).orEmpty()
+    return json.toRequestBody(mediaType)
 }

@@ -12,6 +12,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.services.StorageFileProvider
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.hideKeyboard
@@ -19,7 +20,6 @@ import com.xyoye.common_component.utils.showKeyboard
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBindExtraSourceBinding
-import com.xyoye.local_component.listener.ExtraSourceListener
 import com.xyoye.local_component.ui.dialog.SegmentWordDialog
 import com.xyoye.local_component.ui.fragment.bind_danmu.BindDanmuSourceFragment
 import com.xyoye.local_component.ui.fragment.bind_subtitle.BindSubtitleSourceFragment
@@ -56,8 +56,9 @@ class BindExtraSourceActivity :
             finish()
             return
         }
+
         this.storageFile = storageFile
-        VideoItemLayout.initVideoLayout(dataBinding, storageFile)
+        viewModel.setStorageFile(storageFile)
 
         dataBinding.viewpager.apply {
             adapter = BindSourcePageAdapter(supportFragmentManager)
@@ -80,7 +81,7 @@ class BindExtraSourceActivity :
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard(dataBinding.searchEt)
                 dataBinding.searchCl.requestFocus()
-                childPage()?.search(dataBinding.searchEt.text.toString().trim())
+                viewModel.setSearchText(dataBinding.searchEt.text.toString().trim())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
@@ -94,7 +95,7 @@ class BindExtraSourceActivity :
         dataBinding.searchTv.setOnClickListener {
             hideKeyboard(dataBinding.searchEt)
             dataBinding.searchCl.requestFocus()
-            childPage()?.search(dataBinding.searchEt.text.toString().trim())
+            viewModel.setSearchText(dataBinding.searchEt.text.toString().trim())
         }
 
         dataBinding.clearTextIv.setOnClickListener {
@@ -132,10 +133,8 @@ class BindExtraSourceActivity :
             }
         })
 
-        viewModel.historyChangedLiveData.observe(this) {
+        viewModel.storageFileFlow.collectAtStarted(this) {
             VideoItemLayout.initVideoLayout(dataBinding, it)
-            childPage(0)?.onStorageFileChanged(it)
-            childPage(1)?.onStorageFileChanged(it)
         }
 
         viewModel.segmentTitleLiveData.observe(this) {
@@ -146,19 +145,9 @@ class BindExtraSourceActivity :
                 hideKeyboard(dataBinding.searchEt)
                 dataBinding.searchCl.requestFocus()
 
-                childPage()?.search(searchText)
+                viewModel.setSearchText(searchText)
             }.show()
         }
-    }
-
-    private fun childPage(index: Int? = null): ExtraSourceListener? {
-        val pageIndex = index ?: dataBinding.viewpager.currentItem
-        val tag = "android:switcher:${R.id.viewpager}:$pageIndex"
-        return supportFragmentManager.findFragmentByTag(tag) as? ExtraSourceListener?
-    }
-
-    fun onSourceChanged() {
-        viewModel.updateSourceChanged(storageFile)
     }
 
     inner class BindSourcePageAdapter(

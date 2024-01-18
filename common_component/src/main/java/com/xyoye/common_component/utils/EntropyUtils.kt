@@ -3,6 +3,7 @@ package com.xyoye.common_component.utils
 import android.text.TextUtils
 import android.util.Base64
 import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.toHexString
 import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest
@@ -27,7 +28,7 @@ object EntropyUtils {
 
         val messageDigest = MessageDigest.getInstance("MD5")
         messageDigest.update(string!!.toByteArray())
-        return buffer2Hex(messageDigest.digest())
+        return messageDigest.digest().toHexString()
     }
 
     /**
@@ -47,7 +48,7 @@ object EntropyUtils {
             while (fileInputStream.read(buffer).also { length = it } != -1) {
                 messageDigest.update(buffer, 0, length)
             }
-            return buffer2Hex(messageDigest.digest())
+            return messageDigest.digest().toHexString()
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {

@@ -7,6 +7,7 @@ import android.util.Base64
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.data_component.enums.ResourceType
 import java.io.File
 import java.net.URLDecoder
 import java.nio.charset.Charset
@@ -54,5 +55,15 @@ fun String.aesDecode(key: String? = null) = EntropyUtils.aesDecode(key, this, Ba
 
 fun String.authorizationValue() = "Bearer $this"
 
-inline fun String?.ifEmptyOrNull(defaultValue: () -> String): String =
-    if (this.isNullOrEmpty()) defaultValue() else this
+inline fun String?.ifNullOrBlank(defaultValue: () -> String): String =
+    if (this.isNullOrBlank()) defaultValue() else this
+
+fun String?.resourceType(): ResourceType? {
+    return when {
+        this.isNullOrEmpty() -> null
+        this.startsWith("http", true) -> ResourceType.URL
+        this.startsWith("/") || this.startsWith("file://") -> ResourceType.File
+        this.startsWith("content") -> ResourceType.URI
+        else -> null
+    }
+}

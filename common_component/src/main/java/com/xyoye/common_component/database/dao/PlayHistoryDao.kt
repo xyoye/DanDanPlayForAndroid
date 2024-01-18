@@ -4,6 +4,7 @@ import androidx.room.*
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.MediaTypeConverter
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by xyoye on 2021/1/19.
@@ -34,6 +35,10 @@ interface PlayHistoryDao {
     @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun getPlayHistory(uniqueKey: String, storageId: Int): PlayHistoryEntity?
+
+    @Query("SELECT * FROM play_history WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
+    @TypeConverters(MediaTypeConverter::class)
+    fun getPlayHistoryFlow(uniqueKey: String, storageId: Int): Flow<PlayHistoryEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entities: PlayHistoryEntity)

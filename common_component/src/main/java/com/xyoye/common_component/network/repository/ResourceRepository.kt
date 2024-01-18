@@ -36,7 +36,7 @@ object ResourceRepository : BaseRepository() {
     suspend fun getDanmuContent(episodeId: String, withRelated: Boolean = true) = request()
         .param("withRelated", withRelated)
         .doGet {
-            Retrofit.danDanService.getDanmuContent(episodeId)
+            Retrofit.danDanService.getDanmuContent(episodeId, it)
         }
 
     /**

@@ -7,6 +7,7 @@ import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.data_component.bean.LocalDanmuBean
 
 /**
  * Created by xyoye on 2023/1/2.
@@ -24,28 +25,25 @@ object StorageVideoSourceFactory {
             playUrl,
             file,
             videoSources,
-            danmuInfo.first,
-            danmuInfo.second,
+            danmuInfo?.episodeId ?: 0,
+            danmuInfo?.danmuPath,
             subtitlePath
         )
     }
 
-    private suspend fun getDanmuInfo(file: StorageFile, storage: Storage): Pair<Int, String?> {
-        val danmuNotFound = Pair(0, null)
-
+    private suspend fun getDanmuInfo(file: StorageFile, storage: Storage): LocalDanmuBean? {
         //从播放记录读取弹幕
         val history = file.playHistory
         if (history?.danmuPath?.isNotEmpty() == true) {
-            return Pair(history.episodeId, history.danmuPath)
+            return LocalDanmuBean(history.danmuPath!!, history.episodeId)
         }
 
         //是否匹配同文件夹内同名弹幕
         if (DanmuConfig.isAutoLoadSameNameDanmu()) {
-            return storage.cacheDanmu(file)?.run { Pair(0, this) }
-                ?: danmuNotFound
+            return storage.cacheDanmu(file)
         }
 
-        return danmuNotFound
+        return null
     }
 
     private suspend fun getSubtitlePath(file: StorageFile, storage: Storage): String? {

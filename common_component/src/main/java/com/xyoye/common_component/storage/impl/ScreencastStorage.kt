@@ -10,11 +10,13 @@ import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
-import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.utils.JsonHelper
+import com.xyoye.common_component.utils.danmu.DanmuFinder
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.bean.LocalDanmuBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -71,20 +73,17 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
         return screencastData?.httpHeader
     }
 
-    override suspend fun cacheDanmu(file: StorageFile): String? {
+    override suspend fun cacheDanmu(file: StorageFile): LocalDanmuBean? {
         val videoData = (file as ScreencastStorageFile).getRealFile()
         val danmuUrl = screencastData?.getDanmuUrl(videoData.videoIndex)
             ?: return null
-        try {
-            return DanmuUtils.saveDanmuStream(
-                fileName = getFileNameNoExtension(file.fileName()) + ".xml",
-                inputStream = ResourceRepository.getResourceResponseBody(danmuUrl).dataOrNull?.byteStream(),
-                directoryName = "screencast"
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
+        val stream = ResourceRepository.getResourceResponseBody(danmuUrl).dataOrNull?.byteStream()
+            ?: return null
+        val episode = DanmuEpisodeData(
+            animeTitle = "screencast",
+            episodeTitle = getFileNameNoExtension(file.fileName())
+        )
+        return DanmuFinder.instance.saveStream(episode, stream)
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {

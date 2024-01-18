@@ -9,9 +9,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.findIndexOnLeft
+import com.xyoye.common_component.extension.findIndexOnRight
+import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.hideKeyboard
-import com.xyoye.data_component.bean.DanmuSourceContentBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemSearchDanmuBinding
@@ -24,8 +28,8 @@ class SearchDanmuView(
 ) : BaseSettingView<LayoutSearchDanmuBinding>(context, attrs, defStyleAttr) {
 
     private var search: ((String) -> Unit)? = null
-    private var download: ((DanmuSourceContentBean) -> Unit)? = null
-    private val mSearchDanmuData = mutableListOf<DanmuSourceContentBean>()
+    private var download: ((DanmuEpisodeData) -> Unit)? = null
+    private val mSearchDanmuData = mutableListOf<DanmuEpisodeData>()
 
     init {
         initRv()
@@ -63,7 +67,7 @@ class SearchDanmuView(
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                addItem<DanmuSourceContentBean, ItemSearchDanmuBinding>(R.layout.item_search_danmu) {
+                addItem<DanmuEpisodeData, ItemSearchDanmuBinding>(R.layout.item_search_danmu) {
                     initView { data, position, _ ->
                         val positionText = (position + 1).toString()
                         itemBinding.positionTv.text = positionText
@@ -104,15 +108,15 @@ class SearchDanmuView(
         search?.invoke(searchText)
     }
 
-    private fun download(data: DanmuSourceContentBean) {
+    private fun download(data: DanmuEpisodeData) {
         download?.invoke(data)
         onSettingVisibilityChanged(false)
     }
 
     fun setDanmuSearch(
         search: (String) -> Unit,
-        download: (DanmuSourceContentBean) -> Unit,
-        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+        download: (DanmuEpisodeData) -> Unit,
+        searchResult: () -> LiveData<List<DanmuEpisodeData>>
     ) {
         this.search = search
         this.download = download

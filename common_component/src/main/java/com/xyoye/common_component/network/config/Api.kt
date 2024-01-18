@@ -28,7 +28,10 @@ object Api {
     const val ASSRT_SUB = "http://api.assrt.net/"
 
     // BiliBili
-    const val BILI_BILI = "https://api.bilibili.com/"
+    const val BILI_BILI_M = "https://m.bilibili.com/"
+
+    // BiliBili API
+    const val BILI_BILI_API = "https://api.bilibili.com/"
 
     // BiliBili弹幕
     const val BILI_BILI_COMMENT = "http://comment.bilibili.com/"

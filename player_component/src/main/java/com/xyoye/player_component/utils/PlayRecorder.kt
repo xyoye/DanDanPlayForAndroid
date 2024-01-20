@@ -56,7 +56,6 @@ object PlayRecorder {
                 torrentPath,
                 torrentIndex,
                 JsonHelper.toJson(source.getHttpHeader()),
-                null,
                 source.getUniqueKey(),
                 source.getStoragePath(),
                 source.getStorageId()
@@ -94,11 +93,13 @@ object PlayRecorder {
             is SurfaceView -> {
                 return recordSurfaceView(view, imageSize)
             }
+
             is TextureView -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && view.surfaceTexture != null) {
                     return recordTextureView(view, imageSize)
                 }
             }
+
             is VLCVideoLayout -> {
                 val textureView = view.findViewById<TextureView>(R.id.texture_video)
                 val surfaceView = view.findViewById<SurfaceView>(R.id.surface_video)

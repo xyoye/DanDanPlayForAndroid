@@ -2,9 +2,9 @@ package com.xyoye.player.wrapper
 
 import android.graphics.PointF
 import android.view.KeyEvent
-import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.data_component.enums.VideoScreenScale
@@ -180,7 +180,7 @@ class ControlWrapper(
         mController.showController(ignoreShowing)
     }
 
-    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
+    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: String?) {
         mController.onDanmuSourceUpdate(danmuPath, episodeId)
     }
 
@@ -248,7 +248,7 @@ class ControlWrapper(
         mDanmuController.toggleDanmuVisible()
     }
 
-    override fun onDanmuSourceChanged(filePath: String, episodeId: Int) {
+    override fun onDanmuSourceChanged(filePath: String, episodeId: String?) {
         mDanmuController.onDanmuSourceChanged(filePath)
         mSettingController.onDanmuSourceChanged()
         mController.onDanmuSourceUpdate(filePath, episodeId)

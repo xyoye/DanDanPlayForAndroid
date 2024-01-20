@@ -54,7 +54,7 @@ class VideoController(
     private var lastPlayPosition = 0L
     private var lastVideoSpeed: Float? = null
 
-    private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
+    private var mDanmuSourceChanged: ((String, String?) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
 
@@ -78,7 +78,7 @@ class VideoController(
         playerControlView.showMessage(text, time)
     }
 
-    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
+    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: String?) {
         val videoSource = mControlWrapper.getVideoSource()
         if (videoSource.getDanmuPath() == danmuPath
             && videoSource.getEpisodeId() == episodeId
@@ -237,7 +237,7 @@ class VideoController(
     /**
      * 弹幕资源更新回调
      */
-    fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: Int) -> Unit) {
+    fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: String?) -> Unit) {
         mDanmuSourceChanged = block
     }
 

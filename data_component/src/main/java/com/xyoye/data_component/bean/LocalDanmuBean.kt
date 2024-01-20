@@ -6,5 +6,5 @@ package com.xyoye.data_component.bean
 
 data class LocalDanmuBean(
     val danmuPath: String,
-    val episodeId: Int = 0
+    val episodeId: String? = null
 )

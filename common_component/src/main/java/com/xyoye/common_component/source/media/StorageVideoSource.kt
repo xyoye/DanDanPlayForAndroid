@@ -16,7 +16,7 @@ class StorageVideoSource(
     private val playUrl: String,
     private val file: StorageFile,
     private val videoSources: List<StorageFile>,
-    private var episodeId: Int,
+    private var episodeId: String?,
     private var danmuPath: String?,
     private var subtitlePath: String?,
 ) : BaseVideoSource(
@@ -32,11 +32,11 @@ class StorageVideoSource(
         danmuPath = path
     }
 
-    override fun getEpisodeId(): Int {
+    override fun getEpisodeId(): String? {
         return episodeId
     }
 
-    override fun setEpisodeId(id: Int) {
+    override fun setEpisodeId(id: String?) {
         episodeId = id
     }
 

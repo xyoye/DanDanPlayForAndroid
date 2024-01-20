@@ -114,6 +114,55 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                //新建临时表
+                database.execSQL(
+                    "CREATE TABLE play_history_temp(" +
+                            "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                            "video_name TEXT NOT NULL," +
+                            "url TEXT NOT NULL," +
+                            "media_type TEXT NOT NULL," +
+                            "video_position INTEGER NOT NULL," +
+                            "video_duration INTEGER NOT NULL," +
+                            "play_time INTEGER NOT NULL," +
+                            "danmu_path TEXT," +
+                            "episode_id TEXT," +
+                            "subtitle_path TEXT," +
+                            "torrent_path TEXT," +
+                            "torrent_index INTEGER NOT NULL DEFAULT -1," +
+                            "http_header TEXT," +
+                            "unique_key TEXT NOT NULL DEFAULT ''," +
+                            "storage_path TEXT," +
+                            "storage_id INTEGER" +
+                            ")"
+                )
+                //旧表数据迁移
+                database.execSQL(
+                    "INSERT INTO play_history_temp(" +
+                            "id, video_name, url, media_type, video_position, " +
+                            "video_duration, play_time, danmu_path, episode_id," +
+                            "subtitle_path, torrent_path, torrent_index, http_header, " +
+                            "unique_key, storage_path, storage_id" +
+                            ") " +
+                            "SELECT " +
+                            "id, video_name, url, media_type, video_position," +
+                            "video_duration, play_time, danmu_path, episode_id," +
+                            "subtitle_path, torrent_path, torrent_index, http_header," +
+                            "unique_key, storage_path, storage_id" +
+                            " FROM play_history"
+                )
+                //移除旧表
+                database.execSQL("DROP TABLE play_history")
+                //重命名为旧表
+                database.execSQL("ALTER TABLE play_history_temp RENAME TO play_history")
+                //移除旧的mediaType + uniqueKey唯一约束
+                database.execSQL("DROP INDEX IF EXISTS 'index_play_history_unique_key_media_type'")
+                //创建新的storageId + uniqueKey的唯一约束
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_play_history_unique_key_storage_id ON play_history(unique_key, storage_id)")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -135,7 +184,8 @@ class DatabaseManager private constructor() {
         MIGRATION_7_8,
         MIGRATION_8_9,
         MIGRATION_9_10,
-        MIGRATION_10_11
+        MIGRATION_10_11,
+        MIGRATION_11_12
     ).build()
 
 }

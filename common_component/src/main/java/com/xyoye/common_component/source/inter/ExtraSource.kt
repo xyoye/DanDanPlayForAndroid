@@ -11,9 +11,9 @@ interface ExtraSource {
 
     fun setDanmuPath(path: String)
 
-    fun getEpisodeId(): Int
+    fun getEpisodeId(): String?
 
-    fun setEpisodeId(id: Int)
+    fun setEpisodeId(id: String?)
 
     fun getSubtitlePath(): String?
 

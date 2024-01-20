@@ -36,7 +36,7 @@ data class DanmuAnimeData(
 data class DanmuEpisodeData(
     val animeId: Int = 0,
     val animeTitle: String = "",
-    val episodeId: Int = 0,
+    val episodeId: String = "",
     val episodeTitle: String = "",
 
     @Json(ignore = true)

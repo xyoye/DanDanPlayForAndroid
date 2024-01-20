@@ -25,7 +25,7 @@ object StorageVideoSourceFactory {
             playUrl,
             file,
             videoSources,
-            danmuInfo?.episodeId ?: 0,
+            danmuInfo?.episodeId,
             danmuInfo?.danmuPath,
             subtitlePath
         )

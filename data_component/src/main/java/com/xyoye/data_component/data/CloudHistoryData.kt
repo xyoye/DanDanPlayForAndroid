@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class CloudHistoryListData(
     val playHistoryAnimes: MutableList<CloudHistoryData> = mutableListOf()
-): CommonJsonData(), Parcelable
+) : CommonJsonData(), Parcelable
 
 @Parcelize
 @JsonClass(generateAdapter = true)
@@ -24,14 +24,14 @@ data class CloudHistoryData(
     val imageUrl: String?,
     val isOnAir: Boolean,
     val episodes: MutableList<CloudHistoryEpisodeData> = mutableListOf()
-): Parcelable
+) : Parcelable
 
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class CloudHistoryEpisodeData(
-    val episodeId: Int,
+    val episodeId: String?,
     val episodeTitle: String?,
     val episodeNumber: String?,
     val lastWatched: String?,
     val airDate: String?
-): Parcelable
+) : Parcelable

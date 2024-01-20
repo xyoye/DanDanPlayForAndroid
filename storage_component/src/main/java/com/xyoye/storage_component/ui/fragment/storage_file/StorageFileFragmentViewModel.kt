@@ -20,9 +20,10 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         private val lastPlayDirectory = PlayHistoryEntity(
             url = "",
             mediaType = MediaType.OTHER_STORAGE,
-            videoName = "",
+            videoName = ""
+        ).apply {
             isLastPlay = true
-        )
+        }
     }
 
     private val _fileLiveData = MutableLiveData<List<StorageFile>>()
@@ -114,7 +115,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             if (unbindDanmu) {
                 DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
-                    file.uniqueKey(), storage.library.mediaType, null, 0
+                    file.uniqueKey(), storage.library.mediaType, null, null
                 )
             } else {
                 DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(

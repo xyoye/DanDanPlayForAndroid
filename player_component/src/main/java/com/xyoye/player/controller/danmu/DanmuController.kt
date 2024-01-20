@@ -2,9 +2,9 @@ package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.wrapper.InterDanmuController
@@ -65,7 +65,7 @@ class DanmuController(context: Context) : InterDanmuController {
         danmuView.toggleVis()
     }
 
-    override fun onDanmuSourceChanged(filePath: String, episodeId: Int) {
+    override fun onDanmuSourceChanged(filePath: String, episodeId: String?) {
         danmuView.release()
         danmuView.loadDanmu(filePath)
     }
@@ -96,7 +96,7 @@ class DanmuController(context: Context) : InterDanmuController {
         }
     }
 
-    override fun seekTo(timeMs: Long, isPlaying: Boolean){
+    override fun seekTo(timeMs: Long, isPlaying: Boolean) {
         danmuView.seekTo(timeMs, isPlaying)
     }
 

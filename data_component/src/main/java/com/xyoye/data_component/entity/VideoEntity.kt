@@ -43,7 +43,4 @@ data class VideoEntity(
 
     @ColumnInfo(name = "extend")
     var isExtend: Boolean = false
-) {
-    @Ignore
-    var isLastPlay: Boolean = false
-}
+)

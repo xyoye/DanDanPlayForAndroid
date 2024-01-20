@@ -19,11 +19,11 @@ abstract class BaseVideoSource(
 
     }
 
-    override fun getEpisodeId(): Int {
-        return 0
+    override fun getEpisodeId(): String? {
+        return null
     }
 
-    override fun setEpisodeId(id: Int) {
+    override fun setEpisodeId(id: String?) {
 
     }
 

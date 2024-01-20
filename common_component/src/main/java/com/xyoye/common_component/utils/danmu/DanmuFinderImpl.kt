@@ -40,7 +40,7 @@ class DanmuFinderImpl(
     }
 
     override suspend fun downloadEpisode(episode: DanmuEpisodeData, withRelated: Boolean): LocalDanmuBean? {
-        val contents = danmuQuery.getContentByEpisodeId(episode.episodeId.toString(), withRelated)
+        val contents = danmuQuery.getContentByEpisodeId(episode.episodeId, withRelated)
         val xmlContent = DanmuContentGenerator.generate(contents)
             ?: return null
 
@@ -59,7 +59,7 @@ class DanmuFinderImpl(
 
     override suspend fun downloadRelated(episode: DanmuEpisodeData, related: List<DanmuRelatedUrlData>): LocalDanmuBean? {
         val contents = related.flatMap {
-            if (it.url == episode.episodeId.toString()) {
+            if (it.url == episode.episodeId) {
                 danmuQuery.getContentByEpisodeId(it.url)
             } else {
                 danmuQuery.getContentByUrl(it.url)
@@ -85,8 +85,8 @@ class DanmuFinderImpl(
         return danmuQuery.search(text)
     }
 
-    override suspend fun getRelated(episodeId: Int): List<DanmuRelatedUrlData> {
-        return danmuQuery.source(episodeId.toString())
+    override suspend fun getRelated(episodeId: String): List<DanmuRelatedUrlData> {
+        return danmuQuery.source(episodeId)
     }
 
     override suspend fun saveStream(episode: DanmuEpisodeData, inputStream: InputStream): LocalDanmuBean? {

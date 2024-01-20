@@ -153,17 +153,17 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
     fun unbindDanmu() {
         viewModelScope.launch(Dispatchers.IO) {
-            databaseDanmu(null, 0)
+            databaseDanmu(null)
         }
     }
 
     fun bindLocalDanmu(filePath: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            databaseDanmu(filePath, 0)
+            databaseDanmu(filePath)
         }
     }
 
-    private suspend fun databaseDanmu(danmuPath: String?, episodeId: Int) {
+    private suspend fun databaseDanmu(danmuPath: String?, episodeId: String? = null) {
         val historyEntity = getStorageFileHistory().copy(
             danmuPath = danmuPath,
             episodeId = episodeId

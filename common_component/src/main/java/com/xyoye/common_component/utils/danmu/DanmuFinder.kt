@@ -48,7 +48,7 @@ interface DanmuFinder {
     /**
      * 获取弹幕的第三方资源
      */
-    suspend fun getRelated(episodeId: Int): List<DanmuRelatedUrlData>
+    suspend fun getRelated(episodeId: String): List<DanmuRelatedUrlData>
 
     /**
      * 保存剧集对应的字幕流数据

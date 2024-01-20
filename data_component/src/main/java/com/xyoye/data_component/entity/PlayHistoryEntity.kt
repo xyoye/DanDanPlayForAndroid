@@ -1,17 +1,22 @@
 package com.xyoye.data_component.entity
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.BooleanConverter
 import com.xyoye.data_component.helper.DateConverter
 import com.xyoye.data_component.helper.MediaTypeConverter
-import java.util.*
+import java.util.Date
 
 /**
  * Created by xyoye on 2021/1/19.
  */
 
-@Entity(tableName = "play_history", indices = [Index(value = arrayOf("unique_key", "media_type"), unique = true)])
+@Entity(tableName = "play_history", indices = [Index(value = arrayOf("unique_key", "storage_id"), unique = true)])
 @TypeConverters(DateConverter::class, MediaTypeConverter::class, BooleanConverter::class)
 data class PlayHistoryEntity(
     @PrimaryKey(autoGenerate = true)
@@ -39,7 +44,7 @@ data class PlayHistoryEntity(
     var danmuPath: String? = null,
 
     @ColumnInfo(name = "episode_id")
-    var episodeId: Int = 0,
+    var episodeId: String? = null,
 
     @ColumnInfo(name = "subtitle_path")
     var subtitlePath: String? = null,
@@ -53,10 +58,6 @@ data class PlayHistoryEntity(
     @ColumnInfo(name = "http_header")
     var httpHeader: String? = null,
 
-    @ColumnInfo(name = "extra")
-    @Deprecated(message = "不再使用")
-    var extra: String? = null,
-
     @ColumnInfo(name = "unique_key")
     var uniqueKey: String = "",
 
@@ -64,11 +65,8 @@ data class PlayHistoryEntity(
     var storagePath: String? = null,
 
     @ColumnInfo(name = "storage_id")
-    var storageId: Int? = null,
-
-    @ColumnInfo(name = "is_last_play")
-    var isLastPlay: Boolean = false
+    var storageId: Int? = null
 ) {
     @Ignore
-    var checked: Boolean = false
+    var isLastPlay: Boolean = false
 }

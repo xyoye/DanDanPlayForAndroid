@@ -72,7 +72,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     override suspend fun cacheDanmu(file: StorageFile): LocalDanmuBean? {
         val videoData = (file as RemoteStorageFile).getRealFile()
         val episode = DanmuEpisodeData(
-            episodeId = videoData.Id.toIntOrNull() ?: 0,
+            episodeId = videoData.Id,
             episodeTitle = videoData.EpisodeTitle,
             animeId = videoData.AnimeId,
             animeTitle = videoData.AnimeTitle

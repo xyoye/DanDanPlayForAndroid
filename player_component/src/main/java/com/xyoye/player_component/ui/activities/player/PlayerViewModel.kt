@@ -54,8 +54,8 @@ class PlayerViewModel : BaseViewModel() {
         }
     }
 
-    fun sendDanmu(episodeId: Int, danmuPath: String?, sendDanmuBean: SendDanmuBean) {
-        if (episodeId > 0) {
+    fun sendDanmu(episodeId: String?, danmuPath: String?, sendDanmuBean: SendDanmuBean) {
+        if (episodeId?.isNotEmpty() == true) {
             sendDanmuToServer(sendDanmuBean, episodeId)
         }
         if (danmuPath != null) {
@@ -63,7 +63,7 @@ class PlayerViewModel : BaseViewModel() {
         }
     }
 
-    private fun sendDanmuToServer(sendDanmuBean: SendDanmuBean, episodeId: Int) {
+    private fun sendDanmuToServer(sendDanmuBean: SendDanmuBean, episodeId: String) {
         viewModelScope.launch {
             val time = BigDecimal(sendDanmuBean.position.toDouble() / 1000)
                 .setScale(2, BigDecimal.ROUND_HALF_UP).toString()
@@ -77,7 +77,7 @@ class PlayerViewModel : BaseViewModel() {
             val color = sendDanmuBean.color and 0x00FFFFFF
 
             val result = ResourceRepository.sendOneDanmu(
-                episodeId.toString(),
+                episodeId,
                 time,
                 mode,
                 color,

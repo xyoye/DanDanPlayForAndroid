@@ -43,7 +43,7 @@ data class BangumiData(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class EpisodeData(
-    var episodeId: Int,
+    var episodeId: String? = null,
     var episodeTitle: String? = null,
     var lastWatched: String? = null,
     var airDate: String? = null

@@ -1,5 +1,7 @@
 package com.xyoye.common_component.storage.file
 
+import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.toCoverFile
 import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.Storage
@@ -22,6 +24,18 @@ abstract class AbstractStorageFile(
     override var storage: Storage = abstractStorage
 
     override var playHistory: PlayHistoryEntity? = null
+
+    override fun fileCover(): String? {
+        if (isDirectory()) {
+            return null
+        }
+        val cachedCoverFile = uniqueKey().toCoverFile()
+            ?: return null
+        if (cachedCoverFile.isInvalid()) {
+            return null
+        }
+        return cachedCoverFile.absolutePath
+    }
 
     override fun storagePath(): String {
         return filePath()

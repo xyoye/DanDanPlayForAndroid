@@ -1,6 +1,7 @@
 package com.xyoye.common_component.network.request
 
 import com.xyoye.data_component.data.CommonJsonData
+import com.xyoye.data_component.data.CommonJsonModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,6 +49,10 @@ class Request {
                     return@withContext Response.Error(RequestError.formJsonData(result))
                 }
 
+                if (result is CommonJsonModel<*> && result.isSuccess.not()) {
+                    return@withContext Response.Error(RequestError.formJsonModel(result))
+                }
+
                 return@withContext Response.Success(result)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -64,6 +69,10 @@ class Request {
                 val result = api.invoke(requestBody())
                 if (result is CommonJsonData && result.success.not()) {
                     return@withContext Response.Error(RequestError.formJsonData(result))
+                }
+
+                if (result is CommonJsonModel<*> && result.isSuccess.not()) {
+                    return@withContext Response.Error(RequestError.formJsonModel(result))
                 }
 
                 return@withContext Response.Success(result)

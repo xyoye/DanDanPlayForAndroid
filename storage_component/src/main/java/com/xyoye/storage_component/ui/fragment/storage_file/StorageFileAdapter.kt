@@ -9,12 +9,24 @@ import androidx.core.util.Pair
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.launcher.ARouter
-import com.xyoye.common_component.adapter.*
+import com.xyoye.common_component.adapter.BaseAdapter
+import com.xyoye.common_component.adapter.BaseViewHolderCreator
+import com.xyoye.common_component.adapter.addEmptyView
+import com.xyoye.common_component.adapter.addItem
+import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoTagBinding
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.dp
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.loadStorageFileCover
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.danmu
 import com.xyoye.common_component.storage.file.subtitle
@@ -109,7 +121,7 @@ class StorageFileAdapter(
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem() = { data: StorageFile ->
         itemBinding.run {
-            coverIv.loadImage(data)
+            coverIv.loadStorageFileCover(data)
 
             titleTv.text = data.fileName()
             titleTv.setTextColor(getTitleColor(data))

@@ -3,6 +3,7 @@ package com.xyoye.common_component.network.request
 import android.util.MalformedJsonException
 import com.squareup.moshi.JsonDataException
 import com.xyoye.data_component.data.CommonJsonData
+import com.xyoye.data_component.data.CommonJsonModel
 import org.json.JSONException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -26,6 +27,15 @@ data class RequestError constructor(
             val message = data.errorMessage ?: "服务端处理失败"
             return RequestError(
                 data.errorCode,
+                message,
+                IllegalStateException(message)
+            )
+        }
+
+        fun formJsonModel(data: CommonJsonModel<*>): RequestError {
+            val message = data.message.ifEmpty { "服务端处理失败" }
+            return RequestError(
+                data.code,
                 message,
                 IllegalStateException(message)
             )

@@ -27,9 +27,11 @@ class VideoStorageFile(
             is FolderBean -> {
                 entity.folderPath
             }
+
             is VideoEntity -> {
                 entity.filePath
             }
+
             else -> {
                 ""
             }
@@ -41,13 +43,28 @@ class VideoStorageFile(
             is FolderBean -> {
                 entity.folderPath
             }
+
             is VideoEntity -> {
                 IOUtils.getVideoUri(entity.fileId).toString()
             }
+
             else -> {
                 ""
             }
         }
+    }
+
+    override fun fileCover(): String? {
+        if (isDirectory()) {
+            return null
+        }
+
+        val cover = super.fileCover()
+        if (cover?.isNotEmpty() == true) {
+            return cover
+        }
+
+        return fileUrl()
     }
 
     override fun isDirectory(): Boolean {
@@ -59,9 +76,11 @@ class VideoStorageFile(
             is FolderBean -> {
                 getFileName(entity.folderPath)
             }
+
             is VideoEntity -> {
                 getFileName(entity.filePath)
             }
+
             else -> {
                 ""
             }

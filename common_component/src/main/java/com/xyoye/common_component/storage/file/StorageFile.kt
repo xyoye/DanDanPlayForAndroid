@@ -31,6 +31,11 @@ interface StorageFile {
     fun fileUrl(): String
 
     /**
+     * 文件缩略图
+     */
+    fun fileCover(): String?
+
+    /**
      * 在Storage中的路径
      */
     fun storagePath(): String

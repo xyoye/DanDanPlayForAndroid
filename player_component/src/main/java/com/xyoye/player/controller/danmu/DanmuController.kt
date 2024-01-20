@@ -2,6 +2,7 @@ package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.DanmakuLanguage
@@ -65,9 +66,9 @@ class DanmuController(context: Context) : InterDanmuController {
         danmuView.toggleVis()
     }
 
-    override fun onDanmuSourceChanged(filePath: String, episodeId: String?) {
+    override fun onDanmuSourceChanged(danmu: LocalDanmuBean?) {
         danmuView.release()
-        danmuView.loadDanmu(filePath)
+        danmuView.loadDanmu(danmu?.danmuPath)
     }
 
     override fun allowSendDanmu(): Boolean {

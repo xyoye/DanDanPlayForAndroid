@@ -1,5 +1,7 @@
 package com.xyoye.common_component.source.inter
 
+import com.xyoye.data_component.bean.LocalDanmuBean
+
 /**
  * Created by xyoye on 2021/11/14.
  *
@@ -7,15 +9,11 @@ package com.xyoye.common_component.source.inter
  */
 
 interface ExtraSource {
-    fun getDanmuPath(): String?
+    fun getDanmu(): LocalDanmuBean?
 
-    fun setDanmuPath(path: String)
-
-    fun getEpisodeId(): String?
-
-    fun setEpisodeId(id: String?)
+    fun setDanmu(danmu: LocalDanmuBean?)
 
     fun getSubtitlePath(): String?
 
-    fun setSubtitlePath(path: String)
+    fun setSubtitlePath(path: String?)
 }

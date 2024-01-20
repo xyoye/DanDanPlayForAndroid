@@ -1,5 +1,6 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.DanmakuLanguage
 
@@ -72,7 +73,7 @@ interface InterDanmuController {
     /**
      * 切换弹幕资源
      */
-    fun onDanmuSourceChanged(filePath: String, episodeId: String? = null)
+    fun onDanmuSourceChanged(danmu: LocalDanmuBean?)
 
     /**
      * 是否允许发送弹幕

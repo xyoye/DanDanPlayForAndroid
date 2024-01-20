@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.formatDuration
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.DanmuBlockEntity
@@ -54,7 +55,7 @@ class VideoController(
     private var lastPlayPosition = 0L
     private var lastVideoSpeed: Float? = null
 
-    private var mDanmuSourceChanged: ((String, String?) -> Unit)? = null
+    private var mDanmuSourceChanged: ((danmu: LocalDanmuBean?) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
 
@@ -78,14 +79,12 @@ class VideoController(
         playerControlView.showMessage(text, time)
     }
 
-    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: String?) {
+    override fun onDanmuSourceUpdate(danmu: LocalDanmuBean?) {
         val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getDanmuPath() == danmuPath
-            && videoSource.getEpisodeId() == episodeId
-        ) {
+        if (videoSource.getDanmu() == danmu) {
             return
         }
-        mDanmuSourceChanged?.invoke(danmuPath, episodeId)
+        mDanmuSourceChanged?.invoke(danmu)
     }
 
     override fun onSubtitleSourceUpdate(subtitlePath: String) {
@@ -170,8 +169,8 @@ class VideoController(
     /**
      * 设置初始弹幕路径
      */
-    fun setDanmuPath(url: String?) {
-        mControlWrapper.onDanmuSourceChanged(url ?: "")
+    fun setDanmu(danmu: LocalDanmuBean?) {
+        mControlWrapper.onDanmuSourceChanged(danmu)
     }
 
     /**
@@ -237,7 +236,7 @@ class VideoController(
     /**
      * 弹幕资源更新回调
      */
-    fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: String?) -> Unit) {
+    fun observeDanmuSourceChanged(block: (danmu: LocalDanmuBean?) -> Unit) {
         mDanmuSourceChanged = block
     }
 

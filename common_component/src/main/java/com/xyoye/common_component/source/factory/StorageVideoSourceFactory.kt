@@ -19,19 +19,18 @@ object StorageVideoSourceFactory {
         val storage = file.storage
         val videoSources = getVideoSources(storage)
         val playUrl = storage.createPlayUrl(file) ?: return null
-        val danmuInfo = getDanmuInfo(file, storage)
+        val danmu = findLocalDanmu(file, storage)
         val subtitlePath = getSubtitlePath(file, storage)
         return StorageVideoSource(
             playUrl,
             file,
             videoSources,
-            danmuInfo?.episodeId,
-            danmuInfo?.danmuPath,
+            danmu,
             subtitlePath
         )
     }
 
-    private suspend fun getDanmuInfo(file: StorageFile, storage: Storage): LocalDanmuBean? {
+    private suspend fun findLocalDanmu(file: StorageFile, storage: Storage): LocalDanmuBean? {
         //从播放记录读取弹幕
         val history = file.playHistory
         if (history?.danmuPath?.isNotEmpty() == true) {

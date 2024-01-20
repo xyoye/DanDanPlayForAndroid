@@ -1,5 +1,6 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.player.utils.MessageTime
 
 /**
@@ -78,7 +79,7 @@ interface InterVideoController {
     /**
      * 弹幕文件更新
      */
-    fun onDanmuSourceUpdate(danmuPath: String, episodeId: String?)
+    fun onDanmuSourceUpdate(danmu: LocalDanmuBean?)
 
     /**
      * 字幕文件更新

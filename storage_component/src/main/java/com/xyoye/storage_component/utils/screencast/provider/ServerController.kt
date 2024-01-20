@@ -197,7 +197,7 @@ object ServerController {
         videoSource: BaseVideoSource
     ): NanoHTTPD.Response {
         //弹幕文件路径为空
-        val danmuPath = videoSource.getDanmuPath()
+        val danmuPath = videoSource.getDanmu()?.danmuPath
         if (danmuPath.isNullOrEmpty()) {
             return resourceNotFound
         }
@@ -212,7 +212,7 @@ object ServerController {
             "*/*",
             FileInputStream(danmuFile)
         ).apply {
-            addHeader("episodeId", videoSource.getEpisodeId().toString())
+            addHeader("episodeId", videoSource.getDanmu()?.episodeId)
             addHeader("danmuMd5", danmuFile.md5())
         }
     }

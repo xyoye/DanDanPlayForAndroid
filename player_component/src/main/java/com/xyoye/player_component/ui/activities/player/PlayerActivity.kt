@@ -194,17 +194,16 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
             // 历史弹幕，直接加载
             if (it.isHistoryData) {
-                videoController.setDanmuPath(it.danmuPath)
+                videoController.setDanmu(it.danmu)
                 return@observe
             }
 
             // 新匹配到的弹幕，提示并加载弹幕
             videoController.showMessage("匹配弹幕成功")
-            videoController.setDanmuPath(it.danmuPath)
+            videoController.setDanmu(it.danmu)
 
             // 更新视频源数据
-            curVideoSource.setDanmuPath(it.danmuPath)
-            curVideoSource.setEpisodeId(it.episodeId)
+            curVideoSource.setDanmu(it.danmu)
             viewModel.storeDanmuSourceChange(curVideoSource)
         }
 
@@ -214,14 +213,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 return@observe
             }
 
-            val curVideoSource = danDanPlayer.getVideoSource()
-            videoController.setDanmuPath(it.danmuPath)
-
-            curVideoSource.setDanmuPath(it.danmuPath)
-            curVideoSource.setEpisodeId(it.episodeId)
-            viewModel.storeDanmuSourceChange(curVideoSource)
-
+            videoController.setDanmu(it)
             videoController.showMessage("加载弹幕成功")
+
+            val curVideoSource = danDanPlayer.getVideoSource()
+            curVideoSource.setDanmu(it)
+            viewModel.storeDanmuSourceChange(curVideoSource)
         }
     }
 
@@ -297,9 +294,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
         videoController.setSubtitlePath(source.getSubtitlePath())
         //当弹幕绑定更新，保存变更
-        videoController.observeDanmuSourceChanged { danmuPath, episodeId ->
-            source.setDanmuPath(danmuPath)
-            source.setEpisodeId(episodeId)
+        videoController.observeDanmuSourceChanged { danmu ->
+            source.setDanmu(danmu)
             viewModel.storeDanmuSourceChange(source)
         }
         //当字幕绑定更新，保存变更
@@ -309,7 +305,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
         //发送弹幕
         videoController.observerSendDanmu {
-            viewModel.sendDanmu(source.getEpisodeId(), source.getDanmuPath(), it)
+            viewModel.sendDanmu(source.getDanmu(), it)
         }
 
         videoController.setSwitchVideoSourceBlock {
@@ -334,7 +330,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         ) {
             danmuViewModel.loadDanmu(videoSource!!)
         } else {
-            videoController.setDanmuPath(videoSource!!.getDanmuPath())
+            videoController.setDanmu(videoSource!!.getDanmu())
         }
     }
 

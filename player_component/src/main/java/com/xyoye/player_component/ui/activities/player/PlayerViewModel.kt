@@ -8,6 +8,7 @@ import com.xyoye.common_component.network.request.errorOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import kotlinx.coroutines.launch
@@ -24,8 +25,8 @@ class PlayerViewModel : BaseViewModel() {
             DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
                 videoSource.getUniqueKey(),
                 videoSource.getMediaType(),
-                videoSource.getDanmuPath(),
-                videoSource.getEpisodeId()
+                videoSource.getDanmu()?.danmuPath,
+                videoSource.getDanmu()?.episodeId
             )
         }
     }
@@ -54,11 +55,14 @@ class PlayerViewModel : BaseViewModel() {
         }
     }
 
-    fun sendDanmu(episodeId: String?, danmuPath: String?, sendDanmuBean: SendDanmuBean) {
+    fun sendDanmu(danmu: LocalDanmuBean?, sendDanmuBean: SendDanmuBean) {
+        val episodeId = danmu?.episodeId
         if (episodeId?.isNotEmpty() == true) {
             sendDanmuToServer(sendDanmuBean, episodeId)
         }
-        if (danmuPath != null) {
+
+        val danmuPath = danmu?.danmuPath
+        if (danmuPath?.isNotEmpty() == true) {
             writeDanmuToFile(sendDanmuBean, danmuPath)
         }
     }

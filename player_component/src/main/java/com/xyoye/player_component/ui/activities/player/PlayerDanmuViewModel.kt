@@ -25,12 +25,11 @@ class PlayerDanmuViewModel : BaseViewModel() {
     fun loadDanmu(videoSource: BaseVideoSource) {
         viewModelScope.launch(Dispatchers.IO) {
             // 如果视频已经存在弹幕，直接加载
-            val historyDanmuPath = videoSource.getDanmuPath()
-            if (historyDanmuPath?.isNotEmpty() == true) {
+            val historyDanmu = videoSource.getDanmu()
+            if (historyDanmu?.danmuPath?.isNotEmpty() == true) {
                 val loadResult = LoadDanmuResult(
                     videoSource.getVideoUrl(),
-                    historyDanmuPath,
-                    videoSource.getEpisodeId(),
+                    historyDanmu,
                     isHistoryData = true
                 )
                 loadDanmuLiveData.postValue(loadResult)
@@ -42,7 +41,7 @@ class PlayerDanmuViewModel : BaseViewModel() {
                 ?.let {
                     DanmuFinder.instance.downloadMatched(it)
                 }?.let {
-                    LoadDanmuResult(videoSource.getVideoUrl(), it.danmuPath, it.episodeId)
+                    LoadDanmuResult(videoSource.getVideoUrl(), it)
                 }?.let {
                     loadDanmuLiveData.postValue(it)
                 }

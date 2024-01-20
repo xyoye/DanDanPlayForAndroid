@@ -6,7 +6,6 @@ package com.xyoye.data_component.bean
 
 data class LoadDanmuResult constructor(
     val videoUrl: String,
-    val danmuPath: String = "",
-    val episodeId: String? = null,
+    val danmu: LocalDanmuBean?,
     val isHistoryData: Boolean = false
 )

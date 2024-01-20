@@ -6,45 +6,37 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.TorrentStorageFile
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.thunder.ThunderManager
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2023/1/2.
  */
 
-class StorageVideoSource(
+class StorageVideoSource constructor(
     private val playUrl: String,
     private val file: StorageFile,
     private val videoSources: List<StorageFile>,
-    private var episodeId: String?,
-    private var danmuPath: String?,
+    private var danmu: LocalDanmuBean?,
     private var subtitlePath: String?,
 ) : BaseVideoSource(
     videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
     videoSources
 ) {
 
-    override fun getDanmuPath(): String? {
-        return danmuPath
+    override fun getDanmu(): LocalDanmuBean? {
+        return danmu
     }
 
-    override fun setDanmuPath(path: String) {
-        danmuPath = path
-    }
-
-    override fun getEpisodeId(): String? {
-        return episodeId
-    }
-
-    override fun setEpisodeId(id: String?) {
-        episodeId = id
+    override fun setDanmu(danmu: LocalDanmuBean?) {
+        this.danmu = danmu
     }
 
     override fun getSubtitlePath(): String? {
         return subtitlePath
     }
 
-    override fun setSubtitlePath(path: String) {
+    override fun setSubtitlePath(path: String?) {
         subtitlePath = path
     }
 

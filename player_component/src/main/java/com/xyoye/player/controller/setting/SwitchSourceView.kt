@@ -12,13 +12,29 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.AppConfig
-import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.extension.filterHiddenFile
+import com.xyoye.common_component.extension.findIndexOnLeft
+import com.xyoye.common_component.extension.findIndexOnRight
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.nextItemIndex
+import com.xyoye.common_component.extension.previousItemIndex
+import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.extension.toResString
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.comparator.FileNameComparator
+import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.getFileName
+import com.xyoye.common_component.utils.getFolderName
+import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.isSubtitleFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.enums.SettingViewType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
@@ -109,7 +125,7 @@ class SwitchSourceView(
     private fun initView() {
         viewBinding.removeTv.setOnClickListener {
             viewBinding.removeTv.isVisible = false
-            mControlWrapper.onDanmuSourceChanged("")
+            mControlWrapper.onDanmuSourceChanged(null)
         }
 
         viewBinding.tvSearchNetworkDanmu.setOnClickListener {
@@ -201,6 +217,7 @@ class SwitchSourceView(
                                     data.isDirectory -> {
                                         openDirectory(data.filePath)
                                     }
+
                                     else -> {
                                         openFile(data)
                                     }
@@ -227,7 +244,7 @@ class SwitchSourceView(
             mControlWrapper.addSubtitleStream(data.filePath)
             mControlWrapper.onSubtitleSourceUpdate(data.filePath)
         } else {
-            mControlWrapper.onDanmuSourceChanged(data.filePath)
+            mControlWrapper.onDanmuSourceChanged(LocalDanmuBean(data.filePath))
         }
     }
 
@@ -290,6 +307,7 @@ class SwitchSourceView(
                         )
                     )
                 }
+
                 isTargetFile(childFile.absolutePath) -> {
                     fileManagerData.add(
                         FileManagerBean(

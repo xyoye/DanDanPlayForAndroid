@@ -2,6 +2,7 @@ package com.xyoye.player.wrapper
 
 import android.graphics.PointF
 import android.view.KeyEvent
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoStreamBean
 import com.xyoye.data_component.enums.DanmakuLanguage
@@ -180,8 +181,8 @@ class ControlWrapper(
         mController.showController(ignoreShowing)
     }
 
-    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: String?) {
-        mController.onDanmuSourceUpdate(danmuPath, episodeId)
+    override fun onDanmuSourceUpdate(danmu: LocalDanmuBean?) {
+        mController.onDanmuSourceUpdate(danmu)
     }
 
     override fun onSubtitleSourceUpdate(subtitlePath: String) {
@@ -248,10 +249,10 @@ class ControlWrapper(
         mDanmuController.toggleDanmuVisible()
     }
 
-    override fun onDanmuSourceChanged(filePath: String, episodeId: String?) {
-        mDanmuController.onDanmuSourceChanged(filePath)
+    override fun onDanmuSourceChanged(danmu: LocalDanmuBean?) {
+        mDanmuController.onDanmuSourceChanged(danmu)
         mSettingController.onDanmuSourceChanged()
-        mController.onDanmuSourceUpdate(filePath, episodeId)
+        mController.onDanmuSourceUpdate(danmu)
     }
 
     override fun allowSendDanmu(): Boolean {

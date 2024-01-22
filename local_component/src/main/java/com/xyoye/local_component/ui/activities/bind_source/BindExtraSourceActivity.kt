@@ -4,12 +4,12 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.google.android.material.tabs.TabLayoutMediator
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.collectAtStarted
@@ -42,6 +42,8 @@ class BindExtraSourceActivity :
 
     lateinit var storageFile: StorageFile
 
+    private val pageAdapter by lazy { BindSourcePageAdapter() }
+
     override fun initViewModel() = ViewModelInit(
         BR.viewModel, BindExtraSourceViewModel::class.java
     )
@@ -61,11 +63,12 @@ class BindExtraSourceActivity :
         viewModel.setStorageFile(storageFile)
 
         dataBinding.viewpager.apply {
-            adapter = BindSourcePageAdapter(supportFragmentManager)
+            adapter = pageAdapter
             currentItem = if (isSearchDanmu) 0 else 1
         }
-
-        dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)
+        TabLayoutMediator(dataBinding.tabLayout, dataBinding.viewpager) { tab, position ->
+            tab.text = pageAdapter.getItemTitle(position)
+        }.attach()
 
         initListener()
     }
@@ -113,17 +116,7 @@ class BindExtraSourceActivity :
             viewModel.segmentTitle(storageFile)
         }
 
-        dataBinding.viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
-
+        dataBinding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 dataBinding.searchEt.hint = when (position) {
                     0 -> getString(R.string.tips_search_danmu)
@@ -150,27 +143,23 @@ class BindExtraSourceActivity :
         }
     }
 
-    inner class BindSourcePageAdapter(
-        fragmentManager: FragmentManager
-    ) : FragmentPagerAdapter(
-        fragmentManager,
-        BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-    ) {
+    inner class BindSourcePageAdapter : FragmentStateAdapter(this) {
         private var titles = arrayOf("搜弹幕", "搜字幕")
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItemCount(): Int {
+            return titles.size
+        }
+
+        override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> BindDanmuSourceFragment.newInstance()
                 1 -> BindSubtitleSourceFragment.newInstance()
                 else -> throw IndexOutOfBoundsException("only 2 fragment, but position : $position")
-
             }
         }
 
-        override fun getCount() = titles.size
-
-        override fun getPageTitle(position: Int): CharSequence {
-            return titles[position]
+        fun getItemTitle(position: Int): String {
+            return titles.getOrNull(position).orEmpty()
         }
     }
 }

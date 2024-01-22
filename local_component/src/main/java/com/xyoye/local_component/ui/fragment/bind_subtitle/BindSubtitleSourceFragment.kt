@@ -3,6 +3,7 @@ package com.xyoye.local_component.ui.fragment.bind_subtitle
 import android.text.TextUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
 import com.xyoye.common_component.adapter.paging.PagingFooterAdapter
@@ -144,7 +145,10 @@ class BindSubtitleSourceFragment :
             }.show()
         }
 
-        parentViewModel.searchTextFlow.collectAtStarted(this) {
+        parentViewModel.searchTextFlow.collectAtStarted(
+            this,
+            minActiveState = Lifecycle.State.RESUMED
+        ) {
             val shooterSecret = SubtitleConfig.getShooterSecret()
             if (shooterSecret.isNullOrEmpty()) {
                 settingSubtitleKey()

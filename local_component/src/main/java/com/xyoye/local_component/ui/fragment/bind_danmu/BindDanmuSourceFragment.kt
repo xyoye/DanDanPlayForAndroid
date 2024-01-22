@@ -3,6 +3,7 @@ package com.xyoye.local_component.ui.fragment.bind_danmu
 import android.graphics.Typeface
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupHorizontalAnimation
@@ -142,7 +143,10 @@ class BindDanmuSourceFragment :
             danmuDownloadDialog?.dismiss()
         }
 
-        parentViewModel.searchTextFlow.collectAtStarted(this) {
+        parentViewModel.searchTextFlow.collectAtStarted(
+            this,
+            minActiveState = Lifecycle.State.RESUMED
+        ) {
             viewModel.searchDanmu(it)
         }
 

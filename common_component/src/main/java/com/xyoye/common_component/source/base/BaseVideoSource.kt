@@ -28,6 +28,14 @@ abstract class BaseVideoSource(
 
     }
 
+    override fun getAudioPath(): String? {
+        return null
+    }
+
+    override fun setAudioPath(path: String?) {
+
+    }
+
     override fun getHttpHeader(): Map<String, String>? {
         return null
     }

@@ -292,6 +292,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             start()
         }
 
+        videoController.setAudioPath(source.getAudioPath())
         videoController.setSubtitlePath(source.getSubtitlePath())
         //当弹幕绑定更新，保存变更
         videoController.observeDanmuSourceChanged { danmu ->
@@ -301,6 +302,11 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         //当字幕绑定更新，保存变更
         videoController.observeSubtitleSourceChanged {
             source.setSubtitlePath(it)
+            viewModel.storeSubtitleSourceChange(source)
+        }
+        //当音频绑定更新，保存变更
+        videoController.observeAudioSourceChanged {
+            source.setAudioPath(it)
             viewModel.storeSubtitleSourceChange(source)
         }
         //发送弹幕

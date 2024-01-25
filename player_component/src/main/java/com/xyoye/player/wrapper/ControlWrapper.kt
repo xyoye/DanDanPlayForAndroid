@@ -101,6 +101,10 @@ class ControlWrapper(
     override fun interceptSubtitle(subtitlePath: String) =
         mVideoPlayer.interceptSubtitle(subtitlePath)
 
+    override fun addAudioStream(audioPath: String) {
+        mVideoPlayer.addAudioStream(audioPath)
+    }
+
     override fun getAudioStream(): List<VideoStreamBean> {
         return mVideoPlayer.getAudioStream()
     }
@@ -187,6 +191,10 @@ class ControlWrapper(
 
     override fun onSubtitleSourceUpdate(subtitlePath: String) {
         mController.onSubtitleSourceUpdate(subtitlePath)
+    }
+
+    override fun onAudioSourceUpdate(audioPath: String) {
+        mController.onAudioSourceUpdate(audioPath)
     }
 
     override fun destroy() {

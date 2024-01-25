@@ -10,9 +10,22 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.databinding.DialogFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerBinding
 import com.xyoye.common_component.databinding.ItemFileManagerPathBinding
-import com.xyoye.common_component.extension.*
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.extension.filterHiddenFile
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.comparator.FileNameComparator
+import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.getFileName
+import com.xyoye.common_component.utils.getFolderName
+import com.xyoye.common_component.utils.isAudioFile
+import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.isSubtitleFile
+import com.xyoye.common_component.utils.isTorrentFile
+import com.xyoye.common_component.utils.isVideoFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
@@ -57,6 +70,7 @@ class FileManagerDialog(
                 FileManagerAction.ACTION_SELECT_VIDEO -> "选择视频文件"
                 FileManagerAction.ACTION_SELECT_DIRECTORY -> "选择文件夹"
                 FileManagerAction.ACTION_SELECT_TORRENT -> "选择种子文件"
+                FileManagerAction.ACTION_SELECT_AUDIO -> "选择音频文件"
             }
         )
 
@@ -168,6 +182,7 @@ class FileManagerDialog(
                                     data.isDirectory -> {
                                         openChildDirectory(data.fileName)
                                     }
+
                                     else -> {
                                         dismiss()
                                         AppConfig.putLastOpenFolder(currentDirPath)
@@ -248,6 +263,7 @@ class FileManagerDialog(
                         )
                     )
                 }
+
                 isTargetFile(childFile.absolutePath) -> {
                     fileManagerData.add(
                         FileManagerBean(
@@ -279,6 +295,8 @@ class FileManagerDialog(
             FileManagerAction.ACTION_SELECT_SUBTITLE -> isSubtitleFile(filePath)
 
             FileManagerAction.ACTION_SELECT_TORRENT -> isTorrentFile(filePath)
+
+            FileManagerAction.ACTION_SELECT_AUDIO -> isAudioFile(filePath)
 
             else -> false
         }
@@ -331,6 +349,8 @@ class FileManagerDialog(
             FileManagerAction.ACTION_SELECT_SUBTITLE -> R.drawable.ic_file_subtitle
 
             FileManagerAction.ACTION_SELECT_TORRENT -> R.drawable.ic_file_torrent
+
+            FileManagerAction.ACTION_SELECT_AUDIO -> R.drawable.ic_file_audio
 
             else -> R.drawable.ic_file_unknow
         }

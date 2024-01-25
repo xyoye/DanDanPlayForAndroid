@@ -91,6 +91,7 @@
     <string name="text_reset_video_speed">重置</string>
     <string name="select_video_source">选集</string>
     <string name="dan">弹</string>
+    <string name="text_add_audio_stream">添加音轨</string>
 
     <string name="text_danmu_config">弹幕参数设置</string>
     <string name="text_danmu_language_setting">弹幕语言设置</string>

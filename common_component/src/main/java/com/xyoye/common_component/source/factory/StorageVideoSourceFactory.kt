@@ -21,12 +21,14 @@ object StorageVideoSourceFactory {
         val playUrl = storage.createPlayUrl(file) ?: return null
         val danmu = findLocalDanmu(file, storage)
         val subtitlePath = getSubtitlePath(file, storage)
+        val audioPath = file.playHistory?.audioPath
         return StorageVideoSource(
             playUrl,
             file,
             videoSources,
             danmu,
-            subtitlePath
+            subtitlePath,
+            audioPath
         )
     }
 

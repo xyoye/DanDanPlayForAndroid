@@ -243,6 +243,11 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
         return true
     }
 
+    override fun addAudioStream(audioPath: String): Boolean {
+        mMediaPlayer.addSlave(IMedia.Slave.Type.Audio, audioPath, true)
+        return true
+    }
+
     private fun initVLCEventListener() {
         mMediaPlayer.setEventListener {
             //VlcEventLog.log(it)
@@ -277,6 +282,7 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.LengthChanged -> {
                     mCurrentDuration = it.lengthChanged
                 }
+
                 MediaPlayer.Event.ESSelected -> {
                     if (it.esChangedType == IMedia.Track.Type.Video) {
                         val track = mMediaPlayer.getSelectedTrack(IMedia.Track.Type.Video)

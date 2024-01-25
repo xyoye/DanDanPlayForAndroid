@@ -65,7 +65,10 @@ data class PlayHistoryEntity(
     var storagePath: String? = null,
 
     @ColumnInfo(name = "storage_id")
-    var storageId: Int? = null
+    var storageId: Int? = null,
+
+    @ColumnInfo(name = "audio_path")
+    var audioPath: String? = null
 ) {
     @Ignore
     var isLastPlay: Boolean = false

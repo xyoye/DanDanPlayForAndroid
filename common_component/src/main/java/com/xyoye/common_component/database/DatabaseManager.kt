@@ -163,6 +163,12 @@ class DatabaseManager private constructor() {
             }
         }
 
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE play_history ADD COLUMN audio_path TEXT")
+            }
+        }
+
         val instance = DatabaseManager.holder.database
     }
 
@@ -185,7 +191,8 @@ class DatabaseManager private constructor() {
         MIGRATION_8_9,
         MIGRATION_9_10,
         MIGRATION_10_11,
-        MIGRATION_11_12
+        MIGRATION_11_12,
+        MIGRATION_12_13
     ).build()
 
 }

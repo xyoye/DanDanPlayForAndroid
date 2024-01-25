@@ -11,6 +11,7 @@ import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.data_component.entity.PlayHistoryEntity
+import com.xyoye.data_component.enums.ExtraResource
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -109,18 +110,42 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     }
 
     /**
+     * 绑定音频文件
+     */
+    fun bindAudioSource(file: StorageFile, audioPath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playHistory = getStorageFileHistory(file)
+            playHistory.audioPath = audioPath
+            DatabaseManager.instance.getPlayHistoryDao().insert(playHistory)
+
+            // 更新文件列表的播放历史
+            updateHistory()
+        }
+    }
+
+    /**
      * 解绑资源文件
      */
-    fun unbindExtraSource(file: StorageFile, unbindDanmu: Boolean) {
+    fun unbindExtraSource(file: StorageFile, resource: ExtraResource) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (unbindDanmu) {
-                DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
-                    file.uniqueKey(), storage.library.mediaType, null, null
-                )
-            } else {
-                DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
-                    file.uniqueKey(), storage.library.mediaType, null
-                )
+            when (resource) {
+                ExtraResource.DANMU -> {
+                    DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
+                        file.uniqueKey(), storage.library.mediaType, null, null
+                    )
+                }
+
+                ExtraResource.SUBTITLE -> {
+                    DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
+                        file.uniqueKey(), storage.library.mediaType, null
+                    )
+                }
+
+                ExtraResource.AUDIO -> {
+                    DatabaseManager.instance.getPlayHistoryDao().updateAudio(
+                        file.uniqueKey(), file.storage.library.id, null
+                    )
+                }
             }
             updateHistory()
         }
@@ -224,5 +249,19 @@ class StorageFileFragmentViewModel : BaseViewModel() {
         }
         //视频文件，展示
         return storageFile.isVideoFile()
+    }
+
+    private suspend fun getStorageFileHistory(storageFile: StorageFile): PlayHistoryEntity {
+        return DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(
+            storageFile.uniqueKey(),
+            storageFile.storage.library.id
+        ) ?: PlayHistoryEntity(
+            0,
+            "",
+            "",
+            mediaType = storageFile.storage.library.mediaType,
+            uniqueKey = storageFile.uniqueKey(),
+            storageId = storageFile.storage.library.id,
+        )
     }
 }

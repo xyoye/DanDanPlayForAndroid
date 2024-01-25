@@ -34,7 +34,7 @@ import com.xyoye.data_component.entity.VideoEntity
         DanmuBlockEntity::class,
         ExtendFolderEntity::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class DatabaseInfo : RoomDatabase() {

@@ -27,6 +27,8 @@ enum class SettingViewType {
 
     LOAD_SUBTITLE_SOURCE,
 
+    LOAD_AUDIO_SOURCE,
+
     DANMU_CONFIGURE,
 
     DANMU_STYLE,

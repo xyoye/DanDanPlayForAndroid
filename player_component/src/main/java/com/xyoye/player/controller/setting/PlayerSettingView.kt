@@ -1,14 +1,17 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.recyclerview.widget.GridLayoutManager
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.nextItemIndex
+import com.xyoye.common_component.extension.previousItemIndex
+import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
@@ -208,20 +211,28 @@ class PlayerSettingView(
             SettingAction.VIDEO_ASPECT -> {
                 selected = PlayerInitializer.screenScale != VideoScreenScale.SCREEN_SCALE_DEFAULT
             }
+
             SettingAction.VIDEO_SPEED -> {
                 selected =
                     PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
             }
+
+            SettingAction.AUDIO_STREAM -> {
+                selected = mControlWrapper.getVideoSource().getAudioPath()?.isNotEmpty() == true
+            }
+
             SettingAction.BACKGROUND_PLAY -> {
                 selected = PlayerConfig.isBackgroundPlay()
             }
+
             SettingAction.DANMU_LOAD -> {
-                selected = TextUtils.isEmpty(mControlWrapper.getDanmuUrl()).not()
+                selected = mControlWrapper.getVideoSource().getDanmu() != null
             }
+
             SettingAction.DANMU_STYLE -> {
                 selected = PlayerInitializer.Danmu.size != PlayerInitializer.Danmu.DEFAULT_SIZE
-                        || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
-                        || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
+                    || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
+                    || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
                         || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
             }
             SettingAction.DANMU_TIME -> {

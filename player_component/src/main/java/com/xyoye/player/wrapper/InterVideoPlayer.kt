@@ -119,6 +119,11 @@ interface InterVideoPlayer {
     fun updateSubtitleOffsetTime()
 
     /**
+     * 添加音频流
+     */
+    fun addAudioStream(audioPath: String)
+
+    /**
      * 获取音轨
      */
     fun getAudioStream(): List<VideoStreamBean>

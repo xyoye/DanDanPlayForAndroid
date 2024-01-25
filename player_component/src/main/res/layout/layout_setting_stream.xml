@@ -17,6 +17,7 @@
             android:layout_width="300dp"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:layout_marginBottom="86dp"
             android:padding="20dp" />
 
         <TextView
@@ -32,6 +33,22 @@
             android:textColor="@color/text_white_immutable"
             android:textSize="14sp"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_add_stream"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/background_player_setting_text"
+            android:focusable="false"
+            android:text="@string/text_add_audio_stream"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="14sp"
+            android:visibility="visible" />
     </FrameLayout>
 
 </layout>

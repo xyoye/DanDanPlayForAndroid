@@ -153,4 +153,9 @@ abstract class AbstractVideoPlayer {
      * 是否由播放器处理外挂弹幕
      */
     open fun interceptSubtitle(subtitlePath: String) = false
+
+    /**
+     * 是否由播放器处理外挂音频
+     */
+    open fun addAudioStream(audioPath: String) = false
 }

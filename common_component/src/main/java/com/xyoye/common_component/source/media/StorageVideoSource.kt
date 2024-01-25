@@ -13,12 +13,13 @@ import com.xyoye.data_component.enums.MediaType
  * Created by xyoye on 2023/1/2.
  */
 
-class StorageVideoSource constructor(
+class StorageVideoSource(
     private val playUrl: String,
     private val file: StorageFile,
     private val videoSources: List<StorageFile>,
     private var danmu: LocalDanmuBean?,
     private var subtitlePath: String?,
+    private var audioPath: String?,
 ) : BaseVideoSource(
     videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
     videoSources
@@ -38,6 +39,14 @@ class StorageVideoSource constructor(
 
     override fun setSubtitlePath(path: String?) {
         subtitlePath = path
+    }
+
+    override fun getAudioPath(): String? {
+        return audioPath
+    }
+
+    override fun setAudioPath(path: String?) {
+        audioPath = path
     }
 
     override fun indexTitle(index: Int): String {

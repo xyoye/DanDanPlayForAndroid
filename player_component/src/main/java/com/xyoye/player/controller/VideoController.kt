@@ -57,6 +57,7 @@ class VideoController(
 
     private var mDanmuSourceChanged: ((danmu: LocalDanmuBean?) -> Unit)? = null
     private var mSubtitleSourceChanged: ((String) -> Unit)? = null
+    private var mAudioSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
 
     init {
@@ -93,6 +94,14 @@ class VideoController(
             return
         }
         mSubtitleSourceChanged?.invoke(subtitlePath)
+    }
+
+    override fun onAudioSourceUpdate(audioPath: String) {
+        val videoSource = mControlWrapper.getVideoSource()
+        if (videoSource.getAudioPath() == audioPath) {
+            return
+        }
+        mAudioSourceChanged?.invoke(audioPath)
     }
 
     override fun onPopupModeChanged(isPopup: Boolean) {
@@ -183,6 +192,15 @@ class VideoController(
     }
 
     /**
+     * 设置初始音频
+     */
+    fun setAudioPath(url: String?) {
+        if (url.isNullOrEmpty())
+            return
+        mControlWrapper.addAudioStream(url)
+    }
+
+    /**
      * 设置上次播放位置
      */
     fun setLastPosition(position: Long) {
@@ -245,6 +263,13 @@ class VideoController(
      */
     fun observeSubtitleSourceChanged(block: (subtitle: String) -> Unit) {
         mSubtitleSourceChanged = block
+    }
+
+    /**
+     * 音频资源更新回调
+     */
+    fun observeAudioSourceChanged(block: (audio: String) -> Unit) {
+        mAudioSourceChanged = block
     }
 
     /**

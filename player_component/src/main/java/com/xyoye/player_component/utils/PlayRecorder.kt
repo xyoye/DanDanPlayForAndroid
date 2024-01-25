@@ -5,7 +5,11 @@ import android.graphics.Point
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.PixelCopy
+import android.view.Surface
+import android.view.SurfaceView
+import android.view.TextureView
+import android.view.View
 import androidx.annotation.RequiresApi
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.resumeWhenAlive
@@ -23,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.File
-import java.util.*
+import java.util.Date
 
 /**
  * Created by xyoye on 2022/1/15.
@@ -58,7 +62,8 @@ object PlayRecorder {
                 JsonHelper.toJson(source.getHttpHeader()),
                 source.getUniqueKey(),
                 source.getStoragePath(),
-                source.getStorageId()
+                source.getStorageId(),
+                source.getAudioPath()
             )
 
             DatabaseManager.instance.getPlayHistoryDao()

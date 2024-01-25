@@ -87,6 +87,11 @@ interface InterVideoController {
     fun onSubtitleSourceUpdate(subtitlePath: String)
 
     /**
+     * 音频文件更新
+     */
+    fun onAudioSourceUpdate(audioPath: String)
+
+    /**
      * 播放器销毁，预留方法
      */
     fun destroy()

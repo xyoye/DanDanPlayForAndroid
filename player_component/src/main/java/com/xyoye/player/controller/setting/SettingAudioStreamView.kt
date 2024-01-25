@@ -7,7 +7,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.nextItemIndex
+import com.xyoye.common_component.extension.previousItemIndex
+import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.data_component.bean.VideoStreamBean
@@ -30,6 +34,8 @@ class SettingAudioStreamView(
 
     init {
         initView()
+
+        initListener()
     }
 
     override fun getLayoutId() = R.layout.layout_setting_stream
@@ -90,6 +96,13 @@ class SettingAudioStreamView(
                     orientation = RecyclerView.VERTICAL
                 )
             )
+        }
+    }
+
+    private fun initListener() {
+        viewBinding.tvAddStream.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.LOAD_AUDIO_SOURCE)
+            onSettingVisibilityChanged(false)
         }
     }
 

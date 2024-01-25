@@ -16,4 +16,8 @@ interface ExtraSource {
     fun getSubtitlePath(): String?
 
     fun setSubtitlePath(path: String?)
+
+    fun getAudioPath(): String?
+
+    fun setAudioPath(path: String?)
 }

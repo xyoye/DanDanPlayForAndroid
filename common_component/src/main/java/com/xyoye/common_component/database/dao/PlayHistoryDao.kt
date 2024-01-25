@@ -61,4 +61,8 @@ interface PlayHistoryDao {
     @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
     @TypeConverters(MediaTypeConverter::class)
     suspend fun updateSubtitle(uniqueKey: String, mediaType: MediaType, subtitlePath: String?)
+
+    @Query("UPDATE play_history SET audio_path = (:audioPath) WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
+    @TypeConverters(MediaTypeConverter::class)
+    suspend fun updateAudio(uniqueKey: String, storageId: Int, audioPath: String?)
 }

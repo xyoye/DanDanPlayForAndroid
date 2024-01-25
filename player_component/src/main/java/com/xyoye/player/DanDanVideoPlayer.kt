@@ -177,6 +177,10 @@ class DanDanVideoPlayer(
         return mVideoPlayer.interceptSubtitle(subtitlePath)
     }
 
+    override fun addAudioStream(audioPath: String) {
+        mVideoPlayer.addAudioStream(audioPath)
+    }
+
     override fun onVideoSizeChange(width: Int, height: Int) {
         mRenderView?.setScaleType(mScreenScale)
         mRenderView?.setVideoSize(width, height)
@@ -205,18 +209,22 @@ class DanDanVideoPlayer(
             PlayerConstant.MEDIA_INFO_BUFFERING_START -> {
                 setPlayState(PlayState.STATE_BUFFERING_PAUSED)
             }
+
             PlayerConstant.MEDIA_INFO_BUFFERING_END -> {
                 setPlayState(PlayState.STATE_BUFFERING_PLAYING)
             }
+
             PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START -> {
                 setPlayState(PlayState.STATE_PLAYING)
                 if (windowVisibility != View.VISIBLE) {
                     pause()
                 }
             }
+
             PlayerConstant.MEDIA_INFO_VIDEO_ROTATION_CHANGED -> {
                 mRenderView?.setVideoRotation(extra)
             }
+
             PlayerConstant.MEDIA_INFO_URL_EMPTY -> {
                 setPlayState(PlayState.STATE_ERROR)
             }
@@ -336,10 +344,12 @@ class DanDanVideoPlayer(
                 mVideoController?.onVolumeKeyDown(true)
                 return true
             }
+
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 mVideoController?.onVolumeKeyDown(false)
                 return true
             }
+
             else -> mVideoController?.onKeyDown(keyCode, event) ?: false
         }
     }

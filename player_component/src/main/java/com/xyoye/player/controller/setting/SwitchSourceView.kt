@@ -16,18 +16,20 @@ import com.xyoye.common_component.extension.filterHiddenFile
 import com.xyoye.common_component.extension.findIndexOnLeft
 import com.xyoye.common_component.extension.findIndexOnRight
 import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.isValid
 import com.xyoye.common_component.extension.nextItemIndex
 import com.xyoye.common_component.extension.previousItemIndex
 import com.xyoye.common_component.extension.requestIndexChildFocus
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.toResDrawable
-import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.comparator.FileNameComparator
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFolderName
+import com.xyoye.common_component.utils.isAudioFile
 import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.common_component.utils.isSubtitleFile
 import com.xyoye.common_component.utils.view.FilePathItemDecoration
@@ -60,6 +62,32 @@ class SwitchSourceView(
     private val mCommonDirectoryData = mutableListOf<FilePathBean>()
     private val mFileData = mutableListOf<FileManagerBean>()
 
+    // 标题
+    private val title
+        get() = when (mSettingViewType) {
+            SettingViewType.LOAD_AUDIO_SOURCE -> "选择音轨"
+            SettingViewType.LOAD_DANMU_SOURCE -> "选择弹幕"
+            SettingViewType.LOAD_SUBTITLE_SOURCE -> "选择字幕"
+            else -> ""
+        }
+
+    // 是否显示弹幕移除按钮
+    private val sourceRemoveAble
+        get() = mSettingViewType == SettingViewType.LOAD_DANMU_SOURCE
+            && mControlWrapper.getVideoSource().getDanmu() != null
+
+    // 是否显示搜索网络弹幕按钮
+    private val sourceSearchAble get() = mSettingViewType == SettingViewType.LOAD_DANMU_SOURCE
+
+    // 文件图标
+    private val sourceFileIcon
+        get() = when (mSettingViewType) {
+            SettingViewType.LOAD_AUDIO_SOURCE -> R.drawable.ic_file_audio
+            SettingViewType.LOAD_DANMU_SOURCE -> R.drawable.ic_file_xml
+            SettingViewType.LOAD_SUBTITLE_SOURCE -> R.drawable.ic_file_subtitle
+            else -> R.drawable.ic_file_unknow
+        }
+
     init {
         initView()
 
@@ -73,20 +101,15 @@ class SwitchSourceView(
     override fun getGravity() = Gravity.START
 
     override fun onViewShow() {
-        val isSwitchSubtitle = mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE
-        viewBinding.titleTv.text = if (isSwitchSubtitle)
-            R.string.text_select_subtitle.toResString()
-        else
-            R.string.select_local_danmu.toResString()
+        viewBinding.titleTv.text = title
         openDirectory(getDefaultOpenDirectory())
 
         mCommonDirectoryData.clear()
         mCommonDirectoryData.addAll(getCommonDirectoryList())
         viewBinding.rvCommonFolder.setData(mCommonDirectoryData)
 
-        viewBinding.removeTv.isVisible = isSwitchSubtitle.not()
-                && mControlWrapper.getDanmuUrl().isNullOrEmpty().not()
-        viewBinding.tvSearchNetworkDanmu.isVisible = isSwitchSubtitle.not()
+        viewBinding.removeTv.isVisible = sourceRemoveAble
+        viewBinding.tvSearchNetworkDanmu.isVisible = sourceSearchAble
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -205,13 +228,7 @@ class SwitchSourceView(
                     initView { data, _, _ ->
                         itemBinding.apply {
                             fileNameTv.text = data.fileName
-                            fileIv.setImageResource(
-                                when {
-                                    data.isDirectory -> R.drawable.ic_folder
-                                    mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE -> R.drawable.ic_file_subtitle
-                                    else -> R.drawable.ic_file_xml
-                                }
-                            )
+                            fileIv.setImageResource(if (data.isDirectory) R.drawable.ic_folder else sourceFileIcon)
                             itemLayout.setOnClickListener {
                                 when {
                                     data.isDirectory -> {
@@ -240,11 +257,24 @@ class SwitchSourceView(
             AppConfig.putLastOpenFolder(it)
         }
 
-        if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
-            mControlWrapper.addSubtitleStream(data.filePath)
-            mControlWrapper.onSubtitleSourceUpdate(data.filePath)
-        } else {
-            mControlWrapper.onDanmuSourceChanged(LocalDanmuBean(data.filePath))
+        when (mSettingViewType) {
+            SettingViewType.LOAD_SUBTITLE_SOURCE -> {
+                mControlWrapper.addSubtitleStream(data.filePath)
+                mControlWrapper.onSubtitleSourceUpdate(data.filePath)
+            }
+
+            SettingViewType.LOAD_DANMU_SOURCE -> {
+                mControlWrapper.onDanmuSourceChanged(LocalDanmuBean(data.filePath))
+            }
+
+            SettingViewType.LOAD_AUDIO_SOURCE -> {
+                mControlWrapper.addAudioStream(data.filePath)
+                mControlWrapper.onAudioSourceUpdate(data.filePath)
+            }
+
+            else -> {
+                // do nothing
+            }
         }
     }
 
@@ -333,9 +363,12 @@ class SwitchSourceView(
      * 是否为目标文件类型
      */
     private fun isTargetFile(filePath: String): Boolean {
-        val isSwitchSubtitle = mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE
-        return (isSwitchSubtitle && isSubtitleFile(filePath))
-                || (!isSwitchSubtitle && isDanmuFile(filePath))
+        return when (mSettingViewType) {
+            SettingViewType.LOAD_DANMU_SOURCE -> isDanmuFile(filePath)
+            SettingViewType.LOAD_SUBTITLE_SOURCE -> isSubtitleFile(filePath)
+            SettingViewType.LOAD_AUDIO_SOURCE -> isAudioFile(filePath)
+            else -> false
+        }
     }
 
     /**
@@ -380,22 +413,22 @@ class SwitchSourceView(
      * 否则：默认缓存目录
      */
     private fun getDefaultOpenDirectory(): String {
-        val targetFilePath = if (mSettingViewType == SettingViewType.LOAD_SUBTITLE_SOURCE) {
-            AppConfig.getCachePath()
-        } else {
-            mControlWrapper.getDanmuUrl()
+        val addedSourcePath = when (mSettingViewType) {
+            SettingViewType.LOAD_AUDIO_SOURCE -> mControlWrapper.getVideoSource().getAudioPath()
+            SettingViewType.LOAD_DANMU_SOURCE -> mControlWrapper.getVideoSource().getDanmu()?.danmuPath
+            SettingViewType.LOAD_SUBTITLE_SOURCE -> mControlWrapper.getVideoSource().getSubtitlePath()
+            else -> null
+        }
+        if (addedSourcePath.isNullOrEmpty()) {
+            return PathHelper.getCachePath()
         }
 
-        if (targetFilePath.isNullOrEmpty()) {
-            return AppConfig.getCachePath()!!
+        val parentDirectory = File(addedSourcePath).parentFile
+        if (parentDirectory != null && parentDirectory.isValid()) {
+            return parentDirectory.absolutePath
         }
 
-        val file = File(targetFilePath)
-        return if (file.isDirectory) {
-            file.absolutePath
-        } else {
-            file.parentFile?.absolutePath ?: AppConfig.getCachePath()!!
-        }
+        return PathHelper.getCachePath()
     }
 
     /**

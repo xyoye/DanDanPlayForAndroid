@@ -7,8 +7,9 @@ import android.media.AudioManager
 import android.net.Uri
 import android.view.Surface
 import com.xyoye.common_component.utils.SupervisorScope
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PixelFormat
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
@@ -16,7 +17,6 @@ import com.xyoye.player.utils.VideoLog
 import com.xyoye.subtitle.MixedSubtitle
 import kotlinx.coroutines.launch
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
-import tv.danmaku.ijk.media.player.misc.ITrackInfo
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
 
 /**
@@ -26,11 +26,10 @@ import tv.danmaku.ijk.media.player.misc.IjkTrackInfo
 class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
     private val TAG = IjkVideoPlayer::class.java.simpleName
 
-    protected lateinit var mMediaPlayer: IjkMediaPlayer
+    private val mMediaPlayer by lazy { IjkMediaPlayer() }
     private var mBufferPercent = 0
 
     override fun initPlayer() {
-        mMediaPlayer = IjkMediaPlayer()
         setOptions()
         initIjkEventListener()
 
@@ -228,23 +227,46 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
 
     override fun getTcpSpeed() = mMediaPlayer.tcpSpeed
 
-    override fun getAudioStream(): List<VideoStreamBean> {
-        return getStreams(true)
-    }
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        val ijkTrackType = getIjkTrackType(type)
+            ?: return emptyList()
 
-    override fun getSubtitleStream(): List<VideoStreamBean> {
-        return getStreams(false)
-    }
+        val selectedTrackId = getIjkTrackType(type)?.let {
+            mMediaPlayer.getSelectedTrack(it)
+        } ?: return emptyList()
 
-    override fun selectStream(stream: VideoStreamBean) {
-        if (stream.isExternalStream) {
-            // 使用外挂流时，禁用内部流
-            disableStream(stream)
-            return
+        return mMediaPlayer.trackInfo.mapIndexedNotNull { index, track ->
+            if (track == null || track.trackType != ijkTrackType) {
+                return@mapIndexedNotNull null
+            }
+            val name = "${track.title}[${track.language}, ${track.codecName}]"
+            val selected = index == selectedTrackId
+            VideoTrackBean.internal(index.toString(), name, type, selected)
         }
+    }
 
-        mMediaPlayer.selectTrack(stream.trackId)
+    override fun selectTrack(track: VideoTrackBean) {
+        val trackId = track.id?.toIntOrNull() ?: return
+        mMediaPlayer.selectTrack(trackId)
         mMediaPlayer.seekTo(getCurrentPosition())
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        val selectedTrackId = getIjkTrackType(type)?.let {
+            mMediaPlayer.getSelectedTrack(it)
+        } ?: return
+
+        if (selectedTrackId >= 0) {
+            mMediaPlayer.deselectTrack(selectedTrackId)
+        }
+    }
+
+    private fun getIjkTrackType(type: TrackType): Int? {
+        return when (type) {
+            TrackType.AUDIO -> IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO
+            TrackType.SUBTITLE -> IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT
+            else -> null
+        }
     }
 
     private fun initIjkEventListener() {
@@ -303,45 +325,6 @@ class IjkVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
             }
 
             setOnNativeInvokeListener { _, _ -> true }
-        }
-    }
-
-    private fun getStreams(isAudio: Boolean): List<VideoStreamBean> {
-        val targetType = if (isAudio)
-            IjkTrackInfo.MEDIA_TRACK_TYPE_AUDIO
-        else
-            IjkTrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT
-
-        val streams = mutableListOf<VideoStreamBean>()
-        val selectedStreamId = mMediaPlayer.getSelectedTrack(targetType)
-
-        for ((index, info) in mMediaPlayer.trackInfo.withIndex()) {
-            if (info.trackType != targetType) {
-                continue
-            }
-            val trackName = "${info.title}[${info.language}, ${info.codecName}]"
-
-            val stream = VideoStreamBean(
-                trackName = trackName,
-                isAudio = isAudio,
-                trackId = index,
-                isChecked = index == selectedStreamId
-            )
-            streams.add(stream)
-        }
-        // 添加自定义的禁用流
-        streams.add(0, VideoStreamBean.disableStream(isAudio))
-        return streams
-    }
-
-    /**
-     * 禁用流
-     */
-    private fun disableStream(stream: VideoStreamBean) {
-        val type = if (stream.isAudio) ITrackInfo.MEDIA_TRACK_TYPE_AUDIO else ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT
-        val selectedTrackId = mMediaPlayer.getSelectedTrack(type)
-        if (selectedTrackId >= 0) {
-            mMediaPlayer.deselectTrack(selectedTrackId)
         }
     }
 }

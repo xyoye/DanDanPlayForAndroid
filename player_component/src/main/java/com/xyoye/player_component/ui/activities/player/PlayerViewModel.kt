@@ -10,7 +10,9 @@ import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.TrackType
 import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.model.BaseDanmaku
 import java.math.BigDecimal
@@ -20,24 +22,37 @@ class PlayerViewModel : BaseViewModel() {
     val localDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(false)
     val cloudDanmuBlockLiveData = DatabaseManager.instance.getDanmuBlockDao().getAll(true)
 
-    fun storeDanmuSourceChange(videoSource: BaseVideoSource) {
-        viewModelScope.launch {
-            DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
-                videoSource.getUniqueKey(),
-                videoSource.getMediaType(),
-                videoSource.getDanmu()?.danmuPath,
-                videoSource.getDanmu()?.episodeId
-            )
-        }
-    }
+    fun storeTrackAdded(videoSource: BaseVideoSource, track: VideoTrackBean) {
+        val uniqueKey = videoSource.getUniqueKey()
+        val storageId = videoSource.getStorageId()
+        val historyDao = DatabaseManager.instance.getPlayHistoryDao()
 
-    fun storeSubtitleSourceChange(videoSource: BaseVideoSource) {
         viewModelScope.launch {
-            DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
-                videoSource.getUniqueKey(),
-                videoSource.getMediaType(),
-                videoSource.getSubtitlePath()
-            )
+            when (track.type) {
+                TrackType.AUDIO -> {
+                    val audioPath = track.type.getAudio(track.trackResource)
+                    if (audioPath != null && audioPath != videoSource.getAudioPath()) {
+                        videoSource.setAudioPath(audioPath)
+                        historyDao.updateAudio(uniqueKey, storageId, audioPath)
+                    }
+                }
+
+                TrackType.SUBTITLE -> {
+                    val subtitlePath = track.type.getSubtitle(track.trackResource)
+                    if (subtitlePath != null && subtitlePath != videoSource.getSubtitlePath()) {
+                        videoSource.setSubtitlePath(subtitlePath)
+                        historyDao.updateSubtitle(uniqueKey, storageId, subtitlePath)
+                    }
+                }
+
+                TrackType.DANMU -> {
+                    val danmu = track.type.getDanmu(track.trackResource)
+                    if (danmu != null && danmu != videoSource.getDanmu()) {
+                        videoSource.setDanmu(danmu)
+                        historyDao.updateDanmu(uniqueKey, storageId, danmu.danmuPath, danmu.episodeId)
+                    }
+                }
+            }
         }
     }
 

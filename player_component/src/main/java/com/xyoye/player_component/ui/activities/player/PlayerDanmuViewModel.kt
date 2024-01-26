@@ -7,7 +7,6 @@ import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.danmu.DanmuFinder
 import com.xyoye.common_component.utils.danmu.source.DanmuSourceFactory
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.bean.LoadDanmuResult
 import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.data.DanmuEpisodeData
 import kotlinx.coroutines.Dispatchers
@@ -18,32 +17,17 @@ import kotlinx.coroutines.launch
  */
 
 class PlayerDanmuViewModel : BaseViewModel() {
-    val loadDanmuLiveData = MutableLiveData<LoadDanmuResult>()
+    val loadDanmuLiveData = MutableLiveData<Pair<String, LocalDanmuBean>>()
     val danmuSearchLiveData = MutableLiveData<List<DanmuEpisodeData>>()
     val downloadDanmuLiveData = MutableLiveData<LocalDanmuBean>()
 
-    fun loadDanmu(videoSource: BaseVideoSource) {
+    fun matchDanmu(videoSource: BaseVideoSource) {
         viewModelScope.launch(Dispatchers.IO) {
-            // 如果视频已经存在弹幕，直接加载
-            val historyDanmu = videoSource.getDanmu()
-            if (historyDanmu?.danmuPath?.isNotEmpty() == true) {
-                val loadResult = LoadDanmuResult(
-                    videoSource.getVideoUrl(),
-                    historyDanmu,
-                    isHistoryData = true
-                )
-                loadDanmuLiveData.postValue(loadResult)
-                return@launch
-            }
-
-            // 如果视频不存在弹幕，尝试匹配弹幕
             DanmuSourceFactory.build(videoSource)
                 ?.let {
                     DanmuFinder.instance.downloadMatched(it)
                 }?.let {
-                    LoadDanmuResult(videoSource.getVideoUrl(), it)
-                }?.let {
-                    loadDanmuLiveData.postValue(it)
+                    loadDanmuLiveData.postValue(videoSource.getVideoUrl() to it)
                 }
         }
     }

@@ -54,13 +54,13 @@ interface PlayHistoryDao {
     @Query("DELETE FROM play_history")
     suspend fun deleteAll()
 
-    @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
+    @Query("UPDATE play_history SET danmu_path = (:danmuPath), episode_id = (:episodeId) WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateDanmu(uniqueKey: String, mediaType: MediaType, danmuPath: String?, episodeId: String?)
+    suspend fun updateDanmu(uniqueKey: String, storageId: Int, danmuPath: String?, episodeId: String?)
 
-    @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE unique_key = (:uniqueKey) AND media_type = (:mediaType)")
+    @Query("UPDATE play_history SET subtitle_path = (:subtitlePath) WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
     @TypeConverters(MediaTypeConverter::class)
-    suspend fun updateSubtitle(uniqueKey: String, mediaType: MediaType, subtitlePath: String?)
+    suspend fun updateSubtitle(uniqueKey: String, storageId: Int, subtitlePath: String?)
 
     @Query("UPDATE play_history SET audio_path = (:audioPath) WHERE unique_key = (:uniqueKey) AND storage_id = (:storageId)")
     @TypeConverters(MediaTypeConverter::class)

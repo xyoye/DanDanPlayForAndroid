@@ -11,8 +11,8 @@ import com.xyoye.common_component.storage.Storage
 import com.xyoye.common_component.storage.StorageSortOption
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.data_component.entity.PlayHistoryEntity
-import com.xyoye.data_component.enums.ExtraResource
 import com.xyoye.data_component.enums.MediaType
+import com.xyoye.data_component.enums.TrackType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -126,22 +126,22 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     /**
      * 解绑资源文件
      */
-    fun unbindExtraSource(file: StorageFile, resource: ExtraResource) {
+    fun unbindExtraSource(file: StorageFile, resource: TrackType) {
         viewModelScope.launch(Dispatchers.IO) {
             when (resource) {
-                ExtraResource.DANMU -> {
+                TrackType.DANMU -> {
                     DatabaseManager.instance.getPlayHistoryDao().updateDanmu(
-                        file.uniqueKey(), storage.library.mediaType, null, null
+                        file.uniqueKey(), storage.library.id, null, null
                     )
                 }
 
-                ExtraResource.SUBTITLE -> {
+                TrackType.SUBTITLE -> {
                     DatabaseManager.instance.getPlayHistoryDao().updateSubtitle(
-                        file.uniqueKey(), storage.library.mediaType, null
+                        file.uniqueKey(), storage.library.id, null
                     )
                 }
 
-                ExtraResource.AUDIO -> {
+                TrackType.AUDIO -> {
                     DatabaseManager.instance.getPlayHistoryDao().updateAudio(
                         file.uniqueKey(), file.storage.library.id, null
                     )

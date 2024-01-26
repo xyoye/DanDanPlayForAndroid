@@ -1,7 +1,8 @@
 package com.xyoye.player.controller.subtitle
 
 import android.content.Context
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.wrapper.InterSubtitleController
 import com.xyoye.subtitle.MixedSubtitle
@@ -22,20 +23,8 @@ class SubtitleController(context: Context) : InterSubtitleController {
         externalSubtitleView
     )
 
-    override fun addSubtitleStream(filePath: String) {
-        externalSubtitleView.addSubtitleStream(filePath)
-    }
-
     override fun updateSubtitleOffsetTime() {
         externalSubtitleView.updateOffsetTime()
-    }
-
-    override fun getExternalSubtitleStream(): List<VideoStreamBean> {
-        return externalSubtitleView.getExternalSubtitleStream()
-    }
-
-    override fun selectSubtitleStream(stream: VideoStreamBean) {
-        externalSubtitleView.selectSubtitleStream(stream)
     }
 
     override fun updateTextSize() {
@@ -63,6 +52,7 @@ class SubtitleController(context: Context) : InterSubtitleController {
                 }
                 subtitleTextView.setSubtitle(subtitle.text)
             }
+
             SubtitleType.BITMAP -> {
                 //显示图片字幕前，清空文字字幕
                 if (!subtitleTextView.isEmptySubtitle()) {
@@ -70,10 +60,36 @@ class SubtitleController(context: Context) : InterSubtitleController {
                 }
                 subtitleImageView.setSubtitle(subtitle.bitmaps)
             }
+
             else -> {
 
             }
         }
+    }
+
+    override fun supportAddTrack(type: TrackType): Boolean {
+        return type == TrackType.SUBTITLE
+    }
+
+    override fun addTrack(track: VideoTrackBean): Boolean {
+        return externalSubtitleView.addTrack(track)
+    }
+
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        return externalSubtitleView.getAddedTrack()
+            ?.let { listOf(it) }
+            ?: emptyList()
+    }
+
+    override fun selectTrack(track: VideoTrackBean) {
+        externalSubtitleView.setTrackSelected(true)
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        if (supportAddTrack(type).not()) {
+            return
+        }
+        externalSubtitleView.setTrackSelected(false)
     }
 
     fun getViews(): Array<InterControllerView> {

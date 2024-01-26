@@ -12,12 +12,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.controller.video.PlayerControlView
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.OrientationHelper
-import com.xyoye.player.wrapper.*
-import kotlinx.coroutines.*
+import com.xyoye.player.wrapper.ControlWrapper
+import com.xyoye.player.wrapper.InterDanmuController
+import com.xyoye.player.wrapper.InterSettingController
+import com.xyoye.player.wrapper.InterSubtitleController
+import com.xyoye.player.wrapper.InterVideoController
+import com.xyoye.player.wrapper.InterVideoPlayer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Created by xyoye on 2020/11/2.
@@ -99,6 +110,12 @@ abstract class BaseVideoController(
     protected fun removeControlComponent(controllerView: InterControllerView) {
         removeView(controllerView.getView())
         mControlComponents.remove(controllerView)
+    }
+
+    override fun setTrackUpdated(type: TrackType) {
+        for (entry in mControlComponents.entries) {
+            entry.key.onTrackChanged(type)
+        }
     }
 
     protected fun removeAllControlComponent() {
@@ -270,6 +287,7 @@ abstract class BaseVideoController(
             PlayState.STATE_ERROR -> {
                 mPlayErrorBlock?.invoke()
             }
+
             else -> {
             }
         }

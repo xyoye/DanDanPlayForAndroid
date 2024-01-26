@@ -37,7 +37,9 @@ import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.data_component.bean.FileManagerBean
 import com.xyoye.data_component.bean.FilePathBean
 import com.xyoye.data_component.bean.LocalDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.SettingViewType
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemFileManagerFolderBinding
@@ -56,42 +58,36 @@ class SwitchSourceView(
 ) : BaseSettingView<LayoutSwitchSourceBinding>(context, attrs, defStyleAttr) {
 
     private val mRootPath = Environment.getExternalStorageDirectory().absolutePath
-    private var mSettingViewType = SettingViewType.LOAD_DANMU_SOURCE
 
     private val mPathData = mutableListOf<FilePathBean>()
     private val mCommonDirectoryData = mutableListOf<FilePathBean>()
     private val mFileData = mutableListOf<FileManagerBean>()
 
+    private var mTrackType = TrackType.DANMU
+
     // 标题
     private val title
-        get() = when (mSettingViewType) {
-            SettingViewType.LOAD_AUDIO_SOURCE -> "选择音轨"
-            SettingViewType.LOAD_DANMU_SOURCE -> "选择弹幕"
-            SettingViewType.LOAD_SUBTITLE_SOURCE -> "选择字幕"
-            else -> ""
+        get() = when (mTrackType) {
+            TrackType.AUDIO -> "选择音轨文件"
+            TrackType.DANMU -> "选择弹幕轨文件"
+            TrackType.SUBTITLE -> "选择字幕轨文件"
         }
 
-    // 是否显示弹幕移除按钮
-    private val sourceRemoveAble
-        get() = mSettingViewType == SettingViewType.LOAD_DANMU_SOURCE
-            && mControlWrapper.getVideoSource().getDanmu() != null
-
     // 是否显示搜索网络弹幕按钮
-    private val sourceSearchAble get() = mSettingViewType == SettingViewType.LOAD_DANMU_SOURCE
+    private val sourceSearchAble get() = mTrackType == TrackType.DANMU
 
     // 文件图标
     private val sourceFileIcon
-        get() = when (mSettingViewType) {
-            SettingViewType.LOAD_AUDIO_SOURCE -> R.drawable.ic_file_audio
-            SettingViewType.LOAD_DANMU_SOURCE -> R.drawable.ic_file_xml
-            SettingViewType.LOAD_SUBTITLE_SOURCE -> R.drawable.ic_file_subtitle
-            else -> R.drawable.ic_file_unknow
+        get() = when (mTrackType) {
+            TrackType.AUDIO -> R.drawable.ic_file_audio
+            TrackType.DANMU -> R.drawable.ic_file_xml
+            TrackType.SUBTITLE -> R.drawable.ic_file_subtitle
         }
 
     init {
         initView()
 
-        initRv()
+        initListener()
     }
 
     override fun getLayoutId() = R.layout.layout_switch_source
@@ -108,7 +104,6 @@ class SwitchSourceView(
         mCommonDirectoryData.addAll(getCommonDirectoryList())
         viewBinding.rvCommonFolder.setData(mCommonDirectoryData)
 
-        viewBinding.removeTv.isVisible = sourceRemoveAble
         viewBinding.tvSearchNetworkDanmu.isVisible = sourceSearchAble
     }
 
@@ -130,9 +125,7 @@ class SwitchSourceView(
         if (mFileData.size > 0) {
             viewBinding.rvFile.requestIndexChildFocus(0)
         } else {
-            if (viewBinding.removeTv.isVisible) {
-                viewBinding.removeTv.requestFocus()
-            } else if (viewBinding.tvSearchNetworkDanmu.isVisible) {
+            if (viewBinding.tvSearchNetworkDanmu.isVisible) {
                 viewBinding.tvSearchNetworkDanmu.requestFocus()
             } else {
                 viewBinding.rvCommonFolder.requestIndexChildFocus(0)
@@ -141,23 +134,11 @@ class SwitchSourceView(
         return true
     }
 
-    fun setSwitchType(settingViewType: SettingViewType) {
-        this.mSettingViewType = settingViewType
+    fun setTrackType(trackType: TrackType) {
+        this.mTrackType = trackType
     }
 
     private fun initView() {
-        viewBinding.removeTv.setOnClickListener {
-            viewBinding.removeTv.isVisible = false
-            mControlWrapper.onDanmuSourceChanged(null)
-        }
-
-        viewBinding.tvSearchNetworkDanmu.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.SEARCH_DANMU)
-            onSettingVisibilityChanged(false)
-        }
-    }
-
-    private fun initRv() {
         viewBinding.rvCommonFolder.apply {
             layoutManager = horizontal()
 
@@ -247,6 +228,13 @@ class SwitchSourceView(
         }
     }
 
+    private fun initListener() {
+        viewBinding.tvSearchNetworkDanmu.setOnClickListener {
+            mControlWrapper.showSettingView(SettingViewType.SEARCH_DANMU)
+            onSettingVisibilityChanged(false)
+        }
+    }
+
     /**
      * 选中目标文件
      */
@@ -257,23 +245,17 @@ class SwitchSourceView(
             AppConfig.putLastOpenFolder(it)
         }
 
-        when (mSettingViewType) {
-            SettingViewType.LOAD_SUBTITLE_SOURCE -> {
-                mControlWrapper.addSubtitleStream(data.filePath)
-                mControlWrapper.onSubtitleSourceUpdate(data.filePath)
+        when (mTrackType) {
+            TrackType.AUDIO -> {
+                mControlWrapper.addTrack(VideoTrackBean.audio(data.filePath))
             }
 
-            SettingViewType.LOAD_DANMU_SOURCE -> {
-                mControlWrapper.onDanmuSourceChanged(LocalDanmuBean(data.filePath))
+            TrackType.DANMU -> {
+                mControlWrapper.addTrack(VideoTrackBean.danmu(LocalDanmuBean(data.filePath)))
             }
 
-            SettingViewType.LOAD_AUDIO_SOURCE -> {
-                mControlWrapper.addAudioStream(data.filePath)
-                mControlWrapper.onAudioSourceUpdate(data.filePath)
-            }
-
-            else -> {
-                // do nothing
+            TrackType.SUBTITLE -> {
+                mControlWrapper.addTrack(VideoTrackBean.subtitle(data.filePath))
             }
         }
     }
@@ -363,11 +345,10 @@ class SwitchSourceView(
      * 是否为目标文件类型
      */
     private fun isTargetFile(filePath: String): Boolean {
-        return when (mSettingViewType) {
-            SettingViewType.LOAD_DANMU_SOURCE -> isDanmuFile(filePath)
-            SettingViewType.LOAD_SUBTITLE_SOURCE -> isSubtitleFile(filePath)
-            SettingViewType.LOAD_AUDIO_SOURCE -> isAudioFile(filePath)
-            else -> false
+        return when (mTrackType) {
+            TrackType.AUDIO -> isAudioFile(filePath)
+            TrackType.DANMU -> isDanmuFile(filePath)
+            TrackType.SUBTITLE -> isSubtitleFile(filePath)
         }
     }
 
@@ -413,11 +394,10 @@ class SwitchSourceView(
      * 否则：默认缓存目录
      */
     private fun getDefaultOpenDirectory(): String {
-        val addedSourcePath = when (mSettingViewType) {
-            SettingViewType.LOAD_AUDIO_SOURCE -> mControlWrapper.getVideoSource().getAudioPath()
-            SettingViewType.LOAD_DANMU_SOURCE -> mControlWrapper.getVideoSource().getDanmu()?.danmuPath
-            SettingViewType.LOAD_SUBTITLE_SOURCE -> mControlWrapper.getVideoSource().getSubtitlePath()
-            else -> null
+        val addedSourcePath = when (mTrackType) {
+            TrackType.AUDIO -> mControlWrapper.getVideoSource().getAudioPath()
+            TrackType.DANMU -> mControlWrapper.getVideoSource().getDanmu()?.danmuPath
+            TrackType.SUBTITLE -> mControlWrapper.getVideoSource().getSubtitlePath()
         }
         if (addedSourcePath.isNullOrEmpty()) {
             return PathHelper.getCachePath()
@@ -440,22 +420,11 @@ class SwitchSourceView(
             return handleKeyCodeVertical(keyCode)
         }
 
-        //移除弹幕按钮的焦点处理
-        if (viewBinding.removeTv.hasFocus()) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_DPAD_RIGHT -> viewBinding.tvSearchNetworkDanmu.requestFocus()
-            }
-            return true
-        }
-
         //网络弹幕按钮的焦点处理
         if (viewBinding.tvSearchNetworkDanmu.hasFocus()) {
             when (keyCode) {
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (viewBinding.removeTv.isVisible)
-                        viewBinding.removeTv.requestFocus()
-                    else
-                        viewBinding.tvSearchNetworkDanmu.requestFocus()
+                    viewBinding.tvSearchNetworkDanmu.requestFocus()
                 }
             }
             return true
@@ -467,10 +436,7 @@ class SwitchSourceView(
         if (handleKeyCodeInPathRv(keyCode)) {
             return true
         }
-        if (handleKeyCodeInFileRv(keyCode)) {
-            return true
-        }
-        return false
+        return handleKeyCodeInFileRv(keyCode)
     }
 
     private fun handleKeyCodeVertical(keyCode: Int): Boolean {
@@ -480,7 +446,7 @@ class SwitchSourceView(
             else -> return false
         }
 
-        if (viewBinding.removeTv.hasFocus() || viewBinding.tvSearchNetworkDanmu.hasFocus()) {
+        if (viewBinding.tvSearchNetworkDanmu.hasFocus()) {
             if (isKeyUp) {
                 if (mFileData.size > 0) {
                     viewBinding.rvFile.requestIndexChildFocus(mFileData.size - 1)
@@ -497,9 +463,7 @@ class SwitchSourceView(
 
         if (viewBinding.rvCommonFolder.focusedChild != null) {
             if (isKeyUp) {
-                if (viewBinding.removeTv.isVisible) {
-                    viewBinding.removeTv.requestFocus()
-                } else if (viewBinding.tvSearchNetworkDanmu.isVisible) {
+                if (viewBinding.tvSearchNetworkDanmu.isVisible) {
                     viewBinding.tvSearchNetworkDanmu.requestFocus()
                 } else if (mFileData.size > 0) {
                     viewBinding.rvFile.requestIndexChildFocus(mFileData.size - 1)
@@ -520,8 +484,6 @@ class SwitchSourceView(
             } else {
                 if (mFileData.size > 0) {
                     viewBinding.rvFile.requestIndexChildFocus(0)
-                } else if (viewBinding.removeTv.isVisible) {
-                    viewBinding.removeTv.requestFocus()
                 } else if (viewBinding.tvSearchNetworkDanmu.isVisible) {
                     viewBinding.tvSearchNetworkDanmu.requestFocus()
                 }
@@ -630,9 +592,7 @@ class SwitchSourceView(
                 return true
             }
 
-            if (viewBinding.removeTv.isVisible) {
-                viewBinding.removeTv.requestFocus()
-            } else if (viewBinding.tvSearchNetworkDanmu.isVisible) {
+            if (viewBinding.tvSearchNetworkDanmu.isVisible) {
                 viewBinding.tvSearchNetworkDanmu.requestFocus()
             } else {
                 viewBinding.rvCommonFolder.requestIndexChildFocus(0)

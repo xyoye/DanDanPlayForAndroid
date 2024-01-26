@@ -17,8 +17,9 @@ import kotlin.math.min
 class ExternalSubtitleManager {
     private var mTimedTextObject: TimedTextObject? = null
 
-    fun loadSubtitle(subtitlePath: String) {
+    fun loadSubtitle(subtitlePath: String): Boolean {
         mTimedTextObject = parserSource(subtitlePath)
+        return mTimedTextObject != null
     }
 
     fun getSubtitle(position: Long): MixedSubtitle? {

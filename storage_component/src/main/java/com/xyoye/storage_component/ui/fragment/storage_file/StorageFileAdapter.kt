@@ -40,8 +40,8 @@ import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.VideoTagBean
-import com.xyoye.data_component.enums.ExtraResource
 import com.xyoye.data_component.enums.FileManagerAction
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
 
@@ -103,9 +103,9 @@ class StorageFileAdapter(
         val oldItem = old as? StorageFile?
         val newItem = new as? StorageFile?
         oldItem?.fileUrl() == newItem?.fileUrl()
-                && oldItem?.fileName() == newItem?.fileName()
-                && oldItem?.childFileCount() == newItem?.childFileCount()
-                && oldItem?.playHistory == newItem?.playHistory
+            && oldItem?.fileName() == newItem?.fileName()
+            && oldItem?.childFileCount() == newItem?.childFileCount()
+            && oldItem?.playHistory == newItem?.playHistory
     }
 
     private fun isDirectoryItem(data: Any) = data is StorageFile && data.isDirectory()
@@ -261,9 +261,9 @@ class StorageFileAdapter(
                 ManageAction.BIND_DANMU -> bindExtraSource(file, true, options)
                 ManageAction.BIND_SUBTITLE -> bindExtraSource(file, false, options)
                 ManageAction.BIND_AUDIO -> bindAudioSource(file)
-                ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, ExtraResource.DANMU)
-                ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, ExtraResource.SUBTITLE)
-                ManageAction.UNBIND_AUDIO -> viewModel.unbindExtraSource(file, ExtraResource.AUDIO)
+                ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, TrackType.DANMU)
+                ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, TrackType.SUBTITLE)
+                ManageAction.UNBIND_AUDIO -> viewModel.unbindExtraSource(file, TrackType.AUDIO)
                 ManageAction.SCREENCAST -> activity.castFile(file)
             }
             return@BottomActionDialog true

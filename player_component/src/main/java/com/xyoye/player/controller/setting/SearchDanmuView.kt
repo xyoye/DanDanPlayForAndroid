@@ -17,6 +17,7 @@ import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.enums.SettingViewType
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ItemSearchDanmuBinding
 import com.xyoye.player_component.databinding.LayoutSearchDanmuBinding
@@ -84,7 +85,7 @@ class SearchDanmuView(
 
     private fun initListener() {
         viewBinding.tvSelectLocalDanmu.setOnClickListener {
-            mControlWrapper.showSettingView(SettingViewType.LOAD_DANMU_SOURCE)
+            mControlWrapper.showSettingView(SettingViewType.SWITCH_SOURCE, TrackType.DANMU)
             onSettingVisibilityChanged(false)
         }
 

@@ -1,6 +1,5 @@
 package com.xyoye.player.wrapper
 
-import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.DanmakuLanguage
 
@@ -8,12 +7,7 @@ import com.xyoye.data_component.enums.DanmakuLanguage
  * Created by xyoye on 2021/4/14.
  */
 
-interface InterDanmuController {
-
-    /**
-     * 获取当前弹幕路径
-     */
-    fun getDanmuUrl(): String?
+interface InterDanmuController : InterVideoTrack {
 
     /**
      * 更新弹幕文字大小
@@ -69,11 +63,6 @@ interface InterDanmuController {
      * 改变弹幕的显示状态
      */
     fun toggleDanmuVisible()
-
-    /**
-     * 切换弹幕资源
-     */
-    fun onDanmuSourceChanged(danmu: LocalDanmuBean?)
 
     /**
      * 是否允许发送弹幕

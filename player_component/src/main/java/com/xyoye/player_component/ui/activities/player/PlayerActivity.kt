@@ -28,6 +28,7 @@ import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.screencast.ScreencastHandler
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.enums.PixelFormat
@@ -185,40 +186,25 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun initListener() {
-        danmuViewModel.loadDanmuLiveData.observe(this) {
+        danmuViewModel.loadDanmuLiveData.observe(this) { (videoUrl, matchDanmu) ->
             val curVideoSource = danDanPlayer.getVideoSource()
             val curVideoUrl = curVideoSource.getVideoUrl()
-            if (curVideoUrl != it.videoUrl) {
+            if (curVideoUrl != videoUrl) {
                 return@observe
             }
 
-            // 历史弹幕，直接加载
-            if (it.isHistoryData) {
-                videoController.setDanmu(it.danmu)
-                return@observe
-            }
-
-            // 新匹配到的弹幕，提示并加载弹幕
             videoController.showMessage("匹配弹幕成功")
-            videoController.setDanmu(it.danmu)
-
-            // 更新视频源数据
-            curVideoSource.setDanmu(it.danmu)
-            viewModel.storeDanmuSourceChange(curVideoSource)
+            videoController.addExtendTrack(VideoTrackBean.danmu(matchDanmu))
         }
 
-        danmuViewModel.downloadDanmuLiveData.observe(this) {
-            if (it == null) {
+        danmuViewModel.downloadDanmuLiveData.observe(this) { searchDanmu ->
+            if (searchDanmu == null) {
                 videoController.showMessage("下载弹幕失败")
                 return@observe
             }
 
-            videoController.setDanmu(it)
-            videoController.showMessage("加载弹幕成功")
-
-            val curVideoSource = danDanPlayer.getVideoSource()
-            curVideoSource.setDanmu(it)
-            viewModel.storeDanmuSourceChange(curVideoSource)
+            videoController.showMessage("下载弹幕成功")
+            videoController.addExtendTrack(VideoTrackBean.danmu(searchDanmu))
         }
     }
 
@@ -259,6 +245,11 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
                 exitPopupMode()
                 exitTaskBackground()
             }
+            // 轨道添加完成
+            observerTrackAdded {
+                val source = videoSource ?: return@observerTrackAdded
+                viewModel.storeTrackAdded(source, it)
+            }
         }
     }
 
@@ -280,7 +271,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun updatePlayer(source: BaseVideoSource) {
-
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())
@@ -290,24 +280,6 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         danDanPlayer.apply {
             setVideoSource(source)
             start()
-        }
-
-        videoController.setAudioPath(source.getAudioPath())
-        videoController.setSubtitlePath(source.getSubtitlePath())
-        //当弹幕绑定更新，保存变更
-        videoController.observeDanmuSourceChanged { danmu ->
-            source.setDanmu(danmu)
-            viewModel.storeDanmuSourceChange(source)
-        }
-        //当字幕绑定更新，保存变更
-        videoController.observeSubtitleSourceChanged {
-            source.setSubtitlePath(it)
-            viewModel.storeSubtitleSourceChange(source)
-        }
-        //当音频绑定更新，保存变更
-        videoController.observeAudioSourceChanged {
-            source.setAudioPath(it)
-            viewModel.storeSubtitleSourceChange(source)
         }
         //发送弹幕
         videoController.observerSendDanmu {
@@ -320,23 +292,37 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     private fun afterInitPlayer() {
-        videoSource ?: return
+        val source = videoSource ?: return
 
         //设置本地视频文件的父文件夹，用于选取弹、字幕
-        if (videoSource!!.getMediaType() == MediaType.LOCAL_STORAGE) {
-            File(videoSource!!.getVideoUrl()).parentFile?.absolutePath?.let {
+        if (source.getMediaType() == MediaType.LOCAL_STORAGE) {
+            File(source.getVideoUrl()).parentFile?.absolutePath?.let {
                 PlayerInitializer.selectSourceDirectory = it
             }
         }
 
-        //自动匹配弹幕，弹窗模式不执行匹配
-        if (DanmuConfig.isAutoMatchDanmu()
-            && videoSource!!.getMediaType() != MediaType.FTP_SERVER
+        // 视频已绑定弹幕，直接加载，否则尝试匹配弹幕
+        val historyDanmu = source.getDanmu()
+        if (historyDanmu != null) {
+            videoController.addExtendTrack(VideoTrackBean.danmu(historyDanmu))
+        } else if (
+            DanmuConfig.isAutoMatchDanmu()
+            && source.getMediaType() != MediaType.FTP_SERVER
             && popupManager.isShowing().not()
         ) {
-            danmuViewModel.loadDanmu(videoSource!!)
-        } else {
-            videoController.setDanmu(videoSource!!.getDanmu())
+            danmuViewModel.matchDanmu(source)
+        }
+
+        // 视频已绑定字幕，直接加载
+        val historySubtitle = source.getSubtitlePath()
+        if (historySubtitle != null) {
+            videoController.addExtendTrack(VideoTrackBean.subtitle(historySubtitle))
+        }
+
+        // 视频已绑定音频，直接加载
+        val historyAudio = source.getAudioPath()
+        if (historyAudio != null) {
+            videoController.addExtendTrack(VideoTrackBean.audio(historyAudio))
         }
     }
 

@@ -40,10 +40,6 @@ abstract class BaseVideoSource(
         return null
     }
 
-    override fun getStorageId(): Int? {
-        return null
-    }
-
     override fun getStoragePath(): String? {
         return null
     }

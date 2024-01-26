@@ -2,14 +2,12 @@ package com.xyoye.player.wrapper
 
 import android.graphics.PointF
 import android.view.KeyEvent
-import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.DanmakuLanguage
-import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.SettingViewType
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.data_component.enums.VideoScreenScale
-import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
 import com.xyoye.subtitle.MixedSubtitle
 
@@ -27,7 +25,10 @@ class ControlWrapper(
     private val mDanmuController: InterDanmuController,
     private val mSubtitleController: InterSubtitleController,
     private val mSettingController: InterSettingController
-) : InterVideoPlayer, InterVideoController, InterDanmuController, InterSubtitleController,
+) : InterVideoPlayer,
+    InterVideoController,
+    InterDanmuController,
+    InterSubtitleController,
     InterSettingController {
 
     /**
@@ -98,41 +99,76 @@ class ControlWrapper(
         mVideoPlayer.setRotation(rotation)
     }
 
-    override fun interceptSubtitle(subtitlePath: String) =
-        mVideoPlayer.interceptSubtitle(subtitlePath)
+    /**
+     * ------------------Player Track Controller----------------------
+     */
 
-    override fun addAudioStream(audioPath: String) {
-        mVideoPlayer.addAudioStream(audioPath)
+    override fun supportAddTrack(type: TrackType): Boolean {
+        return mVideoPlayer.supportAddTrack(type)
     }
 
-    override fun getAudioStream(): List<VideoStreamBean> {
-        return mVideoPlayer.getAudioStream()
-    }
-
-    override fun getSubtitleStream(): List<VideoStreamBean> {
-        val subtitleStream = mutableListOf<VideoStreamBean>()
-        //内嵌字幕流
-        val embeddedSubtitle = mVideoPlayer.getSubtitleStream()
-        subtitleStream.addAll(embeddedSubtitle)
-
-        //非VLC内核时，添加外挂字幕流。VLC内核会处理外挂字幕流
-        if (PlayerInitializer.playerType != PlayerType.TYPE_VLC_PLAYER) {
-            //外挂字幕流
-            val externalSubtitle = mSubtitleController.getExternalSubtitleStream()
-            //任意外挂字幕是选中状态，内嵌字幕全部取消选中
-            if (externalSubtitle.any { it.isChecked }) {
-                subtitleStream.forEach { it.isChecked = false }
-            }
-            subtitleStream.addAll(externalSubtitle)
+    override fun addTrack(track: VideoTrackBean): Boolean {
+        // 如果视频播放器支持添加轨道，则直接添加
+        // 否则由支持轨道的控制器添加
+        val trackType = track.type
+        val added = if (mVideoPlayer.supportAddTrack(trackType)) {
+            mVideoPlayer.addTrack(track)
+        } else if (mSubtitleController.supportAddTrack(trackType)) {
+            mSubtitleController.addTrack(track)
+        } else if (mDanmuController.supportAddTrack(trackType)) {
+            mDanmuController.addTrack(track)
+        } else {
+            false
         }
-        return subtitleStream
+
+        if (added) {
+            // 添加轨道成功，设置轨道选中
+            selectTrack(track)
+
+            mController.setTrackAdded(track)
+        }
+        return added
     }
 
-    override fun selectStream(stream: VideoStreamBean) {
-        mVideoPlayer.selectStream(stream)
-        if (stream.isAudio.not()) {
-            mSubtitleController.selectSubtitleStream(stream)
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        // 如果视频播放器支持添加轨道，则直接获取播放器的轨道
+        if (mVideoPlayer.supportAddTrack(type)) {
+            return mVideoPlayer.getTracks(type)
         }
+
+        // 获取播放器的轨道和控制器的轨道
+        val tracks = mVideoPlayer.getTracks(type).toMutableList()
+        if (type == TrackType.SUBTITLE) {
+            tracks.addAll(mSubtitleController.getTracks(type))
+        } else if (type == TrackType.DANMU) {
+            tracks.addAll(mDanmuController.getTracks(type))
+        }
+        return tracks
+    }
+
+    override fun selectTrack(track: VideoTrackBean) {
+        // 如果视频播放器支持添加轨道，则选中播放器轨道，并取消控制器中同类型轨道的选中
+        // 否则由支持轨道的控制器选中，并取消播放器中同类型轨道的选中
+        val trackType = track.type
+        if (mVideoPlayer.supportAddTrack(trackType)) {
+            mVideoPlayer.selectTrack(track)
+            mSubtitleController.deselectTrack(trackType)
+            mDanmuController.deselectTrack(trackType)
+        } else if (mSubtitleController.supportAddTrack(trackType)) {
+            mVideoPlayer.deselectTrack(trackType)
+            mSubtitleController.selectTrack(track)
+        } else if (mDanmuController.supportAddTrack(trackType)) {
+            mVideoPlayer.deselectTrack(trackType)
+            mDanmuController.selectTrack(track)
+        }
+        mController.setTrackUpdated(trackType)
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        mVideoPlayer.deselectTrack(type)
+        mSubtitleController.deselectTrack(type)
+        mDanmuController.deselectTrack(type)
+        mController.setTrackUpdated(type)
     }
 
     /**
@@ -185,16 +221,12 @@ class ControlWrapper(
         mController.showController(ignoreShowing)
     }
 
-    override fun onDanmuSourceUpdate(danmu: LocalDanmuBean?) {
-        mController.onDanmuSourceUpdate(danmu)
+    override fun setTrackAdded(track: VideoTrackBean) {
+        mController.setTrackAdded(track)
     }
 
-    override fun onSubtitleSourceUpdate(subtitlePath: String) {
-        mController.onSubtitleSourceUpdate(subtitlePath)
-    }
-
-    override fun onAudioSourceUpdate(audioPath: String) {
-        mController.onAudioSourceUpdate(audioPath)
+    override fun setTrackUpdated(type: TrackType) {
+        mController.setTrackUpdated(type)
     }
 
     override fun destroy() {
@@ -204,10 +236,6 @@ class ControlWrapper(
     /**
      * ------------------Danmu Controller----------------------
      */
-
-    override fun getDanmuUrl(): String? {
-        return mDanmuController.getDanmuUrl()
-    }
 
     override fun updateDanmuSize() {
         mDanmuController.updateDanmuSize()
@@ -257,12 +285,6 @@ class ControlWrapper(
         mDanmuController.toggleDanmuVisible()
     }
 
-    override fun onDanmuSourceChanged(danmu: LocalDanmuBean?) {
-        mDanmuController.onDanmuSourceChanged(danmu)
-        mSettingController.onDanmuSourceChanged()
-        mController.onDanmuSourceUpdate(danmu)
-    }
-
     override fun allowSendDanmu(): Boolean {
         return mDanmuController.allowSendDanmu()
     }
@@ -292,14 +314,6 @@ class ControlWrapper(
      * ------------------Subtitle Controller----------------------
      */
 
-    override fun addSubtitleStream(filePath: String) {
-        //是否由播放器处理外挂字幕
-        if (interceptSubtitle(filePath))
-            return
-        //由字幕控件处理外挂字幕
-        mSubtitleController.addSubtitleStream(filePath)
-    }
-
     override fun updateTextSize() {
         mSubtitleController.updateTextSize()
     }
@@ -321,14 +335,6 @@ class ControlWrapper(
         mVideoPlayer.updateSubtitleOffsetTime()
     }
 
-    override fun getExternalSubtitleStream(): List<VideoStreamBean> {
-        return mSubtitleController.getExternalSubtitleStream()
-    }
-
-    override fun selectSubtitleStream(stream: VideoStreamBean) {
-        mSubtitleController.selectSubtitleStream(stream)
-    }
-
     override fun onSubtitleTextOutput(subtitle: MixedSubtitle) {
         mSubtitleController.onSubtitleTextOutput(subtitle)
     }
@@ -342,22 +348,14 @@ class ControlWrapper(
         mSettingController.hideSettingView()
     }
 
-    override fun onDanmuSourceChanged() {
-        mSettingController.onDanmuSourceChanged()
-    }
-
-    override fun onSubtitleSourceChanged() {
-        mSettingController.onSubtitleSourceChanged()
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return mSettingController.onKeyDown(keyCode, event)
     }
 
-    override fun showSettingView(viewType: SettingViewType) {
+    override fun showSettingView(viewType: SettingViewType, extra: Any?) {
         hideController()
         if (!isLocked()) {
-            mSettingController.showSettingView(viewType)
+            mSettingController.showSettingView(viewType, extra)
         }
     }
 

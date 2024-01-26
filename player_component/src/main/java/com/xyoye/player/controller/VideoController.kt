@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
@@ -55,10 +55,8 @@ class VideoController(
     private var lastPlayPosition = 0L
     private var lastVideoSpeed: Float? = null
 
-    private var mDanmuSourceChanged: ((danmu: LocalDanmuBean?) -> Unit)? = null
-    private var mSubtitleSourceChanged: ((String) -> Unit)? = null
-    private var mAudioSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
+    private var trackAddedBlock: ((VideoTrackBean) -> Unit)? = null
 
     init {
         addControlComponent(mDanmuController.getView())
@@ -80,28 +78,8 @@ class VideoController(
         playerControlView.showMessage(text, time)
     }
 
-    override fun onDanmuSourceUpdate(danmu: LocalDanmuBean?) {
-        val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getDanmu() == danmu) {
-            return
-        }
-        mDanmuSourceChanged?.invoke(danmu)
-    }
-
-    override fun onSubtitleSourceUpdate(subtitlePath: String) {
-        val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getSubtitlePath() == subtitlePath) {
-            return
-        }
-        mSubtitleSourceChanged?.invoke(subtitlePath)
-    }
-
-    override fun onAudioSourceUpdate(audioPath: String) {
-        val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getAudioPath() == audioPath) {
-            return
-        }
-        mAudioSourceChanged?.invoke(audioPath)
+    override fun setTrackAdded(track: VideoTrackBean) {
+        trackAddedBlock?.invoke(track)
     }
 
     override fun onPopupModeChanged(isPopup: Boolean) {
@@ -176,28 +154,10 @@ class VideoController(
     }
 
     /**
-     * 设置初始弹幕路径
+     * 添加扩展轨道
      */
-    fun setDanmu(danmu: LocalDanmuBean?) {
-        mControlWrapper.onDanmuSourceChanged(danmu)
-    }
-
-    /**
-     * 设置初始字幕路径
-     */
-    fun setSubtitlePath(url: String?) {
-        if (url.isNullOrEmpty())
-            return
-        mControlWrapper.addSubtitleStream(url)
-    }
-
-    /**
-     * 设置初始音频
-     */
-    fun setAudioPath(url: String?) {
-        if (url.isNullOrEmpty())
-            return
-        mControlWrapper.addAudioStream(url)
+    fun addExtendTrack(track: VideoTrackBean) {
+        mControlWrapper.addTrack(track)
     }
 
     /**
@@ -252,24 +212,10 @@ class VideoController(
     }
 
     /**
-     * 弹幕资源更新回调
+     * 监听轨道添加完成
      */
-    fun observeDanmuSourceChanged(block: (danmu: LocalDanmuBean?) -> Unit) {
-        mDanmuSourceChanged = block
-    }
-
-    /**
-     * 字幕资源更新回调
-     */
-    fun observeSubtitleSourceChanged(block: (subtitle: String) -> Unit) {
-        mSubtitleSourceChanged = block
-    }
-
-    /**
-     * 音频资源更新回调
-     */
-    fun observeAudioSourceChanged(block: (audio: String) -> Unit) {
-        mAudioSourceChanged = block
+    fun observerTrackAdded(block: (VideoTrackBean) -> Unit) {
+        trackAddedBlock = block
     }
 
     /**

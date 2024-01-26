@@ -12,43 +12,55 @@
         android:translationX="300dp"
         tools:translationX="0dp">
 
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            tools:text="音轨" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_stream"
+            android:id="@+id/rv_track"
             android:layout_width="300dp"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
+            android:layout_marginTop="55dp"
             android:layout_marginBottom="86dp"
-            android:padding="20dp" />
+            android:clipToPadding="false"
+            android:paddingHorizontal="10dp" />
 
         <TextView
-            android:id="@+id/tv_empty_stream"
+            android:id="@+id/tv_empty_track"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="55dp"
             android:background="@drawable/background_player_setting_text"
             android:focusable="false"
             android:gravity="center_vertical"
             android:paddingHorizontal="20dp"
+            android:text="@string/text_no_data"
             android:textColor="@color/text_white_immutable"
             android:textSize="14sp"
             android:visibility="gone" />
 
         <TextView
-            android:id="@+id/tv_add_stream"
+            android:id="@+id/tv_add_track"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="20dp"
             android:layout_gravity="bottom"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/background_player_setting_text"
             android:focusable="false"
-            android:text="@string/text_add_audio_stream"
             android:gravity="center"
             android:paddingHorizontal="20dp"
             android:textColor="@color/text_white_immutable"
             android:textSize="14sp"
-            android:visibility="visible" />
+            android:visibility="visible"
+            tools:text="@string/text_add_audio_stream" />
     </FrameLayout>
 
 </layout>

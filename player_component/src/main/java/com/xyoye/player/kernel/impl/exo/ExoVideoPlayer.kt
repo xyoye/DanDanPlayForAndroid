@@ -5,19 +5,37 @@ import android.graphics.Point
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.LoadControl
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.RenderersFactory
+import com.google.android.exoplayer2.Tracks
 import com.google.android.exoplayer2.analytics.DefaultAnalyticsCollector
 import com.google.android.exoplayer2.ext.FfmpegRenderersFactory
-import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.LoadEventInfo
+import com.google.android.exoplayer2.source.MediaLoadData
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.MediaSourceEventListener
 import com.google.android.exoplayer2.text.Cue
-import com.google.android.exoplayer2.trackselection.*
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Clock
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.video.VideoSize
+import com.xyoye.common_component.extension.mapByLength
 import com.xyoye.common_component.utils.SupervisorScope
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.kernel.inter.AbstractVideoPlayer
 import com.xyoye.player.utils.PlayerConstant
@@ -34,9 +52,9 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     private lateinit var exoplayer: ExoPlayer
     private lateinit var mMediaSource: MediaSource
 
-    private lateinit var mRenderersFactory: RenderersFactory
-    private lateinit var mTrackSelector: TrackSelector
-    private lateinit var mLoadControl: LoadControl
+    private val mRenderersFactory: RenderersFactory by lazy { FfmpegRenderersFactory(mContext) }
+    private val mTrackSelector: TrackSelector by lazy { DefaultTrackSelector(mContext) }
+    private val mLoadControl: LoadControl by lazy { DefaultLoadControl() }
     private lateinit var mSpeedPlaybackParameters: PlaybackParameters
     private lateinit var mMediaSourceEventListener: MediaSourceEventListener
 
@@ -47,17 +65,9 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     private var mLastReportedPlayWhenReady = false
     private var mLastReportedPlaybackState = Player.STATE_IDLE
 
-    override fun initPlayer() {
-        if (!this::mRenderersFactory.isInitialized) {
-            mRenderersFactory = FfmpegRenderersFactory(mContext)
-        }
-        if (!this::mTrackSelector.isInitialized) {
-            mTrackSelector = DefaultTrackSelector(mContext)
-        }
-        if (!this::mLoadControl.isInitialized) {
-            mLoadControl = DefaultLoadControl()
-        }
+    private val trackNameProvider by lazy { DefaultTrackNameProvider(mContext.resources) }
 
+    override fun initPlayer() {
         //番剧，字幕优先使用中文，音频优先使用日语
         mTrackSelector.parameters = TrackSelectionParameters.Builder(mContext)
             .setPreferredTextLanguage("zh")
@@ -175,8 +185,10 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         return when (exoplayer.playbackState) {
             Player.STATE_BUFFERING,
             Player.STATE_READY -> exoplayer.playWhenReady
+
             Player.STATE_IDLE,
             Player.STATE_ENDED -> false
+
             else -> false
         }
     }
@@ -205,34 +217,52 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     //not support
     override fun getTcpSpeed(): Long = 0L
 
-    override fun getAudioStream(): List<VideoStreamBean> {
-        return getStreams(true)
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        val exoTrackType = getExoTrackType(type) ?: return emptyList()
+
+        return exoplayer.currentTracks.groups
+            .filter { it.type == exoTrackType }
+            .flatMap {
+                mapByLength(it.length) { index ->
+                    val trackFormat = it.getTrackFormat(index)
+                    val name = trackNameProvider.getTrackName(trackFormat)
+                    val selected = it.isTrackSelected(index)
+                    VideoTrackBean.internal(index.toString(), name, type, selected)
+                }
+            }
     }
 
-    override fun getSubtitleStream(): List<VideoStreamBean> {
-        return getStreams(false)
-    }
+    override fun selectTrack(track: VideoTrackBean) {
+        val exoTrackType = getExoTrackType(track.type) ?: return
+        val trackId = track.id?.toIntOrNull() ?: return
 
-    override fun selectStream(stream: VideoStreamBean) {
-        if (stream.isExternalStream) {
-            // 使用外挂流时，禁用内部流
-            disableStream(stream)
-            return
-        }
-
-        val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
-        val mediaTrackGroup = exoplayer.currentTracks
-            .groups.getOrNull(stream.trackGroupId)
+        val override = exoplayer.currentTracks.groups
+            .firstOrNull { it.type == exoTrackType }
             ?.mediaTrackGroup
+            ?.let { TrackSelectionOverride(it, trackId) }
             ?: return
-        val override = TrackSelectionOverride(mediaTrackGroup, stream.trackId)
 
-        val trackParams = TrackSelectionParameters.Builder(mContext)
-            .setTrackTypeDisabled(streamType, false)
-            .clearOverridesOfType(mediaTrackGroup.type)
+        mTrackSelector.parameters = TrackSelectionParameters.Builder(mContext)
+            .setTrackTypeDisabled(exoTrackType, false)
+            .clearOverridesOfType(exoTrackType)
             .addOverride(override)
             .build()
-        mTrackSelector.parameters = trackParams
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        val exoTrackType = getExoTrackType(type) ?: return
+        mTrackSelector.parameters = TrackSelectionParameters
+            .Builder(mContext)
+            .setTrackTypeDisabled(exoTrackType, true)
+            .build()
+    }
+
+    private fun getExoTrackType(type: TrackType): Int? {
+        return when (type) {
+            TrackType.AUDIO -> C.TRACK_TYPE_AUDIO
+            TrackType.SUBTITLE -> C.TRACK_TYPE_TEXT
+            else -> null
+        }
     }
 
     override fun onVideoSizeChanged(videoSize: VideoSize) {
@@ -261,6 +291,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                 Player.STATE_IDLE -> {
 
                 }
+
                 Player.STATE_BUFFERING -> {
                     mIsBuffering = true
                     mPlayerEventListener.onInfo(
@@ -268,6 +299,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                         getBufferedPercentage()
                     )
                 }
+
                 Player.STATE_READY -> {
                     if (mIsBuffering) {
                         mPlayerEventListener.onInfo(
@@ -277,6 +309,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                         mIsBuffering = false
                     }
                 }
+
                 Player.STATE_ENDED -> {
                     mPlayerEventListener.onCompletion()
                 }
@@ -340,61 +373,5 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
             }
         }
         exoplayer.addListener(this)
-    }
-
-    private fun getStreams(isAudio: Boolean): List<VideoStreamBean> {
-        val targetType = if (isAudio)
-            C.TRACK_TYPE_AUDIO
-        else
-            C.TRACK_TYPE_TEXT
-
-        val streams = mutableListOf<VideoStreamBean>()
-        val trackNameProvider = DefaultTrackNameProvider(mContext.resources)
-
-        for (trackGroupIndex in 0 until exoplayer.currentTracks.groups.size) {
-            val trackGroup = exoplayer.currentTracks.groups[trackGroupIndex]
-            if (trackGroup.type != targetType) {
-                continue
-            }
-
-            for (index in 0 until trackGroup.length) {
-                val isSelected = trackGroup.isTrackSelected(index)
-                val trackFormat = trackGroup.getTrackFormat(index)
-                val stream = VideoStreamBean(
-                    trackName = trackNameProvider.getTrackName(trackFormat),
-                    isAudio = isAudio,
-                    trackId = index,
-                    isChecked = isSelected,
-                    trackGroupId = trackGroupIndex
-                )
-                streams.add(stream)
-            }
-        }
-        // 添加自定义的禁用流
-        streams.add(0, VideoStreamBean.disableStream(isAudio))
-        return streams
-    }
-
-    /**
-     * 禁用流
-     */
-    private fun disableStream(stream: VideoStreamBean) {
-        val streamType = if (stream.isAudio) C.TRACK_TYPE_AUDIO else C.TRACK_TYPE_TEXT
-        val trackParams = TrackSelectionParameters.Builder(mContext)
-            .setTrackTypeDisabled(streamType, true)
-            .build()
-        mTrackSelector.parameters = trackParams
-    }
-
-    fun setTrackSelector(trackSelector: TrackSelector) {
-        mTrackSelector = trackSelector
-    }
-
-    fun setRenderersFactory(renderersFactory: RenderersFactory) {
-        mRenderersFactory = renderersFactory
-    }
-
-    fun setLoadControl(loadControl: LoadControl) {
-        mLoadControl = loadControl
     }
 }

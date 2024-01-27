@@ -130,6 +130,10 @@ object PlayRecorder {
         imageSize: Point?
     ) = suspendCancellableCoroutine {
         val recordBitmap = createBitmap(surfaceView, imageSize)
+        if (recordBitmap == null) {
+            it.resumeWhenAlive(null)
+            return@suspendCancellableCoroutine
+        }
 
         val surface = surfaceView.holder.surface
         if (surface.isValid.not()) {
@@ -152,6 +156,11 @@ object PlayRecorder {
         imageSize: Point?
     ) = suspendCancellableCoroutine {
         val recordBitmap = createBitmap(textureView, imageSize)
+        if (recordBitmap == null) {
+            it.resumeWhenAlive(null)
+            return@suspendCancellableCoroutine
+        }
+
         val surfaceTexture = textureView.surfaceTexture
         if (surfaceTexture == null) {
             it.resumeWhenAlive(null)
@@ -173,13 +182,17 @@ object PlayRecorder {
         }, Handler(Looper.getMainLooper()))
     }
 
-    private fun createBitmap(view: View, imageSize: Point?): Bitmap {
-        if (imageSize != null) {
+    private fun createBitmap(view: View, imageSize: Point?): Bitmap? {
+        if (imageSize != null && imageSize.x > 0 && imageSize.y > 0) {
             return Bitmap.createBitmap(
                 imageSize.x,
                 imageSize.y,
                 Bitmap.Config.ARGB_8888
             )
+        }
+
+        if (view.width <= 0 || view.height <= 0) {
+            return null
         }
 
         val height: Float

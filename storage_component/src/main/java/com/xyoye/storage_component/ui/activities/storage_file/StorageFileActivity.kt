@@ -184,7 +184,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         if (keyCode != KeyEvent.KEYCODE_BACK) {
             return super.onKeyDown(keyCode, event)
         }
-        if (mMenus.onKeyDown()) {
+        if (this::mMenus.isInitialized && mMenus.onKeyDown()) {
             return true
         }
         if (popFragment()) {
@@ -293,12 +293,15 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             videoCount == 0 && directoryCount == 0 -> {
                 "0视频"
             }
+
             directoryCount == 0 -> {
                 "${videoCount}视频"
             }
+
             videoCount == 0 -> {
                 "${directoryCount}文件夹"
             }
+
             else -> {
                 "${videoCount}视频  ${directoryCount}文件夹"
             }

@@ -20,6 +20,9 @@ class CenterLayoutManager @JvmOverloads constructor(
         state: RecyclerView.State?,
         position: Int
     ) {
+        if (position == RecyclerView.NO_POSITION) {
+            return
+        }
         val centerSmoothScroller = CenterSmoothScroller(recyclerView?.context)
         centerSmoothScroller.targetPosition = position
         startSmoothScroll(centerSmoothScroller)

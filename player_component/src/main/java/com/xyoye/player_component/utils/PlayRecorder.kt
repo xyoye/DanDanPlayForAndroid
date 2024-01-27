@@ -85,7 +85,13 @@ object PlayRecorder {
             return
         }
         SupervisorScope.IO.launch {
-            val bitmap = generateRenderImage(view) ?: return@launch
+            val bitmap = try {
+                generateRenderImage(view)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            } ?: return@launch
+
             val bitmapFile = File(PathHelper.getVideoCoverDirectory(), key)
             MediaUtils.saveImage(bitmapFile, bitmap)
             bitmap.recycle()
@@ -124,7 +130,14 @@ object PlayRecorder {
         imageSize: Point?
     ) = suspendCancellableCoroutine {
         val recordBitmap = createBitmap(surfaceView, imageSize)
-        PixelCopy.request(surfaceView.holder.surface, recordBitmap, { result ->
+
+        val surface = surfaceView.holder.surface
+        if (surface.isValid.not()) {
+            it.resumeWhenAlive(null)
+            return@suspendCancellableCoroutine
+        }
+
+        PixelCopy.request(surface, recordBitmap, { result ->
             if (result == PixelCopy.SUCCESS) {
                 it.resumeWhenAlive(recordBitmap)
             } else {
@@ -144,7 +157,13 @@ object PlayRecorder {
             it.resumeWhenAlive(null)
             return@suspendCancellableCoroutine
         }
+
         val surface = Surface(textureView.surfaceTexture)
+        if (surface.isValid.not()) {
+            it.resumeWhenAlive(null)
+            return@suspendCancellableCoroutine
+        }
+
         PixelCopy.request(surface, recordBitmap, { result ->
             if (result == PixelCopy.SUCCESS) {
                 it.resumeWhenAlive(recordBitmap)

@@ -87,4 +87,13 @@ object AnimeRepository : BaseRepository() {
         .doGet {
             Retrofit.danDanService.getPlayHistory()
         }
+
+    /**
+     * 添加剧集播放历史
+     */
+    suspend fun addEpisodePlayHistory(episodeIds: List<String>) = request()
+        .param("episodeIdList", episodeIds)
+        .doPost {
+            Retrofit.danDanService.addPlayHistory(it)
+        }
 }

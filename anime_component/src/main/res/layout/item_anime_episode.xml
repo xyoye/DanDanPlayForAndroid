@@ -6,7 +6,7 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_c3_stoke_gray"
+        android:background="@drawable/background_anime_episode"
         android:minHeight="60dp"
         android:orientation="vertical"
         android:padding="8dp">
@@ -30,16 +30,22 @@
             android:textSize="12sp"
             tools:text="测试标题" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/last_watch_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:drawableStart="@drawable/ic_last_play_time"
+            android:drawablePadding="3dp"
             android:ellipsize="end"
+            android:gravity="center_vertical"
             android:maxLines="1"
             android:text=""
-            android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            android:visibility="gone" />
+            android:textColor="@color/text_gray_light"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:ignore="SmallSp"
+            tools:text="2020-10-2"
+            tools:visibility="visible" />
     </LinearLayout>
 </layout>

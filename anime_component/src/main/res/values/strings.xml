@@ -37,4 +37,7 @@
     <string name="question_where_get_domain">Q：如何获取获取第三方资源搜索服务节点？</string>
     <string name="answer_where_get_domain">A：弹弹play不提供节点，请从自行从网络上搜索相关节点</string>
     <string name="action_find_domain">查找第三方资源搜索服务节点</string>
+    <string name="action_select_all">全选</string>
+    <string name="action_invert_select">反选</string>
+    <string name="action_mark_as_viewed">标记已看</string>
 </resources>

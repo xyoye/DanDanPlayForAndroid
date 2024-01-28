@@ -113,4 +113,7 @@ interface DanDanService {
 
     @GET("/config/filter.xml")
     suspend fun getCloudFilters(): ResponseBody
+
+    @POST("/api/v2/playhistory")
+    suspend fun addPlayHistory(@Body body: RequestBody): CommonJsonData
 }

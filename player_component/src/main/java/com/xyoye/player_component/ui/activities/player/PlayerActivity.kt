@@ -218,7 +218,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             }
             //退出播放
             observerExitPlayer {
-                danDanPlayer.recordPlayInfo()
+                if (popupManager.isShowing()) {
+                    danDanPlayer.recordPlayInfo()
+                }
                 popupManager.dismiss()
                 finish()
             }

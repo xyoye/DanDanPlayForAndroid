@@ -11,8 +11,10 @@ import android.view.SurfaceView
 import android.view.TextureView
 import android.view.View
 import androidx.annotation.RequiresApi
+import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.resumeWhenAlive
+import com.xyoye.common_component.network.repository.AnimeRepository
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.JsonHelper
@@ -66,8 +68,11 @@ object PlayRecorder {
                 source.getAudioPath()
             )
 
+            // 保存播放历史到数据库
             DatabaseManager.instance.getPlayHistoryDao()
                 .insert(history)
+            // 上报剧集播放到云端
+            recordToCloud(source)
 
             //部分视频无法获取到视频时长，播放后再更新时长
             if (source.getMediaType() == MediaType.LOCAL_STORAGE) {
@@ -210,5 +215,21 @@ object PlayRecorder {
             height.toInt(),
             Bitmap.Config.RGB_565
         )
+    }
+
+    /**
+     * 上报剧集播放记录到云端
+     */
+    private suspend fun recordToCloud(videoSource: BaseVideoSource) {
+        val episodeId = videoSource.getDanmu()?.episodeId
+        if (episodeId.isNullOrEmpty()) {
+            return
+        }
+
+        if (UserConfig.isUserLoggedIn().not()) {
+            return
+        }
+
+        AnimeRepository.addEpisodePlayHistory(listOf(episodeId))
     }
 }

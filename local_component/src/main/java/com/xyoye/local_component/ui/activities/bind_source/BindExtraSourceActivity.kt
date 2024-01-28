@@ -62,15 +62,14 @@ class BindExtraSourceActivity :
         this.storageFile = storageFile
         viewModel.setStorageFile(storageFile)
 
-        dataBinding.viewpager.apply {
-            adapter = pageAdapter
-            currentItem = if (isSearchDanmu) 0 else 1
-        }
+        dataBinding.viewpager.adapter = pageAdapter
         TabLayoutMediator(dataBinding.tabLayout, dataBinding.viewpager) { tab, position ->
             tab.text = pageAdapter.getItemTitle(position)
         }.attach()
 
         initListener()
+
+        initChildFragment()
     }
 
     private fun initListener() {
@@ -140,6 +139,14 @@ class BindExtraSourceActivity :
 
                 viewModel.setSearchText(searchText)
             }.show()
+        }
+    }
+
+    private fun initChildFragment() {
+        if (isSearchDanmu.not()) {
+            dataBinding.viewpager.post {
+                dataBinding.viewpager.currentItem = 1
+            }
         }
     }
 

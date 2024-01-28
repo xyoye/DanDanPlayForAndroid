@@ -28,14 +28,13 @@
             app:layout_constraintBottom_toTopOf="@+id/navigation_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout" >
-        </FrameLayout>
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation_view"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:backgroundTint="@color/item_bg_color"
+            android:background="@color/item_bg_color"
             app:elevation="5dp"
             app:itemIconTint="@drawable/selector_main_bottom_navigation"
             app:itemTextColor="@drawable/selector_main_bottom_navigation"

@@ -12,6 +12,7 @@ import androidx.lifecycle.coroutineScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.horizontal
@@ -90,6 +91,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
         initPathRv()
         initListener()
+        updateFloatingButtonStyle()
         openDirectory(null)
     }
 
@@ -112,6 +114,10 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
         dataBinding.quicklyPlayBt.setOnClickListener {
             viewModel.quicklyPlay(storage)
+        }
+
+        dataBinding.quicklyPlayBt.setOnFocusChangeListener { _, _ ->
+            updateFloatingButtonStyle()
         }
 
         dataBinding.pathRv.setOnFocusChangeListener { _, hasFocus ->
@@ -335,6 +341,20 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
      */
     private fun onSortOptionChanged() {
         mRouteFragmentMap.values.onEach { it.sort() }
+    }
+
+    /**
+     * 根据焦点状态修改悬浮按钮样式
+     */
+    private fun updateFloatingButtonStyle() {
+        val floatingButton = dataBinding.quicklyPlayBt
+        val shapeAppearanceRes = if (floatingButton.isFocused)
+            R.style.ShapeAppearance_DanDanPlay_FloatingButton_Focused
+        else
+            R.style.ShapeAppearance_DanDanPlay_FloatingButton
+        floatingButton.shapeAppearanceModel = ShapeAppearanceModel.builder(
+            this, 0, shapeAppearanceRes
+        ).build()
     }
 
     /**

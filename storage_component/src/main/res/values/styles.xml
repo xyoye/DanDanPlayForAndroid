@@ -10,4 +10,13 @@
         <item name="queryBackground">@null</item>
         <item name="submitBackground">@null</item>
     </style>
+
+    <style name="ShapeAppearance.DanDanPlay.FloatingButton.Focused" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">20%</item>
+    </style>
+
+    <style name="ShapeAppearance.DanDanPlay.FloatingButton" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.xyoye.storage_component.ui.fragment.storage_file
 
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.extension.setData
@@ -58,6 +59,18 @@ class StorageFileFragment :
     override fun onResume() {
         super.onResume()
         viewModel.updateHistory()
+        setRecyclerViewItemFocusAble(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        setRecyclerViewItemFocusAble(false)
+    }
+
+    private fun setRecyclerViewItemFocusAble(focusAble: Boolean) {
+        dataBinding.storageFileRv.children.forEach {
+            it.isFocusable = focusAble
+        }
     }
 
     private fun initRecyclerView() {

@@ -55,19 +55,17 @@ class StorageFileFragment :
         viewModel.listFile(directory)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.updateHistory()
+    }
+
     private fun initRecyclerView() {
         dataBinding.storageFileRv.apply {
             layoutManager = vertical()
 
             adapter = StorageFileAdapter(ownerActivity, viewModel).create()
         }
-    }
-
-    /**
-     * 再次展示再界面上
-     */
-    fun onReappear() {
-        viewModel.updateHistory()
     }
 
     fun requestFocus(reversed: Boolean = false) {

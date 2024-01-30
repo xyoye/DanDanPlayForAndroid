@@ -6,15 +6,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.addFragment
 import com.xyoye.common_component.extension.horizontal
-import com.xyoye.common_component.extension.removeFragment
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.storage.Storage
@@ -81,11 +81,6 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             return
         }
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        notifyFragmentReappear()
     }
 
     override fun initView() {
@@ -217,11 +212,21 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         val fragment = StorageFileFragment.newInstance()
         mRouteFragmentMap[path] = fragment
 
-        supportFragmentManager.addFragment(
-            dataBinding.fragmentContainer.id,
-            fragment,
-            path.route
-        )
+        supportFragmentManager.beginTransaction().apply {
+            // 添加前的最后一个Fragment，设置为STARTED状态
+            supportFragmentManager.fragments.lastOrNull()?.let {
+                setMaxLifecycle(it, Lifecycle.State.STARTED)
+            }
+
+            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            add(dataBinding.fragmentContainer.id, fragment, path.route)
+
+            // 当前添加的Fragment，设置为RESUMED状态
+            setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
+            commit()
+        }
+
         onDisplayFragmentChanged()
     }
 
@@ -232,9 +237,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         val lastRoute = mRouteFragmentMap.keys.last()
         val fragment = mRouteFragmentMap.remove(lastRoute)
             ?: return true
-        supportFragmentManager.removeFragment(fragment)
+        removeFragment(listOf(fragment))
         onDisplayFragmentChanged()
-        notifyFragmentReappear()
         return true
     }
 
@@ -248,9 +252,27 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
                 fragments.add(fragment)
             }
         }
-        supportFragmentManager.removeFragment(*fragments.toTypedArray())
+        removeFragment(fragments)
         onDisplayFragmentChanged()
-        notifyFragmentReappear()
+    }
+
+    private fun removeFragment(fragments: List<Fragment>) {
+        supportFragmentManager.beginTransaction().apply {
+            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+
+            fragments.forEach {
+                remove(it)
+                // 当前移除的Fragment，设置为CREATED状态
+                setMaxLifecycle(it, Lifecycle.State.CREATED)
+            }
+
+            // 非移除的最后一个Fragment，设置为RESUMED状态
+            supportFragmentManager.fragments
+                .lastOrNull { it !in fragments }
+                ?.let { setMaxLifecycle(it, Lifecycle.State.RESUMED) }
+            commit()
+        }
     }
 
     private fun onDisplayFragmentChanged() {
@@ -276,13 +298,6 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             }
             return@BottomActionDialog true
         }.show()
-    }
-
-    /**
-     * 通知当前展示的Fragment重新出现在界面上
-     */
-    private fun notifyFragmentReappear() {
-        mRouteFragmentMap.values.lastOrNull()?.onReappear()
     }
 
     /**

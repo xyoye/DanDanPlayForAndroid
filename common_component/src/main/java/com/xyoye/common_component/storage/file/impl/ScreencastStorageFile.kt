@@ -1,13 +1,11 @@
 package com.xyoye.common_component.storage.file.impl
 
 import android.net.Uri
-import com.xyoye.common_component.extension.toMd5String
 import com.xyoye.common_component.storage.file.AbstractStorageFile
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.impl.ScreencastStorage
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
-import com.xyoye.data_component.enums.MediaType
 
 /**
  * Created by xyoye on 2023/4/12
@@ -15,15 +13,15 @@ import com.xyoye.data_component.enums.MediaType
 
 class ScreencastStorageFile(
     storage: ScreencastStorage,
-    private val videoIndex: Int,
     private val screencastData: ScreencastData,
+    private val videoData: ScreencastVideoData,
 ) : AbstractStorageFile(storage) {
     override fun getRealFile(): ScreencastVideoData {
-        return screencastData.videos[videoIndex]
+        return videoData
     }
 
     override fun filePath(): String {
-        return screencastData.getVideoUrl(videoIndex)
+        return screencastData.getVideoUrl(videoData)
     }
 
     override fun fileUrl(): String {
@@ -35,7 +33,7 @@ class ScreencastStorageFile(
     }
 
     override fun fileName(): String {
-        return screencastData.videos[videoIndex].videoTitle
+        return videoData.title
     }
 
     override fun fileLength(): Long {
@@ -45,8 +43,8 @@ class ScreencastStorageFile(
     override fun clone(): StorageFile {
         return ScreencastStorageFile(
             storage as ScreencastStorage,
-            videoIndex,
-            screencastData
+            screencastData,
+            videoData
         ).also { it.playHistory = playHistory }
     }
 
@@ -55,7 +53,6 @@ class ScreencastStorageFile(
     }
 
     override fun uniqueKey(): String {
-        val originalUniqueKey = screencastData.getVideoUrl(videoIndex)
-        return "${MediaType.SCREEN_CAST.value}_$originalUniqueKey".toMd5String()
+        return videoData.uniqueKey
     }
 }

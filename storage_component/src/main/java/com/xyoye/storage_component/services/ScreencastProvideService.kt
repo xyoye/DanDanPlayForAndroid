@@ -9,11 +9,13 @@ import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.extension.aesEncode
 import com.xyoye.common_component.extension.authorizationValue
 import com.xyoye.common_component.extension.isServiceRunning
+import com.xyoye.common_component.extension.mapByLength
 import com.xyoye.common_component.network.repository.ScreencastRepository
 import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
@@ -39,7 +41,7 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
 
     private lateinit var notifier: ScreencastProvideNotifier
     private lateinit var receiver: MediaLibraryEntity
-    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
         private const val KEY_SCREENCAST_RECEIVER = "key_screencast_receiver"
@@ -72,7 +74,7 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val videoSource = VideoSourceManager.getInstance().getSource()
+        val videoSource = VideoSourceManager.getInstance().getSource() as? StorageVideoSource?
         //必须存在视频资源
         if (videoSource == null) {
             stopSelf()
@@ -95,15 +97,15 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
     override fun onDestroy() {
         ServiceLifecycleBridge.onScreencastProvideLifeChange(null)
         stopHttpServer()
-        ioScope.cancel()
+        serviceScope.cancel()
         super.onDestroy()
     }
 
     /**
      * 连接投屏接收端，并投送视频
      */
-    private fun connectReceiver(videoSource: BaseVideoSource) {
-        ioScope.launch(Dispatchers.IO) {
+    private fun connectReceiver(videoSource: StorageVideoSource) {
+        serviceScope.launch(Dispatchers.IO) {
             if (isDeviceRunning().not()) {
                 stopSelf()
                 ToastCenter.showError("连接至投屏设备失败，请确认投屏设备已启用接收服务")
@@ -112,26 +114,26 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
 
             stopHttpServer()
             //启动代理服务
-            httpServer = createHttpServer(videoSource, httpPort)
-            if (httpServer == null) {
+            val newHttpServer = createHttpServer(videoSource, httpPort)
+            if (newHttpServer == null) {
                 stopSelf()
                 ToastCenter.showError("启用投屏投送服务失败")
                 return@launch
             }
-            //设置投屏接收处理回调
-            httpServer!!.setScreenProvideHandler(this@ScreencastProvideService)
             //通知接收端播放
-            postScreencastDevicePlay(videoSource, httpServer!!.listeningPort)
+            postScreencastDevicePlay(newHttpServer.listeningPort, videoSource)
+
+            httpServer = newHttpServer
         }
     }
 
     private fun createHttpServer(
-        videoSource: BaseVideoSource,
+        videoSource: StorageVideoSource,
         port: Int,
         retry: Int = 5
     ): HttpServer? {
         return try {
-            val httpServer = HttpServer(videoSource, port)
+            val httpServer = HttpServer(port, videoSource, serviceScope, this)
             httpServer.start(2000)
             httpServer
         } catch (e: Exception) {
@@ -162,9 +164,9 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
     /**
      * 通知投屏接收端播放视频
      */
-    private fun postScreencastDevicePlay(videoSource: BaseVideoSource, port: Int) {
-        ioScope.launch {
-            val screencastData = createScreencastData(videoSource, port)
+    private fun postScreencastDevicePlay(port: Int, videoSource: StorageVideoSource) {
+        serviceScope.launch {
+            val screencastData = createScreencastData(port, videoSource)
             val result = ScreencastRepository.play(
                 "http://${receiver.screencastAddress}:${receiver.port}",
                 receiver.password?.aesEncode()?.authorizationValue(),
@@ -180,26 +182,29 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
         }
     }
 
-    private fun createScreencastData(
-        videoSource: BaseVideoSource,
-        port: Int
-    ): ScreencastData {
-        val videoData = mutableListOf<ScreencastVideoData>()
-        for (index in 0 until videoSource.getGroupSize()) {
-            val video = ScreencastVideoData(
-                videoIndex = index,
-                videoTitle = videoSource.indexTitle(index)
+    /**
+     * 创建发送到投屏接收端的数据
+     */
+    private fun createScreencastData(port: Int, videoSource: StorageVideoSource): ScreencastData {
+        val videoData = mapByLength(videoSource.getGroupSize()) {
+            val storageFile = videoSource.indexStorageFile(it)
+            val fileHistory = storageFile.playHistory
+            ScreencastVideoData(
+                storageFile.fileName(),
+                storageFile.uniqueKey(),
+                fileHistory?.episodeId,
+                fileHistory?.danmuPath,
+                fileHistory?.subtitlePath,
+                fileHistory?.videoPosition ?: 0L,
+                fileHistory?.videoDuration ?: 0L
             )
-            videoData.add(video)
         }
 
         return ScreencastData(
             port = port,
-            mediaType = videoSource.getMediaType().value,
+            playUniqueKey = videoSource.getStorageFile().uniqueKey(),
+            relatedVideos = videoData,
             httpHeader = videoSource.getHttpHeader(),
-            videos = videoData,
-            playIndex = videoSource.getGroupIndex(),
-            uniqueKey = videoSource.getUniqueKey()
         )
     }
 

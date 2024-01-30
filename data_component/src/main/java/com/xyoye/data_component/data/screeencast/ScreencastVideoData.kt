@@ -2,7 +2,7 @@ package com.xyoye.data_component.data.screeencast
 
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
-import com.xyoye.data_component.enums.MediaType
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -12,31 +12,36 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ScreencastData(
-    val port: Int = 0,
-    var ip: String? = null,
-    val playIndex: Int = 0,
-    val mediaType: String = MediaType.OTHER_STORAGE.value,
+    val port: Int,
+    val relatedVideos: List<ScreencastVideoData>,
+    val playUniqueKey: String,
     val httpHeader: Map<String, String>? = null,
-    val videos: List<ScreencastVideoData> = emptyList(),
-    val uniqueKey: String? = null,
-) : Parcelable{
+) : Parcelable {
 
-    fun getVideoUrl(videoIndex: Int): String {
-        return "http://$ip:$port/video?index=$videoIndex"
+    @IgnoredOnParcel
+    var ip: String? = null
+
+    fun getVideoUrl(videoData: ScreencastVideoData): String {
+        return "http://$ip:$port/video?uniqueKey=${videoData.uniqueKey}"
     }
 
-    fun getDanmuUrl(videoIndex: Int): String {
-        return "http://$ip:$port/danmu?index=$videoIndex"
+    fun getDanmuUrl(videoData: ScreencastVideoData): String {
+        return "http://$ip:$port/danmu?uniqueKey=${videoData.uniqueKey}"
     }
 
-    fun getSubtitleUrl(videoIndex: Int): String {
-        return "http://$ip:$port/subtitle?index=$videoIndex"
+    fun getSubtitleUrl(videoData: ScreencastVideoData): String {
+        return "http://$ip:$port/subtitle?uniqueKey=${videoData.uniqueKey}"
     }
 }
 
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ScreencastVideoData(
-    val videoIndex: Int = 0,
-    val videoTitle: String = ""
+    val title: String = "",
+    val uniqueKey: String = "",
+    val episodeId: String? = null,
+    val danmuFileName: String? = null,
+    val subtitleFileName: String? = null,
+    val position: Long = 0L,
+    val duration: Long = 0L
 ) : Parcelable

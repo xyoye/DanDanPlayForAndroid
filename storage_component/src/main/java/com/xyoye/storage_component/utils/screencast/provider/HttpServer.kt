@@ -1,8 +1,10 @@
 package com.xyoye.storage_component.utils.screencast.provider
 
-import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.storage_component.services.ScreencastProvideHandler
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 
 /**
  * <pre>
@@ -12,17 +14,23 @@ import fi.iki.elonen.NanoHTTPD
  * </pre>
  */
 
-class HttpServer(private val videoSource: BaseVideoSource, port: Int) : NanoHTTPD(port) {
-    private var handler: ScreencastProvideHandler? = null
+class HttpServer(
+    port: Int,
+    private val videoSource: StorageVideoSource,
+    private val coroutineScope: CoroutineScope,
+    private val listener: ScreencastProvideHandler
+) : NanoHTTPD(port) {
+
+    private val controller: ServerController by lazy {
+        ServerController(videoSource, listener)
+    }
 
     override fun serve(session: IHTTPSession?): Response {
         if (session != null && session.method == Method.GET) {
-            return ServerController.handleGetRequest(videoSource, session, handler)
+            return runBlocking(coroutineScope.coroutineContext) {
+                controller.handleSession(session)
+            }
         }
         return super.serve(session)
-    }
-
-    fun setScreenProvideHandler(handler: ScreencastProvideHandler) {
-        this.handler = handler
     }
 }

@@ -112,4 +112,12 @@ class StorageVideoSource(
         }
         return -1L
     }
+
+    fun getStorageFile(): StorageFile {
+        return file
+    }
+
+    fun indexStorageFile(index: Int): StorageFile {
+        return videoSources[index]
+    }
 }

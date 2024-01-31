@@ -18,8 +18,9 @@ interface ScreencastService {
     @GET("/init")
     suspend fun init(
         @Header(HeaderKey.BASE_URL) url: String,
-        @Header(HeaderKey.AUTHORIZATION) authorization: String?
-    ): CommonJsonData
+        @Header(HeaderKey.AUTHORIZATION) authorization: String?,
+        @Header(HeaderKey.SCREENCAST_VERSION) version: Int
+    ): retrofit2.Response<CommonJsonData>
 
     @POST("/play")
     suspend fun play(

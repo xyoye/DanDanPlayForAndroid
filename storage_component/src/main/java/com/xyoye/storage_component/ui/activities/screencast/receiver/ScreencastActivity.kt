@@ -23,6 +23,7 @@ import com.xyoye.storage_component.BR
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.ActivityScreenCastBinding
 import com.xyoye.storage_component.services.ScreencastReceiveService
+import com.xyoye.storage_component.utils.screencast.Constant
 import kotlin.random.Random
 
 
@@ -42,6 +43,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
     override fun initView() {
 
         title = "投屏接收端"
+
+        initVersion()
 
         initListener()
 
@@ -121,6 +124,11 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         dataBinding.autoStartSwitch.setOnCheckedChangeListener { _, isChecked ->
             ScreencastConfig.putStartReceiveWhenLaunch(isChecked)
         }
+    }
+
+    private fun initVersion() {
+        val versionDisplay = "v${Constant.version}"
+        dataBinding.versionTv.text = versionDisplay
     }
 
     private fun initPort() {

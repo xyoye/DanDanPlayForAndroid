@@ -54,6 +54,7 @@ object RouteTable {
         const val ScreencastReceiver = "/stream/screencast_receiver"
         const val ScreencastProvide = "/stream/screencast_provide"
         const val ScreencastReceive = "/stream/screencast_receive"
+        const val ScreencastVersion = "/stream/screencast_version"
 
         const val StorageFile = "/stream/storage_file"
         const val StorageFileProvider = "/stream/storage_file/provider"

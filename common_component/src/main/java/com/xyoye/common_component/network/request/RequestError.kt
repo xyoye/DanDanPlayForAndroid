@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 import kotlin.coroutines.cancellation.CancellationException
 
-data class RequestError constructor(
+data class RequestError(
     val code: Int,
     val msg: String,
     val original: Exception
@@ -71,7 +71,7 @@ data class RequestError constructor(
 
                 is CancellationException -> 2000 to "网络请求中断"
 
-                else -> -1 to "其它错误: ${e.message}"
+                else -> -1 to "${e.message}"
 
             }.run { RequestError(first, second, e) }
         }

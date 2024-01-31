@@ -1,9 +1,11 @@
 package com.xyoye.storage_component.utils.screencast.receiver
 
+import com.xyoye.common_component.network.config.HeaderKey
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.storage_component.services.ScreencastReceiveHandler
+import com.xyoye.storage_component.utils.screencast.Constant
 import fi.iki.elonen.NanoHTTPD
 import java.io.IOException
 
@@ -21,7 +23,7 @@ object ServerController {
         session: NanoHTTPD.IHTTPSession
     ): NanoHTTPD.Response? {
         return when (session.uri) {
-            "/init" -> init()
+            "/init" -> init(session)
             else -> null
         }
     }
@@ -53,8 +55,20 @@ object ServerController {
     /**
      * 初始化
      */
-    private fun init(): NanoHTTPD.Response {
-        return createResponse()
+    private fun init(session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+        val version = session.headers[HeaderKey.SCREENCAST_VERSION]?.toIntOrNull() ?: 0
+        if (version != Constant.version) {
+            return createResponse(
+                NanoHTTPD.Response.Status.CONFLICT.requestStatus,
+                false,
+                "投屏版本不匹配，请更新双端至相同APP版本。\n" +
+                    "接收端: ${Constant.version}，投屏端: $version"
+            )
+        }
+
+        return createResponse().apply {
+            addHeader(HeaderKey.SCREENCAST_VERSION, Constant.version.toString())
+        }
     }
 
     /**
@@ -78,7 +92,7 @@ object ServerController {
     }
 
     private fun createResponse(
-        code: Int = 200,
+        code: Int = NanoHTTPD.Response.Status.OK.requestStatus,
         success: Boolean = true,
         message: String? = null
     ): NanoHTTPD.Response {

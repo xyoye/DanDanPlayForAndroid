@@ -92,7 +92,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="ip_tips, password_tips" />
+                app:constraint_referenced_ids="version_tips, ip_tips, password_tips" />
+
+            <TextView
+                android:id="@+id/version_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/tips_screencast_version"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="@id/server_info_tips"
+                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
+
+            <TextView
+                android:id="@+id/version_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/version_tips"
+                app:layout_constraintStart_toEndOf="@+id/tips_barrier"
+                app:layout_constraintTop_toTopOf="@id/version_tips"
+                tools:text="1" />
 
             <TextView
                 android:id="@+id/ip_tips"
@@ -103,7 +128,7 @@
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@id/server_info_tips"
-                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
+                app:layout_constraintTop_toBottomOf="@id/version_tips" />
 
             <TextView
                 android:id="@+id/ip_tv"
@@ -126,7 +151,7 @@
                 android:text="@string/tips_port"
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/ip_tips"
+                app:layout_constraintStart_toStartOf="@id/server_info_tips"
                 app:layout_constraintTop_toBottomOf="@id/ip_tv" />
 
             <TextView
@@ -139,7 +164,7 @@
                 android:textColor="@color/text_gray"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/port_tips"
-                app:layout_constraintStart_toEndOf="@id/port_tips"
+                app:layout_constraintStart_toEndOf="@id/tips_barrier"
                 app:layout_constraintTop_toTopOf="@id/port_tips"
                 tools:text="8080" />
 
@@ -164,7 +189,7 @@
                 android:text="@string/tips_password"
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/ip_tips"
+                app:layout_constraintStart_toStartOf="@id/server_info_tips"
                 app:layout_constraintTop_toBottomOf="@id/port_tips" />
 
             <RadioGroup

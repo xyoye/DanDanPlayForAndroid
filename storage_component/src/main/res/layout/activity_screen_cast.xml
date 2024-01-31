@@ -140,19 +140,45 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="ip_tips, port_tips, password_tips" />
+                app:constraint_referenced_ids="version_tips, ip_tips, port_tips, password_tips" />
+
+            <TextView
+                android:id="@+id/version_tips"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/tips_screencast_version"
+                android:textColor="@color/text_black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
+
+            <TextView
+                android:id="@+id/version_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/version_tips"
+                app:layout_constraintStart_toEndOf="@+id/tips_barrier"
+                app:layout_constraintTop_toTopOf="@id/version_tips"
+                tools:text="1" />
 
             <TextView
                 android:id="@+id/ip_tips"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/tips_ip"
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
+                app:layout_constraintTop_toBottomOf="@id/version_tips" />
 
             <TextView
                 android:id="@+id/ip_tv"

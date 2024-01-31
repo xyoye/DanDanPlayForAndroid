@@ -43,6 +43,7 @@
     <string name="tips_password">密码：</string>
     <string name="tips_port">端口：</string>
     <string name="tips_ip">IP：</string>
+    <string name="tips_screencast_version">版本：</string>
     <string name="tips_connect_info">连接信息</string>
     <string name="tips_connect_qe_code">连接码</string>
     <string name="tips_screencast_receive_service">投屏接收服务</string>

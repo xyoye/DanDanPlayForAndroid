@@ -5,7 +5,9 @@ package com.xyoye.common_component.network.config
  */
 
 object HeaderKey {
-    const val BASE_URL = "Dynamic_Base_url"
+    const val BASE_URL = "dynamic-base-url"
 
     const val AUTHORIZATION = "Authorization"
+
+    const val SCREENCAST_VERSION = "screencast-version"
 }

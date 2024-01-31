@@ -13,6 +13,7 @@ import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
@@ -22,7 +23,6 @@ import com.xyoye.storage_component.BR
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.ActivityScreenCastBinding
 import com.xyoye.storage_component.services.ScreencastReceiveService
-import com.xyoye.storage_component.utils.screencast.Constant
 import kotlin.random.Random
 
 
@@ -127,7 +127,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
     }
 
     private fun initVersion() {
-        val versionDisplay = "v${Constant.version}"
+        val versionDisplay = "v${ScreencastConstants.version}"
         dataBinding.versionTv.text = versionDisplay
     }
 

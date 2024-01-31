@@ -9,5 +9,5 @@ object HeaderKey {
 
     const val AUTHORIZATION = "Authorization"
 
-    const val SCREENCAST_VERSION = "screencast-version"
+    const val AUTH_REDIRECT = "Authorization-Redirect"
 }

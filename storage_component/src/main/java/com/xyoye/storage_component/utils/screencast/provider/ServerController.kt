@@ -2,13 +2,14 @@ package com.xyoye.storage_component.utils.screencast.provider
 
 import android.net.Uri
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.extension.md5
 import com.xyoye.common_component.extension.resourceType
-import com.xyoye.common_component.network.helper.RedirectAuthorizationInterceptor
+import com.xyoye.common_component.network.config.HeaderKey
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.storage.helper.ScreencastConstants
+import com.xyoye.common_component.storage.helper.ScreencastConstants.ProviderApi
 import com.xyoye.common_component.utils.RangeUtils
 import com.xyoye.common_component.utils.getFileExtension
 import com.xyoye.data_component.enums.ResourceType
@@ -46,17 +47,19 @@ class ServerController(
     }
 
     suspend fun handleSession(session: IHTTPSession): Response {
-        val targetVideoSource = session.parameters["uniqueKey"]
+        val targetVideoSource = session.parameters[ScreencastConstants.Param.uniqueKey]
             ?.firstOrNull()
             ?.let { findVideoSource(it) }
             ?: return resourceNotFound
 
-        return when (session.uri) {
-            "/video" -> createVideoResponse(targetVideoSource, session)
-            "/danmu" -> createDanmuResponse(targetVideoSource)
-            "/subtitle" -> createSubtitleResponse(targetVideoSource)
-            "/callback" -> handleScreencastCallback(targetVideoSource, session)
-            else -> resourceNotFound
+        val api = ProviderApi.fromPath(session.uri)
+            ?: return resourceNotFound
+
+        return when (api) {
+            ProviderApi.VIDEO -> createVideoResponse(targetVideoSource, session)
+            ProviderApi.DANMU -> createDanmuResponse(targetVideoSource)
+            ProviderApi.SUBTITLE -> createSubtitleResponse(targetVideoSource)
+            ProviderApi.CALLBACK -> handleScreencastCallback(targetVideoSource, session)
         }
     }
 
@@ -104,7 +107,7 @@ class ServerController(
             "redirect to real source"
         ).apply {
             addHeader("Location", redirectUrl)
-            addHeader(RedirectAuthorizationInterceptor.TAG_AUTH_REDIRECT, "redirect")
+            addHeader(HeaderKey.AUTH_REDIRECT, "redirect")
         }
     }
 
@@ -194,12 +197,9 @@ class ServerController(
 
         return NanoHTTPD.newChunkedResponse(
             Response.Status.OK,
-            "*/*",
+            "*/xml",
             FileInputStream(danmuFile)
-        ).apply {
-            addHeader("episodeId", videoSource.getDanmu()?.episodeId)
-            addHeader("danmuMd5", danmuFile.md5())
-        }
+        )
     }
 
     /**
@@ -218,15 +218,13 @@ class ServerController(
         if (subtitleFile.exists().not() || subtitleFile.canRead().not()) {
             return resourceNotFound
         }
+        val fileNameExtension = getFileExtension(subtitleFile)
 
         return NanoHTTPD.newChunkedResponse(
             Response.Status.OK,
-            "*/*",
+            "*/$fileNameExtension",
             FileInputStream(subtitleFile)
-        ).apply {
-            addHeader("subtitleSuffix", getFileExtension(subtitlePath))
-            addHeader("subtitleMd5", subtitleFile.md5())
-        }
+        )
     }
 
     /**
@@ -236,8 +234,8 @@ class ServerController(
         videoSource: StorageVideoSource,
         session: IHTTPSession
     ): Response {
-        val position = session.parameters["position"]?.firstOrNull()?.toLongOrNull()
-        val duration = session.parameters["duration"]?.firstOrNull()?.toLongOrNull()
+        val position = session.parameters[ScreencastConstants.Param.position]?.firstOrNull()?.toLongOrNull()
+        val duration = session.parameters[ScreencastConstants.Param.duration]?.firstOrNull()?.toLongOrNull()
         if (position == null || duration == null) {
             return NanoHTTPD.newFixedLengthResponse(
                 Response.Status.PRECONDITION_FAILED,

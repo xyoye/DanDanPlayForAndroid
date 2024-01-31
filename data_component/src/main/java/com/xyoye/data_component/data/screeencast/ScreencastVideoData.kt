@@ -20,22 +20,6 @@ data class ScreencastData(
 
     @IgnoredOnParcel
     var ip: String? = null
-
-    fun getVideoUrl(videoData: ScreencastVideoData): String {
-        return "http://$ip:$port/video?uniqueKey=${videoData.uniqueKey}"
-    }
-
-    fun getDanmuUrl(videoData: ScreencastVideoData): String {
-        return "http://$ip:$port/danmu?uniqueKey=${videoData.uniqueKey}"
-    }
-
-    fun getSubtitleUrl(videoData: ScreencastVideoData): String {
-        return "http://$ip:$port/subtitle?uniqueKey=${videoData.uniqueKey}"
-    }
-
-    fun getCallbackUrl(videoData: ScreencastVideoData): String {
-        return "http://$ip:$port/callback?uniqueKey=${videoData.uniqueKey}"
-    }
 }
 
 @Parcelize

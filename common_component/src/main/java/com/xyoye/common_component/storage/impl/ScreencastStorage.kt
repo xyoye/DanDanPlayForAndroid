@@ -11,6 +11,7 @@ import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.danmu.DanmuFinder
 import com.xyoye.common_component.utils.getFileName
@@ -94,7 +95,7 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             return null
         }
 
-        val danmuUrl = screencastData?.getDanmuUrl(videoData)
+        val danmuUrl = screencastData?.let { ScreencastConstants.ProviderApi.DANMU.buildUrl(it, videoData) }
             ?: return null
         val stream = ResourceRepository.getResourceResponseBody(danmuUrl).dataOrNull?.byteStream()
             ?: return null
@@ -113,7 +114,7 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             return null
         }
 
-        val subtitleUrl = screencastData?.getSubtitleUrl(videoData)
+        val subtitleUrl = screencastData?.let { ScreencastConstants.ProviderApi.SUBTITLE.buildUrl(it, videoData) }
             ?: return null
 
         try {

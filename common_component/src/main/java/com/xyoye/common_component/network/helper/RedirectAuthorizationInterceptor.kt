@@ -15,10 +15,6 @@ import okhttp3.internal.http.RetryAndFollowUpInterceptor
  * @see RetryAndFollowUpInterceptor.buildRedirectRequest
  */
 class RedirectAuthorizationInterceptor : Interceptor {
-    companion object {
-        const val TAG_AUTH_REDIRECT = "Authorization-Redirect"
-    }
-
     //重定向Authorization请求头缓存
     private val authorizationCache = mutableMapOf<String, String>()
 
@@ -56,7 +52,7 @@ class RedirectAuthorizationInterceptor : Interceptor {
 
         val redirectUrl = response.header("Location")
         val authorization = response.request.header(HeaderKey.AUTHORIZATION)
-        val redirectAuth = response.header(TAG_AUTH_REDIRECT) == "redirect"
+        val redirectAuth = response.header(HeaderKey.AUTH_REDIRECT) == "redirect"
         if (redirectUrl != null && authorization != null && redirectAuth) {
             authorizationCache[redirectUrl.toMd5String()] = authorization
         }

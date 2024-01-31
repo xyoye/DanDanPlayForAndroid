@@ -1,12 +1,12 @@
 package com.xyoye.storage_component.utils.screencast.provider
 
 import android.text.TextUtils
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.IOUtils
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.bean.UDPDeviceBean
-import com.xyoye.storage_component.utils.screencast.receiver.UdpServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
@@ -64,23 +64,18 @@ object UdpClient {
      */
     private fun initMulticastSocket(): Boolean {
         try {
-            val multicastHostName = UdpServer.multicastHostName
-            val group = InetAddress.getByName(UdpServer.multicastHostName)
+            val group = InetAddress.getByName(ScreencastConstants.Multicast.host)
             if (!group.isMulticastAddress) {
-                DDLog.e(TAG, "${multicastHostName}不是组播地址")
+                DDLog.e(TAG, "${ScreencastConstants.Multicast.host}不是组播地址")
                 return false
             }
-            multicastSocket = MulticastSocket(UdpServer.multicastPort)
+            multicastSocket = MulticastSocket(ScreencastConstants.Multicast.port)
             multicastSocket!!.joinGroup(group)
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        if (multicastSocket == null) {
-            return false
-        }
-
-        return true
+        return multicastSocket != null
     }
 
     /**
@@ -101,7 +96,7 @@ object UdpClient {
                 return
             }
             //组播消息解密
-            val msg = EntropyUtils.aesDecode(UdpServer.multicastMsgKey, entropyMsg)
+            val msg = EntropyUtils.aesDecode(ScreencastConstants.Multicast.secret, entropyMsg)
             if (TextUtils.isEmpty(msg)) {
                 return
             }

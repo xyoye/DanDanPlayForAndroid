@@ -3,6 +3,7 @@ package com.xyoye.common_component.storage.file.impl
 import android.net.Uri
 import com.xyoye.common_component.storage.file.AbstractStorageFile
 import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.storage.impl.ScreencastStorage
 import com.xyoye.data_component.data.screeencast.ScreencastData
 import com.xyoye.data_component.data.screeencast.ScreencastVideoData
@@ -21,7 +22,7 @@ class ScreencastStorageFile(
     }
 
     override fun filePath(): String {
-        return screencastData.getVideoUrl(videoData)
+        return ScreencastConstants.ProviderApi.VIDEO.buildUrl(screencastData, videoData)
     }
 
     override fun fileUrl(): String {
@@ -56,5 +57,7 @@ class ScreencastStorageFile(
         return videoData.uniqueKey
     }
 
-    fun getCallbackUrl() = screencastData.getCallbackUrl(videoData)
+    fun getCallbackUrl(): String {
+        return ScreencastConstants.ProviderApi.CALLBACK.buildUrl(screencastData, videoData)
+    }
 }

@@ -20,6 +20,7 @@ import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.PathHelper
@@ -259,8 +260,8 @@ object PlayRecorder {
         // 构建包含播放进度的回调地址
         val callbackUrl = storageFile.getCallbackUrl()
         val completeUrl = Uri.parse(callbackUrl).buildUpon()
-            .appendQueryParameter("position", history.videoPosition.toString())
-            .appendQueryParameter("duration", history.videoDuration.toString())
+            .appendQueryParameter(ScreencastConstants.Param.position, history.videoPosition.toString())
+            .appendQueryParameter(ScreencastConstants.Param.duration, history.videoDuration.toString())
             .build()
             .toString()
 

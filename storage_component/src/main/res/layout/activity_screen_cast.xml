@@ -140,7 +140,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="version_tips, ip_tips, port_tips, password_tips" />
+                app:constraint_referenced_ids="version_tips, ip_tips, port_tips" />
 
             <TextView
                 android:id="@+id/version_tips"
@@ -230,73 +230,67 @@
                 app:layout_constraintBottom_toBottomOf="@id/port_tv"
                 app:layout_constraintStart_toEndOf="@id/port_tv"
                 app:layout_constraintTop_toTopOf="@id/port_tv" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/server_password_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/background_item_corner"
+            android:paddingVertical="5dp"
+            app:layout_constraintEnd_toEndOf="@+id/server_switch_layout"
+            app:layout_constraintStart_toStartOf="@+id/server_switch_layout"
+            app:layout_constraintTop_toBottomOf="@id/server_info_layout">
 
             <TextView
-                android:id="@+id/password_tips"
-                android:layout_width="0dp"
+                android:id="@+id/tips_password"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
                 android:text="@string/tips_password"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/password_et"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:enabled="false"
+                android:maxLength="8"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/text_black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/refresh_port_iv" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tips_password"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <RadioGroup
-                android:id="@+id/password_radio_gp"
-                android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/refresh_password_iv"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/background_item_press"
+                android:padding="8dp"
+                android:src="@drawable/ic_password_refresh"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/password_et"
+                app:layout_constraintStart_toEndOf="@id/password_et"
+                app:layout_constraintTop_toTopOf="@id/password_et" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/password_switch"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="@id/password_tips"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tips_barrier"
-                app:layout_constraintTop_toTopOf="@id/password_tips">
-
-                <RadioButton
-                    android:id="@+id/no_password_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/text_not_use"
-                    android:textSize="14sp"
-                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <RadioButton
-                    android:id="@+id/set_password_rb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="false"
-                    android:textSize="14sp"
-                    app:theme="@style/Theme.DanDanPlay.RadioButton" />
-
-                <EditText
-                    android:id="@+id/password_et"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:maxLength="8"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/text_black"
-                    android:textSize="14sp" />
-
-                <ImageView
-                    android:id="@+id/refresh_password_iv"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/background_item_press"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_password_refresh"
-                    android:visibility="visible" />
-            </RadioGroup>
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/Theme.DanDanPlay.SwitchCompat" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -307,7 +301,7 @@
             android:background="@drawable/background_item_corner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/server_info_layout">
+            app:layout_constraintTop_toBottomOf="@id/server_password_layout">
 
             <TextView
                 android:id="@+id/tips_confirm_receive"
@@ -339,9 +333,9 @@
                 android:text="@string/tips_start_receive_when_start"
                 android:textColor="@color/text_gray"
                 android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tips_confirm_receive"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tips_confirm_receive" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/auto_start_switch"

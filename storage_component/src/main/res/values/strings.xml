@@ -40,7 +40,7 @@
     <string name="text_password_connect">密码连接</string>
     <string name="text_direct_connect">直接连接</string>
     <string name="text_not_use">不使用</string>
-    <string name="tips_password">密码：</string>
+    <string name="tips_password">密码</string>
     <string name="tips_port">端口：</string>
     <string name="tips_ip">IP：</string>
     <string name="tips_screencast_version">版本：</string>

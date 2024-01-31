@@ -55,4 +55,6 @@ class ScreencastStorageFile(
     override fun uniqueKey(): String {
         return videoData.uniqueKey
     }
+
+    fun getCallbackUrl() = screencastData.getCallbackUrl(videoData)
 }

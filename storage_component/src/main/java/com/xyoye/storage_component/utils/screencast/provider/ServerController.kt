@@ -1,6 +1,7 @@
 package com.xyoye.storage_component.utils.screencast.provider
 
 import android.net.Uri
+import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.md5
 import com.xyoye.common_component.extension.resourceType
 import com.xyoye.common_component.network.helper.RedirectAuthorizationInterceptor
@@ -18,6 +19,7 @@ import fi.iki.elonen.NanoHTTPD.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.util.Date
 
 /**
  * Created by xyoye on 2022/9/15
@@ -53,6 +55,7 @@ class ServerController(
             "/video" -> createVideoResponse(targetVideoSource, session)
             "/danmu" -> createDanmuResponse(targetVideoSource)
             "/subtitle" -> createSubtitleResponse(targetVideoSource)
+            "/callback" -> handleScreencastCallback(targetVideoSource, session)
             else -> resourceNotFound
         }
     }
@@ -224,6 +227,38 @@ class ServerController(
             addHeader("subtitleSuffix", getFileExtension(subtitlePath))
             addHeader("subtitleMd5", subtitleFile.md5())
         }
+    }
+
+    /**
+     * 处理视频播放回调
+     */
+    private suspend fun handleScreencastCallback(
+        videoSource: StorageVideoSource,
+        session: IHTTPSession
+    ): Response {
+        val position = session.parameters["position"]?.firstOrNull()?.toLongOrNull()
+        val duration = session.parameters["duration"]?.firstOrNull()?.toLongOrNull()
+        if (position == null || duration == null) {
+            return NanoHTTPD.newFixedLengthResponse(
+                Response.Status.PRECONDITION_FAILED,
+                NanoHTTPD.MIME_HTML,
+                "参数错误"
+            )
+        }
+
+        // 修改本地播放记录中的进度
+        val newHistory = videoSource.getStorageFile().playHistory
+            ?.copy(videoPosition = position, videoDuration = duration, playTime = Date())
+            ?: return resourceNotFound
+
+        // 更新本地播放记录
+        DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+
+        return NanoHTTPD.newFixedLengthResponse(
+            Response.Status.OK,
+            NanoHTTPD.MIME_HTML,
+            "播放记录已更新"
+        )
     }
 
     /**

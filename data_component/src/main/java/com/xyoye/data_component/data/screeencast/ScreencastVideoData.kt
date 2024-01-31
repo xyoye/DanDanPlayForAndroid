@@ -32,6 +32,10 @@ data class ScreencastData(
     fun getSubtitleUrl(videoData: ScreencastVideoData): String {
         return "http://$ip:$port/subtitle?uniqueKey=${videoData.uniqueKey}"
     }
+
+    fun getCallbackUrl(videoData: ScreencastVideoData): String {
+        return "http://$ip:$port/callback?uniqueKey=${videoData.uniqueKey}"
+    }
 }
 
 @Parcelize

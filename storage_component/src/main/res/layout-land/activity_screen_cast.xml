@@ -87,99 +87,114 @@
                 app:layout_constraintStart_toEndOf="@id/qr_code_iv"
                 app:layout_constraintTop_toTopOf="@id/code_info_tips" />
 
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/tips_barrier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="end"
-                app:constraint_referenced_ids="version_tips, ip_tips" />
-
-            <TextView
-                android:id="@+id/version_tips"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/tips_screencast_version"
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
+                android:layout_height="0dp"
                 app:layout_constraintStart_toStartOf="@id/server_info_tips"
-                app:layout_constraintTop_toBottomOf="@id/server_info_tips" />
-
-            <TextView
-                android:id="@+id/version_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/text_black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/version_tips"
-                app:layout_constraintStart_toEndOf="@+id/tips_barrier"
-                app:layout_constraintTop_toTopOf="@id/version_tips"
-                tools:text="1" />
-
-            <TextView
-                android:id="@+id/ip_tips"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/tips_ip"
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/server_info_tips"
-                app:layout_constraintTop_toBottomOf="@id/version_tips" />
-
-            <TextView
-                android:id="@+id/ip_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:text="@{viewModel.displayIp}"
-                android:textColor="@color/text_gray"
-                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tips_barrier"
-                app:layout_constraintTop_toTopOf="@id/ip_tips"
-                tools:text="192.168.1.1\n192.168.1.1" />
+                app:layout_constraintTop_toBottomOf="@id/server_info_tips"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:id="@+id/port_tips"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/tips_port"
-                android:textColor="@color/text_black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@id/server_info_tips"
-                app:layout_constraintTop_toBottomOf="@id/ip_tv" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/port_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/text_gray"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/port_tips"
-                app:layout_constraintStart_toEndOf="@id/tips_barrier"
-                app:layout_constraintTop_toTopOf="@id/port_tips"
-                tools:text="8080" />
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/tips_barrier"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="end"
+                        app:constraint_referenced_ids="version_tips, ip_tips, port_tips" />
 
-            <ImageView
-                android:id="@+id/refresh_port_iv"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/background_item_press"
-                android:padding="8dp"
-                android:src="@drawable/ic_password_refresh"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/port_tips"
-                app:layout_constraintStart_toEndOf="@id/port_tv"
-                app:layout_constraintTop_toTopOf="@id/port_tips" />
+                    <TextView
+                        android:id="@+id/version_tips"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/tips_screencast_version"
+                        android:textColor="@color/text_black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/version_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/text_black"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="@id/version_tips"
+                        app:layout_constraintStart_toEndOf="@+id/tips_barrier"
+                        app:layout_constraintTop_toTopOf="@id/version_tips"
+                        tools:text="1" />
+
+                    <TextView
+                        android:id="@+id/ip_tips"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/tips_ip"
+                        android:textColor="@color/text_black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/version_tips" />
+
+                    <TextView
+                        android:id="@+id/ip_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@{viewModel.displayIp}"
+                        android:textColor="@color/text_gray"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tips_barrier"
+                        app:layout_constraintTop_toTopOf="@id/ip_tips"
+                        tools:text="192.168.1.1\n192.168.1.1" />
+
+                    <TextView
+                        android:id="@+id/port_tips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/tips_port"
+                        android:textColor="@color/text_black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/ip_tv" />
+
+                    <TextView
+                        android:id="@+id/port_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/text_gray"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="@id/port_tips"
+                        app:layout_constraintStart_toEndOf="@id/tips_barrier"
+                        app:layout_constraintTop_toTopOf="@id/port_tips"
+                        tools:text="8080" />
+
+                    <ImageView
+                        android:id="@+id/refresh_port_iv"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/background_item_press"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_password_refresh"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="@+id/port_tips"
+                        app:layout_constraintStart_toEndOf="@id/port_tv"
+                        app:layout_constraintTop_toTopOf="@id/port_tips" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

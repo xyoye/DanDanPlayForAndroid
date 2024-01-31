@@ -1,9 +1,7 @@
 package com.xyoye.common_component.network.repository
 
 import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
+import com.xyoye.common_component.network.request.NetworkException
 import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.screeencast.ScreencastData
@@ -22,12 +20,12 @@ object ScreencastRepository : BaseRepository() {
             Retrofit.screencastService.init(url, authorization, ScreencastConstants.version)
         }.run {
             // 数据错误，外部处理
-            val response = dataOrNull ?: return@run this
+            val response = getOrNull() ?: return@run this
             val data = response.body() ?: return@run this
 
             // 服务器返回错误，转换为Response.Error
             if (data.success.not()) {
-                return@run Response.Error(RequestError.formJsonData(data))
+                return@run Result.failure(NetworkException.formJsonData(data))
             }
 
             // 版本版本判断
@@ -40,8 +38,8 @@ object ScreencastRepository : BaseRepository() {
 
             // 版本不同，返回Response.Error
             val message = "投屏版本不匹配，请更新双端至相同APP版本。" +
-                "\n投屏端: ${localVersion}，接收端: $remoteVersion"
-            return@run Response.Error(RequestError.formException(IllegalStateException(message)))
+                    "\n投屏端: ${localVersion}，接收端: $remoteVersion"
+            return@run Result.failure(NetworkException.formException(IllegalStateException(message)))
         }
 
     /**

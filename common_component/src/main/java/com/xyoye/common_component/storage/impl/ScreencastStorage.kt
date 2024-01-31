@@ -4,10 +4,9 @@ import android.net.Uri
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.aesEncode
 import com.xyoye.common_component.extension.authorizationValue
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.network.repository.ScreencastRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.ScreencastStorageFile
@@ -17,7 +16,6 @@ import com.xyoye.common_component.utils.danmu.DanmuFinder
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.data.screeencast.ScreencastData
@@ -97,7 +95,7 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
 
         val danmuUrl = screencastData?.let { ScreencastConstants.ProviderApi.DANMU.buildUrl(it, videoData) }
             ?: return null
-        val stream = ResourceRepository.getResourceResponseBody(danmuUrl).dataOrNull?.byteStream()
+        val stream = ResourceRepository.getResourceResponseBody(danmuUrl).getOrNull()?.byteStream()
             ?: return null
         val episode = DanmuEpisodeData(
             animeTitle = "screencast",
@@ -119,7 +117,7 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
 
         try {
             val result = ResourceRepository.getResourceResponse(subtitleUrl)
-            val response = result.dataOrNull ?: return null
+            val response = result.getOrNull() ?: return null
             if (response.code() != NanoHTTPD.Response.Status.OK.requestStatus) return null
             val responseBody = response.body() ?: return null
 
@@ -140,8 +138,8 @@ class ScreencastStorage(library: MediaLibraryEntity) : AbstractStorage(library) 
             "http://${library.screencastAddress}:${library.port}",
             library.password?.aesEncode()?.authorizationValue()
         )
-        if (result is Response.Error) {
-            ToastCenter.showError(result.error.toastMsg)
+        if (result.isFailure) {
+            result.exceptionOrNull()?.message?.toastError()
             return false
         }
         return true

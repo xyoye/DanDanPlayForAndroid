@@ -6,9 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.MagnetRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.MagnetData
 import com.xyoye.data_component.entity.MagnetScreenEntity
@@ -59,12 +58,12 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             val result = MagnetRepository.searchMagnet(magnetDomain, keyword, typeId, subgroupId)
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            val resources = result.dataOrNull?.Resources ?: emptyList()
+            val resources = result.getOrNull()?.Resources ?: emptyList()
             magnetLiveData.postValue(resources)
         }
     }
@@ -103,12 +102,12 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             val result = MagnetRepository.getMagnetSubgroup(magnetDomain)
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            val subgroups = result.dataOrNull?.Subgroups?.map {
+            val subgroups = result.getOrNull()?.Subgroups?.map {
                 MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.SUBGROUP)
             } ?: emptyList()
 
@@ -134,12 +133,12 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             val result = MagnetRepository.getMagnetType(magnetDomain)
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            val types = result.dataOrNull?.Types?.map {
+            val types = result.getOrNull()?.Types?.map {
                 MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.TYPE)
             } ?: emptyList()
             magnetTypeData.postValue(types)

@@ -1,7 +1,7 @@
 package com.xyoye.common_component.utils.subtitle
 
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.dataOrNull
+
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.data_component.data.SubtitleSourceBean
@@ -19,7 +19,7 @@ object SubtitleMatchHelper {
         val videoHash = SubtitleHashUtils.getThunderHash(videoPath)
             ?: return emptyList()
 
-        return ResourceRepository.matchSubtitleFormThunder(videoHash).dataOrNull
+        return ResourceRepository.matchSubtitleFormThunder(videoHash).getOrNull()
             ?.sublist
             ?.filter { it.surl != null }
             ?.map {
@@ -38,7 +38,7 @@ object SubtitleMatchHelper {
 
         return ResourceRepository
             .matchSubtitleFormShooter(videoHash, getFileName(videoPath))
-            .dataOrNull
+            .getOrNull()
             ?.filter { it.Files != null }
             ?.flatMap { files ->
                 files.Files!!

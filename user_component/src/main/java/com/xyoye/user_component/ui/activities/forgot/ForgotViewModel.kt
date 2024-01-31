@@ -4,8 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.UserRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.weight.ToastCenter
 import kotlinx.coroutines.launch
@@ -52,8 +52,8 @@ class ForgotViewModel : BaseViewModel() {
             )
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
@@ -84,8 +84,8 @@ class ForgotViewModel : BaseViewModel() {
             )
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 

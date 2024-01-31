@@ -11,8 +11,7 @@ import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.extension.ifNullOrBlank
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
+import com.xyoye.common_component.network.request.NetworkException
 import com.xyoye.data_component.data.SubtitleSourceBean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flatMapLatest
@@ -57,15 +56,16 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
 
             val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
             val result = ResourceRepository.searchSubtitle(shooterSecret, keyword, page)
-            if (result is Response.Error) {
-                return if (result.error.code == 509) {
-                    LoadResult.Error(result.error.copy(msg = "请求频率过高"))
+            if (result.isFailure) {
+                val exception = result.exceptionOrNull()
+                return if (exception is NetworkException && exception.code == 509) {
+                    LoadResult.Error(IllegalStateException("请求频率过高，请点击重试"))
                 } else {
-                    LoadResult.Error(result.error)
+                    LoadResult.Error(IllegalStateException("加载失败，请点击重试"))
                 }
             }
 
-            val subtitleData = result.dataOrNull?.sub?.subs?.map {
+            val subtitleData = result.getOrNull()?.sub?.subs?.map {
                 SubtitleSourceBean(
                     it.id,
                     it.native_name.ifNullOrBlank { it.videoname.orEmpty() },

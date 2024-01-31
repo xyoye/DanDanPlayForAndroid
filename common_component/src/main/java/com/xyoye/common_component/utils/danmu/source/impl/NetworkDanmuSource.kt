@@ -1,7 +1,7 @@
 package com.xyoye.common_component.utils.danmu.source.impl
 
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.dataOrNull
+
 import com.xyoye.common_component.utils.danmu.source.AbstractDanmuSource
 import java.io.InputStream
 
@@ -16,7 +16,7 @@ class NetworkDanmuSource(
 
     override suspend fun getStream(): InputStream? {
         return ResourceRepository.getResourceResponseBody(url, headers)
-            .dataOrNull
+            .getOrNull()
             ?.byteStream()
     }
 }

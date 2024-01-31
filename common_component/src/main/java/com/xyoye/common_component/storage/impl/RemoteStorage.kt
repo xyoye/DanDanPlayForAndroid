@@ -2,8 +2,7 @@ package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
 import com.xyoye.common_component.network.repository.RemoteRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
+import com.xyoye.common_component.network.request.NetworkException
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.helper.RemoteFileHelper
@@ -84,11 +83,11 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         val videoData = (file as RemoteStorageFile).getRealFile()
         val result = RemoteRepository.getRelatedSubtitles(this, videoData.Id)
 
-        val subtitleFileName = result.dataOrNull?.subtitles?.firstOrNull()?.fileName
+        val subtitleFileName = result.getOrNull()?.subtitles?.firstOrNull()?.fileName
             ?: return null
 
         return RemoteRepository.downloadSubtitle(this, videoData.Id, subtitleFileName)
-            .dataOrNull
+            .getOrNull()
             ?.byteStream()
             ?.let { SubtitleUtils.saveSubtitle(subtitleFileName, it) }
     }
@@ -112,18 +111,19 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     private suspend fun getRemoteRootFiles(): List<RemoteVideoData>? {
         val result = RemoteRepository.getStorageFiles(this)
-        if (result is Response.Error) {
-            if (result.error.original is CancellationException) {
+        if (result.isFailure) {
+            val exception = result.exceptionOrNull() ?: return null
+            if (exception.cause is CancellationException) {
                 // ignore
-            } else if (result.error.code == 401) {
+            } else if (exception is NetworkException && exception.code == 401) {
                 ToastCenter.showWarning("连接失败：密钥验证失败")
             } else {
-                ToastCenter.showWarning("连接失败：${result.error.msg}")
+                ToastCenter.showWarning("连接失败：${exception.message}")
             }
             return null
         }
 
-        return result.dataOrNull?.let {
+        return result.getOrNull()?.let {
             storageFilesSnapshot = it
 
             if (library.remoteAnimeGrouping) {

@@ -3,10 +3,9 @@ package com.xyoye.anime_component.ui.fragment.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
 import com.xyoye.common_component.network.repository.OtherRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.BannerData
 import kotlinx.coroutines.launch
@@ -24,13 +23,13 @@ class HomeFragmentViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = AnimeRepository.getWeeklyAnime()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                val weeklyAnimeData = splitWeeklyAnime(result.data)
+            if (result.isSuccess) {
+                val weeklyAnimeData = splitWeeklyAnime(result.getOrThrow())
                 weeklyAnimeLiveData.postValue(weeklyAnimeData)
             }
         }
@@ -40,13 +39,13 @@ class HomeFragmentViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = OtherRepository.getHomeBanner()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                bannersLiveData.postValue(result.data)
+            if (result.isSuccess) {
+                bannersLiveData.postValue(result.getOrThrow())
             }
         }
     }

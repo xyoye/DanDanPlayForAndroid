@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.stringCompare
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
@@ -131,10 +131,12 @@ class AnimeSeasonViewModel : BaseViewModel() {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
             }
+
             position -> {
                 sortTypeData[position].isChecked = false
                 sortType = AnimeSortType.NONE
             }
+
             else -> {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
@@ -190,13 +192,13 @@ class AnimeSeasonViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = AnimeRepository.getSeasonAnime(year, month)
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                seasonAnimeData = result.data
+            if (result.isSuccess) {
+                seasonAnimeData = result.getOrThrow()
                 showSearchResult()
             }
         }

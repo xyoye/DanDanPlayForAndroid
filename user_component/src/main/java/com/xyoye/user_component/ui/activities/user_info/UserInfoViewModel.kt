@@ -4,8 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.UserRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.LoginData
@@ -29,8 +29,8 @@ class UserInfoViewModel : BaseViewModel() {
             val result = UserRepository.updateScreenName(screenName)
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
@@ -47,8 +47,8 @@ class UserInfoViewModel : BaseViewModel() {
             val result = UserRepository.updatePassword(oldPassword, newPassword)
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 

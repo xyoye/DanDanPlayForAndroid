@@ -7,6 +7,7 @@ import android.util.Base64
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.PathHelper
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.enums.ResourceType
 import java.io.File
 import java.net.URLDecoder
@@ -66,4 +67,8 @@ fun String?.resourceType(): ResourceType? {
         this.startsWith("content") -> ResourceType.URI
         else -> null
     }
+}
+
+fun String.toastError() {
+    ToastCenter.showError(this)
 }

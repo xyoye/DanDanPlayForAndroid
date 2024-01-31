@@ -10,8 +10,8 @@ import com.xyoye.common_component.extension.aesEncode
 import com.xyoye.common_component.extension.authorizationValue
 import com.xyoye.common_component.extension.isServiceRunning
 import com.xyoye.common_component.extension.mapByLength
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.ScreencastRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
@@ -158,7 +158,7 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
             "http://${receiver.screencastAddress}:${receiver.port}",
             receiver.password?.aesEncode()?.authorizationValue()
         )
-        return result is Response.Success
+        return result.isSuccess
     }
 
     /**
@@ -173,8 +173,8 @@ class ScreencastProvideService : Service(), ScreencastProvideHandler {
                 screencastData
             )
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 

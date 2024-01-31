@@ -7,7 +7,7 @@ import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.dataOrNull
+
 import com.xyoye.common_component.utils.PathHelper
 import com.xyoye.common_component.utils.danmu.DanmuFinder
 import com.xyoye.data_component.bean.LocalDanmuBean
@@ -37,7 +37,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
             sendDownloadMessage("以${mode}模式下载：$code")
 
             actionDo("开始获取CID")
-            val episodeCid = OtherRepository.getCidInfo(isAvCode, code).dataOrNull?.data
+            val episodeCid = OtherRepository.getCidInfo(isAvCode, code).getOrNull()?.data
             if (episodeCid == null) {
                 actionFailed()
                 return@launch
@@ -124,7 +124,7 @@ class BilibiliDanmuViewModel : BaseViewModel() {
         sendDownloadMessage("剧集：${episodeCid.title}")
 
         actionDo("获取弹幕内容")
-        val inputStream = ResourceRepository.getResourceResponseBody(url, gzipHeader).dataOrNull?.byteStream()
+        val inputStream = ResourceRepository.getResourceResponseBody(url, gzipHeader).getOrNull()?.byteStream()
         if (inputStream == null) {
             actionFailed()
             return null

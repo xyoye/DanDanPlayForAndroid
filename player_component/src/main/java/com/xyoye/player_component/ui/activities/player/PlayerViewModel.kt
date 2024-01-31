@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.errorOrNull
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.utils.DanmuUtils
 import com.xyoye.common_component.weight.ToastCenter
@@ -103,8 +102,9 @@ class PlayerViewModel : BaseViewModel() {
                 sendDanmuBean.text
             )
 
-            result.errorOrNull?.let {
-                ToastCenter.showOriginalToast("发送弹幕失败\n x${it.code} ${it.msg}")
+            if (result.isFailure) {
+                val message = result.exceptionOrNull()?.message.orEmpty()
+                ToastCenter.showOriginalToast("发送弹幕失败\n$message")
             }
         }
     }

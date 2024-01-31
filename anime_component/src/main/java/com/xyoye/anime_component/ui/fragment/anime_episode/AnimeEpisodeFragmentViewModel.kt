@@ -4,10 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiData
 import com.xyoye.data_component.data.EpisodeData
 import kotlinx.coroutines.launch
@@ -41,9 +39,9 @@ class AnimeEpisodeFragmentViewModel : BaseViewModel() {
             showLoading()
             val result = AnimeRepository.addEpisodePlayHistory(episodeId)
 
-            if (result is Response.Error) {
+            if (result.isFailure) {
                 hideLoading()
-                ToastCenter.showError(result.error.toastMsg)
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
@@ -59,12 +57,12 @@ class AnimeEpisodeFragmentViewModel : BaseViewModel() {
 
         val result = AnimeRepository.getAnimeDetail(bangumiData.animeId.toString())
 
-        if (result is Response.Error) {
-            ToastCenter.showError(result.error.toastMsg)
+        if (result.isFailure) {
+            result.exceptionOrNull()?.message?.toastError()
             return
         }
 
-        val episodes = result.dataOrNull?.bangumi?.episodes ?: emptyList()
+        val episodes = result.getOrNull()?.bangumi?.episodes ?: emptyList()
         episodeLiveData.postValue(episodes)
     }
 }

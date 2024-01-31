@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.stringCompare
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
@@ -70,13 +70,13 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 .insert(AnimeSearchHistoryEntity(searchText.get()!!))
 
             val result = AnimeRepository.searchAnime(searchWord, searchType)
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                searchAnimeData = result.data
+            if (result.isSuccess) {
+                searchAnimeData = result.getOrThrow()
                 showSearchResult()
             }
         }

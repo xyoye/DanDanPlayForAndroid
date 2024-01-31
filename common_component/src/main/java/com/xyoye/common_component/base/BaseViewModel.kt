@@ -2,8 +2,6 @@ package com.xyoye.common_component.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.helper.Loading
 
 /**
@@ -31,9 +29,5 @@ abstract class BaseViewModel : ViewModel() {
 
     protected fun hideLoadingFailed() {
         loadingObserver.postValue(Pair(Loading.HIDE_LOADING_FAILED, null))
-    }
-
-    protected fun showNetworkError(error: RequestError) {
-        ToastCenter.showError("x${error.code} ${error.msg}")
     }
 }

@@ -7,9 +7,8 @@ import androidx.paging.PagingData
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.subtitle.SubtitleMatchHelper
@@ -65,12 +64,12 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
             )
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            val subtitle = result.dataOrNull?.sub?.subs?.firstOrNull()
+            val subtitle = result.getOrNull()?.sub?.subs?.firstOrNull()
             if (subtitle == null) {
                 ToastCenter.showError("获取字幕详情失败")
                 return@launch
@@ -90,17 +89,17 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
             }
 
             val result = ResourceRepository.getResourceResponseBody(sourceUrl)
-            if (result is Response.Error) {
+            if (result.isFailure) {
                 hideLoading()
-                ToastCenter.showError(result.error.toastMsg)
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
+            if (result.isSuccess) {
                 if (unzip) {
-                    unzipSaveSubtitle(name, result.data)
+                    unzipSaveSubtitle(name, result.getOrThrow())
                 } else {
-                    saveSubtitle(name, result.data)
+                    saveSubtitle(name, result.getOrThrow())
                 }
                 hideLoading()
             }

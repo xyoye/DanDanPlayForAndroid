@@ -35,50 +35,50 @@ class Request {
 
     suspend fun <T : Any> doDelete(
         api: suspend (RequestParams) -> T
-    ): Response<T> {
+    ): Result<T> {
         return doGet(api)
     }
 
     suspend fun <T : Any> doGet(
         api: suspend (RequestParams) -> T
-    ): Response<T> {
+    ): Result<T> {
         return withContext(Dispatchers.IO) {
             try {
                 val result = api.invoke(requestParams)
                 if (result is CommonJsonData && result.success.not()) {
-                    return@withContext Response.Error(RequestError.formJsonData(result))
+                    return@withContext Result.failure(NetworkException.formJsonData(result))
                 }
 
                 if (result is CommonJsonModel<*> && result.isSuccess.not()) {
-                    return@withContext Response.Error(RequestError.formJsonModel(result))
+                    return@withContext Result.failure(NetworkException.formJsonModel(result))
                 }
 
-                return@withContext Response.Success(result)
+                return@withContext Result.success(result)
             } catch (e: Exception) {
                 e.printStackTrace()
-                return@withContext Response.Error(RequestError.formException(e))
+                return@withContext Result.failure(NetworkException.formException(e))
             }
         }
     }
 
     suspend fun <T : Any> doPost(
         api: suspend (RequestBody) -> T
-    ): Response<T> {
+    ): Result<T> {
         return withContext(Dispatchers.IO) {
             try {
                 val result = api.invoke(requestBody())
                 if (result is CommonJsonData && result.success.not()) {
-                    return@withContext Response.Error(RequestError.formJsonData(result))
+                    return@withContext Result.failure(NetworkException.formJsonData(result))
                 }
 
                 if (result is CommonJsonModel<*> && result.isSuccess.not()) {
-                    return@withContext Response.Error(RequestError.formJsonModel(result))
+                    return@withContext Result.failure(NetworkException.formJsonModel(result))
                 }
 
-                return@withContext Response.Success(result)
+                return@withContext Result.success(result)
             } catch (e: Exception) {
                 e.printStackTrace()
-                return@withContext Response.Error(RequestError.formException(e))
+                return@withContext Result.failure(NetworkException.formException(e))
             }
         }
     }

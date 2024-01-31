@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.BangumiData
 import kotlinx.coroutines.launch
@@ -31,13 +30,13 @@ class AnimeDetailViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = AnimeRepository.getAnimeDetail(animeId)
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 transitionFailedLiveData.postValue(true)
                 return@launch
             }
 
-            result.dataOrNull?.bangumi?.apply {
+            result.getOrNull()?.bangumi?.apply {
                 animeTitleField.set(animeTitle)
                 animeStatusField.set(if (isOnAir) "状态：连载中" else "状态：已完结")
                 animeTypeField.set("类型：$typeDescription")
@@ -65,7 +64,7 @@ class AnimeDetailViewModel : BaseViewModel() {
                 AnimeRepository.followAnime(animeId)
             }
 
-            if (result is Response.Error) {
+            if (result.isFailure) {
                 val status = if (isFollowed) "取消关注" else "关注"
                 ToastCenter.showError("${status}失败，请重试")
                 return@launch

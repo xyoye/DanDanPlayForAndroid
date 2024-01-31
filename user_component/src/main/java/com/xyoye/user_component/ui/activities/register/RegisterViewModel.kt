@@ -4,8 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.UserRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.common_component.weight.ToastCenter
@@ -57,15 +57,15 @@ class RegisterViewModel : BaseViewModel() {
             )
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                if (UserInfoHelper.login(result.data)){
+            if (result.isSuccess) {
+                if (UserInfoHelper.login(result.getOrThrow())) {
                     ToastCenter.showSuccess("注册成功")
-                    registerLiveData.postValue(result.data)
+                    registerLiveData.postValue(result.getOrThrow())
                 } else {
                     ToastCenter.showError("注册错误，请稍后再试")
                 }

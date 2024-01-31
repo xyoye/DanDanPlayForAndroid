@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.collectable
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.OtherRepository
-import com.xyoye.common_component.network.request.Response
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -73,18 +73,18 @@ class BindExtraSourceViewModel : BaseViewModel() {
             val result = OtherRepository.getSegmentWords(storageFile.fileName())
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            if (result is Response.Success) {
-                if (result.data.code() == 409) {
+            if (result.isSuccess) {
+                if (result.getOrThrow().code() == 409) {
                     ToastCenter.showError("请求过于频繁(每分钟限2次)，请稍后再试")
                     return@launch
                 }
 
-                val json = result.data.body()?.string() ?: ""
+                val json = result.getOrThrow().body()?.string() ?: ""
                 val segments = parseSegmentResult(json) ?: emptyList()
                 segmentCache.put(storageFile.uniqueKey(), segments)
                 _segmentTitleLiveData.postValue(segments)

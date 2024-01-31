@@ -13,35 +13,27 @@ import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 import kotlin.coroutines.cancellation.CancellationException
 
-data class RequestError(
+class NetworkException(
     val code: Int,
-    val msg: String,
-    val original: Exception
-) : Throwable() {
-
-    val toastMsg: String get() = "x$code $msg"
+    msg: String,
+    cause: Exception?
+) : Throwable("x$code $msg", cause) {
 
     companion object {
 
-        fun formJsonData(data: CommonJsonData): RequestError {
-            val message = data.errorMessage ?: "服务端处理失败"
-            return RequestError(
-                data.errorCode,
-                message,
-                IllegalStateException(message)
-            )
-        }
+        fun formJsonData(data: CommonJsonData) = NetworkException(
+            data.errorCode,
+            data.errorMessage ?: "服务端处理失败",
+            IllegalStateException()
+        )
 
-        fun formJsonModel(data: CommonJsonModel<*>): RequestError {
-            val message = data.message.ifEmpty { "服务端处理失败" }
-            return RequestError(
-                data.code,
-                message,
-                IllegalStateException(message)
-            )
-        }
+        fun formJsonModel(data: CommonJsonModel<*>) = NetworkException(
+            data.code,
+            data.message.ifEmpty { "服务端处理失败" },
+            IllegalStateException()
+        )
 
-        fun formException(e: Exception): RequestError {
+        fun formException(e: Exception): NetworkException {
             return when (e) {
                 is HttpException -> formHttpException(e)
 
@@ -73,7 +65,7 @@ data class RequestError(
 
                 else -> -1 to "${e.message}"
 
-            }.run { RequestError(first, second, e) }
+            }.run { NetworkException(first, second, e) }
         }
 
         private fun formHttpException(e: HttpException): Pair<Int, String> {

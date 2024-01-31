@@ -9,8 +9,6 @@ import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.database.migration.ManualMigration
 import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.repository.UserRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.data_component.data.LoginData
 import com.xyoye.data_component.entity.DanmuBlockEntity
@@ -32,10 +30,10 @@ class MainViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = UserRepository.refreshToken()
 
-            if (result is Response.Success) {
+            if (result.isSuccess) {
                 UserConfig.putUserLoggedIn(false)
-                if (UserInfoHelper.login(result.data)) {
-                    reLoginLiveData.postValue(result.data)
+                if (UserInfoHelper.login(result.getOrThrow())) {
+                    reLoginLiveData.postValue(result.getOrThrow())
                 }
             }
         }
@@ -59,7 +57,7 @@ class MainViewModel : BaseViewModel() {
         viewModelScope.launch {
             val result = OtherRepository.getCloudFilters()
 
-            result.dataOrNull?.byteStream()?.use {
+            result.getOrNull()?.byteStream()?.use {
                 val filterData = parseFilterData(it)
                 saveFilterData(filterData)
                 AppConfig.putCloudBlockUpdateTime(currentTime)

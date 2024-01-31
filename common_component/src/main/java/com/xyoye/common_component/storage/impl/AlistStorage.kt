@@ -3,7 +3,6 @@ package com.xyoye.common_component.storage.impl
 import android.net.Uri
 import com.xyoye.common_component.network.repository.AlistRepository
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.AlistStorageFile
@@ -26,7 +25,7 @@ class AlistStorage(
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         return AlistRepository.openDirectory(rootUrl, token, file.filePath())
-            .dataOrNull
+            .getOrNull()
             ?.successData
             ?.fileList
             ?.map {
@@ -38,7 +37,7 @@ class AlistStorage(
         val newToken = refreshToken() ?: return null
         this.token = newToken
 
-        return AlistRepository.getRootFile(rootUrl, token).dataOrNull
+        return AlistRepository.getRootFile(rootUrl, token).getOrNull()
             ?.successData
             ?.let {
                 AlistFileData(it.rootPath, true)
@@ -52,7 +51,7 @@ class AlistStorage(
             ?: return null
 
         return ResourceRepository.getResourceResponseBody(rawUrl)
-            .dataOrNull
+            .getOrNull()
             ?.byteStream()
     }
 
@@ -65,7 +64,7 @@ class AlistStorage(
         val fileName = pathUri.lastPathSegment
         val parentPath = pathUri.path?.removeSuffix("/$fileName") ?: "/"
         return AlistRepository.openFile(rootUrl, token, path)
-            .dataOrNull
+            .getOrNull()
             ?.successData
             ?.let {
                 AlistStorageFile(parentPath, it, this)
@@ -91,7 +90,7 @@ class AlistStorage(
         val password = library.password ?: return null
 
         return AlistRepository.login(rootUrl, username, password)
-            .dataOrNull
+            .getOrNull()
             ?.successData
             ?.token
     }
@@ -103,7 +102,7 @@ class AlistStorage(
         }
 
         return AlistRepository.openFile(rootUrl, token, file.filePath())
-            .dataOrNull
+            .getOrNull()
             ?.successData
             ?.rawUrl
     }

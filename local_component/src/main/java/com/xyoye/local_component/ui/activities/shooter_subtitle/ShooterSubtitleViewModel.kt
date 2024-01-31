@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.ResourceRepository
-import com.xyoye.common_component.network.request.Response
-import com.xyoye.common_component.network.request.dataOrNull
 import com.xyoye.common_component.utils.subtitle.SubtitleSearchHelper
 import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.common_component.weight.ToastCenter
@@ -41,12 +40,12 @@ class ShooterSubtitleViewModel : BaseViewModel() {
             )
             hideLoading()
 
-            if (result is Response.Error) {
-                ToastCenter.showError(result.error.toastMsg)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
                 return@launch
             }
 
-            val subtitle = result.dataOrNull?.sub?.subs?.firstOrNull()
+            val subtitle = result.getOrNull()?.sub?.subs?.firstOrNull()
             if (subtitle == null) {
                 ToastCenter.showError("获取字幕详情失败")
                 return@launch
@@ -60,7 +59,7 @@ class ShooterSubtitleViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
             val result = ResourceRepository.getResourceResponseBody(downloadUrl)
-            val subtitlePath = result.dataOrNull?.byteStream()?.let {
+            val subtitlePath = result.getOrNull()?.byteStream()?.let {
                 SubtitleUtils.saveSubtitle(fileName, it)
             }
             hideLoading()
@@ -81,7 +80,7 @@ class ShooterSubtitleViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
             val result = ResourceRepository.getResourceResponseBody(url)
-            val unzipDirPath = result.dataOrNull?.byteStream()?.let {
+            val unzipDirPath = result.getOrNull()?.byteStream()?.let {
                 SubtitleUtils.saveAndUnzipFile(fileName, it)
             }
             hideLoading()

@@ -96,11 +96,13 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
         mediator.attach()
     }
 
-    private fun initListener() {
-        dataBinding.toolbar.setNavigationOnClickListener {
-            finishAfterTransition()
-        }
+    @Deprecated("Deprecated in Java", ReplaceWith("finish()"))
+    override fun onBackPressed() {
+        // 重写以防止返回动画
+        finish()
+    }
 
+    private fun initListener() {
         dataBinding.appBarLayout.addOnOffsetChangedListener { layout, offset ->
             val percent = offset.absoluteValue.toFloat() / layout.totalScrollRange * 2f
             // 降低滚动更新UI的频率

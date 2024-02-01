@@ -9,13 +9,13 @@ import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeHistoryBinding
 import com.xyoye.anime_component.databinding.ItemAnimeBinding
+import com.xyoye.anime_component.utils.loadAnimeCover
 import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.gridEmpty
-import com.xyoye.common_component.extension.loadImageWithPalette
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.FastClickFilter
@@ -70,9 +70,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
                 addItem<CloudHistoryData, ItemAnimeBinding>(R.layout.item_anime) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            coverIv.loadImageWithPalette(data.imageUrl) {
-                                animeNameTv.setBackgroundColor(it)
-                            }
+                            coverIv.loadAnimeCover(data.imageUrl)
                             animeNameTv.text = data.animeTitle
                             itemLayout.setOnClickListener {
                                 //防止快速点击

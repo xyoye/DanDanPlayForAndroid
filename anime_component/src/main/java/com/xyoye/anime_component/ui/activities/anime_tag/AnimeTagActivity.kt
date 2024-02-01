@@ -12,8 +12,8 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.weight.ToastCenter
 
 @Route(path = RouteTable.Anime.AnimeTag)
@@ -58,7 +58,7 @@ class AnimeTagActivity : BaseActivity<AnimeTagViewModel, ActivityAnimeTagBinding
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor()
+                    R.color.item_bg_color.toResColor(this@AnimeTagActivity)
                 )
             )
         }

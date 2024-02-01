@@ -7,12 +7,12 @@ import androidx.core.view.isGone
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ItemAnimeBinding
+import com.xyoye.anime_component.utils.loadAnimeCover
 import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.UserConfig
-import com.xyoye.common_component.extension.loadImageWithPalette
 import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.data_component.bean.AnimeArgument
 import com.xyoye.data_component.data.AnimeData
@@ -31,9 +31,7 @@ class AnimeAdapter {
             addItem<AnimeData, ItemAnimeBinding>(R.layout.item_anime) {
                 initView { data, _, _ ->
                     itemBinding.apply {
-                        coverIv.loadImageWithPalette(data.imageUrl) {
-                            animeNameTv.setBackgroundColor(it)
-                        }
+                        coverIv.loadAnimeCover(data.imageUrl)
 
                         followTagView.isGone = !UserConfig.isUserLoggedIn() || !data.isFavorited
                         animeNameTv.text = data.animeTitle

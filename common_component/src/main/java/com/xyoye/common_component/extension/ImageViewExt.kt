@@ -8,7 +8,6 @@ import coil.size.Scale
 import coil.transform.RoundedCornersTransformation
 import com.xyoye.common_component.R
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.coil.CoilPaletteTarget
 import com.xyoye.data_component.enums.ResourceType
 import java.io.File
 
@@ -31,15 +30,6 @@ fun ImageView.loadImage(
         error(errorRes)
         crossfade(true)
         transformation?.let { transformations(it) }
-    }
-}
-
-fun ImageView.loadImageWithPalette(source: String?, onPaletteColor: (Int) -> Unit) {
-    load(source) {
-        scale(Scale.FILL)
-        crossfade(true)
-        allowHardware(false)
-        target(CoilPaletteTarget(this@loadImageWithPalette, onPaletteColor))
     }
 }
 

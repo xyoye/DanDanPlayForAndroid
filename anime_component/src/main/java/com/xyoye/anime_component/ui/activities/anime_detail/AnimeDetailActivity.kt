@@ -11,6 +11,7 @@ import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeDetailBinding
 import com.xyoye.anime_component.ui.adapter.AnimeDetailPageAdapter
+import com.xyoye.anime_component.utils.loadAnimeCover
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.clamp
@@ -187,10 +188,6 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     private fun updateUIbyAnime(title: String, image: String) {
         dataBinding.collapsingToolbarLayout.title = title
         dataBinding.backgroundCoverIv.loadImage(image)
-        dataBinding.coverIv.loadImage(
-            source = image,
-            radiusDp = 3f,
-            errorRes = R.drawable.ic_load_image_failed
-        )
+        dataBinding.coverIv.loadAnimeCover(image)
     }
 }

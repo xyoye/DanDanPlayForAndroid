@@ -68,6 +68,7 @@
                             android:layout_height="0dp"
                             android:layout_marginStart="30dp"
                             android:layout_marginBottom="25dp"
+                            android:background="@color/anime_cover_placeholder"
                             android:scaleType="centerCrop"
                             android:transitionName="cover_image"
                             app:layout_constraintBottom_toBottomOf="parent"

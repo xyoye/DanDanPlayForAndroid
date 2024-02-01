@@ -1,7 +1,6 @@
 package com.xyoye.anime_component.ui.fragment.anime_recommend
 
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import com.alibaba.android.arouter.launcher.ARouter
@@ -11,13 +10,14 @@ import com.xyoye.anime_component.databinding.FragmentAnimeRecommendBinding
 import com.xyoye.anime_component.databinding.ItemAnimeRecommendBinding
 import com.xyoye.anime_component.ui.activities.anime_detail.AnimeDetailViewModel
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
+import com.xyoye.anime_component.utils.loadAnimeCover
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.grid
-import com.xyoye.common_component.extension.loadImage
 import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
@@ -49,7 +49,7 @@ class AnimeRecommendFragment :
             layoutManager = grid(3)
 
             val pxValue = dp2px(10)
-            val spaceColor = ContextCompat.getColor(mAttachActivity, R.color.item_bg_color)
+            val spaceColor = R.color.item_bg_color.toResColor(mAttachActivity)
             addItemDecoration(ItemDecorationDrawable(pxValue, pxValue, spaceColor))
 
             adapter = AnimeAdapter.getAdapter(mAttachActivity)
@@ -62,7 +62,7 @@ class AnimeRecommendFragment :
                 addItem<AnimeData, ItemAnimeRecommendBinding>(R.layout.item_anime_recommend) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            animeCoverIv.loadImage(data.imageUrl, 3f)
+                            animeCoverIv.loadAnimeCover(data.imageUrl)
                             animeTitleTv.text = data.animeTitle
                             animeStatusTv.text = if (data.isOnAir) "连载中" else "已完结"
                             itemLayout.setOnClickListener {

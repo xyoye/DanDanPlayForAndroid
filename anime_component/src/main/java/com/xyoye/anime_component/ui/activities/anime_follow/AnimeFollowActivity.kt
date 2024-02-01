@@ -12,8 +12,8 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.data.FollowAnimeData
 
 @Route(path = RouteTable.Anime.AnimeFollow)
@@ -48,7 +48,7 @@ class AnimeFollowActivity : BaseActivity<AnimeFollowViewModel, ActivityAnimeFoll
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor()
+                    R.color.item_bg_color.toResColor(this@AnimeFollowActivity)
                 )
             )
         }

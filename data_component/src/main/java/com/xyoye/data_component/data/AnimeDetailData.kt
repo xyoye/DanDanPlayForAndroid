@@ -3,6 +3,7 @@ package com.xyoye.data_component.data
 import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.xyoye.data_component.entity.EpisodeHistoryEntity
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -50,7 +51,9 @@ data class EpisodeData(
     val airDate: String? = null,
 
     @Json(ignore = true)
-    val selected: Boolean = false
+    val selected: Boolean = false,
+    @Json(ignore = true)
+    val histories: List<EpisodeHistoryEntity> = emptyList()
 ) : Parcelable
 
 @Parcelize

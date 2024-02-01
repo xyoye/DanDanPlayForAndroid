@@ -66,15 +66,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
                     initView { data, _, _ ->
                         itemBinding.apply {
                             libraryNameTv.text = data.displayName
-                            libraryUrlTv.text = when (data.mediaType) {
-                                MediaType.STREAM_LINK,
-                                MediaType.MAGNET_LINK,
-                                MediaType.REMOTE_STORAGE,
-                                MediaType.SMB_SERVER,
-                                MediaType.EXTERNAL_STORAGE -> data.describe
-
-                                else -> data.url
-                            }
+                            libraryUrlTv.text = data.disPlayDescribe
                             libraryCoverIv.setImageResource(data.mediaType.cover)
 
                             screencastStatusTv.isVisible =

@@ -2,7 +2,12 @@ package com.xyoye.data_component.entity
 
 import android.os.Parcelable
 import android.provider.MediaStore
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.BooleanConverter
 import com.xyoye.data_component.helper.MediaTypeConverter
@@ -104,4 +109,16 @@ data class MediaLibraryEntity(
     @Ignore
     @IgnoredOnParcel
     var running: Boolean = false
+
+    @IgnoredOnParcel
+    val disPlayDescribe
+        get() = when (mediaType) {
+            MediaType.STREAM_LINK,
+            MediaType.MAGNET_LINK,
+            MediaType.REMOTE_STORAGE,
+            MediaType.SMB_SERVER,
+            MediaType.EXTERNAL_STORAGE -> describe
+
+            else -> url
+        }
 }

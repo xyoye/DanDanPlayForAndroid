@@ -17,16 +17,17 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.grid
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
 import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.toText
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
+import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.EpisodeData
-import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.regex.Pattern
 
 class AnimeEpisodeFragment :
@@ -36,7 +37,6 @@ class AnimeEpisodeFragment :
     private var inMarkMode = false
 
     private val episodes = mutableListOf<EpisodeData>()
-    private val utcTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
     private val parentViewModel: AnimeDetailViewModel by viewModels(ownerProducer = { mAttachActivity })
 
@@ -63,14 +63,17 @@ class AnimeEpisodeFragment :
                         // 设置选中样式
                         itemLayout.isSelected = data.selected
 
-                        //提取剧集内容
+                        // 提取剧集内容
                         val episodeInfo = getEpisodeInfo(data.episodeTitle)
                         episodeNumberTv.text = episodeInfo[0]
                         episodeTitleTv.text = episodeInfo[1]
 
-                        //展示最后观看时间
+                        // 展示最后观看时间
                         lastWatchTv.isGone = data.lastWatched == null
                         lastWatchTv.text = formatLastPlayTime(data.lastWatched)
+
+                        // 显示视频播放
+                        ivVideoPlay.isVisible = data.histories.isNotEmpty()
 
                         val numberColor = if (data.lastWatched == null) R.color.text_black else R.color.text_gray
                         val titleColor = if (data.lastWatched == null) R.color.text_gray else R.color.text_gray_light
@@ -92,6 +95,10 @@ class AnimeEpisodeFragment :
                             enterMarkMode(data)
                             return@setOnLongClickListener true
                         }
+
+                        ivVideoPlay.setOnClickListener {
+                            playHistoryVideo(data)
+                        }
                     }
 
                 }
@@ -109,6 +116,11 @@ class AnimeEpisodeFragment :
         initObserver()
 
         initListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshEpisodeHistory()
     }
 
     private fun isSameEpisodeItem() = { old: Any, new: Any ->
@@ -141,6 +153,12 @@ class AnimeEpisodeFragment :
 
             val newData = episodes.reversed()
             updateEpisode(newData)
+        }
+
+        viewModel.playVideoFLow.collectAtStarted(this) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
+                .navigation()
         }
     }
 
@@ -208,7 +226,7 @@ class AnimeEpisodeFragment :
             return ""
         }
         return try {
-            utcTimeFormat.parse(time).toText()
+            viewModel.utcTimeFormat.parse(time).toText()
         } catch (e: Exception) {
             e.printStackTrace()
             time
@@ -369,5 +387,21 @@ class AnimeEpisodeFragment :
         } else {
             dataBinding.tvSetRead.text = R.string.action_mark_as_viewed.toResString()
         }
+    }
+
+    /**
+     * 播放媒体库中的视频
+     */
+    private fun playHistoryVideo(episode: EpisodeData) {
+        val actionList = episode.histories.mapIndexedNotNull { index, history ->
+            val library = history.library ?: return@mapIndexedNotNull null
+            SheetActionBean(index, library.displayName, library.mediaType.cover, library.disPlayDescribe)
+        }
+        BottomActionDialog(mAttachActivity, actionList, "选择媒体库") {
+            viewModel.playEpisodeHistory(
+                episode.histories[it.actionId as Int].entity
+            )
+            return@BottomActionDialog true
+        }.show()
     }
 }

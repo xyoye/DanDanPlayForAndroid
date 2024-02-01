@@ -1,5 +1,6 @@
 package com.xyoye.data_component.entity
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
@@ -10,12 +11,15 @@ import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.helper.BooleanConverter
 import com.xyoye.data_component.helper.DateConverter
 import com.xyoye.data_component.helper.MediaTypeConverter
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 /**
  * Created by xyoye on 2021/1/19.
  */
 
+@Parcelize
 @Entity(tableName = "play_history", indices = [Index(value = arrayOf("unique_key", "storage_id"), unique = true)])
 @TypeConverters(DateConverter::class, MediaTypeConverter::class, BooleanConverter::class)
 data class PlayHistoryEntity(
@@ -69,7 +73,9 @@ data class PlayHistoryEntity(
 
     @ColumnInfo(name = "audio_path")
     var audioPath: String? = null
-) {
+) : Parcelable {
+
     @Ignore
+    @IgnoredOnParcel
     var isLastPlay: Boolean = false
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,26 +14,34 @@
 
         <TextView
             android:id="@+id/episode_number_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/text_black"
             android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/iv_video_play"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginEnd="0dp"
             tools:text="第一话" />
 
         <TextView
             android:id="@+id/episode_title_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/text_gray"
             android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/episode_number_tv"
+            app:layout_constraintStart_toStartOf="@id/episode_number_tv"
+            app:layout_constraintTop_toBottomOf="@id/episode_number_tv"
             tools:text="测试标题" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/last_watch_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:drawableStart="@drawable/ic_last_play_time"
@@ -44,8 +53,23 @@
             android:textColor="@color/text_gray_light"
             android:textSize="10sp"
             android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/episode_number_tv"
+            app:layout_constraintStart_toStartOf="@id/episode_number_tv"
+            app:layout_constraintTop_toBottomOf="@id/episode_title_tv"
             tools:ignore="SmallSp"
             tools:text="2020-10-2"
             tools:visibility="visible" />
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_video_play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_magnet_play"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

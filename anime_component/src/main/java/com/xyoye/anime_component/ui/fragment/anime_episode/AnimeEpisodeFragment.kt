@@ -1,15 +1,16 @@
 package com.xyoye.anime_component.ui.fragment.anime_episode
 
-import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
+import androidx.fragment.app.viewModels
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentAnimeEpisodeBinding
 import com.xyoye.anime_component.databinding.ItemAnimeEpisodeBinding
+import com.xyoye.anime_component.ui.activities.anime_detail.AnimeDetailViewModel
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -23,7 +24,6 @@ import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.toText
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.data.BangumiData
 import com.xyoye.data_component.data.EpisodeData
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -38,15 +38,7 @@ class AnimeEpisodeFragment :
     private val episodes = mutableListOf<EpisodeData>()
     private val utcTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
 
-    companion object {
-        fun newInstance(bangumiData: BangumiData): AnimeEpisodeFragment {
-            val episodeFragment = AnimeEpisodeFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("bangumi_data", bangumiData)
-            episodeFragment.arguments = bundle
-            return episodeFragment
-        }
-    }
+    private val parentViewModel: AnimeDetailViewModel by viewModels(ownerProducer = { mAttachActivity })
 
     private lateinit var episodeAdapter: BaseAdapter
 
@@ -117,12 +109,6 @@ class AnimeEpisodeFragment :
         initObserver()
 
         initListener()
-
-        arguments?.run {
-            getParcelable<BangumiData>("bangumi_data")?.let {
-                viewModel.setBangumiData(it)
-            }
-        }
     }
 
     private fun isSameEpisodeItem() = { old: Any, new: Any ->
@@ -132,6 +118,10 @@ class AnimeEpisodeFragment :
     }
 
     private fun initObserver() {
+        parentViewModel.animeDetailLiveData.observe(this) {
+            viewModel.setBangumiData(it)
+        }
+
         viewModel.episodeLiveData.observe(this) {
             inMarkMode = false
             updateLayoutByMarkMode()
@@ -373,7 +363,8 @@ class AnimeEpisodeFragment :
 
         if (inMarkMode) {
             val selectedCount = episodes.count { it.selected }
-            val display = if (selectedCount > 0) "此${selectedCount}集已看" else R.string.action_mark_as_viewed.toResString()
+            val display =
+                if (selectedCount > 0) "此${selectedCount}集已看" else R.string.action_mark_as_viewed.toResString()
             dataBinding.tvSetRead.text = display
         } else {
             dataBinding.tvSetRead.text = R.string.action_mark_as_viewed.toResString()

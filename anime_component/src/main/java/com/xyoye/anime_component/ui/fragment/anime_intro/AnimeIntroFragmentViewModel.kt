@@ -2,10 +2,8 @@ package com.xyoye.anime_component.ui.fragment.anime_intro
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.data_component.data.BangumiData
-import com.xyoye.data_component.data.TagData
 import java.text.DecimalFormat
 
 class AnimeIntroFragmentViewModel : BaseViewModel() {
@@ -21,8 +19,6 @@ class AnimeIntroFragmentViewModel : BaseViewModel() {
     val expandInfoFiled = ObservableBoolean(false)
     val expandStatusFiled = ObservableField("展开")
 
-    val tagLiveData = MutableLiveData<MutableList<TagData>>()
-
     fun setBangumiData(bangumiData: BangumiData) {
         bangumiData.apply {
             animeStatusField.set(getAnimeStatus(isOnAir, airDay))
@@ -35,8 +31,6 @@ class AnimeIntroFragmentViewModel : BaseViewModel() {
             val info = getAnimeInfo(metadata)
             hideInfoFiled.set(info.isNullOrEmpty())
             animeInfoFiled.set(info)
-
-            tagLiveData.postValue(tags)
         }
     }
 

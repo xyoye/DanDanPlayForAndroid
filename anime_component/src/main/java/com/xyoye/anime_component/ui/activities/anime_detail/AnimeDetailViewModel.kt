@@ -24,15 +24,12 @@ class AnimeDetailViewModel : BaseViewModel() {
 
     val animeDetailLiveData = MutableLiveData<BangumiData>()
 
-    val transitionFailedLiveData = MutableLiveData<Boolean>()
-
     fun getAnimeDetail(animeId: String) {
         viewModelScope.launch {
             val result = AnimeRepository.getAnimeDetail(animeId)
 
             if (result.isFailure) {
                 result.exceptionOrNull()?.message?.toastError()
-                transitionFailedLiveData.postValue(true)
                 return@launch
             }
 

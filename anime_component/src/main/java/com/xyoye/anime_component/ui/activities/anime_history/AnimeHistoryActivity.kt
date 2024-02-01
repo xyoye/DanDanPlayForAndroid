@@ -21,6 +21,7 @@ import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
+import com.xyoye.data_component.bean.AnimeArgument
 import com.xyoye.data_component.data.CloudHistoryData
 import com.xyoye.data_component.data.CloudHistoryListData
 
@@ -86,7 +87,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
                                 ARouter.getInstance()
                                     .build(RouteTable.Anime.AnimeDetail)
-                                    .withInt("animeId", data.animeId)
+                                    .withParcelable("animeArgument", AnimeArgument.fromData(data))
                                     .withOptionsCompat(options)
                                     .navigation(this@AnimeHistoryActivity)
                             }

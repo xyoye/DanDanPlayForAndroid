@@ -1,14 +1,15 @@
 package com.xyoye.anime_component.ui.fragment.anime_recommend
 
-import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.viewModels
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentAnimeRecommendBinding
 import com.xyoye.anime_component.databinding.ItemAnimeRecommendBinding
+import com.xyoye.anime_component.ui.activities.anime_detail.AnimeDetailViewModel
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
@@ -20,21 +21,13 @@ import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
+import com.xyoye.data_component.bean.AnimeArgument
 import com.xyoye.data_component.data.AnimeData
-import com.xyoye.data_component.data.BangumiData
 
 class AnimeRecommendFragment :
     BaseFragment<AnimeRecommendFragmentViewModel, FragmentAnimeRecommendBinding>() {
 
-    companion object {
-        fun newInstance(bangumiData: BangumiData): AnimeRecommendFragment {
-            val recommendFragment = AnimeRecommendFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("bangumi_data", bangumiData)
-            recommendFragment.arguments = bundle
-            return recommendFragment
-        }
-    }
+    private val parentViewModel: AnimeDetailViewModel by viewModels(ownerProducer = { mAttachActivity })
 
     override fun initViewModel() =
         ViewModelInit(
@@ -49,16 +42,9 @@ class AnimeRecommendFragment :
         initRv()
 
         initObserver()
-
-        arguments?.run {
-            getParcelable<BangumiData>("bangumi_data")?.let {
-                viewModel.setBangumiData(it)
-            }
-        }
     }
 
     private fun initRv() {
-
         dataBinding.recommendRv.apply {
             layoutManager = grid(3)
 
@@ -76,7 +62,7 @@ class AnimeRecommendFragment :
                 addItem<AnimeData, ItemAnimeRecommendBinding>(R.layout.item_anime_recommend) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            animeCoverIv.loadImage(data.imageUrl, 3)
+                            animeCoverIv.loadImage(data.imageUrl, 3f)
                             animeTitleTv.text = data.animeTitle
                             animeStatusTv.text = if (data.isOnAir) "连载中" else "已完结"
                             itemLayout.setOnClickListener {
@@ -86,7 +72,7 @@ class AnimeRecommendFragment :
                                 )
                                 ARouter.getInstance()
                                     .build(RouteTable.Anime.AnimeDetail)
-                                    .withInt("animeId", data.animeId)
+                                    .withParcelable("animeArgument", AnimeArgument.fromData(data))
                                     .withOptionsCompat(options)
                                     .navigation(mAttachActivity)
                             }
@@ -100,12 +86,10 @@ class AnimeRecommendFragment :
     }
 
     private fun initObserver() {
-        viewModel.recommendLiveData.observe(this) {
-            dataBinding.recommendRv.setData(it)
-        }
-
-        viewModel.recommendMoreLiveData.observe(this) {
-            dataBinding.recommendMoreRv.setData(it)
+        parentViewModel.animeDetailLiveData.observe(this) {
+            viewModel.setBangumiData(it)
+            dataBinding.recommendRv.setData(it.relateds)
+            dataBinding.recommendMoreRv.setData(it.similars)
         }
     }
 }

@@ -14,6 +14,7 @@ import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.loadImageWithPalette
 import com.xyoye.common_component.utils.FastClickFilter
+import com.xyoye.data_component.bean.AnimeArgument
 import com.xyoye.data_component.data.AnimeData
 
 /**
@@ -49,7 +50,7 @@ class AnimeAdapter {
 
                             ARouter.getInstance()
                                 .build(RouteTable.Anime.AnimeDetail)
-                                .withInt("animeId", data.animeId)
+                                .withParcelable("animeArgument", AnimeArgument.fromData(data))
                                 .withOptionsCompat(options)
                                 .navigation(activity)
                         }

@@ -8,9 +8,7 @@ import coil.size.Scale
 import coil.transform.RoundedCornersTransformation
 import com.xyoye.common_component.R
 import com.xyoye.common_component.storage.file.StorageFile
-import com.xyoye.common_component.utils.coil.CoilLoadCompleteTarget
 import com.xyoye.common_component.utils.coil.CoilPaletteTarget
-import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.enums.ResourceType
 import java.io.File
 
@@ -18,20 +16,21 @@ import java.io.File
  * Created by xyoye on 2020/7/31.
  */
 
-fun ImageView.loadImage(source: String?) {
-    load(source) {
-        scale(Scale.FILL)
-        crossfade(true)
-    }
-}
+fun ImageView.loadImage(
+    source: String?,
+    radiusDp: Float = 0f,
+    errorRes: Int = 0,
+) {
+    val transformation = if (radiusDp > 0)
+        RoundedCornersTransformation(radiusDp.dp())
+    else
+        null
 
-fun ImageView.loadImage(source: String?, dpRadius: Int) {
-    val radius = dp2px(dpRadius).toFloat()
-    val transformation = RoundedCornersTransformation(radius)
     load(source) {
         scale(Scale.FILL)
+        error(errorRes)
         crossfade(true)
-        transformations(transformation)
+        transformation?.let { transformations(it) }
     }
 }
 
@@ -41,28 +40,6 @@ fun ImageView.loadImageWithPalette(source: String?, onPaletteColor: (Int) -> Uni
         crossfade(true)
         allowHardware(false)
         target(CoilPaletteTarget(this@loadImageWithPalette, onPaletteColor))
-    }
-}
-
-fun ImageView.loadImageWithCallback(
-    source: String?,
-    dpRadius: Float = 0f,
-    errorRes: Int = 0,
-    onComplete: () -> Unit
-) {
-    val transformation = if (dpRadius > 0)
-        RoundedCornersTransformation(dpRadius.dp())
-    else
-        null
-
-    load(source) {
-        scale(Scale.FILL)
-        crossfade(true)
-        error(errorRes)
-        transformation?.let {
-            transformations(it)
-        }
-        target(CoilLoadCompleteTarget(this@loadImageWithCallback, onComplete))
     }
 }
 

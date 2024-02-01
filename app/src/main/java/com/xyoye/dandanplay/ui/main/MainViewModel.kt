@@ -28,12 +28,10 @@ class MainViewModel : BaseViewModel() {
 
     fun reLogin() {
         viewModelScope.launch {
-            val result = UserRepository.refreshToken()
-
-            if (result.isSuccess) {
-                UserConfig.putUserLoggedIn(false)
-                if (UserInfoHelper.login(result.getOrThrow())) {
-                    reLoginLiveData.postValue(result.getOrThrow())
+            UserRepository.refreshToken().getOrNull()?.let {
+                UserConfig.putUserLoggedIn(true)
+                if (UserInfoHelper.login(it)) {
+                    reLoginLiveData.postValue(it)
                 }
             }
         }

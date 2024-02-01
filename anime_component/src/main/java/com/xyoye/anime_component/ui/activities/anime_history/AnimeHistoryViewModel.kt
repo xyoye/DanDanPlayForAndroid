@@ -22,10 +22,7 @@ class AnimeHistoryViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                historyLiveData.postValue(result.getOrThrow())
-            }
-
+            result.getOrNull()?.let { historyLiveData.postValue(it) }
         }
     }
 }

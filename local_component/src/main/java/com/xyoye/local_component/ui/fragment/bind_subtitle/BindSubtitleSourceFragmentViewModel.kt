@@ -95,14 +95,14 @@ class BindSubtitleSourceFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
+            result.getOrNull()?.let {
                 if (unzip) {
-                    unzipSaveSubtitle(name, result.getOrThrow())
+                    unzipSaveSubtitle(name, it)
                 } else {
-                    saveSubtitle(name, result.getOrThrow())
+                    saveSubtitle(name, it)
                 }
-                hideLoading()
             }
+            hideLoading()
         }
     }
 

@@ -28,9 +28,8 @@ class HomeFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                val weeklyAnimeData = splitWeeklyAnime(result.getOrThrow())
-                weeklyAnimeLiveData.postValue(weeklyAnimeData)
+            result.getOrNull()?.let {
+                weeklyAnimeLiveData.postValue(splitWeeklyAnime(it))
             }
         }
     }
@@ -44,9 +43,7 @@ class HomeFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                bannersLiveData.postValue(result.getOrThrow())
-            }
+            result.getOrNull()?.let { bannersLiveData.postValue(it) }
         }
     }
 

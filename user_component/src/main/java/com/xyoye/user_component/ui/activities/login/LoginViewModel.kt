@@ -51,13 +51,12 @@ class LoginViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                if (UserInfoHelper.login(result.getOrThrow())) {
-                    ToastCenter.showSuccess("登录成功")
-                    loginLiveData.postValue(result.getOrThrow())
-                } else {
-                    ToastCenter.showError("登录错误，请稍后再试")
-                }
+            val data = result.getOrNull()
+            if (data != null && UserInfoHelper.login(data)) {
+                ToastCenter.showSuccess("登录成功")
+                loginLiveData.postValue(data)
+            } else {
+                ToastCenter.showError("登录错误，请稍后再试")
             }
         }
 

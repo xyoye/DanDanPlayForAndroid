@@ -19,11 +19,10 @@ class AnimeTagViewModel : BaseViewModel() {
 
             if (result.isFailure) {
                 result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            if (result.isSuccess) {
-                tagAnimeLiveData.postValue(result.getOrThrow())
-            }
+            result.getOrNull()?.let { tagAnimeLiveData.postValue(it) }
         }
     }
 }

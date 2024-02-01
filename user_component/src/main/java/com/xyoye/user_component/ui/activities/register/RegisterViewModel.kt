@@ -33,9 +33,9 @@ class RegisterViewModel : BaseViewModel() {
         val screenName = screenNameField.get()
 
         val allowRegister = checkAccount(account)
-                && checkPassword(password)
-                && checkEmail(email)
-                && checkScreenName(screenName)
+            && checkPassword(password)
+            && checkEmail(email)
+            && checkScreenName(screenName)
         if (!allowRegister)
             return
 
@@ -62,13 +62,12 @@ class RegisterViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                if (UserInfoHelper.login(result.getOrThrow())) {
-                    ToastCenter.showSuccess("注册成功")
-                    registerLiveData.postValue(result.getOrThrow())
-                } else {
-                    ToastCenter.showError("注册错误，请稍后再试")
-                }
+            val data = result.getOrNull()
+            if (data != null && UserInfoHelper.login(data)) {
+                ToastCenter.showSuccess("注册成功")
+                registerLiveData.postValue(data)
+            } else {
+                ToastCenter.showError("注册错误，请稍后再试")
             }
         }
     }

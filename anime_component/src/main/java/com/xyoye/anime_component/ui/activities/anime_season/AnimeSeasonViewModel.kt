@@ -197,8 +197,8 @@ class AnimeSeasonViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                seasonAnimeData = result.getOrThrow()
+            result.getOrNull()?.let {
+                seasonAnimeData = it
                 showSearchResult()
             }
         }

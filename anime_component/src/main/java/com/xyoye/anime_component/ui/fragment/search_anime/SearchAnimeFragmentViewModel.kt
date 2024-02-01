@@ -75,8 +75,8 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                searchAnimeData = result.getOrThrow()
+            result.getOrNull()?.let {
+                searchAnimeData = it
                 showSearchResult()
             }
         }

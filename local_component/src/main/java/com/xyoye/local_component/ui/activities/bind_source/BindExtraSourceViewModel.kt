@@ -78,17 +78,15 @@ class BindExtraSourceViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                if (result.getOrThrow().code() == 409) {
-                    ToastCenter.showError("请求过于频繁(每分钟限2次)，请稍后再试")
-                    return@launch
-                }
-
-                val json = result.getOrThrow().body()?.string() ?: ""
-                val segments = parseSegmentResult(json) ?: emptyList()
-                segmentCache.put(storageFile.uniqueKey(), segments)
-                _segmentTitleLiveData.postValue(segments)
+            val data = result.getOrNull() ?: return@launch
+            if (data.code() == 409) {
+                ToastCenter.showError("请求过于频繁(每分钟限2次)，请稍后再试")
+                return@launch
             }
+            val json = data.body()?.string() ?: ""
+            val segments = parseSegmentResult(json) ?: emptyList()
+            segmentCache.put(storageFile.uniqueKey(), segments)
+            _segmentTitleLiveData.postValue(segments)
         }
     }
 

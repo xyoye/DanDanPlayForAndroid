@@ -22,9 +22,7 @@ class AnimeFollowViewModel : BaseViewModel() {
                 return@launch
             }
 
-            if (result.isSuccess) {
-                followLiveData.postValue(result.getOrThrow())
-            }
+            result.getOrNull()?.let { followLiveData.postValue(it) }
         }
     }
 }

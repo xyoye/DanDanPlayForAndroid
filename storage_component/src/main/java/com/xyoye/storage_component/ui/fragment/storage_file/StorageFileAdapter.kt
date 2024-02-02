@@ -103,9 +103,10 @@ class StorageFileAdapter(
         val oldItem = old as? StorageFile?
         val newItem = new as? StorageFile?
         oldItem?.fileUrl() == newItem?.fileUrl()
-            && oldItem?.fileName() == newItem?.fileName()
-            && oldItem?.childFileCount() == newItem?.childFileCount()
-            && oldItem?.playHistory == newItem?.playHistory
+                && oldItem?.fileName() == newItem?.fileName()
+                && oldItem?.childFileCount() == newItem?.childFileCount()
+                && oldItem?.playHistory == newItem?.playHistory
+                && oldItem?.playHistory?.isLastPlay == newItem?.playHistory?.isLastPlay
     }
 
     private fun isDirectoryItem(data: Any) = data is StorageFile && data.isDirectory()

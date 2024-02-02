@@ -163,7 +163,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 .map {
                     val history = getHistory(it)
                     val isSameHistory = if (it.isFile()) {
-                        it.playHistory == history
+                        it.playHistory == history && it.playHistory?.isLastPlay == history?.isLastPlay
                     } else {
                         it.playHistory?.id == history?.id
                     }

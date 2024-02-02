@@ -1,5 +1,6 @@
 package com.xyoye.player.utils
 
+import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.wrapper.ControlWrapper
 
 /**
@@ -16,6 +17,10 @@ class LongPressAccelerator(
     private var isEnable = false
 
     fun enable() {
+        // 不可倍速
+        if (canAccelerate().not()) {
+            return
+        }
         //已暂停
         if (controlWrapper.isPlaying().not()) {
             return
@@ -34,7 +39,7 @@ class LongPressAccelerator(
         isEnable = true
 
         originSpeed = controlWrapper.getSpeed()
-        val newSpeed = originSpeed * 2
+        val newSpeed = PlayerInitializer.Player.pressVideoSpeed
         controlWrapper.setSpeed(newSpeed)
         onStart.invoke(newSpeed)
     }
@@ -47,5 +52,12 @@ class LongPressAccelerator(
 
         controlWrapper.setSpeed(originSpeed)
         onStop.invoke()
+    }
+
+    /**
+     * 是否可以加速，当前倍速不等于长按倍速
+     */
+    private fun canAccelerate(): Boolean {
+        return PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.pressVideoSpeed
     }
 }

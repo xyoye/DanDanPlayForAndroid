@@ -131,4 +131,7 @@
     <string name="text_setting_subtitle_style">字幕样式设置</string>
 
     <string name="text_no_data">无数据</string>
+
+    <string name="text_long_press_speed">长按速度</string>
+    <string name="tips_long_press_rule">长按速度与播放速度一致时，将禁用长按变速</string>
 </resources>

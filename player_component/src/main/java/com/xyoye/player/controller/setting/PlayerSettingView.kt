@@ -218,8 +218,8 @@ class PlayerSettingView(
             }
 
             SettingAction.VIDEO_SPEED -> {
-                selected =
-                    PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
+                selected = PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
+                    || PlayerInitializer.Player.pressVideoSpeed != PlayerInitializer.Player.DEFAULT_PRESS_SPEED
             }
 
             SettingAction.BACKGROUND_PLAY -> {

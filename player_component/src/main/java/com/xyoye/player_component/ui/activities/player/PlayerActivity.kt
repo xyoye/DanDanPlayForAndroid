@@ -363,6 +363,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
         //视频速度
         PlayerInitializer.Player.videoSpeed = PlayerConfig.getNewVideoSpeed()
+        // 长按视频速度
+        PlayerInitializer.Player.pressVideoSpeed = PlayerConfig.getPressVideoSpeed()
         //自动播放下一集
         PlayerInitializer.Player.isAutoPlayNext = PlayerConfig.isAutoPlayNext()
 

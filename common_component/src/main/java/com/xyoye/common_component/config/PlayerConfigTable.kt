@@ -1,6 +1,10 @@
 package com.xyoye.common_component.config
 
-import com.xyoye.data_component.enums.*
+import com.xyoye.data_component.enums.PixelFormat
+import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.VLCAudioOutput
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
 import com.xyoye.mmkv_annotation.MMKVFiled
 import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
@@ -49,6 +53,10 @@ object PlayerConfigTable {
     //视频倍速
     @MMKVFiled
     val newVideoSpeed = 1f
+
+    //视频长按速率
+    @MMKVFiled
+    val pressVideoSpeed = 2f
 
     //自动播放下一集
     @MMKVFiled

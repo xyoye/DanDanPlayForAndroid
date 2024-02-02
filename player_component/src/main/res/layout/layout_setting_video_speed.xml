@@ -30,7 +30,7 @@
             android:id="@+id/reset_tv"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
+            android:layout_marginEnd="10dp"
             android:background="@drawable/background_player_setting_text_transparent"
             android:focusable="true"
             android:gravity="center"
@@ -55,7 +55,10 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginTop="10dp"
             android:focusable="true"
+            android:nextFocusLeft="@id/reset_tv"
+            android:nextFocusRight="@id/speed_slider"
             android:nextFocusUp="@id/reset_tv"
+            android:nextFocusDown="@id/speed_slider"
             android:stepSize="0.05"
             android:theme="@style/Theme.DanDanPlay.Slider"
             android:valueFrom="0.25"
@@ -66,6 +69,75 @@
             app:thumbColor="@color/theme"
             app:tickColor="@color/theme"
             app:trackColor="@color/gray_60" />
+
+        <TextView
+            android:id="@+id/tv_press_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/text_long_press_speed"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/speed_slider" />
+
+        <TextView
+            android:id="@+id/tv_reset_press_speed"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/background_player_setting_text_transparent"
+            android:focusable="true"
+            android:gravity="center"
+            android:nextFocusLeft="@id/speed_slider"
+            android:nextFocusRight="@id/slider_press_speed"
+            android:nextFocusUp="@id/speed_slider"
+            android:nextFocusDown="@id/slider_press_speed"
+            android:padding="5dp"
+            android:text="@string/text_reset_video_speed"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/tv_press_speed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_press_speed"
+            tools:visibility="visible" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_press_speed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:focusable="true"
+            android:nextFocusLeft="@id/tv_reset_press_speed"
+            android:nextFocusRight="@id/speed_slider"
+            android:nextFocusUp="@id/tv_reset_press_speed"
+            android:nextFocusDown="@id/speed_slider"
+            android:stepSize="0.05"
+            android:theme="@style/Theme.DanDanPlay.Slider"
+            android:valueFrom="0.25"
+            android:valueTo="4"
+            app:haloColor="@color/theme"
+            app:labelBehavior="withinBounds"
+            app:layout_constraintTop_toBottomOf="@id/tv_press_speed"
+            app:thumbColor="@color/theme"
+            app:tickColor="@color/theme"
+            app:trackColor="@color/gray_60" />
+
+        <TextView
+            android:id="@+id/tips_speed_rule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:text="@string/tips_long_press_rule"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

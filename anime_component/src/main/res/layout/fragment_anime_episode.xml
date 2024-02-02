@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_item_press"
-                android:onClick="@{() -> viewModel.changeSort()}"
+                android:onClick="@{() -> viewModel.toggleSort()}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -155,7 +155,6 @@
             android:id="@+id/episode_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingHorizontal="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrier" />
 

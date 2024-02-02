@@ -7,26 +7,25 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_anime_episode"
         android:minHeight="60dp"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:paddingVertical="10dp">
 
         <TextView
-            android:id="@+id/episode_number_tv"
+            android:id="@+id/tv_episode_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/text_black"
+            android:layout_marginStart="10dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/selector_episode_title_color"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@id/iv_video_play"
+            app:layout_constraintEnd_toStartOf="@id/iv_episode_play"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginEnd="0dp"
             tools:text="第一话" />
 
         <TextView
-            android:id="@+id/episode_title_tv"
+            android:id="@+id/tv_episode_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -34,42 +33,89 @@
             android:maxLines="1"
             android:textColor="@color/text_gray"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@id/episode_number_tv"
-            app:layout_constraintStart_toStartOf="@id/episode_number_tv"
-            app:layout_constraintTop_toBottomOf="@id/episode_number_tv"
+            app:layout_constraintEnd_toEndOf="@id/tv_episode_title"
+            app:layout_constraintStart_toStartOf="@id/tv_episode_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_episode_title"
+            app:layout_goneMarginBottom="10dp"
             tools:text="测试标题" />
 
+        <ImageView
+            android:id="@+id/iv_watch_time"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_history_local"
+            app:layout_constraintBottom_toBottomOf="@id/tv_watch_time"
+            app:layout_constraintStart_toStartOf="@id/tv_episode_title"
+            app:layout_constraintTop_toTopOf="@id/tv_watch_time" />
+
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/last_watch_tv"
+            android:id="@+id/tv_watch_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
             android:layout_marginTop="5dp"
-            android:drawableStart="@drawable/ic_last_play_time"
-            android:drawablePadding="3dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text=""
             android:textColor="@color/text_gray_light"
             android:textSize="10sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@id/episode_number_tv"
-            app:layout_constraintStart_toStartOf="@id/episode_number_tv"
-            app:layout_constraintTop_toBottomOf="@id/episode_title_tv"
+            app:layout_constraintEnd_toEndOf="@+id/tv_episode_title"
+            app:layout_constraintStart_toEndOf="@id/iv_watch_time"
+            app:layout_constraintTop_toBottomOf="@id/tv_episode_subtitle"
             tools:ignore="SmallSp"
-            tools:text="2020-10-2"
+            tools:text="2020-10-2" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_watch_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="iv_watch_time,tv_watch_time"
             tools:visibility="visible" />
 
         <ImageView
-            android:id="@+id/iv_video_play"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_magnet_play"
+            android:id="@+id/iv_episode_play"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_episode_play"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_episode_mark_viewed"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_episode_mark_viewed"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_episode_mark_viewed"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fl_episode_mark"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <FrameLayout
+            android:id="@+id/fl_episode_mark"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="visible">
+
+            <CheckBox
+                android:id="@+id/cb_episode_mark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:textColor="@color/text_black"
+                app:theme="@style/Theme.DanDanPlay.CheckBox" />
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

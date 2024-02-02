@@ -63,5 +63,5 @@ interface PlayHistoryDao {
 
     @Transaction
     @Query("SELECT * FROM play_history WHERE episode_id IN (:episodeIds)")
-    suspend fun getEpisodeHistory(episodeIds: List<String>): List<EpisodeHistoryEntity>
+    fun getEpisodeHistory(episodeIds: List<String>): Flow<List<EpisodeHistoryEntity>>
 }

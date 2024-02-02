@@ -55,6 +55,9 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     // 默认的tab列表
     private val defaultTabs = AnimeDetailTab.values()
 
+    // 返回事件拦截器
+    private var backPressInterceptor: (() -> Boolean)? = null
+
     override fun initViewModel() = ViewModelInit(
         BR.viewModel,
         AnimeDetailViewModel::class.java
@@ -99,6 +102,11 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
 
     @Deprecated("Deprecated in Java", ReplaceWith("finish()"))
     override fun onBackPressed() {
+        // 如果有返回事件拦截器，优先执行拦截器
+        if (backPressInterceptor?.invoke() == true) {
+            return
+        }
+
         // 重写以防止返回动画
         finish()
     }
@@ -189,5 +197,26 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
         dataBinding.collapsingToolbarLayout.title = title
         dataBinding.backgroundCoverIv.loadImage(image)
         dataBinding.coverIv.loadAnimeCover(image)
+    }
+
+    /**
+     * 刷新番剧详情
+     */
+    fun refreshAnimeDetail() {
+        viewModel.getAnimeDetail(animeArgument.id.toString())
+    }
+
+    /**
+     * 注册返回事件拦截器
+     */
+    fun registerBackPressInterceptor(interceptor: () -> Boolean) {
+        backPressInterceptor = interceptor
+    }
+
+    /**
+     * 取消返回事件拦截器
+     */
+    fun unregisterBackPressInterceptor() {
+        backPressInterceptor = null
     }
 }

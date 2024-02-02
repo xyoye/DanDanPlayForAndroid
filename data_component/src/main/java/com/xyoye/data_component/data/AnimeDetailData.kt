@@ -51,10 +51,28 @@ data class EpisodeData(
     val airDate: String? = null,
 
     @Json(ignore = true)
-    val selected: Boolean = false,
+    val title: String = "",
     @Json(ignore = true)
-    val histories: List<EpisodeHistoryEntity> = emptyList()
-) : Parcelable
+    val subtitle: String = "",
+    @Json(ignore = true)
+    val searchEpisodeNum: String = "",
+
+    @Json(ignore = true)
+    val watchTime: String? = null,
+    @Json(ignore = true)
+    val histories: List<EpisodeHistoryEntity> = emptyList(),
+    @Json(ignore = true)
+    val isMarked: Boolean = false,
+    @Json(ignore = true)
+    val inMarkMode: Boolean = false
+) : Parcelable {
+
+    @Json(ignore = true)
+    val markAble get() = lastWatched == null
+
+    @Json(ignore = true)
+    val watched get() = histories.isNotEmpty() || lastWatched != null
+}
 
 @Parcelize
 @JsonClass(generateAdapter = true)

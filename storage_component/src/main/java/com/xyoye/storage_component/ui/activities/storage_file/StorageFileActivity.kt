@@ -53,7 +53,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         private set
 
     // 标题栏菜单管理器
-    private lateinit var mMenus: StorageFileMenus
+    private var mMenus: StorageFileMenus? = null
 
     // 文件Fragment列表
     private val mRouteFragmentMap = mutableMapOf<StorageFilePath, StorageFileFragment>()
@@ -170,25 +170,23 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        mMenus = StorageFileMenus.inflater(this, menu)
-        mMenus.onSearchTextChanged { onSearchTextChanged(it) }
-        mMenus.onSortTypeChanged { onSortOptionChanged() }
+        mMenus = StorageFileMenus.inflater(this, menu).apply {
+            onSearchTextChanged { onSearchTextChanged(it) }
+            onSortTypeChanged { onSortOptionChanged() }
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        mMenus.onOptionsItemSelected(item)
+        mMenus?.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode != KeyEvent.KEYCODE_BACK) {
-            return super.onKeyDown(keyCode, event)
-        }
-        if (this::mMenus.isInitialized && mMenus.onKeyDown()) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mMenus?.handleBackPressed() == true) {
             return true
         }
-        if (popFragment()) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && popFragment()) {
             return true
         }
         return super.onKeyDown(keyCode, event)

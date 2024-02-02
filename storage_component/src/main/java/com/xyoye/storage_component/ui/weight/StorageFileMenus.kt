@@ -94,7 +94,7 @@ class StorageFileMenus private constructor(
         }
     }
 
-    fun onKeyDown(): Boolean {
+    fun handleBackPressed(): Boolean {
         if (mSearchView.isIconified) {
             return false
         }

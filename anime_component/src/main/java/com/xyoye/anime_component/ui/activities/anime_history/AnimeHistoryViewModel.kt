@@ -1,15 +1,21 @@
 package com.xyoye.anime_component.ui.activities.anime_history
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
-import com.xyoye.data_component.data.CloudHistoryListData
+import com.xyoye.data_component.data.CloudHistoryData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class AnimeHistoryViewModel : BaseViewModel() {
-    val historyLiveData = MutableLiveData<CloudHistoryListData>()
+    private val _historiesFlow = MutableStateFlow<List<CloudHistoryData>>(emptyList())
+    private val _searchWordFlow = MutableStateFlow("")
+
+    val displayHistoriesFlow = combine(_historiesFlow, _searchWordFlow) { histories, searchWord ->
+        combineAnimeFilter(histories, searchWord)
+    }
 
     fun getCloudHistory() {
         viewModelScope.launch {
@@ -22,7 +28,22 @@ class AnimeHistoryViewModel : BaseViewModel() {
                 return@launch
             }
 
-            result.getOrNull()?.let { historyLiveData.postValue(it) }
+            _historiesFlow.emit(result.getOrNull()?.playHistoryAnimes ?: emptyList())
         }
+    }
+
+    fun searchAnime(keyword: String) {
+        _searchWordFlow.value = keyword
+    }
+
+    private fun combineAnimeFilter(
+        histories: List<CloudHistoryData>,
+        searchWord: String
+    ): List<CloudHistoryData> {
+        if (searchWord.isEmpty()) {
+            return histories
+        }
+
+        return histories.filter { it.animeTitle?.contains(searchWord, ignoreCase = true) == true }
     }
 }

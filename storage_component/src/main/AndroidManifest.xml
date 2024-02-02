@@ -13,8 +13,7 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.storage_file.StorageFileActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/StorageFileActivityStyle" />
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".ui.activities.remote_scan.RemoteScanActivity"
             android:configChanges="orientation|screenSize" />

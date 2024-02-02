@@ -11,6 +11,7 @@
         <item name="controlBackground">@color/theme</item>
         <item name="android:textColorPrimary">@color/text_black</item>
         <item name="android:windowAnimationStyle">@style/ActivityAnimStyle</item>
+        <item name="searchViewStyle">@style/Widget.DanDanPlay.SearchView</item>
     </style>
 
     <style name="ActivityAnimStyle" parent="@android:style/Animation.Activity">
@@ -117,5 +118,12 @@
 
     <style name="Theme.DanDanPlay.Toolbar.Subtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Widget.DanDanPlay.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@null</item>
+        <item name="submitBackground">@null</item>
     </style>
 </resources>

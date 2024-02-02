@@ -26,7 +26,7 @@ import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.bean.AnimeArgument
-import com.xyoye.data_component.data.CloudHistoryData
+import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CloudHistoryListData
 
 @Route(path = RouteTable.Anime.AnimeHistory)
@@ -88,7 +88,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
                 addEmptyView(R.layout.layout_empty)
 
-                addItem<CloudHistoryData, ItemAnimeBinding>(R.layout.item_anime) {
+                addItem<AnimeData, ItemAnimeBinding>(R.layout.item_anime) {
                     initView { data, _, _ ->
                         itemBinding.apply {
                             coverIv.loadAnimeCover(data.imageUrl)

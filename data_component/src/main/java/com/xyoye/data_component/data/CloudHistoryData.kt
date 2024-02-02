@@ -11,27 +11,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class CloudHistoryListData(
-    val playHistoryAnimes: MutableList<CloudHistoryData> = mutableListOf()
+    val playHistoryAnimes: MutableList<AnimeData> = mutableListOf()
 ) : CommonJsonData(), Parcelable
-
-@Parcelize
-@JsonClass(generateAdapter = true)
-data class CloudHistoryData(
-    val animeId: Int,
-    val animeTitle: String?,
-    val type: String?,
-    val typeDescription: String?,
-    val imageUrl: String?,
-    val isOnAir: Boolean,
-    val episodes: MutableList<CloudHistoryEpisodeData> = mutableListOf()
-) : Parcelable
-
-@Parcelize
-@JsonClass(generateAdapter = true)
-data class CloudHistoryEpisodeData(
-    val episodeId: String?,
-    val episodeTitle: String?,
-    val episodeNumber: String?,
-    val lastWatched: String?,
-    val airDate: String?
-) : Parcelable

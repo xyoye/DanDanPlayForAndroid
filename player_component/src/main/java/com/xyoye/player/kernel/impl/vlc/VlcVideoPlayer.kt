@@ -277,7 +277,6 @@ class VlcVideoPlayer(private val mContext: Context) : AbstractVideoPlayer() {
                 MediaPlayer.Event.SeekableChanged -> seekable = it.seekable
                 //播放错误
                 MediaPlayer.Event.EncounteredError -> {
-                    stop()
                     mPlayerEventListener.onError()
                     VideoLog.d("$TAG--listener--onInfo--> onError")
                 }

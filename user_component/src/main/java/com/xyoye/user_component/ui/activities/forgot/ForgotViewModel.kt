@@ -4,11 +4,11 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.UserRepository
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.data.CommonJsonData
+import kotlinx.coroutines.launch
 
 class ForgotViewModel : BaseViewModel() {
 
@@ -36,35 +36,30 @@ class ForgotViewModel : BaseViewModel() {
         if (!allowReset)
             return
 
-        httpRequest<CommonJsonData>(viewModelScope) {
-            onStart { showLoading() }
+        val appId = SecurityHelper.getInstance().appId
+        val unixTimestamp = System.currentTimeMillis() / 1000
+        val hashInfo = appId + email + unixTimestamp + account
+        val hash = SecurityHelper.getInstance().buildHash(hashInfo)
 
-            api {
-                val appId = SecurityHelper.getInstance().appId
-                val unixTimestamp = System.currentTimeMillis() / 1000
-                val hashInfo = appId + email + unixTimestamp + account
-                val hash = SecurityHelper.getInstance().buildHash(hashInfo)
+        viewModelScope.launch {
+            showLoading()
+            val result = UserRepository.resetPassword(
+                account!!,
+                email!!,
+                appId,
+                unixTimestamp.toString(),
+                hash
+            )
+            hideLoading()
 
-                val params = HashMap<String, String>()
-                params["appId"] = appId
-                params["userName"] = account!!
-                params["email"] = email!!
-                params["unixTimestamp"] = unixTimestamp.toString()
-                params["hash"] = hash
-
-                Retrofit.service.resetPassword(params)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess {
-                ToastCenter.showSuccess("重置成功，密码已发送至邮箱")
-                requestLiveData.postValue(true)
-            }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            ToastCenter.showSuccess("重置成功，密码已发送至邮箱")
+            requestLiveData.postValue(true)
         }
-
     }
 
     private fun retrieveAccount() {
@@ -73,32 +68,29 @@ class ForgotViewModel : BaseViewModel() {
         val allowRetrieve = checkEmail(email)
         if (!allowRetrieve)
             return
-        httpRequest<CommonJsonData>(viewModelScope) {
-            onStart { showLoading() }
 
-            api {
-                val appId = SecurityHelper.getInstance().appId
-                val unixTimestamp = System.currentTimeMillis() / 1000
-                val hashInfo = appId + email + unixTimestamp
-                val hash = SecurityHelper.getInstance().buildHash(hashInfo)
+        val appId = SecurityHelper.getInstance().appId
+        val unixTimestamp = System.currentTimeMillis() / 1000
+        val hashInfo = appId + email + unixTimestamp
+        val hash = SecurityHelper.getInstance().buildHash(hashInfo)
 
-                val params = HashMap<String, String>()
-                params["appId"] = appId
-                params["email"] = email!!
-                params["unixTimestamp"] = unixTimestamp.toString()
-                params["hash"] = hash
+        viewModelScope.launch {
+            showLoading()
+            val result = UserRepository.retrieveAccount(
+                email!!,
+                appId,
+                unixTimestamp.toString(),
+                hash
+            )
+            hideLoading()
 
-                Retrofit.service.retrieveAccount(params)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess {
-                ToastCenter.showSuccess("验证成功，帐号已发送至邮箱")
-                requestLiveData.postValue(true)
-            }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            ToastCenter.showSuccess("验证成功，帐号已发送至邮箱")
+            requestLiveData.postValue(true)
         }
     }
 

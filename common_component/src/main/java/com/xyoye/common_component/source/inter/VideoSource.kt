@@ -21,7 +21,7 @@ interface VideoSource {
 
     fun getUniqueKey(): String
 
-    fun getStorageId(): Int?
+    fun getStorageId(): Int
 
     fun getStoragePath(): String?
 }

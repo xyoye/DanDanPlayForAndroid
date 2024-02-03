@@ -4,12 +4,13 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.UserRepository
 import com.xyoye.common_component.utils.SecurityHelper
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.LoginData
+import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel() {
 
@@ -29,37 +30,34 @@ class LoginViewModel : BaseViewModel() {
         if (!allowLogin)
             return
 
-        httpRequest<LoginData>(viewModelScope) {
-            onStart { showLoading() }
+        val appId = SecurityHelper.getInstance().appId
+        val unixTimestamp = System.currentTimeMillis() / 1000
+        val hashInfo = appId + password + unixTimestamp + account
+        val hash = SecurityHelper.getInstance().buildHash(hashInfo)
 
-            api {
-                val appId = SecurityHelper.getInstance().appId
-                val unixTimestamp = System.currentTimeMillis() / 1000
-                val hashInfo = appId + password + unixTimestamp + account
-                val hash = SecurityHelper.getInstance().buildHash(hashInfo)
+        viewModelScope.launch {
+            showLoading()
+            val result = UserRepository.login(
+                account!!,
+                password!!,
+                appId,
+                unixTimestamp.toString(),
+                hash
+            )
+            hideLoading()
 
-                val params = HashMap<String, String>()
-                params["userName"] = account!!
-                params["password"] = password!!
-                params["appId"] = appId
-                params["unixTimestamp"] = unixTimestamp.toString()
-                params["hash"] = hash
-
-                Retrofit.service.login(params)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess {
-                if (UserInfoHelper.login(it)){
-                    ToastCenter.showSuccess("登录成功")
-                    loginLiveData.postValue(it)
-                } else {
-                    ToastCenter.showError("登录错误，请稍后再试")
-                }
+            val data = result.getOrNull()
+            if (data != null && UserInfoHelper.login(data)) {
+                ToastCenter.showSuccess("登录成功")
+                loginLiveData.postValue(data)
+            } else {
+                ToastCenter.showError("登录错误，请稍后再试")
             }
-
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
         }
 
     }

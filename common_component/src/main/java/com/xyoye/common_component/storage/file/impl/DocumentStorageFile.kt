@@ -36,6 +36,19 @@ class DocumentStorageFile(
         return documentFile.uri.toString()
     }
 
+    override fun fileCover(): String? {
+        if (isDirectory()) {
+            return null
+        }
+
+        val cover = super.fileCover()
+        if (cover?.isNotEmpty() == true) {
+            return cover
+        }
+
+        return fileUrl()
+    }
+
     override fun storagePath(): String {
         return fileUrl()
     }

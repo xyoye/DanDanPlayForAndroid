@@ -1,187 +1,175 @@
 package com.xyoye.storage_component.utils.screencast.provider
 
 import android.net.Uri
-import com.xyoye.common_component.extension.md5
-import com.xyoye.common_component.network.helper.RedirectAuthorizationInterceptor
+import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.resourceType
+import com.xyoye.common_component.network.config.HeaderKey
 import com.xyoye.common_component.source.base.BaseVideoSource
+import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
+import com.xyoye.common_component.source.media.StorageVideoSource
+import com.xyoye.common_component.storage.file.StorageFile
+import com.xyoye.common_component.storage.helper.ScreencastConstants
+import com.xyoye.common_component.storage.helper.ScreencastConstants.ProviderApi
 import com.xyoye.common_component.utils.RangeUtils
 import com.xyoye.common_component.utils.getFileExtension
+import com.xyoye.data_component.enums.ResourceType
 import com.xyoye.storage_component.services.ScreencastProvideHandler
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import fi.iki.elonen.NanoHTTPD.IHTTPSession
+import fi.iki.elonen.NanoHTTPD.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.io.InputStream
+import java.util.Date
 
 /**
  * Created by xyoye on 2022/9/15
  */
 
-object ServerController {
-    private val resourceNotFound: NanoHTTPD.Response by lazy {
+class ServerController(
+    private val videoSource: StorageVideoSource,
+    private val listener: ScreencastProvideHandler
+) {
+    private val resourceNotFound: Response by lazy {
         NanoHTTPD.newFixedLengthResponse(
-            NanoHTTPD.Response.Status.NOT_FOUND,
+            Response.Status.NOT_FOUND,
             NanoHTTPD.MIME_HTML,
             "资源不存在"
         )
     }
 
-    fun handleGetRequest(
-        videoSource: BaseVideoSource,
-        session: NanoHTTPD.IHTTPSession,
-        handler: ScreencastProvideHandler?
-    ): NanoHTTPD.Response {
-        val index = session.parameters["index"]
+    private val rangeNotSatisfiable: Response by lazy {
+        NanoHTTPD.newFixedLengthResponse(
+            Response.Status.RANGE_NOT_SATISFIABLE,
+            NanoHTTPD.MIME_HTML,
+            "请求资源位置不合法"
+        )
+    }
+
+    suspend fun handleSession(session: IHTTPSession): Response {
+        val targetVideoSource = session.parameters[ScreencastConstants.Param.uniqueKey]
             ?.firstOrNull()
-            ?.toIntOrNull()
+            ?.let { findVideoSource(it) }
             ?: return resourceNotFound
 
-        val targetVideoSource = if (videoSource.getGroupIndex() == index)
-            videoSource
-        else
-            getIndexSource(index, videoSource) ?: return resourceNotFound
+        val api = ProviderApi.fromPath(session.uri)
+            ?: return resourceNotFound
 
-        return when (session.uri) {
-            "/video" -> createVideoResponse(targetVideoSource, session, handler)
-            "/danmu" -> createDanmuResponse(targetVideoSource)
-            "/subtitle" -> createSubtitleResponse(targetVideoSource)
-            else -> resourceNotFound
+        return when (api) {
+            ProviderApi.VIDEO -> createVideoResponse(targetVideoSource, session)
+            ProviderApi.DANMU -> createDanmuResponse(targetVideoSource)
+            ProviderApi.SUBTITLE -> createSubtitleResponse(targetVideoSource)
+            ProviderApi.CALLBACK -> handleScreencastCallback(targetVideoSource, session)
         }
     }
 
     /**
      * 创建视频资源响应结果
      */
-    private fun createVideoResponse(
-        videoSource: BaseVideoSource,
-        session: NanoHTTPD.IHTTPSession,
-        handler: ScreencastProvideHandler?
-    ): NanoHTTPD.Response {
+    private suspend fun createVideoResponse(
+        videoSource: StorageVideoSource,
+        session: IHTTPSession
+    ): Response {
         val videoUrl = videoSource.getVideoUrl()
-        return if (videoUrl.startsWith("http://", true) || videoUrl.startsWith("https://")) {
-            createVideoResponseRedirect(videoSource, session, handler)
+
+        return if (videoUrl.resourceType() == ResourceType.URL) {
+            createVideoResponseRedirect(videoSource, session)
         } else {
-            createVideoResponseDirect(videoSource, session, handler)
+            createVideoResponseDirect(videoSource, session)
+        }.also {
+            considerInvokeCallback(it)
         }
     }
 
     /**
-     * 创建视频资源响应结果-通用
-     */
-    private fun createVideoResponseDirect(
-        videoSource: BaseVideoSource,
-        session: NanoHTTPD.IHTTPSession,
-        handler: ScreencastProvideHandler?
-    ): NanoHTTPD.Response {
-        //视频文件不存在
-        val videoFile = File(videoSource.getVideoUrl())
-        if (videoFile.exists().not() || videoFile.canRead().not()) {
-            return resourceNotFound
-        }
-
-        //已投送视频
-        handler?.onProvideVideo(videoSource)
-
-        //解析Range
-        val rangeText = session.headers["range"] ?: session.headers["Range"]
-        val rangeArray = rangeText?.run {
-            RangeUtils.getRange(this, videoFile.length())
-        }
-
-        val videoInputStream = FileInputStream(videoFile)
-        val contentType = getContentType(videoFile.absolutePath)
-        //存在range，且contentLength != 0
-        return if (rangeArray != null && rangeArray[2] != 0L) {
-            createVideoResponsePartial(
-                videoInputStream,
-                rangeArray,
-                contentType,
-                videoFile.length()
-            )
-        } else {
-            createVideoResponseTotal(videoInputStream, contentType)
-        }
-    }
-
-    /**
-     * 创建视频资源响应结果-重定向
+     * 创建重定向的视频资源响应结果
      */
     private fun createVideoResponseRedirect(
         videoSource: BaseVideoSource,
-        session: NanoHTTPD.IHTTPSession,
-        handler: ScreencastProvideHandler?
-    ): NanoHTTPD.Response {
+        session: IHTTPSession
+    ): Response {
         var redirectUrl = videoSource.getVideoUrl()
+
+        // 如果链接是localHost，且请求头存在host，使用host的值替换localHost
         val localhost = "127.0.0.1"
         val isLocalhostUrl = redirectUrl.contains(localhost)
         if (isLocalhostUrl) {
-            var host = session.headers["Host"] ?: session.headers["host"]
-            if (host != null && host.isNotEmpty()) {
-                host = Uri.parse("http://$host").host ?: host
-                redirectUrl = redirectUrl.replace(localhost, host)
+            val sessionHost = session.headers["Host"] ?: session.headers["host"]
+            if (!sessionHost.isNullOrEmpty()) {
+                val realHost = Uri.parse("http://$sessionHost").host ?: sessionHost
+                redirectUrl = redirectUrl.replace(localhost, realHost)
             }
         }
 
-        //已投送视频
-        handler?.onProvideVideo(videoSource)
-
         return NanoHTTPD.newFixedLengthResponse(
-            NanoHTTPD.Response.Status.REDIRECT,
+            Response.Status.REDIRECT,
             getContentType(redirectUrl),
             "redirect to real source"
         ).apply {
             addHeader("Location", redirectUrl)
-            addHeader(RedirectAuthorizationInterceptor.TAG_AUTH_REDIRECT, "redirect")
+            addHeader(HeaderKey.AUTH_REDIRECT, "redirect")
         }
     }
 
     /**
-     * 创建视频资源响应结果-分块
+     * 创建视频资源响应结果
      */
-    private fun createVideoResponsePartial(
-        inputStream: InputStream,
-        rangeArray: Array<Long>,
-        contentType: String,
-        sourceLength: Long
-    ): NanoHTTPD.Response {
-        try {
-            //设置Offset
-            inputStream.skip(rangeArray[0])
+    private suspend fun createVideoResponseDirect(
+        videoSource: StorageVideoSource,
+        session: IHTTPSession
+    ): Response {
+        val storageFile = videoSource.getStorageFile()
+        val inputStream = storageFile.storage.openFile(storageFile)
+            ?: return resourceNotFound
+
+        // 解析Range
+        val rangeText = session.headers["range"] ?: session.headers["Range"] ?: ""
+        val range = RangeUtils.parseRange(rangeText, storageFile.fileLength())
+
+        // 带有Range头，但解析失败，返回416
+        if (rangeText.isNotEmpty() && range == null) {
+            return rangeNotSatisfiable
+        }
+
+        val contentType = getContentType(storageFile.fileName())
+
+        // Range不存在，返回200
+        if (range == null) {
+            return NanoHTTPD.newChunkedResponse(Response.Status.OK, contentType, inputStream)
+        }
+
+        // 尝试跳过Range的起始字节数据
+        val skipped = try {
+            inputStream.skip(range.first)
         } catch (e: IOException) {
             e.printStackTrace()
+            -1L
         }
-        //响应内容
-        val response = NanoHTTPD.newFixedLengthResponse(
-            NanoHTTPD.Response.Status.PARTIAL_CONTENT,
+
+        // 跳过失败，返回200
+        if (skipped == -1L) {
+            return NanoHTTPD.newChunkedResponse(Response.Status.OK, contentType, inputStream)
+        }
+
+        // 计算Range长度
+        val rangeLength = range.second - range.first + 1
+        val contentRange = "bytes ${range.first}-${range.second}/$rangeLength"
+
+        // 返回206
+        return NanoHTTPD.newFixedLengthResponse(
+            Response.Status.PARTIAL_CONTENT,
             contentType,
             inputStream,
-            sourceLength
-        )
-        //添加响应头
-        val contentRange = "bytes ${rangeArray[0]}-${rangeArray[1]}/$sourceLength"
-        response.addHeader("Accept-Ranges", "bytes")
-        response.addHeader("Content-Range", contentRange)
-        response.addHeader("Content-Length", rangeArray[2].toString())
-        return response
+            rangeLength
+        ).apply {
+            addHeader("Accept-Ranges", "bytes")
+            addHeader("Content-Range", contentRange)
+        }
     }
 
     /**
-     * 创建视频资源响应结果-完整
+     * 获取内容类型
      */
-    private fun createVideoResponseTotal(
-        inputStream: InputStream,
-        contentType: String
-    ): NanoHTTPD.Response {
-        return NanoHTTPD.newChunkedResponse(
-            NanoHTTPD.Response.Status.OK,
-            contentType,
-            inputStream
-        )
-    }
-
     private fun getContentType(filePath: String): String {
         if (filePath.isEmpty()) {
             return "video/*"
@@ -195,9 +183,9 @@ object ServerController {
      */
     private fun createDanmuResponse(
         videoSource: BaseVideoSource
-    ): NanoHTTPD.Response {
+    ): Response {
         //弹幕文件路径为空
-        val danmuPath = videoSource.getDanmuPath()
+        val danmuPath = videoSource.getDanmu()?.danmuPath
         if (danmuPath.isNullOrEmpty()) {
             return resourceNotFound
         }
@@ -208,13 +196,10 @@ object ServerController {
         }
 
         return NanoHTTPD.newChunkedResponse(
-            NanoHTTPD.Response.Status.OK,
-            "*/*",
+            Response.Status.OK,
+            "*/xml",
             FileInputStream(danmuFile)
-        ).apply {
-            addHeader("episodeId", videoSource.getEpisodeId().toString())
-            addHeader("danmuMd5", danmuFile.md5())
-        }
+        )
     }
 
     /**
@@ -222,7 +207,7 @@ object ServerController {
      */
     private fun createSubtitleResponse(
         videoSource: BaseVideoSource
-    ): NanoHTTPD.Response {
+    ): Response {
         //字幕文件路径为空
         val subtitlePath = videoSource.getSubtitlePath()
         if (subtitlePath.isNullOrEmpty()) {
@@ -233,23 +218,76 @@ object ServerController {
         if (subtitleFile.exists().not() || subtitleFile.canRead().not()) {
             return resourceNotFound
         }
+        val fileNameExtension = getFileExtension(subtitleFile)
 
         return NanoHTTPD.newChunkedResponse(
-            NanoHTTPD.Response.Status.OK,
-            "*/*",
+            Response.Status.OK,
+            "*/$fileNameExtension",
             FileInputStream(subtitleFile)
-        ).apply {
-            addHeader("subtitleSuffix", getFileExtension(subtitlePath))
-            addHeader("subtitleMd5", subtitleFile.md5())
-        }
+        )
     }
 
     /**
-     * 根据索引获取目标视频资源
+     * 处理视频播放回调
      */
-    private fun getIndexSource(index: Int, videoSource: BaseVideoSource) = runBlocking {
-        return@runBlocking withContext(Dispatchers.IO) {
-            videoSource.indexSource(index)
+    private suspend fun handleScreencastCallback(
+        videoSource: StorageVideoSource,
+        session: IHTTPSession
+    ): Response {
+        val position = session.parameters[ScreencastConstants.Param.position]?.firstOrNull()?.toLongOrNull()
+        val duration = session.parameters[ScreencastConstants.Param.duration]?.firstOrNull()?.toLongOrNull()
+        if (position == null || duration == null) {
+            return NanoHTTPD.newFixedLengthResponse(
+                Response.Status.PRECONDITION_FAILED,
+                NanoHTTPD.MIME_HTML,
+                "参数错误"
+            )
+        }
+
+        // 修改本地播放记录中的进度
+        val newHistory = videoSource.getStorageFile().playHistory
+            ?.copy(videoPosition = position, videoDuration = duration, playTime = Date())
+            ?: return resourceNotFound
+
+        // 更新本地播放记录
+        DatabaseManager.instance.getPlayHistoryDao().insert(newHistory)
+
+        return NanoHTTPD.newFixedLengthResponse(
+            Response.Status.OK,
+            NanoHTTPD.MIME_HTML,
+            "播放记录已更新"
+        )
+    }
+
+    /**
+     * 根据Key获取目标视频资源
+     */
+    private suspend fun findVideoSource(uniqueKey: String): StorageVideoSource? {
+        if (videoSource.getUniqueKey() == uniqueKey) {
+            return videoSource
+        }
+
+        var targetFile: StorageFile? = null
+        for (index in 0 until videoSource.getGroupSize()) {
+            val storageFile = videoSource.indexStorageFile(index)
+            if (storageFile.uniqueKey() == uniqueKey) {
+                targetFile = storageFile
+                break
+            }
+        }
+        return targetFile?.let { StorageVideoSourceFactory.create(it) }
+    }
+
+    /**
+     * 考虑执行视频投屏成功回调
+     */
+    private fun considerInvokeCallback(response: Response) {
+        if (response.status == Response.Status.OK ||
+            response.status == Response.Status.PARTIAL_CONTENT ||
+            response.status == Response.Status.REDIRECT
+        ) {
+            // 200、206、301的响应视为投屏成功
+            listener.onProvideVideo(videoSource)
         }
     }
 }

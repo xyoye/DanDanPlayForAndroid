@@ -10,12 +10,13 @@ import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.danmaku.BiliDanmakuLoader
 import com.xyoye.danmaku.BiliDanmakuParser
-import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.danmaku.filter.KeywordFilter
 import com.xyoye.danmaku.filter.LanguageConverter
 import com.xyoye.danmaku.filter.RegexFilter
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.info.PlayerInitializer
@@ -58,8 +59,14 @@ class DanmuView(
 
     private var mSeekPosition = INVALID_VALUE
 
-    var mUrl: String? = null
-    private var isDanmuLoaded = false
+    // 当前已添加的弹幕轨道，不一定被成功加载或选中
+    private var mAddedTrack: VideoTrackBean? = null
+
+    // 当前弹幕轨道是否被选中
+    private var mTrackSelected = false
+
+    // 弹幕是否加载完成
+    private var mDanmuLoaded = false
 
     init {
         showFPS(DanmuConfig.isDanmuDebug())
@@ -77,7 +84,7 @@ class DanmuView(
 
             override fun prepared() {
                 post {
-                    isDanmuLoaded = true
+                    mDanmuLoaded = true
                     if (mControlWrapper.isPlaying()) {
                         val position = if (mSeekPosition == INVALID_VALUE) {
                             mControlWrapper.getCurrentPosition() + PlayerInitializer.Danmu.offsetPosition
@@ -109,21 +116,25 @@ class DanmuView(
             PlayState.STATE_IDLE -> {
                 release()
             }
+
             PlayState.STATE_PLAYING -> {
                 if (isPrepared) {
                     resume()
                 }
             }
+
             PlayState.STATE_BUFFERING_PAUSED -> {
                 if (isPrepared) {
                     pause()
                 }
             }
+
             PlayState.STATE_BUFFERING_PLAYING -> {
                 if (isPrepared && mControlWrapper.isPlaying()) {
                     resume()
                 }
             }
+
             PlayState.STATE_COMPLETED,
             PlayState.STATE_ERROR,
             PlayState.STATE_PAUSED -> {
@@ -131,6 +142,7 @@ class DanmuView(
                     pause()
                 }
             }
+
             else -> {
             }
         }
@@ -174,44 +186,69 @@ class DanmuView(
     }
 
     override fun release() {
-        super.release()
-        mUrl = null
+        mAddedTrack = null
+        hide()
         clear()
         clearDanmakusOnScreen()
+        super.release()
     }
 
     fun seekTo(timeMs: Long, isPlaying: Boolean) {
-        if (isPlaying && isDanmuLoaded) {
+        if (isPlaying && mDanmuLoaded) {
             seekTo(timeMs + PlayerInitializer.Danmu.offsetPosition)
         } else {
             mSeekPosition = timeMs + PlayerInitializer.Danmu.offsetPosition
         }
     }
 
-    fun loadDanmu(url: String?) {
-        if (url.isNullOrEmpty())
-            return
-        val danmuFile = File(url)
-        if (!danmuFile.exists())
-            return
+    fun addTrack(track: VideoTrackBean): Boolean {
+        val danmu = track.type.getDanmu(track.trackResource)
+            ?: return false
 
-        mUrl = url
-        mDanmakuLoader.load(url)
-        if (mDanmakuLoader.dataSource != null) {
-            val danmakuParser = BiliDanmakuParser()
-            danmakuParser.load(mDanmakuLoader.dataSource)
-            prepare(danmakuParser, mDanmakuContext)
-            isDanmuLoaded = false
-        } else {
+        val danmuFile = File(danmu.danmuPath)
+        if (danmuFile.exists().not())
+            return false
+
+        // 释放上一次加载的弹幕
+        release()
+
+        // 获取弹幕文件
+        mDanmakuLoader.load(danmu.danmuPath)
+        val dataSource = mDanmakuLoader.dataSource
+        if (dataSource == null) {
             ToastCenter.showOriginalToast("弹幕加载失败")
+            return false
         }
+
+        mAddedTrack = track
+        mDanmuLoaded = false
+        val danmuParser = BiliDanmakuParser().apply {
+            load(dataSource)
+        }
+        prepare(danmuParser, mDanmakuContext)
+        return true
     }
 
-    fun toggleVis() {
-        if (isShown) {
-            hide()
-        } else {
+    fun getAddedTrack() = mAddedTrack?.copy(selected = mTrackSelected)
+
+    fun setTrackSelected(selected: Boolean) {
+        mTrackSelected = selected
+        setDanmuVisible(selected)
+    }
+
+    fun toggleVisible() {
+        if (mTrackSelected.not()) {
+            return
+        }
+
+        setDanmuVisible(isShown.not())
+    }
+
+    private fun setDanmuVisible(visible: Boolean) {
+        if (visible) {
             show()
+        } else {
+            hide()
         }
     }
 
@@ -356,8 +393,8 @@ class DanmuView(
         }
     }
 
-    fun allowSendDanmu(): Boolean {
-        return isDanmuLoaded
+    fun isDanmuLoaded(): Boolean {
+        return mDanmuLoaded
     }
 
     fun addDanmuToView(danmuBean: SendDanmuBean) {

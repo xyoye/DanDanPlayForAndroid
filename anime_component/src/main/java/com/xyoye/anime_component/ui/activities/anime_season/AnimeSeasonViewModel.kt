@@ -4,15 +4,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.AnimeRepository
 import com.xyoye.common_component.utils.stringCompare
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.BangumiAnimeData
 import com.xyoye.data_component.data.CommonTypeData
 import com.xyoye.data_component.enums.AnimeSortType
-import java.util.*
+import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.Collections
 
 class AnimeSeasonViewModel : BaseViewModel() {
     private val seasonData = mutableListOf(
@@ -129,10 +131,12 @@ class AnimeSeasonViewModel : BaseViewModel() {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
             }
+
             position -> {
                 sortTypeData[position].isChecked = false
                 sortType = AnimeSortType.NONE
             }
+
             else -> {
                 sortTypeData[position].isChecked = true
                 sortType = AnimeSortType.formValue(sortTypeData[position].typeId)
@@ -185,18 +189,17 @@ class AnimeSeasonViewModel : BaseViewModel() {
     }
 
     private fun getSeasonAnime(year: String, month: String) {
-        httpRequest<BangumiAnimeData>(viewModelScope) {
-            api {
-                Retrofit.service.getSeasonAnime(year, month)
+        viewModelScope.launch {
+            val result = AnimeRepository.getSeasonAnime(year, month)
+
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess {
+            result.getOrNull()?.let {
                 seasonAnimeData = it
                 showSearchResult()
-            }
-
-            onError {
-                showNetworkError(it)
             }
         }
     }

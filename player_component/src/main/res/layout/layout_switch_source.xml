@@ -27,24 +27,6 @@
             tools:text="选择弹幕" />
 
         <TextView
-            android:id="@+id/remove_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/background_player_setting_text"
-            android:focusable="true"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="@string/action_remove_danmu"
-            android:textColor="@color/text_white_immutable"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/title_tv"
-            app:layout_constraintEnd_toStartOf="@id/tv_search_network_danmu"
-            app:layout_constraintTop_toTopOf="@id/title_tv"
-            tools:visibility="visible" />
-
-        <TextView
             android:id="@+id/tv_search_network_danmu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

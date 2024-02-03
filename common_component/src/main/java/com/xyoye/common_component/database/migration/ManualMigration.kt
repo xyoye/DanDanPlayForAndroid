@@ -42,7 +42,7 @@ object ManualMigration {
                         "",
                         MediaType.LOCAL_STORAGE,
                         danmuPath = it.danmuPath,
-                        episodeId = it.danmuId,
+                        episodeId = it.danmuId.toString(),
                         subtitlePath = it.subtitlePath,
                         uniqueKey = it.filePath.toMd5String()
                     )

@@ -6,9 +6,14 @@ import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
-import com.xyoye.common_component.utils.*
+import com.xyoye.common_component.utils.MediaUtils
+import com.xyoye.common_component.utils.getFileName
+import com.xyoye.common_component.utils.getFileNameNoExtension
+import com.xyoye.common_component.utils.isDanmuFile
+import com.xyoye.common_component.utils.isSubtitleFile
 import com.xyoye.common_component.utils.subtitle.SubtitleFinder
 import com.xyoye.data_component.bean.FolderBean
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.entity.VideoEntity
@@ -71,7 +76,7 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         return file.filePath()
     }
 
-    override suspend fun cacheDanmu(file: StorageFile): String? {
+    override suspend fun cacheDanmu(file: StorageFile): LocalDanmuBean? {
         val danmuFileName = getFileNameNoExtension(file.fileName()) + ".xml"
         return file.getFile<VideoEntity>()
             ?.folderPath.toFile()
@@ -79,6 +84,7 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             ?.filter { it.isFile && isDanmuFile(it.absolutePath) }
             ?.find { getFileName(it.absolutePath) == danmuFileName }
             ?.absolutePath
+            ?.let { LocalDanmuBean(it) }
     }
 
     override suspend fun cacheSubtitle(file: StorageFile): String? {

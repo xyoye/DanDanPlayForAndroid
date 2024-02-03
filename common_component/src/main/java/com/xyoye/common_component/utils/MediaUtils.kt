@@ -10,7 +10,6 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import com.xyoye.common_component.R
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toText
@@ -18,7 +17,8 @@ import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 
 /**
@@ -30,7 +30,7 @@ private val commonVideoExtension = arrayOf(
     "m4v", "mkv", "mov", "mpeg",
     "mpg", "mpe", "rm", "rmvb",
     "wmv", "asf", "asx", "dat",
-    "vob", "m3u8", "m2ts"
+    "vob", "m3u8", "m2ts", "m4s"
 )
 
 val supportSubtitleExtension = arrayOf(
@@ -38,13 +38,10 @@ val supportSubtitleExtension = arrayOf(
     "ttml"
 )
 
-private val supportNetworkScheme = arrayOf(
-    "http", "https", "smb", "ftp"
+val supportAudioExtension = arrayOf(
+    "mp3", "wav", "pcm", "flac",
+    "ogg", "m4s"
 )
-
-fun isNetworkScheme(scheme: String?): Boolean {
-    return scheme != null && supportNetworkScheme.contains(scheme.lowercase(Locale.ROOT))
-}
 
 fun isVideoFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
@@ -66,20 +63,12 @@ fun isTorrentFile(filePath: String): Boolean {
     return extension.lowercase(Locale.ROOT) == "torrent"
 }
 
-object MediaUtils {
+fun isAudioFile(filePath: String): Boolean {
+    val extension = getFileExtension(filePath)
+    return supportAudioExtension.contains(extension.lowercase(Locale.ROOT))
+}
 
-    /**
-     * 获取文件类型对应图标
-     */
-    fun getMediaTypeCover(filePath: String): Int {
-        return when {
-            isVideoFile(filePath) -> R.drawable.ic_file_video
-            isSubtitleFile(filePath) -> R.drawable.ic_file_subtitle
-            isDanmuFile(filePath) -> R.drawable.ic_file_xml
-            isTorrentFile(filePath) -> R.drawable.ic_file_torrent
-            else -> R.drawable.ic_file_unknow
-        }
-    }
+object MediaUtils {
 
     /**
      * 保存视频截图

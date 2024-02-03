@@ -1,5 +1,7 @@
 package com.xyoye.common_component.network.service
 
+import com.xyoye.common_component.network.config.HeaderKey
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.data_component.data.CommonJsonData
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -14,18 +16,17 @@ import retrofit2.http.*
 
 interface ScreencastService {
 
-    @GET("/init")
+    @GET(ScreencastConstants.ReceiverApi.init)
     suspend fun init(
-        @Header("host") host: String,
-        @Header("port") port: Int,
-        @Header("Authorization") authorization: String?
-    ): CommonJsonData
+        @Header(HeaderKey.BASE_URL) url: String,
+        @Header(HeaderKey.AUTHORIZATION) authorization: String?,
+        @Header(ScreencastConstants.Header.versionKey) version: Int
+    ): retrofit2.Response<CommonJsonData>
 
-    @POST("/play")
+    @POST(ScreencastConstants.ReceiverApi.play)
     suspend fun play(
-        @Header("host") host: String,
-        @Header("port") port: Int,
-        @Header("Authorization") authorization: String?,
+        @Header(HeaderKey.BASE_URL) url: String,
+        @Header(HeaderKey.AUTHORIZATION) authorization: String?,
         @Body data: RequestBody
     ): CommonJsonData
 }

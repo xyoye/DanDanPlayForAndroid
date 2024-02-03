@@ -132,23 +132,6 @@ fun getFileExtension(filePath: String?): String {
 }
 
 /**
- * 字节数字转16进制
- */
-fun buffer2Hex(bytes: ByteArray, offset: Int = 0, length: Int = bytes.size): String {
-    val stringBuilder = StringBuilder(2 * length)
-    val k: Int = offset + length
-    for (index in offset until k) {
-        val hexInt = bytes[index].toInt() and 0xff
-        var hexStr = Integer.toHexString(hexInt)
-        if (hexStr.length < 2) {
-            hexStr = "0$hexStr"
-        }
-        stringBuilder.append(hexStr)
-    }
-    return stringBuilder.toString()
-}
-
-/**
  * 文件大小格式化
  */
 fun formatFileSize(size: Long): String {

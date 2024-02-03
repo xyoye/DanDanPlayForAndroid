@@ -11,12 +11,12 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class DanmuRelatedData(
-    var relateds: MutableList<DanmuRelatedUrlData> = mutableListOf()
+    var relateds: List<DanmuRelatedUrlData> = emptyList()
 ) : CommonJsonData()
 
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class DanmuRelatedUrlData(
-    val url: String?
+    val url: String = ""
 ) : Parcelable
 

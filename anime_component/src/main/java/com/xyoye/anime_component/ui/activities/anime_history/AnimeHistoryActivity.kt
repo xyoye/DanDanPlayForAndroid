@@ -1,5 +1,7 @@
 package com.xyoye.anime_component.ui.activities.anime_history
 
+import android.view.KeyEvent
+import android.view.Menu
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -9,19 +11,22 @@ import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeHistoryBinding
 import com.xyoye.anime_component.databinding.ItemAnimeBinding
+import com.xyoye.anime_component.ui.widget.AnimeSearchMenus
+import com.xyoye.anime_component.utils.loadAnimeCover
 import com.xyoye.common_component.adapter.addEmptyView
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.gridEmpty
-import com.xyoye.common_component.extension.loadImageWithPalette
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
-import com.xyoye.data_component.data.CloudHistoryData
+import com.xyoye.data_component.bean.AnimeArgument
+import com.xyoye.data_component.data.AnimeData
 import com.xyoye.data_component.data.CloudHistoryListData
 
 @Route(path = RouteTable.Anime.AnimeHistory)
@@ -30,6 +35,9 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
     @Autowired
     @JvmField
     var historyData: CloudHistoryListData? = null
+
+    //  标题栏搜索菜单
+    private var mMenus: AnimeSearchMenus? = null
 
     override fun initViewModel() =
         ViewModelInit(
@@ -47,14 +55,28 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
         initRv()
 
         if (historyData == null) {
-            viewModel.getUserFollow()
+            viewModel.getCloudHistory()
         } else {
             dataBinding.historyRv.setData(historyData!!.playHistoryAnimes)
         }
 
-        viewModel.historyLiveData.observe(this) {
-            dataBinding.historyRv.setData(it.playHistoryAnimes)
+        viewModel.displayHistoriesFlow.collectAtStarted(this) {
+            dataBinding.historyRv.setData(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        mMenus = AnimeSearchMenus.inflater(this, menu).apply {
+            onSearchTextChanged { viewModel.searchAnime(it) }
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mMenus?.handleBackPressed() == true) {
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     private fun initRv() {
@@ -66,12 +88,10 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
                 addEmptyView(R.layout.layout_empty)
 
-                addItem<CloudHistoryData, ItemAnimeBinding>(R.layout.item_anime) {
+                addItem<AnimeData, ItemAnimeBinding>(R.layout.item_anime) {
                     initView { data, _, _ ->
                         itemBinding.apply {
-                            coverIv.loadImageWithPalette(data.imageUrl) {
-                                animeNameTv.setBackgroundColor(it)
-                            }
+                            coverIv.loadAnimeCover(data.imageUrl)
                             animeNameTv.text = data.animeTitle
                             itemLayout.setOnClickListener {
                                 //防止快速点击
@@ -86,7 +106,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
                                 ARouter.getInstance()
                                     .build(RouteTable.Anime.AnimeDetail)
-                                    .withInt("animeId", data.animeId)
+                                    .withParcelable("animeArgument", AnimeArgument.fromData(data))
                                     .withOptionsCompat(options)
                                     .navigation(this@AnimeHistoryActivity)
                             }

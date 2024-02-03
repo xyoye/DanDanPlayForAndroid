@@ -6,13 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.MagnetRepository
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.MagnetData
-import com.xyoye.data_component.data.MagnetResourceData
-import com.xyoye.data_component.data.MagnetSubgroupData
-import com.xyoye.data_component.data.MagnetTypeData
 import com.xyoye.data_component.entity.MagnetScreenEntity
 import com.xyoye.data_component.entity.MagnetSearchHistoryEntity
 import com.xyoye.data_component.enums.MagnetScreenType
@@ -28,60 +25,46 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
 
     val searchText = ObservableField<String>()
 
-    val magnetLiveData = MutableLiveData<MutableList<MagnetData>>()
+    val magnetLiveData = MutableLiveData<List<MagnetData>>()
 
     val searchHistoryLiveData = DatabaseManager.instance.getMagnetSearchHistoryDao().getAll()
 
-    var magnetSubgroupData = MutableLiveData<MutableList<MagnetScreenEntity>>()
-    var magnetTypeData = MutableLiveData<MutableList<MagnetScreenEntity>>()
+    var magnetSubgroupData = MutableLiveData<List<MagnetScreenEntity>>()
+    var magnetTypeData = MutableLiveData<List<MagnetScreenEntity>>()
 
     val domainErrorLiveData = MutableLiveData<Boolean>()
 
     fun search() {
-        val searchTextStr = searchText.get() ?: ""
-        if (searchTextStr.isEmpty()) {
+        val keyword = searchText.get()
+        if (keyword.isNullOrEmpty()) {
             ToastCenter.showWarning("请输入搜索条件")
             return
         }
 
-        if (AppConfig.getMagnetResDomain() == null){
+        val magnetDomain = AppConfig.getMagnetResDomain()
+        if (magnetDomain.isNullOrEmpty()) {
             domainErrorLiveData.postValue(true)
             return
         }
 
-        viewModelScope.launch(context = Dispatchers.Main) {
-            DatabaseManager.instance
-                .getMagnetSearchHistoryDao()
-                .insert(MagnetSearchHistoryEntity(searchTextStr))
-        }
+        viewModelScope.launch {
+            DatabaseManager.instance.getMagnetSearchHistoryDao()
+                .insert(MagnetSearchHistoryEntity(keyword))
 
-        httpRequest<MagnetResourceData>(viewModelScope) {
-            onStart { showLoading() }
+            val typeId = magnetTypeId.get()?.toString().orEmpty()
+            val subgroupId = magnetSubgroupId.get()?.toString().orEmpty()
 
-            api {
-                val subgroupId = magnetSubgroupId.get() ?: -1
-                val typeId = magnetTypeId.get() ?: -1
-                val subgroupIdText = if (subgroupId < 0) "" else subgroupId.toString()
-                val typeIdText = if (typeId < 0) "" else typeId.toString()
+            showLoading()
+            val result = MagnetRepository.searchMagnet(magnetDomain, keyword, typeId, subgroupId)
+            hideLoading()
 
-                //搜索结果
-                Retrofit.resService.searchMagnet(
-                    searchTextStr,
-                    typeIdText,
-                    subgroupIdText
-                )
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess {
-                val resources = it.Resources ?: mutableListOf()
-                magnetLiveData.postValue(resources)
-            }
-
-            onError {
-                showNetworkError(it)
-            }
-
-            onComplete { hideLoading() }
+            val resources = result.getOrNull()?.Resources ?: emptyList()
+            magnetLiveData.postValue(resources)
         }
     }
 
@@ -108,29 +91,27 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             return
         }
 
-        if (AppConfig.getMagnetResDomain() == null){
+        val magnetDomain = AppConfig.getMagnetResDomain()
+        if (magnetDomain.isNullOrEmpty()) {
             domainErrorLiveData.postValue(true)
             return
         }
 
-        httpRequest<MagnetSubgroupData>(viewModelScope) {
+        viewModelScope.launch {
+            showLoading()
+            val result = MagnetRepository.getMagnetSubgroup(magnetDomain)
+            hideLoading()
 
-            onStart { showLoading() }
-
-            api {
-                Retrofit.resService.getMagnetSubgroup()
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess { subgroupData ->
-                val screenEntities = subgroupData.Subgroups.map {
-                    MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.SUBGROUP)
-                }
-                magnetSubgroupData.postValue(screenEntities.toMutableList())
-            }
+            val subgroups = result.getOrNull()?.Subgroups?.map {
+                MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.SUBGROUP)
+            } ?: emptyList()
 
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
+            magnetSubgroupData.postValue(subgroups)
         }
     }
 
@@ -141,29 +122,27 @@ class SearchMagnetFragmentViewModel : BaseViewModel() {
             return
         }
 
-        if (AppConfig.getMagnetResDomain() == null){
+        val magnetDomain = AppConfig.getMagnetResDomain()
+        if (magnetDomain.isNullOrEmpty()) {
             domainErrorLiveData.postValue(true)
             return
         }
 
-        httpRequest<MagnetTypeData>(viewModelScope) {
+        viewModelScope.launch {
+            showLoading()
+            val result = MagnetRepository.getMagnetType(magnetDomain)
+            hideLoading()
 
-            onStart { showLoading() }
-
-            api {
-                Retrofit.resService.getMagnetType()
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onSuccess { typeData ->
-                val screenEntities = typeData.Types.map {
-                    MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.TYPE)
-                }
-                magnetTypeData.postValue(screenEntities.toMutableList())
-            }
+            val types = result.getOrNull()?.Types?.map {
+                MagnetScreenEntity(it.Id, it.Name, MagnetScreenType.TYPE)
+            } ?: emptyList()
+            magnetTypeData.postValue(types)
 
-            onError { showNetworkError(it) }
-
-            onComplete { hideLoading() }
         }
     }
 }

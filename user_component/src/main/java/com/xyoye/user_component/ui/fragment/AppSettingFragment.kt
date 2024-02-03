@@ -4,11 +4,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceDataStore
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.network.Retrofit
+import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.utils.AppUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.user_component.R
@@ -139,7 +143,7 @@ class AppSettingFragment : PreferenceFragmentCompat() {
 
         override fun putString(key: String?, value: String?) {
             when (key) {
-                "backup_domain_address" -> AppConfig.putBackupDomain(value ?: Retrofit.backupUrl)
+                "backup_domain_address" -> AppConfig.putBackupDomain(value ?: Api.DAN_DAN_SPARE)
                 else -> super.putString(key, value)
             }
         }

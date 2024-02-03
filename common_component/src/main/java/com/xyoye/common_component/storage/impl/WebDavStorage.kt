@@ -1,6 +1,7 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
+import com.xyoye.common_component.network.config.HeaderKey
 import com.xyoye.common_component.network.helper.UnsafeOkHttpClient
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
@@ -14,7 +15,7 @@ import com.xyoye.sardine.util.SardineConfig
 import okhttp3.Credentials
 import java.io.InputStream
 import java.net.URI
-import java.util.*
+import java.util.Date
 
 /**
  * Created by xyoye on 2022/12/29
@@ -79,7 +80,7 @@ class WebDavStorage(
         val accountInfo = getAccountInfo()
             ?: return null
         val credential = Credentials.basic(accountInfo.first, accountInfo.second)
-        return mapOf(Pair("Authorization", credential))
+        return mapOf(Pair(HeaderKey.AUTHORIZATION, credential))
     }
 
     override suspend fun test(): Boolean {

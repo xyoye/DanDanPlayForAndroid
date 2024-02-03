@@ -9,11 +9,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class BiliBiliCidData(
     val code: Int,
-    val data: CidData?
-)
-
-@JsonClass(generateAdapter = true)
-data class CidData(
-    val title: String?,
-    val cid: Long
+    val data: EpisodeCidData?
 )

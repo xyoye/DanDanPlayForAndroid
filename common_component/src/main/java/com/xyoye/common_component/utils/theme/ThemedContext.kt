@@ -10,6 +10,8 @@ import com.xyoye.common_component.base.app.BaseApplication
  * Created by xyoye on 2022/10/10
  */
 
+val themeContext: Context get() = ThemedContext.get()
+
 @SuppressLint("StaticFieldLeak")
 object ThemedContext {
 

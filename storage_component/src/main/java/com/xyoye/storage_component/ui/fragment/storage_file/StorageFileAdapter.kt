@@ -9,12 +9,26 @@ import androidx.core.util.Pair
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.launcher.ARouter
-import com.xyoye.common_component.adapter.*
+import com.xyoye.common_component.adapter.BaseAdapter
+import com.xyoye.common_component.adapter.BaseViewHolderCreator
+import com.xyoye.common_component.adapter.addEmptyView
+import com.xyoye.common_component.adapter.addItem
+import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
+import com.xyoye.common_component.adapter.setupVerticalAnimation
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.databinding.ItemStorageFolderBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoTagBinding
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.dp
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.isInvalid
+import com.xyoye.common_component.extension.loadStorageFileCover
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toFile
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.danmu
 import com.xyoye.common_component.storage.file.subtitle
@@ -22,8 +36,12 @@ import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.common_component.weight.BottomActionDialog
+import com.xyoye.common_component.weight.ToastCenter
+import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.bean.VideoTagBean
+import com.xyoye.data_component.enums.FileManagerAction
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
 
@@ -40,8 +58,10 @@ class StorageFileAdapter(
         SCREENCAST("投屏", com.xyoye.common_component.R.drawable.ic_video_cast),
         BIND_DANMU("手动查找弹幕", com.xyoye.common_component.R.drawable.ic_bind_danmu_manual),
         BIND_SUBTITLE("手动查找字幕", com.xyoye.common_component.R.drawable.ic_bind_subtitle),
+        BIND_AUDIO("添加音频文件", com.xyoye.common_component.R.drawable.ic_bind_audio),
         UNBIND_DANMU("移除弹幕绑定", com.xyoye.common_component.R.drawable.ic_unbind_danmu),
-        UNBIND_SUBTITLE("移除字幕绑定", com.xyoye.common_component.R.drawable.ic_unbind_subtitle);
+        UNBIND_SUBTITLE("移除字幕绑定", com.xyoye.common_component.R.drawable.ic_unbind_subtitle),
+        UNBIND_AUDIO("移除音频绑定", com.xyoye.common_component.R.drawable.ic_unbind_subtitle);
 
         fun toAction() = SheetActionBean(this, title, icon)
     }
@@ -86,6 +106,7 @@ class StorageFileAdapter(
                 && oldItem?.fileName() == newItem?.fileName()
                 && oldItem?.childFileCount() == newItem?.childFileCount()
                 && oldItem?.playHistory == newItem?.playHistory
+                && oldItem?.playHistory?.isLastPlay == newItem?.playHistory?.isLastPlay
     }
 
     private fun isDirectoryItem(data: Any) = data is StorageFile && data.isDirectory()
@@ -109,7 +130,7 @@ class StorageFileAdapter(
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.videoItem() = { data: StorageFile ->
         itemBinding.run {
-            coverIv.loadImage(data)
+            coverIv.loadStorageFileCover(data)
 
             titleTv.text = data.fileName()
             titleTv.setTextColor(getTitleColor(data))
@@ -162,6 +183,9 @@ class StorageFileAdapter(
         }
         if (isShowSubtitle(data)) {
             tagList.add(VideoTagBean("字幕", R.color.orange.toResColor()))
+        }
+        if (isShowAudio(data)) {
+            tagList.add(VideoTagBean("音频", R.color.pink.toResColor()))
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
@@ -228,13 +252,19 @@ class StorageFileAdapter(
         return file.playHistory?.subtitlePath?.isNotEmpty() == true
     }
 
+    private fun isShowAudio(file: StorageFile): Boolean {
+        return file.playHistory?.audioPath?.isNotEmpty() == true
+    }
+
     private fun showMoreAction(file: StorageFile, options: ActivityOptionsCompat) {
         BottomActionDialog(activity, getMoreActions(file)) {
             when (it.actionId) {
                 ManageAction.BIND_DANMU -> bindExtraSource(file, true, options)
                 ManageAction.BIND_SUBTITLE -> bindExtraSource(file, false, options)
-                ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, true)
-                ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, false)
+                ManageAction.BIND_AUDIO -> bindAudioSource(file)
+                ManageAction.UNBIND_DANMU -> viewModel.unbindExtraSource(file, TrackType.DANMU)
+                ManageAction.UNBIND_SUBTITLE -> viewModel.unbindExtraSource(file, TrackType.SUBTITLE)
+                ManageAction.UNBIND_AUDIO -> viewModel.unbindExtraSource(file, TrackType.AUDIO)
                 ManageAction.SCREENCAST -> activity.castFile(file)
             }
             return@BottomActionDialog true
@@ -247,11 +277,15 @@ class StorageFileAdapter(
             add(ManageAction.SCREENCAST.toAction())
             add(ManageAction.BIND_DANMU.toAction())
             add(ManageAction.BIND_SUBTITLE.toAction())
+            add(ManageAction.BIND_AUDIO.toAction())
             if (file.danmu != null) {
                 add(ManageAction.UNBIND_DANMU.toAction())
             }
             if (file.subtitle != null) {
                 add(ManageAction.UNBIND_SUBTITLE.toAction())
+            }
+            if (file.playHistory?.audioPath != null) {
+                add(ManageAction.UNBIND_AUDIO.toAction())
             }
         }
 
@@ -274,4 +308,17 @@ class StorageFileAdapter(
         activity,
         Pair(itemLayout, itemLayout.transitionName),
     )
+
+    private fun bindAudioSource(file: StorageFile) {
+        FileManagerDialog(
+            activity,
+            FileManagerAction.ACTION_SELECT_AUDIO
+        ) {
+            if (it.toFile().isInvalid()) {
+                ToastCenter.showError("绑定音频失败，音频不存在或内容为空")
+                return@FileManagerDialog
+            }
+            viewModel.bindAudioSource(file, it)
+        }.show()
+    }
 }

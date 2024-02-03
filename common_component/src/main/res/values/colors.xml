@@ -67,6 +67,9 @@
     <color name="indicator_checked_color">#2095f4</color>
     <color name="indicator_uncheck_color">#999999</color>
 
+    <color name="anime_cover_placeholder">#1F888888</color>
+    <color name="anime_title_background">#AA000000</color>
+
     <color name="gray_10">#F5F5F5</color>
     <color name="gray_20">#EEEEEE</color>
     <color name="gray_30">#E0E0E0</color>

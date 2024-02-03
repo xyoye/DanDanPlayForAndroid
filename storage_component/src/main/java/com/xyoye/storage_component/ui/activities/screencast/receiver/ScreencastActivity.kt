@@ -3,7 +3,6 @@ package com.xyoye.storage_component.ui.activities.screencast.receiver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
-import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.huawei.hms.hmsscankit.ScanUtil
@@ -14,6 +13,7 @@ import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.ScreencastConfig
 import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.weight.ToastCenter
@@ -42,6 +42,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
     override fun initView() {
 
         title = "投屏接收端"
+
+        initVersion()
 
         initListener()
 
@@ -80,17 +82,18 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             startService()
         }
 
-        dataBinding.passwordRadioGp.setOnCheckedChangeListener { _, checkedId ->
-            val isNoPassword = dataBinding.noPasswordRb.id == checkedId
-            dataBinding.passwordEt.isEnabled = isNoPassword.not()
-            dataBinding.refreshPasswordIv.isInvisible = isNoPassword
+        dataBinding.passwordSwitch.setOnCheckedChangeListener { _, isChecked ->
+            dataBinding.passwordEt.isEnabled = isChecked
+            dataBinding.refreshPasswordIv.isVisible = isChecked
 
-            if (isNoPassword.not()) {
+            if (isChecked) {
                 var password = dataBinding.passwordEt.text.toString()
                 if (password.isEmpty()) {
                     password = viewModel.createRandomPwd()
                     dataBinding.passwordEt.setText(password)
                 }
+            } else {
+                dataBinding.passwordEt.setText("")
             }
         }
 
@@ -123,6 +126,11 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         }
     }
 
+    private fun initVersion() {
+        val versionDisplay = "v${ScreencastConstants.version}"
+        dataBinding.versionTv.text = versionDisplay
+    }
+
     private fun initPort() {
         httpPort = ScreencastConfig.getReceiverPort()
         if (httpPort == 0) {
@@ -134,9 +142,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
     private fun initPassword() {
         val isUsePwd = ScreencastConfig.isUseReceiverPassword()
-        dataBinding.noPasswordRb.isChecked = isUsePwd.not()
-        dataBinding.setPasswordRb.isChecked = isUsePwd
-        dataBinding.refreshPasswordIv.isInvisible = isUsePwd.not()
+        dataBinding.passwordSwitch.isChecked = isUsePwd
 
         val receiverPwd = ScreencastConfig.getReceiverPassword()
         if (receiverPwd.isNullOrEmpty() && isUsePwd) {
@@ -149,7 +155,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
     private fun startService() {
         var password: String? = null
-        if (dataBinding.setPasswordRb.isChecked) {
+        if (dataBinding.passwordSwitch.isChecked) {
             val inputPwd = dataBinding.passwordEt.text.toString()
             if (inputPwd.isEmpty() || inputPwd.length != 8) {
                 ToastCenter.showWarning("密码需要设置为8位")
@@ -178,9 +184,9 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         dataBinding.serverSwitchTv.setTextColor(R.color.text_white.toResColor())
         dataBinding.serverSwitchTv.isSelected = false
 
-        dataBinding.setPasswordRb.isEnabled = true
-        dataBinding.noPasswordRb.isEnabled = true
-        dataBinding.passwordEt.isEnabled = true
+        dataBinding.passwordSwitch.isEnabled = true
+        dataBinding.passwordEt.isEnabled = dataBinding.passwordSwitch.isChecked
+        dataBinding.refreshPasswordIv.isVisible = dataBinding.passwordSwitch.isChecked
         dataBinding.refreshPasswordIv.isEnabled = true
         dataBinding.refreshPortIv.isVisible = true
     }
@@ -190,7 +196,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             viewModel.ipList,
             httpPort,
             Build.MODEL,
-            dataBinding.setPasswordRb.isChecked,
+            dataBinding.passwordSwitch.isChecked,
             null
         )
         val qrCodeJson = JsonHelper.toJson(qrCodeContent) ?: ""
@@ -205,9 +211,9 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         dataBinding.serverSwitchTv.setTextColor(R.color.text_black.toResColor())
         dataBinding.serverSwitchTv.isSelected = true
 
-        dataBinding.setPasswordRb.isEnabled = false
-        dataBinding.noPasswordRb.isEnabled = false
+        dataBinding.passwordSwitch.isEnabled = false
         dataBinding.passwordEt.isEnabled = false
+        dataBinding.refreshPasswordIv.isVisible = false
         dataBinding.refreshPasswordIv.isEnabled = false
         dataBinding.refreshPortIv.isVisible = false
     }

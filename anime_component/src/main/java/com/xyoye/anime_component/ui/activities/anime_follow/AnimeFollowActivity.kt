@@ -1,5 +1,7 @@
 package com.xyoye.anime_component.ui.activities.anime_follow
 
+import android.view.KeyEvent
+import android.view.Menu
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -7,13 +9,15 @@ import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeFollowBinding
 import com.xyoye.anime_component.ui.adapter.AnimeAdapter
+import com.xyoye.anime_component.ui.widget.AnimeSearchMenus
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.gridEmpty
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.dp2px
+import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.data_component.data.FollowAnimeData
 
 @Route(path = RouteTable.Anime.AnimeFollow)
@@ -23,6 +27,9 @@ class AnimeFollowActivity : BaseActivity<AnimeFollowViewModel, ActivityAnimeFoll
     @Autowired
     @JvmField
     var followData: FollowAnimeData? = null
+
+    // 标题栏搜索菜单
+    private var mMenus: AnimeSearchMenus? = null
 
     override fun initViewModel() =
         ViewModelInit(
@@ -48,7 +55,7 @@ class AnimeFollowActivity : BaseActivity<AnimeFollowViewModel, ActivityAnimeFoll
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor()
+                    R.color.item_bg_color.toResColor(this@AnimeFollowActivity)
                 )
             )
         }
@@ -59,8 +66,22 @@ class AnimeFollowActivity : BaseActivity<AnimeFollowViewModel, ActivityAnimeFoll
             dataBinding.followRv.setData(followData!!.favorites)
         }
 
-        viewModel.followLiveData.observe(this) {
-            dataBinding.followRv.setData(it.favorites)
+        viewModel.displayFollowedFlow.collectAtStarted(this) {
+            dataBinding.followRv.setData(it)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        mMenus = AnimeSearchMenus.inflater(this, menu).apply {
+            onSearchTextChanged { viewModel.searchAnime(it) }
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mMenus?.handleBackPressed() == true) {
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

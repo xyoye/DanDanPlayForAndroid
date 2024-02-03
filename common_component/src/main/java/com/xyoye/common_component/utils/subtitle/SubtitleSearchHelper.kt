@@ -3,16 +3,18 @@ package com.xyoye.common_component.utils.subtitle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.cachedIn
 import com.xyoye.common_component.config.SubtitleConfig
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.RequestError
-import com.xyoye.common_component.network.request.RequestErrorHandler
+import com.xyoye.common_component.extension.ifNullOrBlank
+import com.xyoye.common_component.network.repository.ResourceRepository
+import com.xyoye.common_component.network.request.NetworkException
 import com.xyoye.data_component.data.SubtitleSourceBean
-import com.xyoye.data_component.data.SubtitleSubData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flatMapLatest
-import retrofit2.HttpException
 
 /**
  * Created by xyoye on 2021/3/25.
@@ -52,51 +54,32 @@ class SubtitleSearchHelper(private val scope: CoroutineScope) {
 
             val page = if (params.key == null) 1 else params.key as Int
 
-            return try {
-                val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
-                val subData =
-                    Retrofit.extService.searchSubtitle(shooterSecret, keyword, page)
-                LoadResult.Page(sub2SubtitleSearchData(subData), null, page + 1)
-            } catch (e: Exception) {
-                //处理509异常
-                if (e is HttpException && e.code() == 509) {
-                    val limitError = RequestError(509, "请求频率过高")
-                    LoadResult.Error(limitError)
+            val shooterSecret = SubtitleConfig.getShooterSecret() ?: ""
+            val result = ResourceRepository.searchSubtitle(shooterSecret, keyword, page)
+            if (result.isFailure) {
+                val exception = result.exceptionOrNull()
+                return if (exception is NetworkException && exception.code == 509) {
+                    LoadResult.Error(IllegalStateException("请求频率过高，请点击重试"))
                 } else {
-                    LoadResult.Error(RequestErrorHandler(e).handlerError())
+                    LoadResult.Error(IllegalStateException("加载失败，请点击重试"))
                 }
             }
-        }
 
-        /**
-         * 搜索字幕转显示数据类型
-         */
-        private fun sub2SubtitleSearchData(subData: SubtitleSubData?): MutableList<SubtitleSourceBean> {
-            return mutableListOf<SubtitleSourceBean>().apply {
-                val subList = subData?.sub?.subs
-                if ((subList?.size ?: 0) > 0) {
-                    for (subDetailData in subList!!) {
-                        val subtitleName =
-                            if (subDetailData.native_name.isNullOrEmpty())
-                                subDetailData.videoname
-                            else
-                                subDetailData.native_name
-                        add(
-                            SubtitleSourceBean(
-                                subDetailData.id,
-                                subtitleName,
-                                subDetailData.upload_time,
-                                subDetailData.subtype,
-                                subDetailData.lang?.desc
-                            )
-                        )
-                    }
-                }
-            }
+            val subtitleData = result.getOrNull()?.sub?.subs?.map {
+                SubtitleSourceBean(
+                    it.id,
+                    it.native_name.ifNullOrBlank { it.videoname.orEmpty() },
+                    it.upload_time,
+                    it.subtype,
+                    it.lang?.desc
+                )
+            } ?: emptyList()
+
+            return LoadResult.Page(subtitleData, null, page + 1)
         }
 
         override fun getRefreshKey(state: PagingState<Int, SubtitleSourceBean>): Int? {
-           return null
+            return null
         }
     }
 }

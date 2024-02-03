@@ -1,34 +1,54 @@
 package com.xyoye.data_component.bean
 
+import android.net.Uri
+import com.xyoye.data_component.enums.TrackType
+
 /**
  * Created by xyoye on 2020/11/16.
  */
 
 data class VideoTrackBean(
-    //流名称
-    val trackName: String,
+    // 轨道ID
+    val id: String? = null,
 
-    //是否为音频流
-    val isAudio: Boolean,
+    // 轨道名称
+    val name: String,
 
-    //流ID
-    val trackId: Int,
+    // 轨道类型
+    val type: TrackType,
 
-    //是否被选中
-    var isChecked: Boolean,
+    // 外部轨道资源
+    val trackResource: Any? = null,
 
-    //渲染器ID（exo）
-    val renderId: Int = 0,
+    // 是否被选中
+    val selected: Boolean = false,
 
-    //分组ID（exo）
-    val trackGroupId: Int = 0,
+    // 是否是禁用轨道
+    val disable: Boolean = false
+) {
 
-    //外挂字幕路径
-    val mSourceUrl: String? = null,
+    companion object {
+        fun internal(id: String, name: String, type: TrackType, selected: Boolean): VideoTrackBean {
+            return VideoTrackBean(id = id, name = name, type = type, selected = selected)
+        }
 
-    //是否为外挂字幕
-    val isExTrack: Boolean = false,
+        fun subtitle(subtitlePath: String): VideoTrackBean {
+            val name = Uri.parse(subtitlePath).lastPathSegment.orEmpty()
+            return VideoTrackBean(name = name, type = TrackType.SUBTITLE, trackResource = subtitlePath)
+        }
 
-    //当前流是否被禁用
-    val isDisable: Boolean = false
-)
+        fun danmu(danmu: LocalDanmuBean): VideoTrackBean {
+            val name = Uri.parse(danmu.danmuPath).lastPathSegment.orEmpty()
+            return VideoTrackBean(name = name, type = TrackType.DANMU, trackResource = danmu)
+        }
+
+        fun audio(audioPath: String): VideoTrackBean {
+            val name = Uri.parse(audioPath).lastPathSegment.orEmpty()
+            return VideoTrackBean(name = name, type = TrackType.AUDIO, trackResource = audioPath)
+        }
+
+        fun disable(type: TrackType, selected: Boolean): VideoTrackBean {
+            return VideoTrackBean(name = "禁用", type = type, selected = selected, disable = true)
+        }
+    }
+}

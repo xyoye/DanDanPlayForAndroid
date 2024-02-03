@@ -4,15 +4,21 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.lifecycle.LiveData
 import com.xyoye.common_component.utils.formatDuration
-import com.xyoye.data_component.bean.DanmuSourceContentBean
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.DanmuBlockEntity
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.base.GestureVideoController
 import com.xyoye.player.controller.danmu.DanmuController
 import com.xyoye.player.controller.setting.SettingController
 import com.xyoye.player.controller.subtitle.SubtitleController
-import com.xyoye.player.controller.video.*
+import com.xyoye.player.controller.video.LoadingView
+import com.xyoye.player.controller.video.PlayerBottomView
+import com.xyoye.player.controller.video.PlayerControlView
+import com.xyoye.player.controller.video.PlayerGestureView
+import com.xyoye.player.controller.video.PlayerPopupControlView
+import com.xyoye.player.controller.video.PlayerTopView
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.utils.MessageTime
 import com.xyoye.player_component.utils.BatteryHelper
@@ -49,9 +55,8 @@ class VideoController(
     private var lastPlayPosition = 0L
     private var lastVideoSpeed: Float? = null
 
-    private var mDanmuSourceChanged: ((String, Int) -> Unit)? = null
-    private var mSubtitleSourceChanged: ((String) -> Unit)? = null
     private var switchVideoSourceBlock: ((Int) -> Unit)? = null
+    private var trackAddedBlock: ((VideoTrackBean) -> Unit)? = null
 
     init {
         addControlComponent(mDanmuController.getView())
@@ -73,22 +78,8 @@ class VideoController(
         playerControlView.showMessage(text, time)
     }
 
-    override fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int) {
-        val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getDanmuPath() == danmuPath
-            && videoSource.getEpisodeId() == episodeId
-        ) {
-            return
-        }
-        mDanmuSourceChanged?.invoke(danmuPath, episodeId)
-    }
-
-    override fun onSubtitleSourceUpdate(subtitlePath: String) {
-        val videoSource = mControlWrapper.getVideoSource()
-        if (videoSource.getSubtitlePath() == subtitlePath) {
-            return
-        }
-        mSubtitleSourceChanged?.invoke(subtitlePath)
+    override fun setTrackAdded(track: VideoTrackBean) {
+        trackAddedBlock?.invoke(track)
     }
 
     override fun onPopupModeChanged(isPopup: Boolean) {
@@ -163,19 +154,10 @@ class VideoController(
     }
 
     /**
-     * 设置初始弹幕路径
+     * 添加扩展轨道
      */
-    fun setDanmuPath(url: String?) {
-        mControlWrapper.onDanmuSourceChanged(url ?: "")
-    }
-
-    /**
-     * 设置初始字幕路径
-     */
-    fun setSubtitlePath(url: String?) {
-        if (url.isNullOrEmpty())
-            return
-        mControlWrapper.addSubtitleStream(url)
+    fun addExtendTrack(track: VideoTrackBean) {
+        mControlWrapper.addTrack(track)
     }
 
     /**
@@ -230,17 +212,10 @@ class VideoController(
     }
 
     /**
-     * 弹幕资源更新回调
+     * 监听轨道添加完成
      */
-    fun observeDanmuSourceChanged(block: (danmuPath: String, episodeId: Int) -> Unit) {
-        mDanmuSourceChanged = block
-    }
-
-    /**
-     * 字幕资源更新回调
-     */
-    fun observeSubtitleSourceChanged(block: (subtitle: String) -> Unit) {
-        mSubtitleSourceChanged = block
+    fun observerTrackAdded(block: (VideoTrackBean) -> Unit) {
+        trackAddedBlock = block
     }
 
     /**
@@ -277,8 +252,8 @@ class VideoController(
      */
     fun observerDanmuSearch(
         search: (String) -> Unit,
-        download: (DanmuSourceContentBean) -> Unit,
-        searchResult: () -> LiveData<List<DanmuSourceContentBean>>
+        download: (DanmuEpisodeData) -> Unit,
+        searchResult: () -> LiveData<List<DanmuEpisodeData>>
     ) {
         mSettingController.setDanmuSearch(search, download, searchResult)
     }

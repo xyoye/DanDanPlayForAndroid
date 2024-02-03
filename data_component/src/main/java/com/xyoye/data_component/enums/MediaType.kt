@@ -70,6 +70,12 @@ enum class MediaType(
         "external_storage",
         "设备存储库",
         cover = R.drawable.ic_external_storage
+    ),
+
+    ALSIT_STORAGE(
+        "alist_storage",
+        "Alist存储库",
+        cover = R.drawable.ic_alist_storage
     );
 
     companion object {
@@ -84,6 +90,7 @@ enum class MediaType(
                 "remote_storage" -> REMOTE_STORAGE
                 "screen_cast" -> SCREEN_CAST
                 "external_storage" -> EXTERNAL_STORAGE
+                "alist_storage" -> ALSIT_STORAGE
                 else -> OTHER_STORAGE
             }
         }

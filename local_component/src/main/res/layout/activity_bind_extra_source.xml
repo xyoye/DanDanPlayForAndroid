@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tab_layout" />
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewpager"
             android:layout_width="0dp"
             android:layout_height="0dp"

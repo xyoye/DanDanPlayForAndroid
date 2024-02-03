@@ -1,17 +1,21 @@
 package com.xyoye.player.controller.setting
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.recyclerview.widget.GridLayoutManager
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.nextItemIndex
+import com.xyoye.common_component.extension.previousItemIndex
+import com.xyoye.common_component.extension.requestIndexChildFocus
+import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
 import com.xyoye.data_component.enums.SettingViewType
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.info.SettingAction
@@ -205,46 +209,64 @@ class PlayerSettingView(
         var selected = false
 
         when (item.action) {
+            SettingAction.AUDIO_TRACK -> {
+                selected = mControlWrapper.getVideoSource().getAudioPath()?.isNotEmpty() == true
+            }
+
             SettingAction.VIDEO_ASPECT -> {
                 selected = PlayerInitializer.screenScale != VideoScreenScale.SCREEN_SCALE_DEFAULT
             }
+
             SettingAction.VIDEO_SPEED -> {
-                selected =
-                    PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
+                selected = PlayerInitializer.Player.videoSpeed != PlayerInitializer.Player.DEFAULT_SPEED
+                    || PlayerInitializer.Player.pressVideoSpeed != PlayerInitializer.Player.DEFAULT_PRESS_SPEED
             }
+
             SettingAction.BACKGROUND_PLAY -> {
                 selected = PlayerConfig.isBackgroundPlay()
             }
-            SettingAction.DANMU_LOAD -> {
-                selected = TextUtils.isEmpty(mControlWrapper.getDanmuUrl()).not()
+
+            SettingAction.DANMU_TRACK -> {
+                selected = mControlWrapper.getVideoSource().getDanmu() != null
             }
+
             SettingAction.DANMU_STYLE -> {
                 selected = PlayerInitializer.Danmu.size != PlayerInitializer.Danmu.DEFAULT_SIZE
-                        || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
-                        || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
-                        || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
+                    || PlayerInitializer.Danmu.alpha != PlayerInitializer.Danmu.DEFAULT_ALPHA
+                    || PlayerInitializer.Danmu.stoke != PlayerInitializer.Danmu.DEFAULT_STOKE
+                    || PlayerInitializer.Danmu.speed != PlayerInitializer.Danmu.DEFAULT_SPEED
             }
+
             SettingAction.DANMU_TIME -> {
                 selected =
                     PlayerInitializer.Danmu.offsetPosition != PlayerInitializer.Danmu.DEFAULT_POSITION
             }
+
+            SettingAction.SUBTITLE_TRACK -> {
+                selected = mControlWrapper.getVideoSource().getSubtitlePath() != null
+            }
+
             SettingAction.SUBTITLE_STYLE -> {
                 selected =
                     PlayerInitializer.Subtitle.textSize != PlayerInitializer.Subtitle.DEFAULT_SIZE
-                            || PlayerInitializer.Subtitle.strokeWidth != PlayerInitializer.Subtitle.DEFAULT_STROKE
-                            || PlayerInitializer.Subtitle.textColor != PlayerInitializer.Subtitle.DEFAULT_TEXT_COLOR
-                            || PlayerInitializer.Subtitle.strokeColor != PlayerInitializer.Subtitle.DEFAULT_STROKE_COLOR
+                        || PlayerInitializer.Subtitle.strokeWidth != PlayerInitializer.Subtitle.DEFAULT_STROKE
+                        || PlayerInitializer.Subtitle.textColor != PlayerInitializer.Subtitle.DEFAULT_TEXT_COLOR
+                        || PlayerInitializer.Subtitle.strokeColor != PlayerInitializer.Subtitle.DEFAULT_STROKE_COLOR
             }
+
             SettingAction.SUBTITLE_TIME -> {
                 selected =
                     PlayerInitializer.Subtitle.offsetPosition != PlayerInitializer.Subtitle.DEFAULT_POSITION
             }
+
             SettingAction.SCREEN_ORIENTATION -> {
                 selected = PlayerInitializer.isOrientationEnabled
             }
+
             SettingAction.NEXT_EPISODE -> {
                 selected = PlayerInitializer.Player.isAutoPlayNext
             }
+
             else -> {}
         }
         item.selected = selected
@@ -258,61 +280,70 @@ class PlayerSettingView(
                 PlayerConfig.putAllowOrientationChange(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
+
             SettingAction.BACKGROUND_PLAY -> {
                 val newStatus = PlayerConfig.isBackgroundPlay().not()
                 PlayerConfig.putBackgroundPlay(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
+
             SettingAction.NEXT_EPISODE -> {
                 val newStatus = !PlayerInitializer.Player.isAutoPlayNext
                 PlayerInitializer.Player.isAutoPlayNext = newStatus
                 PlayerConfig.putAutoPlayNext(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
+
             SettingAction.VIDEO_SPEED -> {
                 mControlWrapper.showSettingView(SettingViewType.VIDEO_SPEED)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.VIDEO_ASPECT -> {
                 mControlWrapper.showSettingView(SettingViewType.VIDEO_ASPECT)
                 onSettingVisibilityChanged(false)
             }
-            SettingAction.AUDIO_STREAM -> {
-                mControlWrapper.showSettingView(SettingViewType.AUDIO_STREAM)
+
+            SettingAction.AUDIO_TRACK -> {
+                mControlWrapper.showSettingView(SettingViewType.TRACKS, TrackType.AUDIO)
                 onSettingVisibilityChanged(false)
             }
-            SettingAction.DANMU_LOAD -> {
-                mControlWrapper.showSettingView(SettingViewType.LOAD_DANMU_SOURCE)
+
+            SettingAction.DANMU_TRACK -> {
+                mControlWrapper.showSettingView(SettingViewType.TRACKS, TrackType.DANMU)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.DANMU_CONFIG -> {
                 mControlWrapper.showSettingView(SettingViewType.DANMU_CONFIGURE)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.DANMU_STYLE -> {
                 mControlWrapper.showSettingView(SettingViewType.DANMU_STYLE)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.DANMU_TIME -> {
                 mControlWrapper.showSettingView(SettingViewType.DANMU_OFFSET_TIME)
                 onSettingVisibilityChanged(false)
             }
-            SettingAction.SUBTITLE_LOAD -> {
-                mControlWrapper.showSettingView(SettingViewType.LOAD_SUBTITLE_SOURCE)
+
+            SettingAction.SUBTITLE_TRACK -> {
+                mControlWrapper.showSettingView(SettingViewType.TRACKS, TrackType.SUBTITLE)
                 onSettingVisibilityChanged(false)
             }
-            SettingAction.SUBTITLE_STREAM -> {
-                mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STREAM)
-                onSettingVisibilityChanged(false)
-            }
+
             SettingAction.SUBTITLE_STYLE -> {
                 mControlWrapper.showSettingView(SettingViewType.SUBTITLE_STYLE)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.SUBTITLE_TIME -> {
                 mControlWrapper.showSettingView(SettingViewType.SUBTITLE_OFFSET_TIME)
                 onSettingVisibilityChanged(false)
             }
+
             SettingAction.SCREEN_SHOT -> {
                 mControlWrapper.showSettingView(SettingViewType.SCREEN_SHOT)
                 onSettingVisibilityChanged(false)

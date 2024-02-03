@@ -17,22 +17,12 @@ interface InterSettingController {
     /**
      * 根据 viewType 显示对应的视图
      */
-    fun showSettingView(viewType: SettingViewType)
+    fun showSettingView(viewType: SettingViewType, extra: Any? = null)
 
     /**
      * 隐藏所有面板设置类视图
      */
     fun hideSettingView()
-
-    /**
-     * 切换弹幕资源
-     */
-    fun onDanmuSourceChanged()
-
-    /**
-     * 切换字幕资源
-     */
-    fun onSubtitleSourceChanged()
 
     fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean
 

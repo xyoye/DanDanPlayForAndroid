@@ -2,10 +2,12 @@ package com.xyoye.player.controller.danmu
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.bean.SendDanmuBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player.wrapper.InterDanmuController
 
@@ -16,10 +18,6 @@ import com.xyoye.player.wrapper.InterDanmuController
 class DanmuController(context: Context) : InterDanmuController {
 
     private val danmuView = DanmuView(context)
-
-    override fun getDanmuUrl(): String? {
-        return danmuView.mUrl
-    }
 
     override fun updateDanmuSize() {
         danmuView.updateDanmuSize()
@@ -62,16 +60,11 @@ class DanmuController(context: Context) : InterDanmuController {
     }
 
     override fun toggleDanmuVisible() {
-        danmuView.toggleVis()
-    }
-
-    override fun onDanmuSourceChanged(filePath: String, episodeId: Int) {
-        danmuView.release()
-        danmuView.loadDanmu(filePath)
+        danmuView.toggleVisible()
     }
 
     override fun allowSendDanmu(): Boolean {
-        return danmuView.allowSendDanmu()
+        return danmuView.isDanmuLoaded()
     }
 
     override fun addDanmuToView(danmuBean: SendDanmuBean) {
@@ -96,7 +89,7 @@ class DanmuController(context: Context) : InterDanmuController {
         }
     }
 
-    override fun seekTo(timeMs: Long, isPlaying: Boolean){
+    override fun seekTo(timeMs: Long, isPlaying: Boolean) {
         danmuView.seekTo(timeMs, isPlaying)
     }
 
@@ -106,6 +99,29 @@ class DanmuController(context: Context) : InterDanmuController {
 
     override fun danmuRelease() {
         danmuView.release()
+    }
+
+    override fun supportAddTrack(type: TrackType): Boolean {
+        return type == TrackType.DANMU
+    }
+
+    override fun addTrack(track: VideoTrackBean): Boolean {
+        return danmuView.addTrack(track)
+    }
+
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        return danmuView.getAddedTrack()?.let { listOf(it) } ?: emptyList()
+    }
+
+    override fun selectTrack(track: VideoTrackBean) {
+        danmuView.setTrackSelected(true)
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        if (supportAddTrack(type).not()) {
+            return
+        }
+        danmuView.setTrackSelected(false)
     }
 
     fun setCloudBlockLiveData(cloudBlockLiveData: LiveData<MutableList<DanmuBlockEntity>>?) {

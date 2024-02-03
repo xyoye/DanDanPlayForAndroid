@@ -1,14 +1,12 @@
 package com.xyoye.player.controller.subtitle
 
 import android.content.Context
-import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.xyoye.common_component.utils.getFileNameNoExtension
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterControllerView
 import com.xyoye.player.info.PlayerInitializer
@@ -30,16 +28,23 @@ class ExternalSubtitleView(
 
     private val lifecycleScope = (context as AppCompatActivity).lifecycleScope
 
-    // 外挂字幕流
-    private val externalSubtitleStream = mutableListOf<VideoStreamBean>()
-
     // 外挂字幕管理器
     private val mSubtitleManager = ExternalSubtitleManager()
 
     // 寻找字幕的Job
     private var mFindSubtitleJob: Job? = null
 
-    private var externalTrackId = -2
+    // 当前已添加的字幕轨道，不一定被成功加载或选中
+    private var mAddedTrack: VideoTrackBean? = null
+
+    // 当前字幕轨道是否被选中
+    private var mTrackSelected = false
+
+    // 字幕是否加载完成
+    private var mSubtitleLoaded = false
+
+    // 是否可以执行寻找字幕
+    private val canFindSubtitle: Boolean get() = mSubtitleLoaded && mTrackSelected
 
     override fun attach(controlWrapper: ControlWrapper) {
         mControlWrapper = controlWrapper
@@ -57,9 +62,11 @@ class ExternalSubtitleView(
             PlayState.STATE_IDLE -> {
                 mSubtitleManager.release()
             }
+
             PlayState.STATE_COMPLETED, PlayState.STATE_ERROR, PlayState.STATE_PAUSED -> {
                 sendEmptySubtitle()
             }
+
             else -> {
             }
         }
@@ -69,16 +76,11 @@ class ExternalSubtitleView(
         findSubtitle(position)
     }
 
-    override fun onLockStateChanged(isLocked: Boolean) {
-    }
-
-    override fun onVideoSizeChanged(videoSize: Point) {
-    }
-
-    override fun onPopupModeChanged(isPopup: Boolean) {
-    }
-
     private fun findSubtitle(position: Long) {
+        if (canFindSubtitle.not()) {
+            return
+        }
+
         mFindSubtitleJob?.cancel()
         mFindSubtitleJob = lifecycleScope.launch(Dispatchers.IO) {
             val subtitleTime = position + PlayerInitializer.Subtitle.offsetPosition
@@ -94,50 +96,53 @@ class ExternalSubtitleView(
         mControlWrapper.onSubtitleTextOutput(MixedSubtitle.fromText(""))
     }
 
-    fun addSubtitleStream(filePath: String) {
-        val streamAdded = externalSubtitleStream.any { it.externalStreamPath == filePath }
-        if (streamAdded) {
-            return
+    fun addTrack(track: VideoTrackBean): Boolean {
+        // 外挂字幕地址无效，视为添加失败
+        val subtitlePath = track.type.getSubtitle(track.trackResource)
+        if (subtitlePath.isNullOrEmpty()) {
+            return false
         }
 
-        val trackName = getFileNameNoExtension(filePath)
-        val subtitleStream = VideoStreamBean(
-            trackName = trackName,
-            isAudio = false,
-            trackId = externalTrackId,
-            isExternalStream = true,
-            externalStreamPath = filePath,
-            isChecked = true
-        )
-        externalSubtitleStream.forEach { it.isChecked = false }
-        externalSubtitleStream.add(subtitleStream)
-        mControlWrapper.selectStream(subtitleStream)
-
-        // 外挂字幕流ID向下减小
-        externalTrackId--
-    }
-
-    fun selectSubtitleStream(stream: VideoStreamBean) {
-        sendEmptySubtitle()
-        mSubtitleManager.release()
-
-        if (stream.isExternalStream.not()) {
-            return
-        }
-        lifecycleScope.launch(Dispatchers.IO) {
-            mSubtitleManager.loadSubtitle(stream.externalStreamPath)
-            // 仅当外挂流字幕路径不为空时，才通知外部更新字幕源
-            if (stream.externalStreamPath.isNotEmpty()) {
-                mControlWrapper.onSubtitleSourceUpdate(stream.externalStreamPath)
+        // 当前已加载的字幕地址与新添加的字幕地址相同，视为添加失败
+        val loadedTrack = mAddedTrack
+        if (loadedTrack != null) {
+            val loadedSubtitle = loadedTrack.type.getSubtitle(loadedTrack.trackResource)
+            if (subtitlePath == loadedSubtitle) {
+                return false
             }
         }
+
+        // 记录轨道数据
+        mAddedTrack = track
+        // 异步加载字幕
+        loadSubtitleAsync(subtitlePath)
+        return true
     }
 
-    fun getExternalSubtitleStream(): List<VideoStreamBean> {
-        return externalSubtitleStream
+    fun getAddedTrack(): VideoTrackBean? {
+        return mAddedTrack?.copy(selected = mTrackSelected)
+    }
+
+    fun setTrackSelected(selected: Boolean) {
+        mTrackSelected = selected
     }
 
     fun updateOffsetTime() {
+        // 当字幕偏移时间改变时，可以立即重新寻找字幕
+        // 但由于当前是每500ms寻找一次字幕，所以忽略此操作
+    }
 
+    private fun loadSubtitleAsync(subtitlePath: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            // 设置加载状态未完成
+            mSubtitleLoaded = false
+            // 释放旧的已加载的弹幕数据
+            mSubtitleManager.release()
+            // 发送一条空字幕，用于清空上一条显示的字幕
+            sendEmptySubtitle()
+
+            // 加载字幕
+            mSubtitleLoaded = mSubtitleManager.loadSubtitle(subtitlePath)
+        }
     }
 }

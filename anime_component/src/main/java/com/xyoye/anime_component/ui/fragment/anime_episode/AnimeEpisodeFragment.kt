@@ -1,44 +1,47 @@
 package com.xyoye.anime_component.ui.fragment.anime_episode
 
-import android.os.Bundle
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
+import androidx.fragment.app.viewModels
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentAnimeEpisodeBinding
 import com.xyoye.anime_component.databinding.ItemAnimeEpisodeBinding
-import com.xyoye.common_component.adapter.BaseAdapter
+import com.xyoye.anime_component.ui.activities.anime_detail.AnimeDetailActivity
+import com.xyoye.anime_component.ui.activities.anime_detail.AnimeDetailViewModel
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
-import com.xyoye.common_component.utils.view.ItemDecorationSpace
-import com.xyoye.data_component.data.BangumiData
+import com.xyoye.common_component.extension.vertical
+import com.xyoye.common_component.weight.BottomActionDialog
+import com.xyoye.common_component.weight.dialog.CommonDialog
+import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.EpisodeData
-import java.util.regex.Pattern
 
 class AnimeEpisodeFragment :
     BaseFragment<AnimeEpisodeFragmentViewModel, FragmentAnimeEpisodeBinding>() {
 
-    private var episodeAsc = true
-    private val episodes = mutableListOf<EpisodeData>()
+    private val parentViewModel: AnimeDetailViewModel by viewModels(ownerProducer = { mAttachActivity })
 
-    companion object {
-        fun newInstance(bangumiData: BangumiData): AnimeEpisodeFragment {
-            val episodeFragment = AnimeEpisodeFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("bangumi_data", bangumiData)
-            episodeFragment.arguments = bundle
-            return episodeFragment
+    // 番剧详情Activity
+    private val animeDetailActivity get() = mAttachActivity as? AnimeDetailActivity
+
+    // 返回事件拦截器
+    private val backPressInterceptor: () -> Boolean = Interceptor@{
+        if (viewModel.markModeFlow.value) {
+            viewModel.toggleMarkMode(false)
+            return@Interceptor true
         }
+        return@Interceptor false
     }
-
-    private lateinit var episodeAdapter: BaseAdapter
 
     override fun initViewModel() =
         ViewModelInit(
@@ -50,33 +53,54 @@ class AnimeEpisodeFragment :
 
     override fun initView() {
 
-        episodeAdapter = buildAdapter {
+        val episodeAdapter = buildAdapter {
+            setupDiffUtil {
+                areItemsTheSame { old: Any, new: Any ->
+                    val oldItem = old as? EpisodeData
+                    val newItem = new as? EpisodeData
+                    oldItem?.episodeId == newItem?.episodeId
+                }
+            }
+
             addItem<EpisodeData, ItemAnimeEpisodeBinding>(R.layout.item_anime_episode) {
                 initView { data, _, _ ->
                     itemBinding.apply {
-                        //提取剧集内容
-                        val episodeInfo = getEpisodeInfo(data.episodeTitle)
-                        episodeNumberTv.text = episodeInfo[0]
-                        episodeTitleTv.text = episodeInfo[1]
+                        // 剧集信息
+                        tvEpisodeTitle.text = data.title
+                        tvEpisodeSubtitle.text = data.subtitle
 
-                        //展示最后观看时间
-                        lastWatchTv.isGone = data.lastWatched == null
-                        lastWatchTv.text = data.lastWatched
+                        // 观看时间
+                        groupWatchTime.isGone = data.watchTime.isNullOrEmpty()
+                        tvWatchTime.text = data.watchTime
+
+                        // 已看状态
+                        tvEpisodeTitle.isSelected = data.watched
+                        cbEpisodeMark.isChecked = data.isMarked
+
+                        // 按钮的显示
+                        ivEpisodePlay.isVisible = data.inMarkMode.not() && data.histories.isNotEmpty()
+                        ivEpisodeMarkViewed.isVisible = data.inMarkMode.not() && data.markAble
+                        flEpisodeMark.isVisible = data.inMarkMode
+
+                        ivEpisodeMarkViewed.setOnClickListener {
+                            considerMarkAsViewed(data)
+                        }
 
                         itemLayout.setOnClickListener {
-                            val episodeNum = getEpisodeNum(episodeInfo[0])
-                            ARouter.getInstance()
-                                .build(RouteTable.Anime.Search)
-                                .withString(
-                                    "animeTitle",
-                                    viewModel.animeTitleField.get()
-                                )
-                                .withString(
-                                    "searchWord",
-                                    "${viewModel.animeSearchWordField.get()} $episodeNum"
-                                )
-                                .withBoolean("isSearchMagnet", true)
-                                .navigation()
+                            if (viewModel.markModeFlow.value) {
+                                viewModel.markEpisodeById(data.episodeId)
+                            } else {
+                                searchEpisodeResource(data)
+                            }
+                        }
+
+                        itemLayout.setOnLongClickListener {
+                            viewModel.toggleMarkMode(true)
+                            return@setOnLongClickListener true
+                        }
+
+                        ivEpisodePlay.setOnClickListener {
+                            playStorageEpisode(data)
                         }
                     }
 
@@ -85,87 +109,131 @@ class AnimeEpisodeFragment :
         }
 
         dataBinding.episodeRv.apply {
-            layoutManager = grid(2)
-
+            layoutManager = vertical()
             adapter = episodeAdapter
-
-            addItemDecoration(ItemDecorationSpace(10))
         }
 
         initObserver()
 
-        arguments?.run {
-            getParcelable<BangumiData>("bangumi_data")?.let {
-                viewModel.setBangumiData(it)
-            }
-        }
+        initListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        animeDetailActivity?.registerBackPressInterceptor(backPressInterceptor)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        animeDetailActivity?.unregisterBackPressInterceptor()
     }
 
     private fun initObserver() {
-        viewModel.episodeLiveData.observe(this) {
-            episodeAsc = true
-            episodes.clear()
-            episodes.addAll(it)
-            dataBinding.episodeRv.setData(episodes)
+        parentViewModel.animeDetailLiveData.observe(this) {
+            viewModel.setBangumiData(it)
         }
 
-        viewModel.episodeSortLiveData.observe(this) {
-            episodeAsc = !episodeAsc
-            val color = if (episodeAsc) R.color.text_gray else R.color.text_blue
+        viewModel.displayEpisodesFlow.collectAtStarted(this) {
+            dataBinding.episodeRv.setData(it)
+        }
 
-            val colorState = AppCompatResources.getColorStateList(mAttachActivity, color)
-            ImageViewCompat.setImageTintList(dataBinding.sortIv, colorState)
+        viewModel.ascendingFlow.collectAtStarted(this) {
+            updateLayoutBySort(it)
+        }
 
-            dataBinding.sortTv.text = if (episodeAsc) "正序" else "倒序"
-            dataBinding.sortTv.setTextColorRes(color)
+        viewModel.markModeFlow.collectAtStarted(this) {
+            dataBinding.actionLayout.isVisible = it
+            dataBinding.titleCl.isVisible = it.not()
+        }
 
-            episodes.reverse()
-            dataBinding.episodeRv.setData(episodes)
+        viewModel.refreshBangumiFlow.collectAtStarted(this) {
+            animeDetailActivity?.refreshAnimeDetail()
+        }
+
+        viewModel.playVideoFLow.collectAtStarted(this) {
+            ARouter.getInstance()
+                .build(RouteTable.Player.Player)
+                .navigation()
+        }
+    }
+
+    private fun initListener() {
+        dataBinding.tvMarkAll.setOnClickListener {
+            viewModel.markAllEpisode()
+        }
+
+        dataBinding.tvInvertMark.setOnClickListener {
+            viewModel.reverseEpisodeMark()
+        }
+
+        dataBinding.tvExitMark.setOnClickListener {
+            viewModel.toggleMarkMode(false)
+        }
+
+        dataBinding.tvSetRead.setOnClickListener {
+            viewModel.submitMarkedEpisodesViewed()
         }
     }
 
     /**
-     * 提取剧集中的集数，用于搜索
-     *
-     * 例：第5话  ->  5
+     * 根据排序方式改变布局
      */
-    private fun getEpisodeNum(episodeText: String?): String {
-        if (episodeText == null)
-            return ""
-        val pattern = Pattern.compile("第(\\d+)话")
-        val matcher = pattern.matcher(episodeText)
-        if (matcher.find()) {
-            return matcher.group().run {
-                var episode = substring(1, length - 1)
-                if (episode.length == 1){
-                    episode = "0$episode"
-                }
-                episode
-            }
-        }
-        return ""
+    private fun updateLayoutBySort(ascending: Boolean) {
+        val color = if (ascending) R.color.text_gray else R.color.text_blue
+        val colorState = AppCompatResources.getColorStateList(mAttachActivity, color)
+        ImageViewCompat.setImageTintList(dataBinding.sortIv, colorState)
+
+        dataBinding.sortTv.text = if (ascending) "正序" else "倒序"
+        dataBinding.sortTv.setTextColorRes(color)
     }
 
     /**
-     * 提取剧集名称及话数
+     * 搜索剧集资源
      */
-    private fun getEpisodeInfo(episodeTitle: String?): Array<String> {
-        val episodeInfo = episodeTitle?.split("\\s".toRegex())
-        if (episodeInfo != null) {
-            return when {
-                episodeInfo.size > 1 -> {
-                    val title = episodeTitle.substring(episodeInfo[0].length + 1)
-                    arrayOf(episodeInfo[0], title)
-                }
-                episodeInfo.size == 1 -> {
-                    arrayOf(episodeInfo[0], "未知剧集")
-                }
-                else -> {
-                    arrayOf("第1话", "未知剧集")
-                }
+    private fun searchEpisodeResource(data: EpisodeData) {
+        ARouter.getInstance()
+            .build(RouteTable.Anime.Search)
+            .withString(
+                "animeTitle",
+                viewModel.animeTitleField.get()
+            )
+            .withString(
+                "searchWord",
+                "${viewModel.animeSearchWordField.get()} ${data.searchEpisodeNum}"
+            )
+            .withBoolean("isSearchMagnet", true)
+            .navigation()
+    }
+
+    /**
+     * 考虑标记为已看
+     */
+    private fun considerMarkAsViewed(data: EpisodeData) {
+        CommonDialog.Builder(mAttachActivity).apply {
+            content = "确认标记 ${data.title} 为已看？"
+            addPositive {
+                viewModel.submitEpisodesViewed(listOf(data.episodeId))
+                it.dismiss()
             }
-        } else {
-            return arrayOf("第1话", "未知剧集")
+            addNegative {
+                it.dismiss()
+            }
+        }.build().show()
+    }
+
+    /**
+     * 播放媒体库中的视频
+     */
+    private fun playStorageEpisode(episode: EpisodeData) {
+        val actionList = episode.histories.mapIndexedNotNull { index, history ->
+            val library = history.library ?: return@mapIndexedNotNull null
+            SheetActionBean(index, library.displayName, library.mediaType.cover, history.entity.storagePath)
         }
+        BottomActionDialog(mAttachActivity, actionList, "选择播放记录") {
+            viewModel.playLocalEpisode(
+                episode.histories[it.actionId as Int]
+            )
+            return@BottomActionDialog true
+        }.show()
     }
 }

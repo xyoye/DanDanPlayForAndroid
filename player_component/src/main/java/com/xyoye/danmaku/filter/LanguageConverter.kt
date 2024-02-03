@@ -22,7 +22,11 @@ class LanguageConverter : DanmakuFilters.BaseDanmakuFilter<DanmakuLanguage>() {
         fromCachingTask: Boolean,
         config: DanmakuContext?
     ): Boolean {
-        val origin = danmaku.text.toString()
+        val origin = danmaku.text?.toString().orEmpty()
+        if (origin.isEmpty()) {
+            return false
+        }
+
         if (language == DanmakuLanguage.SC) {
             danmaku.text = OpenCC.convertSC(origin)
         } else if (language == DanmakuLanguage.TC) {

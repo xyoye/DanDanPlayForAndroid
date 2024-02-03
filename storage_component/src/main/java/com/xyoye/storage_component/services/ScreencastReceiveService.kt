@@ -28,7 +28,14 @@ import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.storage_component.utils.screencast.receiver.HttpServer
 import com.xyoye.storage_component.utils.screencast.receiver.UdpServer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 
 /**
@@ -41,7 +48,7 @@ interface ScreencastReceiveHandler {
 
 class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
     private var httpServer: HttpServer? = null
-    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var notifier: ScreencastReceiverNotifier
     private lateinit var multicastLock: WifiManager.MulticastLock
@@ -97,16 +104,18 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
         //停止旧服务
         stopHttpServer()
         //创建新服务
-        httpServer = createHttpServer(httpPort, password)
-        if (httpServer == null) {
+        val newHttpServer = createHttpServer(httpPort, password)
+        if (newHttpServer == null) {
             stopSelf()
             return START_STICKY
         }
         //设置投屏接收处理回调
-        httpServer!!.setScreenReceiveHandler(this)
+        newHttpServer.setScreenReceiveHandler(this)
         //启动UDP组播
-        startMulticast(password)
+        startMulticast(newHttpServer.listeningPort, password)
+
         ToastCenter.showSuccess("投屏接收服务已启动")
+        httpServer = newHttpServer
         return START_STICKY
     }
 
@@ -115,7 +124,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
         stopHttpServer()
         UdpServer.stopMulticastEmit()
         multicastJob?.cancel()
-        ioScope.cancel()
+        serviceScope.cancel()
         ServiceLifecycleBridge.onScreencastReceiveLifeChange(false)
         super.onDestroy()
     }
@@ -124,9 +133,10 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
      * 处理投屏
      */
     override fun onReceiveVideo(screencastData: ScreencastData) {
-        ioScope.launch {
-            val targetVideo = screencastData.videos.getOrNull(screencastData.playIndex)
-                ?: return@launch
+        serviceScope.launch {
+            val targetVideo = screencastData.relatedVideos.firstOrNull {
+                it.uniqueKey == screencastData.playUniqueKey
+            } ?: return@launch
 
             //询问是否接收投屏
             if (considerAcceptScreencast(targetVideo).not()) {
@@ -143,7 +153,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             val mediaSource = MediaLibraryEntity.HISTORY.copy(mediaType = MediaType.SCREEN_CAST)
                 .run { StorageFactory.createStorage(this) }
                 .run { this as? ScreencastStorage }
-                ?.apply { setupScreencastData(screencastData) }
+                ?.apply { this.bindScreencastData(screencastData) }
                 ?.run { getRootFile() }
                 ?.run { StorageVideoSourceFactory.create(this) }
             if (mediaSource == null) {
@@ -151,7 +161,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
                 return@launch
             }
 
-            notifier.showReceivedVideo(targetVideo.videoTitle)
+            notifier.showReceivedVideo(targetVideo.title)
 
             //正在播放器页面时，不打开新的播放器
             val topActivity = ActivityHelper.instance.getTopActivity()
@@ -170,11 +180,11 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
     /**
      * 启动UDP组播
      */
-    private fun startMulticast(password: String?) {
+    private fun startMulticast(port: Int, password: String?) {
         multicastJob?.cancel()
-        multicastJob = ioScope.launch {
+        multicastJob = serviceScope.launch {
             UdpServer.startMulticastEmit(
-                httpServer!!.listeningPort,
+                port,
                 needPassword = password.isNullOrEmpty().not()
             )
         }
@@ -201,7 +211,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             suspendCancellableCoroutine { continuation ->
                 AlertDialog.Builder(topActivity)
                     .setTitle("接收到投屏请求，是否播放？")
-                    .setMessage("投屏内容：${videoData.videoTitle}")
+                    .setMessage("投屏内容：${videoData.title}")
                     .setNegativeButton("忽略") { dialog, _ ->
                         dialog.dismiss()
                         continuation.resume(false)

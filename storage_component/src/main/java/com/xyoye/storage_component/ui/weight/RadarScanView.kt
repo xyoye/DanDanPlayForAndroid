@@ -3,11 +3,15 @@ package com.xyoye.storage_component.ui.weight
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
-import com.xyoye.common_component.extension.colorWithAlpha
+import com.xyoye.common_component.extension.opacity
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.storage_component.R
@@ -307,9 +311,8 @@ class RadarScanView : View {
             val pSize = progress * point.width()
 
             //颜色透明度: 0 -> 255 -> 0
-            val alphaProgress = if (progress - 0.5 > 0) 1 - progress else progress
-            val pAlpha = (alphaProgress * 255).toInt()
-            mScanPointPaint.color = mScanPointColor.colorWithAlpha(pAlpha)
+            val percent = if (progress - 0.5 > 0) 1 - progress else progress
+            mScanPointPaint.color = mScanPointColor.opacity(percent)
 
             //绘制点
             canvas.drawCircle(point.left, point.top, pSize / 2, mScanPointPaint)

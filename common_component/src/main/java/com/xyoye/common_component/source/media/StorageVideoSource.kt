@@ -6,6 +6,7 @@ import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.TorrentStorageFile
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.thunder.ThunderManager
+import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.enums.MediaType
 
 /**
@@ -16,36 +17,36 @@ class StorageVideoSource(
     private val playUrl: String,
     private val file: StorageFile,
     private val videoSources: List<StorageFile>,
-    private var episodeId: Int,
-    private var danmuPath: String?,
+    private var danmu: LocalDanmuBean?,
     private var subtitlePath: String?,
+    private var audioPath: String?,
 ) : BaseVideoSource(
     videoSources.indexOfFirst { it.uniqueKey() == file.uniqueKey() },
     videoSources
 ) {
 
-    override fun getDanmuPath(): String? {
-        return danmuPath
+    override fun getDanmu(): LocalDanmuBean? {
+        return danmu
     }
 
-    override fun setDanmuPath(path: String) {
-        danmuPath = path
-    }
-
-    override fun getEpisodeId(): Int {
-        return episodeId
-    }
-
-    override fun setEpisodeId(id: Int) {
-        episodeId = id
+    override fun setDanmu(danmu: LocalDanmuBean?) {
+        this.danmu = danmu
     }
 
     override fun getSubtitlePath(): String? {
         return subtitlePath
     }
 
-    override fun setSubtitlePath(path: String) {
+    override fun setSubtitlePath(path: String?) {
         subtitlePath = path
+    }
+
+    override fun getAudioPath(): String? {
+        return audioPath
+    }
+
+    override fun setAudioPath(path: String?) {
+        audioPath = path
     }
 
     override fun indexTitle(index: Int): String {
@@ -110,5 +111,13 @@ class StorageVideoSource(
             return ThunderManager.getInstance().getTaskId(file.filePath())
         }
         return -1L
+    }
+
+    fun getStorageFile(): StorageFile {
+        return file
+    }
+
+    fun indexStorageFile(index: Int): StorageFile {
+        return videoSources[index]
     }
 }

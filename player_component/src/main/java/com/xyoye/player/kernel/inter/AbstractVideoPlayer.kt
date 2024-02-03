@@ -2,13 +2,15 @@ package com.xyoye.player.kernel.inter
 
 import android.graphics.Point
 import android.view.Surface
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.enums.TrackType
+import com.xyoye.player.wrapper.InterVideoTrack
 
 /**
  * Created by xyoye on 2020/10/29.
  */
 
-abstract class AbstractVideoPlayer {
+abstract class AbstractVideoPlayer : InterVideoTrack {
 
     //播放器事件回调
     protected lateinit var mPlayerEventListener: VideoPlayerEventListener
@@ -134,23 +136,14 @@ abstract class AbstractVideoPlayer {
      */
     abstract fun getTcpSpeed(): Long
 
-    /**
-     * 获取音轨
-     */
-    abstract fun getAudioStream(): List<VideoStreamBean>
 
-    /**
-     * 获取字幕轨
-     */
-    abstract fun getSubtitleStream(): List<VideoStreamBean>
+    /*------------轨道信息-------------------*/
 
-    /**
-     * 选择音/字幕轨
-     */
-    abstract fun selectStream(stream: VideoStreamBean)
+    override fun supportAddTrack(type: TrackType): Boolean {
+        return false
+    }
 
-    /**
-     * 是否由播放器处理外挂弹幕
-     */
-    open fun interceptSubtitle(subtitlePath: String) = false
+    override fun addTrack(track: VideoTrackBean): Boolean {
+        return false
+    }
 }

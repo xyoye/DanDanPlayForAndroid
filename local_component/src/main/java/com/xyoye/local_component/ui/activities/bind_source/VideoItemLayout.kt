@@ -9,7 +9,12 @@ import com.xyoye.common_component.adapter.BaseViewHolderCreator
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.databinding.ItemStorageVideoTagBinding
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.dp
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.loadStorageFileCover
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
@@ -32,7 +37,7 @@ object VideoItemLayout {
 
             titleTv.setTextIsSelectable(true)
 
-            coverIv.loadImage(data)
+            coverIv.loadStorageFileCover(data)
 
             titleTv.text = data.fileName()
 

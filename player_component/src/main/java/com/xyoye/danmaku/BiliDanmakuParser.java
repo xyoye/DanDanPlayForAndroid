@@ -114,6 +114,9 @@ public class BiliDanmakuParser extends BaseDanmakuParser {
                 // 6:用户hash
                 // 7:弹幕id
                 String pValue = attributes.getValue("p");
+                if (TextUtils.isEmpty(pValue)) {
+                    return;
+                }
                 // parse p value to danmaku
                 String[] values = pValue.split(",");
                 if (values.length > 0) {

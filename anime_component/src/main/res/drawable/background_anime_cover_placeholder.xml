@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidElementNotAllowed -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="@color/anime_cover_placeholder" />
+
+    <corners android:radius="@dimen/anime_cover_radius" />
+</shape>

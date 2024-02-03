@@ -25,7 +25,11 @@ public class RegexFilter extends DanmakuFilters.BaseDanmakuFilter<List<String>> 
         for (int i = 0; i < mRegexList.size(); i++) {
             String regex = mRegexList.get(i);
 
-            filtered = Pattern.matches(regex, danmaku.text);
+            try {
+                filtered = Pattern.matches(regex, danmaku.text);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (filtered) {
                 Log.d("RegexFilter", danmaku.text.toString());
                 break;

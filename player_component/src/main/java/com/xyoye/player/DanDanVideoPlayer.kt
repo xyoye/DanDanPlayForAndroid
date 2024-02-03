@@ -13,8 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.xyoye.cache.CacheManager
 import com.xyoye.common_component.source.base.BaseVideoSource
-import com.xyoye.data_component.bean.VideoStreamBean
+import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.data_component.enums.VideoScreenScale
 import com.xyoye.player.controller.VideoController
 import com.xyoye.player.info.PlayerInitializer
@@ -26,6 +27,7 @@ import com.xyoye.player.surface.SurfaceFactory
 import com.xyoye.player.utils.AudioFocusHelper
 import com.xyoye.player.utils.PlayerConstant
 import com.xyoye.player.wrapper.InterVideoPlayer
+import com.xyoye.player.wrapper.InterVideoTrack
 import com.xyoye.player_component.utils.PlayRecorder
 import com.xyoye.subtitle.MixedSubtitle
 
@@ -36,7 +38,10 @@ import com.xyoye.subtitle.MixedSubtitle
 class DanDanVideoPlayer(
     context: Context,
     attrs: AttributeSet? = null
-) : FrameLayout(context, attrs, 0), InterVideoPlayer, VideoPlayerEventListener {
+) : FrameLayout(context, attrs, 0),
+    InterVideoPlayer,
+    InterVideoTrack,
+    VideoPlayerEventListener {
     //播放状态
     private var mCurrentPlayState = PlayState.STATE_IDLE
 
@@ -173,10 +178,6 @@ class DanDanVideoPlayer(
 
     override fun getVideoSize() = mVideoPlayer.getVideoSize()
 
-    override fun interceptSubtitle(subtitlePath: String): Boolean {
-        return mVideoPlayer.interceptSubtitle(subtitlePath)
-    }
-
     override fun onVideoSizeChange(width: Int, height: Int) {
         mRenderView?.setScaleType(mScreenScale)
         mRenderView?.setVideoSize(width, height)
@@ -205,18 +206,22 @@ class DanDanVideoPlayer(
             PlayerConstant.MEDIA_INFO_BUFFERING_START -> {
                 setPlayState(PlayState.STATE_BUFFERING_PAUSED)
             }
+
             PlayerConstant.MEDIA_INFO_BUFFERING_END -> {
                 setPlayState(PlayState.STATE_BUFFERING_PLAYING)
             }
+
             PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START -> {
                 setPlayState(PlayState.STATE_PLAYING)
                 if (windowVisibility != View.VISIBLE) {
                     pause()
                 }
             }
+
             PlayerConstant.MEDIA_INFO_VIDEO_ROTATION_CHANGED -> {
                 mRenderView?.setVideoRotation(extra)
             }
+
             PlayerConstant.MEDIA_INFO_URL_EMPTY -> {
                 setPlayState(PlayState.STATE_ERROR)
             }
@@ -275,11 +280,11 @@ class DanDanVideoPlayer(
 
     private fun isInPlayState(): Boolean {
         return this::mVideoPlayer.isInitialized
-                && mCurrentPlayState != PlayState.STATE_ERROR
-                && mCurrentPlayState != PlayState.STATE_IDLE
-                && mCurrentPlayState != PlayState.STATE_PREPARING
-                && mCurrentPlayState != PlayState.STATE_START_ABORT
-                && mCurrentPlayState != PlayState.STATE_COMPLETED
+            && mCurrentPlayState != PlayState.STATE_ERROR
+            && mCurrentPlayState != PlayState.STATE_IDLE
+            && mCurrentPlayState != PlayState.STATE_PREPARING
+            && mCurrentPlayState != PlayState.STATE_START_ABORT
+            && mCurrentPlayState != PlayState.STATE_COMPLETED
     }
 
     fun resume() {
@@ -336,10 +341,12 @@ class DanDanVideoPlayer(
                 mVideoController?.onVolumeKeyDown(true)
                 return true
             }
+
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 mVideoController?.onVolumeKeyDown(false)
                 return true
             }
+
             else -> mVideoController?.onKeyDown(keyCode, event) ?: false
         }
     }
@@ -375,15 +382,23 @@ class DanDanVideoPlayer(
         mVideoPlayer.setSubtitleOffset(PlayerInitializer.Subtitle.offsetPosition)
     }
 
-    override fun getAudioStream(): List<VideoStreamBean> {
-        return mVideoPlayer.getAudioStream()
+    override fun supportAddTrack(type: TrackType): Boolean {
+        return mVideoPlayer.supportAddTrack(type)
     }
 
-    override fun getSubtitleStream(): List<VideoStreamBean> {
-        return mVideoPlayer.getSubtitleStream()
+    override fun addTrack(track: VideoTrackBean): Boolean {
+        return mVideoPlayer.addTrack(track)
     }
 
-    override fun selectStream(stream: VideoStreamBean) {
-        return mVideoPlayer.selectStream(stream)
+    override fun getTracks(type: TrackType): List<VideoTrackBean> {
+        return mVideoPlayer.getTracks(type)
+    }
+
+    override fun selectTrack(track: VideoTrackBean) {
+        return mVideoPlayer.selectTrack(track)
+    }
+
+    override fun deselectTrack(type: TrackType) {
+        return mVideoPlayer.deselectTrack(type)
     }
 }

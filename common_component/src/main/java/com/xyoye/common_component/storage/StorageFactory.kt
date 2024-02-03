@@ -1,6 +1,15 @@
 package com.xyoye.common_component.storage
 
-import com.xyoye.common_component.storage.impl.*
+import com.xyoye.common_component.storage.impl.AlistStorage
+import com.xyoye.common_component.storage.impl.DocumentFileStorage
+import com.xyoye.common_component.storage.impl.FtpStorage
+import com.xyoye.common_component.storage.impl.LinkStorage
+import com.xyoye.common_component.storage.impl.RemoteStorage
+import com.xyoye.common_component.storage.impl.ScreencastStorage
+import com.xyoye.common_component.storage.impl.SmbStorage
+import com.xyoye.common_component.storage.impl.TorrentStorage
+import com.xyoye.common_component.storage.impl.VideoStorage
+import com.xyoye.common_component.storage.impl.WebDavStorage
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 
@@ -22,6 +31,7 @@ object StorageFactory {
             MediaType.STREAM_LINK -> LinkStorage(library)
             MediaType.OTHER_STORAGE -> LinkStorage(library)
             MediaType.SCREEN_CAST -> ScreencastStorage(library)
+            MediaType.ALSIT_STORAGE -> AlistStorage(library)
             else -> null
         }
     }

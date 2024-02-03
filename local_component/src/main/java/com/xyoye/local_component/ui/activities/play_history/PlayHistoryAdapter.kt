@@ -4,10 +4,22 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.xyoye.common_component.adapter.*
+import com.xyoye.common_component.adapter.BaseAdapter
+import com.xyoye.common_component.adapter.BaseViewHolderCreator
+import com.xyoye.common_component.adapter.addEmptyView
+import com.xyoye.common_component.adapter.addItem
+import com.xyoye.common_component.adapter.buildAdapter
+import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.databinding.ItemStorageVideoBinding
 import com.xyoye.common_component.databinding.ItemStorageVideoTagBinding
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.addToClipboard
+import com.xyoye.common_component.extension.dp
+import com.xyoye.common_component.extension.horizontal
+import com.xyoye.common_component.extension.loadVideoCover
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.toCoverFile
+import com.xyoye.common_component.extension.toResColor
+import com.xyoye.common_component.extension.toResDrawable
 import com.xyoye.common_component.utils.FastClickFilter
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
@@ -68,7 +80,9 @@ class PlayHistoryAdapter(
 
     private fun BaseViewHolderCreator<ItemStorageVideoBinding>.historyItem() =
         { data: PlayHistoryEntity ->
-            itemBinding.coverIv.loadVideoCover(data.uniqueKey.toCoverFile())
+            data.uniqueKey.toCoverFile()?.let {
+                itemBinding.coverIv.loadVideoCover(it)
+            }
 
             itemBinding.durationTv.text = getDuration(data)
             itemBinding.durationTv.isVisible = data.videoDuration > 0
@@ -153,6 +167,7 @@ class PlayHistoryAdapter(
                 val torrentFile = File(torrentPath)
                 return !torrentFile.exists()
             }
+
             else -> entity.storageId == null
         }
     }

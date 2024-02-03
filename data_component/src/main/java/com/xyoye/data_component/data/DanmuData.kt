@@ -19,6 +19,6 @@ data class DanmuData(
 @JsonClass(generateAdapter = true)
 data class DanmuContentData(
     val cid: Int,
-    val p: String?,
-    val m: String?
+    val p: String = "",
+    val m: String = ""
 ) : Parcelable

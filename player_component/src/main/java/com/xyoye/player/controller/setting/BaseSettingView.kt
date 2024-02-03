@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.data_component.enums.PlayState
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.wrapper.ControlWrapper
 
 
@@ -117,6 +118,10 @@ abstract class BaseSettingView<V : ViewDataBinding> @JvmOverloads constructor(
     }
 
     override fun onVideoSizeChanged(videoSize: Point) {
+
+    }
+
+    override fun onTrackChanged(type: TrackType) {
 
     }
 

@@ -1,6 +1,5 @@
 package com.xyoye.dandanplay.ui.main
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
@@ -8,17 +7,15 @@ import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.database.migration.ManualMigration
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.network.repository.OtherRepository
+import com.xyoye.common_component.network.repository.UserRepository
 import com.xyoye.common_component.utils.UserInfoHelper
 import com.xyoye.data_component.data.LoginData
 import com.xyoye.data_component.entity.DanmuBlockEntity
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.w3c.dom.Element
 import java.io.InputStream
-import java.util.*
+import java.util.Date
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**
@@ -30,13 +27,9 @@ class MainViewModel : BaseViewModel() {
     val reLoginLiveData = MutableLiveData<LoginData>()
 
     fun reLogin() {
-        httpRequest<LoginData>(viewModelScope) {
-            api {
-                Retrofit.service.reLogin()
-            }
-
-            onSuccess {
-                UserConfig.putUserLoggedIn(false)
+        viewModelScope.launch {
+            UserRepository.refreshToken().getOrNull()?.let {
+                UserConfig.putUserLoggedIn(true)
                 if (UserInfoHelper.login(it)) {
                     reLoginLiveData.postValue(it)
                 }
@@ -53,44 +46,26 @@ class MainViewModel : BaseViewModel() {
     fun initCloudBlockData() {
         val lastUpdateTime = AppConfig.getCloudBlockUpdateTime()
         val currentTime = System.currentTimeMillis()
+
         //7天更新一次
-        if (currentTime - lastUpdateTime > 7 * 24 * 60 * 60 * 1000) {
+        if (currentTime - lastUpdateTime < 7 * 24 * 60 * 60 * 1000) {
+            return
+        }
 
-            httpRequest<MutableList<String>>(viewModelScope) {
+        viewModelScope.launch {
+            val result = OtherRepository.getCloudFilters()
 
-                api {
-                    val baseUrl = if (AppConfig.isBackupDomainEnable()) {
-                        AppConfig.getBackupDomain()
-                    } else {
-                        Retrofit.baseUrl
-                    }
-                    val filterUrl = Uri.parse(baseUrl)
-                        .buildUpon()
-                        .appendPath("config")
-                        .appendPath("filter.xml")
-                        .build()
-                        .toString()
-                    val responseBody = Retrofit.extService.downloadResource(filterUrl)
-
-                    parseFilterData(responseBody.byteStream())
-                }
-
-                onSuccess {
-                    AppConfig.putCloudBlockUpdateTime(currentTime)
-                    saveFilterData(it)
-                }
-
-                onError {
-                    it.printStackTrace()
-                }
-
+            result.getOrNull()?.byteStream()?.use {
+                val filterData = parseFilterData(it)
+                saveFilterData(filterData)
+                AppConfig.putCloudBlockUpdateTime(currentTime)
             }
+
         }
     }
 
-    private fun parseFilterData(inputStream: InputStream): MutableList<String> {
-        return runBlocking(Dispatchers.IO) {
-
+    private fun parseFilterData(inputStream: InputStream): List<String> {
+        return try {
             val factory = DocumentBuilderFactory.newInstance()
             val builder = factory.newDocumentBuilder()
             val document = builder.parse(inputStream)
@@ -114,29 +89,26 @@ class MainViewModel : BaseViewModel() {
                     }
                 }
             }
-
-            mutableListOf(
-                simplified.toString(),
-                traditional.toString()
-            )
+            listOf(simplified.toString(), traditional.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
-    private fun saveFilterData(filterData: MutableList<String>) {
-        viewModelScope.launch {
-            val blockEntities = filterData.map { keyword ->
-                DanmuBlockEntity(
-                    0,
-                    keyword,
-                    true,
-                    Date(),
-                    true
-                )
-            }
-            DatabaseManager.instance.getDanmuBlockDao().deleteByType(true)
-            DatabaseManager.instance.getDanmuBlockDao().insert(
-                *blockEntities.toTypedArray()
+    private suspend fun saveFilterData(filterData: List<String>) {
+        val blockEntities = filterData.map {
+            DanmuBlockEntity(
+                0,
+                it,
+                true,
+                Date(),
+                true
             )
         }
+        DatabaseManager.instance.getDanmuBlockDao().deleteByType(true)
+        DatabaseManager.instance.getDanmuBlockDao().insert(
+            *blockEntities.toTypedArray()
+        )
     }
 }

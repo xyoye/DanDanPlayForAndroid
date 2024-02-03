@@ -11,7 +11,11 @@ import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.grid
+import com.xyoye.common_component.extension.gridEmpty
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 import com.xyoye.common_component.utils.view.ItemDecorationDrawable
 import com.xyoye.common_component.utils.view.ItemDecorationSpace
@@ -133,7 +137,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor()
+                    R.color.item_bg_color.toResColor(this@AnimeSeasonActivity)
                 )
             )
         }

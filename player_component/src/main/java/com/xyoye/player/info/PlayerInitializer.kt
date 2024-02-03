@@ -2,7 +2,13 @@ package com.xyoye.player.info
 
 import android.graphics.Color
 import com.xyoye.data_component.enums.DanmakuLanguage
-import com.xyoye.data_component.enums.*
+import com.xyoye.data_component.enums.PixelFormat
+import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.SurfaceType
+import com.xyoye.data_component.enums.VLCAudioOutput
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
+import com.xyoye.data_component.enums.VideoScreenScale
 
 /**
  * Created by xyoye on 2020/10/29.
@@ -22,6 +28,7 @@ object PlayerInitializer {
 
     object Player {
         const val DEFAULT_SPEED = 1f
+        const val DEFAULT_PRESS_SPEED = 2f
 
         var isMediaCodeCEnabled = false
         var isMediaCodeCH265Enabled = false
@@ -30,6 +37,7 @@ object PlayerInitializer {
         var vlcPixelFormat = VLCPixelFormat.PIXEL_RGB_32
         var vlcHWDecode = VLCHWDecode.HW_ACCELERATION_AUTO
         var videoSpeed = DEFAULT_SPEED
+        var pressVideoSpeed = DEFAULT_PRESS_SPEED
         var vlcAudioOutput = VLCAudioOutput.AUTO
         var isAutoPlayNext = true
     }

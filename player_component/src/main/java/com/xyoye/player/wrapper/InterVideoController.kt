@@ -1,5 +1,7 @@
 package com.xyoye.player.wrapper
 
+import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.enums.TrackType
 import com.xyoye.player.utils.MessageTime
 
 /**
@@ -76,14 +78,14 @@ interface InterVideoController {
     fun showController(ignoreShowing: Boolean = false)
 
     /**
-     * 弹幕文件更新
+     * 轨道已添加
      */
-    fun onDanmuSourceUpdate(danmuPath: String, episodeId: Int)
+    fun setTrackAdded(track: VideoTrackBean)
 
     /**
-     * 字幕文件更新
+     * 轨道更新
      */
-    fun onSubtitleSourceUpdate(subtitlePath: String)
+    fun setTrackUpdated(type: TrackType)
 
     /**
      * 播放器销毁，预留方法

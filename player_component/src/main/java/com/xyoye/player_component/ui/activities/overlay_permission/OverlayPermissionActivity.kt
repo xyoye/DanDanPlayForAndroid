@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.weight.ToastCenter
 
 /**
  * Created by xyoye on 2022/11/4
@@ -53,7 +54,12 @@ class OverlayPermissionActivity : AppCompatActivity() {
     private fun requestOverlayPermission() {
         val intent = Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION")
         intent.data = Uri.parse("package:$packageName")
-        startActivityForResult(intent, REQUEST_CODE)
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, REQUEST_CODE)
+        } else {
+            ToastCenter.showError("无法启动悬浮窗权限授权页")
+            onPermissionResult(false)
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

@@ -2,6 +2,8 @@ package com.xyoye.local_component.ui.fragment.bind_subtitle
 
 import android.text.TextUtils
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
 import com.xyoye.common_component.adapter.paging.PagingFooterAdapter
@@ -9,10 +11,10 @@ import com.xyoye.common_component.adapter.paging.addItem
 import com.xyoye.common_component.adapter.paging.buildPagingAdapter
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.SubtitleConfig
+import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toFile
 import com.xyoye.common_component.extension.vertical
-import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.FileManagerDialog
 import com.xyoye.data_component.data.SubtitleSourceBean
@@ -21,8 +23,8 @@ import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.FragmentBindSubtitleSourceBinding
 import com.xyoye.local_component.databinding.ItemSubtitleSearchSourceBinding
-import com.xyoye.local_component.listener.ExtraSourceListener
 import com.xyoye.local_component.ui.activities.bind_source.BindExtraSourceActivity
+import com.xyoye.local_component.ui.activities.bind_source.BindExtraSourceViewModel
 import com.xyoye.local_component.ui.dialog.ShooterSecretDialog
 import com.xyoye.local_component.ui.dialog.SubtitleDetailDialog
 import com.xyoye.local_component.ui.dialog.SubtitleFileListDialog
@@ -32,14 +34,15 @@ import com.xyoye.local_component.ui.dialog.SubtitleFileListDialog
  * Created by xyoye on 2022/1/25
  */
 class BindSubtitleSourceFragment :
-    BaseFragment<BindSubtitleSourceFragmentViewModel, FragmentBindSubtitleSourceBinding>(),
-    ExtraSourceListener {
-
-    private lateinit var subtitleAdapter: BasePagingAdapter<SubtitleSourceBean>
+    BaseFragment<BindSubtitleSourceFragmentViewModel, FragmentBindSubtitleSourceBinding>() {
 
     companion object {
         fun newInstance() = BindSubtitleSourceFragment()
     }
+
+    private val parentViewModel: BindExtraSourceViewModel by viewModels(ownerProducer = { mAttachActivity })
+
+    private lateinit var subtitleAdapter: BasePagingAdapter<SubtitleSourceBean>
 
     override fun initViewModel() = ViewModelInit(
         BR.viewModel,
@@ -51,20 +54,13 @@ class BindSubtitleSourceFragment :
     override fun initView() {
         viewModel.storageFile = (activity as BindExtraSourceActivity).storageFile
 
-        initActionView()
-
         initRv()
 
         initListener()
 
-        viewModel.matchSubtitle()
-    }
-
-    private fun initActionView() {
-        val boundSubtitle = viewModel.storageFile.playHistory?.subtitlePath?.isNotEmpty() == true
-        dataBinding.tvUnbindSubtitle.isEnabled = boundSubtitle
-
         updateKeyActionView()
+
+        viewModel.matchSubtitle()
     }
 
     private fun initRv() {
@@ -138,10 +134,6 @@ class BindSubtitleSourceFragment :
             ).show()
         }
 
-        viewModel.sourceRefreshLiveData.observe(this) {
-            (mAttachActivity as BindExtraSourceActivity).onSourceChanged()
-        }
-
         viewModel.unzipResultLiveData.observe(this) { dirPath ->
             FileManagerDialog(
                 requireActivity(),
@@ -153,6 +145,23 @@ class BindSubtitleSourceFragment :
             }.show()
         }
 
+        parentViewModel.searchTextFlow.collectAtStarted(
+            this,
+            minActiveState = Lifecycle.State.RESUMED
+        ) {
+            val shooterSecret = SubtitleConfig.getShooterSecret()
+            if (shooterSecret.isNullOrEmpty()) {
+                settingSubtitleKey()
+            } else {
+                viewModel.searchSubtitle(it)
+            }
+        }
+
+        parentViewModel.storageFileFlow.collectAtStarted(this) {
+            val boundSubtitle = it.playHistory?.subtitlePath?.isNotEmpty() == true
+            dataBinding.tvUnbindSubtitle.isEnabled = boundSubtitle
+        }
+
         dataBinding.tvUnbindSubtitle.setOnClickListener {
             viewModel.unbindSubtitle()
         }
@@ -162,20 +171,6 @@ class BindSubtitleSourceFragment :
         dataBinding.tvSettingSubtitleKey.setOnClickListener {
             settingSubtitleKey()
         }
-    }
-
-    override fun search(searchText: String) {
-        val shooterSecret = SubtitleConfig.getShooterSecret()
-        if (shooterSecret.isNullOrEmpty()) {
-            settingSubtitleKey()
-        } else {
-            viewModel.searchSubtitle(searchText)
-        }
-    }
-
-    override fun onStorageFileChanged(storageFile: StorageFile) {
-        viewModel.storageFile = storageFile
-        initActionView()
     }
 
     private fun settingSubtitleKey() {

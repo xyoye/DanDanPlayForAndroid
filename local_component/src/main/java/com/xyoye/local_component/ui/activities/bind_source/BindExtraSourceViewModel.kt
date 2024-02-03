@@ -6,17 +6,18 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.collectable
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.weight.ToastCenter
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
 import org.json.JSONObject
-import retrofit2.HttpException
 
 
 /**
@@ -31,65 +32,61 @@ class BindExtraSourceViewModel : BaseViewModel() {
         private val segmentCache = LruCache<String, List<String>>(MAX_CACHE_SIZE)
     }
 
-    private val _historyChangedLiveData = MediatorLiveData<StorageFile>()
-    val historyChangedLiveData: LiveData<StorageFile> = _historyChangedLiveData
+    private lateinit var storageFile: StorageFile
+
+    val storageFileFlow: StateFlow<StorageFile> by lazy {
+        DatabaseManager.instance.getPlayHistoryDao().getPlayHistoryFlow(
+            storageFile.uniqueKey(),
+            storageFile.storage.library.id
+        ).map {
+            storageFile.clone().apply { playHistory = it }
+        }.stateIn(viewModelScope, SharingStarted.Lazily, storageFile)
+    }
+
+    private val _searchTextFlow = MutableSharedFlow<String>()
+    val searchTextFlow = _searchTextFlow.collectable
 
     private val _segmentTitleLiveData = MediatorLiveData<List<String>>()
     val segmentTitleLiveData: LiveData<List<String>> = _segmentTitleLiveData
 
-    fun updateSourceChanged(storageFile: StorageFile) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val history = DatabaseManager.instance.getPlayHistoryDao().getPlayHistory(
-                storageFile.uniqueKey(),
-                storageFile.storage.library.id
-            )
-            val newStorageFile = storageFile.clone().apply {
-                playHistory = history
-            }
-            _historyChangedLiveData.postValue(newStorageFile)
+    fun setStorageFile(storageFile: StorageFile) {
+        this.storageFile = storageFile
+    }
+
+    fun setSearchText(text: String) {
+        viewModelScope.launch {
+            _searchTextFlow.emit(text)
         }
     }
 
     fun segmentTitle(storageFile: StorageFile) {
-        httpRequest<List<String>>(viewModelScope) {
-            api {
-                // 从缓存中获取
-                val cache = segmentCache.get(storageFile.uniqueKey())
-                if (cache != null && cache.isNotEmpty()) {
-                    return@api cache
-                }
-
-                // 从网络获取
-                val requestParams = JSONObject()
-                requestParams.put("tasks", JSONArray().apply { put("tok") })
-                requestParams.put("text", storageFile.fileName())
-                val requestBody = requestParams.toString().toRequestBody("application/json".toMediaTypeOrNull())
-
-                val response = Retrofit.extService.segmentWords(params = requestBody)
-                if (response.code() == 429) {
-                    throw HttpException(response)
-                }
-                val json = response.body()?.string() ?: ""
-                return@api parseSegmentResult(json) ?: emptyList()
+        viewModelScope.launch {
+            // 从缓存中获取
+            val cache = segmentCache.get(storageFile.uniqueKey()) ?: emptyList()
+            if (cache.isNotEmpty()) {
+                _segmentTitleLiveData.postValue(cache)
+                return@launch
             }
 
-            onStart { showLoading() }
+            // 从网络获取
+            showLoading()
+            val result = OtherRepository.getSegmentWords(storageFile.fileName())
+            hideLoading()
 
-            onSuccess {
-                // 缓存分词结果
-                segmentCache.put(storageFile.uniqueKey(), it)
-                _segmentTitleLiveData.postValue(it)
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onError {
-                if (it.code == 429) {
-                    ToastCenter.showError("请求过于频繁(每分钟限2次)，请稍后再试")
-                    return@onError
-                }
-                ToastCenter.showError("x${it.code} ${it.msg}")
+            val data = result.getOrNull() ?: return@launch
+            if (data.code() == 409) {
+                ToastCenter.showError("请求过于频繁(每分钟限2次)，请稍后再试")
+                return@launch
             }
-
-            onComplete { hideLoading() }
+            val json = data.body()?.string() ?: ""
+            val segments = parseSegmentResult(json) ?: emptyList()
+            segmentCache.put(storageFile.uniqueKey(), segments)
+            _segmentTitleLiveData.postValue(segments)
         }
     }
 

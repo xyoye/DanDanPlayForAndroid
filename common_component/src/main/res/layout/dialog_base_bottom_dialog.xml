@@ -53,7 +53,7 @@
                 android:id="@+id/container_fl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="120dp"
+                android:minHeight="80dp"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 app:layout_constraintTop_toBottomOf="@+id/title_tv" />

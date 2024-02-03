@@ -6,15 +6,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.addFragment
 import com.xyoye.common_component.extension.horizontal
-import com.xyoye.common_component.extension.removeFragment
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.services.ScreencastProvideService
 import com.xyoye.common_component.storage.Storage
@@ -52,7 +53,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         private set
 
     // 标题栏菜单管理器
-    private lateinit var mMenus: StorageFileMenus
+    private var mMenus: StorageFileMenus? = null
 
     // 文件Fragment列表
     private val mRouteFragmentMap = mutableMapOf<StorageFilePath, StorageFileFragment>()
@@ -83,11 +84,6 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         super.onCreate(savedInstanceState)
     }
 
-    override fun onResume() {
-        super.onResume()
-        notifyFragmentReappear()
-    }
-
     override fun initView() {
         mToolbarStyleHelper.observerChildScroll()
         title = storageLibrary?.displayName
@@ -95,6 +91,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
         initPathRv()
         initListener()
+        updateFloatingButtonStyle()
         openDirectory(null)
     }
 
@@ -117,6 +114,10 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
         dataBinding.quicklyPlayBt.setOnClickListener {
             viewModel.quicklyPlay(storage)
+        }
+
+        dataBinding.quicklyPlayBt.setOnFocusChangeListener { _, _ ->
+            updateFloatingButtonStyle()
         }
 
         dataBinding.pathRv.setOnFocusChangeListener { _, hasFocus ->
@@ -169,25 +170,23 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        mMenus = StorageFileMenus.inflater(this, menu)
-        mMenus.onSearchTextChanged { onSearchTextChanged(it) }
-        mMenus.onSortTypeChanged { onSortOptionChanged() }
+        mMenus = StorageFileMenus.inflater(this, menu).apply {
+            onSearchTextChanged { onSearchTextChanged(it) }
+            onSortTypeChanged { onSortOptionChanged() }
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        mMenus.onOptionsItemSelected(item)
+        mMenus?.onOptionsItemSelected(item)
         return super.onOptionsItemSelected(item)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode != KeyEvent.KEYCODE_BACK) {
-            return super.onKeyDown(keyCode, event)
-        }
-        if (mMenus.onKeyDown()) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && mMenus?.handleBackPressed() == true) {
             return true
         }
-        if (popFragment()) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && popFragment()) {
             return true
         }
         return super.onKeyDown(keyCode, event)
@@ -217,11 +216,21 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         val fragment = StorageFileFragment.newInstance()
         mRouteFragmentMap[path] = fragment
 
-        supportFragmentManager.addFragment(
-            dataBinding.fragmentContainer.id,
-            fragment,
-            path.route
-        )
+        supportFragmentManager.beginTransaction().apply {
+            // 添加前的最后一个Fragment，设置为STARTED状态
+            supportFragmentManager.fragments.lastOrNull()?.let {
+                setMaxLifecycle(it, Lifecycle.State.STARTED)
+            }
+
+            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            add(dataBinding.fragmentContainer.id, fragment, path.route)
+
+            // 当前添加的Fragment，设置为RESUMED状态
+            setMaxLifecycle(fragment, Lifecycle.State.RESUMED)
+            commit()
+        }
+
         onDisplayFragmentChanged()
     }
 
@@ -232,9 +241,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         val lastRoute = mRouteFragmentMap.keys.last()
         val fragment = mRouteFragmentMap.remove(lastRoute)
             ?: return true
-        supportFragmentManager.removeFragment(fragment)
+        removeFragment(listOf(fragment))
         onDisplayFragmentChanged()
-        notifyFragmentReappear()
         return true
     }
 
@@ -248,9 +256,27 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
                 fragments.add(fragment)
             }
         }
-        supportFragmentManager.removeFragment(*fragments.toTypedArray())
+        removeFragment(fragments)
         onDisplayFragmentChanged()
-        notifyFragmentReappear()
+    }
+
+    private fun removeFragment(fragments: List<Fragment>) {
+        supportFragmentManager.beginTransaction().apply {
+            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+
+            fragments.forEach {
+                remove(it)
+                // 当前移除的Fragment，设置为CREATED状态
+                setMaxLifecycle(it, Lifecycle.State.CREATED)
+            }
+
+            // 非移除的最后一个Fragment，设置为RESUMED状态
+            supportFragmentManager.fragments
+                .lastOrNull { it !in fragments }
+                ?.let { setMaxLifecycle(it, Lifecycle.State.RESUMED) }
+            commit()
+        }
     }
 
     private fun onDisplayFragmentChanged() {
@@ -279,13 +305,6 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     }
 
     /**
-     * 通知当前展示的Fragment重新出现在界面上
-     */
-    private fun notifyFragmentReappear() {
-        mRouteFragmentMap.values.lastOrNull()?.onReappear()
-    }
-
-    /**
      * 更新标题栏副标题
      */
     private fun updateToolbarSubtitle(videoCount: Int, directoryCount: Int) {
@@ -293,12 +312,15 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             videoCount == 0 && directoryCount == 0 -> {
                 "0视频"
             }
+
             directoryCount == 0 -> {
                 "${videoCount}视频"
             }
+
             videoCount == 0 -> {
                 "${directoryCount}文件夹"
             }
+
             else -> {
                 "${videoCount}视频  ${directoryCount}文件夹"
             }
@@ -317,6 +339,20 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
      */
     private fun onSortOptionChanged() {
         mRouteFragmentMap.values.onEach { it.sort() }
+    }
+
+    /**
+     * 根据焦点状态修改悬浮按钮样式
+     */
+    private fun updateFloatingButtonStyle() {
+        val floatingButton = dataBinding.quicklyPlayBt
+        val shapeAppearanceRes = if (floatingButton.isFocused)
+            R.style.ShapeAppearance_DanDanPlay_FloatingButton_Focused
+        else
+            R.style.ShapeAppearance_DanDanPlay_FloatingButton
+        floatingButton.shapeAppearanceModel = ShapeAppearanceModel.builder(
+            this, 0, shapeAppearanceRes
+        ).build()
     }
 
     /**

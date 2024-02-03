@@ -3,28 +3,26 @@ package com.xyoye.anime_component.ui.activities.anime_tag
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.AnimeRepository
 import com.xyoye.data_component.data.AnimeTagData
+import kotlinx.coroutines.launch
 
 class AnimeTagViewModel : BaseViewModel() {
     val tagAnimeLiveData = MutableLiveData<AnimeTagData>()
 
     fun getAnimeByTag(tagId: Int) {
-        httpRequest<AnimeTagData>(viewModelScope) {
-            onStart { showLoading() }
+        viewModelScope.launch {
+            showLoading()
+            val result = AnimeRepository.searchAnimeByTag(listOf(tagId.toString()))
+            hideLoading()
 
-            api {
-                Retrofit.service.searchByTag(tagId.toString())
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onError { showNetworkError(it) }
-
-            onSuccess {
-                tagAnimeLiveData.postValue(it)
-            }
-
-            onComplete { hideLoading() }
+            result.getOrNull()?.let { tagAnimeLiveData.postValue(it) }
         }
     }
 }

@@ -35,20 +35,22 @@ abstract class BaseActivity<VM : BaseViewModel, V : ViewDataBinding> : BaseAppCo
 
     override fun initStatusBar() {
         ImmersionBar.with(this)
-            .statusBarColor(R.color.status_bar_color)
             .fitsSystemWindows(true)
-            .statusBarDarkFont(!isNightMode())
+            .statusBarDarkFont(isNightMode().not())
+            .statusBarColor(R.color.status_bar_color)
+            .navigationBarDarkIcon(isNightMode().not())
+            .navigationBarColor(R.color.status_bar_color)
             .init()
     }
 
     open fun observeLoadingDialog() {
-        viewModel.loadingObserver.observe(this, {
-            when(it.first){
+        viewModel.loadingObserver.observe(this) {
+            when (it.first) {
                 Loading.SHOW_LOADING -> showLoading()
                 Loading.SHOW_LOADING_MSG -> showLoading(it.second!!)
-                else ->  hideLoading()
+                else -> hideLoading()
             }
-        })
+        }
     }
 
     fun getOwnerViewModel(): BaseViewModel = viewModel

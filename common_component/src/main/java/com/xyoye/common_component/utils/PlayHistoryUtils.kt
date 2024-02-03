@@ -1,12 +1,7 @@
 package com.xyoye.common_component.utils
 
-import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.toText
-import com.xyoye.data_component.entity.PlayHistoryEntity
-import com.xyoye.data_component.enums.MediaType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.Date
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -16,13 +11,6 @@ import kotlin.time.toDuration
 
 object PlayHistoryUtils {
     private val dayName = arrayOf("今天", "昨天", "前天")
-
-    suspend fun getPlayHistory(uniqueKey: String, mediaType: MediaType): PlayHistoryEntity? {
-        return withContext(Dispatchers.IO) {
-            return@withContext DatabaseManager.instance.getPlayHistoryDao()
-                .getPlayHistory(uniqueKey, mediaType)
-        }
-    }
 
     fun formatPlayTime(time: Date): String {
         if (time.after(Date())) {

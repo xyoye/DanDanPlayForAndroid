@@ -7,26 +7,6 @@ import com.xyoye.common_component.config.AppConfig
  */
 
 /**
- * 去重
- *
- * @param comparator 用于比较的集合
- * @params predicate 去重的条件
- */
-inline fun <reified T, reified E> MutableIterator<T>.deduplication(
-    comparator: Collection<E>,
-    predicate: (T, E) -> Boolean
-) {
-    while (hasNext()) {
-        val iterator = next()
-        comparator.forEach {
-            if (predicate.invoke(iterator, it)) {
-                remove()
-            }
-        }
-    }
-}
-
-/**
  * 过滤以.开头的文件
  */
 inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
@@ -116,4 +96,12 @@ fun <T> List<T>.findIndexOnRight(
         return this.indexOfFirst { predicate.invoke(it) }
     }
     return -1
+}
+
+inline fun <T> mapByLength(length: Int, action: (Int) -> T): List<T> {
+    val list = mutableListOf<T>()
+    for (index in 0 until length) {
+        list.add(action(index))
+    }
+    return list
 }

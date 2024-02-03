@@ -27,5 +27,5 @@ data class MagnetData(
     var PageUrl: String? = null,
     var FileSize: String? = null,
     var PublishDate: String? = null,
-    var episodeId: Int = -1
+    var episodeId: String? = null
 ) : Parcelable

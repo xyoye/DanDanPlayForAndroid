@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.database.DatabaseManager
-import com.xyoye.common_component.network.Retrofit
-import com.xyoye.common_component.network.request.httpRequest
+import com.xyoye.common_component.extension.aesEncode
+import com.xyoye.common_component.extension.authorizationValue
+import com.xyoye.common_component.extension.toastError
+import com.xyoye.common_component.network.repository.ScreencastRepository
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.weight.ToastCenter
-import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.enums.MediaType
 import kotlinx.coroutines.Dispatchers
@@ -83,31 +84,20 @@ class MediaViewModel : BaseViewModel() {
     }
 
     fun checkScreenDeviceRunning(receiver: MediaLibraryEntity) {
-        httpRequest<CommonJsonData>(viewModelScope) {
+        viewModelScope.launch {
+            showLoading()
+            val result = ScreencastRepository.init(
+                "http://${receiver.screencastAddress}:${receiver.port}",
+                receiver.password?.aesEncode()?.authorizationValue()
+            )
+            hideLoading()
 
-            api {
-                Retrofit.screencastService.init(
-                    host = receiver.screencastAddress,
-                    port = receiver.port,
-                    authorization = receiver.password,
-                )
+            if (result.isFailure) {
+                result.exceptionOrNull()?.message?.toastError()
+                return@launch
             }
 
-            onStart { showLoading() }
-
-            onSuccess {
-                if (it.success) {
-                    ToastCenter.showSuccess("投屏设备连接正常，请前往其它媒体库选择文件投屏")
-                } else {
-                    ToastCenter.showError(it.errorMessage ?: "连接至投屏设备失败，请确认投屏设备已启用接收服务")
-                }
-            }
-
-            onError {
-                ToastCenter.showError("连接至投屏设备失败，请确认投屏设备已启用接收服务")
-            }
-
-            onComplete { hideLoading() }
+            ToastCenter.showSuccess("投屏设备连接正常，请前往其它媒体库选择文件投屏")
         }
     }
 }

@@ -9,7 +9,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.ItemPagingFooterBinding
-import com.xyoye.common_component.network.request.RequestError
 
 /**
  * Created by xyoye on 2020/12/4.
@@ -36,13 +35,8 @@ class PagingFooterViewHolder(
         binding.loadingLl.isVisible = loadState is LoadState.Loading
         binding.loadFailedLl.isVisible = loadState is LoadState.Error
 
-        if (loadState is LoadState.Error){
-            val error = loadState.error
-            var message = "加载失败，请点击重试"
-            if(error is RequestError){
-                message = "${error.msg}，请点击重试"
-            }
-            binding.loadFailedMsgTv.text = message
+        if (loadState is LoadState.Error) {
+            binding.loadFailedMsgTv.text = loadState.error.message
         }
 
         if (loadState is LoadState.Loading) {

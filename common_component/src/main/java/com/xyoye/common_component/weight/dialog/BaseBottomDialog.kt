@@ -1,7 +1,9 @@
 package com.xyoye.common_component.weight.dialog
 
 import android.app.Activity
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -17,7 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogBaseBottomDialogBinding
-import com.xyoye.common_component.extension.rippleDrawable
+import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.utils.dp2px
 
 
@@ -120,6 +122,7 @@ abstract class BaseBottomDialog<T : ViewDataBinding>(
                     val layoutParams = actionLayoutParams(Gravity.START)
                     addView(actionView, layoutParams)
                 }
+
                 1 -> {
                     val layoutParams = actionLayoutParams(Gravity.END)
                     addView(actionView, layoutParams)
@@ -141,6 +144,7 @@ abstract class BaseBottomDialog<T : ViewDataBinding>(
                     val layoutParams = actionLayoutParams(Gravity.END)
                     addView(actionView, layoutParams)
                 }
+
                 1 -> {
                     val layoutParams = actionLayoutParams(Gravity.START)
                     addView(actionView, layoutParams)
@@ -153,9 +157,11 @@ abstract class BaseBottomDialog<T : ViewDataBinding>(
     private fun createActionView(drawable: Drawable?, description: String, paddingDp: Int): View {
         val padding = dp2px(paddingDp)
         val actionView = ImageView(context)
+        val rippleColor = ColorStateList.valueOf(R.color.gray_40.toResColor())
+        val rippleDrawable = RippleDrawable(rippleColor, null, null)
         actionView.setImageDrawable(drawable)
         actionView.setPadding(padding, padding, padding, padding)
-        actionView.background = rippleDrawable()
+        actionView.background = rippleDrawable
         actionView.contentDescription = description
         return actionView
     }

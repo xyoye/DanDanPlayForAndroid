@@ -4,6 +4,7 @@ import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
 import com.xyoye.common_component.base.app.BaseApplication
+import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.DDLog
 import com.xyoye.common_component.utils.EntropyUtils
 import com.xyoye.common_component.utils.IOUtils
@@ -26,11 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 object UdpServer {
 
     private var TAG = UdpServer::class.java.simpleName
-
-    const val multicastPort = 12333
-    const val multicastHostName = "239.254.254.254"
-    const val multicastMsgKey = "03YSdjQY7q3bDdnq"
-    private const val multicastIntervalMs = 2000L
 
     //UDPSocket
     private var multicastSocket: MulticastSocket? = null
@@ -57,7 +53,7 @@ object UdpServer {
         multicastCount = 0
         while (isRunning.get()) {
             sendMulticast(httpPort, needPassword)
-            delay(timeMillis = multicastIntervalMs)
+            delay(timeMillis = ScreencastConstants.Multicast.intervalMs)
         }
     }
 
@@ -75,9 +71,9 @@ object UdpServer {
      */
     private fun initMulticastSocket(): Boolean {
         try {
-            multicastAddress = InetAddress.getByName(multicastHostName)
+            multicastAddress = InetAddress.getByName(ScreencastConstants.Multicast.host)
             if (!multicastAddress!!.isMulticastAddress) {
-                DDLog.e(TAG, "${multicastHostName}不是组播地址")
+                DDLog.e(TAG, "${ScreencastConstants.Multicast.host}不是组播地址")
                 return false
             }
             multicastSocket = MulticastSocket()
@@ -85,11 +81,7 @@ object UdpServer {
             e.printStackTrace()
         }
 
-        if (multicastSocket == null) {
-            return false
-        }
-
-        return true
+        return multicastSocket != null
     }
 
     /**
@@ -106,7 +98,7 @@ object UdpServer {
             val msg = JsonHelper.toJson(udpDeviceBean) ?: return
 
             //组播内容加密
-            val entropyMsg = EntropyUtils.aesEncode(multicastMsgKey, msg)
+            val entropyMsg = EntropyUtils.aesEncode(ScreencastConstants.Multicast.secret, msg)
             if (TextUtils.isEmpty(entropyMsg)) {
                 return
             }
@@ -115,7 +107,7 @@ object UdpServer {
             val data = entropyMsg.toByteArray()
 
             val sendPacket =
-                DatagramPacket(data, data.size, multicastAddress, multicastPort)
+                DatagramPacket(data, data.size, multicastAddress, ScreencastConstants.Multicast.port)
             multicastSocket?.send(sendPacket)
 
             multicastCount++

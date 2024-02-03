@@ -1,7 +1,9 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.xyoye.data_component.entity.EpisodeHistoryEntity
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -43,11 +45,34 @@ data class BangumiData(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class EpisodeData(
-    var episodeId: Int,
-    var episodeTitle: String? = null,
-    var lastWatched: String? = null,
-    var airDate: String? = null
-) : Parcelable
+    val episodeId: String = "",
+    val episodeTitle: String = "",
+    val lastWatched: String? = null,
+    val airDate: String? = null,
+
+    @Json(ignore = true)
+    val title: String = "",
+    @Json(ignore = true)
+    val subtitle: String = "",
+    @Json(ignore = true)
+    val searchEpisodeNum: String = "",
+
+    @Json(ignore = true)
+    val watchTime: String? = null,
+    @Json(ignore = true)
+    val histories: List<EpisodeHistoryEntity> = emptyList(),
+    @Json(ignore = true)
+    val isMarked: Boolean = false,
+    @Json(ignore = true)
+    val inMarkMode: Boolean = false
+) : Parcelable {
+
+    @Json(ignore = true)
+    val markAble get() = lastWatched == null
+
+    @Json(ignore = true)
+    val watched get() = histories.isNotEmpty() || lastWatched != null
+}
 
 @Parcelize
 @JsonClass(generateAdapter = true)

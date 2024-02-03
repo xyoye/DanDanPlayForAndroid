@@ -24,7 +24,6 @@
     <string name="text_smb_v2">SMB 2</string>
     <string name="text_smb_v1">SMB 1</string>
     <string name="action_remote_scan">扫码快捷录入</string>
-    <string name="action_remote_control">遥控器</string>
     <string name="action_test_server">测试</string>
 
     <string name="tips_parse_mode">数据解析</string>
@@ -41,9 +40,10 @@
     <string name="text_password_connect">密码连接</string>
     <string name="text_direct_connect">直接连接</string>
     <string name="text_not_use">不使用</string>
-    <string name="tips_password">密码：</string>
+    <string name="tips_password">密码</string>
     <string name="tips_port">端口：</string>
     <string name="tips_ip">IP：</string>
+    <string name="tips_screencast_version">版本：</string>
     <string name="tips_connect_info">连接信息</string>
     <string name="tips_connect_qe_code">连接码</string>
     <string name="tips_screencast_receive_service">投屏接收服务</string>

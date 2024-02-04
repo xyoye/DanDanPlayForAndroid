@@ -40,6 +40,7 @@ class FileManagerDialog(
     activity: Activity,
     private val action: FileManagerAction,
     private var defaultFolderPath: String? = null,
+    private val dismissWhenClickPositive: Boolean = true,
     private val listener: (resultPath: String) -> Unit
 ) : BaseBottomDialog<DialogFileManagerBinding>(activity) {
 
@@ -79,9 +80,11 @@ class FileManagerDialog(
         setNegativeListener { dismiss() }
 
         setPositiveListener {
-            dismiss()
             AppConfig.putLastOpenFolder(currentDirPath)
             listener.invoke(currentDirPath)
+            if (dismissWhenClickPositive) {
+                dismiss()
+            }
         }
 
         binding.rootPathTv.setOnClickListener {

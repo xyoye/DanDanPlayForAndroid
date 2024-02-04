@@ -13,13 +13,17 @@ import com.xyoye.data_component.entity.ExtendFolderEntity
 import com.xyoye.data_component.enums.FileManagerAction
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
-import com.xyoye.user_component.databinding.*
+import com.xyoye.user_component.databinding.FragmentScanExtendBinding
+import com.xyoye.user_component.databinding.ItemExtendFolderAddBinding
+import com.xyoye.user_component.databinding.ItemExtendFolderBinding
 
 class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentScanExtendBinding>() {
 
     companion object {
         fun newInstance() = ScanExtendFragment()
     }
+
+    private var fileManagerDialog: FileManagerDialog? = null
 
     override fun initViewModel() =
         ViewModelInit(
@@ -69,13 +73,24 @@ class ScanExtendFragment : BaseFragment<ScanExtendFragmentViewModel, FragmentSca
             dataBinding.extendFolderRv.setData(it)
         }
 
+        viewModel.extendAppendedLiveData.observe(this) {
+            fileManagerDialog?.dismiss()
+        }
+
         viewModel.getExtendFolder()
     }
 
     private fun showExtendFolderDialog() {
-        FileManagerDialog(requireActivity(), FileManagerAction.ACTION_SELECT_DIRECTORY) {
+        fileManagerDialog?.dismiss()
+        fileManagerDialog = FileManagerDialog(
+            mAttachActivity,
+            FileManagerAction.ACTION_SELECT_DIRECTORY,
+            dismissWhenClickPositive = false
+        ) {
             viewModel.addExtendFolder(it)
-        }.show()
+        }.also {
+            it.show()
+        }
     }
 
     private fun showConfirmRemoveDialog(entity: ExtendFolderEntity) {

@@ -70,6 +70,13 @@
     <string name="action_commonly_folder_manager">常用目录管理</string>
     <string name="tips_screencast_receiving">运行中</string>
 
+    <string name="tips_video_extension_support_setting">视频文件扩展名设置</string>
+    <string name="hint_input_video_extension">请输入需支持的视频扩展名</string>
+    <string name="question_for_extension">Q：扩展名的作用是什么？</string>
+    <string name="answer_for_extension">A：在文件识别时，应用会将扩展名在支持列表中的文件视为视频，扩展名匹配时不区分大小写</string>
+    <string name="tips_for_extension">Tips：扩展名应以,分隔，如：mp4,rmvb,mkv</string>
+    <string name="action_reset_extension">重置为默认支持的扩展名</string>
+
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>
         <item>@drawable/ic_baoqingtian</item>

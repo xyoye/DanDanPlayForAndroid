@@ -9,9 +9,9 @@ import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.factory.StorageVideoSourceFactory
 import com.xyoye.common_component.storage.StorageFactory
 import com.xyoye.common_component.storage.impl.LinkStorage
-import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.common_component.utils.getDirPath
+import com.xyoye.common_component.utils.meida.VideoScan
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.entity.ExtendFolderEntity
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -38,7 +38,7 @@ class PlayerIntentViewModel : BaseViewModel() {
                 return@launch
 
             val folderPath = getDirPath(filePath)
-            val extendVideos = MediaUtils.scanVideoFile(folderPath)
+            val extendVideos = VideoScan.traverse(folderPath)
             if (extendVideos.isNotEmpty()) {
                 DatabaseManager.instance.getExtendFolderDao().insert(
                     ExtendFolderEntity(folderPath, extendVideos.size)

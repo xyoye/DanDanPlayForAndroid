@@ -6,15 +6,12 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.xyoye.common_component.base.app.BaseApplication
-import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toText
 import com.xyoye.common_component.utils.meida.VideoExtension
-import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -103,41 +100,6 @@ object MediaUtils {
     }
 
     /**
-     * 扫描文件夹内视频文件
-     */
-    fun scanVideoFile(folderPath: String): MutableList<VideoEntity> {
-        val folderFile = File(folderPath)
-        if (!folderFile.exists())
-            return mutableListOf()
-
-        val childFileArray = folderFile.listFiles() ?: return mutableListOf()
-
-        val videoEntities = mutableListOf<VideoEntity>()
-        childFileArray.forEach {
-            if (it.isFile && isVideoFile(it.absolutePath)) {
-                videoEntities.add(
-                    VideoEntity(
-                        0,
-                        0,
-                        0,
-                        it.absolutePath,
-                        folderPath,
-                        null,
-                        null,
-                        getVideoDuration(it),
-                        it.length(),
-                        isFilter = false,
-                        isExtend = true
-                    )
-                )
-            } else if (it.isDirectory) {
-                videoEntities.addAll(scanVideoFile(it.absolutePath))
-            }
-        }
-        return videoEntities
-    }
-
-    /**
      * 获取Uri对应文件的真实路径
      */
     fun getPathFromURI(contentUri: Uri): String {
@@ -202,23 +164,5 @@ object MediaUtils {
             IOUtils.closeIO(fileOutputStream)
         }
         return false
-    }
-
-    private fun getVideoDuration(videoFile: File): Long {
-        if (videoFile.isInvalid()) {
-            return 0
-        }
-        val retriever = MediaMetadataRetriever()
-        return try {
-            retriever.setDataSource(BaseApplication.getAppContext(), Uri.fromFile(videoFile))
-            retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                ?.toLongOrNull()
-                ?: 0
-        } catch (e: Exception) {
-            e.printStackTrace()
-            0
-        } finally {
-            retriever.release()
-        }
     }
 }

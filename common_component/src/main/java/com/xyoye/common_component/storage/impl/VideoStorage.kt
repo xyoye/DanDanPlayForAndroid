@@ -6,11 +6,11 @@ import com.xyoye.common_component.resolver.MediaResolver
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.VideoStorageFile
-import com.xyoye.common_component.utils.MediaUtils
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.getFileNameNoExtension
 import com.xyoye.common_component.utils.isDanmuFile
 import com.xyoye.common_component.utils.isSubtitleFile
+import com.xyoye.common_component.utils.meida.VideoScan
 import com.xyoye.common_component.utils.subtitle.SubtitleFinder
 import com.xyoye.data_component.bean.FolderBean
 import com.xyoye.data_component.bean.LocalDanmuBean
@@ -126,7 +126,7 @@ class VideoStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
     private suspend fun deepRefresh() {
         //系统视频数据 = 自定义扫描目录视频 + MediaStore中系统视频
         val systemVideos = DatabaseManager.instance.getExtendFolderDao().getAll()
-            .flatMap { MediaUtils.scanVideoFile(it.folderPath) }
+            .flatMap { VideoScan.traverse(it.folderPath) }
             .plus(MediaResolver.queryVideo())
             .distinctBy { it.filePath }
 

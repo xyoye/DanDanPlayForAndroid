@@ -14,7 +14,7 @@ import com.xyoye.data_component.enums.AnimeDetailTab
 
 class AnimeDetailPageAdapter(
     activity: FragmentActivity,
-    private val tabs: Array<AnimeDetailTab>
+    val tabs: Array<AnimeDetailTab>
 ) : FragmentStateAdapter(activity) {
 
     override fun getItemCount() = tabs.size

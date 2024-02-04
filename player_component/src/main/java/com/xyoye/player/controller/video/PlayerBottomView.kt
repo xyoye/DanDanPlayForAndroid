@@ -15,6 +15,7 @@ import androidx.databinding.DataBindingUtil
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.extension.toResDrawable
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.enums.PlayState
@@ -61,7 +62,7 @@ class PlayerBottomView(
 
         viewBinding.sendDanmuTv.setOnClickListener {
             if (!UserConfig.isUserLoggedIn()) {
-                ToastCenter.showOriginalToast("请登录后再执行此操作")
+                ToastCenter.showWarning(R.string.tips_login_required.toResString())
                 return@setOnClickListener
             }
 
@@ -126,10 +127,12 @@ class PlayerBottomView(
                 viewBinding.playSeekBar.progress = 0
                 viewBinding.playSeekBar.secondaryProgress = 0
             }
+
             PlayState.STATE_PREPARING -> {
                 updateSourceAction()
                 viewBinding.playIv.isSelected = false
             }
+
             PlayState.STATE_START_ABORT,
             PlayState.STATE_PREPARED,
             PlayState.STATE_PAUSED,
@@ -137,14 +140,17 @@ class PlayerBottomView(
                 viewBinding.playIv.isSelected = false
                 mControlWrapper.stopProgress()
             }
+
             PlayState.STATE_PLAYING -> {
                 viewBinding.playIv.isSelected = true
                 mControlWrapper.startProgress()
             }
+
             PlayState.STATE_BUFFERING_PAUSED,
             PlayState.STATE_BUFFERING_PLAYING -> {
                 viewBinding.playIv.isSelected = mControlWrapper.isPlaying()
             }
+
             PlayState.STATE_COMPLETED -> {
                 mControlWrapper.stopProgress()
                 viewBinding.playIv.isSelected = mControlWrapper.isPlaying()

@@ -17,11 +17,14 @@ import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.adapter.setupDiffUtil
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.config.RouteTable
+import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.collectAtStarted
 import com.xyoye.common_component.extension.setData
 import com.xyoye.common_component.extension.setTextColorRes
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.weight.BottomActionDialog
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.data_component.data.EpisodeData
@@ -171,6 +174,10 @@ class AnimeEpisodeFragment :
         }
 
         dataBinding.tvSetRead.setOnClickListener {
+            if (UserConfig.isUserLoggedIn().not()) {
+                ToastCenter.showWarning(R.string.tips_login_required.toResString())
+                return@setOnClickListener
+            }
             viewModel.submitMarkedEpisodesViewed()
         }
     }
@@ -209,6 +216,11 @@ class AnimeEpisodeFragment :
      * 考虑标记为已看
      */
     private fun considerMarkAsViewed(data: EpisodeData) {
+        if (UserConfig.isUserLoggedIn().not()) {
+            ToastCenter.showWarning(R.string.tips_login_required.toResString())
+            return
+        }
+
         CommonDialog.Builder(mAttachActivity).apply {
             content = "确认标记 ${data.title} 为已看？"
             addPositive {

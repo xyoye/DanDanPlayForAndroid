@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class ScanExtendFragmentViewModel : BaseViewModel() {
 
     val extendFolderLiveData = MutableLiveData<MutableList<Any>>()
+    val extendAppendedLiveData = MutableLiveData<Any>()
 
     fun getExtendFolder() {
         viewModelScope.launch {
@@ -37,18 +38,18 @@ class ScanExtendFragmentViewModel : BaseViewModel() {
     fun addExtendFolder(folderPath: String) {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading()
-
             val extendVideos = MediaUtils.scanVideoFile(folderPath)
-            if (extendVideos.size == 0){
-                ToastCenter.showError("失败，未识别到任何视频")
-                hideLoading()
+            hideLoading()
+
+            if (extendVideos.size == 0) {
+                ToastCenter.showError("失败，当前文件夹内未识别到任何视频")
                 return@launch
             }
 
             val entity = ExtendFolderEntity(folderPath, extendVideos.size)
             DatabaseManager.instance.getExtendFolderDao().insert(entity)
             getExtendFolder()
-            hideLoading()
+            extendAppendedLiveData.postValue(Any())
         }
     }
 }

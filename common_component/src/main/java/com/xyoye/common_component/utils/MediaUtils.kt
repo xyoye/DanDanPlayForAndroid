@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.extension.isInvalid
 import com.xyoye.common_component.extension.toText
+import com.xyoye.common_component.utils.meida.VideoExtension
 import com.xyoye.data_component.entity.VideoEntity
 import java.io.File
 import java.io.FileOutputStream
@@ -24,14 +25,6 @@ import java.util.Locale
 /**
  * Created by xyoye on 2020/11/26.
  */
-
-private val commonVideoExtension = arrayOf(
-    "3gp", "avi", "flv", "mp4",
-    "m4v", "mkv", "mov", "mpeg",
-    "mpg", "mpe", "rm", "rmvb",
-    "wmv", "asf", "asx", "dat",
-    "vob", "m3u8", "m2ts", "m4s"
-)
 
 val supportSubtitleExtension = arrayOf(
     "ass", "scc", "stl", "srt",
@@ -45,7 +38,7 @@ val supportAudioExtension = arrayOf(
 
 fun isVideoFile(filePath: String): Boolean {
     val extension = getFileExtension(filePath)
-    return commonVideoExtension.contains(extension.lowercase(Locale.ROOT))
+    return VideoExtension.isSupport(extension)
 }
 
 fun isSubtitleFile(filePath: String): Boolean {

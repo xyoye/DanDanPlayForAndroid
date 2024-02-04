@@ -2,6 +2,7 @@ package com.xyoye.common_component.config
 
 import androidx.appcompat.app.AppCompatDelegate
 import com.xyoye.common_component.network.config.Api
+import com.xyoye.common_component.utils.meida.VideoExtension
 import com.xyoye.data_component.enums.HistorySort
 import com.xyoye.data_component.enums.StorageSort
 import com.xyoye.mmkv_annotation.MMKVFiled
@@ -84,4 +85,8 @@ object AppConfigTable {
     @MMKVFiled
     //备用域名地址
     var backupDomain: String = Api.DAN_DAN_SPARE
+
+    @MMKVFiled
+    //支持的视频后缀
+    var supportVideoExtension: String = VideoExtension.supportText
 }

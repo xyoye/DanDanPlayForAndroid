@@ -90,6 +90,11 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     }
 
     private fun initViewPager(tabs: Array<AnimeDetailTab>) {
+        val viewPagerAdapter = dataBinding.viewpager.adapter as? AnimeDetailPageAdapter?
+        if (viewPagerAdapter != null && viewPagerAdapter.tabs.contentEquals(tabs)) {
+            return
+        }
+
         dataBinding.viewpager.adapter = AnimeDetailPageAdapter(this, tabs)
         val mediator = TabLayoutMediator(
             dataBinding.tabLayout,

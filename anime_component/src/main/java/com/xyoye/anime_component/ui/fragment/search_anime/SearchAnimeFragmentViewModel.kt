@@ -3,9 +3,11 @@ package com.xyoye.anime_component.ui.fragment.search_anime
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.xyoye.anime_component.R
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
+import com.xyoye.common_component.extension.toResString
 import com.xyoye.common_component.extension.toastError
 import com.xyoye.common_component.network.repository.AnimeRepository
 import com.xyoye.common_component.utils.stringCompare
@@ -149,7 +151,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
         if (!UserConfig.isUserLoggedIn()
             && AnimeSortType.formValue(sortTypeData[position].typeId) == AnimeSortType.FOLLOW
         ) {
-            ToastCenter.showWarning("请登录后再进行此操作")
+            ToastCenter.showWarning(R.string.tips_login_required.toResString())
             return
         }
 

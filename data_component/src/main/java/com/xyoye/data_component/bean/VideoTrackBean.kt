@@ -24,12 +24,15 @@ data class VideoTrackBean(
     val selected: Boolean = false,
 
     // 是否是禁用轨道
-    val disable: Boolean = false
+    val disable: Boolean = false,
+
+    // 是否是内部轨道
+    val internal: Boolean = false
 ) {
 
     companion object {
         fun internal(id: String, name: String, type: TrackType, selected: Boolean): VideoTrackBean {
-            return VideoTrackBean(id = id, name = name, type = type, selected = selected)
+            return VideoTrackBean(id = id, name = name, type = type, selected = selected, internal = true)
         }
 
         fun subtitle(subtitlePath: String): VideoTrackBean {

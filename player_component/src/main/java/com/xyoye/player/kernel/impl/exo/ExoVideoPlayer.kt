@@ -220,27 +220,30 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     override fun getTracks(type: TrackType): List<VideoTrackBean> {
         val exoTrackType = getExoTrackType(type) ?: return emptyList()
 
-        return exoplayer.currentTracks.groups
-            .filter { it.type == exoTrackType }
-            .flatMap {
-                mapByLength(it.length) { index ->
-                    val trackFormat = it.getTrackFormat(index)
-                    val name = trackNameProvider.getTrackName(trackFormat)
-                    val selected = it.isTrackSelected(index)
-                    VideoTrackBean.internal(index.toString(), name, type, selected)
-                }
+        return exoplayer.currentTracks.groups.flatMapIndexed { groupIndex: Int, group: Tracks.Group ->
+            if (group.type != exoTrackType) {
+                return@flatMapIndexed emptyList()
             }
+            mapByLength(group.length) { trackIndex ->
+                val trackFormat = group.getTrackFormat(trackIndex)
+                val name = trackNameProvider.getTrackName(trackFormat)
+                val selected = group.isTrackSelected(trackIndex)
+                val id = "$groupIndex-$trackIndex"
+                VideoTrackBean.internal(id, name, type, selected)
+            }
+        }
     }
 
     override fun selectTrack(track: VideoTrackBean) {
         val exoTrackType = getExoTrackType(track.type) ?: return
-        val trackId = track.id?.toIntOrNull() ?: return
 
-        val override = exoplayer.currentTracks.groups
-            .firstOrNull { it.type == exoTrackType }
-            ?.mediaTrackGroup
-            ?.let { TrackSelectionOverride(it, trackId) }
-            ?: return
+        val trackIds = track.id?.split("-") ?: return
+        val groupIndex = trackIds.getOrNull(0)?.toInt() ?: return
+        val trackIndex = trackIds.getOrNull(1)?.toInt() ?: return
+
+        val override = exoplayer.currentTracks.groups.getOrNull(groupIndex)?.let {
+            TrackSelectionOverride(it.mediaTrackGroup, trackIndex)
+        } ?: return
 
         mTrackSelector.parameters = TrackSelectionParameters.Builder(mContext)
             .setTrackTypeDisabled(exoTrackType, false)

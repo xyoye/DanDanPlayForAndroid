@@ -150,7 +150,7 @@ class ControlWrapper(
         // 如果视频播放器支持添加轨道，则选中播放器轨道，并取消控制器中同类型轨道的选中
         // 否则由支持轨道的控制器选中，并取消播放器中同类型轨道的选中
         val trackType = track.type
-        if (mVideoPlayer.supportAddTrack(trackType)) {
+        if (track.internal || mVideoPlayer.supportAddTrack(trackType)) {
             mVideoPlayer.selectTrack(track)
             mSubtitleController.deselectTrack(trackType)
             mDanmuController.deselectTrack(trackType)

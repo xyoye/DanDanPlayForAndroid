@@ -94,7 +94,7 @@ class ServerController(
         val localhost = "127.0.0.1"
         val isLocalhostUrl = redirectUrl.contains(localhost)
         if (isLocalhostUrl) {
-            val sessionHost = session.headers["Host"] ?: session.headers["host"]
+            val sessionHost = session.headers["host"]
             if (!sessionHost.isNullOrEmpty()) {
                 val realHost = Uri.parse("http://$sessionHost").host ?: sessionHost
                 redirectUrl = redirectUrl.replace(localhost, realHost)
@@ -123,7 +123,7 @@ class ServerController(
             ?: return resourceNotFound
 
         // 解析Range
-        val rangeText = session.headers["range"] ?: session.headers["Range"] ?: ""
+        val rangeText = session.headers["range"] ?: ""
         val range = RangeUtils.parseRange(rangeText, storageFile.fileLength())
 
         // 带有Range头，但解析失败，返回416

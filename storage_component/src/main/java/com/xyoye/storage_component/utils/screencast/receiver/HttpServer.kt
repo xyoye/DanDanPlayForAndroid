@@ -53,7 +53,7 @@ class HttpServer(
             return true
         }
 
-        val authorization = session.headers[HeaderKey.AUTHORIZATION]
+        val authorization = session.headers[HeaderKey.AUTHORIZATION.lowercase()]
         if (authorization.isNullOrEmpty()) {
             return false
         }

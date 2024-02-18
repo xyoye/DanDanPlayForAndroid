@@ -51,7 +51,7 @@ class FtpPlayServer private constructor() : NanoHTTPD(randomPort()) {
         storage.completePending()
 
         //解析Range
-        val rangeText = session.headers["range"] ?: session.headers["Range"]
+        val rangeText = session.headers["range"]
         val rangeArray = rangeText?.run {
             RangeUtils.getRange(this, storageFile.fileLength())
         }

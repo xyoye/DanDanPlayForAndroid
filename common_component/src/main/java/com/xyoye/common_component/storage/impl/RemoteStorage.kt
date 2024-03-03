@@ -26,7 +26,7 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     private var storageFilesSnapshot = listOf<RemoteVideoData>()
 
-    override var rootUri: Uri = Uri.parse("http://${library.url}:${library.port}")
+    override var rootUri: Uri = generateRootUri()
 
     override suspend fun listFiles(file: StorageFile): List<StorageFile> {
         return if (file.isRootFile()) {
@@ -132,5 +132,15 @@ class RemoteStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
                 RemoteFileHelper.convertTreeData(it)
             }
         }
+    }
+
+    private fun generateRootUri(): Uri {
+        // 兼容旧模式数据
+        val noScheme = Uri.parse(library.url).scheme.isNullOrEmpty()
+        if (noScheme) {
+            return Uri.parse("http://${library.url}:${library.port}")
+        }
+
+        return Uri.parse(library.url)
     }
 }

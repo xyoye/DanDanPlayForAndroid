@@ -82,7 +82,7 @@ class AlistStorageEditDialog(
 
     private fun checkParams(serverData: MediaLibraryEntity): Boolean {
         if (serverData.url.isEmpty()) {
-            ToastCenter.showWarning("请填写服务器名称或IP地址")
+            ToastCenter.showWarning("请填写服务器地址")
             return false
         }
         if (!serverData.url.endsWith("/")) {

@@ -23,48 +23,21 @@
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/address_et"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/address_et"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_dialog_edit"
-                android:gravity="center_vertical"
-                android:hint="@string/hint_web_dav_address"
-                android:maxLines="1"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:singleLine="true"
-                android:text="@={remoteData.url}"
-                android:textColor="@color/text_black"
-                android:textColorHint="@color/text_gray"
-                android:textSize="14sp" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/port_et"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/background_dialog_edit"
-                android:gravity="center"
-                android:hint="@string/hint_port"
-                android:inputType="number"
-                android:maxLength="5"
-                android:maxLines="1"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:singleLine="true"
-                android:text="@={BindingConverter.intToString(remoteData.port)}"
-                android:textColor="@color/text_black"
-                android:textColorHint="@color/text_gray"
-                android:textSize="14sp" />
-        </LinearLayout>
+            android:layout_height="48dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_server_address"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:text="@={remoteData.url}"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/display_name_et"

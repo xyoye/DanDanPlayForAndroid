@@ -80,7 +80,7 @@ class RemoteStorageEditDialog(
                 if (remoteData.displayName.isEmpty()) {
                     remoteData.displayName = "远程媒体库"
                 }
-                remoteData.describe = "http://${remoteData.url}:${remoteData.port}"
+                remoteData.describe = remoteData.url
                 activity.addStorage(remoteData)
             }
         }
@@ -102,7 +102,17 @@ class RemoteStorageEditDialog(
 
     private fun checkParams(remoteData: MediaLibraryEntity): Boolean {
         if (remoteData.url.isEmpty()) {
-            ToastCenter.showWarning("请填写IP地址")
+            ToastCenter.showWarning("请填写服务器地址")
+            return false
+        }
+
+        if (!remoteData.url.endsWith("/")) {
+            remoteData.url = "${remoteData.url}/"
+        }
+
+        val serverUrl = remoteData.url
+        if (!serverUrl.startsWith("http://") && !serverUrl.startsWith("https://")) {
+            ToastCenter.showWarning("请填写服务器协议：http或https")
             return false
         }
 
@@ -129,8 +139,7 @@ class RemoteStorageEditDialog(
         if (data == null) {
             return@block
         }
-        remoteData.url = data.selectedIP ?: ""
-        remoteData.port = data.port
+        remoteData.url = "http://${data.selectedIP.orEmpty()}:${data.port}/"
         remoteData.displayName = data.machineName ?: ""
         tokenRequired = data.tokenRequired
         binding.remoteData = remoteData

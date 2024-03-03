@@ -25,7 +25,7 @@
             android:layout_height="48dp"
             android:background="@drawable/background_dialog_edit"
             android:gravity="center_vertical"
-            android:hint="@string/hint_web_dav_address"
+            android:hint="@string/hint_server_address"
             android:maxLines="1"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"

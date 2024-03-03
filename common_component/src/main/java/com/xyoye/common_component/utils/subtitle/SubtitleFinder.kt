@@ -65,9 +65,9 @@ object SubtitleFinder {
      * 判断是否是候选字幕
      */
     private fun isCandidateSubtitle(videoName: String, subtitleName: String): Boolean {
-        //获取点之前的视频名
+        //获取无后缀的视频名
         var compareVideoName = videoName
-        val pointIndex = videoName.indexOf(".")
+        val pointIndex = videoName.lastIndexOf(".")
         if (pointIndex != -1) {
             compareVideoName = videoName.substring(0, pointIndex)
         }

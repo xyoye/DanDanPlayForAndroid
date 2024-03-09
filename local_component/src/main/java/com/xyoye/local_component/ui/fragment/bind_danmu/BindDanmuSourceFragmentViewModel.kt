@@ -89,6 +89,10 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
             hideLoading()
 
             _searchedAnimeFlow.emit(result)
+            // 自动选择第一个动画。
+            if (result.isNotEmpty()) {
+                _selectedAnimeFlow.emit(result[0])
+            }
         }
     }
 

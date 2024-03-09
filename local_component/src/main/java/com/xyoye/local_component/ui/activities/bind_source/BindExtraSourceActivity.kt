@@ -129,6 +129,10 @@ class BindExtraSourceActivity :
             VideoItemLayout.initVideoLayout(dataBinding, it)
         }
 
+        viewModel.searchTextFlow.collectAtStarted(this) {
+            dataBinding.searchEt.setText(it)
+        }
+
         viewModel.segmentTitleLiveData.observe(this) {
             SegmentWordDialog(this, it) { searchText ->
                 dataBinding.searchEt.setText(searchText)

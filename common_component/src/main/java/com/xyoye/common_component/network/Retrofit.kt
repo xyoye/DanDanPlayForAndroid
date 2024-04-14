@@ -4,8 +4,8 @@ import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.helper.AgentInterceptor
 import com.xyoye.common_component.network.helper.AuthInterceptor
 import com.xyoye.common_component.network.helper.BackupDomainInterceptor
+import com.xyoye.common_component.network.helper.DecompressInterceptor
 import com.xyoye.common_component.network.helper.DynamicBaseUrlInterceptor
-import com.xyoye.common_component.network.helper.GzipInterceptor
 import com.xyoye.common_component.network.helper.LoggerInterceptor
 import com.xyoye.common_component.network.service.AlistService
 import com.xyoye.common_component.network.service.DanDanService
@@ -45,7 +45,7 @@ class Retrofit private constructor() {
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(AgentInterceptor())
             .addInterceptor(AuthInterceptor())
-            .addInterceptor(GzipInterceptor())
+            .addInterceptor(DecompressInterceptor())
             .addInterceptor(BackupDomainInterceptor())
             .addInterceptor(LoggerInterceptor().retrofit())
             .build()
@@ -58,6 +58,7 @@ class Retrofit private constructor() {
             .writeTimeout(4, TimeUnit.SECONDS)
             .hostnameVerifier { _, _ -> true }
             .addInterceptor(AgentInterceptor())
+            .addInterceptor(DecompressInterceptor())
             .addInterceptor(DynamicBaseUrlInterceptor())
             .addInterceptor(LoggerInterceptor().retrofit())
             .build()

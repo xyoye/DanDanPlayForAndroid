@@ -19,11 +19,11 @@ object AlistRepository : BaseRepository() {
         }
 
     /**
-     * 获取Alist根目录
+     * 获取Alist当前用户信息
      */
-    suspend fun getRootFile(url: String, token: String) = request()
+    suspend fun getUserInfo(url: String, token: String) = request()
         .doGet {
-            Retrofit.alistService.getRootPath(url, token)
+            Retrofit.alistService.getUserInfo(url, token)
         }
 
     /**

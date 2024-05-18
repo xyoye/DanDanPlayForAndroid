@@ -25,7 +25,7 @@ interface AlistService {
     ): CommonJsonModel<AlistLoginData>
 
     @GET("/api/me")
-    suspend fun getRootPath(
+    suspend fun getUserInfo(
         @Header(HeaderKey.BASE_URL) baseUrl: String,
         @Header(HeaderKey.AUTHORIZATION) authorization: String?,
     ): CommonJsonModel<AlistRootData>

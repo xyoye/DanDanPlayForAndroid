@@ -14,6 +14,6 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class AlistRootData(
     @NullToEmptyString
-    @Json(name = "base_path")
-    val rootPath: String = ""
+    @Json(name = "username")
+    val userName: String = ""
 ) : Parcelable

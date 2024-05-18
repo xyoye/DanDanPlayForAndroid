@@ -6,6 +6,7 @@ import com.xyoye.common_component.network.repository.ResourceRepository
 import com.xyoye.common_component.storage.AbstractStorage
 import com.xyoye.common_component.storage.file.StorageFile
 import com.xyoye.common_component.storage.file.impl.AlistStorageFile
+import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.data_component.data.alist.AlistFileData
 import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.data_component.entity.PlayHistoryEntity
@@ -37,10 +38,16 @@ class AlistStorage(
         val newToken = refreshToken() ?: return null
         this.token = newToken
 
-        return AlistRepository.getRootFile(rootUrl, token).getOrNull()
+        val result = AlistRepository.getUserInfo(rootUrl, token)
+        if (result.isFailure) {
+             ToastCenter.showToast("${result.exceptionOrNull()?.message}")
+            return null
+        }
+
+        return result.getOrNull()
             ?.successData
             ?.let {
-                AlistFileData(it.rootPath, true)
+                AlistFileData("/", true)
             }?.let {
                 AlistStorageFile("", it, this)
             }

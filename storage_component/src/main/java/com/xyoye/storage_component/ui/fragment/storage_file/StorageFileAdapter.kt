@@ -34,6 +34,7 @@ import com.xyoye.common_component.storage.file.danmu
 import com.xyoye.common_component.storage.file.subtitle
 import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
+import com.xyoye.common_component.utils.getRecognizableFileName
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.common_component.weight.BottomActionDialog
 import com.xyoye.common_component.weight.ToastCenter
@@ -120,7 +121,7 @@ class StorageFileAdapter(
                 "${childFileCount}文件"
             else
                 "目录"
-            itemBinding.folderTv.text = data.fileName()
+            itemBinding.folderTv.text = getRecognizableFileName(data)
             itemBinding.folderTv.setTextColor(getTitleColor(data))
             itemBinding.fileCountTv.text = fileCount
             itemBinding.itemLayout.setOnClickListener {

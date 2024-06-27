@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import com.xyoye.common_component.base.app.BaseApplication
 import com.xyoye.common_component.extension.isValid
+import com.xyoye.common_component.storage.file.StorageFile
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -154,3 +155,19 @@ fun formatFileSize(size: Long): String {
     }
 }
 
+private val SEASON_REGEX = Regex("^Season \\d+\$")
+
+/**
+ * 获取易于辨识的目录名。
+ * 对于符合 kodi 电视剧媒体库结构的视频目录（格式为 Season XX），会返回 <pre>目录名 (Season XX)</pre>。
+ * 否则，仍然直接返回目录名。
+ */
+fun getRecognizableFileName(storageFile: StorageFile): String {
+    return if (storageFile.isDirectory() && storageFile.fileName().matches(SEASON_REGEX)) {
+        // For kodi TV show library's season directory, add the parent directory name as the prefix
+        val parent = try { Uri.parse(storageFile.filePath()).pathSegments } catch (e: Exception) { null }
+            ?.takeIf { it.size > 1 }
+            ?.let { it[it.size - 2] }
+        if (parent != null) "$parent (${storageFile.fileName()})" else storageFile.fileName()
+    } else storageFile.fileName()
+}

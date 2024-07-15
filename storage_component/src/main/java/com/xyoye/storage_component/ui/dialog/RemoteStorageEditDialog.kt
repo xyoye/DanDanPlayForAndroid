@@ -43,7 +43,7 @@ class RemoteStorageEditDialog(
         this.binding = binding
         val isEditStorage = originalStorage != null
 
-        setTitle(if (isEditStorage) "编辑远程连接帐号" else "添加远程连接帐号")
+        setTitle(if (isEditStorage) "编辑PC端媒体库帐号" else "添加PC端媒体库帐号")
         binding.remoteData = remoteData
 
         setGroupMode(remoteData.remoteAnimeGrouping)
@@ -78,7 +78,7 @@ class RemoteStorageEditDialog(
         setPositiveListener {
             if (checkParams(remoteData)) {
                 if (remoteData.displayName.isEmpty()) {
-                    remoteData.displayName = "远程媒体库"
+                    remoteData.displayName = "PC端媒体库"
                 }
                 remoteData.describe = remoteData.url
                 activity.addStorage(remoteData)

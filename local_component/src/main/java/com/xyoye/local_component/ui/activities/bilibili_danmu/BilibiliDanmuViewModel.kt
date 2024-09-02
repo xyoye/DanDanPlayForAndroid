@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.xyoye.common_component.base.BaseViewModel
+import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.network.config.Api
 import com.xyoye.common_component.network.repository.OtherRepository
 import com.xyoye.common_component.network.repository.ResourceRepository
@@ -144,7 +145,11 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
     private suspend fun findVideoCidInJavaScript(url: String): EpisodeCidData? {
         val htmlElement = try {
-            Jsoup.connect(url).timeout(10 * 1000).get().toString()
+            Jsoup.connect(url)
+                .userAgent(AppConfig.getJsoupUserAgent().orEmpty())
+                .timeout(10 * 1000)
+                .get()
+                .toString()
         } catch (t: Throwable) {
             t.printStackTrace()
             sendDownloadMessage("错误：${t.message}")
@@ -177,52 +182,53 @@ class BilibiliDanmuViewModel : BaseViewModel() {
 
     private suspend fun findAnimeCidInJavaScript(url: String): AnimeCidData? {
         val htmlElement = try {
-            Jsoup.connect(url).timeout(10 * 1000).get().toString()
+            Jsoup.connect(url)
+                .userAgent(AppConfig.getJsoupUserAgent().orEmpty())
+                .timeout(10 * 1000)
+                .get()
+                .toString()
         } catch (t: Throwable) {
             t.printStackTrace()
             sendDownloadMessage("错误：${t.message}")
             return null
         }
 
-        val header = "<script id=\"__NEXT_DATA__\" type=\"application/json\">"
-        val footer = "</script>"
-
-        val pattern = Pattern.compile("($header).*($footer)")
-        val matcher = pattern.matcher(htmlElement)
-        if (matcher.find().not()) {
-            return null
-        }
+        val header = "window.__INITIAL_STATE__="
+        val footer = "};"
 
         val jsonObject = try {
-            JSONObject(matcher.group(0)?.removeSurrounding(header, footer).orEmpty())
+            val headerStart = htmlElement.indexOf(header)
+            if (headerStart == -1) {
+                return null
+            }
+            var content = htmlElement.substring(headerStart + header.length)
+
+            val footerStart = content.indexOf(footer)
+            if (footerStart == -1) {
+                return null
+            }
+            content = content.substring(0, footerStart + 1)
+
+            JSONObject(content)
         } catch (e: Exception) {
             return null
         }
 
-        val mediaInfoJson = jsonObject
-            .optJSONObject("props")
-            ?.optJSONObject("pageProps")
-            ?.optJSONObject("dehydratedState")
-            ?.optJSONArray("queries")
-            ?.optJSONObject(0)
-            ?.optJSONObject("state")
-            ?.optJSONObject("data")
-            ?.optJSONObject("seasonInfo")
-            ?.optJSONObject("mediaInfo")
-            ?: return null
-
-        val animeTitle = mediaInfoJson.optString("title").orEmpty()
-        val episodesJson = mediaInfoJson.optJSONArray("episodes")
+        val seasonTitle = jsonObject.optJSONObject("mediaInfo")?.optString("season_title").orEmpty()
+        val episodesJson = jsonObject.optJSONArray("epList")
             ?: return null
 
         val episodeList = mutableListOf<EpisodeCidData>()
         for (index in 0 until episodesJson.length()) {
             val episodeJson = episodesJson.optJSONObject(index)
-            val title = episodeJson.optString("playerEpTitle").orEmpty()
+            val episodeName = episodeJson.optString("long_title").orEmpty()
+            val episodeIndex = episodeJson.optString("title").orEmpty()
+            val title = if (episodeName.isEmpty()) "第${episodeIndex}话" else "第${episodeIndex}话 $episodeName"
+
             val cid = episodeJson.optString("cid") ?: continue
             episodeList.add(EpisodeCidData(title, cid))
         }
-        return AnimeCidData(animeTitle, episodeList)
+        return AnimeCidData(seasonTitle, episodeList)
     }
 
     private suspend fun actionDo(name: String) {

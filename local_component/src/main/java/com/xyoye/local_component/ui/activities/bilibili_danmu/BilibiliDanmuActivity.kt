@@ -1,6 +1,8 @@
 package com.xyoye.local_component.ui.activities.bilibili_danmu
 
 import android.content.Intent
+import android.view.Menu
+import android.view.MenuItem
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.xyoye.common_component.base.BaseActivity
@@ -12,12 +14,16 @@ import com.xyoye.data_component.bean.SheetActionBean
 import com.xyoye.local_component.BR
 import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBilibiliDanmuBinding
+import com.xyoye.local_component.ui.weight.BiliBiliDanmuMenus
 
 @Route(path = RouteTable.Local.BiliBiliDanmu)
 class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilibiliDanmuBinding>() {
     companion object {
         private const val REQUEST_CODE_SELECT_URL = 1001
     }
+
+    // 标题栏菜单管理器
+    private lateinit var mMenus: BiliBiliDanmuMenus
 
     override fun initViewModel() =
         ViewModelInit(
@@ -58,6 +64,16 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        mMenus = BiliBiliDanmuMenus.inflater(this, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        mMenus.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     private fun showActionDialog() {

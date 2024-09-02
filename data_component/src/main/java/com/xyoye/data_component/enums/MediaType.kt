@@ -56,7 +56,7 @@ enum class MediaType(
 
     REMOTE_STORAGE(
         "remote_storage",
-        "远程媒体库",
+        "PC端媒体库",
         cover = R.drawable.ic_remote_storage
     ),
 

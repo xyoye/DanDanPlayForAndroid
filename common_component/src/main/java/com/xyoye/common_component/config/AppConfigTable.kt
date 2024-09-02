@@ -89,4 +89,8 @@ object AppConfigTable {
     @MMKVFiled
     //支持的视频后缀
     var supportVideoExtension: String = VideoExtension.supportText
+
+    @MMKVFiled
+    // Jsoup的User-Agent
+    var jsoupUserAgent: String = DefaultConfig.DEFAULT_JSOUP_USER_AGENT
 }

@@ -8,5 +8,7 @@ data class EditBean(
     val title: String,
     val emptyWarningMsg: String,
     val hint: String,
-    val defaultText: String? = null
+    val defaultText: String? = null,
+    val inputTips: String? = null,
+    val canInputEmpty: Boolean = false
 )

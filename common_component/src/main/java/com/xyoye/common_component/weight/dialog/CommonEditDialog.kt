@@ -2,6 +2,7 @@ package com.xyoye.common_component.weight.dialog
 
 import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.xyoye.common_component.R
 import com.xyoye.common_component.databinding.DialogCommonEditBinding
 import com.xyoye.common_component.utils.hideKeyboard
@@ -39,7 +40,7 @@ class CommonEditDialog(
 
         setPositiveListener {
             val result = binding.inputEt.text.toString().trim()
-            if (result.isEmpty()) {
+            if (editBean.canInputEmpty.not() && result.isEmpty()) {
                 ToastCenter.showWarning(editBean.emptyWarningMsg)
                 return@setPositiveListener
             }
@@ -59,6 +60,9 @@ class CommonEditDialog(
         binding.inputEt.setText(editBean.defaultText)
         binding.inputEt.hint = editBean.hint
         binding.inputEt.postDelayed({ showKeyboard(binding.inputEt) }, 200)
+
+        binding.tvInputTips.isVisible = editBean.inputTips?.isNotEmpty() == true
+        binding.tvInputTips.text = editBean.inputTips
     }
 
     override fun dismiss() {

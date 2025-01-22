@@ -1,6 +1,8 @@
 package com.xyoye.dandanplay.ui.main
 
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +24,7 @@ import com.xyoye.dandanplay.BR
 import com.xyoye.dandanplay.R
 import com.xyoye.dandanplay.databinding.ActivityMainBinding
 import com.xyoye.data_component.data.LoginData
+import com.xyoye.user_component.ui.weight.DeveloperMenus
 import kotlin.random.Random
 import kotlin.system.exitProcess
 
@@ -46,6 +49,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
 
     private var fragmentTag = ""
     private var touchTime = 0L
+
+    // 标题栏菜单管理器
+    private lateinit var mMenus: DeveloperMenus
 
     override fun initViewModel() =
         ViewModelInit(
@@ -86,10 +92,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                     title = "弹弹play"
                     switchFragment(TAG_FRAGMENT_HOME)
                 }
+
                 R.id.navigation_media -> {
                     title = "媒体库"
                     switchFragment(TAG_FRAGMENT_MEDIA)
                 }
+
                 R.id.navigation_personal -> {
                     title = "个人中心"
                     switchFragment(TAG_FRAGMENT_PERSONAL)
@@ -121,6 +129,16 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             }
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        mMenus = DeveloperMenus.inflater(this, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        mMenus.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     override fun getLoginLiveData(): MutableLiveData<LoginData> {
@@ -158,6 +176,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                     fragmentTag = tag
                 }
             }
+
             TAG_FRAGMENT_MEDIA -> {
                 val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT_MEDIA)
                 if (fragment == null) {
@@ -174,6 +193,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                     fragmentTag = tag
                 }
             }
+
             TAG_FRAGMENT_PERSONAL -> {
                 val fragment = supportFragmentManager.findFragmentByTag(TAG_FRAGMENT_PERSONAL)
                 if (fragment == null) {
@@ -190,6 +210,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                     fragmentTag = tag
                 }
             }
+
             else -> {
                 throw RuntimeException("no match fragment")
             }

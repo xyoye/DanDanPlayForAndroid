@@ -1,5 +1,6 @@
 package com.xyoye.common_component.network.service
 
+import com.xyoye.common_component.network.helper.DeveloperCertificateInterceptor
 import com.xyoye.common_component.network.request.RequestParams
 import com.xyoye.data_component.data.AnimeDetailData
 import com.xyoye.data_component.data.AnimeTagData
@@ -17,9 +18,11 @@ import com.xyoye.data_component.data.SearchAnimeData
 import com.xyoye.data_component.data.SendDanmuData
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -116,4 +119,11 @@ interface DanDanService {
 
     @POST("/api/v2/playhistory")
     suspend fun addPlayHistory(@Body body: RequestBody): CommonJsonData
+
+    @GET("api/v2/login/renew")
+    suspend fun checkAuthenticate(
+        @Header(DeveloperCertificateInterceptor.HEADER_APP_ID) appId: String,
+        @Header(DeveloperCertificateInterceptor.HEADER_APP_SECRET) appSecret: String,
+        @Header("X-Auth") authMode: Int
+    ): Response<ResponseBody>
 }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/input_app_id"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/app_id"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/input_app_secret"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/background_dialog_edit"
+            android:gravity="center_vertical"
+            android:hint="@string/app_secret"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/text_gray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/input_app_id" />
+
+        <TextView
+            android:id="@+id/tv_certificate_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/dandanplay_certificate_tips"
+            android:textColor="@color/text_black"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@id/input_app_secret" />
+
+        <TextView
+            android:id="@+id/tv_local_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/dandanplay_local_tips"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_certificate_tips" />
+
+        <TextView
+            android:id="@+id/tv_read_document"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/read_dandanplay_document"
+            android:textColor="@color/text_theme"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_local_tips" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

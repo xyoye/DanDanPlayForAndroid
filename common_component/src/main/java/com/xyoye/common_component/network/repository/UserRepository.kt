@@ -113,4 +113,12 @@ object UserRepository : BaseRepository() {
         .doPost {
             Retrofit.danDanService.updatePassword(it)
         }
+
+    /**
+     * 校验凭证
+     */
+    suspend fun checkAuthenticate(appId: String, appSecret: String) = request()
+        .doGet {
+            Retrofit.danDanService.checkAuthenticate(appId, appSecret, 1)
+        }
 }

@@ -49,7 +49,7 @@ class DeveloperAuthenticateDialog(
         }
 
         binding.tvReadDocument.setOnClickListener {
-            activity.startUrlActivity("https://github.com/kaedei/dandanplay-libraryindex/blob/master/api/OpenPlatform.md")
+            activity.startUrlActivity("https://doc.dandanplay.com/open/")
         }
     }
 

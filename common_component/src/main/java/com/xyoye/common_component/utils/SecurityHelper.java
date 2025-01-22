@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.xyoye.common_component.base.app.BaseApplication;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by xyoye on 2021/1/6.
  */
@@ -52,7 +55,32 @@ public class SecurityHelper {
         return !ERROR_RESULT.equals(getAppId());
     }
 
+    public Map<String, String> getSignatureMap(String path, Context context) {
+        Object signature = getSignature(path, context);
+        if (signature == null) {
+            return null;
+        }
+
+        if (signature instanceof Map) {
+            HashMap<String, String> map = new HashMap<>();
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) signature).entrySet()) {
+                Object key = entry.getKey();
+                if (key instanceof String) {
+                    Object value = entry.getValue();
+                    if (value instanceof String) {
+                        map.put((String) key, (String) value);
+                    }
+                }
+            }
+            return map;
+        }
+
+        return null;
+    }
+
     private static native String getKey(int position, Context context);
 
     private static native String buildHash(String hashInfo, Context context);
+
+    private static native Object getSignature(String path, Context context);
 }

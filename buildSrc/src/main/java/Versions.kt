@@ -4,5 +4,5 @@ object Versions {
     const val minSdkVersion = 21
     const val targetSdkVersion = 29
     const val versionCode = 58
-    const val versionName = "4.2.0"
+    const val versionName = "4.1.1"
 }

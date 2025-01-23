@@ -106,7 +106,13 @@ class BaseAdapter : AnimatedAdapter<RecyclerView.ViewHolder>() {
         super.setData(data)
 
         if (diffCreator != null) {
-            setDiffData(data, diffCreator!!)
+            // [Bugly] #2529539
+            // TODO: 临时的解决方案，需要复现与排查
+            try {
+                setDiffData(data, diffCreator!!)
+            } catch (e: Exception) {
+                setNotifyData(data)
+            }
         } else {
             setNotifyData(data)
         }

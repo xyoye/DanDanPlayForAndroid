@@ -5,8 +5,10 @@ import com.xyoye.common_component.network.helper.AgentInterceptor
 import com.xyoye.common_component.network.helper.AuthInterceptor
 import com.xyoye.common_component.network.helper.BackupDomainInterceptor
 import com.xyoye.common_component.network.helper.DecompressInterceptor
+import com.xyoye.common_component.network.helper.DeveloperCertificateInterceptor
 import com.xyoye.common_component.network.helper.DynamicBaseUrlInterceptor
 import com.xyoye.common_component.network.helper.LoggerInterceptor
+import com.xyoye.common_component.network.helper.SignatureInterceptor
 import com.xyoye.common_component.network.service.AlistService
 import com.xyoye.common_component.network.service.DanDanService
 import com.xyoye.common_component.network.service.ExtendedService
@@ -43,6 +45,8 @@ class Retrofit private constructor() {
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(4, TimeUnit.SECONDS)
             .hostnameVerifier { _, _ -> true }
+            .addInterceptor(SignatureInterceptor())
+            .addInterceptor(DeveloperCertificateInterceptor())
             .addInterceptor(AgentInterceptor())
             .addInterceptor(AuthInterceptor())
             .addInterceptor(DecompressInterceptor())

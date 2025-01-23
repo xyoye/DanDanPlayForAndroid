@@ -77,6 +77,12 @@
     <string name="tips_for_extension">Tips：扩展名应以,分隔，如：mp4,rmvb,mkv</string>
     <string name="action_reset_extension">重置为默认支持的扩展名</string>
 
+    <string name="app_id">App Id</string>
+    <string name="app_secret">App Secret</string>
+    <string name="dandanplay_certificate_tips">应弹弹play开放平台要求，请开发者完善AppId与AppSecret，没有相关凭证的应用在使用弹弹play API相关功能时可能受到限制，如番剧列表、弹幕匹配、用户信息等。</string>
+    <string name="dandanplay_local_tips">* 此配置仅用于弹弹play API相关功能，不影响其他本地功能的使用，媒体库视频播放、弹/字幕文件加载仍可正常使用</string>
+    <string name="read_dandanplay_document">详细信息请查看弹弹play开放平台文档</string>
+
     <integer-array name="cover">
         <item>@drawable/ic_bailitusu</item>
         <item>@drawable/ic_baoqingtian</item>

@@ -113,7 +113,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
             if (localDanmu == null) {
                 hideLoading()
-                ToastCenter.showSuccess("保存弹幕失败")
+                ToastCenter.showError("保存弹幕失败")
                 return@launch
             }
 
@@ -137,7 +137,7 @@ class BindDanmuSourceFragmentViewModel : BaseViewModel() {
 
             if (localDanmu == null) {
                 hideLoading()
-                ToastCenter.showSuccess("保存弹幕失败")
+                ToastCenter.showError("保存弹幕失败")
                 return@launch
             }
 

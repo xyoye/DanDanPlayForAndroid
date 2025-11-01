@@ -108,96 +108,18 @@ object ServerController {
         for (entry in parameters.entries) {
             val key = entry.key
             val value = entry.value.firstOrNull() ?: continue
-            updateDanmuConfig(context, key, value)
+            if (key.isNotEmpty() && value.isNotEmpty()) {
+                sendConfigBroadcast(context, key, value)
+            }
         }
         return createResponse(message = "弹幕设置已更新")
     }
 
-    private fun updateDanmuConfig(context: Context, key: String, value: String) {
-        when (key) {
-            "danmuSize" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuSize(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuSpeed" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuSpeed(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuAlpha" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuAlpha(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuStoke" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuStoke(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "showMobileDanmu" -> {
-                val boolValue = value.toBoolean()
-                DanmuConfig.putShowMobileDanmu(boolValue)
-                sendConfigBroadcast(context, key, boolValue)
-            }
-            "showBottomDanmu" -> {
-                val boolValue = value.toBoolean()
-                DanmuConfig.putShowBottomDanmu(boolValue)
-                sendConfigBroadcast(context, key, boolValue)
-            }
-            "showTopDanmu" -> {
-                val boolValue = value.toBoolean()
-                DanmuConfig.putShowTopDanmu(boolValue)
-                sendConfigBroadcast(context, key, boolValue)
-            }
-            "danmuMaxCount" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuMaxCount(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuMaxLine" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuMaxLine(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuScrollMaxLine" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuScrollMaxLine(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuTopMaxLine" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuTopMaxLine(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "danmuBottomMaxLine" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuBottomMaxLine(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-            "cloudDanmuBlock" -> {
-                val boolValue = value.toBoolean()
-                DanmuConfig.putCloudDanmuBlock(boolValue)
-                sendConfigBroadcast(context, key, boolValue)
-            }
-            "danmuLanguage" -> {
-                val intValue = value.toIntOrNull() ?: return
-                DanmuConfig.putDanmuLanguage(intValue)
-                sendConfigBroadcast(context, key, intValue)
-            }
-        }
-    }
 
     private fun sendConfigBroadcast(context: Context, key: String, value: Any) {
         val intent = Intent(ACTION_DANMU_CONFIG_UPDATED)
         intent.putExtra(EXTRA_CONFIG_KEY, key)
-        when (value) {
-            is Int -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
-            is Boolean -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
-            is String -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
-            is Float -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
-            is Long -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
-        }
+        intent.putExtra(EXTRA_CONFIG_VALUE, value.toString())
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 

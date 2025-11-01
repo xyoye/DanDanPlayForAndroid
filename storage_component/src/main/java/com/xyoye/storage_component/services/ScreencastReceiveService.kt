@@ -235,7 +235,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
 
     private fun createHttpServer(port: Int, password: String?): HttpServer? {
         return try {
-            val httpServer = HttpServer(password, port)
+            val httpServer = HttpServer(this, password, port)
             httpServer.start(2000)
             httpServer
         } catch (e: Exception) {

@@ -15,7 +15,10 @@ import fi.iki.elonen.NanoHTTPD
  * </pre>
  */
 
+import android.content.Context
+
 class HttpServer(
+    private val context: Context,
     private val password: String?,
     port: Int
 ) : NanoHTTPD(port) {
@@ -30,7 +33,7 @@ class HttpServer(
 
             val response = when (session.method) {
                 Method.GET -> {
-                    ServerController.handleGetRequest(session)
+                    ServerController.handleGetRequest(context, session)
                 }
 
                 Method.POST -> {

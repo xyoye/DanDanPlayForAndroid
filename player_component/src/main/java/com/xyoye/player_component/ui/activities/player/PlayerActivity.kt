@@ -1,6 +1,7 @@
 package com.xyoye.player_component.ui.activities.player
 
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -9,6 +10,7 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
@@ -85,6 +87,76 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     //电量管理
     private var batteryHelper = BatteryHelper()
 
+    private val danmuConfigReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != "com.xyoye.dandanplay.ACTION_DANMU_CONFIG_UPDATED") {
+                return
+            }
+
+            val key = intent.getStringExtra("extra_config_key") ?: return
+
+            when (key) {
+                "danmuSize" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.size)
+                    PlayerInitializer.Danmu.size = value
+                    videoController.getDanmuController().updateDanmuSize()
+                }
+                "danmuSpeed" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.speed)
+                    PlayerInitializer.Danmu.speed = value
+                    videoController.getDanmuController().updateDanmuSpeed()
+                }
+                "danmuAlpha" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.alpha)
+                    PlayerInitializer.Danmu.alpha = value
+                    videoController.getDanmuController().updateDanmuAlpha()
+                }
+                "danmuStoke" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.stoke)
+                    PlayerInitializer.Danmu.stoke = value
+                    videoController.getDanmuController().updateDanmuStoke()
+                }
+                "showMobileDanmu" -> {
+                    val value = intent.getBooleanExtra("extra_config_value", PlayerInitializer.Danmu.mobileDanmu)
+                    PlayerInitializer.Danmu.mobileDanmu = value
+                    videoController.getDanmuController().updateMobileDanmuState()
+                }
+                "showTopDanmu" -> {
+                    val value = intent.getBooleanExtra("extra_config_value", PlayerInitializer.Danmu.topDanmu)
+                    PlayerInitializer.Danmu.topDanmu = value
+                    videoController.getDanmuController().updateTopDanmuState()
+                }
+                "showBottomDanmu" -> {
+                    val value = intent.getBooleanExtra("extra_config_value", PlayerInitializer.Danmu.bottomDanmu)
+                    PlayerInitializer.Danmu.bottomDanmu = value
+                    videoController.getDanmuController().updateBottomDanmuState()
+                }
+                "danmuMaxCount" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.maxNum)
+                    PlayerInitializer.Danmu.maxNum = value
+                    videoController.getDanmuController().updateMaxScreenNum()
+                }
+                "danmuMaxLine", "danmuScrollMaxLine", "danmuTopMaxLine", "danmuBottomMaxLine" -> {
+                    val maxLine = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.maxScrollLine)
+                    when(key) {
+                        "danmuScrollMaxLine" -> PlayerInitializer.Danmu.maxScrollLine = maxLine
+                        "danmuTopMaxLine" -> PlayerInitializer.Danmu.maxTopLine = maxLine
+                        "danmuBottomMaxLine" -> PlayerInitializer.Danmu.maxBottomLine = maxLine
+                    }
+                    videoController.getDanmuController().updateMaxLine()
+                }
+                "cloudDanmuBlock" -> {
+                    val value = intent.getBooleanExtra("extra_config_value", PlayerInitializer.Danmu.cloudBlock)
+                    PlayerInitializer.Danmu.cloudBlock = value
+                }
+                "danmuLanguage" -> {
+                    val value = intent.getIntExtra("extra_config_value", PlayerInitializer.Danmu.language.value)
+                    PlayerInitializer.Danmu.language = DanmakuLanguage.formValue(value)
+                }
+            }
+        }
+    }
+
     override fun initViewModel() =
         ViewModelInit(
             BR.viewModel,
@@ -121,6 +193,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     override fun onResume() {
         super.onResume()
 
+        val intentFilter = IntentFilter("com.xyoye.dandanplay.ACTION_DANMU_CONFIG_UPDATED")
+        LocalBroadcastManager.getInstance(this).registerReceiver(danmuConfigReceiver, intentFilter)
+
         exitPopupMode()
     }
 
@@ -131,6 +206,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             danDanPlayer.pause()
         }
         danDanPlayer.recordPlayInfo()
+        
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(danmuConfigReceiver)
         super.onPause()
     }
 
@@ -272,7 +349,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         afterInitPlayer()
     }
 
-    private fun updatePlayer(source: BaseVideoSource) {
+private fun updatePlayer(source: BaseVideoSource) {
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
             setLastPosition(source.getCurrentPosition())

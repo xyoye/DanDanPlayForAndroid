@@ -65,5 +65,7 @@ object ScreencastConstants {
         const val init = "/init"
 
         const val play = "/play"
+
+        const val config = "/android/config"
     }
 }

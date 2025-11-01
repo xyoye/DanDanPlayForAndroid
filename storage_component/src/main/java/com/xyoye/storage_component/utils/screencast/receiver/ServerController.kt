@@ -1,5 +1,9 @@
 package com.xyoye.storage_component.utils.screencast.receiver
 
+import android.content.Context
+import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.xyoye.common_component.config.DanmuConfig
 import com.xyoye.common_component.storage.helper.ScreencastConstants
 import com.xyoye.common_component.utils.JsonHelper
 import com.xyoye.data_component.data.CommonJsonData
@@ -17,12 +21,17 @@ import java.io.IOException
  */
 
 object ServerController {
+    const val ACTION_DANMU_CONFIG_UPDATED = "com.xyoye.dandanplay.ACTION_DANMU_CONFIG_UPDATED"
+    const val EXTRA_CONFIG_KEY = "extra_config_key"
+    const val EXTRA_CONFIG_VALUE = "extra_config_value"
 
     fun handleGetRequest(
+        context: Context,
         session: NanoHTTPD.IHTTPSession
     ): NanoHTTPD.Response? {
         return when (session.uri) {
             ScreencastConstants.ReceiverApi.init -> init(session)
+            ScreencastConstants.ReceiverApi.config -> config(context, session)
             else -> null
         }
     }
@@ -89,6 +98,107 @@ object ServerController {
         screencastData.apply { ip = session.remoteIpAddress }
         handler?.onReceiveVideo(screencastData)
         return createResponse()
+    }
+
+    /**
+     * 更新弹幕配置
+     */
+    private fun config(context: Context, session: NanoHTTPD.IHTTPSession): NanoHTTPD.Response {
+        val parameters = session.parameters
+        for (entry in parameters.entries) {
+            val key = entry.key
+            val value = entry.value.firstOrNull() ?: continue
+            updateDanmuConfig(context, key, value)
+        }
+        return createResponse(message = "弹幕设置已更新")
+    }
+
+    private fun updateDanmuConfig(context: Context, key: String, value: String) {
+        when (key) {
+            "danmuSize" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuSize(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuSpeed" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuSpeed(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuAlpha" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuAlpha(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuStoke" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuStoke(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "showMobileDanmu" -> {
+                val boolValue = value.toBoolean()
+                DanmuConfig.putShowMobileDanmu(boolValue)
+                sendConfigBroadcast(context, key, boolValue)
+            }
+            "showBottomDanmu" -> {
+                val boolValue = value.toBoolean()
+                DanmuConfig.putShowBottomDanmu(boolValue)
+                sendConfigBroadcast(context, key, boolValue)
+            }
+            "showTopDanmu" -> {
+                val boolValue = value.toBoolean()
+                DanmuConfig.putShowTopDanmu(boolValue)
+                sendConfigBroadcast(context, key, boolValue)
+            }
+            "danmuMaxCount" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuMaxCount(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuMaxLine" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuMaxLine(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuScrollMaxLine" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuScrollMaxLine(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuTopMaxLine" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuTopMaxLine(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "danmuBottomMaxLine" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuBottomMaxLine(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+            "cloudDanmuBlock" -> {
+                val boolValue = value.toBoolean()
+                DanmuConfig.putCloudDanmuBlock(boolValue)
+                sendConfigBroadcast(context, key, boolValue)
+            }
+            "danmuLanguage" -> {
+                val intValue = value.toIntOrNull() ?: return
+                DanmuConfig.putDanmuLanguage(intValue)
+                sendConfigBroadcast(context, key, intValue)
+            }
+        }
+    }
+
+    private fun sendConfigBroadcast(context: Context, key: String, value: Any) {
+        val intent = Intent(ACTION_DANMU_CONFIG_UPDATED)
+        intent.putExtra(EXTRA_CONFIG_KEY, key)
+        when (value) {
+            is Int -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
+            is Boolean -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
+            is String -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
+            is Float -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
+            is Long -> intent.putExtra(EXTRA_CONFIG_VALUE, value)
+        }
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 
     private fun createResponse(

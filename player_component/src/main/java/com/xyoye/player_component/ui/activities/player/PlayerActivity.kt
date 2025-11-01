@@ -88,8 +88,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     //电量管理
     private var batteryHelper = BatteryHelper()
 
-    //弹幕配置广播
-    private val danmuConfigReceiver = PlayerDanmuConfigReceiver(videoController)
+    //弹幕配置广播（延迟初始化，避免过早创建 VideoController 导致的潜在崩溃）
+    private lateinit var danmuConfigReceiver: PlayerDanmuConfigReceiver
 
     override fun initViewModel() =
         ViewModelInit(
@@ -121,6 +121,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         dataBinding.playerContainer.removeAllViews()
         dataBinding.playerContainer.addView(danDanPlayer)
 
+        // 在控制器完成初始化并与播放器绑定后，再创建弹幕配置接收器
+        danmuConfigReceiver = PlayerDanmuConfigReceiver(videoController)
+
         applyPlaySource(VideoSourceManager.getInstance().getSource())
     }
 
@@ -128,7 +131,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         super.onResume()
 
         val intentFilter = IntentFilter("com.xyoye.dandanplay.ACTION_DANMU_CONFIG_UPDATED")
-        LocalBroadcastManager.getInstance(this).registerReceiver(danmuConfigReceiver, intentFilter)
+        if (this::danmuConfigReceiver.isInitialized) {
+            LocalBroadcastManager.getInstance(this).registerReceiver(danmuConfigReceiver, intentFilter)
+        }
 
         exitPopupMode()
     }
@@ -141,7 +146,9 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
         danDanPlayer.recordPlayInfo()
         
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(danmuConfigReceiver)
+        if (this::danmuConfigReceiver.isInitialized) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(danmuConfigReceiver)
+        }
         super.onPause()
     }
 

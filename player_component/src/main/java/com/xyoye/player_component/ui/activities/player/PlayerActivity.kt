@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
+import android.provider.Settings
 import android.view.KeyEvent
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
@@ -29,9 +30,13 @@ import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.StorageVideoSource
 import com.xyoye.common_component.utils.screencast.ScreencastHandler
+import com.xyoye.common_component.utils.screencast.ScreencastRemoteControlBridge
+import com.xyoye.common_component.utils.screencast.ScreencastRemoteControlTarget
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.common_component.weight.dialog.CommonDialog
 import com.xyoye.data_component.bean.VideoTrackBean
+import com.xyoye.data_component.data.screeencast.RemoteControlResult
+import com.xyoye.data_component.data.screeencast.RemotePlayerStatus
 import com.xyoye.data_component.enums.DanmakuLanguage
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.data_component.enums.PixelFormat
@@ -52,10 +57,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.math.roundToInt
 
 @Route(path = RouteTable.Player.PlayerCenter)
 class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
-    PlayerReceiverListener, ScreencastHandler {
+    PlayerReceiverListener, ScreencastHandler, ScreencastRemoteControlTarget {
 
     private val danmuViewModel: PlayerDanmuViewModel by lazy {
         ViewModelProvider(
@@ -125,6 +131,8 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         danmuConfigReceiver = PlayerDanmuConfigReceiver(videoController)
 
         applyPlaySource(VideoSourceManager.getInstance().getSource())
+
+        ScreencastRemoteControlBridge.attach(this)
     }
 
     override fun onResume() {
@@ -157,6 +165,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         unregisterReceiver()
         danDanPlayer.release()
         batteryHelper.release()
+        ScreencastRemoteControlBridge.detach(this)
         super.onDestroy()
     }
 
@@ -502,5 +511,207 @@ private fun updatePlayer(source: BaseVideoSource) {
     private fun exitTaskBackground() {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         activityManager.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_WITH_HOME)
+    }
+
+    override fun provideRemoteStatus(): RemotePlayerStatus? {
+        val currentVolume = getSystemVolumePercent()
+        val brightness = getScreenBrightnessPercent()
+        val source = videoSource
+        return RemotePlayerStatus(
+            title = source?.getVideoTitle(),
+            playing = danDanPlayer.isPlaying(),
+            position = danDanPlayer.getCurrentPosition(),
+            duration = danDanPlayer.getDuration(),
+            bufferedPercent = danDanPlayer.getBufferedPercentage(),
+            speed = danDanPlayer.getSpeed(),
+            volumePercent = currentVolume,
+            brightnessPercent = brightness,
+            mediaType = source?.getMediaType()?.name
+        )
+    }
+
+    override fun handleRemoteAction(
+        action: String,
+        params: Map<String, String>
+    ): RemoteControlResult {
+        val normalized = action.trim().lowercase()
+        val result = when (normalized) {
+            "play", "resume" -> {
+                danDanPlayer.resume()
+                RemoteControlResult.success()
+            }
+            "pause" -> {
+                danDanPlayer.pause()
+                RemoteControlResult.success()
+            }
+            "toggle" -> {
+                if (danDanPlayer.isPlaying()) {
+                    danDanPlayer.pause()
+                } else {
+                    danDanPlayer.resume()
+                }
+                RemoteControlResult.success()
+            }
+            "seek" -> {
+                val position = params["position"]?.toLongOrNull()
+                if (position == null || position < 0) {
+                    RemoteControlResult.failure(400, "position 参数无效")
+                } else {
+                    danDanPlayer.seekTo(position)
+                    RemoteControlResult.success()
+                }
+            }
+            "seekby", "seek_by", "seekoffset" -> {
+                val offset = params["offset"]?.toLongOrNull()
+                if (offset == null) {
+                    RemoteControlResult.failure(400, "offset 参数无效")
+                } else {
+                    val duration = danDanPlayer.getDuration()
+                    val current = danDanPlayer.getCurrentPosition()
+                    val target = (current + offset).coerceIn(0L, duration)
+                    danDanPlayer.seekTo(target)
+                    RemoteControlResult.success()
+                }
+            }
+            "set_speed", "speed" -> {
+                val speed = params["speed"]?.toFloatOrNull()
+                if (speed == null || speed <= 0f) {
+                    RemoteControlResult.failure(400, "speed 参数无效")
+                } else {
+                    danDanPlayer.setSpeed(speed)
+                    PlayerConfig.putNewVideoSpeed(speed)
+                    RemoteControlResult.success()
+                }
+            }
+            "set_volume", "volume" -> {
+                val percent = params["percent"]?.toIntOrNull()
+                if (percent == null) {
+                    RemoteControlResult.failure(400, "percent 参数无效")
+                } else if (setSystemVolumePercent(percent)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "设置音量失败")
+                }
+            }
+            "volumeup", "volume_up" -> {
+                val delta = params["delta"]?.toIntOrNull() ?: 5
+                if (adjustSystemVolume(delta)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "调整音量失败")
+                }
+            }
+            "volumedown", "volume_down" -> {
+                val delta = params["delta"]?.toIntOrNull() ?: 5
+                if (adjustSystemVolume(-delta)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "调整音量失败")
+                }
+            }
+            "set_brightness", "brightness" -> {
+                val percent = params["percent"]?.toIntOrNull()
+                if (percent == null) {
+                    RemoteControlResult.failure(400, "percent 参数无效")
+                } else if (setScreenBrightnessPercent(percent)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "设置亮度失败")
+                }
+            }
+            "brightnessup", "brightness_up" -> {
+                val delta = params["delta"]?.toIntOrNull() ?: 5
+                if (adjustScreenBrightness(delta)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "调整亮度失败")
+                }
+            }
+            "brightnessdown", "brightness_down" -> {
+                val delta = params["delta"]?.toIntOrNull() ?: 5
+                if (adjustScreenBrightness(-delta)) {
+                    RemoteControlResult.success()
+                } else {
+                    RemoteControlResult.failure(500, "调整亮度失败")
+                }
+            }
+            "status" -> {
+                provideRemoteStatus()?.let { RemoteControlResult.success(it) }
+                    ?: RemoteControlResult.failure(503, "暂无播放数据")
+            }
+            "exit", "stop" -> {
+                danDanPlayer.recordPlayInfo()
+                finish()
+                RemoteControlResult.success()
+            }
+            else -> RemoteControlResult.failure(400, "未知 action: $action")
+        }
+
+        if (result.success) {
+            result.status = provideRemoteStatus()
+        }
+        return result
+    }
+
+    private fun getSystemVolumePercent(): Int {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        if (maxVolume <= 0) {
+            return -1
+        }
+        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        return ((currentVolume.toFloat() / maxVolume) * 100f).roundToInt()
+    }
+
+    private fun setSystemVolumePercent(percent: Int): Boolean {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        if (maxVolume <= 0) {
+            return false
+        }
+        val targetVolume = ((percent.coerceIn(0, 100) / 100f) * maxVolume).roundToInt()
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetVolume, 0)
+        return true
+    }
+
+    private fun adjustSystemVolume(delta: Int): Boolean {
+        val current = getSystemVolumePercent()
+        if (current < 0) {
+            return false
+        }
+        return setSystemVolumePercent(current + delta)
+    }
+
+    private fun getScreenBrightnessPercent(): Int {
+        val brightness = window.attributes.screenBrightness
+        return if (brightness >= 0f) {
+            (brightness.coerceIn(0f, 1f) * 100f).roundToInt()
+        } else {
+            try {
+                val systemBrightness = Settings.System.getInt(
+                    contentResolver,
+                    Settings.System.SCREEN_BRIGHTNESS
+                )
+                ((systemBrightness / 255f) * 100f).roundToInt()
+            } catch (e: Exception) {
+                -1
+            }
+        }
+    }
+
+    private fun setScreenBrightnessPercent(percent: Int): Boolean {
+        val normalized = percent.coerceIn(0, 100)
+        val layoutParams = window.attributes
+        layoutParams.screenBrightness = normalized / 100f
+        window.attributes = layoutParams
+        return true
+    }
+
+    private fun adjustScreenBrightness(delta: Int): Boolean {
+        val current = getScreenBrightnessPercent()
+        if (current < 0) {
+            return false
+        }
+        return setScreenBrightnessPercent(current + delta)
     }
 }

@@ -66,6 +66,8 @@ object ScreencastConstants {
 
         const val play = "/play"
 
-        const val config = "/android/config"
+        const val config = "/remote/config"
+
+        const val control = "/remote/control"
     }
 }

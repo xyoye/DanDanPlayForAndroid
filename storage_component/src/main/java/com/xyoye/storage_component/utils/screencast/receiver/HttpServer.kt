@@ -26,6 +26,11 @@ class HttpServer(
 
     override fun serve(session: IHTTPSession?): Response {
         if (session != null) {
+            // 处理 OPTIONS 请求（CORS 预检）
+            if (session.method == Method.OPTIONS) {
+                return handleOptions(session)
+            }
+
             //身份验证
             if (authentication(session).not()) {
                 return unauthorizedResponse()
@@ -45,10 +50,25 @@ class HttpServer(
                 }
             }
             if (response != null) {
-                return response
+                return addCorsHeaders(response)
             }
         }
         return super.serve(session)
+    }
+
+    private fun handleOptions(session: IHTTPSession): Response {
+        val response = newFixedLengthResponse("").apply {
+            mimeType = "application/json"
+        }
+        return addCorsHeaders(response)
+    }
+
+    private fun addCorsHeaders(response: Response): Response {
+        response.addHeader("Access-Control-Allow-Origin", "*")
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, screencast-version")
+        response.addHeader("Access-Control-Max-Age", "3600")
+        return response
     }
 
     private fun authentication(session: IHTTPSession): Boolean {
@@ -78,7 +98,9 @@ class HttpServer(
             errorMessage = "连接验证失败"
         )
         val json = JsonHelper.toJson(jsonData)
-        return newFixedLengthResponse(json)
+        return newFixedLengthResponse(json).apply {
+            mimeType = "application/json"
+        }
     }
 
     fun setScreenReceiveHandler(handler: ScreencastReceiveHandler?) {

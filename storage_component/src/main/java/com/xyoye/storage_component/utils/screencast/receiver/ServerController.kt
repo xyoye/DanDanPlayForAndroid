@@ -47,13 +47,17 @@ object ServerController {
         try {
             session.parseBody(postData)
         } catch (ioe: IOException) {
-            return NanoHTTPD.newFixedLengthResponse(
-                NanoHTTPD.Response.Status.INTERNAL_ERROR,
-                NanoHTTPD.MIME_PLAINTEXT,
+            return createResponse(
+                NanoHTTPD.Response.Status.INTERNAL_ERROR.requestStatus,
+                false,
                 "SERVER INTERNAL ERROR: IOException: " + ioe.message
             )
         } catch (re: NanoHTTPD.ResponseException) {
-            return NanoHTTPD.newFixedLengthResponse(re.status, NanoHTTPD.MIME_PLAINTEXT, re.message)
+            return createResponse(
+                re.status.requestStatus,
+                false,
+                re.message
+            )
         }
 
 
@@ -163,11 +167,15 @@ object ServerController {
             errorMessage = message
         )
         val json = JsonHelper.toJson(jsonData)
-        return NanoHTTPD.newFixedLengthResponse(json ?: "{}")
+        return NanoHTTPD.newFixedLengthResponse(json ?: "{}").apply {
+            mimeType = "application/json"
+        }
     }
 
     private fun createResponse(result: RemoteControlResult): NanoHTTPD.Response {
         val json = JsonHelper.toJson(result)
-        return NanoHTTPD.newFixedLengthResponse(json ?: "{}")
+        return NanoHTTPD.newFixedLengthResponse(json ?: "{}").apply {
+            mimeType = "application/json"
+        }
     }
 }

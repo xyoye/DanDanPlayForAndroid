@@ -1,6 +1,6 @@
-# 投屏接收端 API 文档
+# 投屏接收端远程控制 API 文档
 
-DanDanPlay 投屏接收端提供 HTTP API，用于接收投屏内容和远程控制播放器。
+投屏接收端提供 HTTP API，用于远程获取当前播放器状态、修改弹幕设置和远程控制播放器。
 
 ## 基础信息
 
@@ -23,12 +23,8 @@ DanDanPlay 投屏接收端提供 HTTP API，用于接收投屏内容和远程控
 - `200`: 成功
 - `400`: 请求参数错误
 - `401`: 认证失败
-- `404`: 播放器未运行
-- `409`: 版本冲突
+- `404`: API 未找到或播放器未运行
 - `500`: 服务器内部错误
-- `502`: 无法读取资源
-- `503`: 服务暂不可用
-- `504`: 执行超时
 
 ---
 
@@ -50,21 +46,20 @@ DanDanPlay 投屏接收端提供 HTTP API，用于接收投屏内容和远程控
 }
 ```
 
-**响应头**:
-- `screencast-version`: 接收端协议版本号
-
 **错误示例**:
 ```json
 {
   "success": false,
   "errorCode": 409,
-  "errorMessage": "投屏版本不匹配，请更新双端至相同APP版本。\n接收端: 1，投屏端: 2"
+  "errorMessage": "投屏版本不匹配，请更新双端至相同APP版本。"
 }
 ```
 
 ---
 
-### 2. 弹幕配置
+### 2. 修改弹幕设置
+
+用于修改安卓端播放器的弹幕设置。如果播放器正在播放视频，设置会立即生效。
 
 **URL**: `GET /remote/config`
 
@@ -102,6 +97,8 @@ GET /remote/config?danmuSize=50&danmuSpeed=40&danmuAlpha=90
 
 ### 3. 播放器控制
 
+用于查询播放器状态和远程控制播放器操作。
+
 **URL**: 
 - `GET /remote/control` - 查询播放器状态
 - `POST /remote/control` - 控制播放器操作
@@ -134,17 +131,18 @@ GET /remote/control
 ```
 
 **status 字段说明**:
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| title | string | 当前播放视频标题 |
-| playing | boolean | 是否正在播放 |
-| position | long | 当前播放位置(毫秒) |
-| duration | long | 视频总时长(毫秒) |
-| bufferedPercent | int | 缓冲进度百分比 |
-| speed | float | 播放速度 |
-| volumePercent | int | 音量百分比 |
-| brightnessPercent | int | 亮度百分比 |
-| mediaType | string | 媒体类型 |
+
+| 字段                | 类型      | 说明         |
+|-------------------|---------|------------|
+| title             | string  | 当前播放视频标题   |
+| playing           | boolean | 是否正在播放     |
+| position          | long    | 当前播放位置(毫秒) |
+| duration          | long    | 视频总时长(毫秒)  |
+| bufferedPercent   | int     | 缓冲进度百分比    |
+| speed             | float   | 播放速度       |
+| volumePercent     | int     | 音量百分比      |
+| brightnessPercent | int     | 亮度百分比      |
+| mediaType         | string  | 媒体类型       |
 
 #### 3.2 控制操作
 
@@ -376,11 +374,9 @@ curl -X POST \
 1. **版本检查**: 投屏端和接收端必须使用相同的协议版本 (`screencast-version`)
 2. **认证**: 如果接收端设置了密码，所有请求必须携带正确的 Bearer Token
 3. **请求方法**: 
-   - `/remote/control` 使用 GET 方法仅用于查询播放器状态
+   - `/remote/control` 使用 GET 方法查询播放器状态
    - `/remote/control` 使用 POST 方法进行播放器控制操作
    - 弹幕配置 `/remote/config` 使用 GET 方法，参数通过 Query 传递
 4. **超时处理**: 控制命令执行超时时间为 2 秒
-5. **线程安全**: 所有控制命令会在主线程执行，确保 UI 操作安全
-6. **播放器状态**: 播放器未运行时调用控制接口会返回 404 错误
-7. **参数验证**: 所有数值参数会进行边界检查和类型验证
+5. **参数验证**: 所有数值参数会进行边界检查和类型验证
 

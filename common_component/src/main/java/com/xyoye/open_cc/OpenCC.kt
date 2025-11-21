@@ -1,5 +1,7 @@
 package com.xyoye.open_cc
 
+import android.util.Log
+import com.google.common.base.Utf8
 import java.io.File
 
 /**
@@ -34,6 +36,13 @@ object OpenCC {
 
     private fun convert(text: String, config: File): String {
         return try {
+            // 检查是否是符合 Unicode 6.0 的格式的UFT-8字符串
+            // Bugly#2456345
+            if (Utf8.isWellFormed(text.toByteArray()).not()) {
+                Log.d("OpenCC", "invalid utf-8 string: $text")
+                return text
+            }
+
             convert(text, config.absolutePath)
         } catch (t: Throwable) {
             t.printStackTrace()

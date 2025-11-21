@@ -83,7 +83,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
             webViewClient = object : WebViewClient() {
 
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                    val uri = request?.url ?: return false
+                    val uri = request?.url ?: return super.shouldOverrideUrlLoading(view, request)
 
                     // 选取b站视频时，考虑将APP协议地址转换为普通番剧地址
                     val bangumiUrl = considerMapBangumiUrl(uri)
@@ -92,12 +92,12 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
                         return true
                     }
 
-                    // 非http(s)协议资源，不加载
-                    if (uri.scheme?.startsWith("http") != true) {
+                    // 拦截BiliBili APP协议，避免在选取地址时打开外部APP
+                    if (uri.scheme == "bilibili") {
                         return true
                     }
 
-                    return false
+                    return super.shouldOverrideUrlLoading(view, request)
                 }
             }
 

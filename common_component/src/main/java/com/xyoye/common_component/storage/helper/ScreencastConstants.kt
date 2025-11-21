@@ -65,5 +65,9 @@ object ScreencastConstants {
         const val init = "/init"
 
         const val play = "/play"
+
+        const val config = "/remote/config"
+
+        const val control = "/remote/control"
     }
 }

@@ -1,32 +1,19 @@
-import setup.moduleSetup
-
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
+    alias(dandanplay.plugins.library)
+    alias(dandanplay.plugins.router)
     id("kotlin-parcelize")
 }
 
-moduleSetup()
-
-kapt {
-    arguments {
-        arg("AROUTER_MODULE_NAME", name)
-    }
+android {
+    namespace = "com.xyoye.data_component"
 }
 
 dependencies {
-    implementation(Dependencies.Kotlin.stdlib_jdk7)
+    implementation(androidx.core)
+    implementation(androidx.room.runtime)
 
-    implementation(Dependencies.AndroidX.core)
-    implementation(Dependencies.AndroidX.room)
+    api(libs.alibaba.arouter.api)
+    api(libs.square.moshi)
 
-    api(Dependencies.Alibaba.arouter_api)
-    api(Dependencies.Square.moshi)
-
-    kapt(Dependencies.Square.moshi_codegen)
-    kapt(Dependencies.Alibaba.arouter_compiler)
-}
-android {
-    namespace = "com.xyoye.data_component"
+    kapt(libs.square.moshi.codegen)
 }

@@ -1,3 +1,41 @@
+pluginManagement {
+    includeBuild("build-logic")
+
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        maven { url = uri("https://developer.huawei.com/repo/") }
+        maven { url = uri("https://maven.aliyun.com/nexus/content/repositories/releases/") }
+    }
+    versionCatalogs {
+        create("androidx") {
+            from(files("gradle/androidx.versions.toml"))
+        }
+        create("kotlinx") {
+            from(files("gradle/kotlinx.versions.toml"))
+        }
+        create("dandanplay") {
+            from(files("gradle/dandanplay.versions.toml"))
+        }
+    }
+}
+
 rootProject.name="DanDanPlayForAndroid"
 
 include(":app")

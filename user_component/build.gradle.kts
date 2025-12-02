@@ -1,24 +1,27 @@
-import setup.moduleSetup
+import java.io.ByteArrayOutputStream
 
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
+    alias(dandanplay.plugins.library)
+    alias(dandanplay.plugins.router)
 }
 
-moduleSetup()
+android {
+    namespace = "com.xyoye.user_component"
 
-kapt {
-    arguments {
-        arg("AROUTER_MODULE_NAME", name)
+    defaultConfig {
+        buildConfigField("String", "BUILD_COMMIT", "\"${currentCommit()}\"")
     }
 }
 
 dependencies {
     implementation(project(":common_component"))
-
-    kapt(Dependencies.Alibaba.arouter_compiler)
 }
-android {
-    namespace = "com.xyoye.user_component"
+
+fun Project.currentCommit(): String {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine = "git log --pretty=format:%h -1".split(" ")
+        standardOutput = stdout
+    }
+    return stdout.toString()
 }

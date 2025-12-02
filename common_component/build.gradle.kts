@@ -1,36 +1,20 @@
-import setup.moduleSetup
-
 plugins {
-    id("com.android.library")
+    alias(dandanplay.plugins.library)
+    alias(dandanplay.plugins.router)
     id("kotlin-parcelize")
-    kotlin("android")
-    kotlin("kapt")
 }
 
-moduleSetup()
-
 android {
+    namespace = "com.xyoye.common_component"
+
     sourceSets {
         named("main").configure {
             jniLibs.srcDir("libs")
         }
     }
-
-    defaultConfig {
-        buildConfigField("String", "APPLICATION_ID", "\"${Versions.applicationId}\"")
-    }
-    namespace = "com.xyoye.common_component"
-}
-
-kapt {
-    arguments {
-        arg("AROUTER_MODULE_NAME", name)
-    }
 }
 
 dependencies {
-    debugImplementation(Dependencies.Square.leakcanary)
-
     api(project(":data_component"))
     api(project(":repository:seven_zip"))
     api(project(":repository:immersion_bar"))
@@ -40,46 +24,38 @@ dependencies {
     api(files("libs/simple-xml-2.7.1.jar"))
     implementation(files("libs/mmkv-annotation.jar"))
 
-    api(Dependencies.Kotlin.stdlib_jdk7)
-    api(Dependencies.Kotlin.coroutines_core)
-    api(Dependencies.Kotlin.coroutines_android)
+    api(androidx.bundles.lifecycle)
+    api(androidx.bundles.room)
+    api(kotlinx.bundles.coroutines)
+    api(libs.bundles.coil)
+    api(libs.bundles.retrofit)
 
-    api(Dependencies.AndroidX.core)
-    api(Dependencies.AndroidX.lifecycle_viewmodel)
-    api(Dependencies.AndroidX.lifecycle_runtime)
-    api(Dependencies.AndroidX.room_ktx)
-    api(Dependencies.AndroidX.constraintlayout)
-    api(Dependencies.AndroidX.recyclerview)
-    api(Dependencies.AndroidX.swiperefreshlayout)
-    api(Dependencies.AndroidX.appcompat)
-    api(Dependencies.AndroidX.multidex)
-    api(Dependencies.AndroidX.palette)
-    api(Dependencies.AndroidX.paging)
-    api(Dependencies.AndroidX.startup)
-    api(Dependencies.AndroidX.preference)
-    api(Dependencies.AndroidX.activity_ktx)
+    api(androidx.core)
+    api(androidx.constraintlayout)
+    api(androidx.recyclerview)
+    api(androidx.swiperefreshlayout)
+    api(androidx.appcompat)
+    api(androidx.multidex)
+    api(androidx.palette)
+    api(androidx.paging)
+    api(androidx.startup)
+    api(androidx.preference)
+    api(androidx.activity.ktx)
 
-    api(Dependencies.Google.material)
-    api(Dependencies.Apache.commons_net)
-
-    api(Dependencies.Tencent.mmkv)
-    implementation(Dependencies.Tencent.bugly)
-
-    api(Dependencies.Square.retrofit)
-    implementation(Dependencies.Square.retrofit_moshi)
-
-    api(Dependencies.Github.coil)
-    api(Dependencies.Github.coil_video)
-    api(Dependencies.Github.nano_http)
-    api(Dependencies.Github.smbj)
-    api(Dependencies.Github.dcerpc)
-
-    api(Dependencies.Alibaba.alicloud_update)
-    api(Dependencies.Alibaba.alicloud_feedback)
-    implementation(Dependencies.Alibaba.alicloud_analysis)
+    api(libs.alicloud.update)
+    api(libs.alicloud.feedback)
+    implementation(libs.alicloud.analysis)
+    api(libs.apache.commons.net)
+    api(libs.github.nanohttpd)
+    api(libs.github.smbj)
+    api(libs.github.dcerpc)
+    api(libs.google.material)
+    api(libs.tencent.mmkv)
+    implementation(libs.tencent.bugly)
 
     kapt(files("libs/mmkv-compiler.jar"))
-    kapt(Dependencies.AndroidX.room_compiler)
-    kapt(Dependencies.Alibaba.arouter_compiler)
+    kapt(androidx.room.compiler)
     implementation(kotlin("reflect"))
+
+    debugImplementation(libs.square.leakcanary)
 }

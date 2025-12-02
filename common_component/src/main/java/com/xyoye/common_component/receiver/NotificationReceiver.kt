@@ -8,7 +8,6 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.launcher.ARouter
-import com.xyoye.common_component.BuildConfig
 import com.xyoye.common_component.extension.notificationManager
 import com.xyoye.common_component.notification.Notifications
 import com.xyoye.common_component.services.ScreencastProvideService
@@ -26,8 +25,8 @@ class NotificationReceiver : BroadcastReceiver() {
     lateinit var screencastReceiveService: ScreencastReceiveService
 
     private object Action {
-        const val CANCEL_SCREENCAST_PROVIDE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_PROVIDE"
-        const val CANCEL_SCREENCAST_RECEIVE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_RECEIVE"
+        const val CANCEL_SCREENCAST_PROVIDE = "com.xyoye.dandanplay.CANCEL_SCREENCAST_PROVIDE"
+        const val CANCEL_SCREENCAST_RECEIVE = "com.xyoye.dandanplay.CANCEL_SCREENCAST_RECEIVE"
     }
 
     companion object {

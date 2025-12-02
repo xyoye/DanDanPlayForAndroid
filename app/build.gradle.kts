@@ -1,45 +1,15 @@
-import setup.applicationSetup
-
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    kotlin("kapt")
+    alias(dandanplay.plugins.application)
+    alias(dandanplay.plugins.router)
 }
-
-applicationSetup()
 
 android {
     namespace = "com.xyoye.dandanplay"
-    compileSdk = Versions.compileSdkVersion
+
     defaultConfig {
-        applicationId = Versions.applicationId
-        minSdk = Versions.minSdkVersion
-        targetSdk = Versions.targetSdkVersion
-        targetSdk = Versions.targetSdkVersion
-        versionCode = Versions.versionCode
-        versionName = Versions.versionName
-        multiDexEnabled = true
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        ndk {
-            abiFilters.add("armeabi-v7a")
-            abiFilters.add("arm64-v8a")
-        }
-    }
-
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a")
-            isUniversalApk = true
-        }
-    }
-}
-
-kapt {
-    arguments {
-        arg("AROUTER_MODULE_NAME", project.name)
+        applicationId = "com.xyoye.dandanplay"
+        versionCode = 59
+        versionName = "4.1.2"
     }
 }
 
@@ -50,6 +20,4 @@ dependencies {
     implementation(project(":user_component"))
     implementation(project(":local_component"))
     implementation(project(":storage_component"))
-
-    kapt(Dependencies.Alibaba.arouter_compiler)
 }

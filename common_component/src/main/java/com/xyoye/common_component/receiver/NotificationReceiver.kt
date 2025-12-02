@@ -26,8 +26,8 @@ class NotificationReceiver : BroadcastReceiver() {
     lateinit var screencastReceiveService: ScreencastReceiveService
 
     private object Action {
-        const val CANCEL_SCREENCAST_PROVIDE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_PROVIDE"
-        const val CANCEL_SCREENCAST_RECEIVE = "${BuildConfig.APPLICATION_ID}.CANCEL_SCREENCAST_RECEIVE"
+        const val CANCEL_SCREENCAST_PROVIDE = "com.xyoye.dandanplay.CANCEL_SCREENCAST_PROVIDE"
+        const val CANCEL_SCREENCAST_RECEIVE = "com.xyoye.dandanplay.CANCEL_SCREENCAST_RECEIVE"
     }
 
     companion object {

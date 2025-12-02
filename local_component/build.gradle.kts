@@ -1,26 +1,14 @@
-import setup.moduleSetup
-
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
+    alias(dandanplay.plugins.library)
+    alias(dandanplay.plugins.router)
 }
 
-moduleSetup()
-
-kapt {
-    arguments {
-        arg("AROUTER_MODULE_NAME", name)
-    }
+android {
+    namespace = "com.xyoye.local_component"
 }
 
 dependencies {
     implementation(project(":common_component"))
 
-    implementation(Dependencies.Github.jsoup)
-
-    kapt(Dependencies.Alibaba.arouter_compiler)
-}
-android {
-    namespace = "com.xyoye.local_component"
+    implementation(libs.github.jsoup)
 }

@@ -3,7 +3,7 @@ package com.xyoye.user_component.ui.activities.setting_player
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.user_component.BR

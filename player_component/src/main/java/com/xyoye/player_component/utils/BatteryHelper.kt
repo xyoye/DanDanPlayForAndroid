@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import com.xyoye.common_component.extension.toResColor
 import com.xyoye.common_component.receiver.BatteryBroadcastReceiver
-import com.xyoye.player_component.R
 import com.xyoye.player_component.widgets.BatteryView
 
 /**
@@ -23,7 +22,7 @@ class BatteryHelper {
     private var batteryAnimator: ValueAnimator? = null
     private var mBattery = 0
 
-    private var batteryLowColor = R.color.text_red.toResColor()
+    private var batteryLowColor = com.xyoye.common_component.R.color.text_red.toResColor()
 
     private fun onBatterChanged(battery: Int) {
         mBattery = battery

@@ -80,9 +80,9 @@ class SwitchSourceView(
     // 文件图标
     private val sourceFileIcon
         get() = when (mTrackType) {
-            TrackType.AUDIO -> R.drawable.ic_file_audio
-            TrackType.DANMU -> R.drawable.ic_file_xml
-            TrackType.SUBTITLE -> R.drawable.ic_file_subtitle
+            TrackType.AUDIO -> com.xyoye.common_component.R.drawable.ic_file_audio
+            TrackType.DANMU -> com.xyoye.common_component.R.drawable.ic_file_xml
+            TrackType.SUBTITLE -> com.xyoye.common_component.R.drawable.ic_file_subtitle
         }
 
     init {
@@ -179,7 +179,7 @@ class SwitchSourceView(
                             tvName.text = data.name
                             tvName.setTextSize(Dimension.SP, 14f)
                             tvName.setTextColorRes(
-                                if (data.isOpened) R.color.text_white_immutable else R.color.text_gray
+                                if (data.isOpened) com.xyoye.common_component.R.color.text_white_immutable else com.xyoye.common_component.R.color.text_gray
                             )
                             tvName.setOnClickListener {
                                 openDirectory(data.path)
@@ -190,7 +190,7 @@ class SwitchSourceView(
             }
 
             val dividerSize = dp2px(16)
-            val divider = R.drawable.ic_file_manager_arrow.toResDrawable()
+            val divider = com.xyoye.common_component.R.drawable.ic_file_manager_arrow.toResDrawable()
             if (divider != null) {
                 addItemDecoration(FilePathItemDecoration(divider, dividerSize))
             }
@@ -210,7 +210,7 @@ class SwitchSourceView(
                     initView { data, _, _ ->
                         itemBinding.apply {
                             fileNameTv.text = data.fileName
-                            fileIv.setImageResource(if (data.isDirectory) R.drawable.ic_folder else sourceFileIcon)
+                            fileIv.setImageResource(if (data.isDirectory) com.xyoye.common_component.R.drawable.ic_folder else sourceFileIcon)
                             itemLayout.setOnClickListener {
                                 when {
                                     data.isDirectory -> {
@@ -243,7 +243,7 @@ class SwitchSourceView(
         onSettingVisibilityChanged(false)
 
         File(data.filePath).parentFile?.absolutePath?.let {
-            AppConfig.putLastOpenFolder(it)
+            AppConfig.setLastOpenFolder(it)
         }
 
         when (mTrackType) {
@@ -377,7 +377,7 @@ class SwitchSourceView(
 
         //上次打开目录
         val lastOpenFolderPath = AppConfig.getLastOpenFolder()
-        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
+        if (AppConfig.getLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
             commonDirectoryList.add(FilePathBean("上次使用", lastOpenFolderPath))
         }
 

@@ -1,6 +1,7 @@
 plugins {
     alias(dandanplay.plugins.application)
     alias(dandanplay.plugins.router)
+    alias(kotlinx.plugins.kapt)
 }
 
 android {
@@ -8,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.xyoye.dandanplay"
-        versionCode = 59
-        versionName = "4.1.2"
+        versionCode = 61
+        versionName = "4.2.0"
     }
 }
 

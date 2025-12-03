@@ -11,7 +11,7 @@ import org.gradle.api.JavaVersion
  *    desc  : 项目编译配置
  */
 
-internal fun CommonExtension<*, *, *, *>.configureCompile() {
+internal fun CommonExtension<*, *, *, *, *>.configureCompile() {
     compileSdk = BuildVersion.COMPILE
 
     defaultConfig {
@@ -21,7 +21,7 @@ internal fun CommonExtension<*, *, *, *>.configureCompile() {
         if (extension is ApplicationBaseFlavor) {
             extension.targetSdk = BuildVersion.TARGET
         } else if (extension is LibraryBaseFlavor) {
-            extension.targetSdk = BuildVersion.TARGET
+            lint.targetSdk = BuildVersion.TARGET
         }
     }
 

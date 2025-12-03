@@ -1,7 +1,7 @@
 package com.xyoye.local_component.ui.dialog
 
 import androidx.appcompat.app.AppCompatActivity
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.utils.hideKeyboard
 import com.xyoye.common_component.weight.ToastCenter
@@ -52,7 +52,7 @@ class MagnetPlayDialog(
 
     private fun launchStorageFileActivity(link: String) {
         val library = MediaLibraryEntity.TORRENT.copy(url = link)
-        ARouter.getInstance()
+        TheRouter
             .build(RouteTable.Stream.StorageFile)
             .withParcelable("storageLibrary", library)
             .navigation()

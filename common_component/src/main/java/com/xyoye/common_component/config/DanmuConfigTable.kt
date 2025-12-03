@@ -1,14 +1,14 @@
 package com.xyoye.common_component.config
 
+import com.anjiu.repository.mmkv.annotation.MMKVClass
+import com.anjiu.repository.mmkv.annotation.MMKVFiled
 import com.xyoye.data_component.enums.DanmakuLanguage
-import com.xyoye.mmkv_annotation.MMKVFiled
-import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
 /**
  * Created by xyoye on 2020/9/21.
  */
 
-@MMKVKotlinClass(className = "DanmuConfig")
+@MMKVClass(className = "DanmuConfig")
 object DanmuConfigTable {
 
     //弹幕文字大小百分比

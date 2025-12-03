@@ -96,7 +96,7 @@ class SearchAnimeFragment :
                         itemBinding.apply {
                             typeNameTv.text = data.typeName
                             typeNameTv.setTextColorRes(
-                                if (data.isChecked) R.color.text_screen_checked_color else R.color.text_black
+                                if (data.isChecked) R.color.text_screen_checked_color else com.xyoye.common_component.R.color.text_black
                             )
 
                             itemLayout.isSelected = data.isChecked
@@ -125,7 +125,7 @@ class SearchAnimeFragment :
                         itemBinding.apply {
                             typeNameTv.text = data.typeName
                             typeNameTv.setTextColorRes(
-                                if (data.isChecked) R.color.text_screen_checked_color else R.color.text_black
+                                if (data.isChecked) R.color.text_screen_checked_color else com.xyoye.common_component.R.color.text_black
                             )
                             itemLayout.isSelected = data.isChecked
 
@@ -149,7 +149,7 @@ class SearchAnimeFragment :
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor(mAttachActivity)
+                    com.xyoye.common_component.R.color.item_bg_color.toResColor(mAttachActivity)
                 )
             )
         }

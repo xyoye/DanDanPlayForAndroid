@@ -1,9 +1,9 @@
 package com.xyoye.player_component.ui.activities.player_interceptor
 
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.source.VideoSourceManager
@@ -38,7 +38,7 @@ class PlayerInterceptorActivity :
             return
         }
 
-        ARouter.getInstance()
+        TheRouter
             .build(RouteTable.Player.PlayerCenter)
             .navigation()
         finish()

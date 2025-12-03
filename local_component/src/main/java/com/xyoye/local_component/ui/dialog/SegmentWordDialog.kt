@@ -110,12 +110,12 @@ class SegmentWordDialog(
         binding.candidateLabelsView.setLabels(labelTexts, object : LabelTextProvider<Any> {
             override fun getLabelText(label: TextView?, position: Int, data: Any?): CharSequence {
                 if (data === SPACE) {
-                    label?.setTextColor(R.color.text_white.toResColor(context))
+                    label?.setTextColor(com.xyoye.common_component.R.color.text_white.toResColor(context))
                     label?.setBackgroundResource(R.drawable.background_segment_labels_theme)
                     return "空格"
                 }
                 if (data === BACKSPACE) {
-                    label?.setTextColor(R.color.text_white.toResColor(context))
+                    label?.setTextColor(com.xyoye.common_component.R.color.text_white.toResColor(context))
                     label?.setBackgroundResource(R.drawable.background_segment_labels_theme)
                     return "删除"
                 }

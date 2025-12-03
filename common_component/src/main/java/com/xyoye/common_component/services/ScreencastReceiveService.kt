@@ -1,13 +1,12 @@
 package com.xyoye.common_component.services
 
 import android.content.Context
-import com.alibaba.android.arouter.facade.template.IProvider
 
 /**
  * Created by xyoye on 2022/9/15
  */
 
-interface ScreencastReceiveService : IProvider {
+interface ScreencastReceiveService {
 
     fun isRunning(context: Context): Boolean
 

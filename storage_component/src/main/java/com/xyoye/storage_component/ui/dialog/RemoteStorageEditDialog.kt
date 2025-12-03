@@ -93,10 +93,10 @@ class RemoteStorageEditDialog(
     override fun onTestResult(result: Boolean) {
         if (result) {
             binding.serverStatusTv.text = "连接成功"
-            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_blue)
         } else {
             binding.serverStatusTv.text = "连接失败"
-            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_red)
         }
     }
 
@@ -126,12 +126,12 @@ class RemoteStorageEditDialog(
     private fun setGroupMode(isGroupByAnime: Boolean) {
         binding.tvGroupByAnime.isSelected = isGroupByAnime
         binding.tvGroupByAnime.setTextColorRes(
-            if (isGroupByAnime) R.color.text_white else R.color.text_black
+            if (isGroupByAnime) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.tvGroupByFile.isSelected = !isGroupByAnime
         binding.tvGroupByFile.setTextColorRes(
-            if (!isGroupByAnime) R.color.text_white else R.color.text_black
+            if (!isGroupByAnime) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
     }
 

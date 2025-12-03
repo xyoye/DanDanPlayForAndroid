@@ -1,8 +1,8 @@
 package com.xyoye.anime_component.ui.activities.anime_tag
 
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeTagBinding
@@ -37,7 +37,7 @@ class AnimeTagActivity : BaseActivity<AnimeTagViewModel, ActivityAnimeTagBinding
     override fun getLayoutId() = R.layout.activity_anime_tag
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         title = "番剧标签"
 
@@ -58,7 +58,7 @@ class AnimeTagActivity : BaseActivity<AnimeTagViewModel, ActivityAnimeTagBinding
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor(this@AnimeTagActivity)
+                    com.xyoye.common_component.R.color.item_bg_color.toResColor(this@AnimeTagActivity)
                 )
             )
         }

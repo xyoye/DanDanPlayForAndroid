@@ -190,7 +190,7 @@ class PlayerSettingView(
      */
     private fun generateItems(): List<Any> {
         val items = mutableListOf<Any>()
-        SettingAction.values()
+        SettingAction.entries
             .asSequence()
             .sortedBy {
                 it.type.widget
@@ -223,7 +223,7 @@ class PlayerSettingView(
             }
 
             SettingAction.BACKGROUND_PLAY -> {
-                selected = PlayerConfig.isBackgroundPlay()
+                selected = PlayerConfig.getBackgroundPlay()
             }
 
             SettingAction.DANMU_TRACK -> {
@@ -277,20 +277,20 @@ class PlayerSettingView(
             SettingAction.SCREEN_ORIENTATION -> {
                 val newStatus = !PlayerInitializer.isOrientationEnabled
                 PlayerInitializer.isOrientationEnabled = newStatus
-                PlayerConfig.putAllowOrientationChange(newStatus)
+                PlayerConfig.setAllowOrientationChange(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
 
             SettingAction.BACKGROUND_PLAY -> {
-                val newStatus = PlayerConfig.isBackgroundPlay().not()
-                PlayerConfig.putBackgroundPlay(newStatus)
+                val newStatus = PlayerConfig.getBackgroundPlay().not()
+                PlayerConfig.setBackgroundPlay(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
 
             SettingAction.NEXT_EPISODE -> {
                 val newStatus = !PlayerInitializer.Player.isAutoPlayNext
                 PlayerInitializer.Player.isAutoPlayNext = newStatus
-                PlayerConfig.putAutoPlayNext(newStatus)
+                PlayerConfig.setAutoPlayNext(newStatus)
                 updateItemStatus(item.action, newStatus)
             }
 

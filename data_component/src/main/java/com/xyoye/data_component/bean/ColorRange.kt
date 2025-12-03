@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 
 /**
- *    author: xieyy@anjiu-tech.com
+ *    author: xyoye1997@outlook.com
  *    time  : 2023/8/31
  *    desc  : 存储两组颜色，可根据百分比取出中间颜色
  */

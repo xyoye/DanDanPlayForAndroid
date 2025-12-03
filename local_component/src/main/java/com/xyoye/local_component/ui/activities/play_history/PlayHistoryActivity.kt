@@ -3,9 +3,9 @@ package com.xyoye.local_component.ui.activities.play_history
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.setData
@@ -39,7 +39,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
     override fun getLayoutId() = R.layout.activity_play_history
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         mediaType = MediaType.fromValue(typeValue)
         viewModel.mediaType = mediaType
@@ -74,7 +74,7 @@ class PlayHistoryActivity : BaseActivity<PlayHistoryViewModel, ActivityPlayHisto
             dataBinding.playHistoryRv.setData(it)
         }
         viewModel.playLiveData.observe(this) {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Player.Player)
                 .navigation()
         }

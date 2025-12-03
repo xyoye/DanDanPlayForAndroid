@@ -2,9 +2,9 @@ package com.xyoye.user_component.ui.activities.login
 
 import android.view.View
 import androidx.core.widget.addTextChangedListener
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.utils.SecurityHelper
@@ -32,7 +32,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
     override fun getLayoutId() = R.layout.activity_login
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         title = ""
 
@@ -58,7 +58,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
             }
 
             registerTv.setOnClickListener {
-                ARouter.getInstance()
+                TheRouter
                     .build(RouteTable.User.UserRegister)
                     .navigation()
             }
@@ -66,9 +66,9 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
             forgotTv.setOnClickListener {
                 BottomActionDialog(
                     this@LoginActivity,
-                    ForgotType.values().map { it.toAction() }
+                    ForgotType.entries.map { it.toAction() }
                 ) {
-                    ARouter.getInstance()
+                    TheRouter
                         .build(RouteTable.User.UserForgot)
                         .withBoolean("isForgotPassword", it.actionId == ForgotType.Password)
                         .navigation()

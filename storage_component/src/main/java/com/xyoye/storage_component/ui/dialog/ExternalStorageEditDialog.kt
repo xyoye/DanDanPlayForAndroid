@@ -39,7 +39,7 @@ class ExternalStorageEditDialog(
             binding.displayNameEt.setText(library.displayName)
             binding.pathTv.text = library.describe
             binding.selectRootTv.isEnabled = false
-            binding.selectRootTv.setTextColor(R.color.text_gray.toResColor(activity))
+            binding.selectRootTv.setTextColor(com.xyoye.common_component.R.color.text_gray.toResColor(activity))
             binding.selectRootTv.background =
                 R.drawable.background_button_corner_disable.toResDrawable(activity)
         }

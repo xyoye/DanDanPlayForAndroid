@@ -1,14 +1,14 @@
 package com.xyoye.common_component.config
 
+import com.anjiu.repository.mmkv.annotation.MMKVClass
+import com.anjiu.repository.mmkv.annotation.MMKVFiled
 import com.xyoye.data_component.enums.PixelFormat
 import com.xyoye.data_component.enums.PlayerType
 import com.xyoye.data_component.enums.VLCAudioOutput
 import com.xyoye.data_component.enums.VLCHWDecode
 import com.xyoye.data_component.enums.VLCPixelFormat
-import com.xyoye.mmkv_annotation.MMKVFiled
-import com.xyoye.mmkv_annotation.MMKVKotlinClass
 
-@MMKVKotlinClass(className = "PlayerConfig")
+@MMKVClass(className = "PlayerConfig")
 object PlayerConfigTable {
     //是否允许屏幕旋转
     @MMKVFiled

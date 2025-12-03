@@ -4,7 +4,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.adapter.paging.BasePagingAdapter
 import com.xyoye.common_component.adapter.paging.PagingFooterAdapter
 import com.xyoye.common_component.adapter.paging.addItem
@@ -84,7 +84,7 @@ class ShooterSubtitleActivity :
         initObserver()
 
         val apiShooterSecret = SubtitleConfig.getShooterSecret()
-        if (apiShooterSecret.isNullOrEmpty()) {
+        if (apiShooterSecret.isEmpty()) {
             showSecretDialog()
         } else {
             showSearchDialog()
@@ -103,7 +103,7 @@ class ShooterSubtitleActivity :
             }
             R.id.item_search_subtitle -> {
                 val apiShooterSecret = SubtitleConfig.getShooterSecret()
-                if (apiShooterSecret.isNullOrEmpty()) {
+                if (apiShooterSecret.isEmpty()) {
                     ToastCenter.showError("请先设置API密钥")
                     return true
                 }

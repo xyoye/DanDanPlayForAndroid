@@ -1,14 +1,14 @@
 package com.xyoye.common_component.config
 
 import android.graphics.Color
-import com.xyoye.mmkv_annotation.MMKVFiled
-import com.xyoye.mmkv_annotation.MMKVKotlinClass
+import com.anjiu.repository.mmkv.annotation.MMKVClass
+import com.anjiu.repository.mmkv.annotation.MMKVFiled
 
 /**
  * Created by xyoye on 2020/9/21.
  */
 
-@MMKVKotlinClass(className = "SubtitleConfig")
+@MMKVClass(className = "SubtitleConfig")
 object SubtitleConfigTable {
 
     @MMKVFiled
@@ -43,5 +43,5 @@ object SubtitleConfigTable {
 
     //字幕优先级
     @MMKVFiled
-    var subtitlePriority: String? = null
+    val subtitlePriority: String? = null
 }

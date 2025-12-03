@@ -6,7 +6,6 @@ import android.os.Handler
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.VideoFrameDecoder
-import com.alibaba.android.arouter.launcher.ARouter
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mmkv.MMKV
 import com.xyoye.common_component.BuildConfig
@@ -40,13 +39,7 @@ open class BaseApplication : Application(), ImageLoaderFactory {
 
         APPLICATION_CONTEXT = this
         mMainHandler = Handler(getAppContext().mainLooper)
-
-        if (BuildConfig.DEBUG) {
-            ARouter.openLog()
-            ARouter.openDebug()
-        }
         MMKV.initialize(this)
-        ARouter.init(this)
         CrashReport.initCrashReport(
             this,
             SecurityHelper.getInstance().buglyId,

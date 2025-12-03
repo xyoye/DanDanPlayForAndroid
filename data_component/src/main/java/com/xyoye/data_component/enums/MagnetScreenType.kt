@@ -10,7 +10,7 @@ enum class MagnetScreenType(val value: Int) {
     TYPE(2);
 
     companion object {
-        fun valueOf(value: Int): MagnetScreenType {
+        fun fromValue(value: Int): MagnetScreenType {
             return when (value) {
                 1 -> SUBGROUP
                 2 -> TYPE

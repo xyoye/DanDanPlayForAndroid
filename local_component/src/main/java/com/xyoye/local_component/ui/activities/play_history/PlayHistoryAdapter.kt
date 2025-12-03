@@ -43,8 +43,8 @@ class PlayHistoryAdapter(
 ) {
 
     private enum class EditHistory(val title: String, val icon: Int) {
-        REMOVE_DANMU("移除弹幕绑定", R.drawable.ic_unbind_danmu),
-        REMOVE_SUBTITLE("移除字幕绑定", R.drawable.ic_unbind_subtitle),
+        REMOVE_DANMU("移除弹幕绑定", com.xyoye.common_component.R.drawable.ic_unbind_danmu),
+        REMOVE_SUBTITLE("移除字幕绑定", com.xyoye.common_component.R.drawable.ic_unbind_subtitle),
         COPY_URL("复制播放链接", R.drawable.ic_copy_url),
         DELETE_HISTORY("删除播放记录", R.drawable.ic_delete_history);
 
@@ -60,13 +60,13 @@ class PlayHistoryAdapter(
                 areItemsTheSame(isSameHistoryItem())
             }
 
-            addEmptyView(R.layout.layout_empty) {
+            addEmptyView(com.xyoye.common_component.R.layout.layout_empty) {
                 initEmptyView {
                     itemBinding.emptyTv.text = "暂无播放记录"
                 }
             }
 
-            addItem(R.layout.item_storage_video) {
+            addItem(com.xyoye.common_component.R.layout.item_storage_video) {
                 initView(historyItem())
             }
         }
@@ -89,9 +89,9 @@ class PlayHistoryAdapter(
 
             val isInvalid = isHistoryInvalid(data)
             val titleTextColor = if (isInvalid)
-                R.color.text_gray
+                com.xyoye.common_component.R.color.text_gray
             else
-                R.color.text_black
+                com.xyoye.common_component.R.color.text_black
 
             itemBinding.titleTv.setTextColor(titleTextColor.toResColor(activity))
             itemBinding.titleTv.text = data.videoName
@@ -123,7 +123,7 @@ class PlayHistoryAdapter(
         tagRv.apply {
             layoutManager = horizontal()
             adapter = buildAdapter {
-                addItem(R.layout.item_storage_video_tag) { initView(tagItem()) }
+                addItem(com.xyoye.common_component.R.layout.item_storage_video_tag) { initView(tagItem()) }
             }
             removeItemDecoration(tagDecoration)
             addItemDecoration(tagDecoration)
@@ -133,7 +133,7 @@ class PlayHistoryAdapter(
 
     private fun BaseViewHolderCreator<ItemStorageVideoTagBinding>.tagItem() =
         { data: VideoTagBean ->
-            val background = R.drawable.background_video_tag.toResDrawable()
+            val background = com.xyoye.common_component.R.drawable.background_video_tag.toResDrawable()
             background?.colorFilter = PorterDuffColorFilter(data.color, PorterDuff.Mode.SRC)
             itemBinding.textView.background = background
             itemBinding.textView.text = data.tag
@@ -142,17 +142,22 @@ class PlayHistoryAdapter(
     private fun generateVideoTags(data: PlayHistoryEntity): List<VideoTagBean> {
         val tagList = mutableListOf<VideoTagBean>()
         if (data.danmuPath?.isNotEmpty() == true) {
-            tagList.add(VideoTagBean("弹幕", R.color.theme.toResColor()))
+            tagList.add(VideoTagBean("弹幕", com.xyoye.common_component.R.color.theme.toResColor()))
         }
         if (data.subtitlePath?.isNotEmpty() == true) {
-            tagList.add(VideoTagBean("字幕", R.color.orange.toResColor()))
+            tagList.add(VideoTagBean("字幕", com.xyoye.common_component.R.color.orange.toResColor()))
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
+            tagList.add(VideoTagBean(progress, com.xyoye.common_component.R.color.black_alpha.toResColor()))
         }
-        tagList.add(VideoTagBean(data.mediaType.storageName, R.color.black_alpha.toResColor()))
-        tagList.add(VideoTagBean(PlayHistoryUtils.formatPlayTime(data.playTime), R.color.black_alpha.toResColor()))
+        tagList.add(VideoTagBean(data.mediaType.storageName, com.xyoye.common_component.R.color.black_alpha.toResColor()))
+        tagList.add(
+            VideoTagBean(
+                PlayHistoryUtils.formatPlayTime(data.playTime),
+                com.xyoye.common_component.R.color.black_alpha.toResColor()
+            )
+        )
         return tagList
     }
 

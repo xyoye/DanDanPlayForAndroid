@@ -3,7 +3,6 @@ package com.xyoye.anime_component.ui.fragment.search_anime
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.xyoye.anime_component.R
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
@@ -148,10 +147,10 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
             return
         }
 
-        if (!UserConfig.isUserLoggedIn()
+        if (!UserConfig.getUserLoggedIn()
             && AnimeSortType.formValue(sortTypeData[position].typeId) == AnimeSortType.FOLLOW
         ) {
-            ToastCenter.showWarning(R.string.tips_login_required.toResString())
+            ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
             return
         }
 
@@ -206,7 +205,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
             animeLiveData.postValue(searchAnimeData.animes)
             return
         }
-        if (!UserConfig.isUserLoggedIn() && sortType == AnimeSortType.FOLLOW) {
+        if (!UserConfig.getUserLoggedIn() && sortType == AnimeSortType.FOLLOW) {
             animeLiveData.postValue(searchAnimeData.animes)
             return
         }
@@ -214,7 +213,7 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
             val sortedList = mutableListOf<AnimeData>().also {
                 it.addAll(searchAnimeData.animes)
             }
-            Collections.sort(sortedList, kotlin.Comparator { o1, o2 ->
+            Collections.sort(sortedList, Comparator { o1, o2 ->
                 return@Comparator when (sortType) {
                     AnimeSortType.FOLLOW -> o1.isFavorited.compareTo(o2.isFavorited)
 

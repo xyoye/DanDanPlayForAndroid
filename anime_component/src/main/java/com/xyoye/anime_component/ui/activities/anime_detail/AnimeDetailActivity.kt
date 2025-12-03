@@ -2,11 +2,11 @@ package com.xyoye.anime_component.ui.activities.anime_detail
 
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.gyf.immersionbar.ImmersionBar
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeDetailBinding
@@ -36,16 +36,16 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     // 标题栏字体颜色变化范围
     private val textColorRange by lazy {
         ColorRange(
-            R.color.text_white_immutable.toResColor(this),
-            R.color.text_theme.toResColor(this)
+            com.xyoye.common_component.R.color.text_white_immutable.toResColor(this),
+            com.xyoye.common_component.R.color.text_theme.toResColor(this)
         )
     }
 
     // 页面颜色变化范围
     private val pageColorRange by lazy {
         ColorRange(
-            R.color.item_bg_color.toResColor(this),
-            R.color.theme.toResColor(this)
+            com.xyoye.common_component.R.color.item_bg_color.toResColor(this),
+            com.xyoye.common_component.R.color.theme.toResColor(this)
         )
     }
 
@@ -53,7 +53,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     private var lastScrollLimit = 0
 
     // 默认的tab列表
-    private val defaultTabs = AnimeDetailTab.values()
+    private val defaultTabs = AnimeDetailTab.entries.toTypedArray()
 
     // 返回事件拦截器
     private var backPressInterceptor: (() -> Boolean)? = null
@@ -73,7 +73,7 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
     }
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         title = ""
 
@@ -135,11 +135,11 @@ class AnimeDetailActivity : BaseActivity<AnimeDetailViewModel, ActivityAnimeDeta
             if (followed) {
                 dataBinding.followTv.text = "已追番"
                 dataBinding.followTv.isSelected = true
-                dataBinding.followTv.setTextColorRes(R.color.text_theme)
+                dataBinding.followTv.setTextColorRes(com.xyoye.common_component.R.color.text_theme)
             } else {
                 dataBinding.followTv.text = "追番"
                 dataBinding.followTv.isSelected = false
-                dataBinding.followTv.setTextColorRes(R.color.text_orange)
+                dataBinding.followTv.setTextColorRes(com.xyoye.common_component.R.color.text_orange)
             }
         }
 

@@ -60,22 +60,22 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
     inner class DanmuSettingDataStore : PreferenceDataStore() {
         override fun getBoolean(key: String?, defValue: Boolean): Boolean {
             return when (key) {
-                "auto_load_same_name_danmu" -> DanmuConfig.isAutoLoadSameNameDanmu()
-                "auto_match_danmu" -> DanmuConfig.isAutoMatchDanmu()
-                "danmu_update_in_choreographer" -> DanmuConfig.isDanmuUpdateInChoreographer()
-                "danmu_cloud_block" -> DanmuConfig.isCloudDanmuBlock()
-                "danmu_debug" -> DanmuConfig.isDanmuDebug()
+                "auto_load_same_name_danmu" -> DanmuConfig.getAutoLoadSameNameDanmu()
+                "auto_match_danmu" -> DanmuConfig.getAutoMatchDanmu()
+                "danmu_update_in_choreographer" -> DanmuConfig.getDanmuUpdateInChoreographer()
+                "danmu_cloud_block" -> DanmuConfig.getCloudDanmuBlock()
+                "danmu_debug" -> DanmuConfig.getDanmuDebug()
                 else -> super.getBoolean(key, defValue)
             }
         }
 
         override fun putBoolean(key: String?, value: Boolean) {
             when (key) {
-                "auto_load_same_name_danmu" -> DanmuConfig.putAutoLoadSameNameDanmu(value)
-                "auto_match_danmu" -> DanmuConfig.putAutoMatchDanmu(value)
-                "danmu_update_in_choreographer" -> DanmuConfig.putDanmuUpdateInChoreographer(value)
-                "danmu_cloud_block" -> DanmuConfig.putCloudDanmuBlock(value)
-                "danmu_debug" -> DanmuConfig.putDanmuDebug(value)
+                "auto_load_same_name_danmu" -> DanmuConfig.setAutoLoadSameNameDanmu(value)
+                "auto_match_danmu" -> DanmuConfig.setAutoMatchDanmu(value)
+                "danmu_update_in_choreographer" -> DanmuConfig.setDanmuUpdateInChoreographer(value)
+                "danmu_cloud_block" -> DanmuConfig.setCloudDanmuBlock(value)
+                "danmu_debug" -> DanmuConfig.setDanmuDebug(value)
                 else -> super.putBoolean(key, value)
             }
         }
@@ -89,7 +89,7 @@ class DanmuSettingFragment : PreferenceFragmentCompat() {
 
         override fun putString(key: String?, value: String?) {
             when (key) {
-                "danmu_language" -> DanmuConfig.putDanmuLanguage(value?.toInt() ?: 0)
+                "danmu_language" -> DanmuConfig.setDanmuLanguage(value?.toInt() ?: 0)
                 else -> super.putString(key, value)
             }
         }

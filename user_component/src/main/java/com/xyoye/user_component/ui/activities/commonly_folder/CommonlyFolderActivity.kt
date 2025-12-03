@@ -1,7 +1,7 @@
 package com.xyoye.user_component.ui.activities.commonly_folder
 
 import android.os.Environment
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
@@ -37,7 +37,7 @@ class CommonlyFolderActivity :
             if (commonFolder2Path.isNullOrEmpty()) "路径：未设置" else "路径：$commonFolder2Path"
         dataBinding.commonlyFolder2Tv.text = commonFolder2Path
 
-        dataBinding.lastOpenFolderSw.isChecked = AppConfig.isLastOpenFolderEnable()
+        dataBinding.lastOpenFolderSw.isChecked = AppConfig.getLastOpenFolderEnable()
 
         initListener()
     }
@@ -52,7 +52,7 @@ class CommonlyFolderActivity :
                 FileManagerAction.ACTION_SELECT_DIRECTORY,
                 defaultPath
             ) {
-                AppConfig.putCommonlyFolder1(it)
+                AppConfig.setCommonlyFolder1(it)
                 val path = "路径：$it"
                 dataBinding.commonlyFolder1Tv.text = path
             }.show()
@@ -64,7 +64,7 @@ class CommonlyFolderActivity :
                 FileManagerAction.ACTION_SELECT_DIRECTORY,
                 defaultPath
             ) {
-                AppConfig.putCommonlyFolder2(it)
+                AppConfig.setCommonlyFolder2(it)
                 val path = "路径：$it"
                 dataBinding.commonlyFolder2Tv.text = path
             }.show()
@@ -74,7 +74,7 @@ class CommonlyFolderActivity :
             CommonDialog.Builder(this).apply {
                 content = "确认删除常用文件夹1？"
                 addPositive {
-                    AppConfig.putCommonlyFolder1("")
+                    AppConfig.setCommonlyFolder1("")
                     dataBinding.commonlyFolder1Tv.text = "路径：未设置"
                     it.dismiss()
                 }
@@ -87,7 +87,7 @@ class CommonlyFolderActivity :
             CommonDialog.Builder(this).apply {
                 content = "确认删除常用文件夹2？"
                 addPositive {
-                    AppConfig.putCommonlyFolder2("")
+                    AppConfig.setCommonlyFolder2("")
                     dataBinding.commonlyFolder2Tv.text = "路径：未设置"
                     it.dismiss()
                 }
@@ -98,7 +98,7 @@ class CommonlyFolderActivity :
 
 
         dataBinding.lastOpenFolderSw.setOnCheckedChangeListener { _, isChecked ->
-            AppConfig.putLastOpenFolderEnable(isChecked)
+            AppConfig.setLastOpenFolderEnable(isChecked)
         }
     }
 }

@@ -37,7 +37,7 @@ class AnimeSearchMenus private constructor(
             isIconified = true
             imeOptions = EditorInfo.IME_ACTION_SEARCH
             queryHint = R.string.tips_search_anime.toResString(activity)
-            findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)?.textSize = 16f
+            findViewById<SearchView.SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)?.textSize = 16f
         }
 
         mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

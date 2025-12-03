@@ -2,7 +2,6 @@ package com.xyoye.anime_component.ui.activities.anime_season
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.xyoye.anime_component.R
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.toResString
@@ -113,10 +112,10 @@ class AnimeSeasonViewModel : BaseViewModel() {
             return
         }
 
-        if (!UserConfig.isUserLoggedIn()
+        if (!UserConfig.getUserLoggedIn()
             && AnimeSortType.formValue(sortTypeData[position].typeId) == AnimeSortType.FOLLOW
         ) {
-            ToastCenter.showWarning(R.string.tips_login_required.toResString())
+            ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
             return
         }
 
@@ -211,7 +210,7 @@ class AnimeSeasonViewModel : BaseViewModel() {
             animeLiveData.postValue(seasonAnimeData.bangumiList)
             return
         }
-        if (!UserConfig.isUserLoggedIn() && sortType == AnimeSortType.FOLLOW) {
+        if (!UserConfig.getUserLoggedIn() && sortType == AnimeSortType.FOLLOW) {
             animeLiveData.postValue(seasonAnimeData.bangumiList)
             return
         }
@@ -219,7 +218,7 @@ class AnimeSeasonViewModel : BaseViewModel() {
             val sortedList = mutableListOf<AnimeData>().also {
                 it.addAll(seasonAnimeData.bangumiList)
             }
-            Collections.sort(sortedList, kotlin.Comparator { o1, o2 ->
+            Collections.sort(sortedList, Comparator { o1, o2 ->
                 return@Comparator when (sortType) {
                     AnimeSortType.FOLLOW -> o1.isFavorited.compareTo(o2.isFavorited)
 

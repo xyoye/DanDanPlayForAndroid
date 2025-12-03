@@ -101,8 +101,8 @@ class DeveloperAuthenticateDialog(
      * 认证成功
      */
     private fun authenticateSuccess(appId: String, appSecret: String) {
-        DevelopConfig.putAppId(appId)
-        DevelopConfig.putAppSecret(appSecret)
+        DevelopConfig.setAppId(appId)
+        DevelopConfig.setAppSecret(appSecret)
         ToastCenter.showSuccess("认证成功")
         onAuthenticate.invoke()
         dismiss()

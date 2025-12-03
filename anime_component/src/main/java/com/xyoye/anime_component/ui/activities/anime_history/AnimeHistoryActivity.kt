@@ -4,9 +4,9 @@ import android.view.KeyEvent
 import android.view.Menu
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeHistoryBinding
@@ -48,7 +48,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
     override fun getLayoutId() = R.layout.activity_anime_history
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         title = "云端播放历史"
 
@@ -86,7 +86,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
 
             adapter = buildAdapter {
 
-                addEmptyView(R.layout.layout_empty)
+                addEmptyView(com.xyoye.common_component.R.layout.layout_empty)
 
                 addItem<AnimeData, ItemAnimeBinding>(R.layout.item_anime) {
                     initView { data, _, _ ->
@@ -104,10 +104,10 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
                                     this@AnimeHistoryActivity, coverIv, coverIv.transitionName
                                 )
 
-                                ARouter.getInstance()
+                                TheRouter
                                     .build(RouteTable.Anime.AnimeDetail)
                                     .withParcelable("animeArgument", AnimeArgument.fromData(data))
-                                    .withOptionsCompat(options)
+                                    .withOptionsCompat(options.toBundle())
                                     .navigation(this@AnimeHistoryActivity)
                             }
                         }
@@ -120,7 +120,7 @@ class AnimeHistoryActivity : BaseActivity<AnimeHistoryViewModel, ActivityAnimeHi
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor()
+                    com.xyoye.common_component.R.color.item_bg_color.toResColor()
                 )
             )
         }

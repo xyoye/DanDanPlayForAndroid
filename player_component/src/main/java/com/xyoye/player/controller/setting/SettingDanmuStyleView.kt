@@ -109,7 +109,7 @@ class SettingDanmuStyleView(
         viewBinding.danmuSizeTv.text = progressText
         viewBinding.danmuSizeSb.progress = progress
 
-        DanmuConfig.putDanmuSize(progress)
+        DanmuConfig.setDanmuSize(progress)
         PlayerInitializer.Danmu.size = progress
         mControlWrapper.updateDanmuSize()
         onConfigChanged()
@@ -123,7 +123,7 @@ class SettingDanmuStyleView(
         viewBinding.danmuSpeedTv.text = progressText
         viewBinding.danmuSpeedSb.progress = progress
 
-        DanmuConfig.putDanmuSpeed(progress)
+        DanmuConfig.setDanmuSpeed(progress)
         PlayerInitializer.Danmu.speed = progress
         mControlWrapper.updateDanmuSpeed()
         onConfigChanged()
@@ -137,7 +137,7 @@ class SettingDanmuStyleView(
         viewBinding.danmuAlphaTv.text = progressText
         viewBinding.danmuAlphaSb.progress = progress
 
-        DanmuConfig.putDanmuAlpha(progress)
+        DanmuConfig.setDanmuAlpha(progress)
         PlayerInitializer.Danmu.alpha = progress
         mControlWrapper.updateDanmuAlpha()
         onConfigChanged()
@@ -151,7 +151,7 @@ class SettingDanmuStyleView(
         viewBinding.danmuStokeTv.text = progressText
         viewBinding.danmuStokeSb.progress = progress
 
-        DanmuConfig.putDanmuStoke(progress)
+        DanmuConfig.setDanmuStoke(progress)
         PlayerInitializer.Danmu.stoke = progress
         mControlWrapper.updateDanmuStoke()
         onConfigChanged()

@@ -101,10 +101,10 @@ class SmbStorageEditDialog(
     override fun onTestResult(result: Boolean) {
         if (result) {
             binding.serverStatusTv.text = "连接成功"
-            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_blue)
         } else {
             binding.serverStatusTv.text = "连接失败"
-            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_red)
         }
     }
 
@@ -130,12 +130,12 @@ class SmbStorageEditDialog(
     private fun setAnonymous(isAnonymous: Boolean) {
         binding.anonymousTv.isSelected = isAnonymous
         binding.anonymousTv.setTextColorRes(
-            if (isAnonymous) R.color.text_white else R.color.text_black
+            if (isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountTv.isSelected = !isAnonymous
         binding.accountTv.setTextColorRes(
-            if (!isAnonymous) R.color.text_white else R.color.text_black
+            if (!isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountEt.isGone = isAnonymous
@@ -151,17 +151,17 @@ class SmbStorageEditDialog(
     private fun setSmbV2(isSmbV2: Boolean) {
         binding.smbV2Tv.isSelected = isSmbV2
         binding.smbV2Tv.setTextColorRes(
-            if (isSmbV2) R.color.text_white else R.color.text_black
+            if (isSmbV2) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.smbV1Tv.post {
             binding.smbV1Tv.isClickable = false
-            binding.smbV1Tv.setTextColorRes(R.color.text_gray)
+            binding.smbV1Tv.setTextColorRes(com.xyoye.common_component.R.color.text_gray)
         }
         //暂不支持SMB V1
 //        binding.smbV1Tv.isSelected = !isSmbV2
 //        binding.smbV1Tv.setTextColorRes(
-//            if (!isSmbV2) R.color.text_white else R.color.text_black
+//            if (!isSmbV2) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
 //        )
     }
 }

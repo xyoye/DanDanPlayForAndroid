@@ -1,11 +1,17 @@
 plugins {
     alias(dandanplay.plugins.library)
     alias(dandanplay.plugins.router)
-    id("kotlin-parcelize")
+    alias(kotlinx.plugins.ksp)
+    alias(kotlinx.plugins.kapt)
+    alias(kotlinx.plugins.parcelize)
 }
 
 android {
     namespace = "com.xyoye.common_component"
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     sourceSets {
         named("main").configure {
@@ -19,10 +25,10 @@ dependencies {
     api(project(":repository:seven_zip"))
     api(project(":repository:immersion_bar"))
     api(project(":repository:thunder"))
+    implementation(project(":repository:mmkv:annotation"))
 
     api(files("libs/sardine-1.0.2.jar"))
     api(files("libs/simple-xml-2.7.1.jar"))
-    implementation(files("libs/mmkv-annotation.jar"))
 
     api(androidx.bundles.lifecycle)
     api(androidx.bundles.room)
@@ -49,13 +55,14 @@ dependencies {
     api(libs.github.nanohttpd)
     api(libs.github.smbj)
     api(libs.github.dcerpc)
+    api(libs.github.router)
     api(libs.google.material)
     api(libs.tencent.mmkv)
     implementation(libs.tencent.bugly)
-
-    kapt(files("libs/mmkv-compiler.jar"))
-    kapt(androidx.room.compiler)
     implementation(kotlin("reflect"))
+
+    ksp(androidx.room.compiler)
+    ksp(project(":repository:mmkv:processor"))
 
     debugImplementation(libs.square.leakcanary)
 }

@@ -35,7 +35,7 @@ object VideoExtension {
      * 重置为默认支持的视频文件扩展名
      */
     fun resetDefault() {
-        AppConfig.putSupportVideoExtension(defaultSupport.joinToString(SEPARATOR))
+        AppConfig.setSupportVideoExtension(defaultSupport.joinToString(SEPARATOR))
         refresh()
     }
 
@@ -54,7 +54,7 @@ object VideoExtension {
         if (storeExtensions.isEmpty()) {
             return false
         }
-        AppConfig.putSupportVideoExtension(storeExtensions.joinToString(SEPARATOR))
+        AppConfig.setSupportVideoExtension(storeExtensions.joinToString(SEPARATOR))
         refresh()
         return true
     }
@@ -70,8 +70,8 @@ object VideoExtension {
      * 从磁盘中获取支持的视频文件扩展名
      */
     private fun refresh() {
-        val stored = AppConfig.getSupportVideoExtension()?.split(SEPARATOR)
-        if (stored.isNullOrEmpty()) {
+        val stored = (AppConfig.getSupportVideoExtension() ?: supportText).split(SEPARATOR)
+        if (stored.isEmpty()) {
             return
         }
         _support.clear()

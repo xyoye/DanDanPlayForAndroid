@@ -2,8 +2,8 @@ package com.xyoye.user_component.ui.activities.user_info
 
 import android.view.Menu
 import android.view.MenuItem
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.UserConfig
@@ -65,7 +65,7 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
 
         viewModel.updatePasswordLiveData.observe(this) {
             updatePasswordDialog.dismiss()
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.UserLogin)
                 .withString("userAccount", it)
                 .navigation()
@@ -92,7 +92,7 @@ class UserInfoActivity : BaseActivity<UserInfoViewModel, ActivityUserInfoBinding
                         it.dismiss()
                         val userAccount: String? = UserInfoHelper.mLoginData?.userName
                         UserInfoHelper.exitLogin()
-                        ARouter.getInstance()
+                        TheRouter
                             .build(RouteTable.User.UserLogin)
                             .withString("userAccount", userAccount)
                             .navigation()

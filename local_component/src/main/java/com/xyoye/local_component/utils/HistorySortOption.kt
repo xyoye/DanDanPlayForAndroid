@@ -18,18 +18,18 @@ class HistorySortOption {
 
     init {
         sort = HistorySort.formValue(AppConfig.getHistorySortType())
-        asc = AppConfig.isHistorySortAsc()
+        asc = AppConfig.getHistorySortAsc()
     }
 
     fun setSort(sort: HistorySort): Boolean {
         this.sort = sort
-        AppConfig.putHistorySortType(sort.value)
+        AppConfig.setHistorySortType(sort.value)
         return true
     }
 
     fun changeAsc(): Boolean {
         this.asc = !asc
-        AppConfig.putHistorySortAsc(asc)
+        AppConfig.setHistorySortAsc(asc)
         return true
     }
 

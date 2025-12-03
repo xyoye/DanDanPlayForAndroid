@@ -11,7 +11,7 @@ import com.xyoye.common_component.config.AppConfig
  */
 inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
     return filterTo(ArrayList()) {
-        AppConfig.isShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
+        AppConfig.getShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
     }
 }
 
@@ -20,7 +20,7 @@ inline fun <T> Iterable<T>.filterHiddenFile(predicate: (T) -> String): List<T> {
  */
 inline fun <T> Sequence<T>.filterHiddenFile(predicate: (T) -> String): MutableCollection<T> {
     return filterTo(ArrayList()) {
-        AppConfig.isShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
+        AppConfig.getShowHiddenFile() || predicate.invoke(it).startsWith(".").not()
     }
 }
 

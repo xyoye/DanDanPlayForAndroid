@@ -3,8 +3,8 @@ package com.xyoye.local_component.ui.activities.bilibili_danmu
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.weight.BottomActionDialog
@@ -79,11 +79,11 @@ class BilibiliDanmuActivity : BaseActivity<BilibiliDanmuViewModel, ActivityBilib
     private fun showActionDialog() {
         BottomActionDialog(
             this,
-            DownloadType.values().map { it.toAction() },
+            DownloadType.entries.map { it.toAction() },
             "下载弹幕"
         ) {
             if (it.actionId == DownloadType.SELECT) {
-                ARouter.getInstance().build(RouteTable.User.WebView)
+                TheRouter.build(RouteTable.User.WebView)
                     .withString("titleText", "选择链接")
                     .withString("url", "http://www.bilibili.com")
                     .withBoolean("isSelectMode", true)

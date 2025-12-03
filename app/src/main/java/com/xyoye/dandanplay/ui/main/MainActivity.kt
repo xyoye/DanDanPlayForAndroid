@@ -6,8 +6,8 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.bridge.LoginObserver
 import com.xyoye.common_component.config.RouteTable
@@ -62,7 +62,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     override fun getLayoutId() = R.layout.activity_main
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
         //隐藏返回按钮
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(false)
@@ -111,7 +111,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
 
         initScreencastReceive()
 
-        if (UserConfig.isUserLoggedIn()) {
+        if (UserConfig.getUserLoggedIn()) {
             viewModel.reLogin()
         }
     }
@@ -226,12 +226,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     }
 
     private fun getFragment(path: String) =
-        ARouter.getInstance()
+        TheRouter
             .build(path)
-            .navigation() as Fragment?
+            .createFragment<Fragment>() as Fragment?
 
     private fun initScreencastReceive() {
-        if (ScreencastConfig.isStartReceiveWhenLaunch().not()) {
+        if (ScreencastConfig.getStartReceiveWhenLaunch().not()) {
             return
         }
         if (receiveService.isRunning(this)) {
@@ -241,7 +241,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         var httpPort = ScreencastConfig.getReceiverPort()
         if (httpPort == 0) {
             httpPort = Random.nextInt(20000, 30000)
-            ScreencastConfig.putReceiverPort(httpPort)
+            ScreencastConfig.setReceiverPort(httpPort)
         }
         val receiverPwd = ScreencastConfig.getReceiverPassword()
         receiveService.startService(this, httpPort, receiverPwd)

@@ -8,7 +8,7 @@ import android.os.IBinder
 import android.text.TextUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.config.ScreencastConfig
@@ -82,7 +82,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
         super.onCreate()
         ServiceLifecycleBridge.onScreencastReceiveLifeChange(true)
 
-        val manager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val manager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
         multicastLock = manager.createMulticastLock("udp_multicast")
         multicastLock.acquire()
 
@@ -171,7 +171,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
             }
 
             VideoSourceManager.getInstance().setSource(mediaSource)
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Player.Player)
                 .navigation()
         }
@@ -195,7 +195,7 @@ class ScreencastReceiveService : Service(), ScreencastReceiveHandler {
      */
     private suspend fun considerAcceptScreencast(videoData: ScreencastVideoData): Boolean {
         //设置了自动接收
-        if (ScreencastConfig.isReceiveNeedConfirm().not()) {
+        if (ScreencastConfig.getReceiveNeedConfirm().not()) {
             return true
         }
 

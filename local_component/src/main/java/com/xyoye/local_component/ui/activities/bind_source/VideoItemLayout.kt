@@ -20,7 +20,6 @@ import com.xyoye.common_component.utils.PlayHistoryUtils
 import com.xyoye.common_component.utils.formatDuration
 import com.xyoye.common_component.utils.view.ItemDecorationOrientation
 import com.xyoye.data_component.bean.VideoTagBean
-import com.xyoye.local_component.R
 import com.xyoye.local_component.databinding.ActivityBindExtraSourceBinding
 
 /**
@@ -33,7 +32,7 @@ object VideoItemLayout {
 
     fun initVideoLayout(dataBinding: ActivityBindExtraSourceBinding, data: StorageFile) {
         dataBinding.videoLayout.run {
-            itemLayout.setBackgroundColor(R.color.item_bg_color.toResColor())
+            itemLayout.setBackgroundColor(com.xyoye.common_component.R.color.item_bg_color.toResColor())
 
             titleTv.setTextIsSelectable(true)
 
@@ -70,7 +69,7 @@ object VideoItemLayout {
         tagRv.apply {
             layoutManager = horizontal()
             adapter = buildAdapter {
-                addItem(R.layout.item_storage_video_tag) {
+                addItem(com.xyoye.common_component.R.layout.item_storage_video_tag) {
                     initView(tagItem())
                 }
             }
@@ -82,7 +81,7 @@ object VideoItemLayout {
 
     private fun BaseViewHolderCreator<ItemStorageVideoTagBinding>.tagItem() =
         { data: VideoTagBean ->
-            val background = R.drawable.background_video_tag.toResDrawable()
+            val background = com.xyoye.common_component.R.drawable.background_video_tag.toResDrawable()
             background?.colorFilter = PorterDuffColorFilter(data.color, PorterDuff.Mode.SRC)
             itemBinding.textView.background = background
             itemBinding.textView.text = data.tag
@@ -91,18 +90,18 @@ object VideoItemLayout {
     private fun generateVideoTags(data: StorageFile): List<VideoTagBean> {
         val tagList = mutableListOf<VideoTagBean>()
         if (isShowDanmu(data)) {
-            tagList.add(VideoTagBean("弹幕", R.color.theme.toResColor()))
+            tagList.add(VideoTagBean("弹幕", com.xyoye.common_component.R.color.theme.toResColor()))
         }
         if (isShowSubtitle(data)) {
-            tagList.add(VideoTagBean("字幕", R.color.orange.toResColor()))
+            tagList.add(VideoTagBean("字幕", com.xyoye.common_component.R.color.orange.toResColor()))
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
+            tagList.add(VideoTagBean(progress, com.xyoye.common_component.R.color.black_alpha.toResColor()))
         }
         val lastPlayTime = getPlayTime(data)
         if (lastPlayTime.isNotEmpty()) {
-            tagList.add(VideoTagBean(lastPlayTime, R.color.black_alpha.toResColor()))
+            tagList.add(VideoTagBean(lastPlayTime, com.xyoye.common_component.R.color.black_alpha.toResColor()))
         }
         return tagList
     }

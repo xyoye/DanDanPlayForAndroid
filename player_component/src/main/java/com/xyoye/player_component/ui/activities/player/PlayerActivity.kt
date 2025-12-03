@@ -1,8 +1,6 @@
 package com.xyoye.player_component.ui.activities.player
 
 import android.app.ActivityManager
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
@@ -12,10 +10,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.bridge.PlayTaskBridge
 import com.xyoye.common_component.config.DanmuConfig
@@ -25,7 +23,6 @@ import com.xyoye.common_component.config.SubtitleConfig
 import com.xyoye.common_component.receiver.HeadsetBroadcastReceiver
 import com.xyoye.common_component.receiver.PlayerReceiverListener
 import com.xyoye.common_component.receiver.ScreenBroadcastReceiver
-import com.xyoye.player_component.receiver.PlayerDanmuConfigReceiver
 import com.xyoye.common_component.source.VideoSourceManager
 import com.xyoye.common_component.source.base.BaseVideoSource
 import com.xyoye.common_component.source.media.StorageVideoSource
@@ -51,6 +48,7 @@ import com.xyoye.player.info.PlayerInitializer
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerBinding
+import com.xyoye.player_component.receiver.PlayerDanmuConfigReceiver
 import com.xyoye.player_component.utils.BatteryHelper
 import com.xyoye.player_component.widgets.popup.PlayerPopupManager
 import kotlinx.coroutines.Dispatchers
@@ -113,7 +111,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     }
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         registerReceiver()
 
@@ -148,7 +146,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onPause() {
         val popupNotShowing = popupManager.isShowing().not()
-        val backgroundPlayDisable = PlayerConfig.isBackgroundPlay().not()
+        val backgroundPlayDisable = PlayerConfig.getBackgroundPlay().not()
         if (popupNotShowing && backgroundPlayDisable) {
             danDanPlayer.pause()
         }
@@ -335,7 +333,7 @@ private fun updatePlayer(source: BaseVideoSource) {
         if (historyDanmu != null) {
             videoController.addExtendTrack(VideoTrackBean.danmu(historyDanmu))
         } else if (
-            DanmuConfig.isAutoMatchDanmu()
+            DanmuConfig.getAutoMatchDanmu()
             && source.getMediaType() != MediaType.FTP_SERVER
             && popupManager.isShowing().not()
         ) {
@@ -375,48 +373,48 @@ private fun updatePlayer(source: BaseVideoSource) {
 
     private fun initPlayerConfig() {
         //播放器类型
-        PlayerInitializer.playerType = PlayerType.valueOf(PlayerConfig.getUsePlayerType())
+        PlayerInitializer.playerType = PlayerType.fromValue(PlayerConfig.getUsePlayerType())
         //IJKPlayer像素格式
         PlayerInitializer.Player.pixelFormat =
-            PixelFormat.valueOf(PlayerConfig.getUsePixelFormat())
+            PixelFormat.fromValue(PlayerConfig.getUsePixelFormat())
         //IJKPlayer硬解码
-        PlayerInitializer.Player.isMediaCodeCEnabled = PlayerConfig.isUseMediaCodeC()
+        PlayerInitializer.Player.isMediaCodeCEnabled = PlayerConfig.getUseMediaCodeC()
         //IJKPlayer H265硬解码
-        PlayerInitializer.Player.isMediaCodeCH265Enabled = PlayerConfig.isUseMediaCodeCH265()
+        PlayerInitializer.Player.isMediaCodeCH265Enabled = PlayerConfig.getUseMediaCodeCH265()
         //IJKPlayer OpenSlEs
-        PlayerInitializer.Player.isOpenSLESEnabled = PlayerConfig.isUseOpenSlEs()
+        PlayerInitializer.Player.isOpenSLESEnabled = PlayerConfig.getUseOpenSlEs()
         //是否使用SurfaceView
         PlayerInitializer.surfaceType =
-            if (PlayerConfig.isUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
+            if (PlayerConfig.getUseSurfaceView()) SurfaceType.VIEW_SURFACE else SurfaceType.VIEW_TEXTURE
         //视频速度
         PlayerInitializer.Player.videoSpeed = PlayerConfig.getNewVideoSpeed()
         // 长按视频速度
         PlayerInitializer.Player.pressVideoSpeed = PlayerConfig.getPressVideoSpeed()
         //自动播放下一集
-        PlayerInitializer.Player.isAutoPlayNext = PlayerConfig.isAutoPlayNext()
+        PlayerInitializer.Player.isAutoPlayNext = PlayerConfig.getAutoPlayNext()
 
         //VLCPlayer像素格式
         PlayerInitializer.Player.vlcPixelFormat =
-            VLCPixelFormat.valueOf(PlayerConfig.getUseVLCPixelFormat())
+            VLCPixelFormat.fromValue(PlayerConfig.getUseVLCPixelFormat())
         PlayerInitializer.Player.vlcHWDecode =
-            VLCHWDecode.valueOf(PlayerConfig.getUseVLCHWDecoder())
+            VLCHWDecode.fromValue(PlayerConfig.getUseVLCHWDecoder())
         PlayerInitializer.Player.vlcAudioOutput =
-            VLCAudioOutput.valueOf(PlayerConfig.getUseVLCAudioOutput())
+            VLCAudioOutput.fromValue(PlayerConfig.getUseVLCAudioOutput())
 
         //弹幕配置
         PlayerInitializer.Danmu.size = DanmuConfig.getDanmuSize()
         PlayerInitializer.Danmu.speed = DanmuConfig.getDanmuSpeed()
         PlayerInitializer.Danmu.alpha = DanmuConfig.getDanmuAlpha()
         PlayerInitializer.Danmu.stoke = DanmuConfig.getDanmuStoke()
-        PlayerInitializer.Danmu.topDanmu = DanmuConfig.isShowTopDanmu()
-        PlayerInitializer.Danmu.mobileDanmu = DanmuConfig.isShowMobileDanmu()
-        PlayerInitializer.Danmu.bottomDanmu = DanmuConfig.isShowBottomDanmu()
+        PlayerInitializer.Danmu.topDanmu = DanmuConfig.getShowTopDanmu()
+        PlayerInitializer.Danmu.mobileDanmu = DanmuConfig.getShowMobileDanmu()
+        PlayerInitializer.Danmu.bottomDanmu = DanmuConfig.getShowBottomDanmu()
         PlayerInitializer.Danmu.maxScrollLine = DanmuConfig.getDanmuScrollMaxLine()
         PlayerInitializer.Danmu.maxTopLine = DanmuConfig.getDanmuTopMaxLine()
         PlayerInitializer.Danmu.maxBottomLine = DanmuConfig.getDanmuBottomMaxLine()
         PlayerInitializer.Danmu.maxNum = DanmuConfig.getDanmuMaxCount()
-        PlayerInitializer.Danmu.cloudBlock = DanmuConfig.isCloudDanmuBlock()
-        PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.isDanmuUpdateInChoreographer()
+        PlayerInitializer.Danmu.cloudBlock = DanmuConfig.getCloudDanmuBlock()
+        PlayerInitializer.Danmu.updateInChoreographer = DanmuConfig.getDanmuUpdateInChoreographer()
         PlayerInitializer.Danmu.language = DanmakuLanguage.formValue(DanmuConfig.getDanmuLanguage())
 
         //字幕配置
@@ -449,7 +447,7 @@ private fun updatePlayer(source: BaseVideoSource) {
         if (isTorrentSource) {
             builder.setPositiveButton("播放器设置") { dialog, _ ->
                 dialog.dismiss()
-                ARouter.getInstance()
+                TheRouter
                     .build(RouteTable.User.SettingPlayer)
                     .navigation()
                 this@PlayerActivity.finish()
@@ -509,7 +507,7 @@ private fun updatePlayer(source: BaseVideoSource) {
     }
 
     private fun exitTaskBackground() {
-        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         activityManager.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_WITH_HOME)
     }
 
@@ -579,7 +577,7 @@ private fun updatePlayer(source: BaseVideoSource) {
                     RemoteControlResult.failure(400, "speed 参数无效")
                 } else {
                     danDanPlayer.setSpeed(speed)
-                    PlayerConfig.putNewVideoSpeed(speed)
+                    PlayerConfig.setNewVideoSpeed(speed)
                     RemoteControlResult.success()
                 }
             }
@@ -654,7 +652,7 @@ private fun updatePlayer(source: BaseVideoSource) {
     }
 
     private fun getSystemVolumePercent(): Int {
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         if (maxVolume <= 0) {
             return -1
@@ -664,7 +662,7 @@ private fun updatePlayer(source: BaseVideoSource) {
     }
 
     private fun setSystemVolumePercent(percent: Int): Boolean {
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         if (maxVolume <= 0) {
             return false

@@ -18,7 +18,7 @@ enum class PixelFormat(val value: String) {
     PIXEL_OPEN_GL_ES2("fcc-_es2");
 
     companion object {
-        fun valueOf(value: String?): PixelFormat {
+        fun fromValue(value: String?): PixelFormat {
             return when (value) {
                 "fcc-rv16" -> PIXEL_RGB565
                 "fcc-rv24" -> PIXEL_RGB888

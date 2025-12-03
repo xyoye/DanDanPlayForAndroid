@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.facade.annotation.Route
 import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.ml.scan.HmsBuildBitmapOption
 import com.huawei.hms.ml.scan.HmsScan
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.bridge.ServiceLifecycleBridge
 import com.xyoye.common_component.config.RouteTable
@@ -57,9 +57,9 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             setupDisableStyle()
         }
 
-        dataBinding.needConfirmSwitch.isChecked = ScreencastConfig.isReceiveNeedConfirm()
+        dataBinding.needConfirmSwitch.isChecked = ScreencastConfig.getReceiveNeedConfirm()
 
-        dataBinding.autoStartSwitch.isChecked = ScreencastConfig.isStartReceiveWhenLaunch()
+        dataBinding.autoStartSwitch.isChecked = ScreencastConfig.getStartReceiveWhenLaunch()
 
         viewModel.initIpPort()
     }
@@ -108,7 +108,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
                 content = "确认更换端口号？\n\n更换后已连接设备需要重新连接"
                 addPositive {
                     httpPort = Random.nextInt(20000, 30000)
-                    ScreencastConfig.putReceiverPort(httpPort)
+                    ScreencastConfig.setReceiverPort(httpPort)
                     dataBinding.portTv.text = httpPort.toString()
                     it.dismiss()
                 }
@@ -118,11 +118,11 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         }
 
         dataBinding.needConfirmSwitch.setOnCheckedChangeListener { _, isChecked ->
-            ScreencastConfig.putReceiveNeedConfirm(isChecked)
+            ScreencastConfig.setReceiveNeedConfirm(isChecked)
         }
 
         dataBinding.autoStartSwitch.setOnCheckedChangeListener { _, isChecked ->
-            ScreencastConfig.putStartReceiveWhenLaunch(isChecked)
+            ScreencastConfig.setStartReceiveWhenLaunch(isChecked)
         }
     }
 
@@ -135,13 +135,13 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         httpPort = ScreencastConfig.getReceiverPort()
         if (httpPort == 0) {
             httpPort = Random.nextInt(20000, 30000)
-            ScreencastConfig.putReceiverPort(httpPort)
+            ScreencastConfig.setReceiverPort(httpPort)
         }
         dataBinding.portTv.text = httpPort.toString()
     }
 
     private fun initPassword() {
-        val isUsePwd = ScreencastConfig.isUseReceiverPassword()
+        val isUsePwd = ScreencastConfig.getUseReceiverPassword()
         dataBinding.passwordSwitch.isChecked = isUsePwd
 
         val receiverPwd = ScreencastConfig.getReceiverPassword()
@@ -164,8 +164,8 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             password = inputPwd
         }
 
-        ScreencastConfig.putReceiverPassword(password ?: "")
-        ScreencastConfig.putUseReceiverPassword(password.isNullOrEmpty().not())
+        ScreencastConfig.setReceiverPassword(password ?: "")
+        ScreencastConfig.setUseReceiverPassword(password.isNullOrEmpty().not())
         ScreencastReceiveService.start(this, httpPort, password)
     }
 
@@ -178,10 +178,10 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
             dataBinding.qrCodeIv.setImageBitmap(it)
         }
         dataBinding.serverStatusTv.text = "未启动"
-        dataBinding.serverStatusTv.setTextColor(R.color.text_red.toResColor())
+        dataBinding.serverStatusTv.setTextColor(com.xyoye.common_component.R.color.text_red.toResColor())
 
         dataBinding.serverSwitchTv.text = "启动服务"
-        dataBinding.serverSwitchTv.setTextColor(R.color.text_white.toResColor())
+        dataBinding.serverSwitchTv.setTextColor(com.xyoye.common_component.R.color.text_white.toResColor())
         dataBinding.serverSwitchTv.isSelected = false
 
         dataBinding.passwordSwitch.isEnabled = true
@@ -205,10 +205,10 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
         }
 
         dataBinding.serverStatusTv.text = "已启动"
-        dataBinding.serverStatusTv.setTextColor(R.color.text_theme.toResColor())
+        dataBinding.serverStatusTv.setTextColor(com.xyoye.common_component.R.color.text_theme.toResColor())
 
         dataBinding.serverSwitchTv.text = "停止服务"
-        dataBinding.serverSwitchTv.setTextColor(R.color.text_black.toResColor())
+        dataBinding.serverSwitchTv.setTextColor(com.xyoye.common_component.R.color.text_black.toResColor())
         dataBinding.serverSwitchTv.isSelected = true
 
         dataBinding.passwordSwitch.isEnabled = false
@@ -220,7 +220,7 @@ class ScreencastActivity : BaseActivity<ScreencastViewModel, ActivityScreenCastB
 
     private fun createQRCode(content: String, enable: Boolean = true): Bitmap? {
         val logoRes = if (enable) R.mipmap.ic_logo else R.mipmap.ic_logo_gray
-        val bmpColor = if (enable) R.color.text_black else R.color.text_gray
+        val bmpColor = if (enable) com.xyoye.common_component.R.color.text_black else com.xyoye.common_component.R.color.text_gray
 
         try {
             val logo = BitmapFactory.decodeResource(resources, logoRes)

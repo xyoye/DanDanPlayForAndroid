@@ -2,12 +2,16 @@ package com.xyoye.user_component.ui.activities.feedback
 
 import android.content.Intent
 import android.os.Build
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
-import com.xyoye.common_component.extension.*
+import com.xyoye.common_component.extension.addToClipboard
+import com.xyoye.common_component.extension.setData
+import com.xyoye.common_component.extension.startUrlActivity
+import com.xyoye.common_component.extension.toResString
+import com.xyoye.common_component.extension.vertical
 import com.xyoye.common_component.utils.AppUtils
 import com.xyoye.common_component.weight.ToastCenter
 import com.xyoye.user_component.BR

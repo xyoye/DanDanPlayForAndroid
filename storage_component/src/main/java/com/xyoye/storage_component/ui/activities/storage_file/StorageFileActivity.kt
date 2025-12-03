@@ -9,13 +9,14 @@ import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.horizontal
@@ -39,7 +40,6 @@ import com.xyoye.storage_component.utils.storage.StorageFilePathAdapter
 import com.xyoye.storage_component.utils.storage.StorageFileStyleHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Route(path = RouteTable.Stream.StorageFile)
 class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFileBinding>() {
@@ -82,7 +82,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
     override fun getLayoutId() = R.layout.activity_storage_file
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         if (checkBundle().not()) {
             super.onCreate(savedInstanceState)
@@ -155,15 +155,15 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         })
 
         viewModel.playLiveData.observe(this) {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Player.Player)
                 .navigation()
         }
 
         viewModel.castLiveData.observe(this) {
-            ARouter.getInstance()
-                .navigation(ScreencastProvideService::class.java)
-                .startService(this, it)
+            TheRouter
+                .get(ScreencastProvideService::class.java)
+                ?.startService(this, it)
         }
 
         viewModel.selectDeviceLiveData.observe(this) {
@@ -171,8 +171,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         }
 
         if (storage is FtpStorage) {
-            lifecycle.coroutineScope.launchWhenResumed {
-                withContext(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     (storage as FtpStorage).completePending()
                 }
             }
@@ -236,7 +236,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
                 setMaxLifecycle(it, Lifecycle.State.STARTED)
             }
 
-            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setCustomAnimations(com.xyoye.common_component.R.anim.fragment_fade_in, com.xyoye.common_component.R.anim.fragment_fade_out)
             setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             add(dataBinding.fragmentContainer.id, fragment, path.route)
 
@@ -276,7 +276,7 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     private fun removeFragment(fragments: List<Fragment>) {
         supportFragmentManager.beginTransaction().apply {
-            setCustomAnimations(R.anim.fragment_fade_in, R.anim.fragment_fade_out)
+            setCustomAnimations(com.xyoye.common_component.R.anim.fragment_fade_in, com.xyoye.common_component.R.anim.fragment_fade_out)
             setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
 
             fragments.forEach {

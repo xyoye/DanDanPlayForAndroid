@@ -3,9 +3,9 @@ package com.xyoye.player_component.ui.activities.player_intent
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
+import com.therouter.TheRouter
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.decodeUrl
@@ -67,7 +67,7 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
 
     private fun observerPlay() {
         viewModel.playLiveData.observe(this) {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Player.Player)
                 .navigation()
             finish()
@@ -96,7 +96,7 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
         }
 
         val library = MediaLibraryEntity.TORRENT.copy(url = filePath)
-        ARouter.getInstance()
+        TheRouter
             .build(RouteTable.Stream.StorageFile)
             .withParcelable("storageLibrary", library)
             .navigation()

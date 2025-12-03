@@ -7,7 +7,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.PreferenceFragmentCompat
 import com.xyoye.common_component.config.PlayerConfig
-import com.xyoye.data_component.enums.*
+import com.xyoye.data_component.enums.PixelFormat
+import com.xyoye.data_component.enums.PlayerType
+import com.xyoye.data_component.enums.VLCAudioOutput
+import com.xyoye.data_component.enums.VLCHWDecode
+import com.xyoye.data_component.enums.VLCPixelFormat
 import com.xyoye.user_component.R
 
 /**
@@ -80,7 +84,7 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
                 playerData.forEach {
                     if (it.value == newValue) {
                         summary = it.key
-                        updateVisible(newValue.toString())
+                        updateVisible(newValue)
                     }
                 }
                 return@setOnPreferenceChangeListener true
@@ -158,11 +162,11 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
         override fun putString(key: String?, value: String?) {
             if (value != null) {
                 when (key) {
-                    "player_type" -> PlayerConfig.putUsePlayerType(value.toInt())
-                    "pixel_format_type" -> PlayerConfig.putUsePixelFormat(value)
-                    "vlc_pixel_format_type" -> PlayerConfig.putUseVLCPixelFormat(value)
-                    "vlc_hardware_acceleration" -> PlayerConfig.putUseVLCHWDecoder(value.toInt())
-                    "vlc_audio_output" -> PlayerConfig.putUseVLCAudioOutput(value)
+                    "player_type" -> PlayerConfig.setUsePlayerType(value.toInt())
+                    "pixel_format_type" -> PlayerConfig.setUsePixelFormat(value)
+                    "vlc_pixel_format_type" -> PlayerConfig.setUseVLCPixelFormat(value)
+                    "vlc_hardware_acceleration" -> PlayerConfig.setUseVLCHWDecoder(value.toInt())
+                    "vlc_audio_output" -> PlayerConfig.setUseVLCAudioOutput(value)
                     else -> super.putString(key, value)
                 }
             } else {
@@ -172,20 +176,20 @@ class PlayerSettingFragment : PreferenceFragmentCompat() {
 
         override fun getBoolean(key: String?, defValue: Boolean): Boolean {
             return when (key) {
-                "media_code_c" -> PlayerConfig.isUseMediaCodeC()
-                "media_code_c_h265" -> PlayerConfig.isUseMediaCodeCH265()
-                "open_sl_es" -> PlayerConfig.isUseOpenSlEs()
-                "surface_renders" -> PlayerConfig.isUseSurfaceView()
+                "media_code_c" -> PlayerConfig.getUseMediaCodeC()
+                "media_code_c_h265" -> PlayerConfig.getUseMediaCodeCH265()
+                "open_sl_es" -> PlayerConfig.getUseOpenSlEs()
+                "surface_renders" -> PlayerConfig.getUseSurfaceView()
                 else -> super.getBoolean(key, defValue)
             }
         }
 
         override fun putBoolean(key: String?, value: Boolean) {
             when (key) {
-                "media_code_c" -> PlayerConfig.putUseMediaCodeC(value)
-                "media_code_c_h265" -> PlayerConfig.putUseMediaCodeCH265(value)
-                "open_sl_es" -> PlayerConfig.putUseOpenSlEs(value)
-                "surface_renders" -> PlayerConfig.putUseSurfaceView(value)
+                "media_code_c" -> PlayerConfig.setUseMediaCodeC(value)
+                "media_code_c_h265" -> PlayerConfig.setUseMediaCodeCH265(value)
+                "open_sl_es" -> PlayerConfig.setUseOpenSlEs(value)
+                "surface_renders" -> PlayerConfig.setUseSurfaceView(value)
                 else -> super.putBoolean(key, value)
             }
         }

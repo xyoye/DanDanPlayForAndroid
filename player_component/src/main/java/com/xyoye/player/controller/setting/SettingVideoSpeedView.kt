@@ -81,7 +81,7 @@ class SettingVideoSpeedView(
             val value = (approximation * 100).roundToInt() / 100f
             viewBinding.resetTv.isGone = value == PlayerInitializer.Player.DEFAULT_SPEED
 
-            PlayerConfig.putNewVideoSpeed(value)
+            PlayerConfig.setNewVideoSpeed(value)
             PlayerInitializer.Player.videoSpeed = value
             mControlWrapper.setSpeed(value)
         }
@@ -95,7 +95,7 @@ class SettingVideoSpeedView(
             val value = (approximation * 100).roundToInt() / 100f
             viewBinding.tvResetPressSpeed.isGone = value == PlayerInitializer.Player.DEFAULT_PRESS_SPEED
 
-            PlayerConfig.putPressVideoSpeed(value)
+            PlayerConfig.setPressVideoSpeed(value)
             PlayerInitializer.Player.pressVideoSpeed = value
         }
 

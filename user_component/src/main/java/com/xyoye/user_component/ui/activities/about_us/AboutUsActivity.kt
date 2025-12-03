@@ -1,7 +1,7 @@
 package com.xyoye.user_component.ui.activities.about_us
 
 import android.annotation.SuppressLint
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.startUrlActivity

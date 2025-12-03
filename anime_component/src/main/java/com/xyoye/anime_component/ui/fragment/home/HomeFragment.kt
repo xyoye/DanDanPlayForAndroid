@@ -3,8 +3,8 @@ package com.xyoye.anime_component.ui.fragment.home
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentHomeBinding
@@ -16,7 +16,7 @@ import com.xyoye.common_component.utils.dp2px
 import com.youth.banner.config.BannerConfig
 import com.youth.banner.config.IndicatorConfig
 import com.youth.banner.indicator.CircleIndicator
-import java.util.*
+import java.util.Calendar
 
 /**
  * Created by xyoye on 2020/7/28.
@@ -36,12 +36,12 @@ class HomeFragment : BaseFragment<HomeFragmentViewModel, FragmentHomeBinding>() 
         dataBinding.tabLayout.setupWithViewPager(dataBinding.viewpager)
 
         dataBinding.searchLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Anime.Search)
                 .navigation()
         }
         dataBinding.seasonLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Anime.AnimeSeason)
                 .navigation()
         }

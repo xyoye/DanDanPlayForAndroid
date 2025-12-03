@@ -61,8 +61,8 @@ class PlayerBottomView(
         }
 
         viewBinding.sendDanmuTv.setOnClickListener {
-            if (!UserConfig.isUserLoggedIn()) {
-                ToastCenter.showWarning(R.string.tips_login_required.toResString())
+            if (!UserConfig.getUserLoggedIn()) {
+                ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
                 return@setOnClickListener
             }
 
@@ -237,7 +237,7 @@ class PlayerBottomView(
         val nextIcon = R.drawable.ic_video_next.toResDrawable()
         if (hasNextSource.not() && nextIcon != null) {
             nextIcon.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
+                com.xyoye.common_component.R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
             )
         }
         viewBinding.ivNextSource.setImageDrawable(nextIcon)
@@ -248,7 +248,7 @@ class PlayerBottomView(
         val previousIcon = R.drawable.ic_video_previous.toResDrawable()
         if (hasPreviousSource.not() && previousIcon != null) {
             previousIcon.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
+                com.xyoye.common_component.R.color.gray_60.toResColor(), BlendModeCompat.SRC_IN
             )
         }
         viewBinding.ivPreviousSource.setImageDrawable(previousIcon)

@@ -17,8 +17,8 @@ object UserInfoHelper {
         val userToken = loginData.token
         if (!userToken.isNullOrEmpty()) {
             mLoginData = loginData
-            UserConfig.putUserToken(userToken)
-            UserConfig.putUserLoggedIn(true)
+            UserConfig.setUserToken(userToken)
+            UserConfig.setUserLoggedIn(true)
             updateLoginInfo()
             return true
         }
@@ -28,8 +28,8 @@ object UserInfoHelper {
 
     fun exitLogin() {
         mLoginData = null
-        UserConfig.putUserToken("")
-        UserConfig.putUserLoggedIn(false)
+        UserConfig.setUserToken("")
+        UserConfig.setUserLoggedIn(false)
         updateLoginInfo()
     }
 

@@ -116,7 +116,7 @@ class SettingSubtitleStyleView(
         viewBinding.subtitleSizeTv.text = progressText
         viewBinding.subtitleSizeSb.progress = progress
 
-        SubtitleConfig.putTextSize(progress)
+        SubtitleConfig.setTextSize(progress)
         PlayerInitializer.Subtitle.textSize = progress
         mControlWrapper.updateTextSize()
         onConfigChanged()
@@ -130,7 +130,7 @@ class SettingSubtitleStyleView(
         viewBinding.subtitleStrokeWidthTv.text = progressText
         viewBinding.subtitleStrokeWidthSb.progress = progress
 
-        SubtitleConfig.putStrokeWidth(progress)
+        SubtitleConfig.setStrokeWidth(progress)
         PlayerInitializer.Subtitle.strokeWidth = progress
         mControlWrapper.updateStrokeWidth()
         onConfigChanged()
@@ -146,7 +146,7 @@ class SettingSubtitleStyleView(
             viewBinding.subtitleColorSb.seekTo(position)
         }
 
-        SubtitleConfig.putTextColor(color)
+        SubtitleConfig.setTextColor(color)
         PlayerInitializer.Subtitle.textColor = color
         mControlWrapper.updateTextColor()
         onConfigChanged()
@@ -162,7 +162,7 @@ class SettingSubtitleStyleView(
             viewBinding.subtitleStrokeColorSb.seekTo(position)
         }
 
-        SubtitleConfig.putStrokeColor(color)
+        SubtitleConfig.setStrokeColor(color)
         PlayerInitializer.Subtitle.strokeColor = color
         mControlWrapper.updateStrokeColor()
         onConfigChanged()

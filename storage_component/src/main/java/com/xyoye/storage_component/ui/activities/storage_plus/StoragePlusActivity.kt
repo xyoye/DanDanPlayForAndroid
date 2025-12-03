@@ -1,8 +1,8 @@
 package com.xyoye.storage_component.ui.activities.storage_plus
 
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.data_component.entity.MediaLibraryEntity
@@ -41,7 +41,7 @@ class StoragePlusActivity : BaseActivity<StoragePlusViewModel, ActivityStoragePl
     override fun getLayoutId() = R.layout.activity_storage_plus
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         if (checkBundle().not()) {
             finish()

@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.mavenCentral
-
 pluginManagement {
     includeBuild("build-logic")
 
@@ -51,6 +49,8 @@ include(":data_component")
 
 include(":repository:danmaku")
 include(":repository:immersion_bar")
+include(":repository:mmkv:annotation")
+include(":repository:mmkv:processor")
 include(":repository:panel_switch")
 include(":repository:seven_zip")
 include(":repository:thunder")

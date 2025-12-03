@@ -1,6 +1,6 @@
 package com.xyoye.anime_component.ui.activities.anime_season
 
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ActivityAnimeSeasonBinding
@@ -56,7 +56,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                     initView { data, _, _ ->
                         itemBinding.apply {
                             typeNameTv.text = data.typeName
-                            typeNameTv.setTextColorRes(if (data.isChecked) R.color.text_theme else R.color.text_black)
+                            typeNameTv.setTextColorRes(if (data.isChecked) com.xyoye.common_component.R.color.text_theme else com.xyoye.common_component.R.color.text_black)
                             itemLayout.setOnClickListener {
                                 if (data.isEnable) {
                                     viewModel.checkYear(data.typeId)
@@ -87,9 +87,9 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                             typeNameTv.text = data.typeName
                             typeNameTv.setTextColorRes(
                                 when {
-                                    !data.isEnable -> R.color.text_gray
-                                    data.isChecked -> R.color.text_theme
-                                    else -> R.color.text_black
+                                    !data.isEnable -> com.xyoye.common_component.R.color.text_gray
+                                    data.isChecked -> com.xyoye.common_component.R.color.text_theme
+                                    else -> com.xyoye.common_component.R.color.text_black
                                 }
                             )
                             itemLayout.setOnClickListener {
@@ -116,7 +116,12 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                     initView { data, position, _ ->
                         itemBinding.apply {
                             typeNameTv.text = data.typeName
-                            typeNameTv.setTextColorRes(if (data.isChecked) R.color.text_theme else R.color.text_black)
+                            typeNameTv.setTextColorRes(
+                                if (data.isChecked)
+                                    com.xyoye.common_component.R.color.text_theme
+                                else
+                                    com.xyoye.common_component.R.color.text_black
+                            )
                             itemLayout.setOnClickListener {
                                 viewModel.checkSort(position)
                             }
@@ -137,7 +142,7 @@ class AnimeSeasonActivity : BaseActivity<AnimeSeasonViewModel, ActivityAnimeSeas
                 ItemDecorationDrawable(
                     pxValue,
                     pxValue,
-                    R.color.item_bg_color.toResColor(this@AnimeSeasonActivity)
+                    com.xyoye.common_component.R.color.item_bg_color.toResColor(this@AnimeSeasonActivity)
                 )
             )
         }

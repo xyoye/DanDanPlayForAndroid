@@ -40,7 +40,7 @@ object StorageVideoSourceFactory {
         }
 
         //是否匹配同文件夹内同名弹幕
-        if (DanmuConfig.isAutoLoadSameNameDanmu()) {
+        if (DanmuConfig.getAutoLoadSameNameDanmu()) {
             return storage.cacheDanmu(file)
         }
 
@@ -56,7 +56,7 @@ object StorageVideoSourceFactory {
         }
 
         //是否匹配同文件夹内同名字幕
-        if (SubtitleConfig.isAutoLoadSameNameSubtitle()) {
+        if (SubtitleConfig.getAutoLoadSameNameSubtitle()) {
             return storage.cacheSubtitle(file)
                 ?: subtitleNotFound
         }
@@ -67,7 +67,7 @@ object StorageVideoSourceFactory {
     private fun getVideoSources(storage: Storage): List<StorageFile> {
         return storage.directoryFiles
             .filter { it.isVideoFile() }
-            .filter { AppConfig.isShowHiddenFile() || !it.fileName().startsWith(".") }
+            .filter { AppConfig.getShowHiddenFile() || !it.fileName().startsWith(".") }
             .sortedWith(StorageSortOption.comparator())
     }
 }

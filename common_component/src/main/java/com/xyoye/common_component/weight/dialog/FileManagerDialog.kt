@@ -80,7 +80,7 @@ class FileManagerDialog(
         setNegativeListener { dismiss() }
 
         setPositiveListener {
-            AppConfig.putLastOpenFolder(currentDirPath)
+            AppConfig.setLastOpenFolder(currentDirPath)
             listener.invoke(currentDirPath)
             if (dismissWhenClickPositive) {
                 dismiss()
@@ -124,7 +124,7 @@ class FileManagerDialog(
         }
 
         val lastOpenFolderPath = AppConfig.getLastOpenFolder()
-        if (AppConfig.isLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
+        if (AppConfig.getLastOpenFolderEnable() && lastOpenFolderPath?.isNotEmpty() == true) {
             val lastOpenDrawable = R.drawable.ic_tag.toResDrawable()
             lastOpenDrawable?.setTint(R.color.black.toResColor())
             addRightAction(lastOpenDrawable, 8, "上次打开目录").setOnClickListener {
@@ -188,7 +188,7 @@ class FileManagerDialog(
 
                                     else -> {
                                         dismiss()
-                                        AppConfig.putLastOpenFolder(currentDirPath)
+                                        AppConfig.setLastOpenFolder(currentDirPath)
                                         listener.invoke(data.filePath)
                                     }
                                 }

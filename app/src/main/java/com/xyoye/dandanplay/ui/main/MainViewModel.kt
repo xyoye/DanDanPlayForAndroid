@@ -29,7 +29,7 @@ class MainViewModel : BaseViewModel() {
     fun reLogin() {
         viewModelScope.launch {
             UserRepository.refreshToken().getOrNull()?.let {
-                UserConfig.putUserLoggedIn(true)
+                UserConfig.setUserLoggedIn(true)
                 if (UserInfoHelper.login(it)) {
                     reLoginLiveData.postValue(it)
                 }
@@ -58,7 +58,7 @@ class MainViewModel : BaseViewModel() {
             result.getOrNull()?.byteStream()?.use {
                 val filterData = parseFilterData(it)
                 saveFilterData(filterData)
-                AppConfig.putCloudBlockUpdateTime(currentTime)
+                AppConfig.setCloudBlockUpdateTime(currentTime)
             }
 
         }

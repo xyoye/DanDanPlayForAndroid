@@ -1,13 +1,12 @@
 package com.xyoye.user_component.ui.activities.forgot
 
 import androidx.core.widget.addTextChangedListener
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.utils.showKeyboard
-
 import com.xyoye.user_component.BR
 import com.xyoye.user_component.R
 import com.xyoye.user_component.databinding.ActivityForgotBinding
@@ -28,7 +27,7 @@ class ForgotActivity : BaseActivity<ForgotViewModel, ActivityForgotBinding>() {
     override fun getLayoutId() = R.layout.activity_forgot
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         title = ""
 

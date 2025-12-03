@@ -13,7 +13,7 @@ enum class VLCPixelFormat(val value: String) {
     PIXEL_YUV("YV12");
 
     companion object {
-        fun valueOf(value: String?): VLCPixelFormat {
+        fun fromValue(value: String?): VLCPixelFormat {
             return when (value) {
                 "RV16" -> PIXEL_RGB_16
                 "RV32" -> PIXEL_RGB_32

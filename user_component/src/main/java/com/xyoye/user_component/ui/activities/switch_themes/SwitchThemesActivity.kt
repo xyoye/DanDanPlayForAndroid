@@ -3,7 +3,7 @@ package com.xyoye.user_component.ui.activities.switch_themes
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.AppConfig
 import com.xyoye.common_component.config.RouteTable
@@ -43,7 +43,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
                     addPositive {
                         it.dismiss()
 
-                        AppConfig.putDarkMode(targetMode)
+                        AppConfig.setDarkMode(targetMode)
 
                         val intent = packageManager.getLaunchIntentForPackage(packageName)
                         startActivity(intent)
@@ -56,7 +56,7 @@ class SwitchThemesActivity : BaseActivity<SwitchThemesViewModel, ActivitySwitchT
                 }.build().show()
             } else {
                 AppCompatDelegate.setDefaultNightMode(targetMode)
-                AppConfig.putDarkMode(targetMode)
+                AppConfig.setDarkMode(targetMode)
                 finish()
             }
         }

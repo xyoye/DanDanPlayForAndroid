@@ -26,7 +26,7 @@ object ManualMigration {
      * 由于数据迁移需要用到MD5，所以手动迁移数据
      */
     private suspend fun migrate_6_7() {
-        val isMigrated = DatabaseConfig.isIsMigrated_6_7()
+        val isMigrated = DatabaseConfig.getIsMigrated_6_7()
         if (isMigrated)
             return
 
@@ -52,7 +52,7 @@ object ManualMigration {
             if (historyList.isNotEmpty()) {
                 DatabaseManager.instance.getPlayHistoryDao().insert(*historyList.toTypedArray())
             }
-            DatabaseConfig.putIsMigrated_6_7(true)
+            DatabaseConfig.setIsMigrated_6_7(true)
         }
     }
 }

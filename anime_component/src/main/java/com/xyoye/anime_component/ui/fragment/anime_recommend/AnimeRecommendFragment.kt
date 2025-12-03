@@ -3,7 +3,7 @@ package com.xyoye.anime_component.ui.fragment.anime_recommend
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentAnimeRecommendBinding
@@ -49,7 +49,7 @@ class AnimeRecommendFragment :
             layoutManager = grid(3)
 
             val pxValue = dp2px(10)
-            val spaceColor = R.color.item_bg_color.toResColor(mAttachActivity)
+            val spaceColor = com.xyoye.common_component.R.color.item_bg_color.toResColor(mAttachActivity)
             addItemDecoration(ItemDecorationDrawable(pxValue, pxValue, spaceColor))
 
             adapter = AnimeAdapter.getAdapter(mAttachActivity)
@@ -70,10 +70,10 @@ class AnimeRecommendFragment :
                                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                                     mAttachActivity, animeCoverIv, animeCoverIv.transitionName
                                 )
-                                ARouter.getInstance()
+                                TheRouter
                                     .build(RouteTable.Anime.AnimeDetail)
                                     .withParcelable("animeArgument", AnimeArgument.fromData(data))
-                                    .withOptionsCompat(options)
+                                    .withOptionsCompat(options.toBundle())
                                     .navigation(mAttachActivity)
                             }
                         }

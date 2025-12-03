@@ -8,7 +8,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.gyf.immersionbar.ImmersionBar
 import com.xyoye.common_component.extension.isNightMode
 import com.xyoye.common_component.extension.toResColor
-import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.ActivityStorageFileBinding
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
 import com.xyoye.storage_component.ui.weight.StorageFileBehavior
@@ -25,10 +24,10 @@ class StorageFileStyleHelper(
     private var mToolbarCollapsed: Boolean = false
 
     //标题栏折叠后颜色
-    private val mToolbarCollapsedColor = R.color.layout_bg_color.toResColor(activity)
+    private val mToolbarCollapsedColor = com.xyoye.common_component.R.color.layout_bg_color.toResColor(activity)
 
     //标题栏展开后颜色
-    private val mToolbarExpandedColor = R.color.item_bg_color.toResColor(activity)
+    private val mToolbarExpandedColor = com.xyoye.common_component.R.color.item_bg_color.toResColor(activity)
 
     //标题栏颜色动画
     private var mColorAnimator: ValueAnimator? = null

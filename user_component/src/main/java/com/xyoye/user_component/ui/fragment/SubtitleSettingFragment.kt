@@ -49,8 +49,8 @@ class SubtitleSettingFragment : PreferenceFragmentCompat() {
     inner class SubtitleSettingDataStore : PreferenceDataStore() {
         override fun getBoolean(key: String?, defValue: Boolean): Boolean {
             return when (key) {
-                "auto_load_same_name_subtitle" -> SubtitleConfig.isAutoLoadSameNameSubtitle()
-                "auto_match_subtitle" -> SubtitleConfig.isAutoMatchSubtitle()
+                "auto_load_same_name_subtitle" -> SubtitleConfig.getAutoLoadSameNameSubtitle()
+                "auto_match_subtitle" -> SubtitleConfig.getAutoMatchSubtitle()
                 else -> super.getBoolean(key, defValue)
             }
         }
@@ -64,15 +64,15 @@ class SubtitleSettingFragment : PreferenceFragmentCompat() {
 
         override fun putBoolean(key: String?, value: Boolean) {
             when (key) {
-                "auto_load_same_name_subtitle" -> SubtitleConfig.putAutoLoadSameNameSubtitle(value)
-                "auto_match_subtitle" -> SubtitleConfig.putAutoMatchSubtitle(value)
+                "auto_load_same_name_subtitle" -> SubtitleConfig.setAutoLoadSameNameSubtitle(value)
+                "auto_match_subtitle" -> SubtitleConfig.setAutoMatchSubtitle(value)
                 else -> super.putBoolean(key, value)
             }
         }
 
         override fun putString(key: String?, value: String?) {
             when (key) {
-                "same_name_subtitle_priority" -> SubtitleConfig.putSubtitlePriority(value ?: "")
+                "same_name_subtitle_priority" -> SubtitleConfig.setSubtitlePriority(value ?: "")
                 else -> super.putString(key, value)
             }
         }

@@ -73,10 +73,10 @@ class AlistStorageEditDialog(
     override fun onTestResult(result: Boolean) {
         if (result) {
             binding.serverStatusTv.text = "连接成功"
-            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_blue)
         } else {
             binding.serverStatusTv.text = "连接失败"
-            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_red)
         }
     }
 

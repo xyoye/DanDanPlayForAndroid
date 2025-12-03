@@ -5,7 +5,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.viewModels
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentAnimeEpisodeBinding
@@ -154,7 +154,7 @@ class AnimeEpisodeFragment :
         }
 
         viewModel.playVideoFLow.collectAtStarted(this) {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Player.Player)
                 .navigation()
         }
@@ -174,8 +174,8 @@ class AnimeEpisodeFragment :
         }
 
         dataBinding.tvSetRead.setOnClickListener {
-            if (UserConfig.isUserLoggedIn().not()) {
-                ToastCenter.showWarning(R.string.tips_login_required.toResString())
+            if (UserConfig.getUserLoggedIn().not()) {
+                ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
                 return@setOnClickListener
             }
             viewModel.submitMarkedEpisodesViewed()
@@ -186,7 +186,7 @@ class AnimeEpisodeFragment :
      * 根据排序方式改变布局
      */
     private fun updateLayoutBySort(ascending: Boolean) {
-        val color = if (ascending) R.color.text_gray else R.color.text_blue
+        val color = if (ascending) com.xyoye.common_component.R.color.text_gray else com.xyoye.common_component.R.color.text_blue
         val colorState = AppCompatResources.getColorStateList(mAttachActivity, color)
         ImageViewCompat.setImageTintList(dataBinding.sortIv, colorState)
 
@@ -198,7 +198,7 @@ class AnimeEpisodeFragment :
      * 搜索剧集资源
      */
     private fun searchEpisodeResource(data: EpisodeData) {
-        ARouter.getInstance()
+        TheRouter
             .build(RouteTable.Anime.Search)
             .withString(
                 "animeTitle",
@@ -216,8 +216,8 @@ class AnimeEpisodeFragment :
      * 考虑标记为已看
      */
     private fun considerMarkAsViewed(data: EpisodeData) {
-        if (UserConfig.isUserLoggedIn().not()) {
-            ToastCenter.showWarning(R.string.tips_login_required.toResString())
+        if (UserConfig.getUserLoggedIn().not()) {
+            ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
             return
         }
 

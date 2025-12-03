@@ -36,7 +36,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
     private var storageLastPlay: PlayHistoryEntity? = null
 
     // 是否隐藏.开头的文件
-    private val hidePointFile = AppConfig.isShowHiddenFile().not()
+    private val hidePointFile = AppConfig.getShowHiddenFile().not()
 
     // 文件列表快照
     private var filesSnapshot = listOf<StorageFile>()

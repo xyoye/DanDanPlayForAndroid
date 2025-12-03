@@ -2,10 +2,9 @@ package com.xyoye.anime_component.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.NonNull
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ItemBannerBinding
 import com.xyoye.common_component.config.RouteTable
@@ -20,7 +19,7 @@ import com.youth.banner.adapter.BannerAdapter
 class HomeBannerAdapter(bannerDetails: MutableList<BannerDetailData>) :
     BannerAdapter<BannerDetailData, HomeBannerAdapter.BannerHolder>(bannerDetails) {
 
-    inner class BannerHolder(@NonNull binding: ItemBannerBinding) :
+    inner class BannerHolder(binding: ItemBannerBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateHolder(parent: ViewGroup?, viewType: Int): BannerHolder {
@@ -45,7 +44,7 @@ class HomeBannerAdapter(bannerDetails: MutableList<BannerDetailData>) :
                 bannerIv.loadImage(data.imageUrl)
                 bannerTitleTv.text = data.title
                 itemLayout.setOnClickListener {
-                    ARouter.getInstance().build(RouteTable.User.WebView)
+                    TheRouter.build(RouteTable.User.WebView)
                         .withString("titleText", data.title)
                         .withString("url", data.url)
                         .navigation()

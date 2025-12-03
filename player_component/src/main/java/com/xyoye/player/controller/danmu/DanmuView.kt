@@ -69,7 +69,7 @@ class DanmuView(
     private var mDanmuLoaded = false
 
     init {
-        showFPS(DanmuConfig.isDanmuDebug())
+        showFPS(DanmuConfig.getDanmuDebug())
 
         initDanmuContext()
 

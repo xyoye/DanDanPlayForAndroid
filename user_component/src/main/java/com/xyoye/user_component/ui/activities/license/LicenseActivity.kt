@@ -1,6 +1,6 @@
 package com.xyoye.user_component.ui.activities.license
 
-import com.alibaba.android.arouter.facade.annotation.Route
+import com.therouter.router.Route
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.base.BaseActivity

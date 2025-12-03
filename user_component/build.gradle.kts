@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream
 plugins {
     alias(dandanplay.plugins.library)
     alias(dandanplay.plugins.router)
+    alias(kotlinx.plugins.kapt)
 }
 
 android {
@@ -10,6 +11,10 @@ android {
 
     defaultConfig {
         buildConfigField("String", "BUILD_COMMIT", "\"${currentCommit()}\"")
+
+        buildFeatures {
+            buildConfig = true
+        }
     }
 }
 

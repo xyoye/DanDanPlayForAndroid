@@ -1,6 +1,6 @@
 package com.xyoye.common_component.network.helper
 
-import android.net.Uri
+import androidx.core.net.toUri
 import com.xyoye.common_component.config.AppConfig
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -11,13 +11,13 @@ import okhttp3.Response
 
 class BackupDomainInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (AppConfig.isBackupDomainEnable().not()) {
+        if (AppConfig.getBackupDomainEnable().not()) {
             return chain.proceed(chain.request())
         }
 
         val oldRequest = chain.request()
         val newRequest = oldRequest.newBuilder()
-        val newBaseUrl = Uri.parse(AppConfig.getBackupDomain())
+        val newBaseUrl = AppConfig.getBackupDomain().toUri()
         val newUrl = oldRequest.url
             .newBuilder()
             .scheme(newBaseUrl.scheme ?: "")

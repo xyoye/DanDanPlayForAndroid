@@ -43,9 +43,9 @@ class ScanFilterFragment : BaseFragment<ScanFilterFragmentViewModel, FragmentSca
                             folderTv.text = getFolderName(data.folderPath)
                             fileCountTv.text = fileCountText
 
-                            folderIv.setImageResource(if (data.isFilter) R.drawable.ic_folder_filter else R.drawable.ic_folder)
-                            folderTv.setTextColorRes(if (data.isFilter) R.color.text_red else R.color.text_black)
-                            fileCountTv.setTextColorRes(if (data.isFilter) R.color.text_red else R.color.text_gray)
+                            folderIv.setImageResource(if (data.isFilter) R.drawable.ic_folder_filter else com.xyoye.common_component.R.drawable.ic_folder)
+                            folderTv.setTextColorRes(if (data.isFilter) com.xyoye.common_component.R.color.text_red else com.xyoye.common_component.R.color.text_black)
+                            fileCountTv.setTextColorRes(if (data.isFilter) com.xyoye.common_component.R.color.text_red else com.xyoye.common_component.R.color.text_gray)
 
                             filterFolderCb.setOnCheckedChangeListener(null)
                             filterFolderCb.isChecked = data.isFilter

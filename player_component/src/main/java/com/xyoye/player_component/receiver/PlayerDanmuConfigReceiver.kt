@@ -35,58 +35,58 @@ class PlayerDanmuConfigReceiver(
         when (key) {
             "danmuSize" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuSize(value)
+                DanmuConfig.setDanmuSize(value)
                 PlayerInitializer.Danmu.size = value
                 videoController.getDanmuController().updateDanmuSize()
             }
             "danmuSpeed" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuSpeed(value)
+                DanmuConfig.setDanmuSpeed(value)
                 PlayerInitializer.Danmu.speed = value
                 videoController.getDanmuController().updateDanmuSpeed()
             }
             "danmuAlpha" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuAlpha(value)
+                DanmuConfig.setDanmuAlpha(value)
                 PlayerInitializer.Danmu.alpha = value
                 videoController.getDanmuController().updateDanmuAlpha()
             }
             "danmuStoke" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuStoke(value)
+                DanmuConfig.setDanmuStoke(value)
                 PlayerInitializer.Danmu.stoke = value
                 videoController.getDanmuController().updateDanmuStoke()
             }
             "showMobileDanmu" -> {
                 val value = valueStr.toBoolean()
-                DanmuConfig.putShowMobileDanmu(value)
+                DanmuConfig.setShowMobileDanmu(value)
                 PlayerInitializer.Danmu.mobileDanmu = value
                 videoController.getDanmuController().updateMobileDanmuState()
             }
             "showTopDanmu" -> {
                 val value = valueStr.toBoolean()
-                DanmuConfig.putShowTopDanmu(value)
+                DanmuConfig.setShowTopDanmu(value)
                 PlayerInitializer.Danmu.topDanmu = value
                 videoController.getDanmuController().updateTopDanmuState()
             }
             "showBottomDanmu" -> {
                 val value = valueStr.toBoolean()
-                DanmuConfig.putShowBottomDanmu(value)
+                DanmuConfig.setShowBottomDanmu(value)
                 PlayerInitializer.Danmu.bottomDanmu = value
                 videoController.getDanmuController().updateBottomDanmuState()
             }
             "danmuMaxCount" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuMaxCount(value)
+                DanmuConfig.setDanmuMaxCount(value)
                 PlayerInitializer.Danmu.maxNum = value
                 videoController.getDanmuController().updateMaxScreenNum()
             }
             "danmuMaxLine", "danmuScrollMaxLine", "danmuTopMaxLine", "danmuBottomMaxLine" -> {
                 val maxLine = valueStr.toIntOrNull() ?: return
                 when (key) {
-                    "danmuScrollMaxLine" -> DanmuConfig.putDanmuScrollMaxLine(maxLine)
-                    "danmuTopMaxLine" -> DanmuConfig.putDanmuTopMaxLine(maxLine)
-                    "danmuBottomMaxLine" -> DanmuConfig.putDanmuBottomMaxLine(maxLine)
+                    "danmuScrollMaxLine" -> DanmuConfig.setDanmuScrollMaxLine(maxLine)
+                    "danmuTopMaxLine" -> DanmuConfig.setDanmuTopMaxLine(maxLine)
+                    "danmuBottomMaxLine" -> DanmuConfig.setDanmuBottomMaxLine(maxLine)
                 }
                 when (key) {
                     "danmuScrollMaxLine" -> PlayerInitializer.Danmu.maxScrollLine = maxLine
@@ -97,12 +97,12 @@ class PlayerDanmuConfigReceiver(
             }
             "cloudDanmuBlock" -> {
                 val value = valueStr.toBoolean()
-                DanmuConfig.putCloudDanmuBlock(value)
+                DanmuConfig.setCloudDanmuBlock(value)
                 PlayerInitializer.Danmu.cloudBlock = value
             }
             "danmuLanguage" -> {
                 val value = valueStr.toIntOrNull() ?: return
-                DanmuConfig.putDanmuLanguage(value)
+                DanmuConfig.setDanmuLanguage(value)
                 PlayerInitializer.Danmu.language = DanmakuLanguage.formValue(value)
             }
         }

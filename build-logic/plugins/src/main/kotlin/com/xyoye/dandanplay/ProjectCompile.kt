@@ -1,16 +1,9 @@
 package com.xyoye.dandanplay
 
 import com.android.build.api.dsl.ApplicationBaseFlavor
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.ApplicationProductFlavor
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.LibraryBaseFlavor
-import com.android.build.api.dsl.LibraryExtension
-import com.android.build.api.dsl.LibraryProductFlavor
 import org.gradle.api.JavaVersion
-import org.gradle.api.Project
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
  *    author: xyoye1997@outlook.com
@@ -18,7 +11,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  *    desc  : 项目编译配置
  */
 
-internal fun CommonExtension<*, *, *, *>.configureCompile() {
+internal fun CommonExtension<*, *, *, *, *>.configureCompile() {
     compileSdk = BuildVersion.COMPILE
 
     defaultConfig {
@@ -28,7 +21,7 @@ internal fun CommonExtension<*, *, *, *>.configureCompile() {
         if (extension is ApplicationBaseFlavor) {
             extension.targetSdk = BuildVersion.TARGET
         } else if (extension is LibraryBaseFlavor) {
-            extension.targetSdk = BuildVersion.TARGET
+            lint.targetSdk = BuildVersion.TARGET
         }
     }
 

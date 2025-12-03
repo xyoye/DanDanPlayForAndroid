@@ -3,7 +3,6 @@ package com.xyoye.anime_component.ui.activities.anime_detail
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.xyoye.anime_component.R
 import com.xyoye.common_component.base.BaseViewModel
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.extension.toResString
@@ -48,8 +47,8 @@ class AnimeDetailViewModel : BaseViewModel() {
     }
 
     fun followAnime() {
-        if (UserConfig.isUserLoggedIn().not()) {
-            ToastCenter.showWarning(R.string.tips_login_required.toResString())
+        if (UserConfig.getUserLoggedIn().not()) {
+            ToastCenter.showWarning(com.xyoye.common_component.R.string.tips_login_required.toResString())
             return
         }
 

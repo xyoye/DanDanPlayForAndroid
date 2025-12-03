@@ -15,7 +15,7 @@ enum class VLCHWDecode(val value: Int) {
     HW_ACCELERATION_FULL(2);
 
     companion object {
-        fun valueOf(value: Int): VLCHWDecode {
+        fun fromValue(value: Int): VLCHWDecode {
             return when (value) {
                 -1 -> HW_ACCELERATION_AUTO
                 0 -> HW_ACCELERATION_DISABLE

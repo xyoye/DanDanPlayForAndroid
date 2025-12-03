@@ -1,9 +1,9 @@
 package com.xyoye.local_component.ui.fragment.media
 
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.adapter.addItem
 import com.xyoye.common_component.adapter.buildAdapter
 import com.xyoye.common_component.application.DanDanPlay
@@ -42,7 +42,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
     override fun getLayoutId() = R.layout.fragment_media
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         viewModel.initLocalStorage()
 
@@ -101,7 +101,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
     private fun launchMediaStorage(data: MediaLibraryEntity) {
         when (data.mediaType) {
             MediaType.STREAM_LINK, MediaType.MAGNET_LINK, MediaType.OTHER_STORAGE -> {
-                ARouter.getInstance()
+                TheRouter
                     .build(RouteTable.Local.PlayHistory)
                     .withSerializable("typeValue", data.mediaType.value)
                     .navigation()
@@ -118,7 +118,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             MediaType.REMOTE_STORAGE,
             MediaType.EXTERNAL_STORAGE,
             MediaType.ALSIT_STORAGE -> {
-                ARouter.getInstance()
+                TheRouter
                     .build(RouteTable.Stream.StorageFile)
                     .withParcelable("storageLibrary", data)
                     .navigation()
@@ -127,7 +127,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
     }
 
     private fun showAddStorageDialog() {
-        val actionList = MediaType.values()
+        val actionList = MediaType.entries
             .filter { it.deletable }
             .map { it.toAction() }
 
@@ -137,7 +137,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
             "新增网络媒体库"
         ) {
             val mediaType = it.actionId as MediaType
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Stream.StoragePlus)
                 .withSerializable("mediaType", mediaType)
                 .navigation()
@@ -152,7 +152,7 @@ class MediaFragment : BaseFragment<MediaViewModel, FragmentMediaBinding>() {
 
         BottomActionDialog(requireActivity(), actions) {
             if (it.actionId == ManageStorage.Edit) {
-                ARouter.getInstance()
+                TheRouter
                     .build(RouteTable.Stream.StoragePlus)
                     .withSerializable("mediaType", data.mediaType)
                     .withParcelable("editData", data)

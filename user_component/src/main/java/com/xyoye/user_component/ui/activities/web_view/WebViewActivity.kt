@@ -12,10 +12,11 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.core.view.isGone
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.toResColor
@@ -53,7 +54,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
     override fun getLayoutId() = R.layout.activity_web_view
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         val realUrl = url
         if (realUrl.isNullOrEmpty()) {
@@ -66,7 +67,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
         //进度条
         progressView = WebViewProgress(this).apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(4))
-            setColor(R.color.text_blue.toResColor())
+            setColor(com.xyoye.common_component.R.color.text_blue.toResColor())
             setProgress(10)
         }
 
@@ -138,7 +139,7 @@ class WebViewActivity : BaseActivity<WebViewViewModel, ActivityWebViewBinding>()
             return null
         }
 
-        return Uri.parse(Api.BILI_BILI_M)
+        return Api.BILI_BILI_M.toUri()
             .buildUpon()
             .appendPath("bangumi")
             .appendPath("play")

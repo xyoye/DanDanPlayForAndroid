@@ -2,12 +2,12 @@
 arouter = "1.5.2"
 coil = "2.2.2"
 exoplayer = "2.18.1"
+kotlinpoet = "1.16.0"
 moshi = "1.14.0"
 retrofit = "2.9.0"
+therouter = "1.3.0"
 
 [libraries]
-alibaba-arouter-api = { module = "com.alibaba:arouter-api", version.ref = "arouter" }
-alibaba-arouter-compiler = { module = "com.alibaba:arouter-compiler", version.ref = "arouter" }
 alicloud-analysis = { module = "com.aliyun.ams:alicloud-android-man", version = "1.2.7" }
 alicloud-feedback = { module = "com.aliyun.ams:alicloud-android-feedback", version = "3.4.0" }
 alicloud-update = { module = "com.taobao.android:update-main", version = "1.1.14-open" }
@@ -22,6 +22,8 @@ github-keyboardpanel = { module = "com.github.albfernandez:juniversalchardet", v
 github-nanohttpd = { module = "org.nanohttpd:nanohttpd", version = "2.3.1" }
 github-smbj = { module = "com.hierynomus:smbj", version = "0.10.0" }
 github-dcerpc = { module = "com.rapid7.client:dcerpc", version = "0.10.0" }
+github-router-apt = { group = "cn.therouter", name = "apt", version.ref = "therouter" }
+github-router = { group = "cn.therouter", name = "router", version.ref = "therouter" }
 
 google-exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 google-exoplayer-core = { module = "com.google.android.exoplayer:exoplayer-core", version.ref = "exoplayer" }
@@ -38,6 +40,8 @@ square-moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 square-moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 square-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 square-retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+square-kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
+square-kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
 
 tencent-bugly = { module = "com.tencent.bugly:crashreport", version = "4.1.9" }
 tencent-mmkv = { module = "com.tencent:mmkv-static", version = "1.2.14" }
@@ -51,3 +55,6 @@ exoplayer = [
     "google-exoplayer-rtmp", "google-exoplayer-smoothstreaming"
 ]
 retrofit = ["square-retrofit", "square-retrofit-moshi"]
+
+[plugins]
+router-agp = { id = "cn.therouter.agp8", version.ref = "therouter" }

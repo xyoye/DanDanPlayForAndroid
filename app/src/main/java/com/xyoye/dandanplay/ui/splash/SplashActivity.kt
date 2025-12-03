@@ -46,7 +46,7 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>() {
         val mode = AppConfig.getDarkMode()
         AppCompatDelegate.setDefaultNightMode(mode)
 
-        if (!AppConfig.isShowSplashAnimation()) {
+        if (!AppConfig.getShowSplashAnimation()) {
             launchActivity()
             return
         }
@@ -100,7 +100,10 @@ class SplashActivity : BaseAppCompatActivity<ActivitySplashBinding>() {
     private fun launchActivity() {
         val intent = Intent(this@SplashActivity, MainActivity::class.java)
         startActivity(intent)
-        overridePendingTransition(R.anim.anim_activity_enter, R.anim.anim_activity_exit)
+        overridePendingTransition(
+            com.xyoye.common_component.R.anim.anim_activity_enter,
+            com.xyoye.common_component.R.anim.anim_activity_exit
+        )
         finish()
     }
 }

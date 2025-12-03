@@ -11,7 +11,7 @@ enum class VLCAudioOutput(val value: String) {
     OPEN_SL_ES("opensles");
 
     companion object {
-        fun valueOf(value: String?): VLCAudioOutput {
+        fun fromValue(value: String?): VLCAudioOutput {
             return when (value) {
                 "audiotrack" -> AUTO
                 "opensles" -> OPEN_SL_ES

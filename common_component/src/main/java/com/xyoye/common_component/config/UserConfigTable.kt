@@ -1,13 +1,13 @@
 package com.xyoye.common_component.config
 
-import com.xyoye.mmkv_annotation.MMKVFiled
-import com.xyoye.mmkv_annotation.MMKVKotlinClass
+import com.anjiu.repository.mmkv.annotation.MMKVClass
+import com.anjiu.repository.mmkv.annotation.MMKVFiled
 
 /**
  * Created by xyoye on 2021/1/6.
  */
 
-@MMKVKotlinClass(className = "UserConfig")
+@MMKVClass(className = "UserConfig")
 object UserConfigTable {
     //用户是否已登录
     @MMKVFiled

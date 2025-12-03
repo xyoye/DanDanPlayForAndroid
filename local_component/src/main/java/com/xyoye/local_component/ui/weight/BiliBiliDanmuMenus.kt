@@ -9,7 +9,7 @@ import com.xyoye.local_component.R
 import com.xyoye.local_component.ui.activities.bilibili_danmu.BilibiliDanmuActivity
 
 /**
- *    author: xieyy@anjiu-tech.com
+ *    author: xyoye1997@outlook.com
  *    time  : 2024/9/2
  *    desc  :
  */
@@ -42,7 +42,7 @@ class BiliBiliDanmuMenus private constructor(
                 inputTips = "使用【选取链接下载】时，会携带此User-Agent请求链接的网页内容"
             ),
         ) {
-            AppConfig.putJsoupUserAgent(it)
+            AppConfig.setJsoupUserAgent(it)
         }.show()
     }
 }

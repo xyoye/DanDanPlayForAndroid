@@ -8,7 +8,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.common_component.adapter.BaseAdapter
 import com.xyoye.common_component.adapter.BaseViewHolderCreator
 import com.xyoye.common_component.adapter.addEmptyView
@@ -79,17 +79,17 @@ class StorageFileAdapter(
                 areContentsTheSame(isSameStorageFileContent())
             }
 
-            addEmptyView(R.layout.layout_empty) {
+            addEmptyView(com.xyoye.common_component.R.layout.layout_empty) {
                 initEmptyView {
                     itemBinding.emptyTv.text = R.string.text_empty_video.toResString()
                 }
             }
 
-            addItem(R.layout.item_storage_folder) {
+            addItem(com.xyoye.common_component.R.layout.item_storage_folder) {
                 checkType { data -> isDirectoryItem(data) }
                 initView(directoryItem())
             }
-            addItem(R.layout.item_storage_video) {
+            addItem(com.xyoye.common_component.R.layout.item_storage_video) {
                 checkType { data -> isVideoItem(data) }
                 initView(videoItem())
             }
@@ -161,7 +161,7 @@ class StorageFileAdapter(
         tagRv.apply {
             layoutManager = horizontal()
             adapter = buildAdapter {
-                addItem(R.layout.item_storage_video_tag) { initView(tagItem()) }
+                addItem(com.xyoye.common_component.R.layout.item_storage_video_tag) { initView(tagItem()) }
             }
             removeItemDecoration(tagDecoration)
             addItemDecoration(tagDecoration)
@@ -171,7 +171,7 @@ class StorageFileAdapter(
 
     private fun BaseViewHolderCreator<ItemStorageVideoTagBinding>.tagItem() =
         { data: VideoTagBean ->
-            val background = R.drawable.background_video_tag.toResDrawable()
+            val background = com.xyoye.common_component.R.drawable.background_video_tag.toResDrawable()
             background?.colorFilter = PorterDuffColorFilter(data.color, PorterDuff.Mode.SRC)
             itemBinding.textView.background = background
             itemBinding.textView.text = data.tag
@@ -180,21 +180,21 @@ class StorageFileAdapter(
     private fun generateVideoTags(data: StorageFile): List<VideoTagBean> {
         val tagList = mutableListOf<VideoTagBean>()
         if (isShowDanmu(data)) {
-            tagList.add(VideoTagBean("弹幕", R.color.theme.toResColor()))
+            tagList.add(VideoTagBean("弹幕", com.xyoye.common_component.R.color.theme.toResColor()))
         }
         if (isShowSubtitle(data)) {
-            tagList.add(VideoTagBean("字幕", R.color.orange.toResColor()))
+            tagList.add(VideoTagBean("字幕", com.xyoye.common_component.R.color.orange.toResColor()))
         }
         if (isShowAudio(data)) {
-            tagList.add(VideoTagBean("音频", R.color.pink.toResColor()))
+            tagList.add(VideoTagBean("音频", com.xyoye.common_component.R.color.pink.toResColor()))
         }
         val progress = getProgress(data)
         if (progress.isNotEmpty()) {
-            tagList.add(VideoTagBean(progress, R.color.black_alpha.toResColor()))
+            tagList.add(VideoTagBean(progress, com.xyoye.common_component.R.color.black_alpha.toResColor()))
         }
         val lastPlayTime = getPlayTime(data)
         if (lastPlayTime.isNotEmpty()) {
-            tagList.add(VideoTagBean(lastPlayTime, R.color.black_alpha.toResColor()))
+            tagList.add(VideoTagBean(lastPlayTime, com.xyoye.common_component.R.color.black_alpha.toResColor()))
         }
         return tagList
     }
@@ -296,10 +296,10 @@ class StorageFileAdapter(
         options: ActivityOptionsCompat
     ) {
         activity.shareStorageFile = file
-        ARouter.getInstance()
+        TheRouter
             .build(RouteTable.Local.BindExtraSource)
             .withBoolean("isSearchDanmu", bindDanmu)
-            .withOptionsCompat(options)
+            .withOptionsCompat(options.toBundle())
             .navigation(activity)
     }
 

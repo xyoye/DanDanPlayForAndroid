@@ -1,15 +1,20 @@
 [versions]
-kotlin = "1.7.21"
-kotlin-coroutines = "1.6.4"
+kotlin = "1.9.21"
+kotlin-coroutines = "1.7.3"
+ksp = "1.9.21-1.0.16"
 
 [libraries]
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+symbolprocessing = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
 
 [bundles]
 coroutines = ["coroutines-android", "coroutines-core"]
 
 [plugins]
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

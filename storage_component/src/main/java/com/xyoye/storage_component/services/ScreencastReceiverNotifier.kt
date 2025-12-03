@@ -30,7 +30,7 @@ class ScreencastReceiverNotifier(private val context: Context) {
             setOngoing(true)
             setOnlyAlertOnce(true)
             addAction(
-                R.drawable.ic_notification_close,
+                com.xyoye.common_component.R.drawable.ic_notification_close,
                 context.getString(android.R.string.cancel),
                 cancelIntent
             )

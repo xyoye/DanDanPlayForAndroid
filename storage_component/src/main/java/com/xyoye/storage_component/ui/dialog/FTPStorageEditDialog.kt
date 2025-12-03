@@ -111,10 +111,10 @@ class FTPStorageEditDialog(
     override fun onTestResult(result: Boolean) {
         if (result) {
             binding.serverStatusTv.text = "连接成功"
-            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_blue)
         } else {
             binding.serverStatusTv.text = "连接失败"
-            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_red)
         }
     }
 
@@ -150,12 +150,12 @@ class FTPStorageEditDialog(
     private fun setAnonymous(isAnonymous: Boolean) {
         binding.anonymousTv.isSelected = isAnonymous
         binding.anonymousTv.setTextColorRes(
-            if (isAnonymous) R.color.text_white else R.color.text_black
+            if (isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountTv.isSelected = !isAnonymous
         binding.accountTv.setTextColorRes(
-            if (!isAnonymous) R.color.text_white else R.color.text_black
+            if (!isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountEt.isGone = isAnonymous
@@ -171,12 +171,12 @@ class FTPStorageEditDialog(
     private fun setActive(isActive: Boolean) {
         binding.activeTv.isSelected = isActive
         binding.activeTv.setTextColorRes(
-            if (isActive) R.color.text_white else R.color.text_black
+            if (isActive) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.passiveTv.isSelected = !isActive
         binding.passiveTv.setTextColorRes(
-            if (!isActive) R.color.text_white else R.color.text_black
+            if (!isActive) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
     }
 }

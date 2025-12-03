@@ -2,7 +2,6 @@ package com.xyoye.player_component.utils
 
 import android.graphics.Bitmap
 import android.graphics.Point
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +11,7 @@ import android.view.SurfaceView
 import android.view.TextureView
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import com.xyoye.common_component.config.UserConfig
 import com.xyoye.common_component.database.DatabaseManager
 import com.xyoye.common_component.extension.resumeWhenAlive
@@ -28,7 +28,6 @@ import com.xyoye.common_component.utils.SupervisorScope
 import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 import com.xyoye.player.surface.InterSurfaceView
-import com.xyoye.player_component.R
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.videolan.libvlc.util.VLCVideoLayout
@@ -117,14 +116,14 @@ object PlayRecorder {
             }
 
             is TextureView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && view.surfaceTexture != null) {
+                if (view.surfaceTexture != null) {
                     return recordTextureView(view, imageSize)
                 }
             }
 
             is VLCVideoLayout -> {
-                val textureView = view.findViewById<TextureView>(R.id.texture_video)
-                val surfaceView = view.findViewById<SurfaceView>(R.id.surface_video)
+                val textureView = view.findViewById<TextureView>(org.videolan.R.id.texture_video)
+                val surfaceView = view.findViewById<SurfaceView>(org.videolan.R.id.surface_video)
                 if (textureView != null && textureView.surfaceTexture != null) {
                     return recordTextureView(textureView, imageSize)
                 } else if (surfaceView != null) {
@@ -232,7 +231,7 @@ object PlayRecorder {
             return
         }
 
-        if (UserConfig.isUserLoggedIn().not()) {
+        if (UserConfig.getUserLoggedIn().not()) {
             return
         }
 
@@ -259,7 +258,7 @@ object PlayRecorder {
 
         // 构建包含播放进度的回调地址
         val callbackUrl = storageFile.getCallbackUrl()
-        val completeUrl = Uri.parse(callbackUrl).buildUpon()
+        val completeUrl = callbackUrl.toUri().buildUpon()
             .appendQueryParameter(ScreencastConstants.Param.position, history.videoPosition.toString())
             .appendQueryParameter(ScreencastConstants.Param.duration, history.videoDuration.toString())
             .build()

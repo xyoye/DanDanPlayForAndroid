@@ -47,7 +47,7 @@ class StorageFileMenus private constructor(
             isIconified = true
             imeOptions = EditorInfo.IME_ACTION_SEARCH
             queryHint = getSearchHintText()
-            findViewById<SearchAutoComplete>(R.id.search_src_text)?.textSize = 16f
+            findViewById<SearchAutoComplete>(androidx.appcompat.R.id.search_src_text)?.textSize = 16f
         }
 
         mSearchView.setOnQueryTextListener(object : OnQueryTextListener {

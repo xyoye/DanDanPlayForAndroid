@@ -39,7 +39,7 @@ class HomePageFragment : BaseAppFragment<FragmentHomePageBinding>() {
             adapter = AnimeAdapter.getAdapter(mAttachActivity)
 
             val pxValue = dp2px(10)
-            val spaceColor = R.color.item_bg_color.toResColor(mAttachActivity)
+            val spaceColor = com.xyoye.common_component.R.color.item_bg_color.toResColor(mAttachActivity)
             addItemDecoration(ItemDecorationDrawable(pxValue, pxValue, spaceColor))
         }
 

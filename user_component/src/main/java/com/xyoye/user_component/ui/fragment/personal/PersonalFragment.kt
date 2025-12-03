@@ -2,9 +2,9 @@ package com.xyoye.user_component.ui.fragment.personal
 
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.sdk.android.feedback.impl.FeedbackAPI
+import com.therouter.TheRouter
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseFragment
 import com.xyoye.common_component.bridge.LoginObserver
 import com.xyoye.common_component.bridge.ServiceLifecycleBridge
@@ -41,7 +41,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
 
         viewModel.relationLiveData.observe(this) {
             dataBinding.followAnimeTv.text = it.first.toString()
-            dataBinding.followAnimeTv.setTextColorRes(R.color.text_pink)
+            dataBinding.followAnimeTv.setTextColorRes(com.xyoye.common_component.R.color.text_pink)
             dataBinding.cloudHistoryTv.text = it.second.toString()
         }
 
@@ -69,7 +69,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
             dataBinding.userNameTv.text = "登录账号"
             dataBinding.tipsLoginBt.isVisible = true
             dataBinding.followAnimeTv.text = resources.getText(R.string.text_default_count)
-            dataBinding.followAnimeTv.setTextColorRes(R.color.text_black)
+            dataBinding.followAnimeTv.setTextColorRes(com.xyoye.common_component.R.color.text_black)
             dataBinding.cloudHistoryTv.text = resources.getText(R.string.text_default_count)
         }
     }
@@ -79,7 +79,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
         var coverIndex = UserConfig.getUserCoverIndex()
         if (coverIndex == -1) {
             coverIndex = coverArray.indices.random()
-            UserConfig.putUserCoverIndex(coverIndex)
+            UserConfig.setUserCoverIndex(coverIndex)
         }
         val typedArray = resources.obtainTypedArray(R.array.cover)
         val coverResId = typedArray.getResourceId(coverIndex, 0)
@@ -94,7 +94,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
                 val typedArray = resources.obtainTypedArray(R.array.cover)
                 val coverResId = typedArray.getResourceId(it, 0)
                 typedArray.recycle()
-                UserConfig.putUserCoverIndex(it)
+                UserConfig.setUserCoverIndex(it)
                 dataBinding.userCoverIv.setImageResource(coverResId)
             }.show()
         }
@@ -107,9 +107,9 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
                 mAttachActivity, dataBinding.userCoverIv, dataBinding.userCoverIv.transitionName
             )
 
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.UserInfo)
-                .withOptionsCompat(options)
+                .withOptionsCompat(options.toBundle())
                 .navigation(mAttachActivity)
         }
 
@@ -117,7 +117,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
             if (!checkLoggedIn())
                 return@setOnClickListener
 
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Anime.AnimeFollow)
                 .withParcelable("followData", viewModel.followData)
                 .navigation()
@@ -127,50 +127,50 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
             if (!checkLoggedIn())
                 return@setOnClickListener
 
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Anime.AnimeHistory)
                 .withParcelable("historyData", viewModel.historyData)
                 .navigation()
         }
 
         dataBinding.playerSettingLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.SettingPlayer)
                 .navigation()
         }
 
         dataBinding.scanManagerLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.ScanManager)
                 .navigation()
         }
 
         dataBinding.cacheManagerLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.CacheManager)
                 .navigation()
         }
 
         dataBinding.commonlyManagerLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.CommonManager)
                 .navigation()
         }
 
         dataBinding.bilibiliDanmuLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Local.BiliBiliDanmu)
                 .navigation()
         }
 
         dataBinding.shooterSubtitleLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Local.ShooterSubtitle)
                 .navigation()
         }
 
         dataBinding.screencastReceiverLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.Stream.ScreencastReceiver)
                 .navigation()
         }
@@ -180,7 +180,7 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
         }
 
         dataBinding.appSettingLl.setOnClickListener {
-            ARouter.getInstance()
+            TheRouter
                 .build(RouteTable.User.SettingApp)
                 .navigation()
         }
@@ -190,8 +190,8 @@ class PersonalFragment : BaseFragment<PersonalFragmentViewModel, FragmentPersona
      * 检查是否已登录
      */
     private fun checkLoggedIn(): Boolean {
-        if (!UserConfig.isUserLoggedIn()) {
-            ARouter.getInstance()
+        if (!UserConfig.getUserLoggedIn()) {
+            TheRouter
                 .build(RouteTable.User.UserLogin)
                 .navigation()
             return false

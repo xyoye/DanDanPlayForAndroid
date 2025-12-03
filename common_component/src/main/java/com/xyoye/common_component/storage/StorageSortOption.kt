@@ -17,25 +17,25 @@ object StorageSortOption {
     }
 
     fun setSort(sort: StorageSort): Boolean {
-        AppConfig.putStorageSortType(sort.value)
+        AppConfig.setStorageSortType(sort.value)
         return true
     }
 
     fun isAsc(): Boolean {
-        return AppConfig.isStorageSortAsc()
+        return AppConfig.getStorageSortAsc()
     }
 
     fun changeAsc(): Boolean {
-        AppConfig.putStorageSortAsc(!isAsc())
+        AppConfig.setStorageSortAsc(!isAsc())
         return true
     }
 
     fun isDirectoryFirst(): Boolean {
-        return AppConfig.isStorageSortDirectoryFirst()
+        return AppConfig.getStorageSortDirectoryFirst()
     }
 
     fun changeDirectoryFirst(): Boolean {
-        AppConfig.putStorageSortDirectoryFirst(!isDirectoryFirst())
+        AppConfig.setStorageSortDirectoryFirst(!isDirectoryFirst())
         return true
     }
 

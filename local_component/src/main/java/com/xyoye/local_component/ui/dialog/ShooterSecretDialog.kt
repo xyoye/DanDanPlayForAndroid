@@ -25,11 +25,11 @@ class ShooterSecretDialog(
 
         setPositiveListener {
             val secret = binding.shooterSecretEt.text.toString()
-            SubtitleConfig.putShooterSecret(secret)
+            SubtitleConfig.setShooterSecret(secret)
             dismiss()
         }
 
-        binding.shooterSecretEt.setText(SubtitleConfig.getShooterSecret() ?: "")
+        binding.shooterSecretEt.setText(SubtitleConfig.getShooterSecret())
 
         binding.loginShooterTv.setOnClickListener {
             activity.startUrlActivity("https://secure.assrt.net/user/logon.xml")

@@ -96,10 +96,10 @@ class WebDavStorageEditDialog(
     override fun onTestResult(result: Boolean) {
         if (result) {
             binding.serverStatusTv.text = "连接成功"
-            binding.serverStatusTv.setTextColorRes(R.color.text_blue)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_blue)
         } else {
             binding.serverStatusTv.text = "连接失败"
-            binding.serverStatusTv.setTextColorRes(R.color.text_red)
+            binding.serverStatusTv.setTextColorRes(com.xyoye.common_component.R.color.text_red)
         }
     }
 
@@ -133,12 +133,12 @@ class WebDavStorageEditDialog(
     private fun setAnonymous(isAnonymous: Boolean) {
         binding.anonymousTv.isSelected = isAnonymous
         binding.anonymousTv.setTextColorRes(
-            if (isAnonymous) R.color.text_white else R.color.text_black
+            if (isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountTv.isSelected = !isAnonymous
         binding.accountTv.setTextColorRes(
-            if (!isAnonymous) R.color.text_white else R.color.text_black
+            if (!isAnonymous) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.accountEt.isGone = isAnonymous
@@ -154,12 +154,12 @@ class WebDavStorageEditDialog(
     private fun setParseMode(isStrict: Boolean) {
         binding.strictParseTv.isSelected = isStrict
         binding.strictParseTv.setTextColorRes(
-            if (isStrict) R.color.text_white else R.color.text_black
+            if (isStrict) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
 
         binding.normalParseTv.isSelected = isStrict.not()
         binding.normalParseTv.setTextColorRes(
-            if (isStrict.not()) R.color.text_white else R.color.text_black
+            if (isStrict.not()) com.xyoye.common_component.R.color.text_white else com.xyoye.common_component.R.color.text_black
         )
     }
 }

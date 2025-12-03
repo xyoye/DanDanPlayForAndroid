@@ -4,7 +4,7 @@ import android.app.Activity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.ItemAnimeBinding
 import com.xyoye.anime_component.utils.loadAnimeCover
@@ -26,14 +26,14 @@ class AnimeAdapter {
     companion object {
         fun getAdapter(activity: Activity) = buildAdapter {
 
-            addEmptyView(R.layout.layout_empty)
+            addEmptyView(com.xyoye.common_component.R.layout.layout_empty)
 
             addItem<AnimeData, ItemAnimeBinding>(R.layout.item_anime) {
                 initView { data, _, _ ->
                     itemBinding.apply {
                         coverIv.loadAnimeCover(data.imageUrl)
 
-                        followTagView.isGone = !UserConfig.isUserLoggedIn() || !data.isFavorited
+                        followTagView.isGone = !UserConfig.getUserLoggedIn() || !data.isFavorited
                         animeNameTv.text = data.animeTitle
                         itemLayout.setOnClickListener {
                             //防止快速点击
@@ -46,10 +46,10 @@ class AnimeAdapter {
                                 activity, coverIv, coverIv.transitionName
                             )
 
-                            ARouter.getInstance()
+                            TheRouter
                                 .build(RouteTable.Anime.AnimeDetail)
                                 .withParcelable("animeArgument", AnimeArgument.fromData(data))
-                                .withOptionsCompat(options)
+                                .withOptionsCompat(options.toBundle())
                                 .navigation(activity)
                         }
                     }

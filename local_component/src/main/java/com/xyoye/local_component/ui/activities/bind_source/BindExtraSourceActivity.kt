@@ -6,10 +6,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.alibaba.android.arouter.facade.annotation.Autowired
-import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.therouter.TheRouter
+import com.therouter.router.Autowired
+import com.therouter.router.Route
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.collectAtStarted
@@ -51,7 +51,7 @@ class BindExtraSourceActivity :
     override fun getLayoutId() = R.layout.activity_bind_extra_source
 
     override fun initView() {
-        ARouter.getInstance().inject(this)
+        TheRouter.inject(this)
 
         val storageFile = storageFileProvider.getShareStorageFile()
         if (storageFile == null) {

@@ -2,7 +2,7 @@ package com.xyoye.anime_component.ui.fragment.search_magnet
 
 import android.os.Bundle
 import androidx.core.view.isVisible
-import com.alibaba.android.arouter.launcher.ARouter
+import com.therouter.TheRouter
 import com.xyoye.anime_component.BR
 import com.xyoye.anime_component.R
 import com.xyoye.anime_component.databinding.FragmentSearchMagnetBinding
@@ -43,7 +43,7 @@ class SearchMagnetFragment :
         }
     }
 
-    private val actionData = ManageMagnet.values().map { it.toSheetActionBean() }
+    private val actionData = ManageMagnet.entries.map { it.toSheetActionBean() }
 
     override fun initViewModel() =
         ViewModelInit(
@@ -77,7 +77,7 @@ class SearchMagnetFragment :
         }
 
         val isResDomainExist = AppConfig.getMagnetResDomain() != null
-        dataBinding.domainTv.setTextColorRes(if (isResDomainExist) R.color.text_theme else R.color.text_red)
+        dataBinding.domainTv.setTextColorRes(if (isResDomainExist) com.xyoye.common_component.R.color.text_theme else com.xyoye.common_component.R.color.text_red)
 
         arguments?.apply {
             val searchWord = getString("search_word")
@@ -92,7 +92,7 @@ class SearchMagnetFragment :
             layoutManager = vertical()
 
             adapter = buildAdapter {
-                addEmptyView(R.layout.layout_empty)
+                addEmptyView(com.xyoye.common_component.R.layout.layout_empty)
 
                 addItem<MagnetData, ItemSearchMagnetBinding>(R.layout.item_search_magnet) {
                     initView { data, _, _ ->
@@ -121,7 +121,7 @@ class SearchMagnetFragment :
                                 }
                                 val magnetLink = "magnet:?xt=urn:btih:$magnetHash"
                                 val library = MediaLibraryEntity.TORRENT.copy(url = magnetLink)
-                                ARouter.getInstance()
+                                TheRouter
                                     .build(RouteTable.Stream.StorageFile)
                                     .withParcelable("storageLibrary", library)
                                     .navigation()
@@ -186,8 +186,8 @@ class SearchMagnetFragment :
 
     private fun showInputDomainDialog() {
         SearchDomainDialog(requireActivity()) {
-            dataBinding.domainTv.setTextColorRes(R.color.text_theme)
-            AppConfig.putMagnetResDomain(it)
+            dataBinding.domainTv.setTextColorRes(com.xyoye.common_component.R.color.text_theme)
+            AppConfig.setMagnetResDomain(it)
         }.show()
     }
 

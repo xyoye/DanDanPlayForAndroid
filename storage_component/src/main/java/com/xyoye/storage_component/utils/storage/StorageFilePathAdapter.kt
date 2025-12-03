@@ -90,9 +90,9 @@ object StorageFilePathAdapter {
 
     private fun getPathColor(path: StorageFilePath): Int {
         return if (path.isLast) {
-            R.color.text_theme
+            com.xyoye.common_component.R.color.text_theme
         } else {
-            R.color.text_black
+            com.xyoye.common_component.R.color.text_black
         }.toResColor()
     }
 }

@@ -48,7 +48,7 @@ class StorageFileFragment :
             dataBinding.storageFileRv.postDelayed({ requestFocus() }, 500)
         }
 
-        dataBinding.refreshLayout.setColorSchemeResources(R.color.theme)
+        dataBinding.refreshLayout.setColorSchemeResources(com.xyoye.common_component.R.color.theme)
         dataBinding.refreshLayout.setOnRefreshListener {
             viewModel.listFile(directory, refresh = true)
         }

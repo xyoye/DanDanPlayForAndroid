@@ -221,17 +221,17 @@ class SettingDanmuConfigureView(
         when (settingMode) {
             BaseDanmaku.TYPE_SCROLL_RL -> {
                 PlayerInitializer.Danmu.mobileDanmu = enable
-                DanmuConfig.putShowMobileDanmu(enable)
+                DanmuConfig.setShowMobileDanmu(enable)
                 mControlWrapper.updateMobileDanmuState()
             }
             BaseDanmaku.TYPE_FIX_TOP -> {
                 PlayerInitializer.Danmu.topDanmu = enable
-                DanmuConfig.putShowTopDanmu(enable)
+                DanmuConfig.setShowTopDanmu(enable)
                 mControlWrapper.updateTopDanmuState()
             }
             BaseDanmaku.TYPE_FIX_BOTTOM -> {
                 PlayerInitializer.Danmu.bottomDanmu = enable
-                DanmuConfig.putShowBottomDanmu(enable)
+                DanmuConfig.setShowBottomDanmu(enable)
                 mControlWrapper.updateBottomDanmuState()
             }
         }
@@ -241,15 +241,15 @@ class SettingDanmuConfigureView(
         when (settingMode) {
             BaseDanmaku.TYPE_SCROLL_RL -> {
                 PlayerInitializer.Danmu.maxScrollLine = line
-                DanmuConfig.putDanmuScrollMaxLine(line)
+                DanmuConfig.setDanmuScrollMaxLine(line)
             }
             BaseDanmaku.TYPE_FIX_TOP -> {
                 PlayerInitializer.Danmu.maxTopLine = line
-                DanmuConfig.putDanmuTopMaxLine(line)
+                DanmuConfig.setDanmuTopMaxLine(line)
             }
             BaseDanmaku.TYPE_FIX_BOTTOM -> {
                 PlayerInitializer.Danmu.maxBottomLine = line
-                DanmuConfig.putDanmuBottomMaxLine(line)
+                DanmuConfig.setDanmuBottomMaxLine(line)
             }
         }
         mControlWrapper.updateMaxLine()
@@ -258,7 +258,7 @@ class SettingDanmuConfigureView(
 
     private fun updateScreenLimit(limit: Int) {
         PlayerInitializer.Danmu.maxNum = limit
-        DanmuConfig.putDanmuMaxCount(limit)
+        DanmuConfig.setDanmuMaxCount(limit)
         mControlWrapper.updateMaxScreenNum()
         applyDanmuConfigureStatus()
     }
@@ -361,7 +361,7 @@ class SettingDanmuConfigureView(
 
     private fun updateLanguage(language: DanmakuLanguage) {
         PlayerInitializer.Danmu.language = language
-        DanmuConfig.putDanmuLanguage(language.value)
+        DanmuConfig.setDanmuLanguage(language.value)
 
         viewBinding.tvLanguageOrigin.isSelected = language == DanmakuLanguage.ORIGINAL
         viewBinding.tvLanguageSc.isSelected = language == DanmakuLanguage.SC

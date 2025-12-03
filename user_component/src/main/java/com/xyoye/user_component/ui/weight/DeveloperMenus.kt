@@ -35,8 +35,7 @@ class DeveloperMenus private constructor(
     private var authenticateDialog: DeveloperAuthenticateDialog? = null
 
     private val isDeveloperAuthenticate: Boolean
-        get() = DevelopConfig.getAppId()?.isNotEmpty() == true
-                && DevelopConfig.getAppSecret()?.isNotEmpty() == true
+        get() = DevelopConfig.getAppId().isNotEmpty() && DevelopConfig.getAppSecret().isNotEmpty()
 
     init {
         updateItem()
@@ -78,12 +77,12 @@ class DeveloperMenus private constructor(
         }
 
         // 已自动提示认证弹窗
-        if (DevelopConfig.isIsAutoShowAuthDialog()) {
+        if (DevelopConfig.getIsAutoShowAuthDialog()) {
             return
         }
 
         // 只自动提示一次
-        DevelopConfig.putIsAutoShowAuthDialog(true)
+        DevelopConfig.setIsAutoShowAuthDialog(true)
 
         // 显示认证弹窗
         showAuthenticateDialog()

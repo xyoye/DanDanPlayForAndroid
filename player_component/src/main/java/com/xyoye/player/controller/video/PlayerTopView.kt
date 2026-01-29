@@ -63,7 +63,7 @@ class PlayerTopView(
         }
 
         // 将初始焦点置于标题，而不是返回按钮
-        post { viewBinding.videoTitleTv.requestFocus() }
+        post { viewBinding.focusPlaceholder.requestFocus() }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -81,7 +81,7 @@ class PlayerTopView(
 
             ViewCompat.animate(viewBinding.playerTopLl).translationY(0f).setDuration(300).start()
         } else {
-            viewBinding.videoTitleTv.requestFocus()
+            viewBinding.focusPlaceholder.requestFocus()
             val height = viewBinding.playerTopLl.height.toFloat()
             ViewCompat.animate(viewBinding.playerTopLl).translationY(-height)
                 .setDuration(300).start()

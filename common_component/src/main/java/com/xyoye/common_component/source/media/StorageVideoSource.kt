@@ -7,6 +7,7 @@ import com.xyoye.common_component.storage.file.impl.TorrentStorageFile
 import com.xyoye.common_component.utils.getFileName
 import com.xyoye.common_component.utils.thunder.ThunderManager
 import com.xyoye.data_component.bean.LocalDanmuBean
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.MediaType
 
 /**
@@ -90,6 +91,13 @@ class StorageVideoSource(
 
     override fun getStoragePath(): String {
         return file.storagePath()
+    }
+
+    override fun updateFileHistory(playHistory: PlayHistoryEntity?) {
+        file.playHistory = playHistory
+        file.storage.updateFileHistory(file, playHistory)
+        videoSources.firstOrNull { it.uniqueKey() == file.uniqueKey() }
+            ?.let { it.playHistory = playHistory }
     }
 
     fun getTorrentPath(): String? {

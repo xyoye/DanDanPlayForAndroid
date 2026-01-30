@@ -3,6 +3,7 @@ package com.xyoye.common_component.source.base
 import com.xyoye.common_component.source.inter.ExtraSource
 import com.xyoye.common_component.source.inter.VideoSource
 import com.xyoye.data_component.bean.LocalDanmuBean
+import com.xyoye.data_component.entity.PlayHistoryEntity
 
 
 /**
@@ -43,4 +44,6 @@ abstract class BaseVideoSource(
     override fun getStoragePath(): String? {
         return null
     }
+
+    abstract fun updateFileHistory(playHistory: PlayHistoryEntity?)
 }

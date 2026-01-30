@@ -11,6 +11,7 @@ import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.bean.SendDanmuBean
 import com.xyoye.data_component.bean.VideoTrackBean
 import com.xyoye.data_component.entity.DanmuBlockEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import com.xyoye.data_component.enums.TrackType
 import kotlinx.coroutines.launch
 import master.flame.danmaku.danmaku.model.BaseDanmaku
@@ -27,12 +28,23 @@ class PlayerViewModel : BaseViewModel() {
         val historyDao = DatabaseManager.instance.getPlayHistoryDao()
 
         viewModelScope.launch {
+            val playHistory = DatabaseManager.instance
+                .getPlayHistoryDao().getPlayHistory(uniqueKey, storageId)
+                ?: PlayHistoryEntity(
+                    0,
+                    "",
+                    "",
+                    mediaType = videoSource.getMediaType(),
+                    uniqueKey = uniqueKey,
+                    storageId = storageId,
+                )
+
             when (track.type) {
                 TrackType.AUDIO -> {
                     val audioPath = track.type.getAudio(track.trackResource)
                     if (audioPath != null && audioPath != videoSource.getAudioPath()) {
                         videoSource.setAudioPath(audioPath)
-                        historyDao.updateAudio(uniqueKey, storageId, audioPath)
+                        playHistory.audioPath = audioPath
                     }
                 }
 
@@ -40,7 +52,7 @@ class PlayerViewModel : BaseViewModel() {
                     val subtitlePath = track.type.getSubtitle(track.trackResource)
                     if (subtitlePath != null && subtitlePath != videoSource.getSubtitlePath()) {
                         videoSource.setSubtitlePath(subtitlePath)
-                        historyDao.updateSubtitle(uniqueKey, storageId, subtitlePath)
+                        playHistory.subtitlePath = subtitlePath
                     }
                 }
 
@@ -48,10 +60,15 @@ class PlayerViewModel : BaseViewModel() {
                     val danmu = track.type.getDanmu(track.trackResource)
                     if (danmu != null && danmu != videoSource.getDanmu()) {
                         videoSource.setDanmu(danmu)
-                        historyDao.updateDanmu(uniqueKey, storageId, danmu.danmuPath, danmu.episodeId)
+                        playHistory.danmuPath = danmu.danmuPath
+                        playHistory.episodeId = danmu.episodeId
                     }
                 }
             }
+
+            historyDao.insert(playHistory)
+            val newHistory = historyDao.getPlayHistory(uniqueKey, storageId)
+            videoSource.updateFileHistory(newHistory)
         }
     }
 

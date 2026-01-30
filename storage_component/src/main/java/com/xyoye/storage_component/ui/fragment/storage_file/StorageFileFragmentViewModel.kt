@@ -58,7 +58,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             storage.openDirectory(target, refresh)
                 .filter { isDisplayFile(it) }
                 .sortedWith(StorageSortOption.comparator())
-                .onEach { it.playHistory = getHistory(it) }
+                .map { updateStorageFileHistory(it, getHistory(it)) }
                 .apply { _fileLiveData.postValue(this) }
                 .also { filesSnapshot = it }
         }
@@ -89,7 +89,7 @@ class StorageFileFragmentViewModel : BaseViewModel() {
                 storage.search(text)
                     .filter { isDisplayFile(it) }
                     .sortedWith(StorageSortOption.comparator())
-                    .onEach { it.playHistory = getHistory(it) }
+                    .map { updateStorageFileHistory(it, getHistory(it)) }
                     .let { _fileLiveData.postValue(it) }
             }
             return
@@ -160,19 +160,8 @@ class StorageFileFragmentViewModel : BaseViewModel() {
 
             refreshStorageLastPlay()
             fileList
-                .map {
-                    val history = getHistory(it)
-                    val isSameHistory = if (it.isFile()) {
-                        it.playHistory == history && it.playHistory?.isLastPlay == history?.isLastPlay
-                    } else {
-                        it.playHistory?.id == history?.id
-                    }
-                    if (isSameHistory) {
-                        return@map it
-                    }
-                    //历史记录不一致时，返回拷贝的新对象
-                    it.clone().apply { playHistory = history }
-                }.apply { _fileLiveData.postValue(this) }
+                .map { updateStorageFileHistory(it, getHistory(it)) }
+                .apply { _fileLiveData.postValue(this) }
                 .also { filesSnapshot = it }
         }
     }
@@ -263,5 +252,15 @@ class StorageFileFragmentViewModel : BaseViewModel() {
             uniqueKey = storageFile.uniqueKey(),
             storageId = storageFile.storage.library.id,
         )
+    }
+
+    private fun updateStorageFileHistory(
+        file: StorageFile,
+        history: PlayHistoryEntity?
+    ): StorageFile {
+        file.storage.updateFileHistory(file, history)
+        return file.clone().apply {
+            playHistory = history
+        }
     }
 }

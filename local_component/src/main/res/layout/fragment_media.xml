@@ -32,7 +32,6 @@
             android:layout_marginBottom="40dp"
             android:contentDescription="@string/action_add_media_storage"
             android:focusable="true"
-            android:focusableInTouchMode="true"
             android:nextFocusLeft="@id/media_lib_rv"
             android:nextFocusUp="@id/media_lib_rv"
             android:src="@drawable/ic_add_white"

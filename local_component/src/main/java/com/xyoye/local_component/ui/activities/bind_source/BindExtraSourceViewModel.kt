@@ -106,21 +106,31 @@ class BindExtraSourceViewModel : BaseViewModel() {
      * 解析分词结果
      */
     private fun parseSegmentResult(json: String): List<String>? {
-        val responseJson = JSONObject(json)
-        val resultKey = responseJson.names()?.get(0)?.toString()
-            ?: return null
-        val jsonArray = responseJson.optJSONArray(resultKey)
-            ?: return null
-        val wordArray = jsonArray.optJSONArray(0)
-            ?: return null
-
-        val words = mutableListOf<String>()
-        val wordLength = wordArray.length()
-        for (i in 0 until wordLength) {
-            val word = wordArray.optString(i)
-            words.add(word)
+        if (json.isEmpty()) {
+            return null
         }
-        return words
+
+        try {
+            val responseJson = JSONObject(json)
+            val resultKey = responseJson.names()?.get(0)?.toString()
+                ?: return null
+            val jsonArray = responseJson.optJSONArray(resultKey)
+                ?: return null
+            val wordArray = jsonArray.optJSONArray(0)
+                ?: return null
+
+            val words = mutableListOf<String>()
+            val wordLength = wordArray.length()
+            for (i in 0 until wordLength) {
+                val word = wordArray.optString(i)
+                words.add(word)
+            }
+            return words
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return null
     }
 
     private fun matchSearchTextCache(target: StorageFile): String? {

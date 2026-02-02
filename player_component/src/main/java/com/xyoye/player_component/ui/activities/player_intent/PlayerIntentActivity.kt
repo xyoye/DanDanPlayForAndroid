@@ -1,6 +1,8 @@
 package com.xyoye.player_component.ui.activities.player_intent
 
 import android.net.Uri
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import com.alibaba.android.arouter.launcher.ARouter
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
@@ -8,6 +10,8 @@ import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
 import com.xyoye.common_component.extension.decodeUrl
 import com.xyoye.common_component.utils.MediaUtils
+import com.xyoye.common_component.utils.isTorrentFile
+import com.xyoye.data_component.entity.MediaLibraryEntity
 import com.xyoye.player_component.BR
 import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.ActivityPlayerIntentBinding
@@ -53,6 +57,11 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
             viewModel.addUnrecognizedFile(videoUrl)
         }
 
+        if (isTorrentIntent(videoUrl, intentData, intent.type)) {
+            openTorrentStorage(videoUrl)
+            return
+        }
+
         viewModel.openIntentUrl(videoUrl)
     }
 
@@ -63,5 +72,34 @@ class PlayerIntentActivity : BaseActivity<PlayerIntentViewModel, ActivityPlayerI
                 .navigation()
             finish()
         }
+    }
+
+    private fun isTorrentIntent(url: String, uri: Uri, mimeType: String?): Boolean {
+        if (mimeType == "application/x-bittorrent" || mimeType == "application/torrent") {
+            return true
+        }
+        if (isTorrentFile(url)) {
+            return true
+        }
+        val uriText = uri.toString()
+        return isTorrentFile(uriText) || isTorrentFile(uri.lastPathSegment ?: "")
+    }
+
+    private fun openTorrentStorage(url: String) {
+        if (url.startsWith("file://").not()) {
+            return
+        }
+
+        val filePath = url.runCatching { toUri().toFile().absolutePath }.getOrNull()
+        if (filePath.isNullOrEmpty()) {
+            return
+        }
+
+        val library = MediaLibraryEntity.TORRENT.copy(url = filePath)
+        ARouter.getInstance()
+            .build(RouteTable.Stream.StorageFile)
+            .withParcelable("storageLibrary", library)
+            .navigation()
+        finish()
     }
 }

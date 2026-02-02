@@ -82,11 +82,6 @@ class PlayerControlView(context: Context): InterControllerView {
 
     private fun updateLockVisible(isVisible: Boolean) {
         if (isVisible) {
-            if (mControlWrapper.isLocked()) {
-                viewBinding.playerLockIv.postDelayed({
-                    viewBinding.playerLockIv.requestFocus()
-                }, 100)
-            }
             viewBinding.playerLockIv.isVisible = true
             ViewCompat.animate(viewBinding.playerLockIv)
                 .translationX(0f)

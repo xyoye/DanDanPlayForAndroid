@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.View
 import androidx.annotation.Dimension
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -273,6 +274,7 @@ class SwitchSourceView(
         mPathData.addAll(pathData)
         viewBinding.rvPath.setData(mPathData)
         viewBinding.rvPath.scrollToPosition(mPathData.size - 1)
+        viewBinding.rvPath.post { viewBinding.rvPath.requestFocus(View.FOCUS_LEFT) }
 
         mFileData.clear()
         mFileData.addAll(getDirectoryChildData(directory))

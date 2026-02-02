@@ -5,13 +5,16 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
+import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.xyoye.common_component.base.BaseActivity
 import com.xyoye.common_component.config.RouteTable
@@ -63,6 +66,11 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         StorageFileStyleHelper(this, dataBinding)
     }
 
+    // 全局焦点变化监听，用于控制标题栏展开/收缩
+    private val focusChangeListener = ViewTreeObserver.OnGlobalFocusChangeListener { _, newFocus ->
+        handleGlobalFocusChange(newFocus)
+    }
+
     var shareStorageFile: StorageFile? = null
 
     override fun initViewModel() =
@@ -86,6 +94,8 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
 
     override fun initView() {
         mToolbarStyleHelper.observerChildScroll()
+        dataBinding.coordinatorLayout.viewTreeObserver
+            .addOnGlobalFocusChangeListener(focusChangeListener)
         title = storageLibrary?.displayName
         updateToolbarSubtitle(0, 0)
 
@@ -198,6 +208,10 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
             SupervisorScope.IO.launch {
                 storage.close()
             }
+        }
+        val observer = dataBinding.coordinatorLayout.viewTreeObserver
+        if (observer.isAlive) {
+            observer.removeOnGlobalFocusChangeListener(focusChangeListener)
         }
         super.onDestroy()
     }
@@ -353,6 +367,47 @@ class StorageFileActivity : BaseActivity<StorageFileViewModel, ActivityStorageFi
         floatingButton.shapeAppearanceModel = ShapeAppearanceModel.builder(
             this, 0, shapeAppearanceRes
         ).build()
+    }
+
+    /**
+     * 焦点切换时，处理标题栏展开/收缩
+     */
+    private fun handleGlobalFocusChange(newFocus: View?) {
+        if (newFocus == null) {
+            return
+        }
+        when {
+            // 焦点在标题栏区域
+            hasAncestorOfType(newFocus, AppBarLayout::class.java) -> setToolbarExpanded(true)
+
+            // 焦点在内容区列表
+            hasAncestorOfType(newFocus, RecyclerView::class.java) -> setToolbarExpanded(false)
+        }
+    }
+
+    /**
+     * 根据焦点归属切换标题栏展开/收缩
+     */
+    private fun setToolbarExpanded(expand: Boolean) {
+        val isExpanded = mToolbarStyleHelper.isToolbarCollapsed().not()
+        if (expand && isExpanded) {
+            return
+        }
+        dataBinding.appbarLayout.setExpanded(expand, true)
+    }
+
+    /**
+     * 判断view是否存在指定类型的祖先
+     */
+    private fun hasAncestorOfType(view: View, clazz: Class<out View>): Boolean {
+        var current: View? = view
+        while (current != null) {
+            if (clazz.isInstance(current)) {
+                return true
+            }
+            current = current.parent as? View
+        }
+        return false
     }
 
     /**

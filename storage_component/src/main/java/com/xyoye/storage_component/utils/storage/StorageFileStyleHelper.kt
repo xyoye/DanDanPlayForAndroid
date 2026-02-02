@@ -1,7 +1,6 @@
 package com.xyoye.storage_component.utils.storage
 
 import android.animation.ValueAnimator
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -11,7 +10,6 @@ import com.xyoye.common_component.extension.toResColor
 import com.xyoye.storage_component.R
 import com.xyoye.storage_component.databinding.ActivityStorageFileBinding
 import com.xyoye.storage_component.ui.activities.storage_file.StorageFileActivity
-import com.xyoye.storage_component.ui.weight.StorageFileBehavior
 
 /**
  * Created by xyoye on 2023/1/1.
@@ -47,12 +45,13 @@ class StorageFileStyleHelper(
      * 监听子View滚动以改变状态栏与标题栏颜色
      */
     fun observerChildScroll() {
-        val view = binding.fragmentContainer
-        val layoutParams = view.layoutParams as? CoordinatorLayout.LayoutParams
-        val behavior = layoutParams?.behavior as? StorageFileBehavior
-        behavior?.observerToolbarCollapsed {
-            changeToolbarStyle(it)
+        binding.appbarLayout.addOnOffsetChangedListener { _, verticalOffset ->
+            changeToolbarStyle(verticalOffset != 0)
         }
+    }
+
+    fun isToolbarCollapsed(): Boolean {
+        return mToolbarCollapsed
     }
 
     private fun changeToolbarStyle(collapsed: Boolean) {

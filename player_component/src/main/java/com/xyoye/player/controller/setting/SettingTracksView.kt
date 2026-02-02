@@ -101,6 +101,8 @@ class SettingTracksView @JvmOverloads constructor(
 
         if (tracks.size > 0) {
             viewBinding.rvTrack.requestIndexChildFocus(0)
+        } else {
+            viewBinding.tvAddTrack.requestFocus()
         }
         return true
     }
@@ -158,7 +160,9 @@ class SettingTracksView @JvmOverloads constructor(
             return false
         }
         val targetIndex = getTargetIndexByKeyCode(keyCode, focusedChildIndex)
-        viewBinding.rvTrack.requestIndexChildFocus(targetIndex)
+        if (targetIndex != -1) {
+            viewBinding.rvTrack.requestIndexChildFocus(targetIndex)
+        }
         return true
     }
 
@@ -169,11 +173,22 @@ class SettingTracksView @JvmOverloads constructor(
         return when (keyCode) {
             //左、上规则
             KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_UP -> {
-                tracks.previousItemIndex<VideoTrackBean>(focusedIndex)
+                if (focusedIndex == 0) {
+                    viewBinding.tvAddTrack.requestFocus()
+                    -1
+                } else {
+                    tracks.previousItemIndex<VideoTrackBean>(focusedIndex)
+                }
             }
             //右、下规则
             KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_DOWN -> {
-                tracks.nextItemIndex<VideoTrackBean>(focusedIndex)
+                val itemCount = viewBinding.rvTrack.adapter?.itemCount ?: 0
+                if (focusedIndex == itemCount - 1) {
+                    viewBinding.tvAddTrack.requestFocus()
+                    -1
+                } else {
+                    tracks.nextItemIndex<VideoTrackBean>(focusedIndex)
+                }
             }
 
             else -> {
@@ -199,6 +214,9 @@ class SettingTracksView @JvmOverloads constructor(
         viewBinding.rvTrack.setData(tracks)
 
         viewBinding.tvEmptyTrack.isVisible = tracks.isEmpty()
+        if (tracks.isEmpty()) {
+            viewBinding.tvAddTrack.requestFocus()
+        }
     }
 
     fun setTrackType(trackType: TrackType) {

@@ -1123,6 +1123,8 @@
                 <data android:mimeType="application/x-ogg" />
                 <data android:mimeType="audio/mpegurl" />
                 <data android:mimeType="audio/x-mpegurl" />
+                <data android:mimeType="application/x-bittorrent" />
+                <data android:mimeType="application/torrent" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

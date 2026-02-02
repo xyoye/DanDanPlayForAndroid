@@ -12,6 +12,18 @@
         android:translationY="-50dp"
         tools:translationY="0dp">
 
+        <FrameLayout
+            android:id="@+id/focus_placeholder"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/player_settings_iv"
+            android:nextFocusRight="@+id/player_settings_iv"
+            android:nextFocusUp="@+id/player_settings_iv"
+            android:nextFocusDown="@+id/player_settings_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/back_iv"
             android:layout_width="@dimen/settings_btn_width"
@@ -21,6 +33,7 @@
             android:focusable="true"
             android:nextFocusLeft="@+id/player_settings_iv"
             android:nextFocusRight="@+id/iv_switch_popup"
+            android:nextFocusUp="@+id/play_iv"
             android:nextFocusDown="@+id/player_lock_iv"
             android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
@@ -111,7 +124,8 @@
             android:focusable="true"
             android:nextFocusLeft="@+id/iv_switch_popup"
             android:nextFocusRight="@+id/back_iv"
-            android:nextFocusDown="@+id/player_lock_iv"
+            android:nextFocusUp="@+id/danmu_control_iv"
+            android:nextFocusDown="@+id/player_shot_iv"
             android:padding="12dp"
             android:src="@drawable/ic_player_setting"
             app:layout_constraintBottom_toBottomOf="@id/back_iv"

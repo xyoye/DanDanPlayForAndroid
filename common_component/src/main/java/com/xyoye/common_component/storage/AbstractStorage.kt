@@ -11,6 +11,7 @@ import com.xyoye.common_component.utils.subtitle.SubtitleUtils
 import com.xyoye.data_component.bean.LocalDanmuBean
 import com.xyoye.data_component.data.DanmuEpisodeData
 import com.xyoye.data_component.entity.MediaLibraryEntity
+import com.xyoye.data_component.entity.PlayHistoryEntity
 import java.io.File
 
 /**
@@ -95,5 +96,11 @@ abstract class AbstractStorage(
 
     override suspend fun test(): Boolean {
         return true
+    }
+
+    override fun updateFileHistory(file: StorageFile, history: PlayHistoryEntity?) {
+        directoryFiles
+            .firstOrNull { it.uniqueKey() == file.uniqueKey() }
+            ?.let { it.playHistory = history }
     }
 }

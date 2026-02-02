@@ -15,7 +15,7 @@ import com.xyoye.player_component.R
 import com.xyoye.player_component.databinding.LayoutPlayerTopBinding
 import com.xyoye.player_component.ui.activities.overlay_permission.OverlayPermissionActivity
 import com.xyoye.player_component.utils.BatteryHelper
-import java.util.*
+import java.util.Date
 
 /**
  * Created by xyoye on 2020/11/3.
@@ -41,6 +41,10 @@ class PlayerTopView(
     private lateinit var mControlWrapper: ControlWrapper
 
     init {
+        // 新增焦点占位视图，避免焦点默认落在返回按钮上
+        viewBinding.focusPlaceholder.setOnClickListener {
+            mControlWrapper.togglePlay()
+        }
 
         viewBinding.backIv.setOnClickListener {
             exitPlayerObserver?.invoke()
@@ -59,7 +63,7 @@ class PlayerTopView(
         }
 
         // 将初始焦点置于标题，而不是返回按钮
-        post { viewBinding.videoTitleTv.requestFocus() }
+        post { viewBinding.focusPlaceholder.requestFocus() }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -77,7 +81,7 @@ class PlayerTopView(
 
             ViewCompat.animate(viewBinding.playerTopLl).translationY(0f).setDuration(300).start()
         } else {
-            viewBinding.videoTitleTv.requestFocus()
+            viewBinding.focusPlaceholder.requestFocus()
             val height = viewBinding.playerTopLl.height.toFloat()
             ViewCompat.animate(viewBinding.playerTopLl).translationY(-height)
                 .setDuration(300).start()

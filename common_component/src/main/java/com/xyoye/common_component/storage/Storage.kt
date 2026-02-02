@@ -95,6 +95,11 @@ interface Storage {
     suspend fun test(): Boolean
 
     /**
+     * 更新文件播放历史
+     */
+    fun updateFileHistory(file: StorageFile, history: PlayHistoryEntity?)
+
+    /**
      * 关闭媒体库
      */
     fun close()

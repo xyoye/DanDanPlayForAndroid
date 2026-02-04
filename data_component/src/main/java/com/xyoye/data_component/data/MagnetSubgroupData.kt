@@ -1,12 +1,12 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/10/26.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class MagnetSubgroupData(
-    val Subgroups: MutableList<MagnetScreenData> = mutableListOf()
+    val Subgroups: List<MagnetScreenData> = emptyList()
 )

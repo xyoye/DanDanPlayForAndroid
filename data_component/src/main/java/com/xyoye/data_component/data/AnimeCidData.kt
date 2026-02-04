@@ -5,6 +5,6 @@ package com.xyoye.data_component.data
  */
 
 data class AnimeCidData(
-    val animeTitle: String,
+    val animeTitle: String = "",
     val episodes: List<EpisodeCidData> = emptyList()
 )

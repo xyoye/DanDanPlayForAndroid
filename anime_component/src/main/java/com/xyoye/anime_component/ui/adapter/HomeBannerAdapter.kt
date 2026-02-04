@@ -16,7 +16,7 @@ import com.youth.banner.adapter.BannerAdapter
  * Created by xyoye on 2020/7/31.
  */
 
-class HomeBannerAdapter(bannerDetails: MutableList<BannerDetailData>) :
+class HomeBannerAdapter(bannerDetails: List<BannerDetailData>) :
     BannerAdapter<BannerDetailData, HomeBannerAdapter.BannerHolder>(bannerDetails) {
 
     inner class BannerHolder(binding: ItemBannerBinding) :

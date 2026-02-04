@@ -122,7 +122,7 @@ class ShooterSubtitleActivity :
         viewModel.searchSubDetailLiveData.observe(this) {
             SubtitleDetailDialog(this, it,
                 downloadOne = {
-                    SubtitleFileListDialog(this, it.filelist!!) { fileName, url ->
+                    SubtitleFileListDialog(this, it.filelist) { fileName, url ->
                         viewModel.downloadSubtitle(fileName, url)
                     }.show()
                 },

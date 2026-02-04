@@ -1,18 +1,18 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/11/30.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubtitleShooterData(
-    val Files: MutableList<ShooterData>?
+    val Files: List<ShooterData> = emptyList()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class ShooterData(
-    val Ext: String?,
-    val Link: String?
+    val Ext: String? = null,
+    val Link: String? = null
 )

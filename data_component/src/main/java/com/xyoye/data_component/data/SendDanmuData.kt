@@ -1,12 +1,12 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2021/2/21.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SendDanmuData(
-    val cid: String?
+    val cid: String? = ""
 )

@@ -17,7 +17,7 @@ import com.xyoye.local_component.databinding.ItemSubtitleFileBinding
 
 class SubtitleFileListDialog(
     activity: Activity,
-    private val subtitleList: MutableList<SubFileData>,
+    private val subtitleList: List<SubFileData>,
     private val callback: (fileName: String, url: String) -> Unit
 ) : BaseBottomDialog<DialogSubtitleFileListBinding>(activity) {
 
@@ -31,11 +31,8 @@ class SubtitleFileListDialog(
         setNegativeListener { dismiss() }
         setPositiveVisible(false)
 
-        val iterator = subtitleList.iterator()
-        while (iterator.hasNext()) {
-            val fileData = iterator.next()
-            if (fileData.url == null || fileData.f == null)
-                iterator.remove()
+        val finalSubtitleList = subtitleList.filter {
+            it.url.isNotEmpty() && it.f.isNotEmpty()
         }
 
         binding.subtitleFileRv.apply {
@@ -50,14 +47,14 @@ class SubtitleFileListDialog(
                             fileSizeTv.text = data.s
                             itemLayout.setOnClickListener {
                                 dismiss()
-                                callback.invoke(data.f!!, data.url!!)
+                                callback.invoke(data.f, data.url)
                             }
                         }
                     }
                 }
             }
 
-            setData(subtitleList)
+            setData(finalSubtitleList)
         }
     }
 }

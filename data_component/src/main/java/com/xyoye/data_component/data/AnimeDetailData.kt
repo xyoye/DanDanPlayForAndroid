@@ -1,28 +1,28 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.xyoye.data_component.entity.EpisodeHistoryEntity
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Created by xyoye on 2020/8/5.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class AnimeDetailData(
     var bangumi: BangumiData? = null
 ) : CommonJsonData(), Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class BangumiData(
     var type: String? = null,
     var typeDescription: String? = null,
     var summary: String? = null,
-    var metadata: MutableList<String>? = null,
+    var metadata: List<String> = emptyList(),
     var bangumiUrl: String? = null,
     var userRating: Int,
     var favoriteStatus: String? = null,
@@ -36,46 +36,44 @@ data class BangumiData(
     var isFavorited: Boolean,
     var isRestricted: Boolean,
     var rating: Double,
-    var episodes: MutableList<EpisodeData> = mutableListOf(),
-    var relateds: MutableList<AnimeData> = mutableListOf(),
-    var similars: MutableList<AnimeData> = mutableListOf(),
-    var tags: MutableList<TagData> = mutableListOf()
+    var episodes: List<EpisodeData> = emptyList(),
+    var relateds: List<AnimeData> = emptyList(),
+    var similars: List<AnimeData> = emptyList(),
+    var tags: List<TagData> = emptyList()
 ) : Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class EpisodeData(
     val episodeId: String = "",
     val episodeTitle: String = "",
     val lastWatched: String? = null,
     val airDate: String? = null,
 
-    @Json(ignore = true)
+    @Transient
     val title: String = "",
-    @Json(ignore = true)
+    @Transient
     val subtitle: String = "",
-    @Json(ignore = true)
+    @Transient
     val searchEpisodeNum: String = "",
 
-    @Json(ignore = true)
+    @Transient
     val watchTime: String? = null,
-    @Json(ignore = true)
+    @Transient
     val histories: List<EpisodeHistoryEntity> = emptyList(),
-    @Json(ignore = true)
+    @Transient
     val isMarked: Boolean = false,
-    @Json(ignore = true)
+    @Transient
     val inMarkMode: Boolean = false
 ) : Parcelable {
 
-    @Json(ignore = true)
     val markAble get() = lastWatched == null
 
-    @Json(ignore = true)
     val watched get() = histories.isNotEmpty() || lastWatched != null
 }
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class TagData(
     var id: Int, var name: String
 ) : Parcelable

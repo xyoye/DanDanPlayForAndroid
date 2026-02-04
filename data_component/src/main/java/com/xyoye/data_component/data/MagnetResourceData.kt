@@ -1,22 +1,22 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/8/19.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class MagnetResourceData(
     var HasMore: Boolean = false,
-    var Resources: MutableList<MagnetData>? = null
+    var Resources: List<MagnetData> = emptyList()
 ) : Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class MagnetData(
     var Title: String? = null,
     var TypeId: Int = -1,

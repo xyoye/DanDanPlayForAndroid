@@ -1,15 +1,15 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/11/23.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuMatchData(
-    val isMatched: Boolean,
+    val isMatched: Boolean = false,
     val matches: List<DanmuEpisodeData> = emptyList()
 ) : CommonJsonData()

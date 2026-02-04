@@ -1,9 +1,9 @@
 package com.xyoye.common_component.network.request
 
 import android.util.MalformedJsonException
-import com.squareup.moshi.JsonDataException
 import com.xyoye.data_component.data.CommonJsonData
 import com.xyoye.data_component.data.CommonJsonModel
+import kotlinx.serialization.SerializationException
 import org.json.JSONException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -49,7 +49,7 @@ class NetworkException(
                 is SSLHandshakeException -> 1004 to "证书验证失败"
 
 
-                is JsonDataException -> 1005 to "响应数据类型匹配失败"
+                is SerializationException -> 1005 to "响应数据类型匹配失败"
 
 
                 is JSONException -> 1006 to "解析响应数据错误"

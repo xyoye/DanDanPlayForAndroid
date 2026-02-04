@@ -1,24 +1,24 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/11/23.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuData(
-    var count: Int,
-    val comments: MutableList<DanmuContentData> = mutableListOf()
+    var count: Int = 0,
+    val comments: List<DanmuContentData> = emptyList()
 ) : Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuContentData(
-    val cid: Int,
+    val cid: Int = 0,
     val p: String = "",
     val m: String = ""
 ) : Parcelable

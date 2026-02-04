@@ -1,18 +1,18 @@
 package com.xyoye.data_component.data.remote
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2021/3/28.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteSubtitleData (
-    val subtitles: MutableList<RemoteSubtitle> = mutableListOf()
+    val subtitles: List<RemoteSubtitle> = emptyList()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteSubtitle(
-    val fileName: String,
-    val fileSize: Long
+    val fileName: String = "",
+    val fileSize: Long = 0
 )

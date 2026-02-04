@@ -1,12 +1,8 @@
 package com.xyoye.common_component.utils
 
-import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.xyoye.common_component.utils.moshi.NullToEmptyStringAdapter
-import com.xyoye.common_component.utils.moshi.NullToIntZeroAdapter
-import com.xyoye.common_component.utils.moshi.NullToLongZeroAdapter
-import java.io.IOException
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Created by xyoye on 2021/3/26.
@@ -14,22 +10,22 @@ import java.io.IOException
 
 object JsonHelper {
 
-    val MO_SHI: Moshi = Moshi.Builder()
-        .add(NullToEmptyStringAdapter)
-        .add(NullToLongZeroAdapter)
-        .add(NullToIntZeroAdapter)
-        .build()
+    val JSON: Json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = false
+        coerceInputValues = true
+    }
 
     inline fun <reified T> parseJson(jsonStr: String): T? {
         if (jsonStr.isEmpty())
             return null
 
         try {
-            val jsonAdapter = MO_SHI.adapter(T::class.java)
-            return jsonAdapter.fromJson(jsonStr)
-        } catch (e: IOException) {
+            return JSON.decodeFromString(jsonStr)
+        } catch (e: SerializationException) {
             e.printStackTrace()
-        } catch (e: JsonDataException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
         return null
@@ -40,12 +36,10 @@ object JsonHelper {
             return emptyList()
 
         try {
-            val type = Types.newParameterizedType(List::class.java, T::class.java)
-            val adapter = MO_SHI.adapter<List<T>>(type)
-            return adapter.fromJson(jsonStr) ?: emptyList()
-        } catch (e: IOException) {
+            return JSON.decodeFromString(jsonStr)
+        } catch (e: SerializationException) {
             e.printStackTrace()
-        } catch (e: JsonDataException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
         return emptyList()
@@ -56,13 +50,10 @@ object JsonHelper {
             return emptyMap()
 
         try {
-            val type =
-                Types.newParameterizedType(Map::class.java, String::class.java, String::class.java)
-            val adapter = MO_SHI.adapter<Map<String, String>>(type)
-            return adapter.fromJson(jsonStr) ?: emptyMap()
-        } catch (e: IOException) {
+            return JSON.decodeFromString(jsonStr)
+        } catch (e: SerializationException) {
             e.printStackTrace()
-        } catch (e: JsonDataException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
 
@@ -73,11 +64,10 @@ object JsonHelper {
         t ?: return null
 
         try {
-            val adapter = MO_SHI.adapter(T::class.java)
-            return adapter.toJson(t)
-        } catch (e: IOException) {
+            return JSON.encodeToString(t)
+        } catch (e: SerializationException) {
             e.printStackTrace()
-        } catch (e: JsonDataException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
         return null

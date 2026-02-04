@@ -39,9 +39,9 @@ object SubtitleMatchHelper {
         return ResourceRepository
             .matchSubtitleFormShooter(videoHash, getFileName(videoPath))
             .getOrNull()
-            ?.filter { it.Files != null }
+            ?.filter { it.Files.isNotEmpty() }
             ?.flatMap { files ->
-                files.Files!!
+                files.Files
                     .filter { it.Link != null }
                     .map {
                         val extension = it.Ext ?: ".ass"

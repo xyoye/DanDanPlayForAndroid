@@ -1,15 +1,15 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/10/13.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SearchAnimeData(
-    var animes: MutableList<AnimeData> = mutableListOf()
+    var animes: List<AnimeData> = emptyList()
 ) : CommonJsonData(), Parcelable

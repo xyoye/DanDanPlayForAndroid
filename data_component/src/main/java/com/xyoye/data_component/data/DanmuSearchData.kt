@@ -1,46 +1,46 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Created by xyoye on 2020/11/26.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuSearchData(
-    val hasMore: Boolean,
+    val hasMore: Boolean = false,
     val animes: List<DanmuAnimeData> = emptyList()
 ) : CommonJsonData()
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuAnimeData(
     val animeId: Int = 0,
     val animeTitle: String = "",
     val episodes: List<DanmuEpisodeData> = emptyList(),
 
-    @Json(ignore = true)
+    @Transient
     val isRecommend: Boolean = false,
-    @Json(ignore = true)
+    @Transient
     val isBound: Boolean = false,
-    @Json(ignore = true)
+    @Transient
     val isSelected: Boolean = false,
 ) : Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class DanmuEpisodeData(
     val animeId: Int = 0,
     val animeTitle: String = "",
     val episodeId: String = "",
     val episodeTitle: String = "",
 
-    @Json(ignore = true)
+    @Transient
     val isRecommend: Boolean = false,
-    @Json(ignore = true)
+    @Transient
     val isBound: Boolean = false
 ) : Parcelable

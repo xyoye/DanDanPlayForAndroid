@@ -1,13 +1,13 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2021/2/23.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class BiliBiliCidData(
-    val code: Int,
-    val data: EpisodeCidData?
+    val code: Int = 0,
+    val data: EpisodeCidData? = null
 )

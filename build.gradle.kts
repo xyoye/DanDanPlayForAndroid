@@ -17,5 +17,6 @@ plugins {
     alias(kotlinx.plugins.kotlin) apply false
     alias(kotlinx.plugins.ksp) apply false
     alias(kotlinx.plugins.parcelize) apply false
+    alias(kotlinx.plugins.serialization) apply false
     alias(libs.plugins.router.agp) apply false
 }

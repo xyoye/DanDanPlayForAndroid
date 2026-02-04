@@ -45,10 +45,10 @@ class AnimeSeasonViewModel : BaseViewModel() {
         )
     }
 
-    val yearsLiveData = MutableLiveData<MutableList<CommonTypeData>>()
-    val seasonLiveData = MutableLiveData<MutableList<CommonTypeData>>()
-    val animeLiveData = MutableLiveData<MutableList<AnimeData>>()
-    val sortLiveData = MutableLiveData<MutableList<CommonTypeData>>()
+    val yearsLiveData = MutableLiveData<List<CommonTypeData>>()
+    val seasonLiveData = MutableLiveData<List<CommonTypeData>>()
+    val animeLiveData = MutableLiveData<List<AnimeData>>()
+    val sortLiveData = MutableLiveData<List<CommonTypeData>>()
 
     fun getYearsData() {
         yearsLiveData.postValue(years)

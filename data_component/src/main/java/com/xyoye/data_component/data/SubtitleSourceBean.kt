@@ -1,12 +1,12 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/12/1.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubtitleSourceBean(
     val id: Int = 0,
     val name: String? = null,

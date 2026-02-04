@@ -1,20 +1,20 @@
 package com.xyoye.data_component.data.alist
 
 import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2024/1/20.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class AlistDirectoryData(
-    @Json(name = "total")
+    @SerialName("total")
     val fileCount: Int = 0,
 
-    @Json(name = "content")
+    @SerialName("content")
     val fileList: List<AlistFileData> = emptyList()
 ) : Parcelable

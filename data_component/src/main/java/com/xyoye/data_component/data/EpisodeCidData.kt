@@ -1,12 +1,12 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2024/1/17.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class EpisodeCidData(
     val title: String = "",
     val cid: String = ""

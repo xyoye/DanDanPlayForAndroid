@@ -1,8 +1,8 @@
 package com.xyoye.data_component.bean
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 /**
  * <pre>
@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class UDPDeviceBean(
     var ipAddress: String? = null,
     val httpPort: Int = 0,

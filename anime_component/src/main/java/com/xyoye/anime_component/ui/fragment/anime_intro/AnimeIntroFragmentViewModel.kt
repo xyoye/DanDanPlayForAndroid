@@ -28,8 +28,8 @@ class AnimeIntroFragmentViewModel : BaseViewModel() {
             animeIntroFiled.set(summary)
             hideIntroFiled.set(summary.isNullOrEmpty())
 
-            val info = getAnimeInfo(metadata)
-            hideInfoFiled.set(info.isNullOrEmpty())
+            val info = metadata.joinToString("\n")
+            hideInfoFiled.set(info.isEmpty())
             animeInfoFiled.set(info)
         }
     }
@@ -60,17 +60,4 @@ class AnimeIntroFragmentViewModel : BaseViewModel() {
             "暂无"
         else
             DecimalFormat("0.0").format(rating)
-
-    private fun getAnimeInfo(metadata: MutableList<String>?): String? {
-        if (metadata == null)
-            return null
-        if (metadata.size == 0)
-            return null
-
-        val infoBuilder = StringBuilder()
-        metadata.forEach {
-            infoBuilder.append("$it\n")
-        }
-        return infoBuilder.toString()
-    }
 }

@@ -1,20 +1,22 @@
 package com.xyoye.data_component.data
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Created by xyoye on 2021/3/25.
  */
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemoteScanData(
-    val ip: List<String>,
-    val port: Int,
-    val machineName: String?,
-    val tokenRequired: Boolean,
+    val ip: List<String> = emptyList(),
+    val port: Int = 0,
+    val machineName: String = "",
+    val tokenRequired: Boolean = false,
 
-    var selectedIP: String?
+    @Transient
+    var selectedIP: String? = null
 ) : Parcelable

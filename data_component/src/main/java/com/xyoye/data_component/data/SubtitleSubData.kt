@@ -1,46 +1,46 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/12/1.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubtitleSubData(
-    val sub: SubData?
+    val sub: SubData? = null
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubData(
-    val subs: MutableList<SubDetailData>?
+    val subs: List<SubDetailData> = emptyList()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubDetailData(
-    val id: Int,
-    val videoname: String?,
-    val native_name: String?,
-    val upload_time: String?,
-    val subtype: String?,
-    val lang: LanguageData?,
+    val id: Int = 0,
+    val videoname: String = "",
+    val native_name: String = "",
+    val upload_time: String = "",
+    val subtype: String = "",
+    val lang: LanguageData? = null,
 
-    val filename: String?,
-    val size: Long?,
-    val url: String?,
-    val filelist: MutableList<SubFileData>?
+    val filename: String = "",
+    val size: Long = 0,
+    val url: String = "",
+    val filelist: List<SubFileData> = emptyList()
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class LanguageData(
-    val desc: String?
+    val desc: String = ""
 )
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubFileData(
-    val url: String?,
+    val url: String = "",
     //fileName
-    val f: String?,
+    val f: String = "",
     //size
-    val s: String?
+    val s: String = ""
 )

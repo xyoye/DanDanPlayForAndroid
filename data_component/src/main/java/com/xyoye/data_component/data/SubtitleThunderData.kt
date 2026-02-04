@@ -1,14 +1,14 @@
 package com.xyoye.data_component.data
 
-import com.squareup.moshi.JsonClass
+import kotlinx.serialization.Serializable
 
 /**
  * Created by xyoye on 2020/11/30.
  */
 
-@JsonClass(generateAdapter = true)
+@Serializable
 data class SubtitleThunderData(
-    val sublist: MutableList<ThunderData>?
+    val sublist: List<ThunderData> = emptyList()
 )
 
 /**
@@ -20,7 +20,7 @@ data class SubtitleThunderData(
  * svote : 3457
  * roffset : 5426795912
  */
-@JsonClass(generateAdapter = true)
+@Serializable
 data class ThunderData(
     val scid: String?,
     val sname: String?,

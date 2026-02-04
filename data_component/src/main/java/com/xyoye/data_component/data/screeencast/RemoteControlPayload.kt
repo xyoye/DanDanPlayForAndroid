@@ -1,12 +1,12 @@
 package com.xyoye.data_component.data.screeencast
 
 import android.os.Parcelable
-import com.squareup.moshi.JsonClass
 import com.xyoye.data_component.data.CommonJsonData
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 data class RemotePlayerStatus(
     val title: String? = null,
     val playing: Boolean = false,
@@ -20,7 +20,7 @@ data class RemotePlayerStatus(
 ) : Parcelable
 
 @Parcelize
-@JsonClass(generateAdapter = true)
+@Serializable
 class RemoteControlResult(
     var status: RemotePlayerStatus? = null
 ) : CommonJsonData(), Parcelable {

@@ -52,11 +52,11 @@ class SearchAnimeFragmentViewModel : BaseViewModel() {
     val isCheckedType = ObservableField(false)
     val checkedAnimeType = ObservableField("类型: ")
 
-    val animeTypeLiveData = MutableLiveData<MutableList<CommonTypeData>>()
-    val animeSortLiveData = MutableLiveData<MutableList<CommonTypeData>>()
+    val animeTypeLiveData = MutableLiveData<List<CommonTypeData>>()
+    val animeSortLiveData = MutableLiveData<List<CommonTypeData>>()
     val searchHistoryLiveData = DatabaseManager.instance.getAnimeSearchHistoryDao().getAll()
 
-    val animeLiveData = MutableLiveData<MutableList<AnimeData>>()
+    val animeLiveData = MutableLiveData<List<AnimeData>>()
 
     fun search() {
         val searchWord = searchText.get() ?: ""

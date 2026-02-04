@@ -30,9 +30,6 @@ dependencyResolutionManagement {
         create("kotlinx") {
             from(files("gradle/kotlinx.versions.toml"))
         }
-        create("dandanplay") {
-            from(files("gradle/dandanplay.versions.toml"))
-        }
     }
 }
 

@@ -44,9 +44,8 @@ class AndroidApplicationPlugin : Plugin<Project> {
                 configureKotlin()
                 configureSigning(project)
 
-                extensions.configure<ApplicationAndroidComponentsExtension> {
-                    configureVariantName()
-                }
+                extensions.findByType(ApplicationAndroidComponentsExtension::class.java)
+                    ?.configureVariantName()
             }
         }
     }

@@ -2,7 +2,12 @@ package com.xyoye.storage_component.ui.weight
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -107,11 +112,7 @@ class ScanWindowView : View {
         super.onDetachedFromWindow()
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        if (canvas == null) {
-            super.onDraw(canvas)
-            return
-        }
+    override fun onDraw(canvas: Canvas) {
 
         val frameSize = getFrameSize()
 

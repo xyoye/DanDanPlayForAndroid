@@ -1,7 +1,7 @@
 plugins {
-    alias(dandanplay.plugins.library)
-    alias(dandanplay.plugins.router)
-    alias(kotlinx.plugins.kapt)
+    id("org.jetbrains.kotlin.kapt")
+    id("dandanplay.android.library")
+    id("dandanplay.android.router")
 }
 
 android {

@@ -1,7 +1,13 @@
 package com.xyoye.player_component.widgets
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.CornerPathEffect
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Rect
+import android.graphics.RectF
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
@@ -129,9 +135,9 @@ class BatteryView @JvmOverloads constructor(
         setProgress(mProgress)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.apply {
+        canvas.apply {
             drawPath(mHeaderPath, mHeaderPaint)
             drawRect(mOuterRect, mOuterPaint)
             drawRect(mInnerRect, mInnerPaint)

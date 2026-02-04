@@ -1,4 +1,4 @@
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.xyoye.dandanplay.configureCompile
 import com.xyoye.dandanplay.configureKotlin
 import org.gradle.api.Plugin

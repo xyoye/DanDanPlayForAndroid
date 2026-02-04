@@ -1,4 +1,0 @@
-[plugins]
-application = { id = "dandanplay.android.application", version = "1.0.0" }
-library = { id = "dandanplay.android.library", version = "1.0.0" }
-router = { id = "dandanplay.android.router", version = "1.0.0" }

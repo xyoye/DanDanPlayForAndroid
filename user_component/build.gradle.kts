@@ -1,9 +1,7 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
-    alias(dandanplay.plugins.library)
-    alias(dandanplay.plugins.router)
-    alias(kotlinx.plugins.kapt)
+    id("org.jetbrains.kotlin.kapt")
+    id("dandanplay.android.library")
+    id("dandanplay.android.router")
 }
 
 android {
@@ -22,11 +20,17 @@ dependencies {
     implementation(project(":common_component"))
 }
 
-fun Project.currentCommit(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine = "git log --pretty=format:%h -1".split(" ")
-        standardOutput = stdout
+fun currentCommit(): String {
+    return try {
+        val output = ProcessBuilder("git", "log", "--pretty=format:%h", "-1")
+            .redirectErrorStream(true)
+            .start()
+            .inputStream
+            .bufferedReader()
+            .readText()
+            .trim()
+        output.ifBlank { "unknown" }
+    } catch (ex: Exception) {
+        "unknown"
     }
-    return stdout.toString()
 }

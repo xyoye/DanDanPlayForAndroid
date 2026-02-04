@@ -1,8 +1,8 @@
 plugins {
-    alias(dandanplay.plugins.library)
-    alias(dandanplay.plugins.router)
+    id("org.jetbrains.kotlin.kapt")
+    id("dandanplay.android.library")
+    id("dandanplay.android.router")
     alias(kotlinx.plugins.ksp)
-    alias(kotlinx.plugins.kapt)
     alias(kotlinx.plugins.parcelize)
 }
 
@@ -60,6 +60,7 @@ dependencies {
     api(libs.tencent.mmkv)
     implementation(libs.tencent.bugly)
     implementation(kotlin("reflect"))
+    implementation(kotlin("parcelize-runtime"))
 
     ksp(androidx.room.compiler)
     ksp(project(":repository:mmkv:processor"))

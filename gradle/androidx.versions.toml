@@ -1,10 +1,10 @@
 [versions]
-agp = "8.2.2"
+agp = "8.13.2"
 lifecycle = "2.5.1"
-room = "2.4.3"
+room = "2.7.2"
 
 [libraries]
-activity-ktx = { module = "androidx.activity:activity-ktx", version = "1.6.1" }
+activity-ktx = { module = "androidx.activity:activity-ktx", version = "1.8.2" }
 appcompat = { module = "androidx.appcompat:appcompat", version = "1.5.1" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.1.4" }
 core = { module = "androidx.core:core-ktx", version = "1.9.0" }

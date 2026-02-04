@@ -24,7 +24,7 @@ object AppUtils {
             val packageName = BaseApplication.getAppContext().applicationInfo.packageName
             val packageInfo =
                 BaseApplication.getAppContext().packageManager.getPackageInfo(packageName, 0)
-            return packageInfo.versionName
+            return packageInfo.versionName ?: "unknown"
         }
         return "unknown"
     }

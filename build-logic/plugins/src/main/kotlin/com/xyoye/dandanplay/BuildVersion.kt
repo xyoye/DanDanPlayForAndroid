@@ -6,7 +6,7 @@ package com.xyoye.dandanplay
  *    desc  : 定义项目的SDK版本
  */
 object BuildVersion {
-    const val TARGET = 29
-    const val COMPILE = 33
+    const val TARGET = 36
+    const val COMPILE = 36
     const val MIN = 21
 }

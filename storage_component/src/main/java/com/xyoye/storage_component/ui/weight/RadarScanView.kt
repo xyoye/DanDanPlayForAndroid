@@ -188,11 +188,7 @@ class RadarScanView : View {
         setMeasuredDimension(width, height)
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        if (canvas == null) {
-            super.onDraw(canvas)
-            return
-        }
+    override fun onDraw(canvas: Canvas) {
 
         //背景
         drawBackgroundLine(canvas)

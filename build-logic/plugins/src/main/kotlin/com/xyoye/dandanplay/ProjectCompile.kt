@@ -1,8 +1,7 @@
 package com.xyoye.dandanplay
 
-import com.android.build.api.dsl.ApplicationBaseFlavor
-import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.LibraryBaseFlavor
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.JavaVersion
 
 /**
@@ -11,22 +10,33 @@ import org.gradle.api.JavaVersion
  *    desc  : 项目编译配置
  */
 
-internal fun CommonExtension<*, *, *, *, *>.configureCompile() {
+internal fun ApplicationExtension.configureCompile() {
     compileSdk = BuildVersion.COMPILE
 
     defaultConfig {
         minSdk = BuildVersion.MIN
-
-        val extension = this
-        if (extension is ApplicationBaseFlavor) {
-            extension.targetSdk = BuildVersion.TARGET
-        } else if (extension is LibraryBaseFlavor) {
-            lint.targetSdk = BuildVersion.TARGET
-        }
+        targetSdk = BuildVersion.TARGET
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+internal fun LibraryExtension.configureCompile() {
+    compileSdk = BuildVersion.COMPILE
+
+    defaultConfig {
+        minSdk = BuildVersion.MIN
+    }
+
+    lint {
+        targetSdk = BuildVersion.TARGET
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }

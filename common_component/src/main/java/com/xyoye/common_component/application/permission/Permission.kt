@@ -13,12 +13,7 @@ class Permission {
     /**
      * 存储权限
      */
-    val storage = PermissionRequest(
-        arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        )
-    )
+    val storage = StoragePermissionRequest()
 
     /**
      * 相机权限
@@ -49,6 +44,27 @@ class Permission {
             PermissionManager.requestPermissions(
                 fragmentManager,
                 permissions,
+                PermissionResult().apply(result)
+            )
+        }
+    }
+
+    class StoragePermissionRequest {
+
+        fun request(fragment: Fragment, result: PermissionResult.() -> Unit) {
+            requestStorage(fragment.childFragmentManager, result)
+        }
+
+        fun request(activity: AppCompatActivity, result: PermissionResult.() -> Unit) {
+            requestStorage(activity.supportFragmentManager, result)
+        }
+
+        private fun requestStorage(
+            fragmentManager: FragmentManager,
+            result: PermissionResult.() -> Unit
+        ) {
+            PermissionManager.requestStorage(
+                fragmentManager,
                 PermissionResult().apply(result)
             )
         }

@@ -29,11 +29,6 @@ import java.io.InputStream
 
 class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
-    private var mSmbConfig = SmbConfig.builder()
-        .withDfsEnabled(false)
-        .withMultiProtocolNegotiate(true)
-        .withBufferSize(16 * 1024 * 1024)
-        .build()
     private var mSmbClient = SMBClient()
     private var mSmbSession: Session? = null
     private var mDiskShare: DiskShare? = null

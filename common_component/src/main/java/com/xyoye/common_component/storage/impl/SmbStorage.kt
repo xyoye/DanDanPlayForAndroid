@@ -1,7 +1,9 @@
 package com.xyoye.common_component.storage.impl
 
 import android.net.Uri
+import com.hierynomus.msfscc.FileAttributes
 import com.hierynomus.smbj.SMBClient
+import com.hierynomus.smbj.SmbConfig
 import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
@@ -78,9 +80,7 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         if (checkConnection().not()) {
             return null
         }
-        if (mDiskShare?.isConnected != true) {
-            return null
-        }
+
         val shareName = (file as SmbStorageFile).getShareName()
             ?: return null
         if (switchShareDisk(shareName).not()) {
@@ -91,7 +91,20 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             mDiskShare?.openFile(file.filePath())?.inputStream
         } catch (e: Exception) {
             e.printStackTrace()
-            null
+
+            // 仅关闭 DiskShare 而不是整个连接
+            closeDiskShare()
+
+            // 触发重连
+            if (switchShareDisk(shareName).not()) {
+                return null
+            }
+            try {
+                mDiskShare?.openFile(file.filePath())?.inputStream
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 
@@ -113,10 +126,12 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         val shareName = diskShare.smbPath.shareName
         val filePath = pathSegments.takeLast(pathSegments.size - 1).joinToString(separator = "/")
         return try {
-            val fileInfo = diskShare.open(filePath).standardFileInfo()
-            val directory = fileInfo.isDirectory
-            val fileLength = if (directory) 0L else fileInfo.endOfFile
-            return SmbStorageFile(this, shareName, filePath, fileLength, directory)
+            diskShare.open(filePath).use { entry ->
+                val fileInfo = entry.standardFileInfo()
+                val directory = fileInfo.isDirectory
+                val fileLength = if (directory) 0L else fileInfo.endOfFile
+                SmbStorageFile(this, shareName, filePath, fileLength, directory)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             showErrorToast("获取文件信息失败", e)
@@ -153,6 +168,8 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
 
     override fun close() {
         closeDiskShare()
+        // 彻底关闭时释放整个连接
+        SmbPlayServer.getInstance().release()
         IOUtils.closeIO(mSmbClient)
     }
 
@@ -165,17 +182,23 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
         }
 
         try {
+            mSmbSession?.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        mSmbSession = null
+
+        try {
             val port = if (library.port == 0) SMBClient.DEFAULT_PORT else library.port
-            val session = mSmbClient.connect(library.url, port)
-                ?.authenticate(getAuthenticationContext())
+            val connection = mSmbClient.connect(library.url, port)
+            val session = connection.authenticate(getAuthenticationContext())
+
             if (session?.connection?.isConnected == true) {
                 mSmbSession = session
                 return true
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            showErrorToast("连接至SMB服务失败", e)
-            close()
         }
         return false
     }
@@ -219,17 +242,14 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
             diskShare.openDirectory(filePath)
                 .list()
                 .filter { it.fileName != "." && it.fileName != ".." }
-                .map {
-                    try {
-                        val childPath = generateChildPath(filePath, it.fileName)
-                        val fileInfo = diskShare.open(childPath).standardFileInfo()
-                        val isDirectory = fileInfo.isDirectory
-                        val fileLength = if (isDirectory) 0L else fileInfo.endOfFile
-                        return@map SmbStorageFile(this, shareName, childPath, fileLength, isDirectory)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        return@map SmbStorageFile(this, shareName, "")
-                    }
+                .map { info ->
+                    val childPath = generateChildPath(filePath, info.fileName)
+                
+                    val fileAttributes = info.fileAttributes
+                    val isDirectory = (fileAttributes and FileAttributes.FILE_ATTRIBUTE_DIRECTORY.value) != 0L
+                    val fileLength = if (isDirectory) 0L else info.endOfFile
+
+                    SmbStorageFile(this, shareName, childPath, fileLength, isDirectory)
                 }
                 .filter { it.filePath().isNotEmpty() }
         } catch (e: Exception) {
@@ -243,45 +263,55 @@ class SmbStorage(library: MediaLibraryEntity) : AbstractStorage(library) {
      * 切换共享目录
      */
     private fun switchShareDisk(shareName: String, showToast: Boolean = false): Boolean {
-        val currentShareName = mDiskShare?.smbPath?.shareName
-        if (shareName == currentShareName) {
+        val currentShare = mDiskShare
+        if (currentShare != null && currentShare.isConnected && currentShare.smbPath.shareName == shareName) {
             return true
         }
         //关闭现有共享目录
         closeDiskShare()
+
+        if (connectShare(shareName)) {
+            return true
+        }
+
         try {
-            //连接至新的共享目录
+            mSmbSession?.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        mSmbSession = null
+
+        if (checkConnection()) {
+            if (connectShare(shareName)) {
+                return true
+            }
+        }
+
+        if (showToast) {
+            ToastCenter.showError("切换共享目录失败")
+        }
+        return false
+    }
+
+    private fun connectShare(shareName: String): Boolean {
+        return try {
             val diskShare = mSmbSession?.connectShare(shareName) as? DiskShare?
             if (diskShare?.isConnected == true) {
                 mDiskShare = diskShare
-                return true
+                true
+            } else {
+                false
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            if (showToast) {
-                showErrorToast("切换共享目录失败", e)
-            }
-
-            // 切换共享目录失败时，如果旧的共享目录不为空，切换回旧的共享目录
-            if (currentShareName != null) {
-                try {
-                    val diskShare = mSmbSession?.connectShare(shareName) as? DiskShare?
-                    if (diskShare?.isConnected == true) {
-                        mDiskShare = diskShare
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+            false
         }
-        return false
     }
 
     /**
      * 关闭共享目录
      */
     private fun closeDiskShare() {
-        SmbPlayServer.getInstance().release()
         if (mDiskShare == null) {
             return
         }

@@ -3,5 +3,6 @@
     <item android:color="@color/navigation_checked_color" android:state_pressed="true" />
     <item android:color="@color/navigation_checked_color" android:state_selected="true" />
     <item android:color="@color/navigation_checked_color" android:state_checked="true" />
+    <item android:color="@color/navigation_checked_color" android:state_focused="true" />
     <item android:color="@color/navigation_uncheck_color" />
 </selector>

@@ -15,6 +15,8 @@
         android:layout_height="match_parent"
         android:background="@color/layout_bg_color"
         android:clipToPadding="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -58,6 +60,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/background_item_press_corner"
+                        android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -83,6 +86,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/background_item_press_corner"
+                        android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical">
 

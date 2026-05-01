@@ -15,7 +15,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/layout_bg_color">
+        android:background="@color/layout_bg_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -152,6 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -178,6 +181,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -204,6 +208,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -230,6 +235,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -267,6 +273,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -293,6 +300,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -319,6 +327,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -374,6 +383,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">
@@ -400,6 +410,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:background="@drawable/background_item_press_corner"
+                    android:focusable="true"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="12dp">

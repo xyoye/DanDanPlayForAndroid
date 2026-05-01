@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_item_press"
+        android:focusable="true"
         android:nextFocusRight="@id/add_media_storage_bt">
 
         <ImageView

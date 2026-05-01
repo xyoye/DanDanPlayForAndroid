@@ -3,6 +3,8 @@ package com.xyoye.dandanplay.ui.main
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
@@ -104,6 +106,16 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
                 }
             }
             return@setOnItemSelectedListener true
+        }
+
+        //TV遥控器：fragment_container获得焦点时，转发给当前Fragment中的第一个可焦点View
+        dataBinding.fragmentContainer.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val currentFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
+                val focusableView = currentFragment?.view?.findFocus()
+                    ?: currentFragment?.view?.let { findFirstFocusableView(it) }
+                focusableView?.requestFocus()
+            }
         }
 
         viewModel.initDatabase()
@@ -272,5 +284,18 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             build()
         }.show()
         return true
+    }
+
+    private fun findFirstFocusableView(view: View): View? {
+        if (view.isFocusable && view.visibility == View.VISIBLE) {
+            return view
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val found = findFirstFocusableView(view.getChildAt(i))
+                if (found != null) return found
+            }
+        }
+        return null
     }
 }

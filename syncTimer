@@ -1,0 +1,279 @@
+.method private final syncTimer(J)J
+    .registers 14
+
+    .line 503
+    iget-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mInSeekingAction:Z
+
+    const-wide/16 v1, 0x0
+
+    if-nez v0, :cond_da
+
+    iget-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mInSyncAction:Z
+
+    if-eqz v0, :cond_c
+
+    goto/16 :goto_da
+
+    :cond_c
+    const/4 v0, 0x1
+
+    .line 506
+    iput-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mInSyncAction:Z
+
+    .line 508
+    iget-wide v3, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mTimeBase:J
+
+    move-wide v5, p1
+
+    sub-long/2addr v5, v3
+
+    iget-wide v7, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mLastRawP1:J
+
+    move-wide v9, v5
+
+    sub-long/2addr v9, v7
+
+    const-wide/16 v7, 0x0
+
+    cmp-long v0, v9, v7
+
+    if-gez v0, :cond_1e
+
+    neg-long v9, v9
+
+    :cond_1e
+    const-wide/16 v7, 0x3e8
+
+    cmp-long v0, v9, v7
+
+    if-lez v0, :cond_28
+
+    iput-wide v5, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mSeekRawP1:J
+
+    iput-wide v5, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mSeekVirtualP1:J
+
+    :cond_28
+    iput-wide v5, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mLastRawP1:J
+
+    iget-wide v7, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mSeekRawP1:J
+
+    move-wide v9, v5
+
+    sub-long/2addr v9, v7
+
+    const-wide/16 v7, 0x5dd
+
+    mul-long/2addr v9, v7
+
+    const-wide/16 v7, 0x5a0
+
+    div-long/2addr v9, v7
+
+    iget-wide v7, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mSeekVirtualP1:J
+
+    add-long p1, v7, v9
+
+    .line 509
+    iget-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mNonBlockModeEnable:Z
+
+    if-eqz v0, :cond_4d
+
+    .line 510
+    iget-object p1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCallback:Lmaster/flame/danmaku/controller/DrawHandler$Callback;
+
+    if-eqz p1, :cond_d7
+
+    .line 511
+    iget-object p2, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-interface {p1, p2}, Lmaster/flame/danmaku/controller/DrawHandler$Callback;->updateTimer(Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;)V
+
+    .line 512
+    iget-object p1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-virtual {p1}, Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;->lastInterval()J
+
+    move-result-wide v1
+
+    goto/16 :goto_d7
+
+    .line 514
+    :cond_4d
+    iget-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mDanmakusVisible:Z
+
+    if-eqz v0, :cond_c7
+
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mRenderingState:Lmaster/flame/danmaku/danmaku/renderer/IRenderer$RenderingState;
+
+    iget-boolean v0, v0, Lmaster/flame/danmaku/danmaku/renderer/IRenderer$RenderingState;->nothingRendered:Z
+
+    if-nez v0, :cond_c7
+
+    iget-boolean v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mInWaitingState:Z
+
+    if-eqz v0, :cond_5d
+
+    goto/16 :goto_c7
+
+    .line 521
+    :cond_5d
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    iget-wide v3, v0, Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;->currMillisecond:J
+
+    sub-long p1, p1, v3
+
+    .line 522
+    iget-wide v3, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mFrameUpdateRate:J
+
+    invoke-direct {p0}, Lmaster/flame/danmaku/controller/DrawHandler;->getAverageRenderingTime()J
+
+    move-result-wide v5
+
+    invoke-static {v3, v4, v5, v6}, Ljava/lang/Math;->max(JJ)J
+
+    move-result-wide v3
+
+    const-wide/16 v5, 0x7d0
+
+    cmp-long v0, p1, v5
+
+    if-gtz v0, :cond_b5
+
+    .line 523
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mRenderingState:Lmaster/flame/danmaku/danmaku/renderer/IRenderer$RenderingState;
+
+    iget-wide v5, v0, Lmaster/flame/danmaku/danmaku/renderer/IRenderer$RenderingState;->consumingTime:J
+
+    iget-wide v7, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCordonTime:J
+
+    cmp-long v0, v5, v7
+
+    if-gtz v0, :cond_b5
+
+    cmp-long v0, v3, v7
+
+    if-lez v0, :cond_82
+
+    goto :goto_b5
+
+    .line 527
+    :cond_82
+    iget-wide v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mFrameUpdateRate:J
+
+    div-long v5, p1, v0
+
+    add-long/2addr v3, v5
+
+    .line 528
+    invoke-static {v0, v1, v3, v4}, Ljava/lang/Math;->max(JJ)J
+
+    move-result-wide v0
+
+    .line 529
+    iget-wide v2, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCordonTime:J
+
+    invoke-static {v2, v3, v0, v1}, Ljava/lang/Math;->min(JJ)J
+
+    move-result-wide v0
+
+    .line 530
+    iget-wide v2, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mLastDeltaTime:J
+
+    sub-long v4, v0, v2
+
+    const-wide/16 v6, 0x3
+
+    cmp-long v8, v4, v6
+
+    if-lez v8, :cond_ae
+
+    const-wide/16 v6, 0x8
+
+    cmp-long v8, v4, v6
+
+    if-gez v8, :cond_ae
+
+    .line 531
+    iget-wide v4, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mFrameUpdateRate:J
+
+    cmp-long v6, v2, v4
+
+    if-ltz v6, :cond_ae
+
+    iget-wide v4, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCordonTime:J
+
+    cmp-long v6, v2, v4
+
+    if-gtz v6, :cond_ae
+
+    move-wide v0, v2
+
+    :cond_ae
+    sub-long p1, p1, v0
+
+    .line 535
+    iput-wide v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mLastDeltaTime:J
+
+    move-wide v9, p1
+
+    move-wide p1, v0
+
+    move-wide v1, v9
+
+    .line 537
+    :cond_b5
+    :goto_b5
+    iput-wide v1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mRemainingTime:J
+
+    .line 538
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-virtual {v0, p1, p2}, Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;->add(J)J
+
+    .line 539
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCallback:Lmaster/flame/danmaku/controller/DrawHandler$Callback;
+
+    if-eqz v0, :cond_c5
+
+    .line 540
+    iget-object v1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-interface {v0, v1}, Lmaster/flame/danmaku/controller/DrawHandler$Callback;->updateTimer(Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;)V
+
+    :cond_c5
+    move-wide v1, p1
+
+    goto :goto_d7
+
+    .line 515
+    :cond_c7
+    :goto_c7
+    iget-object v0, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-virtual {v0, p1, p2}, Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;->update(J)J
+
+    .line 516
+    iput-wide v1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mRemainingTime:J
+
+    .line 517
+    iget-object p1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mCallback:Lmaster/flame/danmaku/controller/DrawHandler$Callback;
+
+    if-eqz p1, :cond_d7
+
+    .line 518
+    iget-object p2, p0, Lmaster/flame/danmaku/controller/DrawHandler;->timer:Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;
+
+    invoke-interface {p1, p2}, Lmaster/flame/danmaku/controller/DrawHandler$Callback;->updateTimer(Lmaster/flame/danmaku/danmaku/model/DanmakuTimer;)V
+
+    :cond_d7
+    :goto_d7
+    const/4 p1, 0x0
+
+    .line 545
+    iput-boolean p1, p0, Lmaster/flame/danmaku/controller/DrawHandler;->mInSyncAction:Z
+
+    :cond_da
+    :goto_da
+    return-wide v1
+.end method

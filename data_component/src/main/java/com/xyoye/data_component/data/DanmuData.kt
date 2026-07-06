@@ -18,7 +18,7 @@ data class DanmuData(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class DanmuContentData(
-    val cid: Int,
+    val cid: Long,
     val p: String = "",
     val m: String = ""
 ) : Parcelable

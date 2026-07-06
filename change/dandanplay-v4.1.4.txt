@@ -1,0 +1,4 @@
+弹弹play 概念版v4.1.4
+
+1.优化 SMB 打开和重连逻辑 ([@azwhikaru](https://github.com/azwhikaru))
+2.修复弹幕cid过长导致的保存失败 ([@Louisover](https://github.com/Louisover))

@@ -68,6 +68,10 @@ class DanmuView(
     // 弹幕是否加载完成
     private var mDanmuLoaded = false
 
+    // 同步视频时间和弹幕时间使用
+    private var videoSpeed = 1f
+    private var speedAdjust = 0f
+
     init {
         showFPS(DanmuConfig.isDanmuDebug())
 
@@ -149,7 +153,24 @@ class DanmuView(
     }
 
     override fun onProgressChanged(duration: Long, position: Long) {
+        //让弹幕时间和视频时间尽量同步
+        if (!mDanmuLoaded) {
+            return
+        }
 
+        val diff = position - currentTime
+        if (kotlin.math.abs(diff) < 100) {
+            return
+        }
+
+        speedAdjust += diff / 50000f
+        speedAdjust = speedAdjust.coerceIn(
+            -0.15f,
+            0.15f
+        )
+        mDanmakuContext.setSpeed(
+            videoSpeed + speedAdjust
+        )
     }
 
     override fun onLockStateChanged(isLocked: Boolean) {
@@ -418,7 +439,11 @@ class DanmuView(
     }
 
     fun setSpeed(speed: Float) {
-        mDanmakuContext.setSpeed(speed)
+        //处理切换倍数时可能出现的同步误差
+        videoSpeed = speed
+        mDanmakuContext.setSpeed(
+            videoSpeed + speedAdjust
+        )
     }
 
     fun setLanguage(language: DanmakuLanguage) {

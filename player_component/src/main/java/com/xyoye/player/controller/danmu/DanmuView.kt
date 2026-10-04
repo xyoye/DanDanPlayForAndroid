@@ -298,7 +298,7 @@ class DanmuView(
         val currentVideoPos = mControlWrapper.getCurrentPosition() + PlayerInitializer.Danmu.offsetPosition
         val drift = currentVideoPos - currentDanmuTime
         val speedAdjustment = (drift / 10000f).coerceIn(-0.15f, 0.15f)
-        val videoSpeed = PlayerInitializer.Player.videoSpeed
+        val videoSpeed = controlWrapper.getSpeed()
         mDanmakuContext.setSpeed(videoSpeed * (1f + speedAdjustment))
     }
 

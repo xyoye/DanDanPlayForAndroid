@@ -103,6 +103,10 @@ class VideoController(
         }
     }
 
+    override fun onZoomStateChanged() {
+        playerControlView.refreshZoomRestore()
+    }
+
     override fun onPlayStateChanged(playState: PlayState) {
         super.onPlayStateChanged(playState)
         if (playState == PlayState.STATE_PLAYING) {

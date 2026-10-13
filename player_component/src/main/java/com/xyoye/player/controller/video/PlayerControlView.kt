@@ -36,6 +36,10 @@ class PlayerControlView(context: Context): InterControllerView {
         viewBinding.playerShotIv.setOnClickListener {
             mControlWrapper.showSettingView(SettingViewType.SCREEN_SHOT)
         }
+        // 复位会触发 onZoomStateChanged，按钮随之收起
+        viewBinding.playerRestoreTv.setOnClickListener {
+            mControlWrapper.resetZoom(true)
+        }
     }
 
     override fun attach(controlWrapper: ControlWrapper) {
@@ -49,6 +53,7 @@ class PlayerControlView(context: Context): InterControllerView {
         if (mControlWrapper.isLocked().not()) {
             updateShotVisible(isVisible)
         }
+        refreshZoomRestore()
     }
 
     override fun onPlayStateChanged(playState: PlayState) {
@@ -62,6 +67,19 @@ class PlayerControlView(context: Context): InterControllerView {
     override fun onLockStateChanged(isLocked: Boolean) {
         viewBinding.playerLockIv.isSelected = isLocked
         updateShotVisible(!isLocked)
+        refreshZoomRestore()
+    }
+
+    /**
+     * 刷新「还原屏幕」按钮显隐
+     *
+     * 与进度栏（控制栏）同步显隐：仅当控制栏显示、未锁定且画面处于缩放状态时显示
+     */
+    fun refreshZoomRestore() {
+        viewBinding.playerRestoreTv.isVisible =
+            mControlWrapper.isControllerShowing() &&
+                    mControlWrapper.isLocked().not() &&
+                    mControlWrapper.isZoomed()
     }
 
     override fun onVideoSizeChanged(videoSize: Point) {

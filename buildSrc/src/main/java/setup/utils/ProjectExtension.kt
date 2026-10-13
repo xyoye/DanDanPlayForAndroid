@@ -32,12 +32,19 @@ fun Project.setupDefaultDependencies() {
 }
 
 fun Project.currentCommit(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine = "git log --pretty=format:%h -1".split(" ")
-        standardOutput = stdout
-    }
-    return stdout.toString()
+    return runCatching {
+        val stdout = ByteArrayOutputStream()
+        val result = exec {
+            commandLine = listOf("git", "log", "--pretty=format:%h", "-1")
+            standardOutput = stdout
+            isIgnoreExitValue = true
+        }
+        if (result.exitValue == 0) {
+            stdout.toString().trim()
+        } else {
+            "null"
+        }
+    }.getOrDefault("null")
 }
 
 fun AppExtension.setupSignConfigs(project: Project) = apply {

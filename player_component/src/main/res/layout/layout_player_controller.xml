@@ -52,5 +52,22 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/player_restore_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="86dp"
+            android:background="@drawable/background_send_danmu_bt"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="@string/text_restore_screen"
+            android:textColor="@color/text_white_immutable"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
     </FrameLayout>
 </layout>

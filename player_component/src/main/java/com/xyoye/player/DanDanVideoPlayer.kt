@@ -134,6 +134,11 @@ class DanDanVideoPlayer(
 
     override fun isPlaying() = isInPlayState() && mVideoPlayer.isPlaying()
 
+    /**
+     * 是否处于播放错误状态
+     */
+    fun isPlayError() = mCurrentPlayState == PlayState.STATE_ERROR
+
     override fun getBufferedPercentage() = mVideoPlayer.getBufferedPercentage()
 
     override fun setSilence(isSilence: Boolean) {
@@ -154,6 +159,8 @@ class DanDanVideoPlayer(
 
     override fun setScreenScale(scaleType: VideoScreenScale) {
         mScreenScale = scaleType
+        // 画面比例变化会改变渲染视图基准尺寸，先复位缩放避免变换错位
+        mVideoController?.resetZoom()
         mRenderView?.setScaleType(mScreenScale)
     }
 
@@ -179,6 +186,8 @@ class DanDanVideoPlayer(
     override fun getVideoSize() = mVideoPlayer.getVideoSize()
 
     override fun onVideoSizeChange(width: Int, height: Int) {
+        // 视频尺寸变化（切集、切换清晰度等）后渲染视图基准尺寸改变，复位缩放
+        mVideoController?.resetZoom()
         mRenderView?.setScaleType(mScreenScale)
         mRenderView?.setVideoSize(width, height)
         mVideoController?.setVideoSize(mVideoPlayer.getVideoSize())
@@ -254,6 +263,9 @@ class DanDanVideoPlayer(
                 attachPlayer(mVideoPlayer)
             }
 
+        // 渲染视图已重建，清空缩放状态
+        mVideoController?.resetZoom()
+
         setExtraOption()
     }
 
@@ -305,6 +317,10 @@ class DanDanVideoPlayer(
         }
         //保存最后一帧
         PlayRecorder.recordImage(videoSource.getUniqueKey(), mRenderView)
+        //播放异常时无法获取有效进度，跳过进度保存，避免把已有播放记录覆盖为 0
+        if (mCurrentPlayState == PlayState.STATE_ERROR) {
+            return
+        }
         //保存播放进度
         PlayRecorder.recordProgress(videoSource, getCurrentPosition(), getDuration())
     }

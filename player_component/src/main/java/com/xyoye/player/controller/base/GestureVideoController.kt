@@ -6,12 +6,14 @@ import android.media.AudioManager
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import com.xyoye.common_component.utils.getScreenWidth
 import com.xyoye.common_component.utils.isScreenEdge
 import com.xyoye.data_component.enums.PlayState
 import com.xyoye.player.controller.video.InterGestureView
 import com.xyoye.player.utils.LongPressAccelerator
+import com.xyoye.player.utils.VideoZoomHelper
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -33,6 +35,43 @@ abstract class GestureVideoController(
     }
     private val mGestureDetector: GestureDetector by lazy {
         GestureDetector(getContext(), this)
+    }
+
+    /**
+     * 画面缩放助手
+     *
+     * 目标视图为当前渲染视图（RenderSurfaceView / RenderTextureView）
+     */
+    private val mZoomHelper = VideoZoomHelper {
+        if (isWrapperInitialized()) mControlWrapper.getRenderView()?.getView() else null
+    }
+
+    /**
+     * 双指缩放手势检测
+     */
+    private val mScaleGestureDetector: ScaleGestureDetector by lazy {
+        ScaleGestureDetector(
+            getContext(),
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    // focusX / focusY 相对本控制器，加上 left / top 换算为父容器坐标
+                    mZoomHelper.zoomBy(
+                        detector.scaleFactor,
+                        detector.focusX + left,
+                        detector.focusY + top
+                    )
+                    return true
+                }
+
+                override fun onScaleEnd(detector: ScaleGestureDetector) {
+                    mZoomHelper.settle()
+                }
+            }
+        ).apply {
+            // 双击已用于播放/暂停与缩放复位，关闭「双击拖动」快速缩放避免冲突
+            isQuickScaleEnabled = false
+        }
     }
 
     private var mPopupGestureHandler: OnTouchListener? = null
@@ -68,7 +107,28 @@ abstract class GestureVideoController(
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         mPopupGestureHandler?.onTouch(v, event)
-        return mGestureDetector.onTouchEvent(event)
+
+        // 悬浮窗模式下不响应缩放手势
+        if (isPopupMode().not() && mZoomHelper.canZoom()) {
+            mScaleGestureDetector.onTouchEvent(event)
+        }
+
+        // 多指操作期间仅处理缩放，不再下发普通手势，避免误触进度/音量/亮度
+        if (mScaleGestureDetector.isInProgress) {
+            return true
+        }
+
+        val handled = mGestureDetector.onTouchEvent(event)
+
+        // 手指全部抬起时处理越界回弹
+        if (event.actionMasked == MotionEvent.ACTION_UP ||
+            event.actionMasked == MotionEvent.ACTION_CANCEL
+        ) {
+            if (mZoomHelper.isZoomed()) {
+                mZoomHelper.settle()
+            }
+        }
+        return handled
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -133,7 +193,12 @@ abstract class GestureVideoController(
 
     override fun onDoubleTap(e: MotionEvent): Boolean {
         if (!isLocked() and isNormalPlayState()) {
-            togglePlay()
+            // 已放大时双击复位画面，否则保持原有的播放/暂停
+            if (mZoomHelper.isZoomed()) {
+                mZoomHelper.reset(true)
+            } else {
+                togglePlay()
+            }
         }
         return true
     }
@@ -147,6 +212,16 @@ abstract class GestureVideoController(
         if (isPopupMode()) {
             return false
         }
+        if (mScaleGestureDetector.isInProgress) {
+            return true
+        }
+
+        // 已放大：单指拖动改为平移画面
+        if (mZoomHelper.isZoomed()) {
+            mZoomHelper.translateBy(-distanceX, -distanceY)
+            return true
+        }
+
         if (!isNormalPlayState() or isLocked() or context.isScreenEdge(e1)) {
             return true
         }
@@ -280,6 +355,22 @@ abstract class GestureVideoController(
 
     fun setPopupGestureHandler(handler: OnTouchListener?) {
         mPopupGestureHandler = handler
+    }
+
+    /**
+     * 复位画面缩放
+     *
+     * 切换画面比例、切换视频源、切换悬浮窗等情况需调用，避免缩放状态与渲染视图尺寸不一致
+     *
+     * @param animate 是否使用动画过渡
+     */
+    fun resetZoom(animate: Boolean = false) {
+        mZoomHelper.reset(animate)
+    }
+
+    override fun onPopupModeChanged(isPopup: Boolean) {
+        super.onPopupModeChanged(isPopup)
+        mZoomHelper.reset(false)
     }
 
     private fun stopSlide() {

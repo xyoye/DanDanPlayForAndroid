@@ -94,6 +94,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
     //电量管理
     private var batteryHelper = BatteryHelper()
 
+    //是否处于后台（用于区分后台切换导致的播放中断）
+    private var isInBackground = false
+
+    //进入后台前的播放进度，用于从后台返回时恢复播放
+    private var positionBeforeBackground = 0L
+
     //弹幕配置广播（延迟初始化，避免过早创建 VideoController 导致的潜在崩溃）
     private lateinit var danmuConfigReceiver: PlayerDanmuConfigReceiver
 
@@ -137,6 +143,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
     override fun onResume() {
         super.onResume()
+        isInBackground = false
 
         val intentFilter = IntentFilter("com.xyoye.dandanplay.ACTION_DANMU_CONFIG_UPDATED")
         if (this::danmuConfigReceiver.isInitialized) {
@@ -144,9 +151,19 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         exitPopupMode()
+
+        //从后台返回时，渲染表面会被系统销毁并重建，播放器可能因此中断而进入错误状态，
+        //此处使用当前播放源重新播放，并恢复到进入后台前的播放进度
+        if (danDanPlayer.isPlayError()) {
+            retryPlayAfterBackground()
+        }
     }
 
     override fun onPause() {
+        isInBackground = true
+        //记录进入后台前的播放进度
+        positionBeforeBackground = danDanPlayer.getCurrentPosition()
+
         val popupNotShowing = popupManager.isShowing().not()
         val backgroundPlayDisable = PlayerConfig.isBackgroundPlay().not()
         if (popupNotShowing && backgroundPlayDisable) {
@@ -241,6 +258,10 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
 
             //播放错误
             observerPlayError {
+                //后台切换导致渲染表面被销毁而产生的异常，不弹窗提示，返回前台后自动恢复播放
+                if (isInBackground) {
+                    return@observerPlayError
+                }
                 showPlayErrorDialog()
             }
             //退出播放
@@ -282,7 +303,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
     }
 
-    private fun applyPlaySource(newSource: BaseVideoSource?) {
+    private fun applyPlaySource(newSource: BaseVideoSource?, position: Long? = null) {
         danDanPlayer.recordPlayInfo()
         danDanPlayer.pause()
         danDanPlayer.release()
@@ -294,15 +315,24 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
         VideoSourceManager.getInstance().setSource(videoSource!!)
 
-        updatePlayer(videoSource!!)
+        updatePlayer(videoSource!!, position)
 
         afterInitPlayer()
     }
 
-private fun updatePlayer(source: BaseVideoSource) {
+    /**
+     * 从后台返回时，渲染表面已被系统销毁，播放器可能已中断并进入错误状态，
+     * 此处使用当前播放源重新初始化播放器，并恢复到进入后台前的播放进度
+     */
+    private fun retryPlayAfterBackground() {
+        val source = videoSource ?: return
+        applyPlaySource(source, positionBeforeBackground)
+    }
+
+private fun updatePlayer(source: BaseVideoSource, position: Long? = null) {
         videoController.apply {
             setVideoTitle(source.getVideoTitle())
-            setLastPosition(source.getCurrentPosition())
+            setLastPosition(position ?: source.getCurrentPosition())
             setLastPlaySpeed(PlayerConfig.getNewVideoSpeed())
         }
 

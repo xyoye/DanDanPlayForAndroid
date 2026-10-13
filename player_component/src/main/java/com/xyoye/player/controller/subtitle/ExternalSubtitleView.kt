@@ -63,7 +63,8 @@ class ExternalSubtitleView(
                 mSubtitleManager.release()
             }
 
-            PlayState.STATE_COMPLETED, PlayState.STATE_ERROR, PlayState.STATE_PAUSED -> {
+            // 暂停时不发送空字幕，保留当前字幕，避免正在阅读的字幕消失
+            PlayState.STATE_COMPLETED, PlayState.STATE_ERROR -> {
                 sendEmptySubtitle()
             }
 

@@ -53,6 +53,16 @@ interface InterVideoController {
     fun isPopupMode(): Boolean
 
     /**
+     * 画面是否处于缩放状态
+     */
+    fun isZoomed(): Boolean
+
+    /**
+     * 复位画面缩放
+     */
+    fun resetZoom(animate: Boolean = false)
+
+    /**
      * 开启进度更新线程
      */
     fun startProgress()

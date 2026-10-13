@@ -12,7 +12,7 @@ import kotlin.math.max
  *
  * 视频画面缩放助手
  *
- * 负责把「双指捏合缩放 / 放大后单指平移」的手势换算为渲染 View 的视图变换
+ * 负责把「双指捏合缩放 / 双指拖动平移」的手势换算为渲染 View 的视图变换
  * （scaleX / scaleY + translationX / translationY），并处理边界约束与松手回弹。
  *
  * 说明：
@@ -130,7 +130,7 @@ class VideoZoomHelper(
     }
 
     /**
-     * 平移画面（放大后单指拖动）
+     * 平移画面（放大后双指拖动）
      *
      * @param dx 水平位移，正值表示画面右移
      * @param dy 垂直位移，正值表示画面下移

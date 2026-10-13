@@ -66,6 +66,7 @@ abstract class GestureVideoController(
 
                 override fun onScaleEnd(detector: ScaleGestureDetector) {
                     mZoomHelper.settle()
+                    onZoomStateChanged()
                 }
             }
         ).apply {
@@ -75,6 +76,16 @@ abstract class GestureVideoController(
     }
 
     private var mPopupGestureHandler: OnTouchListener? = null
+
+    /**
+     * 双指平移画面的跟踪状态
+     *
+     * ScaleGestureDetector 只回调缩放倍数，不回调平移，
+     * 因此这里自行跟踪多指重心位移来换算画面平移量。
+     */
+    private var mPointerTracked = false
+    private var mLastPointerX = 0f
+    private var mLastPointerY = 0f
 
     private var mCurrentPlayState = PlayState.STATE_IDLE
 
@@ -108,9 +119,10 @@ abstract class GestureVideoController(
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         mPopupGestureHandler?.onTouch(v, event)
 
-        // 悬浮窗模式下不响应缩放手势
-        if (isPopupMode().not() && mZoomHelper.canZoom()) {
+        // 悬浮窗模式 / 锁定状态下不响应画面缩放、平移手势
+        if (isPopupMode().not() && isLocked().not() && mZoomHelper.canZoom()) {
             mScaleGestureDetector.onTouchEvent(event)
+            handleMultiPointerPan(event)
         }
 
         // 多指操作期间仅处理缩放，不再下发普通手势，避免误触进度/音量/亮度
@@ -124,8 +136,11 @@ abstract class GestureVideoController(
         if (event.actionMasked == MotionEvent.ACTION_UP ||
             event.actionMasked == MotionEvent.ACTION_CANCEL
         ) {
-            if (mZoomHelper.isZoomed()) {
+            // 手势结束后放弃多指重心基准，下次多指操作重新确立基准点
+            mPointerTracked = false
+            if (isLocked().not() && mZoomHelper.isZoomed()) {
                 mZoomHelper.settle()
+                onZoomStateChanged()
             }
         }
         return handled
@@ -149,6 +164,55 @@ abstract class GestureVideoController(
             }
         }
         return super.onTouchEvent(event)
+    }
+
+    /**
+     * 双指平移画面
+     *
+     * 与 [mScaleGestureDetector] 的缩放并行工作：缩放在 onScale 中生效，
+     * 平移在此处通过跟踪多指重心位移实现，因此捏合缩放与拖动画面可同时进行。
+     *
+     * 仅在画面已放大时才有实际位移，未放大时由 [VideoZoomHelper.translateBy] 内部忽略。
+     */
+    private fun handleMultiPointerPan(event: MotionEvent) {
+        // 单指或手指全部抬起时结束跟踪
+        if (event.pointerCount < 2) {
+            mPointerTracked = false
+            return
+        }
+
+        // 指针增减的瞬间重置基准点，避免重心跳变导致画面抖动
+        if (event.actionMasked == MotionEvent.ACTION_POINTER_DOWN ||
+            event.actionMasked == MotionEvent.ACTION_POINTER_UP
+        ) {
+            mPointerTracked = false
+            return
+        }
+
+        var sumX = 0f
+        var sumY = 0f
+        for (index in 0 until event.pointerCount) {
+            sumX += event.getX(index)
+            sumY += event.getY(index)
+        }
+        val pointerX = sumX / event.pointerCount
+        val pointerY = sumY / event.pointerCount
+
+        if (!mPointerTracked) {
+            mPointerTracked = true
+            mLastPointerX = pointerX
+            mLastPointerY = pointerY
+            return
+        }
+
+        val dx = pointerX - mLastPointerX
+        val dy = pointerY - mLastPointerY
+        mLastPointerX = pointerX
+        mLastPointerY = pointerY
+
+        if (dx != 0f || dy != 0f) {
+            mZoomHelper.translateBy(dx, dy)
+        }
     }
 
     override fun onFling(
@@ -195,7 +259,7 @@ abstract class GestureVideoController(
         if (!isLocked() and isNormalPlayState()) {
             // 已放大时双击复位画面，否则保持原有的播放/暂停
             if (mZoomHelper.isZoomed()) {
-                mZoomHelper.reset(true)
+                resetZoom(true)
             } else {
                 togglePlay()
             }
@@ -212,13 +276,9 @@ abstract class GestureVideoController(
         if (isPopupMode()) {
             return false
         }
-        if (mScaleGestureDetector.isInProgress) {
-            return true
-        }
 
-        // 已放大：单指拖动改为平移画面
-        if (mZoomHelper.isZoomed()) {
-            mZoomHelper.translateBy(-distanceX, -distanceY)
+        // 双指操作（缩放 / 平移）期间不下发单指手势，避免误触进度 / 音量 / 亮度
+        if (mScaleGestureDetector.isInProgress || e2.pointerCount >= 2) {
             return true
         }
 
@@ -364,13 +424,34 @@ abstract class GestureVideoController(
      *
      * @param animate 是否使用动画过渡
      */
-    fun resetZoom(animate: Boolean = false) {
+    override fun resetZoom(animate: Boolean) {
         mZoomHelper.reset(animate)
+        onZoomStateChanged()
+    }
+
+    override fun isZoomed() = mZoomHelper.isZoomed()
+
+    /**
+     * 缩放状态变化回调
+     *
+     * 供子类刷新依赖缩放状态的 UI（如「还原屏幕」按钮）
+     */
+    protected open fun onZoomStateChanged() {}
+
+    /**
+     * 锁定状态变化回调
+     *
+     * 锁定时已保留当前缩放状态，仅放弃多指平移的重心跟踪基准，
+     * 避免解锁后因基准点过期导致画面跳动。
+     */
+    override fun onLockStateChanged(isLocked: Boolean) {
+        super.onLockStateChanged(isLocked)
+        mPointerTracked = false
     }
 
     override fun onPopupModeChanged(isPopup: Boolean) {
         super.onPopupModeChanged(isPopup)
-        mZoomHelper.reset(false)
+        resetZoom(false)
     }
 
     private fun stopSlide() {

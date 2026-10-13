@@ -201,6 +201,12 @@ class ControlWrapper(
 
     override fun isPopupMode() = mController.isPopupMode()
 
+    override fun isZoomed() = mController.isZoomed()
+
+    override fun resetZoom(animate: Boolean) {
+        mController.resetZoom(animate)
+    }
+
     override fun startProgress() {
         mController.startProgress()
     }

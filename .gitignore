@@ -10,3 +10,5 @@
 *.jks
 dadanplay.jks
 keystore.properties
+# 本地 AI 助手工作目录（含临时解包数据，体积大，不入库）
+/.workbuddy

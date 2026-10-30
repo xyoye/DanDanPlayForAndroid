@@ -43,6 +43,14 @@ abstract class AbstractVideoPlayer : InterVideoTrack {
     abstract fun setSurface(surface: Surface)
 
     /**
+     * 清除视频载体，不需要主动解绑载体的内核默认不处理
+     *
+     * @param surface 待清除的视频载体，仅当前正在使用该载体时执行清除
+     */
+    open fun clearSurface(surface: Surface) {
+    }
+
+    /**
      *  异步准备播放
      */
     abstract fun prepareAsync()

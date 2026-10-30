@@ -6,6 +6,13 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
+concurrency:
+  group: package-beta
+  cancel-in-progress: true
+
 jobs:
   package:
     name: Generate Beta APK
@@ -57,7 +64,30 @@ jobs:
             mv app/build/outputs/apk/${{ env.BUILD_TYPE }}/${file_name} $file_name
           done
 
-      # 8.创建Release
+      # 8.清理旧Beta版本
+      - name: cleanup old beta releases and tags
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current_tag="dandanplay-v${BUILD_VERSION}-beta"
+
+          git fetch --tags --force
+
+          while IFS= read -r tag
+          do
+            [ "$tag" = "$current_tag" ] && continue
+
+            echo "Deleting old beta: $tag"
+
+            git push origin --delete "$tag"
+
+            if gh release view "$tag" > /dev/null 2>&1
+            then
+              gh release delete "$tag" --yes
+            fi
+          done < <(git tag --list 'dandanplay-v*-beta')
+
+      # 9.创建Release
       - name: generate release
         id: generate_release
         uses: softprops/action-gh-release@v1

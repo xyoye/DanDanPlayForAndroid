@@ -144,6 +144,7 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
         }
 
         exitPopupMode()
+        danDanPlayer.onHostResume()
     }
 
     override fun onPause() {
@@ -153,7 +154,12 @@ class PlayerActivity : BaseActivity<PlayerViewModel, ActivityPlayerBinding>(),
             danDanPlayer.pause()
         }
         danDanPlayer.recordPlayInfo()
-        
+
+        // 悬浮窗仍在显示时，播放器继续使用悬浮窗中的渲染载体
+        if (popupNotShowing) {
+            danDanPlayer.onHostPause(keepPlaying = !backgroundPlayDisable)
+        }
+
         if (this::danmuConfigReceiver.isInitialized) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(danmuConfigReceiver)
         }

@@ -102,12 +102,14 @@ class DanDanVideoPlayer(
     }
 
     override fun pause() {
-        if (isInPlayState() && mVideoPlayer.isPlaying()) {
-            setPlayState(PlayState.STATE_PAUSED)
-            mVideoPlayer.pause()
-            mAudioFocusHelper.abandonFocus()
-            keepScreenOn = false
+        // 暂停操作保持幂等，确保内核和控制层状态不一致时仍能完成纠正
+        if (!isInPlayState()) {
+            return
         }
+        setPlayState(PlayState.STATE_PAUSED)
+        mVideoPlayer.pause()
+        mAudioFocusHelper.abandonFocus()
+        keepScreenOn = false
     }
 
     override fun getVideoSource(): BaseVideoSource {
@@ -182,6 +184,19 @@ class DanDanVideoPlayer(
         mRenderView?.setScaleType(mScreenScale)
         mRenderView?.setVideoSize(width, height)
         mVideoController?.setVideoSize(mVideoPlayer.getVideoSize())
+    }
+
+    override fun onPositionRestored(positionMs: Long) {
+        mVideoController?.setProgress(positionMs)
+    }
+
+    override fun onPlayStateChanged(playState: PlayState) {
+        setPlayState(playState)
+
+        // 播放界面不可见时沿用原有保护逻辑，避免内核在后台意外开始播放
+        if (playState == PlayState.STATE_PLAYING && windowVisibility != View.VISIBLE) {
+            pause()
+        }
     }
 
     override fun onPrepared() {
@@ -297,6 +312,22 @@ class DanDanVideoPlayer(
     }
 
     /**
+     * 恢复宿主界面的渲染载体绑定。
+     */
+    fun onHostResume() {
+        mRenderView?.onHostResume()
+    }
+
+    /**
+     * 解除宿主界面的渲染载体绑定。
+     *
+     * @param keepPlaying 是否需要在后台继续播放
+     */
+    fun onHostPause(keepPlaying: Boolean) {
+        mRenderView?.onHostPause(keepPlaying)
+    }
+
+    /**
      * 保存播放信息
      */
     fun recordPlayInfo() {
@@ -315,15 +346,15 @@ class DanDanVideoPlayer(
             CacheManager.release()
             //释放播放器控制器
             mVideoController?.destroy()
-            //释放播放器
-            mVideoPlayer.release()
-            //关闭常亮
-            keepScreenOn = false
-            //释放渲染布局
+            //先取消渲染回调和待执行任务，退出时不再创建待恢复播放状态
             mRenderView?.run {
                 this@DanDanVideoPlayer.removeView(getView())
                 release()
             }
+            //释放播放器
+            mVideoPlayer.release()
+            //关闭常亮
+            keepScreenOn = false
             //取消音频焦点
             mAudioFocusHelper.abandonFocus()
             //重置播放状态

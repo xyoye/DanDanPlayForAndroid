@@ -184,6 +184,10 @@ class DanDanVideoPlayer(
         mVideoController?.setVideoSize(mVideoPlayer.getVideoSize())
     }
 
+    override fun onPositionRestored(positionMs: Long) {
+        mVideoController?.setProgress(positionMs)
+    }
+
     override fun onPrepared() {
         setPlayState(PlayState.STATE_PREPARED)
     }
@@ -297,6 +301,22 @@ class DanDanVideoPlayer(
     }
 
     /**
+     * 恢复宿主界面的渲染载体绑定。
+     */
+    fun onHostResume() {
+        mRenderView?.onHostResume()
+    }
+
+    /**
+     * 解除宿主界面的渲染载体绑定。
+     *
+     * @param keepPlaying 是否需要在后台继续播放
+     */
+    fun onHostPause(keepPlaying: Boolean) {
+        mRenderView?.onHostPause(keepPlaying)
+    }
+
+    /**
      * 保存播放信息
      */
     fun recordPlayInfo() {
@@ -315,15 +335,15 @@ class DanDanVideoPlayer(
             CacheManager.release()
             //释放播放器控制器
             mVideoController?.destroy()
-            //释放播放器
-            mVideoPlayer.release()
-            //关闭常亮
-            keepScreenOn = false
-            //释放渲染布局
+            //先取消渲染回调和待执行任务，退出时不再创建待恢复播放状态
             mRenderView?.run {
                 this@DanDanVideoPlayer.removeView(getView())
                 release()
             }
+            //释放播放器
+            mVideoPlayer.release()
+            //关闭常亮
+            keepScreenOn = false
             //取消音频焦点
             mAudioFocusHelper.abandonFocus()
             //重置播放状态

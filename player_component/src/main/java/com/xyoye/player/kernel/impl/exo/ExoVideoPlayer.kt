@@ -107,6 +107,10 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         exoplayer.setVideoSurface(surface)
     }
 
+    override fun clearSurface(surface: Surface) {
+        exoplayer.clearVideoSurface(surface)
+    }
+
     override fun prepareAsync() {
         if (!this::mMediaSource.isInitialized) {
             return

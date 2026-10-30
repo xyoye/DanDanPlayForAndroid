@@ -102,12 +102,14 @@ class DanDanVideoPlayer(
     }
 
     override fun pause() {
-        if (isInPlayState() && mVideoPlayer.isPlaying()) {
-            setPlayState(PlayState.STATE_PAUSED)
-            mVideoPlayer.pause()
-            mAudioFocusHelper.abandonFocus()
-            keepScreenOn = false
+        // 暂停操作保持幂等，确保内核和控制层状态不一致时仍能完成纠正
+        if (!isInPlayState()) {
+            return
         }
+        setPlayState(PlayState.STATE_PAUSED)
+        mVideoPlayer.pause()
+        mAudioFocusHelper.abandonFocus()
+        keepScreenOn = false
     }
 
     override fun getVideoSource(): BaseVideoSource {
@@ -186,6 +188,15 @@ class DanDanVideoPlayer(
 
     override fun onPositionRestored(positionMs: Long) {
         mVideoController?.setProgress(positionMs)
+    }
+
+    override fun onPlayStateChanged(playState: PlayState) {
+        setPlayState(playState)
+
+        // 播放界面不可见时沿用原有保护逻辑，避免内核在后台意外开始播放
+        if (playState == PlayState.STATE_PLAYING && windowVisibility != View.VISIBLE) {
+            pause()
+        }
     }
 
     override fun onPrepared() {

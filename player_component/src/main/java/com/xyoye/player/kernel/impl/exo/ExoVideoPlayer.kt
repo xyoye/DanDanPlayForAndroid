@@ -61,9 +61,9 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     private var subtitleType = SubtitleType.UN_KNOW
 
     private var mIsPreparing = false
-    private var mIsBuffering = false
-    private var mLastReportedPlayWhenReady = false
-    private var mLastReportedPlaybackState = Player.STATE_IDLE
+
+    // 将 EXO 状态统一转换为播放器控制层状态
+    private val playbackStateMapper = ExoPlaybackStateMapper()
 
     private val trackNameProvider by lazy { DefaultTrackNameProvider(mContext.resources) }
 
@@ -141,9 +141,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         exoplayer.stop()
         exoplayer.setVideoSurface(null)
         mIsPreparing = false
-        mIsBuffering = false
-        mLastReportedPlaybackState = Player.STATE_IDLE
-        mLastReportedPlayWhenReady = false
+        playbackStateMapper.reset()
     }
 
     override fun release() {
@@ -155,9 +153,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
         }
 
         mIsPreparing = false
-        mIsBuffering = false
-        mLastReportedPlaybackState = Player.STATE_IDLE
-        mLastReportedPlayWhenReady = false
+        playbackStateMapper.reset()
     }
 
     override fun seekTo(timeMs: Long) {
@@ -185,17 +181,7 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     override fun setSubtitleOffset(offsetMs: Long) {
     }
 
-    override fun isPlaying(): Boolean {
-        return when (exoplayer.playbackState) {
-            Player.STATE_BUFFERING,
-            Player.STATE_READY -> exoplayer.playWhenReady
-
-            Player.STATE_IDLE,
-            Player.STATE_ENDED -> false
-
-            else -> false
-        }
-    }
+    override fun isPlaying(): Boolean = exoplayer.isPlaying
 
     override fun getCurrentPosition() = exoplayer.contentPosition
 
@@ -283,47 +269,33 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
     }
 
     override fun onRenderedFirstFrame() {
-        mPlayerEventListener.onInfo(PlayerConstant.MEDIA_INFO_VIDEO_RENDERING_START, 0)
         mIsPreparing = false
+        dispatchPlaybackState(exoplayer)
     }
 
-    override fun onPlaybackStateChanged(state: Int) {
+    override fun onEvents(player: Player, events: Player.Events) {
+        // 首次播放由首帧回调结束准备状态，避免准备阶段提前驱动控制组件
         if (mIsPreparing) {
             return
         }
 
-        val playWhenReady = exoplayer.playWhenReady
-        if (mLastReportedPlayWhenReady != playWhenReady || mLastReportedPlaybackState != state) {
-            when (state) {
-                Player.STATE_IDLE -> {
-
-                }
-
-                Player.STATE_BUFFERING -> {
-                    mIsBuffering = true
-                    mPlayerEventListener.onInfo(
-                        PlayerConstant.MEDIA_INFO_BUFFERING_START,
-                        getBufferedPercentage()
-                    )
-                }
-
-                Player.STATE_READY -> {
-                    if (mIsBuffering) {
-                        mPlayerEventListener.onInfo(
-                            PlayerConstant.MEDIA_INFO_BUFFERING_END,
-                            getBufferedPercentage()
-                        )
-                        mIsBuffering = false
-                    }
-                }
-
-                Player.STATE_ENDED -> {
-                    mPlayerEventListener.onCompletion()
-                }
-            }
+        // 播放自然结束只在状态真实切换时通知一次
+        if (events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED) &&
+            player.playbackState == Player.STATE_ENDED
+        ) {
+            mPlayerEventListener.onCompletion()
+            return
         }
-        mLastReportedPlaybackState = state
-        mLastReportedPlayWhenReady = playWhenReady
+
+        val hasPlaybackStateEvent = events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED) ||
+                events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED) ||
+                events.contains(Player.EVENT_PLAYBACK_SUPPRESSION_REASON_CHANGED) ||
+                events.contains(Player.EVENT_IS_PLAYING_CHANGED)
+        // 轨道、画面尺寸等事件不会改变控制层播放状态
+        if (!hasPlaybackStateEvent) {
+            return
+        }
+        dispatchPlaybackState(player)
     }
 
     override fun onTracksChanged(tracks: Tracks) {
@@ -365,6 +337,19 @@ class ExoVideoPlayer(private val mContext: Context) : AbstractVideoPlayer(), Pla
                 MixedSubtitle.fromText(subtitleText)
             )
         }
+    }
+
+    /**
+     * 将 EXO 当前状态同步到播放器控制层。
+     *
+     * @param player 提供最新聚合状态的 EXO 播放器
+     */
+    private fun dispatchPlaybackState(player: Player) {
+        val playState = playbackStateMapper.map(
+            playbackState = player.playbackState,
+            isPlaying = player.isPlaying
+        ) ?: return
+        mPlayerEventListener.onPlayStateChanged(playState)
     }
 
     private fun initListener() {
